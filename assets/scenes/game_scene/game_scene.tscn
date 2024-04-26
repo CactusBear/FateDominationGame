@@ -1,0 +1,102 @@
+[gd_scene load_steps=10 format=3 uid="uid://idh0ptdol8o3"]
+
+[ext_resource type="Texture2D" uid="uid://c6poaobifhu56" path="res://assets/images/game_scene/game_board.png" id="1_hbfn1"]
+[ext_resource type="Texture2D" uid="uid://c5bi2tjycxlxh" path="res://assets/images/ui/play_pad.png" id="2_3i0jb"]
+[ext_resource type="Script" path="res://assets/scripts/game_scene/PlayerPad.gd" id="2_yd56s"]
+[ext_resource type="PackedScene" uid="uid://b8k2pxeds72t5" path="res://assets/scenes/ui/header_button.tscn" id="3_rbdqa"]
+[ext_resource type="Texture2D" uid="uid://ckpmud2y0lgx1" path="res://assets/images/ui/master_pad.png" id="5_nedm5"]
+[ext_resource type="Texture2D" uid="uid://cr52hmyk0vpjh" path="res://assets/images/ui/command_spell_pad.png" id="6_57ppi"]
+[ext_resource type="Texture2D" uid="uid://dgdw6q4xgk7xt" path="res://assets/images/ui/deck_pad.png" id="7_m3qc2"]
+[ext_resource type="Texture2D" uid="uid://bwonb5qh7061g" path="res://assets/images/ui/discard_pad.png" id="8_4g6hf"]
+[ext_resource type="Texture2D" uid="uid://dct1jdasu38tp" path="res://assets/images/ui/servant_pad.png" id="8_f1dka"]
+
+[node name="GameScene" type="Node2D"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+offset_right = 1920.0
+offset_bottom = 1080.0
+size_flags_vertical = 0
+color = Color(0.00392157, 0.00392157, 0.0980392, 1)
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+
+[node name="GameBoard" type="TextureRect" parent="."]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 2112.0
+offset_bottom = 1776.0
+scale = Vector2(0.5, 0.5)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("1_hbfn1")
+metadata/_edit_lock_ = true
+
+[node name="PlayerPad" type="Node2D" parent="."]
+script = ExtResource("2_yd56s")
+
+[node name="PlayPad" type="NinePatchRect" parent="PlayerPad"]
+offset_left = 1192.0
+offset_top = 48.0
+offset_right = 1736.0
+offset_bottom = 704.0
+texture = ExtResource("2_3i0jb")
+patch_margin_left = 1
+patch_margin_top = 1
+patch_margin_right = 1
+patch_margin_bottom = 1
+metadata/_edit_lock_ = true
+
+[node name="HeaderButton" parent="PlayerPad" instance=ExtResource("3_rbdqa")]
+offset_left = 1784.0
+offset_top = 24.0
+offset_right = 2660.0
+offset_bottom = 900.0
+
+[node name="HeaderButton2" parent="PlayerPad" instance=ExtResource("3_rbdqa")]
+offset_left = 1784.0
+offset_top = 160.0
+offset_right = 2660.0
+offset_bottom = 1036.0
+
+[node name="MasterPad" type="TextureRect" parent="PlayerPad"]
+offset_left = 1080.0
+offset_top = 880.0
+offset_right = 2097.0
+offset_bottom = 2381.0
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("5_nedm5")
+
+[node name="CommandSpellPad" type="TextureRect" parent="PlayerPad"]
+offset_left = 1208.0
+offset_top = 728.0
+offset_right = 2681.0
+offset_bottom = 1378.0
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("6_57ppi")
+
+[node name="DeckPad" type="TextureRect" parent="PlayerPad"]
+offset_left = 1728.0
+offset_top = 880.0
+offset_right = 2759.0
+offset_bottom = 2381.0
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("7_m3qc2")
+
+[node name="DiscardPad" type="TextureRect" parent="PlayerPad"]
+offset_left = 1640.0
+offset_top = 768.0
+offset_right = 3141.0
+offset_bottom = 1798.0
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("8_4g6hf")
+
+[node name="ServantPad" type="TextureRect" parent="PlayerPad"]
+offset_left = 1584.0
+offset_top = 872.0
+offset_right = 3087.0
+offset_bottom = 2540.0
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("8_f1dka")
