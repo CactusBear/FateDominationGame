@@ -2,9 +2,14 @@
 	"master_id" : "00001",
 	"master_name" : "emiya_shirou",
 	"shown_master_name" : "卫宫士郎",
-	"header_img" : "00001_emiya_shirou_header.png"
-	"command_spell_image" : "emiya_shirou_cs.png",
-	"abilities" : abilities,
-	"specials" : specials,
-	"upgrade_skill" : upgrade_skill
+	"header_img" : "00001_emiya_shirou_header.png",
+	"master_card_img" : "00001_emiya_shirou_cd.png",
+	"command_spell_img" : "00001_emiya_shirou_cs.png",
+	"abilities" : {
+		
+	},
+	"specials" : {
+		
+	},
+	"upgrade_skill" : ""
 }
