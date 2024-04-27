@@ -29,6 +29,43 @@ var player_data:Dictionary = {
 	"is_battle_win" : false,
 	"is_first" : false,
 	"phase_order" : 1,
-	"current_phase" : {},
-	"others" : {}
+	"current_time_points" : [],
+	"buffs" : []
 	}
+
+var location_data:Dictionary = {
+	"magic_workshop" : [
+		"","","","",[]
+	],
+	"miyama" : [
+		"","",[]
+	],
+	"shinto" : [
+		"","",[]
+	],
+	"scout" : [
+		"",[]
+	]
+}
+
+const MAGIC_WORKSHOP_0 = {"magic_workshop" : 0}
+const MAGIC_WORKSHOP_1 = {"magic_workshop" : 1}
+const MAGIC_WORKSHOP_2 = {"magic_workshop" : 2}
+const MAGIC_WORKSHOP_3 = {"magic_workshop" : 3}
+const MAGIC_WORKSHOP_4 = {"magic_workshop" : 4}
+
+const MIYAMA_0 = {"miyama" : 0}
+const MIYAMA_1 = {"miyama" : 1}
+const MIYAMA_2 = {"miyama" : 2}
+
+const SHINTO_0 = {"shinto" : 0}
+const SHINTO_1 = {"shinto" : 1}
+const SHINTO_2 = {"shinto" : 2}
+
+const SCOUT_0 = {"scout" : 0}
+const SCOUT_1 = {"scout" : 1}
+
+const MAGIC_WORKSHOP = "magic_workshop"
+const MIYAMA = "miyama"
+const SHINTO = "shinto"
+const SCOUT = "scout"

@@ -47,7 +47,7 @@ func signal_connection():
 
 
 func weishu_func():
-	var player_data = PlayerDataManager.get_data(player_id)
+	var player_data = GameDataManager.get_player_data(player_id)
 	player_data["magic"] = 2
 	pass
 	

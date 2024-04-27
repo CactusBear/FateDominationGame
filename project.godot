@@ -24,7 +24,7 @@ config/icon="res://icon.svg"
 CursorReplace="*res://assets/scripts/system/global/cursor_replace.gd"
 GameData="*res://assets/scripts/system/global/game_data.gd"
 MasterManager="*res://assets/scripts/system/global/master_manager.gd"
-PlayerDataManager="*res://assets/scripts/system/global/player_data_manager.gd"
+GameDataManager="*res://assets/scripts/system/global/game_data_manager.gd"
 TimePointChecker="*res://assets/scripts/system/global/time_point_checker.gd"
 LoadGame="*res://assets/scripts/system/global/load_game.gd"
 
