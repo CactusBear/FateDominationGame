@@ -64,6 +64,21 @@ const SELF_BATTLE_WIN = "self_battle_win"
 const SELF_BATTLE = "self_battle"
 const SELF_BATTLE_LOSE = "self_battle_lose"
 
+const DEPLOY_START = "deploy_start"
+const DEPLOY = "deploy"
+const DEPLOY_END = "deploy_end"
+const SELF_DEPLOY_START = "self_deploy_start"
+const SELF_DEPLOY = "self_deploy"
+const SELF_DEPLOY_END = "self_deploy_end"
+
+const MOVE_START = "move_start"
+const MOVE = "move"
+const MOVE_END = "move_end"
+const SELF_MOVE_START = "self_move_start"
+const SELF_MOVE = "self_move"
+const SELF_MOVE_END = "self_move_end"
+
+
 
 var global_signals:Dictionary
 var current_time_points:Array

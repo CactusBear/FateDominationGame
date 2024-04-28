@@ -7,7 +7,12 @@ func do_nothing():
 	
 	
 
-#编辑数值
+#编辑数值(记得写发信号)
+func set_player_data(key_name:String, value, player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	player_data[key_name] = value
+
+
 func edit_magic(set_num:int = -1, vary_num:int = 0, player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	if set_num != -1:
@@ -48,7 +53,7 @@ func move_location(move_location_num:int, player_id:int = GameData.player_id, ig
 						#show("目标地点上限已满")
 						return
 					for pos in scout:
-						if pos == "":
+						if pos == -1:
 							location = GameData.SCOUT_0
 							return
 						if pos is Array:
@@ -63,7 +68,7 @@ func move_location(move_location_num:int, player_id:int = GameData.player_id, ig
 						#show("目标地点上限已满")
 						return
 					for pos in scout:
-						if pos == "":
+						if pos == -1:
 							location = GameData.SCOUT_0
 							return
 						if pos is Array:
@@ -74,7 +79,7 @@ func move_location(move_location_num:int, player_id:int = GameData.player_id, ig
 						#show("目标地点上限已满")
 						return
 					for pos in magic_workshop:
-						if pos == "":
+						if pos == -1:
 							location = {"magic_workshop" : magic_workshop.find(pos)}
 							return
 						if pos is Array:
@@ -87,7 +92,7 @@ func move_location(move_location_num:int, player_id:int = GameData.player_id, ig
 						#show("目标地点上限已满")
 						return
 					for pos in scout:
-						if pos == "":
+						if pos == -1:
 							location = GameData.SCOUT_0
 							return
 						if pos is Array:
@@ -100,7 +105,7 @@ func move_location(move_location_num:int, player_id:int = GameData.player_id, ig
 						#show("目标地点上限已满")
 						return
 					for pos in magic_workshop:
-						if pos == "":
+						if pos == -1:
 							location = {"magic_workshop" : magic_workshop.find(pos)}
 							return
 						if pos is Array:
@@ -117,7 +122,7 @@ func move_location(move_location_num:int, player_id:int = GameData.player_id, ig
 						#show("目标地点上限已满")
 						return
 					for pos in magic_workshop:
-						if pos == "":
+						if pos == -1:
 							location = {"magic_workshop" : magic_workshop.find(pos)}
 							return
 						if pos is Array:
@@ -125,11 +130,19 @@ func move_location(move_location_num:int, player_id:int = GameData.player_id, ig
 							
 	pass
 
-func set_location(setted_location:Dictionary, player_id:int = GameData.player_id, ignore_limit:bool = false):
+func set_location(setted_location:Dictionary, player_id:int = GameData.player_id, is_move:bool = true):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	var location:Dictionary = player_data["location"]
+	var location_data:Dictionary = GameData.location_data 
+	var area
+	for key in setted_location.keys():
+		area = key
+	if get_pl_or_pls_in_location(setted_location) != -1 and !(get_pl_or_pls_in_location(setted_location) is Array):
+		#show("目标位置已满")
+		return
 	location = setted_location
-
+	
+	
 func manage_buff(buff, player_id:int = GameData.player_id, add_or_del:bool = true):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	if add_or_del:
@@ -138,6 +151,13 @@ func manage_buff(buff, player_id:int = GameData.player_id, add_or_del:bool = tru
 	else:
 		var buffs:Array = player_data["buffs"]
 		buffs.erase(buff)
+	pass
+
+
+#功能函数(记得写发信号)
+func deploy(deploy_location:Dictionary, player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	set_location(deploy_location, player_id, false)
 	pass
 
 
@@ -219,9 +239,17 @@ func get_num_of_pl_in_map_area(map_area:String):
 	var area_data = GameData.location_data[map_area]
 	var count = 0
 	for location in area_data:
-		if !(location is Array) and location != "":
+		if !(location is Array) and location != -1:
 			count += 1
 		elif location is Array:
 			for i in location:
 				count += 1
 	return count
+
+func get_pl_or_pls_in_location(location:Dictionary):
+	var area
+	var location_data = GameData.location_data
+	for key in location.keys():
+		area = key
+	var pl_or_pls = location_data[area][location[area]]	 
+	return pl_or_pls

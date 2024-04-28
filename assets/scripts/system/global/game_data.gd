@@ -20,8 +20,9 @@ var player_data:Dictionary = {
 	"master_skills" : {},
 	"servant_skills" : {},
 	"location" : {},
+	"temp_location" : {},
 	"power" : 0,
-	"is_arranged" : false,
+	"is_deployed" : false,
 	"is_out" : true,
 	"is_shown" : false,
 	"is_battle" : false,
@@ -35,16 +36,16 @@ var player_data:Dictionary = {
 
 var location_data:Dictionary = {
 	"magic_workshop" : [
-		"","","","",[]
+		-1,-1,-1,-1,[]
 	],
 	"miyama" : [
-		"","",[]
+		-1,-1,[]
 	],
 	"shinto" : [
-		"","",[]
+		-1,-1,[]
 	],
 	"scout" : [
-		"",[]
+		-1,[]
 	]
 }
 
