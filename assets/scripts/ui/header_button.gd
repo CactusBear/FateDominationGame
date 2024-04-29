@@ -11,7 +11,8 @@ extends TextureButton
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	header_pic_setter(master_name)
-	pass # Replace with function body.
+	pass
+	
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

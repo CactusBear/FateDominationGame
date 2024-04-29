@@ -6,12 +6,11 @@ var player_max:int = 7
 var player_id:int = 6
 var player_data_library:Dictionary = {player_id:player_data}
 
-var _master = preload("res://assets/scripts/system/base_master.gd").new()._data.duplicate()
 
 var player_data:Dictionary = {
 	"player_name" : "null_name",
-	"master" : _master,
-	"servant" : {},
+	"master" : null,
+	"servant" : null,
 	"command_spell" : {},
 	"magic" : 4,
 	"score" : 0,
@@ -31,7 +30,8 @@ var player_data:Dictionary = {
 	"is_first" : false,
 	"phase_order" : 1,
 	"current_time_points" : [],
-	"buffs" : []
+	"buffs" : [],
+	"others" : {}
 	}
 
 var location_data:Dictionary = {

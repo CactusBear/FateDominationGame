@@ -1,23 +1,29 @@
-[gd_scene load_steps=10 format=3 uid="uid://idh0ptdol8o3"]
+[gd_scene load_steps=15 format=3 uid="uid://idh0ptdol8o3"]
 
 [ext_resource type="Texture2D" uid="uid://c6poaobifhu56" path="res://assets/images/game_scene/game_board.png" id="1_hbfn1"]
+[ext_resource type="Texture2D" uid="uid://c5rr8wykga03a" path="res://assets/images/game_scene/back_ground.png" id="1_vntgr"]
 [ext_resource type="Texture2D" uid="uid://c5bi2tjycxlxh" path="res://assets/images/ui/play_pad.png" id="2_3i0jb"]
 [ext_resource type="Script" path="res://assets/scripts/game_scene/PlayerPad.gd" id="2_yd56s"]
-[ext_resource type="PackedScene" uid="uid://b8k2pxeds72t5" path="res://assets/scenes/ui/header_button.tscn" id="3_rbdqa"]
 [ext_resource type="Texture2D" uid="uid://ckpmud2y0lgx1" path="res://assets/images/ui/master_pad.png" id="5_nedm5"]
 [ext_resource type="Texture2D" uid="uid://cr52hmyk0vpjh" path="res://assets/images/ui/command_spell_pad.png" id="6_57ppi"]
+[ext_resource type="Texture2D" uid="uid://ctsm80wtpro48" path="res://assets/images/ui/skill_pad.png" id="7_2u3bw"]
 [ext_resource type="Texture2D" uid="uid://dgdw6q4xgk7xt" path="res://assets/images/ui/deck_pad.png" id="7_m3qc2"]
 [ext_resource type="Texture2D" uid="uid://bwonb5qh7061g" path="res://assets/images/ui/discard_pad.png" id="8_4g6hf"]
 [ext_resource type="Texture2D" uid="uid://dct1jdasu38tp" path="res://assets/images/ui/servant_pad.png" id="8_f1dka"]
+[ext_resource type="Texture2D" uid="uid://d2ix0hsj355he" path="res://assets/images/ui/score_bar.png" id="11_mqq56"]
+[ext_resource type="Texture2D" uid="uid://dgi7dqsjc1q08" path="res://assets/images/game_scene/magic_pad.png" id="12_1bvy4"]
+[ext_resource type="Texture2D" uid="uid://cp55rgng25igv" path="res://assets/images/ui/header/header_belt.png" id="12_yfwnp"]
+[ext_resource type="PackedScene" uid="uid://di730hki0lhra" path="res://assets/scenes/ui/header_turn.tscn" id="13_0ieng"]
 
 [node name="GameScene" type="Node2D"]
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="BackGround" type="TextureRect" parent="."]
 z_index = -1
 offset_right = 1920.0
 offset_bottom = 1080.0
 size_flags_vertical = 0
-color = Color(0.00392157, 0.00392157, 0.0980392, 1)
+texture = ExtResource("1_vntgr")
+expand_mode = 1
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
 
@@ -38,65 +44,94 @@ metadata/_edit_lock_ = true
 script = ExtResource("2_yd56s")
 
 [node name="PlayPad" type="NinePatchRect" parent="PlayerPad"]
-offset_left = 1192.0
-offset_top = 48.0
-offset_right = 1736.0
-offset_bottom = 704.0
+offset_left = 1104.0
+offset_top = 168.0
+offset_right = 1654.0
+offset_bottom = 568.0
 texture = ExtResource("2_3i0jb")
 patch_margin_left = 1
 patch_margin_top = 1
 patch_margin_right = 1
 patch_margin_bottom = 1
-metadata/_edit_lock_ = true
 
-[node name="HeaderButton" parent="PlayerPad" instance=ExtResource("3_rbdqa")]
-offset_left = 1784.0
-offset_top = 24.0
-offset_right = 2660.0
-offset_bottom = 900.0
-
-[node name="HeaderButton2" parent="PlayerPad" instance=ExtResource("3_rbdqa")]
-offset_left = 1784.0
-offset_top = 160.0
-offset_right = 2660.0
-offset_bottom = 1036.0
-
-[node name="MasterPad" type="TextureRect" parent="PlayerPad"]
-offset_left = 1080.0
-offset_top = 880.0
-offset_right = 2097.0
-offset_bottom = 2381.0
+[node name="MasterPad" type="Sprite2D" parent="PlayerPad"]
+position = Vector2(1152, 936)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("5_nedm5")
 
-[node name="CommandSpellPad" type="TextureRect" parent="PlayerPad"]
-offset_left = 1208.0
-offset_top = 728.0
-offset_right = 2681.0
-offset_bottom = 1378.0
+[node name="CommandSpellPad" type="Sprite2D" parent="PlayerPad"]
+position = Vector2(1432, 752)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("6_57ppi")
 
-[node name="DeckPad" type="TextureRect" parent="PlayerPad"]
-offset_left = 1728.0
-offset_top = 880.0
-offset_right = 2759.0
-offset_bottom = 2381.0
+[node name="SkillPad" type="Sprite2D" parent="PlayerPad"]
+position = Vector2(1432, 936)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("7_2u3bw")
+
+[node name="DeckPad" type="Sprite2D" parent="PlayerPad"]
+position = Vector2(1848, 936)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("7_m3qc2")
 
-[node name="DiscardPad" type="TextureRect" parent="PlayerPad"]
-offset_left = 1640.0
-offset_top = 768.0
-offset_right = 3141.0
-offset_bottom = 1798.0
+[node name="DiscardPad" type="Sprite2D" parent="PlayerPad"]
+position = Vector2(1824, 792)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("8_4g6hf")
 
-[node name="ServantPad" type="TextureRect" parent="PlayerPad"]
-offset_left = 1584.0
-offset_top = 872.0
-offset_right = 3087.0
-offset_bottom = 2540.0
+[node name="ServantPad" type="Sprite2D" parent="PlayerPad"]
+position = Vector2(1720, 936)
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("8_f1dka")
+
+[node name="ScoreBar" type="Node2D" parent="PlayerPad"]
+position = Vector2(384, 970)
+scale = Vector2(0.2, 0.2)
+metadata/_edit_lock_ = true
+
+[node name="Left" type="Sprite2D" parent="PlayerPad/ScoreBar"]
+position = Vector2(-1600, -10)
+texture = ExtResource("11_mqq56")
+region_enabled = true
+region_rect = Rect2(0, 0, 392, 213)
+
+[node name="Middle" type="Sprite2D" parent="PlayerPad/ScoreBar"]
+position = Vector2(800, -10)
+scale = Vector2(3.73333, 1)
+texture = ExtResource("11_mqq56")
+region_enabled = true
+region_rect = Rect2(392, 0, 1200, 213)
+
+[node name="Right" type="Sprite2D" parent="PlayerPad/ScoreBar"]
+position = Vector2(3200, -10)
+texture = ExtResource("11_mqq56")
+region_enabled = true
+region_rect = Rect2(1592, 0, 388, 213)
+
+[node name="MagicPad" type="Sprite2D" parent="PlayerPad"]
+position = Vector2(1104, 792)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("12_1bvy4")
+
+[node name="HeaderBelt" type="Node2D" parent="PlayerPad"]
+position = Vector2(1832, 104)
+scale = Vector2(0.17, 0.17)
+
+[node name="Main" type="Sprite2D" parent="PlayerPad/HeaderBelt"]
+position = Vector2(0, 1230.94)
+scale = Vector2(1, 2.9114)
+texture = ExtResource("12_yfwnp")
+region_enabled = true
+region_rect = Rect2(0, 0, 408, 1288)
+
+[node name="Lower" type="Sprite2D" parent="PlayerPad/HeaderBelt"]
+position = Vector2(-0.000718061, 3200)
+texture = ExtResource("12_yfwnp")
+region_enabled = true
+region_rect = Rect2(0, 1288, 408, 279)
+
+[node name="Header" parent="PlayerPad" instance=ExtResource("13_0ieng")]
+position = Vector2(1792, 24)
+
+[node name="Header2" parent="PlayerPad" instance=ExtResource("13_0ieng")]
+position = Vector2(1792, 160)

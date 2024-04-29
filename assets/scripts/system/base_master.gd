@@ -1,29 +1,25 @@
 extends Node
 class_name  BaseMaster
 
-var player_id:int
+var _master_id:int
+var _master_name:String
+var _shown_master_name:String
+var _header_img:String
+var _master_card_img:String
+var _command_spell_img:String
+var _effects:Dictionary
+var _specials:Dictionary
+var _upgrade_skill:Dictionary
 
-var _data:Dictionary = {
-	"master_id" : -1,
-	"master_name" : "null_master_name",
-	"shown_master_name" : "null_shown_master_name",
-	"command_spell_type" : "normal",
-	"command_spell_image" : "emiya_shirou",
-	"command_spell_num" : 3,
-	"abilities" : [],
-	"specials" : {},
-	"upgrade_skill" : {},
-	"signals_dic" : {},
-}
-var _signals_dic:Dictionary = {"null_time_point" : _signals}
-var _signals:Array
-
-var _ability = {
-	"name" : "null_name",
-	"time-points" : [],
-}
-
-func set_ability(ability:Dictionary, name:String, time_points:Array):
-	ability["name"] = name
-	ability["time_points"] = time_points
+func _init(master_id:int, master_name:String, shown_master_name:String, header_img:String, master_card_img:String, commmand_spell_img:String):
+	_master_id = master_id
+	_master_name = master_name
+	_shown_master_name = shown_master_name
+	_header_img = header_img
+	_master_card_img = master_card_img
+	_command_spell_img = commmand_spell_img
+	_effects = {}
+	_specials = {}
+	_upgrade_skill = {}
+	
 	

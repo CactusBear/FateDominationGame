@@ -7,6 +7,8 @@ func do_nothing():
 	
 	
 
+
+
 #编辑数值(记得写发信号)
 func set_player_data(key_name:String, value, player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
@@ -164,7 +166,7 @@ func deploy(deploy_location:Dictionary, player_id:int = GameData.player_id):
 
 
 #判断
-func _if_func(_var1, _var2):
+func _if_func(_var1, _var2 = true):
 	if _var1 == _var2:
 		return true
 	elif _var1 != _var2:
@@ -184,6 +186,27 @@ func _when(time_points:Array):
 	if TimePointChecker.current_time_points.has(time_points):
 		return true
 	
+func _has(parent_var, children_var, key = null):
+	if parent_var is Array:
+		if parent_var.find(children_var) != -1:
+			return true
+		else :
+			return false
+			
+	if parent_var is Dictionary:
+		if key == null:
+			 #show("请输入字典的键")
+			return
+		if parent_var[key] is Array:
+			var array:Array = parent_var[key]
+			array.find(children_var)
+		if parent_var[key] is Dictionary:
+			var dic:Dictionary = parent_var[key]
+			if dic.has(children_var):
+				return true
+			else :
+				return false
+
 
 #循环
 func _for_func(_func:Callable, count:int):
@@ -193,13 +216,14 @@ func _for_func(_func:Callable, count:int):
 func _while_func(_func:Callable, condition:bool):
 	while condition:
 		_func.call()
+		
+func _foreach_func(_func:Callable, _var):
+	for i in _var:
+		_func.call(i)
 
 #获取数值
 func create_buff(buff_name:String, buff_img:String):
-	var buff = {
-		"buff_name" = buff_name,
-		"buff_img" = buff_img
-	}
+	var buff = BaseBuff.new(buff_name, buff_img)
 	return buff
 
 func _location(map_area:String, index:int):
@@ -253,3 +277,53 @@ func get_pl_or_pls_in_location(location:Dictionary):
 		area = key
 	var pl_or_pls = location_data[area][location[area]]	 
 	return pl_or_pls
+	
+
+func get_data_num(key:String, player_id:int = GameData.player_id):
+	var player_data = GameDataManager.get_player_data(player_id) as Dictionary
+	if !player_data.has(key):
+		#show("所提供的键不存在于player_data中")
+		return
+	if player_data[key] is Dictionary:
+		var data:Dictionary = player_data[key]
+		return data.size()
+	if player_data[key] is Array:
+		var data:Array = player_data[key]
+		return data.size() 
+	if player_data[key] is int:
+		return player_data[key]
+	
+	
+func get_player_name(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["player_name"]
+	
+
+func get_phase_order(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["phase_order"]
+	
+
+func get_player_time_points(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["current_time_points"]
+	
+	
+func get_player_buffs(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["buffs"]
+
+
+func get_player_master(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["master"] 
+
+
+func get_player_servant(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["servant"] 
+
+
+
+#交互
+

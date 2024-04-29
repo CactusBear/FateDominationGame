@@ -38,5 +38,13 @@ func load_masters(load_path:String):
 
 func load_master_file(path:String, master_file_name:String):
 	var master_file = FileAccess.open(path + "/" + master_file_name, FileAccess.READ)
-	
+	var json = master_file.get_as_text()
+	master_file.close()
+	var data = JSON.parse_string(json)
+	var abilities:Dictionary = data["effects"]
+	for effect:Dictionary in abilities:
+		var _funcs = effect.keys()
+		if !_funcs.find("time_points"):
+			#show("没有检测到效果时点！")
+			return
 	pass
