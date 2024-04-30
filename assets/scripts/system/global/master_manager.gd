@@ -4,7 +4,7 @@ extends Node
 
 func _on_game_start():
 	#将御主信号加入全局信号
-	for id in range(GameData.player_num):
+	for id in range(MapData.player_num):
 		var player_data = GameDataManager.get_player_data(id)
 		var signals_dic = player_data["master"]["signals_dic"] as Dictionary
 		for time_point in signals_dic.keys():

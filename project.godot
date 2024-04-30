@@ -27,6 +27,7 @@ MasterManager="*res://assets/scripts/system/global/master_manager.gd"
 GameDataManager="*res://assets/scripts/system/global/game_data_manager.gd"
 TimePointChecker="*res://assets/scripts/system/global/time_point_checker.gd"
 LoadGame="*res://assets/scripts/system/global/load_game.gd"
+MapData="*res://assets/scripts/system/global/map_data.gd"
 
 [display]
 

@@ -6,7 +6,7 @@ var masters_can_use = []
 
 
 func game_start():
-	GameData.player_id = get_id()
+	MapData.player_id = get_id()
 	masters_can_use = get_masters_can_use()
 	
 

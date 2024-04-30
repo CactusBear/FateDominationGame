@@ -25,6 +25,7 @@ texture = ExtResource("3_ldped")
 offset_right = 229.0
 offset_bottom = 229.0
 scale = Vector2(0.35, 0.35)
+mouse_default_cursor_shape = 2
 ignore_texture_size = true
 
 [connection signal="button_down" from="HeaderButton" to="." method="_on_header_button_button_down"]
