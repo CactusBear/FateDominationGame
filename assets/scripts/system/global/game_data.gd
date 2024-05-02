@@ -36,4 +36,5 @@ var player_data:Dictionary = {
 
 var objects:Array[BaseObject]
 
-
+var master_datas:Array[Dictionary]
+var servant_datas:Array[Dictionary]

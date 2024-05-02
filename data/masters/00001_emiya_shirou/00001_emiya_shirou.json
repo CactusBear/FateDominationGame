@@ -1,17 +1,55 @@
 {
-	"master_name" : "emiya_shirou",
-	"shown_master_name" : "卫宫士郎",
-	"header_img" : "00001_emiya_shirou_header.png",
-	"master_card_img" : "00001_emiya_shirou_cd.png",
-	"command_spell_img" : "00001_emiya_shirou_cs.png",
-	"effects" : {
-		"weishu" : {
-			"time_points" : ["game_start"],
-			"edit_magic" : [2]
-		}
-	},
-	"specials" : {
-		
-	},
-	"upgrade_skill" : {}
+  "master_name": "emiya_shirou",
+  "shown_master_name": "卫宫士郎",
+  "header_img": "00001_emiya_shirou_header.png",
+  "master_card_img": "00001_emiya_shirou_cd.png",
+  "command_spell_img": "00001_emiya_shirou_cs.png",
+  "effects": [
+    {
+      "effect_name": "weishu",
+      "time_points": ["game_start"],
+      "funcs": [{ "func_name": "edit_magic", "parameters": [2] }]
+    }
+  ],
+  "specials": {
+    "SKILLS": [
+      {
+        "skill_name": "GanJiangMoYe",
+        "skill_card_img": "GanJiangMoYe.png",
+        "effects": [
+          {
+            "effect_name": "lalala",
+            "time_points": ["game_start"],
+            "funcs": []
+          }
+        ]
+      }
+    ],
+    "ATTACKS": [
+      {
+        "attack_name": "lalala",
+        "attack_crad_img": "lalala.png",
+        "effects": [
+          {
+            "effect_name": "lalala",
+            "time_points": [],
+            "funcs": []
+          }
+        ]
+      }
+    ]
+  },
+  "upgrade_skill": [
+    {
+      "skill_name": "lalala",
+      "skill_card_img": "lalala.png",
+      "effects": [
+        {
+          "effect_name": "lalala",
+          "time_points": ["game_start"],
+          "funcs": []
+        }
+      ]
+    }
+  ]
 }

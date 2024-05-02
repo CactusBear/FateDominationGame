@@ -36,6 +36,21 @@ func edit_power(set_num:int = -1, vary_num:int = 0, player_id:int = GameData.pla
 	player_data["power"] += vary_num
 	pass
 
+func edit_map_benefit():
+	pass
+func edit_map_magic():
+	pass
+func edit_map_score():
+	pass
+func edit_map_move_cost():
+	pass
+func edit_map_area_buff():
+	pass
+func edit_map_event_cards():
+	pass
+func edit_map_situatiuon_cards():
+	pass
+
 func move_location(move_location_num:int, player_id:int = GameData.player_id, ignore_limit:bool = false):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	var location:Dictionary = player_data["location"]
@@ -252,11 +267,12 @@ func _location(map_area:String, index:int):
 	return location
 	
 
-func get_by_tag(tag:String):
+func get_by_tag(tag:Dictionary):
 	var objects:Array
 	for object in GameData.objects:
-		if object.tags.find(tag) != -1:
-			objects.append(object)
+		for t:Dictionary in object.tags:
+			if t == tag:
+				objects.append(object)
 	return objects
 
 func get_location(player_id:int = GameData.player_id):

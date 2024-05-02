@@ -18,7 +18,7 @@ func load_masters(load_path:String):
 			if load_dir.current_is_dir() and !_loaded_path.has(load_dir.get_current_dir()):
 				load_masters(load_dir.get_current_dir())
 			elif !load_dir.current_is_dir():
-				load_master_file(load_dir.get_current_dir(), load_file_name)
+				GameData.master_datas.append(load_master_file(load_dir.get_current_dir(), load_file_name)) 
 			load_file_name = load_dir.get_next()
 			if load_file_name == "":
 				var current_path = load_dir.get_current_dir()
@@ -47,4 +47,21 @@ func load_master_file(path:String, master_file_name:String):
 		if !_funcs.find("time_points"):
 			#show("没有检测到效果时点！")
 			return
+	return data
 	pass
+
+
+
+#func add_tag():
+	#var datas = GameData.master_datas.append_array(GameData.servant_datas)
+	#var master_tags:Array[String]
+	#var servant_tags:Array[String]
+	#var skill_tags:Array[String]
+	#var attack_tags:Array[String]
+	#var situation_tags:Array[String]
+	#var event_tags:Array[String]
+	#var buff_tags:Array[String]
+	#var others_tags:Array[String]
+	#
+	#for data:Dictionary in datas:
+		#master_tags = data[]

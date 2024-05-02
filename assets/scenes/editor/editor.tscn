@@ -1,0 +1,446 @@
+[gd_scene load_steps=4 format=3 uid="uid://ui734wywrhw8"]
+
+[ext_resource type="Script" path="res://assets/scripts/editor/create_master.gd" id="1_4d2dj"]
+[ext_resource type="Texture2D" uid="uid://c5bi2tjycxlxh" path="res://assets/images/ui/play_pad.png" id="2_meqoi"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_egqrm"]
+font_size = 40
+
+[node name="Editor" type="Node2D"]
+
+[node name="CreateMaster" type="Node2D" parent="."]
+script = ExtResource("1_4d2dj")
+
+[node name="MasterBaseInfo" type="NinePatchRect" parent="CreateMaster"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MasterName" type="LineEdit" parent="CreateMaster/MasterBaseInfo"]
+layout_mode = 0
+offset_right = 232.0
+offset_bottom = 31.0
+placeholder_text = "请用字母数字和下划线表示"
+alignment = 1
+
+[node name="ShownMasterName" type="LineEdit" parent="CreateMaster/MasterBaseInfo"]
+layout_mode = 0
+offset_top = 32.0
+offset_right = 232.0
+offset_bottom = 63.0
+placeholder_text = "御主显示的名称"
+alignment = 1
+
+[node name="HeaderImg" type="LineEdit" parent="CreateMaster/MasterBaseInfo"]
+layout_mode = 0
+offset_top = 64.0
+offset_right = 232.0
+offset_bottom = 95.0
+placeholder_text = "请保持头像图片宽高比为1:1"
+alignment = 1
+editable = false
+
+[node name="TextureButton" type="TextureButton" parent="CreateMaster/MasterBaseInfo/HeaderImg"]
+layout_mode = 0
+offset_left = 232.0
+offset_right = 264.0
+offset_bottom = 32.0
+
+[node name="FileDialog" type="FileDialog" parent="CreateMaster/MasterBaseInfo/HeaderImg/TextureButton"]
+title = "Open a File"
+initial_position = 1
+size = Vector2i(437, 400)
+popup_window = true
+ok_button_text = "打开"
+dialog_hide_on_ok = true
+cancel_button_text = "取消"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png")
+
+[node name="MasterCardImg" type="LineEdit" parent="CreateMaster/MasterBaseInfo"]
+layout_mode = 0
+offset_top = 96.0
+offset_right = 232.0
+offset_bottom = 127.0
+placeholder_text = "御主卡面"
+alignment = 1
+editable = false
+
+[node name="TextureButton" type="TextureButton" parent="CreateMaster/MasterBaseInfo/MasterCardImg"]
+layout_mode = 0
+offset_left = 232.0
+offset_right = 264.0
+offset_bottom = 32.0
+
+[node name="FileDialog" type="FileDialog" parent="CreateMaster/MasterBaseInfo/MasterCardImg/TextureButton"]
+title = "Open a File"
+initial_position = 1
+size = Vector2i(437, 400)
+popup_window = true
+ok_button_text = "打开"
+dialog_hide_on_ok = true
+cancel_button_text = "取消"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png")
+
+[node name="CommandSpellImg" type="LineEdit" parent="CreateMaster/MasterBaseInfo"]
+layout_mode = 0
+offset_top = 128.0
+offset_right = 232.0
+offset_bottom = 159.0
+placeholder_text = "御主令咒卡面"
+alignment = 1
+editable = false
+
+[node name="TextureButton" type="TextureButton" parent="CreateMaster/MasterBaseInfo/CommandSpellImg"]
+layout_mode = 0
+offset_left = 232.0
+offset_right = 264.0
+offset_bottom = 32.0
+
+[node name="FileDialog" type="FileDialog" parent="CreateMaster/MasterBaseInfo/CommandSpellImg/TextureButton"]
+title = "Open a File"
+initial_position = 1
+size = Vector2i(437, 400)
+popup_window = true
+ok_button_text = "打开"
+dialog_hide_on_ok = true
+cancel_button_text = "取消"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png")
+
+[node name="Confirm" type="Button" parent="CreateMaster/MasterBaseInfo"]
+layout_mode = 0
+offset_top = 160.0
+offset_right = 24.0
+offset_bottom = 184.0
+
+[node name="EffectEditor" type="NinePatchRect" parent="CreateMaster"]
+offset_left = 296.0
+offset_right = 336.0
+offset_bottom = 40.0
+
+[node name="AddEffect" type="Button" parent="CreateMaster/EffectEditor"]
+layout_mode = 0
+offset_right = 32.0
+offset_bottom = 32.0
+
+[node name="EffectBaseInfo" type="PopupPanel" parent="CreateMaster/EffectEditor/AddEffect"]
+title = "新增效果"
+initial_position = 1
+size = Vector2i(500, 400)
+visible = true
+
+[node name="BackGround" type="NinePatchRect" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 496.0
+offset_bottom = 396.0
+
+[node name="EffectName" type="LineEdit" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround"]
+offset_right = 100.0
+offset_bottom = 40.0
+placeholder_text = "效果名称"
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround"]
+custom_minimum_size = Vector2(500, 40)
+layout_mode = 0
+offset_top = 80.0
+offset_right = 500.0
+offset_bottom = 120.0
+
+[node name="AddTimePoint" type="LineEdit" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+placeholder_text = "添加时点"
+alignment = 1
+
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+
+[node name="TimePointPanel" type="PopupPanel" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button"]
+initial_position = 1
+size = Vector2i(1200, 800)
+visible = true
+
+[node name="BackGround" type="NinePatchRect" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 1196.0
+offset_bottom = 796.0
+texture = ExtResource("2_meqoi")
+
+[node name="Game" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 105.0
+text = "游戏"
+label_settings = SubResource("LabelSettings_egqrm")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Game"]
+layout_mode = 0
+offset_left = -50.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 30
+alignment = 1
+item_count = 3
+selected = 0
+popup/item_0/text = "游戏开始"
+popup/item_0/id = 0
+popup/item_1/text = "游戏中"
+popup/item_1/id = 1
+popup/item_2/text = "游戏结束"
+popup/item_2/id = 2
+
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Game"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = 80.0
+offset_right = 200.0
+offset_bottom = 120.0
+
+[node name="Day" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
+layout_mode = 0
+offset_left = 500.0
+offset_top = 50.0
+offset_right = 580.0
+offset_bottom = 105.0
+text = "回合
+"
+label_settings = SubResource("LabelSettings_egqrm")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Day"]
+layout_mode = 0
+offset_left = -50.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 30
+alignment = 1
+item_count = 3
+selected = 0
+popup/item_0/text = "一天开始"
+popup/item_0/id = 0
+popup/item_1/text = "一天中"
+popup/item_1/id = 1
+popup/item_2/text = "一天结束"
+popup/item_2/id = 2
+
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Day"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = 80.0
+offset_right = 200.0
+offset_bottom = 120.0
+
+[node name="PreparePhase" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
+layout_mode = 0
+offset_left = 880.0
+offset_top = 50.0
+offset_right = 1040.0
+offset_bottom = 105.0
+text = "准备阶段
+"
+label_settings = SubResource("LabelSettings_egqrm")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/PreparePhase"]
+layout_mode = 0
+offset_left = -50.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 30
+alignment = 1
+item_count = 9
+selected = 0
+popup/item_0/text = "准备阶段开始"
+popup/item_0/id = 0
+popup/item_1/text = "自己准备阶段开始"
+popup/item_1/id = 1
+popup/item_2/text = "他人准备阶段开始"
+popup/item_2/id = 2
+popup/item_3/text = "准备阶段中"
+popup/item_3/id = 3
+popup/item_4/text = "自己准备阶段中"
+popup/item_4/id = 4
+popup/item_5/text = "他人准备阶段中"
+popup/item_5/id = 5
+popup/item_6/text = "准备阶段结束"
+popup/item_6/id = 6
+popup/item_7/text = "自己准备阶段结束"
+popup/item_7/id = 7
+popup/item_8/text = "他人准备阶段结束"
+popup/item_8/id = 8
+
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/PreparePhase"]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 280.0
+offset_bottom = 120.0
+
+[node name="OutpostPhase2" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 250.0
+offset_right = 280.0
+offset_bottom = 305.0
+text = "前哨阶段
+"
+label_settings = SubResource("LabelSettings_egqrm")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/OutpostPhase2"]
+layout_mode = 0
+offset_left = -50.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 30
+alignment = 1
+item_count = 9
+selected = 0
+popup/item_0/text = "前哨阶段开始"
+popup/item_0/id = 0
+popup/item_1/text = "自己前哨阶段开始"
+popup/item_1/id = 1
+popup/item_2/text = "他人前哨阶段开始"
+popup/item_2/id = 2
+popup/item_3/text = "前哨阶段中"
+popup/item_3/id = 3
+popup/item_4/text = "自己准备阶段中"
+popup/item_4/id = 4
+popup/item_5/text = "他人前哨阶段中"
+popup/item_5/id = 5
+popup/item_6/text = "前哨阶段结束"
+popup/item_6/id = 6
+popup/item_7/text = "自己前哨阶段结束"
+popup/item_7/id = 7
+popup/item_8/text = "他人前哨阶段结束"
+popup/item_8/id = 8
+
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/OutpostPhase2"]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 280.0
+offset_bottom = 120.0
+
+[node name="ActionPhase3" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
+layout_mode = 0
+offset_left = 500.0
+offset_top = 250.0
+offset_right = 660.0
+offset_bottom = 305.0
+text = "行动阶段
+"
+label_settings = SubResource("LabelSettings_egqrm")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/ActionPhase3"]
+layout_mode = 0
+offset_left = -50.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 30
+alignment = 1
+item_count = 9
+selected = 0
+popup/item_0/text = "行动阶段开始"
+popup/item_0/id = 0
+popup/item_1/text = "自己行动阶段开始"
+popup/item_1/id = 1
+popup/item_2/text = "他人行动阶段开始"
+popup/item_2/id = 2
+popup/item_3/text = "行动阶段中"
+popup/item_3/id = 3
+popup/item_4/text = "自己行动阶段中"
+popup/item_4/id = 4
+popup/item_5/text = "他人行动阶段中"
+popup/item_5/id = 5
+popup/item_6/text = "行动阶段结束"
+popup/item_6/id = 6
+popup/item_7/text = "自己行动阶段结束"
+popup/item_7/id = 7
+popup/item_8/text = "他人行动阶段结束"
+popup/item_8/id = 8
+
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/ActionPhase3"]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 280.0
+offset_bottom = 120.0
+
+[node name="BattlePhase4" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
+layout_mode = 0
+offset_left = 880.0
+offset_top = 250.0
+offset_right = 1040.0
+offset_bottom = 305.0
+text = "战斗阶段
+"
+label_settings = SubResource("LabelSettings_egqrm")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/BattlePhase4"]
+layout_mode = 0
+offset_left = -50.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 30
+alignment = 1
+item_count = 9
+selected = 0
+popup/item_0/text = "战斗阶段开始"
+popup/item_0/id = 0
+popup/item_1/text = "自己战斗阶段开始"
+popup/item_1/id = 1
+popup/item_2/text = "他人战斗阶段开始"
+popup/item_2/id = 2
+popup/item_3/text = "战斗阶段中"
+popup/item_3/id = 3
+popup/item_4/text = "自己战斗阶段中"
+popup/item_4/id = 4
+popup/item_5/text = "他人战斗阶段中"
+popup/item_5/id = 5
+popup/item_6/text = "战斗阶段结束"
+popup/item_6/id = 6
+popup/item_7/text = "自己战斗阶段结束"
+popup/item_7/id = 7
+popup/item_8/text = "他人战斗阶段结束"
+popup/item_8/id = 8
+
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/BattlePhase4"]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 280.0
+offset_bottom = 120.0
+
+[connection signal="pressed" from="CreateMaster/MasterBaseInfo/HeaderImg/TextureButton" to="CreateMaster" method="_show_header_dialog"]
+[connection signal="file_selected" from="CreateMaster/MasterBaseInfo/HeaderImg/TextureButton/FileDialog" to="CreateMaster" method="_header_selected"]
+[connection signal="pressed" from="CreateMaster/MasterBaseInfo/MasterCardImg/TextureButton" to="CreateMaster" method="_show_master_card_dialog"]
+[connection signal="file_selected" from="CreateMaster/MasterBaseInfo/MasterCardImg/TextureButton/FileDialog" to="CreateMaster" method="_master_card_selected"]
+[connection signal="pressed" from="CreateMaster/MasterBaseInfo/CommandSpellImg/TextureButton" to="CreateMaster" method="_show_command_spell_dialog"]
+[connection signal="file_selected" from="CreateMaster/MasterBaseInfo/CommandSpellImg/TextureButton/FileDialog" to="CreateMaster" method="_command_spell_selected"]
+[connection signal="pressed" from="CreateMaster/MasterBaseInfo/Confirm" to="CreateMaster" method="_write_base_info"]

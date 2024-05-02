@@ -22,5 +22,5 @@ func _init(master_name:String, shown_master_name:String, header_img:String, mast
 	_effects = {}
 	_specials = {}
 	_upgrade_skill = {}
-	
+	super.add_object()
 	

@@ -14,6 +14,7 @@ func _init(buff_name:String, buff_img:String):
 	_buff_level = 1
 	_funcs = []
 	_is_active = true
+	super.add_object()
 	
 
 func add_buff_func(_func:Callable, buff:Dictionary):

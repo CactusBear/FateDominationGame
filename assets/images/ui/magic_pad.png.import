@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dgi7dqsjc1q08"
-path="res://.godot/imported/magic_pad.png-f69928889abc20559078c12156fcb2eb.ctex"
+uid="uid://bd30ovhi7d3rw"
+path="res://.godot/imported/magic_pad.png-a58759873d04d0a9cbaa04a7d32432d1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/game_scene/magic_pad.png"
-dest_files=["res://.godot/imported/magic_pad.png-f69928889abc20559078c12156fcb2eb.ctex"]
+source_file="res://assets/images/ui/magic_pad.png"
+dest_files=["res://.godot/imported/magic_pad.png-a58759873d04d0a9cbaa04a7d32432d1.ctex"]
 
 [params]
 
