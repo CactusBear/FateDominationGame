@@ -131,7 +131,7 @@ offset_bottom = 32.0
 title = "新增效果"
 initial_position = 1
 size = Vector2i(500, 400)
-visible = true
+borderless = false
 
 [node name="BackGround" type="NinePatchRect" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo"]
 offset_left = 4.0
@@ -140,6 +140,7 @@ offset_right = 496.0
 offset_bottom = 396.0
 
 [node name="EffectName" type="LineEdit" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround"]
+layout_mode = 0
 offset_right = 100.0
 offset_bottom = 40.0
 placeholder_text = "效果名称"
@@ -163,9 +164,10 @@ custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 
 [node name="TimePointPanel" type="PopupPanel" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button"]
+title = "添加时点"
 initial_position = 1
 size = Vector2i(1200, 800)
-visible = true
+borderless = false
 
 [node name="BackGround" type="NinePatchRect" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel"]
 offset_left = 4.0
@@ -245,12 +247,46 @@ offset_top = 80.0
 offset_right = 200.0
 offset_bottom = 120.0
 
-[node name="PreparePhase" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
-layout_mode = 0
+[node name="Phase" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
 offset_left = 880.0
 offset_top = 50.0
 offset_right = 1040.0
 offset_bottom = 105.0
+text = "阶段"
+label_settings = SubResource("LabelSettings_egqrm")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Phase"]
+layout_mode = 0
+offset_left = -50.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 30
+alignment = 1
+item_count = 3
+selected = 0
+popup/item_0/text = "每个阶段开始"
+popup/item_0/id = 0
+popup/item_1/text = "每个阶段中"
+popup/item_1/id = 1
+popup/item_2/text = "每个阶段结束"
+popup/item_2/id = 2
+
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Phase"]
+layout_mode = 0
+offset_left = 180.0
+offset_top = 80.0
+offset_right = 220.0
+offset_bottom = 120.0
+
+[node name="PreparePhase" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 250.0
+offset_right = 280.0
+offset_bottom = 305.0
 text = "准备阶段
 "
 label_settings = SubResource("LabelSettings_egqrm")
@@ -295,9 +331,9 @@ offset_bottom = 120.0
 
 [node name="OutpostPhase2" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
 layout_mode = 0
-offset_left = 120.0
+offset_left = 500.0
 offset_top = 250.0
-offset_right = 280.0
+offset_right = 660.0
 offset_bottom = 305.0
 text = "前哨阶段
 "
@@ -343,9 +379,9 @@ offset_bottom = 120.0
 
 [node name="ActionPhase3" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
 layout_mode = 0
-offset_left = 500.0
+offset_left = 880.0
 offset_top = 250.0
-offset_right = 660.0
+offset_right = 1040.0
 offset_bottom = 305.0
 text = "行动阶段
 "
@@ -391,10 +427,10 @@ offset_bottom = 120.0
 
 [node name="BattlePhase4" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
 layout_mode = 0
-offset_left = 880.0
-offset_top = 250.0
-offset_right = 1040.0
-offset_bottom = 305.0
+offset_left = 120.0
+offset_top = 450.0
+offset_right = 280.0
+offset_bottom = 505.0
 text = "战斗阶段
 "
 label_settings = SubResource("LabelSettings_egqrm")
@@ -437,6 +473,184 @@ offset_top = 80.0
 offset_right = 280.0
 offset_bottom = 120.0
 
+[node name="Events1" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
+layout_mode = 0
+offset_left = 500.0
+offset_top = 450.0
+offset_right = 660.0
+offset_bottom = 505.0
+text = "事件表1"
+label_settings = SubResource("LabelSettings_egqrm")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events1"]
+layout_mode = 0
+offset_left = -50.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 30
+alignment = 1
+item_count = 24
+selected = 0
+popup/item_0/text = "打出卡牌时"
+popup/item_0/id = 0
+popup/item_1/text = "自己打出卡牌时"
+popup/item_1/id = 1
+popup/item_2/text = "他人打出卡牌时"
+popup/item_2/id = 2
+popup/item_3/text = "魔力增加时"
+popup/item_3/id = 3
+popup/item_4/text = "自己魔力增加时"
+popup/item_4/id = 4
+popup/item_5/text = "他人魔力增加时"
+popup/item_5/id = 5
+popup/item_6/text = "魔力减少时"
+popup/item_6/id = 6
+popup/item_7/text = "自己魔力减少时"
+popup/item_7/id = 7
+popup/item_8/text = "他人魔力减少时"
+popup/item_8/id = 8
+popup/item_9/text = "战果增加时"
+popup/item_9/id = 9
+popup/item_10/text = "自己战果增加时"
+popup/item_10/id = 10
+popup/item_11/text = "他人战果增加时"
+popup/item_11/id = 11
+popup/item_12/text = "战果减少时"
+popup/item_12/id = 12
+popup/item_13/text = "自己战果减少时"
+popup/item_13/id = 13
+popup/item_14/text = "他人战果减少时"
+popup/item_14/id = 14
+popup/item_15/text = "移动开始时"
+popup/item_15/id = 15
+popup/item_16/text = "自己移动开始时"
+popup/item_16/id = 16
+popup/item_17/text = "他人移动开始时"
+popup/item_17/id = 17
+popup/item_18/text = "移动时"
+popup/item_18/id = 18
+popup/item_19/text = "自己移动时"
+popup/item_19/id = 19
+popup/item_20/text = "他人移动时"
+popup/item_20/id = 20
+popup/item_21/text = "移动结束时"
+popup/item_21/id = 21
+popup/item_22/text = "自己移动结束时"
+popup/item_22/id = 22
+popup/item_23/text = "他人移动结束时"
+popup/item_23/id = 23
+
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events1"]
+layout_mode = 0
+offset_left = 210.0
+offset_top = 80.0
+offset_right = 250.0
+offset_bottom = 120.0
+
+[node name="Events2" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
+layout_mode = 0
+offset_left = 880.0
+offset_top = 450.0
+offset_right = 1040.0
+offset_bottom = 505.0
+text = "事件表2"
+label_settings = SubResource("LabelSettings_egqrm")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events2"]
+layout_mode = 0
+offset_left = -50.0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 30
+alignment = 1
+item_count = 36
+selected = 0
+popup/item_0/text = "战斗胜利时"
+popup/item_0/id = 0
+popup/item_1/text = "自己战斗胜利时"
+popup/item_1/id = 1
+popup/item_2/text = "他人战斗胜利时"
+popup/item_2/id = 2
+popup/item_3/text = "交战时"
+popup/item_3/id = 3
+popup/item_4/text = "自己交战时"
+popup/item_4/id = 4
+popup/item_5/text = "他人交战时"
+popup/item_5/id = 5
+popup/item_6/text = "战斗败北时"
+popup/item_6/id = 6
+popup/item_7/text = "自己战斗败北时"
+popup/item_7/id = 7
+popup/item_8/text = "他人战斗败北时"
+popup/item_8/id = 8
+popup/item_9/text = "部署开始时"
+popup/item_9/id = 9
+popup/item_10/text = "自己部署开始时"
+popup/item_10/id = 10
+popup/item_11/text = "他人部署开始时"
+popup/item_11/id = 11
+popup/item_12/text = "部署时"
+popup/item_12/id = 12
+popup/item_13/text = "自己部署时"
+popup/item_13/id = 13
+popup/item_14/text = "他人部署时"
+popup/item_14/id = 14
+popup/item_15/text = "部署结束时"
+popup/item_15/id = 15
+popup/item_16/text = "自己部署结束时"
+popup/item_16/id = 16
+popup/item_17/text = "他人部署结束时"
+popup/item_17/id = 17
+popup/item_18/text = "效果结算开始"
+popup/item_18/id = 18
+popup/item_19/text = "自己效果结算开始"
+popup/item_19/id = 19
+popup/item_20/text = "他人效果结算开始"
+popup/item_20/id = 20
+popup/item_21/text = "效果结算中"
+popup/item_21/id = 21
+popup/item_22/text = "自己效果结算中"
+popup/item_22/id = 22
+popup/item_23/text = "他人效果结算中"
+popup/item_23/id = 23
+popup/item_24/text = "效果结算结束"
+popup/item_24/id = 24
+popup/item_25/text = "自己效果结算结束"
+popup/item_25/id = 25
+popup/item_26/text = "他人效果结算结束"
+popup/item_26/id = 26
+popup/item_27/text = "buff生效开始"
+popup/item_27/id = 27
+popup/item_28/text = "自己buff生效开始"
+popup/item_28/id = 28
+popup/item_29/text = "他人buff生效开始"
+popup/item_29/id = 29
+popup/item_30/text = "buff生效中"
+popup/item_30/id = 30
+popup/item_31/text = "自己buff生效中"
+popup/item_31/id = 31
+popup/item_32/text = "他人buff生效中"
+popup/item_32/id = 32
+popup/item_33/text = "buff生效结束"
+popup/item_33/id = 33
+popup/item_34/text = "自己buff生效结束"
+popup/item_34/id = 34
+popup/item_35/text = "他人buff生效结束"
+popup/item_35/id = 35
+
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events2"]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 280.0
+offset_bottom = 120.0
+
 [connection signal="pressed" from="CreateMaster/MasterBaseInfo/HeaderImg/TextureButton" to="CreateMaster" method="_show_header_dialog"]
 [connection signal="file_selected" from="CreateMaster/MasterBaseInfo/HeaderImg/TextureButton/FileDialog" to="CreateMaster" method="_header_selected"]
 [connection signal="pressed" from="CreateMaster/MasterBaseInfo/MasterCardImg/TextureButton" to="CreateMaster" method="_show_master_card_dialog"]
@@ -444,3 +658,5 @@ offset_bottom = 120.0
 [connection signal="pressed" from="CreateMaster/MasterBaseInfo/CommandSpellImg/TextureButton" to="CreateMaster" method="_show_command_spell_dialog"]
 [connection signal="file_selected" from="CreateMaster/MasterBaseInfo/CommandSpellImg/TextureButton/FileDialog" to="CreateMaster" method="_command_spell_selected"]
 [connection signal="pressed" from="CreateMaster/MasterBaseInfo/Confirm" to="CreateMaster" method="_write_base_info"]
+[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect" to="CreateMaster" method="_show_add_effect"]
+[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button" to="CreateMaster" method="_show_add_time_point"]

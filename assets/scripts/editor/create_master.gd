@@ -15,6 +15,9 @@ var regex:RegEx = RegEx.new()
 
 
 @onready var effect_editor_nd =  $EffectEditor
+@onready var effect_base_info_nd = $EffectEditor/AddEffect/EffectBaseInfo
+@onready var time_point_panel_nd = $EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel
+
 
 var master_name:String
 var shown_master_name:String
@@ -79,3 +82,9 @@ func _write_base_info():
 	
 	effect_editor_nd.show()
 	
+
+func _show_add_effect():
+	effect_base_info_nd.show()
+
+func _show_add_time_point():
+	time_point_panel_nd.show()
