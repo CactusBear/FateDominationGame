@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://ui734wywrhw8"]
+[gd_scene load_steps=5 format=3 uid="uid://ui734wywrhw8"]
 
 [ext_resource type="Script" path="res://assets/scripts/editor/create_master.gd" id="1_4d2dj"]
 [ext_resource type="Texture2D" uid="uid://c5bi2tjycxlxh" path="res://assets/images/ui/play_pad.png" id="2_meqoi"]
+[ext_resource type="PackedScene" uid="uid://chgknwaaw743c" path="res://assets/scenes/editor/time_point.tscn" id="2_r8hhh"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_egqrm"]
 font_size = 40
@@ -131,7 +132,6 @@ offset_bottom = 32.0
 title = "新增效果"
 initial_position = 1
 size = Vector2i(500, 400)
-visible = true
 borderless = false
 
 [node name="BackGround" type="NinePatchRect" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo"]
@@ -147,20 +147,15 @@ offset_bottom = 40.0
 placeholder_text = "效果名称"
 alignment = 1
 
-[node name="TimePoint" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 60.0
-offset_right = 74.0
-offset_bottom = 83.0
-text = "添加时点"
-
 [node name="HBoxContainer" type="HBoxContainer" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround"]
 custom_minimum_size = Vector2(500, 40)
 layout_mode = 0
 offset_top = 80.0
-offset_right = 1500.0
+offset_right = 500.0
 offset_bottom = 120.0
+
+[node name="TimePoint" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer" instance=ExtResource("2_r8hhh")]
+layout_mode = 2
 
 [node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer"]
 custom_minimum_size = Vector2(40, 0)
@@ -243,12 +238,12 @@ popup/item_1/id = 1
 popup/item_2/text = "一天结束"
 popup/item_2/id = 2
 
-[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Day/OptionButton"]
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Day"]
 layout_mode = 0
-offset_left = 210.0
-offset_top = 30.0
-offset_right = 250.0
-offset_bottom = 70.0
+offset_left = 160.0
+offset_top = 80.0
+offset_right = 200.0
+offset_bottom = 120.0
 
 [node name="Phase" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
 layout_mode = 0
@@ -278,12 +273,12 @@ popup/item_1/id = 1
 popup/item_2/text = "每个阶段结束"
 popup/item_2/id = 2
 
-[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Phase/OptionButton"]
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Phase"]
 layout_mode = 0
-offset_left = 230.0
-offset_top = 30.0
-offset_right = 270.0
-offset_bottom = 70.0
+offset_left = 180.0
+offset_top = 80.0
+offset_right = 220.0
+offset_bottom = 120.0
 
 [node name="PreparePhase" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
 layout_mode = 0
@@ -326,12 +321,12 @@ popup/item_7/id = 7
 popup/item_8/text = "他人准备阶段结束"
 popup/item_8/id = 8
 
-[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/PreparePhase/OptionButton"]
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/PreparePhase"]
 layout_mode = 0
-offset_left = 290.0
-offset_top = 30.0
-offset_right = 330.0
-offset_bottom = 70.0
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 280.0
+offset_bottom = 120.0
 
 [node name="OutpostPhase" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
 layout_mode = 0
@@ -374,12 +369,12 @@ popup/item_7/id = 7
 popup/item_8/text = "他人前哨阶段结束"
 popup/item_8/id = 8
 
-[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/OutpostPhase/OptionButton"]
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/OutpostPhase"]
 layout_mode = 0
-offset_left = 290.0
-offset_top = 30.0
-offset_right = 330.0
-offset_bottom = 70.0
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 280.0
+offset_bottom = 120.0
 
 [node name="ActionPhase" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
 layout_mode = 0
@@ -422,12 +417,12 @@ popup/item_7/id = 7
 popup/item_8/text = "他人行动阶段结束"
 popup/item_8/id = 8
 
-[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/ActionPhase/OptionButton"]
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/ActionPhase"]
 layout_mode = 0
-offset_left = 290.0
-offset_top = 30.0
-offset_right = 330.0
-offset_bottom = 70.0
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 280.0
+offset_bottom = 120.0
 
 [node name="BattlePhase" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
 layout_mode = 0
@@ -470,12 +465,12 @@ popup/item_7/id = 7
 popup/item_8/text = "他人战斗阶段结束"
 popup/item_8/id = 8
 
-[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/BattlePhase/OptionButton"]
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/BattlePhase"]
 layout_mode = 0
-offset_left = 290.0
-offset_top = 30.0
-offset_right = 330.0
-offset_bottom = 70.0
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 280.0
+offset_bottom = 120.0
 
 [node name="Events1" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
 layout_mode = 0
@@ -547,12 +542,12 @@ popup/item_22/id = 22
 popup/item_23/text = "他人移动结束时"
 popup/item_23/id = 23
 
-[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events1/OptionButton"]
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events1"]
 layout_mode = 0
-offset_left = 260.0
-offset_top = 30.0
-offset_right = 300.0
-offset_bottom = 70.0
+offset_left = 210.0
+offset_top = 80.0
+offset_right = 250.0
+offset_bottom = 120.0
 
 [node name="Events2" type="Label" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround"]
 layout_mode = 0
@@ -642,12 +637,12 @@ popup/item_31/id = 31
 popup/item_32/text = "他人buff生效结束"
 popup/item_32/id = 32
 
-[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events2/OptionButton"]
+[node name="Button" type="Button" parent="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events2"]
 layout_mode = 0
-offset_left = 290.0
-offset_top = 30.0
-offset_right = 330.0
-offset_bottom = 70.0
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 280.0
+offset_bottom = 120.0
 
 [connection signal="pressed" from="CreateMaster/MasterBaseInfo/HeaderImg/TextureButton" to="CreateMaster" method="_show_header_dialog"]
 [connection signal="file_selected" from="CreateMaster/MasterBaseInfo/HeaderImg/TextureButton/FileDialog" to="CreateMaster" method="_header_selected"]
@@ -659,11 +654,11 @@ offset_bottom = 70.0
 [connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect" to="CreateMaster" method="_show_add_effect"]
 [connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button" to="CreateMaster" method="_show_add_time_point"]
 [connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Game/OptionButton/Button" to="CreateMaster" method="_on_add_time_point_game"]
-[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Day/OptionButton/Button" to="CreateMaster" method="_on_add_time_point_day"]
-[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Phase/OptionButton/Button" to="CreateMaster" method="_on_add_time_point_phase"]
-[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/PreparePhase/OptionButton/Button" to="CreateMaster" method="_on_add_time_point_prepare_phase"]
-[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/OutpostPhase/OptionButton/Button" to="CreateMaster" method="_on_add_time_point_outpost_phase"]
-[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/ActionPhase/OptionButton/Button" to="CreateMaster" method="_on_add_time_point_action_phase"]
-[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/BattlePhase/OptionButton/Button" to="CreateMaster" method="_on_add_time_point_battle_phase"]
-[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events1/OptionButton/Button" to="CreateMaster" method="_on_add_time_point_events1"]
-[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events2/OptionButton/Button" to="CreateMaster" method="_on_add_time_point_events2"]
+[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Day/Button" to="CreateMaster" method="_on_add_time_point_day"]
+[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Phase/Button" to="CreateMaster" method="_on_add_time_point_phase"]
+[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/PreparePhase/Button" to="CreateMaster" method="_on_add_time_point_prepare_phase"]
+[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/OutpostPhase/Button" to="CreateMaster" method="_on_add_time_point_prepare_phase"]
+[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/ActionPhase/Button" to="CreateMaster" method="_on_add_time_point_action_phase"]
+[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/BattlePhase/Button" to="CreateMaster" method="_on_add_time_point_battle_phase"]
+[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events1/Button" to="CreateMaster" method="_on_add_time_point_events1"]
+[connection signal="pressed" from="CreateMaster/EffectEditor/AddEffect/EffectBaseInfo/BackGround/HBoxContainer/Button/TimePointPanel/BackGround/Events2/Button" to="CreateMaster" method="_on_add_time_point_events2"]

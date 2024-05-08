@@ -17,5 +17,12 @@ func _init(buff_name:String, buff_img:String):
 	super.add_object()
 	
 
-func add_buff_func(_func:Callable, buff:Dictionary):
+func add_buff_func(_func:BaseFunc, buff:Dictionary):
 	_funcs.append(_func)
+
+	
+func set_active(T_or_F:bool):
+	_is_active = T_or_F
+
+func set_buff_level(level:int):
+	_buff_level = level

@@ -10,46 +10,89 @@ func do_nothing():
 
 
 #编辑数值(记得写发信号)
+func edit_num_and_return(num:int, add:int = 0, times:float = 1, is_round_up:bool = false):
+	var result:int
+	if add != 0:
+		num += add
+	if times != 1 and !is_round_up:
+		num = num * times
+	elif times != 1 and is_round_up:
+		var val:float = num * times
+		num = num * times
+		if val != num:
+			num += 1 
+	result = num
+	return result
+
+func change_pl_order(set_order = null,vary_order:int = 0, player_id = GameData.player_id):
+	pass
+		
+
 func set_player_data(key_name:String, value, player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	player_data[key_name] = value
 
 
-func edit_magic(set_num:int = -1, vary_num:int = 0, player_id:int = GameData.player_id):
+func edit_magic(set_num = null, vary_num:int = 0, player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
-	if set_num != -1:
+	if set_num != null:
 		player_data["magic"] = set_num
 	player_data["magic"] += vary_num
-	pass
 
-func edit_score(set_num:int = -1, vary_num:int = 0, player_id:int = GameData.player_id):
+func edit_score(set_num = null, vary_num:int = 0, player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
-	if set_num != -1:
+	if set_num != null:
 		player_data["score"] = set_num
 	player_data["score"] += vary_num
-	pass
 	
-func edit_power(set_num:int = -1, vary_num:int = 0, player_id:int = GameData.player_id):
+func edit_power(set_num = null, vary_num:int = 0, player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
-	if set_num != -1:
+	if set_num != null:
 		player_data["power"] = set_num
 	player_data["power"] += vary_num
-	pass
 
-func edit_map_benefit():
-	pass
-func edit_map_magic():
-	pass
-func edit_map_score():
-	pass
-func edit_map_move_cost():
-	pass
-func edit_map_area_buff():
-	pass
-func edit_map_event_cards():
-	pass
-func edit_map_situatiuon_cards():
-	pass
+func edit_map_benefit(location:Dictionary, set_num = null, vary_num:int = 0):
+	var area
+	var pos
+	for key in location:
+		area = key
+		pos = location[area]
+	if set_num != null:
+		MapData.location_benefit[area][pos] = set_num
+	MapData.location_benefit[area][pos] += vary_num
+	
+	
+func edit_map_magic(location:Dictionary, set_num = null, vary_num:int = 0):
+	var area
+	var pos
+	for key in location:
+		area = key
+		pos = location[area]
+	if set_num != null:
+		MapData.location_magic[area][pos] = set_num
+	MapData.location_magic[area][pos] += vary_num
+	
+func edit_map_score(map_area:String, set_num = null, vary_num:int = 0):
+	if set_num != null:
+		MapData.location_score[map_area] = set_num
+	MapData.location_score[map_area] += vary_num
+
+func edit_map_move_cost(a_to_b:String, set_num = null, vary_num:int = 0):
+	if set_num != null:
+		MapData.move_cost[a_to_b] = set_num
+	MapData.move_cost[a_to_b] += vary_num
+	
+func add_map_area_buff(map_area:String, add_buff:BaseBuff):
+	var buff_arr:Array = MapData.area_buffs[map_area]
+	buff_arr.append(add_buff)
+	
+func add_map_event_cards(map_area:String, add_event:BaseEvent):
+	var event_arr:Array = MapData.event_cards[map_area]
+	event_arr.append(add_event)
+	
+func add_map_situatiuon_cards(add_situation:BaseSituation):
+	var situation_arr = MapData.situation_cards as Array
+	situation_arr.append(add_situation)
 
 func move_location(move_location_num:int, player_id:int = GameData.player_id, ignore_limit:bool = false):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
@@ -145,7 +188,6 @@ func move_location(move_location_num:int, player_id:int = GameData.player_id, ig
 						if pos is Array:
 							location = MapData.MAGIC_WORKSHOP_4
 							
-	pass
 
 func set_location(setted_location:Dictionary, player_id:int = GameData.player_id, is_move:bool = true):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
@@ -168,17 +210,67 @@ func manage_buff(buff, player_id:int = GameData.player_id, add_or_del:bool = tru
 	else:
 		var buffs:Array = player_data["buffs"]
 		buffs.erase(buff)
-	pass
 
 
 #功能函数(记得写发信号)
 func deploy(deploy_location:Dictionary, player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	set_location(deploy_location, player_id, false)
-	pass
 
+func activate_effect(effect:BaseEffect):
+	for f in effect._funcs:
+		f._func.callv(f._parameters)
+		
+func activate_effect_by_tp(effect:BaseEffect, time_points:Array[String]):
+	for f in effect._funcs:
+		f._func.callv(f._parameters)
 
+func play_attack(attack:BaseAttack, player_id:int = GameData.player_id, cost:int = attack._cost, power:int = attack._power):
+	var player_data = GameDataManager.get_player_data(player_id)
+	player_data["magic"] -= cost
+	player_data["power"] += power
+	for eff:BaseEffect in attack._effects:
+		if eff._time_points.has(TimePoints.PLAYED_CRAD):
+			activate_effect(eff)
+	var playered_cards_arr = player_data["played_cards"] as Array
+	playered_cards_arr.append(attack)
 
+func play_skill(skill:BaseSkill, player_id:int = GameData.player_id, ignore_limit:bool = false, cost:int = skill._cost, power:int = skill._power):
+	var player_data = GameDataManager.get_player_data(player_id)
+	if player_data["magic"] < 8 :
+		if !ignore_limit and !skill._ignore_limit:
+			#show_lack_of_magic()
+			return
+	player_data["magic"] -= cost
+	player_data["power"] += power
+	for eff:BaseEffect in skill._effects:
+		if eff._time_points.has(TimePoints.PLAYED_CRAD):
+			activate_effect(eff)
+	var playered_cards_arr = player_data["played_cards"] as Array
+	playered_cards_arr.append(skill)
+
+func add_attack(attack:BaseAttack, player_id:int = GameData.player_id, power:int = attack._power):
+	var player_data = GameDataManager.get_player_data(player_id)
+	player_data["power"] += power
+	for eff:BaseEffect in attack._effects:
+		if eff._time_points.has(TimePoints.PLAYED_CRAD):
+			activate_effect(eff)
+	var playered_cards_arr = player_data["played_cards"] as Array
+	playered_cards_arr.append(attack)
+
+func add_skill(skill:BaseSkill, player_id:int = GameData.player_id, ignore_limit:bool = false,  power:int = skill._power):
+	var player_data = GameDataManager.get_player_data(player_id)
+	if player_data["magic"] < 8 :
+		if !ignore_limit and !skill._ignore_limit:
+			#show_lack_of_magic()
+			return
+	player_data["power"] += power
+	for eff:BaseEffect in skill._effects:
+		if eff._time_points.has(TimePoints.PLAYED_CRAD):
+			activate_effect(eff)
+	var playered_cards_arr = player_data["played_cards"] as Array
+	playered_cards_arr.append(skill)
+	
 
 #判断
 func _if_func(_var1, _var2 = true):
@@ -224,17 +316,18 @@ func _has(parent_var, children_var, key = null):
 
 
 #循环
-func _for_func(_func:Callable, count:int):
+func _for_func(_func:BaseFunc, count:int):
 	for i in range(count):
-		_func.call()
+		_func._func.callv(_func._parameters)
 
-func _while_func(_func:Callable, condition:bool):
+func _while_func(_func:BaseFunc, condition:bool):
 	while condition:
-		_func.call()
+		_func._func.callv(_func._parameters)
 		
-func _foreach_func(_func:Callable, _var):
+func _foreach_func(_func:BaseFunc, _var, parameter_index:int = 0):
 	for i in _var:
-		_func.call(i)
+		_func._parameters[parameter_index] = i
+		_func._func.callv(_func._parameters)
 
 #获取数值
 func create_buff(buff_name:String, buff_img:String, buff_id:int):
@@ -266,6 +359,16 @@ func _location(map_area:String, index:int):
 	location = {map_area : index}
 	return location
 	
+func _tag(tag_name:String, from_player_id:int):
+	var tag = {
+		"tag_name" : tag_name,
+		"from" : from_player_id
+	}
+	return tag
+	
+func get_all_players_id():
+	return GameData.player_data_library.keys()
+
 
 func get_by_tag(tag:Dictionary):
 	var objects:Array
@@ -346,23 +449,108 @@ func get_player_servant(player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	return player_data["servant"] 
 
+func get_player_commmand_spell(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["command_spell"]
+
+func get_player_deck(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["deck"]
+	
+func get_player_discard(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["discard"]
+	
+func get_player_played_cards(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["played_cards"]
+
+func get_player_master_skills(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["master_skills"]
+
+func get_player_servant_skills(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["servant_skills"]
+
+func get_pl_master_side(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["side"]["master"]
+
+func get_pl_servant_side(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["side"]["servant"]
+
+func get_pl_command_spell_side(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["side"]["command_spell"]
+
+func get_pl_deck_side(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["side"]["deck"]
+	
+func get_pl_discard_side(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["side"]["discard"]
+
+func get_pl_skills_side(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["side"]["skills"]
+
+func get_pl_buffs_side(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["side"]["buffs"]
+	
+func get_pl_others_side(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["side"]["others"]
+
+func get_pl_master_out_game(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["out_of_game"]["master"]
+
+func get_pl_servant_out_game(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["out_of_game"]["servant"]
+
+func get_pl_command_spell_out_game(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["out_of_game"]["command_spell"]
+
+func get_pl_attacks_out_game(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["out_of_game"]["attacks"]
+
+func get_pl_skills_out_game(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["out_of_game"]["skills"]
+
+func get_pl_buffs_out_game(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["out_of_game"]["buffs"]
+	
+func get_pl_others_out_game(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	return player_data["out_of_game"]["others"]
+
+
 
 func get_location_magic(location:Dictionary):
 	var area
-	var val
+	var pos
 	for key in location:
 		area = key
-		val = location[key]
-	return MapData.location_magic[area][val]
+		pos = location[area]
+	return MapData.location_magic[area][pos]
 
 
 func get_location_benefit(location:Dictionary):
 	var area
-	var val
+	var pos
 	for key in location:
 		area = key
-		val = location[key]
-	return MapData.location_benefit[area][val]
+		pos = location[area]
+	return MapData.location_benefit[area][pos]
 
 
 func get_area_score(map_area:String):
@@ -389,21 +577,36 @@ func get_area_score_need_win(map_area:String):
 	return MapData.score_need_win[map_area]
 
 
-func get_buff_by_name_fr_arr(buff_name:String, buffs:Array):
-	var got_buffs:Array
+func get_buff_by_name_fr_arr(buff_name:String, buffs:Array[BaseBuff]):
+	var got_buffs:Array[BaseBuff]
 	for buff:BaseBuff in buffs:
 		if buff._buff_name == buff_name:
 			got_buffs.append(buff)
 	if got_buffs.size() > 1:
-		#show_tag_check()
+		#show_check()
 		pass
 	else :
 		for b in got_buffs:
 			return b
 	
 
-func get_card_by_name_fr_arr(card_name:String, cards:Array):
-	pass
+func get_cards_by_name_fr_arr(card_name:String, cards:Array[BaseCard]):
+	var got_cards:Array[BaseCard]
+	for card:BaseCard in cards:
+		if card._card_name == card_name:
+			got_cards.append(card)
+	return got_cards
+	
+
+func get_card_by_index_fr_arr(card_index:int, cards:Array[BaseCard]):
+	return cards[card_index]
+
+func get_nums(object:BaseObject):
+	return object.numbers
+
+func get_num(index:int, object:BaseObject):
+	return object.numbers[index]
+
 
 
 #交互

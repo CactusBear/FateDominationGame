@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://chgknwaaw743c"]
+
+[node name="TimePoint" type="LineEdit"]
+custom_minimum_size = Vector2(125, 40)
+offset_right = 125.0
+offset_bottom = 31.0
+placeholder_text = "空时点"
+alignment = 1
+editable = false

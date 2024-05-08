@@ -8,7 +8,22 @@
     {
       "effect_name": "weishu",
       "time_points": ["game_start"],
-      "funcs": [{ "func_name": "edit_magic", "parameters": [2] }]
+      "effect_numbers" : [2,2],
+      "funcs": [
+        {
+          "func_name": "edit_magic",
+          "parameters": [{"number_index" : 0}],
+          "sub_func": [""],
+          "sub_parameters": [[{"number_index" : 1}]],
+          "var_index": -1
+        },
+        {
+          "self_var": -1,
+          "sub_func": "",
+          "sub_parameters": [[]],
+          "var_index": -1
+        }
+      ]
     }
   ],
   "specials": {
@@ -50,6 +65,13 @@
           "funcs": []
         }
       ]
+    }
+  ],
+  "tags": [
+    {
+      "tag": "a",
+      "name_list": [],
+      "type": ""
     }
   ]
 }

@@ -1,0 +1,73 @@
+[gd_scene load_steps=11 format=3 uid="uid://cqp0k672uhmrm"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fhhkc"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(50, 50, 1)
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 1.0
+emission_ring_radius = 1.0
+emission_ring_inner_radius = 0.9
+orbit_velocity_min = -2.0
+orbit_velocity_max = 2.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 0.0
+sub_emitter_mode = 1
+sub_emitter_frequency = 4.0
+
+[sub_resource type="Curve" id="Curve_lod61"]
+_data = [Vector2(0, 0.493507), 0.0, 0.0, 0, 0, Vector2(0.487013, 0.696104), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.94545, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_cjtdj"]
+curve = SubResource("Curve_lod61")
+
+[sub_resource type="Gradient" id="Gradient_tt25q"]
+colors = PackedColorArray(1, 0.439216, 0, 1, 1, 1, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_fgavi"]
+gradient = SubResource("Gradient_tt25q")
+
+[sub_resource type="Gradient" id="Gradient_50xg2"]
+offsets = PackedFloat32Array(0, 0.578571)
+colors = PackedColorArray(1, 0.415686, 0, 1, 1, 1, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_h6a8s"]
+gradient = SubResource("Gradient_50xg2")
+
+[sub_resource type="Curve" id="Curve_7r66b"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.50974, 0.290909), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_4tmas"]
+curve = SubResource("Curve_7r66b")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fkm24"]
+particle_flag_disable_z = true
+angle_min = -20.0
+angle_max = 80.0
+orbit_velocity_min = -0.2
+orbit_velocity_max = -0.2
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -20.0
+radial_accel_max = 60.0
+color = Color(1, 0.882353, 0, 1)
+color_ramp = SubResource("GradientTexture1D_h6a8s")
+color_initial_ramp = SubResource("GradientTexture1D_fgavi")
+alpha_curve = SubResource("CurveTexture_cjtdj")
+emission_curve = SubResource("CurveTexture_4tmas")
+
+[node name="FireCircle" type="GPUParticles2D"]
+amount = 100
+sub_emitter = NodePath("GPUParticles2D")
+process_material = SubResource("ParticleProcessMaterial_fhhkc")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+scale = Vector2(1, 4)
+amount = 400
+process_material = SubResource("ParticleProcessMaterial_fkm24")
+lifetime = 0.5
+trail_enabled = true
+trail_lifetime = 1.5
+trail_sections = 50

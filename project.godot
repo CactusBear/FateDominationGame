@@ -28,6 +28,7 @@ GameDataManager="*res://assets/scripts/system/global/game_data_manager.gd"
 TimePointChecker="*res://assets/scripts/system/global/time_point_checker.gd"
 LoadGame="*res://assets/scripts/system/global/load_game.gd"
 MapData="*res://assets/scripts/system/global/map_data.gd"
+EffectLib="*res://assets/scripts/system/global/effect_lib.gd"
 
 [display]
 
@@ -66,3 +67,4 @@ pointing/android/enable_long_press_as_right_click=true
 [rendering]
 
 renderer/rendering_method="mobile"
+viewport/hdr_2d=true

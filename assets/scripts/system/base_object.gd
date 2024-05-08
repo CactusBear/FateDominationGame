@@ -5,13 +5,13 @@ class_name BaseObject
 var tags:Array
 var tag:Dictionary = {
 	"tag_name" : "",
-	"type" : "",
 	"from" : -1
 }
 
-var self_numbers:Array[int]
+var numbers:Array[int]
 
-
+func del():
+	self.free()
 
 func add_object():
 	GameData.objects.append(self)
