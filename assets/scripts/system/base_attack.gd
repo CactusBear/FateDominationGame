@@ -6,7 +6,7 @@ var _attributes:Array[String]
 var _cost:int
 var _power:int
 
-func _init(card_name:String, card_img:String, attributes:Array[String], cost:int = 0, power:int = 0, effects:Array[BaseEffect] = []):
+func _init(card_name:String, card_img:String, attributes:Array, cost:int = 0, power:int = 0, effects:Array = []):
 	_card_name =_card_name
 	_card_img = card_img
 	_attributes = attributes
@@ -16,7 +16,7 @@ func _init(card_name:String, card_img:String, attributes:Array[String], cost:int
 	super.add_object()
 
 
-func edit_attribute(add_attributes:Array[String] = [], del_attributes:Array[String] = [], set_attributes:Array[String] = [""]):
+func edit_attribute(add_attributes:Array = [], del_attributes:Array = [], set_attributes:Array = [""]):
 	if set_attributes != [""]:
 		_attributes = set_attributes
 	_attributes.append_array(add_attributes)

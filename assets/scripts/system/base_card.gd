@@ -10,5 +10,5 @@ var _effects:Array[BaseEffect]
 func edit_card_name(card_name:String):
 	_card_name = card_name
 
-func set_effects(effects:Array[BaseEffect]):
+func set_effects(effects:Array):
 	_effects = effects

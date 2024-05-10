@@ -7,7 +7,7 @@ var _funcs:Array[BaseFunc]
 var _is_passive:bool = false
 
 
-func _init(effect_name:String, time_points:Array[String], funcs:Array[BaseFunc]):
+func _init(effect_name:String, time_points:Array, funcs:Array):
 	_effect_name = effect_name
 	_time_points = time_points
 	_funcs = funcs
@@ -17,7 +17,7 @@ func _init(effect_name:String, time_points:Array[String], funcs:Array[BaseFunc])
 func edit_effect_name(effect_name:String):
 	_effect_name = effect_name
 	
-func edit_time_points(add_time_points:Array[String] = [], del_time_points:Array[String] = [], set_time_points:Array[String] = [""]):
+func edit_time_points(add_time_points:Array = [], del_time_points:Array = [], set_time_points:Array = [""]):
 	if set_time_points != [""]:
 		_time_points = set_time_points
 	_time_points.append_array(add_time_points)
@@ -26,8 +26,8 @@ func edit_time_points(add_time_points:Array[String] = [], del_time_points:Array[
 		if i != -1:
 			_time_points.pop_at(i)
 
-func edit_funcs(set_funcs:Array[BaseFunc] = [EffectLib.do_nothing()], add_funcs:Array[BaseFunc] = []):
-	if set_funcs != [EffectLib.do_nothing()]:
+func edit_funcs(set_funcs:Array = [], add_funcs:Array = []):
+	if set_funcs != []:
 		_funcs = set_funcs
 	_funcs.append_array(add_funcs)
 

@@ -24,9 +24,40 @@ func edit_num_and_return(num:int, add:int = 0, times:float = 1, is_round_up:bool
 	result = num
 	return result
 
-func change_pl_order(set_order = null,vary_order:int = 0, player_id = GameData.player_id):
-	pass
-		
+func change_pl_order(set_order = null, vary_order:int = 0, player_id = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	if set_order != null and set_order is int:
+		var current_order = player_data["order"] as int
+		var pl_ids = get_all_players_id()
+		if set_order < current_order:
+			for order in range(set_order,current_order + 1):
+				for id in pl_ids:
+					var pl_data = GameDataManager.get_player_data(id)
+					if pl_data["order"] == order:
+						pl_data["order"] += 1
+					if pl_data["order"] >= 8:
+						pl_data["order"] -= 7
+			player_data["order"] = set_order
+		elif set_order > current_order:
+			for order in range(current_order,set_order + 1):
+				for id in pl_ids:
+					var pl_data = GameDataManager.get_player_data(id)
+					if pl_data["order"] == order:
+						pl_data["order"] -= 1
+					if pl_data["data"] <= 0:
+						pl_data["order"] += 7
+			player_data["order"] = set_order
+			
+	var pl_ids = get_all_players_id()
+	for id in pl_ids:
+		var pl_data = GameDataManager.get_player_data(id)
+		pl_data["order"] += vary_order
+		if pl_data["order"] >= 8:
+			pl_data["order"] -= 7
+		if pl_data["data"] <= 0:
+			pl_data["order"] += 7
+
+
 
 func set_player_data(key_name:String, value, player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
@@ -212,6 +243,13 @@ func manage_buff(buff, player_id:int = GameData.player_id, add_or_del:bool = tru
 		buffs.erase(buff)
 
 
+func random_int(range_start:int, range_end:int):
+	return randi_range(range_start,range_end)
+
+func random_float(range_start:float, range_end:float):
+	return randf_range(range_start,range_end)
+
+
 #功能函数(记得写发信号)
 func deploy(deploy_location:Dictionary, player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
@@ -221,9 +259,9 @@ func activate_effect(effect:BaseEffect):
 	for f in effect._funcs:
 		f._func.callv(f._parameters)
 		
-func activate_effect_by_tp(effect:BaseEffect, time_points:Array[String]):
-	for f in effect._funcs:
-		f._func.callv(f._parameters)
+#func activate_effect_by_tp(effect:BaseEffect, time_points:Array):
+	#for f in effect._funcs:
+		#f._func.callv(f._parameters)
 
 func play_attack(attack:BaseAttack, player_id:int = GameData.player_id, cost:int = attack._cost, power:int = attack._power):
 	var player_data = GameDataManager.get_player_data(player_id)
@@ -233,7 +271,11 @@ func play_attack(attack:BaseAttack, player_id:int = GameData.player_id, cost:int
 		if eff._time_points.has(TimePoints.PLAYED_CRAD):
 			activate_effect(eff)
 	var playered_cards_arr = player_data["played_cards"] as Array
-	playered_cards_arr.append(attack)
+	var dic = {
+		"card" : attack,
+		"is_back" : false
+	}
+	playered_cards_arr.append(dic)
 
 func play_skill(skill:BaseSkill, player_id:int = GameData.player_id, ignore_limit:bool = false, cost:int = skill._cost, power:int = skill._power):
 	var player_data = GameDataManager.get_player_data(player_id)
@@ -247,7 +289,11 @@ func play_skill(skill:BaseSkill, player_id:int = GameData.player_id, ignore_limi
 		if eff._time_points.has(TimePoints.PLAYED_CRAD):
 			activate_effect(eff)
 	var playered_cards_arr = player_data["played_cards"] as Array
-	playered_cards_arr.append(skill)
+	var dic = {
+		"card" : skill,
+		"is_back" : false
+	}
+	playered_cards_arr.append(dic)
 
 func add_attack(attack:BaseAttack, player_id:int = GameData.player_id, power:int = attack._power):
 	var player_data = GameDataManager.get_player_data(player_id)
@@ -256,7 +302,11 @@ func add_attack(attack:BaseAttack, player_id:int = GameData.player_id, power:int
 		if eff._time_points.has(TimePoints.PLAYED_CRAD):
 			activate_effect(eff)
 	var playered_cards_arr = player_data["played_cards"] as Array
-	playered_cards_arr.append(attack)
+	var dic = {
+		"card" : attack,
+		"is_back" : false
+	}
+	playered_cards_arr.append(dic)
 
 func add_skill(skill:BaseSkill, player_id:int = GameData.player_id, ignore_limit:bool = false,  power:int = skill._power):
 	var player_data = GameDataManager.get_player_data(player_id)
@@ -269,8 +319,50 @@ func add_skill(skill:BaseSkill, player_id:int = GameData.player_id, ignore_limit
 		if eff._time_points.has(TimePoints.PLAYED_CRAD):
 			activate_effect(eff)
 	var playered_cards_arr = player_data["played_cards"] as Array
-	playered_cards_arr.append(skill)
+	var dic = {
+		"card" : skill,
+		"is_back" : false
+	}
+	playered_cards_arr.append(dic)
 	
+func draw_card_by_card(card:BaseCard, from:Array, to:Array, to_index:int = -1):
+	var i = from.find(card)
+	if i == -1:
+		return
+	from.pop_at(i)
+	if to_index == -1:
+		to.append(card)
+	to.insert(to_index, card)
+	
+func draw_card_by_index(from:Array, to:Array, from_index:int = 0, to_index:int = -1):
+	var card = from[0]
+	if card is BaseCard:
+		from.pop_at(0)
+		if to_index == -1:
+			to.append(card)
+		to.insert(to_index, card)
+
+func draw_card_from_pl_deck_to_hand(from_index:int = 0, player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	var deck = player_data["deck"] as Array
+	var card = deck[from_index]
+	deck.pop_at(from_index)
+	var hand = player_data["hand_cards"] as Array
+	hand.append(card)
+
+
+func defeat(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	player_data["is_battle_lose"] = true
+	player_data["is_battle_win"] = false
+
+
+#禁止系效果
+func prevent(time_points:Array, player_id:int = GameData.player_id, _func:BaseFunc = null):
+	pass
+
+
+
 
 #判断
 func _if_func(_var1, _var2 = true):
@@ -577,7 +669,7 @@ func get_area_score_need_win(map_area:String):
 	return MapData.score_need_win[map_area]
 
 
-func get_buff_by_name_fr_arr(buff_name:String, buffs:Array[BaseBuff]):
+func get_buff_by_name_fr_arr(buff_name:String, buffs:Array):
 	var got_buffs:Array[BaseBuff]
 	for buff:BaseBuff in buffs:
 		if buff._buff_name == buff_name:
@@ -590,7 +682,7 @@ func get_buff_by_name_fr_arr(buff_name:String, buffs:Array[BaseBuff]):
 			return b
 	
 
-func get_cards_by_name_fr_arr(card_name:String, cards:Array[BaseCard]):
+func get_cards_by_name_fr_arr(card_name:String, cards:Array):
 	var got_cards:Array[BaseCard]
 	for card:BaseCard in cards:
 		if card._card_name == card_name:
@@ -598,7 +690,7 @@ func get_cards_by_name_fr_arr(card_name:String, cards:Array[BaseCard]):
 	return got_cards
 	
 
-func get_card_by_index_fr_arr(card_index:int, cards:Array[BaseCard]):
+func get_card_by_index_fr_arr(card_index:int, cards:Array):
 	return cards[card_index]
 
 func get_nums(object:BaseObject):
@@ -611,3 +703,12 @@ func get_num(index:int, object:BaseObject):
 
 #交互
 
+
+
+#效果处理
+func start_effect():
+	pass
+	
+	
+func end_effect():
+	pass

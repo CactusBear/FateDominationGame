@@ -29,6 +29,7 @@ TimePointChecker="*res://assets/scripts/system/global/time_point_checker.gd"
 LoadGame="*res://assets/scripts/system/global/load_game.gd"
 MapData="*res://assets/scripts/system/global/map_data.gd"
 EffectLib="*res://assets/scripts/system/global/effect_lib.gd"
+GameProgress="*res://assets/scripts/system/global/game_progress.gd"
 
 [display]
 
@@ -44,6 +45,10 @@ project/assembly_name="Fate"
 
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
+
+[filesystem]
+
+import/blender/enabled=false
 
 [input]
 
