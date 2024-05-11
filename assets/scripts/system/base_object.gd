@@ -8,7 +8,7 @@ var tag:Dictionary = {
 	"from" : -1
 }
 
-var numbers:Array[int]
+var numbers:Array#[int]
 
 func del():
 	self.free()
@@ -16,8 +16,8 @@ func del():
 func add_object():
 	GameData.objects.append(self)
 
-func add_number():
-	pass
+func set_numbers(nums:Array):
+	numbers = nums
 
 const MASTER_TAG = "master_tag"
 const SERVANT_TAG = "servant_tag"

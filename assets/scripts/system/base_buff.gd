@@ -4,8 +4,9 @@ class_name BaseBuff
 var _buff_name:String
 var _buff_img:String
 var _buff_level:int
-var _funcs:Array
+var _funcs:Array#[BaseFunc]
 var _is_active:bool
+var _self_vars:Array
 
 
 func _init(buff_name:String, buff_img:String):
@@ -17,7 +18,7 @@ func _init(buff_name:String, buff_img:String):
 	super.add_object()
 	
 
-func add_buff_func(_func:BaseFunc, buff:Dictionary):
+func add_buff_effect(_func:BaseFunc):
 	_funcs.append(_func)
 
 	

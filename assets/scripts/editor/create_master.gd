@@ -44,7 +44,7 @@ var command_spell_img_path:String
 var command_spell_img:Texture2D
 var command_spell_img_name:String
 
-var time_points:Array[String]
+var time_points:Array#[String]
 
 func _show_header_dialog():
 	header_dialog.show()

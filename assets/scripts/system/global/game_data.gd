@@ -57,9 +57,9 @@ var player_data:Dictionary = {
 		}
 	}
 
-var objects:Array[BaseObject]
-var effects:Array[BaseEffect]
+var objects:Array#[BaseObject]
+var effects:Array#[BaseEffect]
 var effects_signals:Dictionary #{BaseEffect : Signal}
 
-var master_datas:Array[Dictionary]
-var servant_datas:Array[Dictionary]
+var loaded_masters:Array#[BaseMaster]
+var loaded_servants:Array#[Dictionary]

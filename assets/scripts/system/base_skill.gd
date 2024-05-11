@@ -2,18 +2,19 @@ extends BaseCard
 class_name BaseSkill
 
 
-var _attributes:Array[String]
+var _attributes:Array#[String]
 var _cost:int
 var _power:int
 var _ignore_limit:bool = false
 
-func _init(card_name:String, card_img:String, attributes:Array, cost:int = 0, power:int = 0, effects:Array = []):
-	_card_name =_card_name
+func _init(card_name:String, card_img:String, attributes:Array, cost:int = 0, power:int = 0, ignore_limit:bool = false, effects:Array = []):
+	_card_name = card_name
 	_card_img = card_img
 	_attributes = attributes
 	_cost = cost
 	_power = power
 	_effects = effects
+	_ignore_limit = ignore_limit
 	super.add_object()
 
 

@@ -13,14 +13,12 @@
         {
           "func_name": "edit_magic",
           "parameters": [{"number_index" : 0}],
-          "sub_func": [""],
-          "sub_parameters": [[{"number_index" : 1}]],
           "var_index": -1
         },
         {
           "self_var": -1,
           "sub_func": "",
-          "sub_parameters": [[]],
+          "sub_parameters": [{"number_index" : 1}],
           "var_index": -1
         }
       ]
@@ -31,10 +29,15 @@
       {
         "skill_name": "GanJiangMoYe",
         "skill_card_img": "GanJiangMoYe.png",
+        "attributes" : [],
+        "cost" : 0,
+        "power" : 0,
+        "ignore_limit" : false,
         "effects": [
           {
             "effect_name": "lalala",
             "time_points": ["game_start"],
+            "effect_numbers" : [],
             "funcs": []
           }
         ]
@@ -44,10 +47,14 @@
       {
         "attack_name": "lalala",
         "attack_crad_img": "lalala.png",
+        "attributes" : [],
+        "cost" : 0,
+        "power" : 0,
         "effects": [
           {
             "effect_name": "lalala",
             "time_points": [],
+            "effect_numbers" : [],
             "funcs": []
           }
         ]
@@ -58,10 +65,15 @@
     {
       "skill_name": "lalala",
       "skill_card_img": "lalala.png",
+      "attributes" : [],
+      "cost" : 0,
+      "power" : 0,
+      "ignore_limit" : false,
       "effects": [
         {
           "effect_name": "lalala",
           "time_points": ["game_start"],
+          "effect_numbers" : [],
           "funcs": []
         }
       ]

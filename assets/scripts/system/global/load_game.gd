@@ -3,6 +3,12 @@ extends Node
 
 var masters_path = "data/masters"
 var _loaded_path = []
+var func_table:Dictionary = FuncTable.new().funcs
+var load_masters_finished:bool = false
+
+func _ready():
+	load_game()
+	pass
 
 func load_game():
 	load_masters(masters_path)
@@ -14,24 +20,29 @@ func load_masters(load_path:String):
 	if load_dir:
 		load_dir.list_dir_begin()
 		var load_file_name = load_dir.get_next()
-		while true:
-			if load_dir.current_is_dir() and !_loaded_path.has(load_dir.get_current_dir()):
-				load_masters(load_dir.get_current_dir())
-			elif !load_dir.current_is_dir():
-				GameData.master_datas.append(load_master_file(load_dir.get_current_dir(), load_file_name)) 
-			load_file_name = load_dir.get_next()
+		while !load_masters_finished:
 			if load_file_name == "":
 				var current_path = load_dir.get_current_dir()
 				var rev_path = current_path.reverse()
 				var index = rev_path.find("/")
-				var last_path = current_path.erase(current_path.length() - index)
+				var last_path = current_path.left(current_path.length() - index - 1)
 				var end_path_last = "/data"
 				if last_path.right(end_path_last.length()) == end_path_last:
 					_loaded_path = []
-					break
+					load_masters_finished = true
+					return
 				else: 
 					_loaded_path.append(current_path)
 					load_masters(last_path)
+			if load_dir.current_is_dir() and !_loaded_path.has(load_dir.get_current_dir() + "/" + load_file_name):
+				load_masters(load_dir.get_current_dir() + "/" + load_file_name)
+			elif !load_dir.current_is_dir():
+				if load_file_name.right(5) != ".json": 
+					load_file_name = load_dir.get_next()
+					continue
+				GameData.loaded_masters.append(load_master_file(load_dir.get_current_dir(), load_file_name)) 
+			load_file_name = load_dir.get_next()
+			
 	else:
 		print("尝试访问路径时出错。")
 
@@ -41,27 +52,87 @@ func load_master_file(path:String, master_file_name:String):
 	var json = master_file.get_as_text()
 	master_file.close()
 	var data = JSON.parse_string(json)
-	var abilities:Dictionary = data["effects"]
-	for effect:Dictionary in abilities:
-		var _funcs = effect.keys()
-		if !_funcs.find("time_points"):
-			#show("没有检测到效果时点！")
-			return
-	return data
-	pass
+	var master_name = data["master_name"]
+	var shown_master_name = data["shown_master_name"]
+	var header_img = path + "/" + data["header_img"]
+	var master_card_img = path + "/" + data["master_card_img"]
+	var command_spell_img = path + "/" + data["command_spell_img"]
+	var effects = load_effects(data["effects"])
+	var specials = data["specials"]
+	var upgrade_skill = load_skills(data["upgrade_skill"], path)
+	specials["SKILLS"] = load_skills(specials["SKILLS"], path)
+	specials["ATTACKS"] = load_attacks(specials["ATTACKS"], path)
+	
+	
+	var master = BaseMaster.new(master_name, shown_master_name, header_img, master_card_img, command_spell_img)
+	master._effects = effects
+	master._specials = specials
+	master._upgrade_skill = upgrade_skill
+	
+	return master
 
 
+func load_effects(effects:Array):
+	var eff_arr:Array#[BaseEffect]
+	for eff:Dictionary in effects:
+		var nums = eff["effect_numbers"] as Array
+		var effect = BaseEffect.new(eff["effect_name"], eff["time_points"])
+		effect.set_numbers(nums)
+		for _func:Dictionary in eff["funcs"]:
+			if _func.has("func_name"):
+				var key = _func["func_name"] as String
+				if func_table[key] == null: 
+					print("没有函数:" + "'" + key + "'")
+					return
+				var main_callable = func_table[key] as Callable
+				var paras = _func["parameters"] as Array
+				var var_index = _func["var_index"]
+				var eff_func = BaseFunc.new(main_callable, paras, var_index)
+				effect.add_func(eff_func)
+			
+			elif _func.has("self_var"):
+				if _func["self_var"] == -1: continue
+				if !(effect._self_vars[_func["self_var"]]) is Node: continue
+				var v = effect._self_vars[_func["self_var"]] as Node
+				for f in v.get_method_list():
+					if f["name"] == _func["sub_func"]:
+						var sub_callable = Callable(v, _func["sub_func"])
+						var paras = _func["parameters"] as Array
+						var var_index = _func["var_index"]
+						var eff_func = BaseFunc.new(sub_callable, paras, var_index)
+						effect.add_func(eff_func)
+		
+		eff_arr.append(effect)
+	
+	return eff_arr
 
-#func add_tag():
-	#var datas = GameData.master_datas.append_array(GameData.servant_datas)
-	#var master_tags:Array[String]
-	#var servant_tags:Array[String]
-	#var skill_tags:Array[String]
-	#var attack_tags:Array[String]
-	#var situation_tags:Array[String]
-	#var event_tags:Array[String]
-	#var buff_tags:Array[String]
-	#var others_tags:Array[String]
-	#
-	#for data:Dictionary in datas:
-		#master_tags = data[]
+
+func load_skills(skills:Array, pic_path:String):
+	var ski_arr:Array
+	for ski:Dictionary in skills:
+		var skill_name = ski["skill_name"]
+		var skill_card_img = pic_path + "/" + ski["skill_card_img"]
+		var attributes = ski["attributes"]
+		var cost = ski["cost"]
+		var power = ski["power"]
+		var ignore_limit = ski["ignore_limit"]
+		var effects = load_effects(ski["effects"])
+		var skill = BaseSkill.new(skill_name, skill_card_img, attributes, cost, power, ignore_limit, effects)
+		ski_arr.append(skill)
+
+	return ski_arr
+	
+
+func load_attacks(attacks:Array, pic_path:String):
+	var att_arr:Array
+	for att:Dictionary in attacks:
+		var attack_name = att["attack_name"]
+		var attack_crad_img = pic_path + "/" + att["attack_crad_img"]
+		var attributes = att["attributes"]
+		var cost = att["cost"]
+		var power = att["power"]
+		var effects = load_effects(att["effects"])
+		var attack = BaseAttack.new(attack_name, attack_crad_img, attributes, cost, power, effects)
+		att_arr.append(attack)
+
+	return att_arr
