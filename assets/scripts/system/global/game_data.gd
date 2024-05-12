@@ -62,4 +62,7 @@ var effects:Array#[BaseEffect]
 var effects_signals:Dictionary #{BaseEffect : Signal}
 
 var loaded_masters:Array#[BaseMaster]
-var loaded_servants:Array#[Dictionary]
+var loaded_servants:Array#[BaseServant]
+
+var ingame_masters:Array#[BaseMaster]
+var ingame_servants:Array#[BaseServant]

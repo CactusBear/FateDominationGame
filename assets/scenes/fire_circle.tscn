@@ -1,4 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://cqp0k672uhmrm"]
+[gd_scene load_steps=12 format=3 uid="uid://cqp0k672uhmrm"]
+
+[ext_resource type="Script" path="res://assets/scripts/system/global/load_game.gd" id="1_7pskm"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fhhkc"]
 particle_flag_disable_z = true
@@ -62,6 +64,7 @@ emission_curve = SubResource("CurveTexture_4tmas")
 amount = 100
 sub_emitter = NodePath("GPUParticles2D")
 process_material = SubResource("ParticleProcessMaterial_fhhkc")
+script = ExtResource("1_7pskm")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
 scale = Vector2(1, 4)

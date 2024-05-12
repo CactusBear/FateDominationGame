@@ -82,8 +82,8 @@
   "tags": [
     {
       "tag": "a",
-      "name_list": [],
-      "type": ""
+      "name_list": ["emiya_shirou"],
+      "type": "master_tag"
     }
   ]
 }

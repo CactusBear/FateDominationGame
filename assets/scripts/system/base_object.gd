@@ -1,7 +1,7 @@
 extends Node
 class_name BaseObject
 
-
+var _name:String
 var tags:Array
 var tag:Dictionary = {
 	"tag_name" : "",

@@ -1,7 +1,6 @@
 extends BaseObject
 class_name BaseEffect
 
-var _effect_name:String
 var _time_points:Array#[String]
 var _funcs:Array#[BaseFunc]
 var _is_passive:bool = false
@@ -9,14 +8,16 @@ var _self_vars:Array
 
 
 func _init(effect_name:String, time_points:Array):
-	_effect_name = effect_name
+	_name = effect_name
 	_time_points = time_points
 	_funcs = []
+	super.add_object()
+	GameData.effects.append(self)
 
 
 
 func edit_effect_name(effect_name:String):
-	_effect_name = effect_name
+	_name = effect_name
 	
 func edit_time_points(add_time_points:Array = [], del_time_points:Array = [], set_time_points:Array = [""]):
 	if set_time_points != [""]:

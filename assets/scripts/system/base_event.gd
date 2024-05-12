@@ -6,7 +6,7 @@ var _score:int
 
 
 func _init(card_name:String, card_img:String, score:int = 0, effects:Array = []):
-	_card_name = card_name
+	_name = card_name
 	_card_img = card_img
 	_score = score
 	_effects = effects
