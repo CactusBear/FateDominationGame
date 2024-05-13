@@ -208,14 +208,14 @@ func load_master_file(path:String, master_file_name:String):
 	var header_img = path + "/" + data["header_img"]
 	var master_card_img = path + "/" + data["master_card_img"]
 	var command_spell_img = path + "/" + data["command_spell_img"]
-	var effects = load_effects(data["effects"])
-	var specials = data["specials"]
-	var upgrade_skill = load_skills(data["upgrade_skill"], path)
-	specials["SKILLS"] = load_skills(specials["SKILLS"], path)
-	specials["ATTACKS"] = load_attacks(specials["ATTACKS"], path)
 	
 	
 	var master = BaseMaster.new(master_name, shown_master_name, header_img, master_card_img, command_spell_img)
+	var effects = load_effects(data["effects"], master)
+	var specials = data["specials"]
+	var upgrade_skill = load_skills(data["upgrade_skill"], path, master)
+	specials["SKILLS"] = load_skills(specials["SKILLS"], path, master)
+	specials["ATTACKS"] = load_attacks(specials["ATTACKS"], path, master)
 	master._effects = effects
 	master._specials = specials
 	master._upgrade_skill = upgrade_skill
@@ -228,11 +228,12 @@ func load_master_file(path:String, master_file_name:String):
 	return master
 
 
-func load_effects(effects:Array):
+func load_effects(effects:Array, from):
 	var eff_arr:Array#[BaseEffect]
 	for eff:Dictionary in effects:
 		var nums = eff["effect_numbers"] as Array
 		var effect = BaseEffect.new(eff["effect_name"], eff["time_points"])
+		effect.from = from
 		effect.set_numbers(nums)
 		for _func:Dictionary in eff["funcs"]:
 			if _func.has("func_name"):
@@ -263,7 +264,7 @@ func load_effects(effects:Array):
 	return eff_arr
 
 
-func load_skills(skills:Array, pic_path:String):
+func load_skills(skills:Array, pic_path:String, from):
 	var ski_arr:Array
 	for ski:Dictionary in skills:
 		var skill_name = ski["skill_name"]
@@ -272,14 +273,16 @@ func load_skills(skills:Array, pic_path:String):
 		var cost = ski["cost"]
 		var power = ski["power"]
 		var ignore_limit = ski["ignore_limit"]
-		var effects = load_effects(ski["effects"])
-		var skill = BaseSkill.new(skill_name, skill_card_img, attributes, cost, power, ignore_limit, effects)
+		var skill = BaseSkill.new(skill_name, skill_card_img, attributes, cost, power, ignore_limit)
+		var effects = load_effects(ski["effects"], skill)
+		skill._effects = effects
+		skill.from = from
 		ski_arr.append(skill)
 
 	return ski_arr
 	
 
-func load_attacks(attacks:Array, pic_path:String):
+func load_attacks(attacks:Array, pic_path:String, from):
 	var att_arr:Array
 	for att:Dictionary in attacks:
 		var attack_name = att["attack_name"]
@@ -287,8 +290,10 @@ func load_attacks(attacks:Array, pic_path:String):
 		var attributes = att["attributes"]
 		var cost = att["cost"]
 		var power = att["power"]
-		var effects = load_effects(att["effects"])
-		var attack = BaseAttack.new(attack_name, attack_crad_img, attributes, cost, power, effects)
+		var attack = BaseAttack.new(attack_name, attack_crad_img, attributes, cost, power)
+		var effects = load_effects(att["effects"], attack)
+		attack._effects = effects
+		attack.from = from
 		att_arr.append(attack)
 
 	return att_arr

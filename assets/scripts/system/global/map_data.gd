@@ -1,174 +1,80 @@
 extends Node
 
 
+var situations:Array
 
-const MAGIC_WORKSHOP_0 = {"magic_workshop" : 0}
-const MAGIC_WORKSHOP_1 = {"magic_workshop" : 1}
-const MAGIC_WORKSHOP_2 = {"magic_workshop" : 2}
-const MAGIC_WORKSHOP_3 = {"magic_workshop" : 3}
-const MAGIC_WORKSHOP_4 = {"magic_workshop" : 4}
+var magic_workshop0 = BaseLocation.new(2,0,1,true)
+var magic_workshop1 = BaseLocation.new(1,0,1,true)
+var magic_workshop2 = BaseLocation.new(1,0,1,true)
+var magic_workshop3 = BaseLocation.new(1,0,1,true)
+var magic_workshop4 = BaseLocation.new(0,0,-1)
 
-const MIYAMA_0 = {"miyama" : 0}
-const MIYAMA_1 = {"miyama" : 1}
-const MIYAMA_2 = {"miyama" : 2}
-
-const SHINTO_0 = {"shinto" : 0}
-const SHINTO_1 = {"shinto" : 1}
-const SHINTO_2 = {"shinto" : 2}
-
-const SCOUT_0 = {"scout" : 0}
-const SCOUT_1 = {"scout" : 1}
-
-const MOON_CELL_0 = {"moon_cell" : 0}
-const MOON_CELL_1 = {"moon_cell" : 1}
-const MOON_CELL_2 = {"moon_cell" : 2}
-const MOON_CELL_3 = {"moon_cell" : 3}
-
-const MAGIC_WORKSHOP = "magic_workshop"
-const MIYAMA = "miyama"
-const SHINTO = "shinto"
-const SCOUT = "scout"
-const MOON_CELL = "moon_cell"
-
-const MA_TO_MI = "ma_to_mi"
-const MI_TO_SH = "mi_to_sh"
-const SH_TO_SC = "sh_to_sc"
-
-var location_data:Dictionary = {
-	MAGIC_WORKSHOP : [
-		-1,-1,-1,-1,[]
+var magic_workshop:BaseMapArea = BaseMapArea.new(
+	[
+		magic_workshop0,
+		magic_workshop1,
+		magic_workshop2,
+		magic_workshop3,
+		magic_workshop4
 	],
-	MIYAMA : [
-		-1,-1,[]
+	"魔术工房"
+)
+
+var miyama0 = BaseLocation.new(0,3)
+var miyama1 = BaseLocation.new(0,1)
+var miyama2 = BaseLocation.new(0,0,-1,true)
+
+var miyama:BaseMapArea = BaseMapArea.new(
+	[
+		miyama0,
+		miyama1,
+		miyama2
 	],
-	SHINTO : [
-		-1,-1,[]
+	"深山町",
+	2
+)
+
+var shinto0 = BaseLocation.new(0,3)
+var shinto1 = BaseLocation.new(0,1)
+var shinto2 = BaseLocation.new(0,0,-1,true)
+
+var shinto:BaseMapArea = BaseMapArea.new(
+	[
+		shinto0,
+		shinto1,
+		shinto2
 	],
-	SCOUT : [
-		-1,[]
+	"新都",
+	3
+)
+
+var scout0 = BaseLocation.new(0,0,1,true)
+var scout1 = BaseLocation.new(0,0,-1)
+
+var scout:BaseMapArea = BaseMapArea.new(
+	[
+		scout0,
+		scout1,
 	],
-	MOON_CELL : [
-		-1,-1,-1,[]
-	]
-}
+	"侦察",
+	2
+)
 
-#地点魔力
-var magic_workshop_magic = [
-	2,1,1,1,0
-]
-
-var miyama_magic = [
-	0,0,0
-]
-
-var shinto_magic = [
-	0,0,0
-]
-
-var scout_magic = [
-	0,0
-]
-
-var moon_cell_magic = [
-	0,0,0,0
-]
-
-var location_magic:Dictionary
-
-
-#地利
-var magic_workshop_benefit = [
-	0,0,0,0,0
-]
-
-var miyama_benefit = [
-	3,1,0
-]
-
-var shinto_benefit = [
-	3,1,0	
-]
-
-var scout_benefit = [
-	0,0
-]
-
-var moon_cell_benefit = [
-	4,2,1,0
-]
-
-var location_benefit:Dictionary
-
-
-#地点战果
-var magic_workshop_score =0
-var miyama_score = 2
-var shinto_score = 3
-var scout_score = 2
-var moon_cell_score = 3
-
-var location_score:Dictionary
-
-var score_need_win = {
-	MAGIC_WORKSHOP : true,
-	MIYAMA : true,
-	SHINTO : true,
-	SCOUT : false,
-	MOON_CELL : true
-}
-
-#局势牌
-var situation_cards = []
-
-#事件牌
-var event_cards = {
-	MAGIC_WORKSHOP : [],
-	MIYAMA : [],
-	SHINTO : [],
-	SCOUT : [],
-	MOON_CELL : []
-}
-
-#移动cost
-var move_cost = {
-	MA_TO_MI : 1,
-	MI_TO_SH : 2,
-	SH_TO_SC : 2
-}
-
-
-#场地buff
-var area_buffs = {
-	MAGIC_WORKSHOP : [],
-	MIYAMA : [],
-	SHINTO : [],
-	SCOUT : [],
-	MOON_CELL : []
-}
-
+var areas:Array
 
 func _init():
-	location_magic = {
-		MAGIC_WORKSHOP : magic_workshop_magic,
-		MIYAMA : miyama_magic,
-		SHINTO : shinto_magic,
-		SCOUT : scout_magic,
-		MOON_CELL : moon_cell_magic
-	}
+	magic_workshop._linked_map_area = miyama
+	magic_workshop._move_cost = 1
 	
-	location_benefit = {
-		MAGIC_WORKSHOP : magic_workshop_benefit,
-		MIYAMA : miyama_benefit,
-		SHINTO : shinto_benefit,
-		SCOUT : scout_benefit,
-		MOON_CELL : moon_cell_benefit
-	}
+	miyama._linked_map_area = shinto
+	miyama._move_cost = 2
 	
-	location_score = {
-		MAGIC_WORKSHOP : magic_workshop_score,
-		MIYAMA : miyama_score,
-		SHINTO : shinto_score,
-		SCOUT : scout_score,
-		MOON_CELL : moon_cell_score
-	}
-	
+	shinto._linked_map_area = scout
+	shinto._move_cost = 2
+
+	areas = [
+		magic_workshop,
+		miyama,
+		shinto,
+		scout
+	]

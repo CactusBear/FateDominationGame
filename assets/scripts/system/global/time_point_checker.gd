@@ -30,13 +30,33 @@ func dynamic_time_point(time_points:Array, current_player_id:int):
 	
 
 func time_point_check():
-	var player_data = GameDataManager.get_player_data(GameData.player_id)
-	var current_time_points = player_data["current_time_points"] as Array
-	for effect:BaseEffect in GameData.effects:
-		var has_effect:bool
-		for tp in effect._time_points:
-			has_effect = current_time_points.has(tp)
-		if has_effect:
-			var sig = GameData.effects_signals[effect] as Signal
-			sig.emit()
+	var pl_ids = EffectLib.get_all_players_id() as Array
+	var if_choose_active:bool = false
+	var if_order_passive:bool = false
+	for id in pl_ids:
+		var player_data = GameDataManager.get_player_data(id)
+		var current_time_points = player_data["current_time_points"] as Array
+		for effect:BaseEffect in player_data["self_effects"]:
+			var has_effect:bool
+			for tp in effect._time_points:
+				has_effect = current_time_points.has(tp)
+			if has_effect:
+				if !effect._is_passive:
+					GameProgress.add_to_choose_active(effect, id)
+				else :
+					GameProgress.add_to_order_passive(effect, id)
+		if player_data["choosing_active_effects"] != []:
+			if_choose_active = true
+		if player_data["ordering_passive_effects"] != []:
+			if_order_passive = true
+	if if_choose_active:
+		GameProgress.choose_active_effect()
+	if if_order_passive:
+		GameProgress.order_passive_effect()
 		
+		
+func time_point_update():
+	var pl_ids = EffectLib.get_all_players_id() as Array
+	for id in pl_ids:
+		var pl_data = GameDataManager.get_player_data(id) as Dictionary
+		pl_data["current_time_points"] = phase_time_points + pl_data["dynamic_time_points"]

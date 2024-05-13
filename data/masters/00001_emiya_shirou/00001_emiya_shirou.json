@@ -18,7 +18,7 @@
         {
           "self_var": -1,
           "sub_func": "",
-          "sub_parameters": [{"number_index" : 1}],
+          "sub_parameters": [{"self_func" : 0}],
           "var_index": -1
         }
       ]

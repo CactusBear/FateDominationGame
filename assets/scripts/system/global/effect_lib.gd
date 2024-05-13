@@ -35,8 +35,8 @@ static func change_pl_order(set_order = null, vary_order:int = 0, player_id = Ga
 					var pl_data = GameDataManager.get_player_data(id)
 					if pl_data["order"] == order:
 						pl_data["order"] += 1
-					if pl_data["order"] >= 8:
-						pl_data["order"] -= 7
+					if pl_data["order"] >= GameData.player_num:
+						pl_data["order"] -= GameData.player_num
 			player_data["order"] = set_order
 		elif set_order > current_order:
 			for order in range(current_order,set_order + 1):
@@ -44,18 +44,18 @@ static func change_pl_order(set_order = null, vary_order:int = 0, player_id = Ga
 					var pl_data = GameDataManager.get_player_data(id)
 					if pl_data["order"] == order:
 						pl_data["order"] -= 1
-					if pl_data["data"] <= 0:
-						pl_data["order"] += 7
+					if pl_data["order"] <= -1:
+						pl_data["order"] += GameData.player_num
 			player_data["order"] = set_order
 			
 	var pl_ids = get_all_players_id()
 	for id in pl_ids:
 		var pl_data = GameDataManager.get_player_data(id)
 		pl_data["order"] += vary_order
-		if pl_data["order"] >= 8:
-			pl_data["order"] -= 7
-		if pl_data["data"] <= 0:
-			pl_data["order"] += 7
+		if pl_data["order"] >= GameData.player_num:
+			pl_data["order"] -= GameData.player_num
+		if pl_data["order"] <= -1:
+			pl_data["order"] += GameData.player_num
 
 
 
@@ -82,155 +82,105 @@ static func edit_power(set_num = null, vary_num:int = 0, player_id:int = GameDat
 		player_data["power"] = set_num
 	player_data["power"] += vary_num
 
-static func edit_map_benefit(location:Dictionary, set_num = null, vary_num:int = 0):
-	var area
-	var pos
-	for key in location:
-		area = key
-		pos = location[area]
+static func edit_location_benefit(location:BaseLocation, set_num = null, vary_num:int = 0):
 	if set_num != null:
-		MapData.location_benefit[area][pos] = set_num
-	MapData.location_benefit[area][pos] += vary_num
+		location._benefit = set_num
+	location._benefit += vary_num
 	
 	
-static func edit_map_magic(location:Dictionary, set_num = null, vary_num:int = 0):
-	var area
-	var pos
-	for key in location:
-		area = key
-		pos = location[area]
+static func edit_location_magic(location:BaseLocation, set_num = null, vary_num:int = 0):
 	if set_num != null:
-		MapData.location_magic[area][pos] = set_num
-	MapData.location_magic[area][pos] += vary_num
+		location._magic = set_num
+	location._magic += vary_num
 	
-static func edit_map_score(map_area:String, set_num = null, vary_num:int = 0):
+static func edit_map_area_score(map_area:BaseMapArea, set_num = null, vary_num:int = 0):
 	if set_num != null:
-		MapData.location_score[map_area] = set_num
-	MapData.location_score[map_area] += vary_num
+		map_area._score = set_num
+	map_area._score += vary_num
 
-static func edit_map_move_cost(a_to_b:String, set_num = null, vary_num:int = 0):
+static func edit_map_area_move_cost(map_area:BaseMapArea, set_num = null, vary_num:int = 0):
 	if set_num != null:
-		MapData.move_cost[a_to_b] = set_num
-	MapData.move_cost[a_to_b] += vary_num
+		map_area._move_cost = set_num
+	map_area._move_cost += vary_num
 	
-static func add_map_area_buff(map_area:String, add_buff:BaseBuff):
-	var buff_arr:Array = MapData.area_buffs[map_area]
+static func add_map_area_buff(map_area:BaseMapArea, add_buff:BaseBuff):
+	var buff_arr:Array = map_area._buffs
 	buff_arr.append(add_buff)
 	
-static func add_map_event_cards(map_area:String, add_event:BaseEvent):
-	var event_arr:Array = MapData.event_cards[map_area]
+static func add_map_area_events(map_area:BaseMapArea, add_event:BaseEvent):
+	var event_arr:Array = map_area._events
 	event_arr.append(add_event)
 	
-static func add_map_situatiuon_cards(add_situation:BaseSituation):
-	var situation_arr = MapData.situation_cards as Array
+static func add_situatiuons(add_situation:BaseSituation):
+	var situation_arr = MapData.situations as Array
 	situation_arr.append(add_situation)
 
-static func move_location(move_location_num:int, player_id:int = GameData.player_id, ignore_limit:bool = false):
+static func move_location(move_num:int, player_id:int = GameData.player_id, ignore_limit:bool = false):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
-	var location:Dictionary = player_data["location"]
-	var area:String
-	for key in location.keys():
-		area = key
-	match area:
-		MapData.MAGIC_WORKSHOP:
-			match move_location_num:
-				1:
-					location = MapData.MIYAMA_2
-				2:
-					location = MapData.SHINTO_2
-				3:
-					var scout:Array = MapData.location_data["scout"]
-					if !ignore_limit and get_num_of_pl_in_map_area("scout") >= 1:
-						#show("目标地点上限已满")
-						return
-					for pos in scout:
-						if pos == -1:
-							location = MapData.SCOUT_0
-							return
-						if pos is Array:
-							location = MapData.SCOUT_1
-		MapData.MIYAMA:
-			match move_location_num:
-				1:
-					location = MapData.SHINTO_2
-				2:
-					var scout:Array = MapData.location_data["scout"]
-					if !ignore_limit and get_num_of_pl_in_map_area("scout") >= 1:
-						#show("目标地点上限已满")
-						return
-					for pos in scout:
-						if pos == -1:
-							location = MapData.SCOUT_0
-							return
-						if pos is Array:
-							location = MapData.SCOUT_1
-				-1:
-					var magic_workshop:Array = MapData.location_data["magic_workshop"]
-					if !ignore_limit and get_num_of_pl_in_map_area("magic_workshop") >= 4:
-						#show("目标地点上限已满")
-						return
-					for pos in magic_workshop:
-						if pos == -1:
-							location = {"magic_workshop" : magic_workshop.find(pos)}
-							return
-						if pos is Array:
-							location = MapData.MAGIC_WORKSHOP_4
-		MapData.SHINTO:
-			match move_location_num:
-				1:
-					var scout:Array = MapData.location_data["scout"]
-					if !ignore_limit and get_num_of_pl_in_map_area("scout") >= 1:
-						#show("目标地点上限已满")
-						return
-					for pos in scout:
-						if pos == -1:
-							location = MapData.SCOUT_0
-							return
-						if pos is Array:
-							location = MapData.SCOUT_1
-				-1:
-					location = MapData.MIYAMA_2
-				-2:
-					var magic_workshop:Array = MapData.location_data["magic_workshop"]
-					if !ignore_limit and get_num_of_pl_in_map_area("magic_workshop") >= 4:
-						#show("目标地点上限已满")
-						return
-					for pos in magic_workshop:
-						if pos == -1:
-							location = {"magic_workshop" : magic_workshop.find(pos)}
-							return
-						if pos is Array:
-							location = MapData.MAGIC_WORKSHOP_4
-		MapData.SCOUT:
-			match move_location_num:
-				-1:
-					location = MapData.SHINTO_2
-				-2:
-					location = MapData.MIYAMA_2
-				-3:
-					var magic_workshop:Array = MapData.location_data["magic_workshop"]
-					if !ignore_limit and get_num_of_pl_in_map_area("magic_workshop") >= 4:
-						#show("目标地点上限已满")
-						return
-					for pos in magic_workshop:
-						if pos == -1:
-							location = {"magic_workshop" : magic_workshop.find(pos)}
-							return
-						if pos is Array:
-							location = MapData.MAGIC_WORKSHOP_4
-							
+	var location:BaseLocation = player_data["location"]
+	var area:BaseMapArea
+	for a:BaseMapArea in MapData.areas:
+		var arr = area._locations as Array
+		if !arr.has(location): 
+			#show("玩家所处位置不位于地图上")
+			return 0
+		area = a
+	
+	var total_cost:int = 0
+	if move_num > 0:
+		for n in move_num:
+			if area._linked_map_area != null:
+				total_cost += area._move_cost
+				area = area._linked_map_area
+	elif move_num < 0:
+		move_num = 0 - move_num
+		for n in move_num:
+			var area_arr:Array
+			for a:BaseMapArea in MapData.areas:
+				if a._linked_map_area == area:
+					area_arr.append(a)
+			if area_arr.size() > 1:
+				#area = choose_where_to_go()
+				continue
+			if area_arr[0] != null:
+				area = area_arr[0]
+	else:
+		return 0
+	
+	if area._can_move_to == false:
+		#show("无法移动至此区域")
+		return 0
+	if ignore_limit:
+		for loc:BaseLocation in area._locations:
+			if loc._pl_num_limit == -1:
+				var arr = loc._players as Array
+				arr.append(player_id)
+				player_data["location"] = loc
+				return total_cost
+	else :
+		for loc:BaseLocation in area._locations:
+			if loc._pl_num_limit <= loc._players.size():
+				#show("目标位置已满")
+				return 0
+			if loc._pl_num_limit > loc._players.size() and loc._will_move_to:
+				var arr = loc._players as Array
+				arr.append(player_id)
+				player_data["location"] = loc
+				return total_cost
 
-static func set_location(setted_location:Dictionary, player_id:int = GameData.player_id, is_move:bool = true):
+static func set_location(setted_location:BaseLocation, player_id:int = GameData.player_id, is_move:bool = true):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
-	var location:Dictionary = player_data["location"]
-	var location_data:Dictionary = MapData.location_data 
-	var area
-	for key in setted_location.keys():
-		area = key
-	if get_pl_or_pls_in_location(setted_location) != -1 and !(get_pl_or_pls_in_location(setted_location) is Array):
+	if setted_location._pl_num_limit <= setted_location._players.size():
 		#show("目标位置已满")
 		return
-	location = setted_location
+	var area:BaseMapArea
+	for a:BaseMapArea in MapData.areas:
+		if a._locations.has(setted_location):
+			area = a
+	if area._can_move_to == false and is_move:
+		#show("无法移动至此区域")
+		return
+	player_data["location"] = setted_location
 	
 	
 static func manage_buff(buff, player_id:int = GameData.player_id, add_or_del:bool = true):
@@ -251,11 +201,20 @@ static func random_float(range_start:float, range_end:float):
 
 
 #功能函数(记得写发信号)
-static func deploy(deploy_location:Dictionary, player_id:int = GameData.player_id):
+static func deploy(deploy_location:BaseLocation, player_id:int = GameData.player_id, ignore_limit:bool = false):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
-	set_location(deploy_location, player_id, false)
+	set_location(deploy_location, player_id, ignore_limit)
+	
+static func move(move_num:int, player_id:int = GameData.player_id, ignore_limit:bool = false, ignore_battle:bool = false):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	if !ignore_battle and player_data["is_battle"] == true:
+		#show("处于交战状态，无法移动")
+		return
+	var cost = move_location(move_num,player_id,ignore_limit)
+	edit_magic(null, 0 - cost, player_id)
 
 static func activate_effect(effect:BaseEffect):
+	start_effect()
 	for f in effect._funcs:
 		var paras = f._parameters as Array
 		for para in paras:
@@ -266,11 +225,15 @@ static func activate_effect(effect:BaseEffect):
 				if para.has("self_var"):
 					if para["self_var"] == -1: return
 					para = effect._self_vars[para["self_var"]]
+				if para.has("self_func"):
+					if para["self_func"] == -1: return
+					para = effect._funcs[para["self_func"]]
 		if f._var_index == -1:
 			f._func.callv(paras)
 		else :
 			effect._self_vars[f._var_index] = f._func.callv(paras)
-		
+	end_effect()
+	
 #func activate_effect_by_tp(effect:BaseEffect, time_points:Array):
 	#for f in effect._funcs:
 		#f._func.callv(f._parameters)
@@ -370,8 +333,18 @@ static func defeat(player_id:int = GameData.player_id):
 
 
 #禁止系效果
-static func prevent(time_points:Array, player_id:int = GameData.player_id, _func:BaseFunc = null):
-	pass
+static func counter(priority:int, effect:BaseEffect, countered_func:BaseFunc = null):
+	#判断priority
+	for i in range(GameProgress.effect_progress.size()-1, -1, -1):
+		var arr = GameProgress.effect_progress[i] as Array
+		var index = arr.find(effect)
+		if index == -1:continue
+		if countered_func == null:
+			arr.remove_at(index)
+		else:
+			var eff = effect.duplicate() as BaseEffect
+			eff.del_func(countered_func)
+			arr[index] = eff
 
 
 
@@ -438,35 +411,14 @@ static func create_buff(buff_name:String, buff_img:String, buff_id:int):
 	var buff = BaseBuff.new(buff_name, buff_img)
 	return buff
 
-static func _location(map_area:String, index:int):
-	if MapData.location_data[map_area] == null:
-		#show("不存在该地图区域，检查有无拼写错误")
-		return
-	var location:Dictionary
-	match map_area:
-		MapData.MAGIC_WORKSHOP:
-			if index >= 5 or index < 0:
-				#show("位置索引错误，不存在该位置")
-				return
-		MapData.MIYAMA:
-			if index >= 3 or index < 0:
-				#show("位置索引错误，不存在该位置")
-				return
-		MapData.SHINTO:
-			if index >= 3 or index < 0:
-				#show("位置索引错误，不存在该位置")
-				return
-		MapData.SCOUT:
-			if index >= 2 or index < 0:
-				#show("位置索引错误，不存在该位置")
-				return
-	location = {map_area : index}
+static func _location(magic:int = 0, benefit:int = 0, pl_num_limit:int = 1, will_move_to:bool = false):
+	var location = BaseLocation.new(magic,benefit,pl_num_limit,will_move_to)
 	return location
 	
-static func _tag(tag_name:String, from_player_id:int):
+static func _tag(tag_name:String, from):
 	var tag = {
 		"tag_name" : tag_name,
-		"from" : from_player_id
+		"from" : from
 	}
 	return tag
 	
@@ -486,27 +438,15 @@ static func get_location(player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	return player_data["location"]
 
-static func get_num_of_pl_in_map_area(map_area:String):
-	if MapData.location_data[map_area] == null:
-		#show("不存在该地图区域，检查有无拼写错误")
-		return
-	var area_data = MapData.location_data[map_area]
-	var count = 0
-	for location in area_data:
-		if !(location is Array) and location != -1:
+static func get_num_of_pl_in_map_area(map_area:BaseMapArea):
+	var count:int = 0
+	for loc:BaseLocation in map_area._locations:
+		for pl in loc._players:
 			count += 1
-		elif location is Array:
-			for i in location:
-				count += 1
 	return count
 
-static func get_pl_or_pls_in_location(location:Dictionary):
-	var area
-	var location_data = MapData.location_data
-	for key in location.keys():
-		area = key
-	var pl_or_pls = location_data[area][location[area]]	 
-	return pl_or_pls
+static func get_pls_in_location(location:BaseLocation):
+	return location._players
 	
 
 static func get_data_num(key:String, player_id:int = GameData.player_id):
@@ -639,46 +579,33 @@ static func get_pl_others_out_game(player_id:int = GameData.player_id):
 
 
 
-static func get_location_magic(location:Dictionary):
-	var area
-	var pos
-	for key in location:
-		area = key
-		pos = location[area]
-	return MapData.location_magic[area][pos]
+static func get_location_magic(location:BaseLocation):
+	return location._magic
 
 
-static func get_location_benefit(location:Dictionary):
-	var area
-	var pos
-	for key in location:
-		area = key
-		pos = location[area]
-	return MapData.location_benefit[area][pos]
+static func get_location_benefit(location:BaseLocation):
+	return location._benefit
 
 
-static func get_area_score(map_area:String):
-	return MapData.location_score[map_area]
+static func get_map_area_score(map_area:BaseMapArea):
+	return map_area._score
 
 
-static func get_area_buffs(map_area:String):
-	return MapData.area_buffs[map_area]
+static func get_map_area_buffs(map_area:BaseMapArea):
+	return map_area._buffs
 
 
-static func get_move_cost(a_to_b:String):
-	return MapData.move_cost[a_to_b]
+static func get_move_cost(map_area:BaseMapArea):
+	return map_area._move_cost
 
 
-static func get_event_cards(map_area:String):
-	return MapData.event_cards[map_area]
+static func get_events(map_area:BaseMapArea):
+	return map_area._events
 
 
-static func get_situation_cards():
-	return MapData.situation_cards
+static func get_situations():
+	return MapData.situations
 
-
-static func get_area_score_need_win(map_area:String):
-	return MapData.score_need_win[map_area]
 
 
 static func get_buff_by_name_fr_arr(buff_name:String, buffs:Array):
@@ -705,12 +632,41 @@ static func get_cards_by_name_fr_arr(card_name:String, cards:Array):
 static func get_card_by_index_fr_arr(card_index:int, cards:Array):
 	return cards[card_index]
 
-static func get_nums(object:BaseObject):
+static func get_printed_nums(object:BaseObject):
 	return object.numbers
 
-static func get_num(index:int, object:BaseObject):
+static func get_printed_num(index:int, object:BaseObject):
 	return object.numbers[index]
 
+static func get_attack_printed_cost(attack:BaseAttack):
+	return attack.numbers[0]
+
+static func get_attack_printed_power(attack:BaseAttack):
+	return attack.numbers[1]
+
+static func get_skill_printed_cost(skill:BaseSkill):
+	return skill.numbers[0]
+	
+static func get_skill_printed_power(skill:BaseSkill):
+	return skill.numbers[1]
+
+static func get_event_printed_score(event:BaseEvent):
+	return event.numbers[0]
+	
+static func get_situation_printed_magic(situation:BaseSituation):
+	return situation.numbers[0]
+
+static func get_pl_id_using_eff():
+	var pl_ids = EffectLib.get_all_players_id() as Array
+	for id in pl_ids:
+		var pl_data = GameDataManager.get_player_data(id) as Dictionary
+		var arr = pl_data["self_effects"] as Array
+		if arr.has(GameProgress.activating_eff):
+			return id
+
+
+static func get_activating_eff():
+	return GameProgress.activating_eff
 
 
 #交互
@@ -719,8 +675,15 @@ static func get_num(index:int, object:BaseObject):
 
 #效果处理
 static func start_effect():
-	pass
+	var pl_ids = get_all_players_id() as Array
+	for id in pl_ids:
+		var pl_data = GameDataManager.get_player_data(id) as Dictionary
+		pl_data["dynamic_time_points"] = []
+	TimePointChecker.time_point_update()
+	
+	if GameProgress.eff_progress_index >= -1:
+		GameProgress.eff_progress_index += 1
 	
 	
 static func end_effect():
-	pass
+	TimePointChecker.time_point_check()

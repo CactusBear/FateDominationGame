@@ -11,7 +11,10 @@ func _init(effect_name:String, time_points:Array):
 	_name = effect_name
 	_time_points = time_points
 	_funcs = []
+	
 	super.add_object()
+	var _from = from as BaseObject
+	_from.numbers.append_array(numbers)
 	GameData.effects.append(self)
 
 
@@ -33,8 +36,19 @@ func edit_funcs(add_funcs:Array = [], set_funcs:Array = []):
 		_funcs = set_funcs
 	_funcs.append_array(add_funcs)
 
+func edit_num(index:int, add_num:int = 0, set_num = null):
+	if set_num != null:
+		numbers[index] = set_num
+	numbers[index] += add_num
+
 func add_func(_func:BaseFunc):
 	_funcs.append(_func)
+
+func del_func(_func:BaseFunc):
+	var i = _funcs.find(_func)
+	while i != -1:
+		_funcs.remove_at(i)
+		i = _funcs.find(_func)
 
 func set_passive(T_or_F:bool):
 	_is_passive = T_or_F

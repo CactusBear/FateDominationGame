@@ -1,6 +1,8 @@
 extends Node
 class_name BaseObject
 
+
+var from
 var _name:String
 var tags:Array
 var tag:Dictionary = {
