@@ -10,18 +10,18 @@ static func do_nothing():
 
 
 #编辑数值(记得写发信号)
-static func edit_num_and_return(num:int, add:int = 0, times:float = 1, is_round_up:bool = false):
-	var result:int
-	if add != 0:
-		num += add
-	if times != 1 and !is_round_up:
-		num = num * times
-	elif times != 1 and is_round_up:
-		var val:float = num * times
-		num = num * times
-		if val != num:
-			num += 1 
-	result = num
+static func edit_num_and_return(num:BaseNumber, add:BaseNumber = BaseNumber.new(0), times:BaseNumber = BaseNumber.new(1), is_round_up:bool = false):
+	var result:BaseNumber
+	if add.number != 0:
+		num.add(add)
+	if times.number != 1 and !is_round_up:
+		num.multiply(times)
+	elif times.number != 1 and is_round_up:
+		var val:float = num.number * times.number
+		var numi = int(num.number * times.number)
+		if val != numi:
+			numi += 1 
+	result.number = num
 	return result
 
 static func change_pl_order(set_order = null, vary_order:int = 0, player_id = GameData.player_id):
@@ -64,24 +64,27 @@ static func set_player_data(key_name:String, value, player_id:int = GameData.pla
 	player_data[key_name] = value
 
 
-static func edit_magic(set_num = null, vary_num:int = 0, player_id:int = GameData.player_id):
+static func edit_magic(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	if set_num != null:
 		player_data["magic"] = set_num
-	player_data["magic"] += vary_num
+	var magic = player_data["magic"] as BaseNumber
+	magic.add(vary_num)
 
-static func edit_score(set_num = null, vary_num:int = 0, player_id:int = GameData.player_id):
+static func edit_score(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	if set_num != null:
 		player_data["score"] = set_num
-	player_data["score"] += vary_num
+	var score = player_data["score"] as BaseNumber
+	score.add(vary_num)
 	
-static func edit_power(set_num = null, vary_num:int = 0, player_id:int = GameData.player_id):
+static func edit_power(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	if set_num != null:
 		player_data["power"] = set_num
-	player_data["power"] += vary_num
-
+	var power = player_data["power"] as BaseNumber
+	power.add(vary_num)
+#waiting
 static func edit_location_benefit(location:BaseLocation, set_num = null, vary_num:int = 0):
 	if set_num != null:
 		location._benefit = set_num
@@ -142,7 +145,7 @@ static func move_location(move_num:int, player_id:int = GameData.player_id, igno
 			if area_arr.size() > 1:
 				#area = choose_where_to_go()
 				continue
-			if area_arr[0] != null:
+			if area_arr.size() >= 1:
 				area = area_arr[0]
 	else:
 		return 0
@@ -225,12 +228,13 @@ static func activate_effect(effect:BaseEffect):
 				if para.has("self_var"):
 					if para["self_var"] == -1: return
 					para = effect._self_vars[para["self_var"]]
-				if para.has("self_func"):
-					if para["self_func"] == -1: return
-					para = effect._funcs[para["self_func"]]
 		if f._var_index == -1:
 			f._func.callv(paras)
 		else :
+			if effect._self_vars.size() <= f._var_index:
+				for i in f._var_index + 1:
+					if effect._self_vars.size() <= i:
+						effect._self_vars.append(null)
 			effect._self_vars[f._var_index] = f._func.callv(paras)
 	end_effect()
 	
@@ -407,6 +411,10 @@ static func _foreach_func(_func:BaseFunc, _var, parameter_index:int = 0):
 		_func._func.callv(_func._parameters)
 
 #获取数值
+static func create_func(callable:Callable, parameters:Array):
+	var _func = BaseFunc.new(callable, parameters)
+	return _func
+
 static func create_buff(buff_name:String, buff_img:String, buff_id:int):
 	var buff = BaseBuff.new(buff_name, buff_img)
 	return buff

@@ -216,6 +216,16 @@ func load_master_file(path:String, master_file_name:String):
 	var upgrade_skill = load_skills(data["upgrade_skill"], path, master)
 	specials["SKILLS"] = load_skills(specials["SKILLS"], path, master)
 	specials["ATTACKS"] = load_attacks(specials["ATTACKS"], path, master)
+	specials["BUFFS"] = load_buffs(specials["BUFFS"], path, master)
+	specials["COUNTERS"]
+	specials["MAP_AREAS"]
+	specials["LOCATIONS"]
+	specials["EVENTS"]
+	specials["SITUATIONS"]
+	specials["NPCS"]
+	specials["COMMAND_SPELLS"]
+	specials["MASTERS"]
+	specials["SERVANTS"]
 	master._effects = effects
 	master._specials = specials
 	master._upgrade_skill = upgrade_skill
@@ -231,14 +241,16 @@ func load_master_file(path:String, master_file_name:String):
 func load_effects(effects:Array, from):
 	var eff_arr:Array#[BaseEffect]
 	for eff:Dictionary in effects:
+		var priority = eff["priority"] as int
+		var is_passive = eff["is_passive"] as bool
 		var nums = eff["effect_numbers"] as Array
-		var effect = BaseEffect.new(eff["effect_name"], eff["time_points"])
+		var effect = BaseEffect.new(eff["effect_name"], eff["time_points"], priority, is_passive)
 		effect.from = from
 		effect.set_numbers(nums)
 		for _func:Dictionary in eff["funcs"]:
 			if _func.has("func_name"):
 				var key = _func["func_name"] as String
-				if func_table[key] == null: 
+				if !func_table.has(key): 
 					print("没有函数:" + "'" + key + "'")
 					return
 				var main_callable = func_table[key] as Callable
@@ -297,3 +309,21 @@ func load_attacks(attacks:Array, pic_path:String, from):
 		att_arr.append(attack)
 
 	return att_arr
+
+
+func load_buffs(buffs:Array, pic_path:String, from):
+	var buff_arr:Array
+	for buf:Dictionary in buffs:
+		var buff_name = buf["buff_name"]
+		var buff_img = pic_path + "/" + buf["buff_img"]
+		var is_active = buf["is_active"]
+		var buff_level = buf["buff_level"]
+		var buff = BaseBuff.new(buff_name, buff_img)
+		var effects = load_effects(buf["effects"], buff)
+		buff._effects = effects
+		buff._is_active = is_active
+		buff._buff_level = buff_level
+		buff.from = from
+		buff_arr.append(buff)
+	
+	return buff_arr

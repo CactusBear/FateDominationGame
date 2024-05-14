@@ -5,12 +5,15 @@ var _time_points:Array#[String]
 var _funcs:Array#[BaseFunc]
 var _is_passive:bool = false
 var _self_vars:Array
+var _priority:int
 
 
-func _init(effect_name:String, time_points:Array):
+func _init(effect_name:String, time_points:Array, priority:int = -1, is_passive:bool = false):
 	_name = effect_name
 	_time_points = time_points
 	_funcs = []
+	_priority = priority
+	_is_passive = is_passive
 	
 	super.add_object()
 	var _from = from as BaseObject

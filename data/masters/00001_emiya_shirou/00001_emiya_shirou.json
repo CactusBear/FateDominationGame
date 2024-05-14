@@ -8,17 +8,19 @@
     {
       "effect_name": "weishu",
       "time_points": ["game_start"],
-      "effect_numbers" : [2,2],
+      "priority": -1,
+      "is_passive" : false,
+      "effect_numbers": [2, 2],
       "funcs": [
         {
           "func_name": "edit_magic",
-          "parameters": [{"number_index" : 0}],
+          "parameters": [{ "number_index": 0 }],
           "var_index": -1
         },
         {
           "self_var": -1,
           "sub_func": "",
-          "sub_parameters": [{"self_func" : 0}],
+          "sub_parameters": [{ "self_func": 0 }],
           "var_index": -1
         }
       ]
@@ -29,15 +31,17 @@
       {
         "skill_name": "GanJiangMoYe",
         "skill_card_img": "GanJiangMoYe.png",
-        "attributes" : [],
-        "cost" : 0,
-        "power" : 0,
-        "ignore_limit" : false,
+        "attributes": [],
+        "cost": 0,
+        "power": 0,
+        "ignore_limit": false,
         "effects": [
           {
             "effect_name": "lalala",
             "time_points": ["game_start"],
-            "effect_numbers" : [],
+            "priority": -1,
+            "is_passive" : false,
+            "effect_numbers": [],
             "funcs": []
           }
         ]
@@ -47,14 +51,34 @@
       {
         "attack_name": "lalala",
         "attack_crad_img": "lalala.png",
-        "attributes" : [],
-        "cost" : 0,
-        "power" : 0,
+        "attributes": [],
+        "cost": 0,
+        "power": 0,
         "effects": [
           {
             "effect_name": "lalala",
             "time_points": [],
-            "effect_numbers" : [],
+            "priority": -1,
+            "is_passive" : false,
+            "effect_numbers": [],
+            "funcs": []
+          }
+        ]
+      }
+    ],
+    "BUFFS": [
+      {
+        "buff_name": "la",
+        "buff_img": "la.png",
+        "is_active": true,
+        "buff_level": 1,
+        "effects": [
+          {
+            "effect_name": "lalala",
+            "time_points": [],
+            "priority": -1,
+            "is_passive" : false,
+            "effect_numbers": [],
             "funcs": []
           }
         ]
@@ -65,15 +89,17 @@
     {
       "skill_name": "lalala",
       "skill_card_img": "lalala.png",
-      "attributes" : [],
-      "cost" : 0,
-      "power" : 0,
-      "ignore_limit" : false,
+      "attributes": [],
+      "cost": 0,
+      "power": 0,
+      "ignore_limit": false,
       "effects": [
         {
           "effect_name": "lalala",
           "time_points": ["game_start"],
-          "effect_numbers" : [],
+          "priority": -1,
+          "is_passive" : false,
+          "effect_numbers": [],
           "funcs": []
         }
       ]

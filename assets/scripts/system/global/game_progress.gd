@@ -56,8 +56,12 @@ func use_active_effect(effect:BaseEffect):
 		shown_tps.append(shown_tp)
 	if eff_progress_index <= -1:
 		return
-	if effect_progress[eff_progress_index] == null:
-		effect_progress[eff_progress_index] = [effect]
+	if effect_progress.size() <= eff_progress_index:
+		for i in eff_progress_index + 1:
+			if effect_progress.size() <= i:
+				effect_progress.append([])
+		var arr = effect_progress[eff_progress_index] as Array
+		arr.append(effect)
 	elif effect_progress[eff_progress_index] is Array:
 		var arr = effect_progress[eff_progress_index] as Array
 		arr.append(effect)
@@ -71,15 +75,37 @@ func use_passive_effect(effect:BaseEffect):
 		shown_tps.append(shown_tp)
 	if eff_progress_index <= -1:
 		return
-	if effect_progress[eff_progress_index] == null:
-		effect_progress[eff_progress_index] = [effect]
+	if effect_progress.size() <= eff_progress_index:
+		for i in eff_progress_index + 1:
+			if effect_progress.size() <= i:
+				effect_progress.append([])
+		var arr = effect_progress[eff_progress_index] as Array
+		arr.append(effect)
 	elif effect_progress[eff_progress_index] is Array:
 		var arr = effect_progress[eff_progress_index] as Array
 		arr.append(effect)
 
 
 func activate_effects():
+	var effs_arr:Array
 	for i in range(effect_progress.size()-1, -1, -1):
-		for eff in effect_progress[i]:
-			EffectLib.activate_effect(eff)
-			activating_eff = eff
+		var array = effect_progress[i] as Array
+		for eff:BaseEffect in array:
+			if effs_arr.size() <= eff._priority:
+				for index in eff._priority + 1:
+					if effs_arr.size() <= index:
+						effs_arr.append([])
+				var arr = effs_arr[eff._priority] as Array
+				arr.append(eff)
+			if effs_arr[eff._priority] is Array:
+				var arr = effs_arr[eff._priority] as Array
+				arr.append(eff)
+	
+	for effs in effs_arr:
+		if effs == []:continue
+		for eff in effs:
+			if eff is BaseEffect:
+				EffectLib.activate_effect(eff)
+				activating_eff = eff
+		
+	
