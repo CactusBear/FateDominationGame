@@ -5,7 +5,8 @@ class_name BaseCounter
 var _is_active:bool
 var _num:BaseNumber
 
-func _init(is_active:bool = false, num:BaseNumber = BaseNumber.new(0)):
+func _init(counter_name:String, is_active:bool = false, num:BaseNumber = BaseNumber.new(0)):
+	_name = counter_name
 	_is_active = is_active
 	_num = num
 

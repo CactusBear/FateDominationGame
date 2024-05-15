@@ -14,7 +14,7 @@ func _ready():
 	pass
 
 func load_game():
-	load_masters(masters_path)
+	load_masters_from_jsons(masters_path)
 	load_stored_jsons()
 	store_jsons()
 	
@@ -133,7 +133,7 @@ func load_tags(need_check:bool = false):
 	#check_tag(need_check)
 
 
-func load_masters(load_path:String):
+func load_masters_from_jsons(load_path:String):
 	var load_dir = DirAccess.open(load_path)
 	if load_dir:
 		load_dir.list_dir_begin()
@@ -152,9 +152,9 @@ func load_masters(load_path:String):
 					return
 				else: 
 					_loaded_path.append(current_path)
-					load_masters(last_path)
+					load_masters_from_jsons(last_path)
 			if load_dir.current_is_dir() and !_loaded_path.has(load_dir.get_current_dir() + "/" + load_file_name):
-				load_masters(load_dir.get_current_dir() + "/" + load_file_name)
+				load_masters_from_jsons(load_dir.get_current_dir() + "/" + load_file_name)
 			elif !load_dir.current_is_dir():
 				if load_file_name.right(5) != ".json": 
 					load_file_name = load_dir.get_next()
@@ -200,7 +200,6 @@ func load_master_file(path:String, master_file_name:String):
 	var json = master_file.get_as_text()
 	master_file.close()
 	temp_stored_jsons_arr.append(json)
-	var index = temp_stored_jsons_arr.size() - 1
 	
 	var data = JSON.parse_string(json)
 	var master_name = data["master_name"]
@@ -212,27 +211,39 @@ func load_master_file(path:String, master_file_name:String):
 	
 	var master = BaseMaster.new(master_name, shown_master_name, header_img, master_card_img, command_spell_img)
 	var effects = load_effects(data["effects"], master)
-	var specials = data["specials"]
+	var specials = data["specials"] as Dictionary
 	var upgrade_skill = load_skills(data["upgrade_skill"], path, master)
-	specials["SKILLS"] = load_skills(specials["SKILLS"], path, master)
-	specials["ATTACKS"] = load_attacks(specials["ATTACKS"], path, master)
-	specials["BUFFS"] = load_buffs(specials["BUFFS"], path, master)
-	specials["COUNTERS"]
-	specials["MAP_AREAS"]
-	specials["LOCATIONS"]
-	specials["EVENTS"]
-	specials["SITUATIONS"]
-	specials["NPCS"]
-	specials["COMMAND_SPELLS"]
-	specials["MASTERS"]
-	specials["SERVANTS"]
+	if specials.has("SKILLS") :
+		specials["SKILLS"] = load_skills(specials["SKILLS"], path, master)
+	if specials.has("ATTACKS") :
+		specials["ATTACKS"] = load_attacks(specials["ATTACKS"], path, master)
+	if specials.has("BUFFS") :
+		specials["BUFFS"] = load_buffs(specials["BUFFS"], path, master)
+	if specials.has("COUNTERS") :
+		specials["COUNTERS"] = load_counters(specials["COUNTERS"], master)
+	if specials.has("MAP_AREAS") :
+		specials["MAP_AREAS"] = load_map_areas(specials["MAP_AREAS"], master)
+	if specials.has("LOCATIONS") :
+		specials["LOCATIONS"] = load_locations(specials["LOCATIONS"], master)
+	if specials.has("EVENTS") :
+		specials["EVENTS"] = load_events(specials["EVENTS"], path, master)
+	if specials.has("SITUATIONS") :
+		specials["SITUATIONS"] = load_situations(specials["SITUATIONS"], path, master)
+	if specials.has("NPCS") :
+		specials["NPCS"]
+	if specials.has("COMMAND_SPELLS") :
+		specials["COMMAND_SPELLS"]
+	if specials.has("MASTERS") :
+		specials["MASTERS"]
+	if specials.has("SERVANTS") :
+		specials["SERVANTS"]
 	master._effects = effects
 	master._specials = specials
 	master._upgrade_skill = upgrade_skill
 	
 	var tags = data["tags"] as Array
 	for tag in tags:
-		tag["from"] = index
+		tag["from"] = master
 	tag_list.append_array(tags)
 	
 	return master
@@ -242,11 +253,18 @@ func load_effects(effects:Array, from):
 	var eff_arr:Array#[BaseEffect]
 	for eff:Dictionary in effects:
 		var priority = eff["priority"] as int
-		var is_passive = eff["is_passive"] as bool
-		var nums = eff["effect_numbers"] as Array
-		var effect = BaseEffect.new(eff["effect_name"], eff["time_points"], priority, is_passive)
+		var is_pure_passive = eff["is_pure_passive"] as bool
+		var is_residue = eff["is_residue"] as bool
+		var numbers = eff["effect_numbers"] as Array
+		var nums:Array
+		for number:Dictionary in numbers:
+			var num = load_number(number)
+			nums.append(num)
+		
+		var effect = BaseEffect.new(eff["effect_name"], eff["time_points"], priority, is_pure_passive, is_residue)
 		effect.from = from
 		effect.set_numbers(nums)
+		effect._using_numbers = nums
 		for _func:Dictionary in eff["funcs"]:
 			if _func.has("func_name"):
 				var key = _func["func_name"] as String
@@ -276,14 +294,19 @@ func load_effects(effects:Array, from):
 	return eff_arr
 
 
+func load_number(number:Dictionary):
+	var num = BaseNumber.new(number["number"], number["can_change"], number["is_pure_number"])
+	return num
+
+
 func load_skills(skills:Array, pic_path:String, from):
 	var ski_arr:Array
 	for ski:Dictionary in skills:
 		var skill_name = ski["skill_name"]
 		var skill_card_img = pic_path + "/" + ski["skill_card_img"]
 		var attributes = ski["attributes"]
-		var cost = ski["cost"]
-		var power = ski["power"]
+		var cost = load_number(ski["cost"])
+		var power = load_number(ski["power"])
 		var ignore_limit = ski["ignore_limit"]
 		var skill = BaseSkill.new(skill_name, skill_card_img, attributes, cost, power, ignore_limit)
 		var effects = load_effects(ski["effects"], skill)
@@ -300,8 +323,8 @@ func load_attacks(attacks:Array, pic_path:String, from):
 		var attack_name = att["attack_name"]
 		var attack_crad_img = pic_path + "/" + att["attack_crad_img"]
 		var attributes = att["attributes"]
-		var cost = att["cost"]
-		var power = att["power"]
+		var cost = load_number(att["cost"])
+		var power = load_number(att["power"])
 		var attack = BaseAttack.new(attack_name, attack_crad_img, attributes, cost, power)
 		var effects = load_effects(att["effects"], attack)
 		attack._effects = effects
@@ -317,7 +340,7 @@ func load_buffs(buffs:Array, pic_path:String, from):
 		var buff_name = buf["buff_name"]
 		var buff_img = pic_path + "/" + buf["buff_img"]
 		var is_active = buf["is_active"]
-		var buff_level = buf["buff_level"]
+		var buff_level = load_number(buf["buff_level"])
 		var buff = BaseBuff.new(buff_name, buff_img)
 		var effects = load_effects(buf["effects"], buff)
 		buff._effects = effects
@@ -327,3 +350,138 @@ func load_buffs(buffs:Array, pic_path:String, from):
 		buff_arr.append(buff)
 	
 	return buff_arr
+
+
+func load_counters(counters:Array, from):
+	var counter_arr:Array
+	for coun:Dictionary in counters:
+		var counter_name = coun["counter_name"]
+		var is_active = coun["is_active"]
+		var num = load_number(coun["num"])
+		var counter = BaseCounter.new(counter_name, is_active, num)
+		counter.from = from
+		counter_arr.append(counter)
+		
+	return counter_arr
+
+
+func load_map_areas(map_areas:Array, from):
+	var map_area_arr:Array
+	var map_links:Array
+	for area:Dictionary in map_areas:
+		var area_name = area["area_name"]
+		var score = load_number(area["score"])
+		var move_cost = load_number(area["move_cost"])
+		var map_area = BaseMapArea.new(area_name, score, move_cost)
+		var locations = load_locations(area["locations"], map_area)
+		var linked_map_area_name = area["linked_map_area_name"]
+		var link_dic:Dictionary = {
+			map_area : linked_map_area_name
+		}
+		map_links.append(link_dic)
+		map_area.from = from
+		map_area_arr.append(map_area)
+	
+	for link_dic:Dictionary in map_links:
+		var area:BaseMapArea
+		for key in link_dic.keys():
+			area = key
+			for a:BaseMapArea in map_area_arr:
+				if a._area_name == link_dic[key]:
+					area._linked_map_area = a
+	
+	return map_area_arr
+
+func load_locations(locations:Array, from):
+	var location_arr:Array
+	for loc:Dictionary in locations:
+		var magic = load_number(loc["magic"])
+		var benefit = load_number(loc["benefit"])
+		var pl_num_limit = loc["player_num_limit"]
+		var will_move_to = loc["will_move_to"]
+		var location = BaseLocation.new(magic, benefit, pl_num_limit, will_move_to)
+		location_arr.append(location)
+		location.from = from
+		
+	return location_arr
+
+
+func load_events(events:Array, pic_path:String, from):
+	var event_arr:Array
+	for even:Dictionary in events:
+		var card_name = even["card_name"]
+		var card_img = pic_path + "/" + even["card_img"]
+		var score = load_number(even["score"])
+		var event = BaseEvent.new(card_name, card_img, score)
+		event._effects = load_effects(even["effects"], event)
+		event.from = from
+		event_arr.append(event)
+	
+	return event_arr
+	
+
+
+func load_situations(situations:Array, pic_path:String, from):
+	var situation_arr:Array
+	for situa:Dictionary in situations:
+		var card_name = situa["card_name"]
+		var card_img = situa["card_img"]
+		var magic = load_number(situa["magic"])
+		var situation = BaseSituation.new(card_name, card_img, magic)
+		situation._effects = load_effects(situa["effects"], situation)
+		situation.from = from
+		situation_arr.append(situation)
+	
+	return situation_arr
+
+
+func load_masters(masters:Array, pic_path:String, from):
+	var master_arr:Array
+	for mas:Dictionary in masters:
+		var master_name = mas["master_name"]
+		var shown_master_name = mas["shown_master_name"]
+		var header_img = pic_path + "/" + mas["header_img"]
+		var master_card_img = pic_path + "/" + mas["master_card_img"]
+		var command_spell_img = pic_path + "/" + mas["command_spell_img"]
+		
+		var master = BaseMaster.new(master_name, shown_master_name, header_img, master_card_img, command_spell_img)
+		var effects = load_effects(mas["effects"], master)
+		var specials = mas["specials"] as Dictionary
+		var upgrade_skill = load_skills(mas["upgrade_skill"], pic_path, master)
+		
+		if specials.has("SKILLS") :
+			specials["SKILLS"] = load_skills(specials["SKILLS"], pic_path, master)
+		if specials.has("ATTACKS") :
+			specials["ATTACKS"] = load_attacks(specials["ATTACKS"], pic_path, master)
+		if specials.has("BUFFS") :
+			specials["BUFFS"] = load_buffs(specials["BUFFS"], pic_path, master)
+		if specials.has("COUNTERS") :
+			specials["COUNTERS"] = load_counters(specials["COUNTERS"], master)
+		if specials.has("MAP_AREAS") :
+			specials["MAP_AREAS"] = load_map_areas(specials["MAP_AREAS"], master)
+		if specials.has("LOCATIONS") :
+			specials["LOCATIONS"] = load_locations(specials["LOCATIONS"], master)
+		if specials.has("EVENTS") :
+			specials["EVENTS"] = load_events(specials["EVENTS"], pic_path, master)
+		if specials.has("SITUATIONS") :
+			specials["SITUATIONS"] = load_situations(specials["SITUATIONS"], pic_path, master)
+		if specials.has("NPCS") :
+			specials["NPCS"]
+		if specials.has("COMMAND_SPELLS") :
+			specials["COMMAND_SPELLS"]
+		if specials.has("MASTERS") :
+			specials["MASTERS"] = load_masters(specials["MASTERS"], pic_path, master)
+		if specials.has("SERVANTS") :
+			specials["SERVANTS"]
+		master._effects = effects
+		master._specials = specials
+		master._upgrade_skill = upgrade_skill
+		
+		var tags = mas["tags"] as Array
+		for tag in tags:
+			tag["from"] = master
+		tag_list.append_array(tags)
+		
+		master_arr.append(master)
+	
+	return master_arr

@@ -24,38 +24,41 @@ static func edit_num_and_return(num:BaseNumber, add:BaseNumber = BaseNumber.new(
 	result.number = num
 	return result
 
-static func change_pl_order(set_order = null, vary_order:int = 0, player_id = GameData.player_id):
+static func change_pl_order(set_order:BaseNumber = null, vary_order:BaseNumber = BaseNumber.new(0), player_id = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
-	if set_order != null and set_order is int:
-		var current_order = player_data["order"] as int
+	if set_order != null and set_order.number is int:
+		var current_order = player_data["order"] as BaseNumber
 		var pl_ids = get_all_players_id()
-		if set_order < current_order:
-			for order in range(set_order,current_order + 1):
+		if set_order.number < current_order.number:
+			for order in range(set_order.number,current_order.number + 1):
 				for id in pl_ids:
 					var pl_data = GameDataManager.get_player_data(id)
-					if pl_data["order"] == order:
-						pl_data["order"] += 1
-					if pl_data["order"] >= GameData.player_num:
-						pl_data["order"] -= GameData.player_num
+					var pl_order = pl_data["order"] as BaseNumber
+					if pl_order.number == order:
+						pl_order.add(BaseNumber.new(1))
+					if pl_order.number >= GameData.player_num:
+						pl_order.minus(BaseNumber.new(GameData.player_num))
 			player_data["order"] = set_order
-		elif set_order > current_order:
-			for order in range(current_order,set_order + 1):
+		elif set_order.number > current_order.number:
+			for order in range(current_order.number,set_order.number + 1):
 				for id in pl_ids:
 					var pl_data = GameDataManager.get_player_data(id)
-					if pl_data["order"] == order:
-						pl_data["order"] -= 1
-					if pl_data["order"] <= -1:
-						pl_data["order"] += GameData.player_num
+					var pl_order = pl_data["order"] as BaseNumber
+					if pl_order.number == order:
+						pl_order.minus(BaseNumber.new(1))
+					if pl_order.number <= -1:
+						pl_order.add(BaseNumber.new(GameData.player_num))
 			player_data["order"] = set_order
 			
 	var pl_ids = get_all_players_id()
 	for id in pl_ids:
 		var pl_data = GameDataManager.get_player_data(id)
-		pl_data["order"] += vary_order
-		if pl_data["order"] >= GameData.player_num:
-			pl_data["order"] -= GameData.player_num
-		if pl_data["order"] <= -1:
-			pl_data["order"] += GameData.player_num
+		var pl_order = pl_data["order"] as BaseNumber
+		pl_order.add(vary_order)
+		if pl_order.number >= GameData.player_num:
+			pl_order.minus(BaseNumber.new(GameData.player_num))
+		if pl_order.number <= -1:
+			pl_order.add(BaseNumber.new(GameData.player_num))
 
 
 
@@ -85,26 +88,26 @@ static func edit_power(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumb
 	var power = player_data["power"] as BaseNumber
 	power.add(vary_num)
 #waiting
-static func edit_location_benefit(location:BaseLocation, set_num = null, vary_num:int = 0):
+static func edit_location_benefit(location:BaseLocation, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0)):
 	if set_num != null:
 		location._benefit = set_num
-	location._benefit += vary_num
+	location._benefit.add(vary_num)
 	
 	
-static func edit_location_magic(location:BaseLocation, set_num = null, vary_num:int = 0):
+static func edit_location_magic(location:BaseLocation, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0)):
 	if set_num != null:
 		location._magic = set_num
-	location._magic += vary_num
+	location._magic.add(vary_num)
 	
-static func edit_map_area_score(map_area:BaseMapArea, set_num = null, vary_num:int = 0):
+static func edit_map_area_score(map_area:BaseMapArea, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0)):
 	if set_num != null:
 		map_area._score = set_num
-	map_area._score += vary_num
+	map_area._score.add(vary_num)
 
-static func edit_map_area_move_cost(map_area:BaseMapArea, set_num = null, vary_num:int = 0):
+static func edit_map_area_move_cost(map_area:BaseMapArea, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0)):
 	if set_num != null:
 		map_area._move_cost = set_num
-	map_area._move_cost += vary_num
+	map_area._move_cost.add(vary_num)
 	
 static func add_map_area_buff(map_area:BaseMapArea, add_buff:BaseBuff):
 	var buff_arr:Array = map_area._buffs
@@ -118,7 +121,7 @@ static func add_situatiuons(add_situation:BaseSituation):
 	var situation_arr = MapData.situations as Array
 	situation_arr.append(add_situation)
 
-static func move_location(move_num:int, player_id:int = GameData.player_id, ignore_limit:bool = false):
+static func move_location(move_num:BaseNumber, player_id:int = GameData.player_id, ignore_limit:bool = false) -> BaseNumber:
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	var location:BaseLocation = player_data["location"]
 	var area:BaseMapArea
@@ -126,18 +129,18 @@ static func move_location(move_num:int, player_id:int = GameData.player_id, igno
 		var arr = area._locations as Array
 		if !arr.has(location): 
 			#show("玩家所处位置不位于地图上")
-			return 0
+			return BaseNumber.new(0)
 		area = a
 	
-	var total_cost:int = 0
-	if move_num > 0:
-		for n in move_num:
+	var total_cost:BaseNumber = BaseNumber.new(0)
+	if move_num.number > 0:
+		for n in move_num.number:
 			if area._linked_map_area != null:
-				total_cost += area._move_cost
+				total_cost.add(area._move_cost)
 				area = area._linked_map_area
-	elif move_num < 0:
-		move_num = 0 - move_num
-		for n in move_num:
+	elif move_num.number < 0:
+		move_num.set_num(BaseNumber.new(0 - move_num.number))
+		for n in move_num.number:
 			var area_arr:Array
 			for a:BaseMapArea in MapData.areas:
 				if a._linked_map_area == area:
@@ -145,14 +148,14 @@ static func move_location(move_num:int, player_id:int = GameData.player_id, igno
 			if area_arr.size() > 1:
 				#area = choose_where_to_go()
 				continue
-			if area_arr.size() >= 1:
+			if area_arr.size() == 1:
 				area = area_arr[0]
 	else:
-		return 0
+		return BaseNumber.new(0)
 	
 	if area._can_move_to == false:
 		#show("无法移动至此区域")
-		return 0
+		return BaseNumber.new(0)
 	if ignore_limit:
 		for loc:BaseLocation in area._locations:
 			if loc._pl_num_limit == -1:
@@ -164,12 +167,14 @@ static func move_location(move_num:int, player_id:int = GameData.player_id, igno
 		for loc:BaseLocation in area._locations:
 			if loc._pl_num_limit <= loc._players.size():
 				#show("目标位置已满")
-				return 0
+				return BaseNumber.new(0)
 			if loc._pl_num_limit > loc._players.size() and loc._will_move_to:
 				var arr = loc._players as Array
 				arr.append(player_id)
 				player_data["location"] = loc
 				return total_cost
+				
+	return BaseNumber.new(0)
 
 static func set_location(setted_location:BaseLocation, player_id:int = GameData.player_id, is_move:bool = true):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
@@ -208,7 +213,7 @@ static func deploy(deploy_location:BaseLocation, player_id:int = GameData.player
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	set_location(deploy_location, player_id, ignore_limit)
 	
-static func move(move_num:int, player_id:int = GameData.player_id, ignore_limit:bool = false, ignore_battle:bool = false):
+static func move(move_num:BaseNumber, player_id:int = GameData.player_id, ignore_limit:bool = false, ignore_battle:bool = false):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	if !ignore_battle and player_data["is_battle"] == true:
 		#show("处于交战状态，无法移动")
@@ -224,7 +229,7 @@ static func activate_effect(effect:BaseEffect):
 			if para is Dictionary:
 				if para.has("number_index"):
 					if para["number_index"] == -1: return
-					para = effect.numbers[para["number_index"]]
+					para = effect._using_numbers[para["number_index"]]
 				if para.has("self_var"):
 					if para["self_var"] == -1: return
 					para = effect._self_vars[para["self_var"]]
@@ -242,90 +247,101 @@ static func activate_effect(effect:BaseEffect):
 	#for f in effect._funcs:
 		#f._func.callv(f._parameters)
 
-static func play_attack(attack:BaseAttack, player_id:int = GameData.player_id, cost:int = attack._cost, power:int = attack._power):
+static func play_attack(attack:BaseAttack, player_id:int = GameData.player_id, cost:BaseNumber = attack._cost, power:BaseNumber = attack._power):
 	var player_data = GameDataManager.get_player_data(player_id)
-	player_data["magic"] -= cost
-	player_data["power"] += power
-	for eff:BaseEffect in attack._effects:
-		if eff._time_points.has(TimePoints.PLAYED_CRAD):
-			activate_effect(eff)
-	var playered_cards_arr = player_data["played_cards"] as Array
-	var dic = {
-		"card" : attack,
-		"is_back" : false
-	}
-	playered_cards_arr.append(dic)
-
-static func play_skill(skill:BaseSkill, player_id:int = GameData.player_id, ignore_limit:bool = false, cost:int = skill._cost, power:int = skill._power):
-	var player_data = GameDataManager.get_player_data(player_id)
-	if player_data["magic"] < 8 :
-		if !ignore_limit and !skill._ignore_limit:
-			#show_lack_of_magic()
-			return
-	player_data["magic"] -= cost
-	player_data["power"] += power
-	for eff:BaseEffect in skill._effects:
-		if eff._time_points.has(TimePoints.PLAYED_CRAD):
-			activate_effect(eff)
-	var playered_cards_arr = player_data["played_cards"] as Array
-	var dic = {
-		"card" : skill,
-		"is_back" : false
-	}
-	playered_cards_arr.append(dic)
-
-static func add_attack(attack:BaseAttack, player_id:int = GameData.player_id, power:int = attack._power):
-	var player_data = GameDataManager.get_player_data(player_id)
-	player_data["power"] += power
-	for eff:BaseEffect in attack._effects:
-		if eff._time_points.has(TimePoints.PLAYED_CRAD):
-			activate_effect(eff)
-	var playered_cards_arr = player_data["played_cards"] as Array
-	var dic = {
-		"card" : attack,
-		"is_back" : false
-	}
-	playered_cards_arr.append(dic)
-
-static func add_skill(skill:BaseSkill, player_id:int = GameData.player_id, ignore_limit:bool = false,  power:int = skill._power):
-	var player_data = GameDataManager.get_player_data(player_id)
-	if player_data["magic"] < 8 :
-		if !ignore_limit and !skill._ignore_limit:
-			#show_lack_of_magic()
-			return
-	player_data["power"] += power
-	for eff:BaseEffect in skill._effects:
-		if eff._time_points.has(TimePoints.PLAYED_CRAD):
-			activate_effect(eff)
-	var playered_cards_arr = player_data["played_cards"] as Array
-	var dic = {
-		"card" : skill,
-		"is_back" : false
-	}
-	playered_cards_arr.append(dic)
+	var pl_magic = player_data["magic"] as BaseNumber
+	pl_magic.minus(cost)
+	var pl_power = player_data["power"] as BaseNumber
+	pl_power.add(power)
 	
-static func draw_card_by_card(card:BaseCard, from:Array, to:Array, to_index:int = -1):
+	attack._is_activating = true
+	
+	var playered_cards_arr = player_data["played_cards"] as Array
+	playered_cards_arr.append(attack)
+
+static func play_skill(skill:BaseSkill, player_id:int = GameData.player_id, ignore_limit:bool = false, cost:BaseNumber = skill._cost, power:BaseNumber = skill._power):
+	var player_data = GameDataManager.get_player_data(player_id)
+	if player_data["magic"] < 8 :
+		if !ignore_limit and !skill._ignore_limit:
+			#show_lack_of_magic()
+			return
+	var pl_magic = player_data["magic"] as BaseNumber
+	pl_magic.minus(cost)
+	var pl_power = player_data["power"] as BaseNumber
+	pl_power.add(power)
+	
+	skill._is_activating = true
+	
+	var playered_cards_arr = player_data["played_cards"] as Array
+	playered_cards_arr.append(skill)
+
+static func add_attack(attack:BaseAttack, player_id:int = GameData.player_id, power:BaseNumber = attack._power):
+	var player_data = GameDataManager.get_player_data(player_id)
+	var pl_power = player_data["power"] as BaseNumber
+	pl_power.add(power)
+	
+	attack._is_activating = true
+	
+	var playered_cards_arr = player_data["played_cards"] as Array
+	playered_cards_arr.append(attack)
+
+static func add_skill(skill:BaseSkill, player_id:int = GameData.player_id, ignore_limit:bool = false,  power:BaseNumber = skill._power):
+	var player_data = GameDataManager.get_player_data(player_id)
+	if player_data["magic"] < 8 :
+		if !ignore_limit and !skill._ignore_limit:
+			#show_lack_of_magic()
+			return
+	var pl_power = player_data["power"] as BaseNumber
+	pl_power.add(power)
+	
+	skill._is_activating = true
+	
+	var playered_cards_arr = player_data["played_cards"] as Array
+	playered_cards_arr.append(skill)
+	
+static func played_cards(player_id:int = GameData.player_id):
+	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CRAD], player_id)
+	
+static func draw_card_by_card(card:BaseCard, from:Array, to:Array, to_index:BaseNumber = BaseNumber.new(-1)):
 	var i = from.find(card)
 	if i == -1:
 		return
 	from.pop_at(i)
-	if to_index == -1:
+	if to_index.number == -1:
 		to.append(card)
-	to.insert(to_index, card)
+	if !(to_index.number is int):
+		#show("index只能为整数")
+		return
+	if to.size() < to_index.number:
+		#show("超出数组范围")
+		return
+	to.insert(to_index.number, card)
 	
-static func draw_card_by_index(from:Array, to:Array, from_index:int = 0, to_index:int = -1):
-	var card = from[0]
+static func draw_card_by_index(from:Array, to:Array, from_index:BaseNumber = BaseNumber.new(0), to_index:BaseNumber = BaseNumber.new(-1)):
+	if from.size() <= from_index.number:
+		#show("超出数组范围")
+		return
+	var card = from[from_index.number]
 	if card is BaseCard:
 		from.pop_at(0)
-		if to_index == -1:
+		if to_index.number == -1:
 			to.append(card)
-		to.insert(to_index, card)
+		if !(to_index.number is int):
+			#show("index只能为整数")
+			return
+		if to.size() < to_index.number:
+			#show("超出数组范围")
+			return
+		to.insert(to_index.number, card)
 
-static func draw_card_from_pl_deck_to_hand(from_index:int = 0, player_id:int = GameData.player_id):
+static func draw_card_from_pl_deck_to_hand(from_index:BaseNumber = BaseNumber.new(0), player_id:int = GameData.player_id):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	var deck = player_data["deck"] as Array
-	var card = deck[from_index]
-	deck.pop_at(from_index)
+	if deck.size() <= from_index.number:
+		#show("超出数组范围")
+		return
+	var card = deck[from_index.number]
+	deck.pop_at(from_index.number)
 	var hand = player_data["hand_cards"] as Array
 	hand.append(card)
 
@@ -336,9 +352,23 @@ static func defeat(player_id:int = GameData.player_id):
 	player_data["is_battle_win"] = false
 
 
+static func discard_played_cards(player_id:int = GameData.player_id):
+	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	var cards_arr = player_data["played_cards"] as Array
+	var discard = player_data["discard"] as Array
+	for card:BaseHandCard in cards_arr:
+		var card_is_residue:bool = false
+		for eff:BaseEffect in card._effects:
+			if eff._is_residue:
+				card_is_residue = true
+				break
+		if card_is_residue: continue
+		card._is_activating = false
+		draw_card_by_card(card, cards_arr, discard, BaseNumber.new(0))
+
+
 #禁止系效果
-static func counter(priority:int, effect:BaseEffect, countered_func:BaseFunc = null):
-	#判断priority
+static func counter(effect:BaseEffect, countered_func:BaseFunc = null):
 	for i in range(GameProgress.effect_progress.size()-1, -1, -1):
 		var arr = GameProgress.effect_progress[i] as Array
 		var index = arr.find(effect)
@@ -411,6 +441,20 @@ static func _foreach_func(_func:BaseFunc, _var, parameter_index:int = 0):
 		_func._func.callv(_func._parameters)
 
 #获取数值
+static func create_base_number(number, can_change:bool = false):
+	var n
+	var num
+	if number is int:
+		n = number
+		num = BaseNumber.new(n, can_change)
+		num.is_float = false
+	elif number is float:
+		n = number
+		num = BaseNumber.new(n, can_change)
+		num.is_float = true
+	return num
+	
+
 static func create_func(callable:Callable, parameters:Array):
 	var _func = BaseFunc.new(callable, parameters)
 	return _func
@@ -419,14 +463,14 @@ static func create_buff(buff_name:String, buff_img:String, buff_id:int):
 	var buff = BaseBuff.new(buff_name, buff_img)
 	return buff
 
-static func _location(magic:int = 0, benefit:int = 0, pl_num_limit:int = 1, will_move_to:bool = false):
+static func _location(magic:BaseNumber = BaseNumber.new(0), benefit:BaseNumber = BaseNumber.new(0), pl_num_limit:int = 1, will_move_to:bool = false):
 	var location = BaseLocation.new(magic,benefit,pl_num_limit,will_move_to)
 	return location
 	
-static func _tag(tag_name:String, from):
+static func _tag(tag_name:String, from_pl_id:int):
 	var tag = {
 		"tag_name" : tag_name,
-		"from" : from
+		"from" : from_pl_id
 	}
 	return tag
 	
@@ -457,7 +501,7 @@ static func get_pls_in_location(location:BaseLocation):
 	return location._players
 	
 
-static func get_data_num(key:String, player_id:int = GameData.player_id):
+static func get_data_number(key:String, player_id:int = GameData.player_id):
 	var player_data = GameDataManager.get_player_data(player_id) as Dictionary
 	if !player_data.has(key):
 		#show("所提供的键不存在于player_data中")
@@ -599,6 +643,10 @@ static func get_map_area_score(map_area:BaseMapArea):
 	return map_area._score
 
 
+static func get_map_area_score_need_win(map_area:BaseMapArea):
+	return map_area._score_need_win
+
+
 static func get_map_area_buffs(map_area:BaseMapArea):
 	return map_area._buffs
 
@@ -637,14 +685,23 @@ static func get_cards_by_name_fr_arr(card_name:String, cards:Array):
 	return got_cards
 	
 
-static func get_card_by_index_fr_arr(card_index:int, cards:Array):
-	return cards[card_index]
+static func get_card_by_index_fr_arr(card_index:BaseNumber, cards:Array):
+	if cards.size() <= card_index.number:
+		#show("超出数组范围")
+		return
+	return cards[card_index.number]
 
 static func get_printed_nums(object:BaseObject):
 	return object.numbers
 
-static func get_printed_num(index:int, object:BaseObject):
-	return object.numbers[index]
+static func get_effect_using_nums(effect:BaseEffect):
+	return effect._using_numbers
+
+static func get_printed_num(index:BaseNumber, object:BaseObject):
+	if object.numbers.size() <= index.number:
+		#show("超出数组范围")
+		return
+	return object.numbers[index.number]
 
 static func get_attack_printed_cost(attack:BaseAttack):
 	return attack.numbers[0]

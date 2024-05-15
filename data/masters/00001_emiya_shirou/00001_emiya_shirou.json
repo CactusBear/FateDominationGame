@@ -9,8 +9,12 @@
       "effect_name": "weishu",
       "time_points": ["game_start"],
       "priority": -1,
-      "is_passive" : false,
-      "effect_numbers": [2, 2],
+      "is_pure_passive": false,
+      "is_residue": false,
+      "effect_numbers": [
+        { "number": 2, "can_change": true, "is_pure_number": true },
+        { "number": 2, "can_change": true, "is_pure_number": true }
+      ],
       "funcs": [
         {
           "func_name": "edit_magic",
@@ -40,7 +44,8 @@
             "effect_name": "lalala",
             "time_points": ["game_start"],
             "priority": -1,
-            "is_passive" : false,
+            "is_pure_passive": false,
+            "is_residue": false,
             "effect_numbers": [],
             "funcs": []
           }
@@ -59,7 +64,8 @@
             "effect_name": "lalala",
             "time_points": [],
             "priority": -1,
-            "is_passive" : false,
+            "is_pure_passive": false,
+            "is_residue": false,
             "effect_numbers": [],
             "funcs": []
           }
@@ -77,7 +83,8 @@
             "effect_name": "lalala",
             "time_points": [],
             "priority": -1,
-            "is_passive" : false,
+            "is_pure_passive": false,
+            "is_residue": false,
             "effect_numbers": [],
             "funcs": []
           }
@@ -98,7 +105,8 @@
           "effect_name": "lalala",
           "time_points": ["game_start"],
           "priority": -1,
-          "is_passive" : false,
+          "is_pure_passive": false,
+          "is_residue": false,
           "effect_numbers": [],
           "funcs": []
         }

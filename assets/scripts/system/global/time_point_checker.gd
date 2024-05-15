@@ -27,6 +27,7 @@ func dynamic_time_point(time_points:Array, current_player_id:int):
 		var other_tp_arr = other_player_data["current_time_points"] as Array
 		other_tp_arr = phase_time_points + other_dtp_arr
 	
+	time_point_check()
 	
 
 func time_point_check():
@@ -41,8 +42,16 @@ func time_point_check():
 			for tp in effect._time_points:
 				has_effect = current_time_points.has(tp)
 			if has_effect:
-				if !effect._is_passive:
-					GameProgress.add_to_choose_active(effect, id)
+				if !effect._is_pure_passive:
+					if effect.need_activate:
+						if effect.from is BaseHandCard:
+							var handcard = effect.from as BaseHandCard
+							if handcard._is_activating:
+								GameProgress.add_to_choose_active(effect, id)
+						else :
+							GameProgress.add_to_choose_active(effect, id)
+					else :
+						GameProgress.add_to_choose_active(effect, id)
 				else :
 					GameProgress.add_to_order_passive(effect, id)
 		if player_data["choosing_active_effects"] != []:

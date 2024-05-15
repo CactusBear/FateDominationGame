@@ -17,7 +17,7 @@ var player_data:Dictionary = {
 	"deck" : [],
 	"discard" : [],
 	"hand_cards" : [],
-	"played_cards" : [], #{"card" : null, "is_back" : false}
+	"played_cards" : [],
 	"master_skills" : [],
 	"servant_skills" : [],
 	"location" : null,
@@ -31,7 +31,7 @@ var player_data:Dictionary = {
 	"is_battle_lose" : false,
 	"is_battle_win" : false,
 	"is_first" : false,
-	"order" : 0,
+	"order" : BaseNumber.new(0),
 	"current_time_points" : [],
 	"dynamic_time_points" : [],
 	"buffs" : [],

@@ -5,10 +5,10 @@ class_name BaseNumber
 var number
 var is_float:bool
 var can_change:bool
+var is_pure_number:bool
 
 
-
-func _init(_number, _can_change:bool = true):
+func _init(_number, _can_change:bool = true, _is_pure_number:bool = true):
 	if _number is int:
 		number = _number
 		is_float = false
@@ -16,7 +16,7 @@ func _init(_number, _can_change:bool = true):
 		number = _number
 		is_float = true
 	can_change = _can_change
-
+	is_pure_number = _is_pure_number
 
 
 func add(num:BaseNumber) -> BaseNumber:

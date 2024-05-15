@@ -32,7 +32,10 @@ func order_passive_effect():
 			id += GameData.player_num
 		var ordered_effects:Array
 		var pl_data = GameDataManager.get_player_data(id) as Dictionary
-		if pl_data["ordering_passive_effects"] == [] :continue
+		var ordering_passive_effects = pl_data["ordering_passive_effects"] as Array
+		if ordering_passive_effects == [] :continue
+		if ordering_passive_effects.size() == 1:
+			ordered_effects = ordering_passive_effects
 		#ordered_effects = show_order_effects(id)
 		for effect in ordered_effects:
 			use_passive_effect(effect)
