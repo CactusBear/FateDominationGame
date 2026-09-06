@@ -1,8 +1,27 @@
-extends Node
+extends RefCounted
 class_name BaseLocation
 
 
-var from
+#所属对象。所有者反过来也持有本对象，用强引用会形成循环引用，所以存弱引用
+var from : set = set_from, get = get_from
+var _from_ref:WeakRef
+var _from_value
+
+
+func set_from(value):
+	if value is Object:
+		_from_ref = weakref(value)
+		_from_value = null
+	else:
+		_from_ref = null
+		_from_value = value
+
+
+func get_from():
+	if _from_ref != null:
+		return _from_ref.get_ref()
+	return _from_value
+
 var _players:Array
 var _magic:BaseNumber
 var _printed_magic:BaseNumber

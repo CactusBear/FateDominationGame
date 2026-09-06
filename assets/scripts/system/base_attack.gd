@@ -13,4 +13,3 @@ func _init(card_name:String, card_img:String, attributes:Array, cost:BaseNumber 
 	numbers.insert(0, cost)
 	numbers.insert(1, power)
 	super.add_object()
-

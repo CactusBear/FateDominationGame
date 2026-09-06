@@ -6,7 +6,6 @@ var tag_list_path = "data"
 var tag_list:Array
 var temp_stored_jsons_arr:Array#[String]
 var _loaded_path = []
-var func_table:Dictionary = FuncTable.new().funcs
 var load_masters_finished:bool = false
 
 func _ready():
@@ -242,11 +241,22 @@ func load_master_file(path:String, master_file_name:String):
 	master._upgrade_skill = upgrade_skill
 	
 	var tags = data["tags"] as Array
+	#存名字而不是对象本身。master.tags里的字典再指回master会形成循环引用，对象永远不释放
 	for tag in tags:
-		tag["from"] = master
+		tag["from"] = master._name
 	tag_list.append_array(tags)
 	
 	return master
+
+
+func func_name_to_class_name(func_name:String) -> String:
+	var parts = func_name.split("_")
+	var _class_name = ""
+	for part in parts:
+		if part == "":
+			continue
+		_class_name += part.substr(0, 1).to_upper() + part.substr(1)
+	return _class_name
 
 
 func load_effects(effects:Array, from):
@@ -262,32 +272,40 @@ func load_effects(effects:Array, from):
 			nums.append(num)
 		
 		var effect = BaseEffect.new(eff["effect_name"], eff["time_points"], priority, is_pure_passive, is_residue)
+		effect._shown_name = eff.get("shown_effect_name", "")
 		effect.from = from
 		effect.set_numbers(nums)
 		effect._using_numbers = nums
+		#from和numbers都已就绪，此时才能把数字登记到所属对象上
+		effect.register_numbers_to_source()
 		for _func:Dictionary in eff["funcs"]:
+			var condition = _func.get("condition", null)
+			var var_index = _func.get("var_index", -1)
+			var paras = _func.get("parameters", []) as Array
+
 			if _func.has("func_name"):
 				var key = _func["func_name"] as String
-				if !func_table.has(key): 
+				var _class_name = func_name_to_class_name(key)
+				var effect_path = "res://assets/scripts/system/effects/" + _class_name + ".gd"
+				if !ResourceLoader.exists(effect_path):
 					print("没有函数:" + "'" + key + "'")
-					return
-				var main_callable = func_table[key] as Callable
-				var paras = _func["parameters"] as Array
-				var var_index = _func["var_index"]
-				var eff_func = BaseFunc.new(main_callable, paras, var_index)
+					continue
+				var effect_instance = load(effect_path).new()
+				var main_callable = Callable(effect_instance, "exec")
+				var eff_func = BaseFunc.new(main_callable, paras, var_index, condition)
+				#Callable不会保活实例，必须由func自己持有引用，否则加载完就被释放
+				eff_func._instance = effect_instance
 				effect.add_func(eff_func)
-			
+
 			elif _func.has("self_var"):
-				if _func["self_var"] == -1: continue
-				if !(effect._self_vars[_func["self_var"]]) is Node: continue
-				var v = effect._self_vars[_func["self_var"]] as Node
-				for f in v.get_method_list():
-					if f["name"] == _func["sub_func"]:
-						var sub_callable = Callable(v, _func["sub_func"])
-						var paras = _func["parameters"] as Array
-						var var_index = _func["var_index"]
-						var eff_func = BaseFunc.new(sub_callable, paras, var_index)
-						effect.add_func(eff_func)
+				#调用存在变量表里的对象自身的方法。目标对象只在效果激活时才存在，
+				#所以这里只记下下标和方法名，绑定推迟到activate_effect
+				var self_var_index = _func["self_var"] as int
+				if self_var_index == -1: continue
+				var method_name = _func.get("sub_func", "") as String
+				if method_name == "": continue
+				var eff_func = BaseFunc.new_method_func(self_var_index, method_name, paras, var_index, condition)
+				effect.add_func(eff_func)
 		
 		eff_arr.append(effect)
 	
@@ -295,7 +313,11 @@ func load_effects(effects:Array, from):
 
 
 func load_number(number:Dictionary):
-	var num = BaseNumber.new(number["number"], number["can_change"], number["is_pure_number"])
+	#JSON里的数字一律解析成float，整数值要还原成int，否则is_float会全部判成true
+	var raw = number["number"]
+	if raw is float and raw == floor(raw) and !number.get("is_float", false):
+		raw = int(raw)
+	var num = BaseNumber.new(raw, number["can_change"], number["is_pure_number"])
 	return num
 
 
@@ -309,6 +331,7 @@ func load_skills(skills:Array, pic_path:String, from):
 		var power = load_number(ski["power"])
 		var ignore_limit = ski["ignore_limit"]
 		var skill = BaseSkill.new(skill_name, skill_card_img, attributes, cost, power, ignore_limit)
+		skill._shown_name = ski.get("shown_skill_name", "")
 		var effects = load_effects(ski["effects"], skill)
 		skill._effects = effects
 		skill.from = from
@@ -321,11 +344,12 @@ func load_attacks(attacks:Array, pic_path:String, from):
 	var att_arr:Array
 	for att:Dictionary in attacks:
 		var attack_name = att["attack_name"]
-		var attack_crad_img = pic_path + "/" + att["attack_crad_img"]
+		var attack_card_img = pic_path + "/" + att["attack_card_img"]
 		var attributes = att["attributes"]
 		var cost = load_number(att["cost"])
 		var power = load_number(att["power"])
-		var attack = BaseAttack.new(attack_name, attack_crad_img, attributes, cost, power)
+		var attack = BaseAttack.new(attack_name, attack_card_img, attributes, cost, power)
+		attack._shown_name = att.get("shown_attack_name", "")
 		var effects = load_effects(att["effects"], attack)
 		attack._effects = effects
 		attack.from = from
@@ -478,8 +502,9 @@ func load_masters(masters:Array, pic_path:String, from):
 		master._upgrade_skill = upgrade_skill
 		
 		var tags = mas["tags"] as Array
+		#同上，存名字避免循环引用
 		for tag in tags:
-			tag["from"] = master
+			tag["from"] = master._name
 		tag_list.append_array(tags)
 		
 		master_arr.append(master)

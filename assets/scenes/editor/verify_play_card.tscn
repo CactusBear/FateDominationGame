@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cb3v82xverifyplay"]
+
+[ext_resource type="Script" path="res://assets/scripts/editor/verify_play_card.gd" id="1_test"]
+
+[node name="verify_play_card" type="Node"]
+script = ExtResource("1_test")

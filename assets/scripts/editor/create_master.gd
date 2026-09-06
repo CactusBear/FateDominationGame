@@ -262,11 +262,11 @@ func _on_add_time_point_events1():
 	var time_point:String
 	match  id:
 		0:
-			time_point = TimePoints.PLAYED_CRAD
+			time_point = TimePoints.PLAYED_CARD
 		1:
-			time_point = TimePoints.SELF_PLAYED_CRAD
+			time_point = TimePoints.SELF_PLAYED_CARD
 		2:
-			time_point = TimePoints.OTHERS_PLAYED_CRAD
+			time_point = TimePoints.OTHERS_PLAYED_CARD
 		3:
 			time_point = TimePoints.MAGIC_ADD
 		4:

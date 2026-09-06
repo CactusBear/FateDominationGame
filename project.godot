@@ -8,6 +8,10 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Fate"
@@ -16,7 +20,7 @@ config/version="0.0.1"
 run/main_scene="res://assets/scenes/game_scene/game_scene.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="FateDomination"
-config/features=PackedStringArray("4.2", "Mobile")
+config/features=PackedStringArray("4.6", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -25,10 +29,12 @@ CursorReplace="*res://assets/scripts/system/global/cursor_replace.gd"
 GameData="*res://assets/scripts/system/global/game_data.gd"
 MasterManager="*res://assets/scripts/system/global/master_manager.gd"
 GameDataManager="*res://assets/scripts/system/global/game_data_manager.gd"
+EffectManager="*res://assets/scripts/system/global/effect_manager.gd"
 TimePointChecker="*res://assets/scripts/system/global/time_point_checker.gd"
 LoadGame="*res://assets/scripts/system/global/load_game.gd"
 MapData="*res://assets/scripts/system/global/map_data.gd"
 GameProgress="*res://assets/scripts/system/global/game_progress.gd"
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [display]
 
@@ -45,6 +51,10 @@ project/assembly_name="Fate"
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg")
+
 [filesystem]
 
 import/blender/enabled=false
@@ -53,13 +63,13 @@ import/blender/enabled=false
 
 last_player={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194319,"key_label":0,"unicode":0,"echo":false,"script":null)
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194319,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 , Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":13,"pressure":0.0,"pressed":false,"script":null)
 ]
 }
 next_player={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194321,"key_label":0,"unicode":0,"echo":false,"script":null)
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194321,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 , Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":14,"pressure":0.0,"pressed":false,"script":null)
 ]
 }

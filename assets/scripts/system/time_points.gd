@@ -60,9 +60,9 @@ const DAY_START = "day_start"
 const DAY = "day"
 const DAY_END = "day_end"
 
-const PLAYED_CRAD = "played_card"
-const SELF_PLAYED_CRAD = "self_played_card"
-const OTHERS_PLAYED_CRAD = "others_played_card"
+const PLAYED_CARD = "played_card"
+const SELF_PLAYED_CARD = "self_played_card"
+const OTHERS_PLAYED_CARD = "others_played_card"
 
 const MAGIC_ADD = "magic_add"
 const MAGIC_DECREASE = "magic_decrease"
@@ -78,6 +78,21 @@ const SELF_SCORE_DECREASE = "self_score_decrease"
 const OTHERS_SCORE_ADD = "others_score_add"
 const OTHERS_SCORE_DECREASE = "others_score_decrease"
 
+const LIVES_ADD = "lives_add"
+const LIVES_DECREASE = "lives_decrease"
+const SELF_LIVES_ADD = "self_lives_add"
+const SELF_LIVES_DECREASE = "self_lives_decrease"
+const OTHERS_LIVES_ADD = "others_lives_add"
+const OTHERS_LIVES_DECREASE = "others_lives_decrease"
+
+const LAST_LIFE = "last_life"
+const SELF_LAST_LIFE = "self_last_life"
+const OTHERS_LAST_LIFE = "others_last_life"
+
+const ELIMINATED = "eliminated"
+const SELF_ELIMINATED = "self_eliminated"
+const OTHERS_ELIMINATED = "others_eliminated"
+
 const BATTLE_WIN = "battle_win"
 const BATTLE = "battle"
 const BATTLE_LOSE = "battle_lose"
@@ -87,6 +102,16 @@ const SELF_BATTLE_LOSE = "self_battle_lose"
 const OTHERS_BATTLE_WIN = "others_battle_win"
 const OTHERS_BATTLE = "others_battle"
 const OTHERS_BATTLE_LOSE = "others_battle_lose"
+
+const CLIMAX_START = "climax_start"
+const CLIMAX = "climax"
+const CLIMAX_END = "climax_end"
+const SELF_CLIMAX_START = "self_climax_start"
+const SELF_CLIMAX = "self_climax"
+const SELF_CLIMAX_END = "self_climax_end"
+const OTHERS_CLIMAX_START = "others_climax_start"
+const OTHERS_CLIMAX = "others_climax"
+const OTHERS_CLIMAX_END = "others_climax_end"
 
 const DEPLOY_START = "deploy_start"
 const DEPLOY = "deploy"
@@ -180,9 +205,9 @@ const shown_time_points:Dictionary = {
 	DAY_START : "一天开始时",
 	DAY : "一天中",
 	DAY_END : "一天结束时",
-	PLAYED_CRAD : "打出卡牌时",
-	SELF_PLAYED_CRAD : "自己打出卡牌时",
-	OTHERS_PLAYED_CRAD : "他人打出卡牌时",
+	PLAYED_CARD : "打出卡牌时",
+	SELF_PLAYED_CARD : "自己打出卡牌时",
+	OTHERS_PLAYED_CARD : "他人打出卡牌时",
 	MAGIC_ADD : "魔力增加时",
 	MAGIC_DECREASE : "魔力减少时",
 	SELF_MAGIC_ADD : "自己魔力增加时",
@@ -195,6 +220,18 @@ const shown_time_points:Dictionary = {
 	SELF_SCORE_DECREASE : "自己战果减少时",
 	OTHERS_SCORE_ADD : "他人战果增加时",
 	OTHERS_SCORE_DECREASE : "他人战果减少时",
+	LIVES_ADD : "生命增加时",
+	LIVES_DECREASE : "生命减少时",
+	SELF_LIVES_ADD : "自己生命增加时",
+	SELF_LIVES_DECREASE : "自己生命减少时",
+	OTHERS_LIVES_ADD : "他人生命增加时",
+	OTHERS_LIVES_DECREASE : "他人生命减少时",
+	LAST_LIFE : "生命只剩最后一条时",
+	SELF_LAST_LIFE : "自己生命只剩最后一条时",
+	OTHERS_LAST_LIFE : "他人生命只剩最后一条时",
+	ELIMINATED : "被淘汰时",
+	SELF_ELIMINATED : "自己被淘汰时",
+	OTHERS_ELIMINATED : "他人被淘汰时",
 	BATTLE_WIN : "赢得战斗时",
 	BATTLE : "交战时",
 	BATTLE_LOSE : "败北时",
@@ -204,6 +241,15 @@ const shown_time_points:Dictionary = {
 	OTHERS_BATTLE_WIN : "他人赢得战斗时",
 	OTHERS_BATTLE : "他人交战时",
 	OTHERS_BATTLE_LOSE : "他人败北时",
+	CLIMAX_START : "高潮开始时",
+	CLIMAX : "高潮时",
+	CLIMAX_END : "高潮结束时",
+	SELF_CLIMAX_START : "自己高潮开始时",
+	SELF_CLIMAX : "自己高潮时",
+	SELF_CLIMAX_END : "自己高潮结束时",
+	OTHERS_CLIMAX_START : "他人高潮开始时",
+	OTHERS_CLIMAX : "他人高潮时",
+	OTHERS_CLIMAX_END : "他人高潮结束时",
 	DEPLOY_START : "开始部署时",
 	DEPLOY : "部署时",
 	DEPLOY_END : "结束部署时",

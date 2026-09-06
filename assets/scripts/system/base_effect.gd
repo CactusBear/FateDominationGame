@@ -9,6 +9,9 @@ var _is_residue:bool = false
 var _self_vars:Array
 var _priority:int
 var _using_numbers:Array
+#激活瞬间的触发上下文快照。start_effect会清空各玩家的动态时点，所以要在清空前记下来
+var _trigger_player_id:int = -1
+var _trigger_time_points:Array
 
 
 func _init(effect_name:String, time_points:Array, priority:int = -1, is_pure_passive:bool = false, is_residue:bool = false):
@@ -18,11 +21,18 @@ func _init(effect_name:String, time_points:Array, priority:int = -1, is_pure_pas
 	_priority = priority
 	_is_pure_passive = is_pure_passive
 	_is_residue = is_residue
-	
+
 	super.add_object()
-	var _from = from as BaseObject
-	_from.numbers.append_array(numbers)
 	GameData.effects.append(self)
+
+
+#把效果自带的数字按效果名登记到所属对象上，供外部效果按"效果名+下标"寻址。
+#from和numbers都要先赋值，所以由加载方在两者就绪后调用
+func register_numbers_to_source():
+	if !(from is BaseObject):
+		return
+	var _from = from as BaseObject
+	_from.effect_numbers[_name] = numbers
 
 
 

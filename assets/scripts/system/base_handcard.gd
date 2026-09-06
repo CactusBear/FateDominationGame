@@ -2,22 +2,13 @@ extends BaseCard
 class_name BaseHandCard
 
 
-var _attributes:Array#[String]
+#_attributes与edit_attribute已移至BaseCard，事件等非手牌卡也能带属性
 var _cost:BaseNumber
 var _is_activating:bool = false
 var _power:BaseNumber
 
 
 
-
-func edit_attribute(add_attributes:Array = [], del_attributes:Array = [], set_attributes:Array = [""]):
-	if set_attributes != [""]:
-		_attributes = set_attributes
-	_attributes.append_array(add_attributes)
-	for del in del_attributes:
-		var i = _attributes.find(del)
-		if i != -1:
-			_attributes.pop_at(i)
 
 func edit_cost(add_cost:BaseNumber = BaseNumber.new(0), set_cost:BaseNumber = null):
 	if set_cost != null:

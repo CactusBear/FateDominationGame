@@ -5,9 +5,24 @@ class_name BaseCard
 
 var _card_img:String
 var _effects:Array#[BaseEffect]
+#属性。属性主要出现在攻击卡上，但事件、目标等非手牌卡也可能带有属性，所以放在卡牌基类上
+var _attributes:Array#[String]
 
 func edit_card_name(card_name:String):
 	_name = card_name
 
 func set_effects(effects:Array):
 	_effects = effects
+
+func edit_attribute(add_attributes:Array = [], del_attributes:Array = [], set_attributes:Array = [""]):
+	if set_attributes != [""]:
+		#复制一份，否则后面的增删会改到调用方传进来的数组
+		_attributes = set_attributes.duplicate()
+	_attributes.append_array(add_attributes)
+	for del in del_attributes:
+		var i = _attributes.find(del)
+		if i != -1:
+			_attributes.pop_at(i)
+
+func has_attribute(attribute:String) -> bool:
+	return _attributes.has(attribute)

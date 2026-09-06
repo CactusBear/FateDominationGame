@@ -5,119 +5,165 @@
   "master_card_img": "00001_emiya_shirou_cd.png",
   "command_spell_img": "00001_emiya_shirou_cs.png",
   "effects": [
-    {
-      "effect_name": "weishu",
-      "time_points": ["game_start"],
-      "priority": -1,
-      "is_pure_passive": false,
-      "is_residue": false,
-      "effect_numbers": [
-        { "number": 2, "can_change": true, "is_pure_number": true },
-        { "number": 2, "can_change": true, "is_pure_number": true }
-      ],
-      "funcs": [
-        {
-          "func_name": "edit_magic",
-          "parameters": [{ "number_index": 0 }],
-          "var_index": -1
-        },
-        {
-          "self_var": -1,
-          "sub_func": "",
-          "sub_parameters": [{ "self_func": 0 }],
-          "var_index": -1
-        }
-      ]
-    }
+	{
+	  "effect_name": "inexperienced",
+	  "shown_effect_name": "未熟",
+	  "time_points": ["game_start"],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [
+		{ "number": 2, "can_change": true, "is_pure_number": true }
+	  ],
+	  "funcs": [
+		{
+		  "func_name": "edit_magic",
+		  "parameters": [{ "number_index": 0 }],
+		  "var_index": -1
+		}
+	  ]
+	},
+	{
+	  "effect_name": "projection_magic",
+	  "shown_effect_name": "投影魔术",
+	  "time_points": ["game_start"],
+	  "priority": 1,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [],
+	  "funcs": [
+		{
+		  "func_name": "add_skill_to_skill_zone",
+		  "parameters": ["kanshou_and_bakuya"],
+		  "var_index": -1
+		}
+	  ]
+	},
+	{
+	  "effect_name": "avalon",
+	  "shown_effect_name": "全世界的远望",
+	  "time_points": ["game_start", "self_lives_decrease"],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [
+		{ "number": 1, "can_change": true, "is_pure_number": true },
+		{ "number": 1, "can_change": true, "is_pure_number": true },
+		{ "number": 0, "can_change": true, "is_pure_number": true }
+	  ],
+	  "funcs": [
+		{
+		  "func_name": "when",
+		  "parameters": [["game_start"]],
+		  "var_index": 0
+		},
+		{
+		  "func_name": "edit_lives",
+		  "parameters": [null, { "number_index": 0 }],
+		  "var_index": -1,
+		  "condition": { "self_var": 0 }
+		},
+		{
+		  "func_name": "when",
+		  "parameters": [["self_lives_decrease"]],
+		  "var_index": 1
+		},
+		{
+		  "func_name": "get_player_lives",
+		  "parameters": [],
+		  "var_index": 2,
+		  "condition": { "self_var": 1 }
+		},
+		{
+		  "func_name": "if_func",
+		  "parameters": [{ "self_var": 2 }, { "number_index": 1 }],
+		  "var_index": 3,
+		  "condition": { "self_var": 1 }
+		},
+		{
+		  "func_name": "edit_magic",
+		  "parameters": [{ "number_index": 2 }],
+		  "var_index": -1,
+		  "condition": { "self_var": 3 }
+		}
+	  ]
+	}
   ],
   "specials": {
-    "SKILLS": [
-      {
-        "skill_name": "GanJiangMoYe",
-        "skill_card_img": "GanJiangMoYe.png",
-        "attributes": [],
-        "cost": 0,
-        "power": 0,
-        "ignore_limit": false,
-        "effects": [
-          {
-            "effect_name": "lalala",
-            "time_points": ["game_start"],
-            "priority": -1,
-            "is_pure_passive": false,
-            "is_residue": false,
-            "effect_numbers": [],
-            "funcs": []
-          }
-        ]
-      }
-    ],
-    "ATTACKS": [
-      {
-        "attack_name": "lalala",
-        "attack_crad_img": "lalala.png",
-        "attributes": [],
-        "cost": 0,
-        "power": 0,
-        "effects": [
-          {
-            "effect_name": "lalala",
-            "time_points": [],
-            "priority": -1,
-            "is_pure_passive": false,
-            "is_residue": false,
-            "effect_numbers": [],
-            "funcs": []
-          }
-        ]
-      }
-    ],
-    "BUFFS": [
-      {
-        "buff_name": "la",
-        "buff_img": "la.png",
-        "is_active": true,
-        "buff_level": 1,
-        "effects": [
-          {
-            "effect_name": "lalala",
-            "time_points": [],
-            "priority": -1,
-            "is_pure_passive": false,
-            "is_residue": false,
-            "effect_numbers": [],
-            "funcs": []
-          }
-        ]
-      }
-    ]
+	"SKILLS": [
+	  {
+		"skill_name": "kanshou_and_bakuya",
+		"shown_skill_name": "干将莫邪",
+		"skill_card_img": "00001_emiya_shirou_kanshou_and_bakuya.png",
+		"attributes": ["strength", "noble_phantasm"],
+		"cost": { "number": 1, "can_change": true, "is_pure_number": true },
+		"power": { "number": 5, "can_change": true, "is_pure_number": true },
+		"ignore_limit": false,
+		"effects": []
+	  }
+	],
+	"ATTACKS": [],
+	"BUFFS": []
   },
   "upgrade_skill": [
-    {
-      "skill_name": "lalala",
-      "skill_card_img": "lalala.png",
-      "attributes": [],
-      "cost": 0,
-      "power": 0,
-      "ignore_limit": false,
-      "effects": [
-        {
-          "effect_name": "lalala",
-          "time_points": ["game_start"],
-          "priority": -1,
-          "is_pure_passive": false,
-          "is_residue": false,
-          "effect_numbers": [],
-          "funcs": []
-        }
-      ]
-    }
+	{
+	  "skill_name": "caliburn",
+	  "shown_skill_name": "誓约胜利之剑",
+	  "skill_card_img": "00001_emiya_shirou_caliburn.png",
+	  "attributes": ["strength", "noble_phantasm"],
+	  "cost": { "number": 6, "can_change": true, "is_pure_number": true },
+	  "power": { "number": 8, "can_change": true, "is_pure_number": true },
+	  "ignore_limit": false,
+	  "effects": [
+		{
+		  "effect_name": "passive",
+		  "shown_effect_name": "被动",
+		  "time_points": ["self_played_card"],
+		  "priority": 0,
+		  "is_pure_passive": true,
+		  "is_residue": false,
+		  "effect_numbers": [
+			{ "number": 2, "can_change": true, "is_pure_number": true }
+		  ],
+		  "funcs": [
+			{
+			  "func_name": "modify_attack_power_by_attribute",
+			  "parameters": [["strength", "agility"], { "number_index": 0 }],
+			  "var_index": -1
+			}
+		  ]
+		},
+		{
+		  "effect_name": "combat",
+		  "shown_effect_name": "战斗阶段",
+		  "time_points": ["self_climax"],
+		  "priority": 0,
+		  "is_pure_passive": true,
+		  "is_residue": false,
+		  "effect_numbers": [
+			{ "number": 4, "can_change": true, "is_pure_number": true }
+		  ],
+		  "funcs": [
+			{
+			  "func_name": "get_eff_source_card",
+			  "parameters": [],
+			  "var_index": 0
+			},
+			{
+			  "func_name": "edit_card_power",
+			  "parameters": [{ "self_var": 0 }, { "number_index": 0 }],
+			  "var_index": -1
+			}
+		  ]
+		}
+	  ]
+	}
   ],
   "tags": [
-    {
-      "tag": "a",
-      "name_list": ["emiya_shirou"],
-      "type": "master_tag"
-    }
+	{
+	  "tag": "emiya_shirou",
+	  "name_list": ["emiya_shirou"],
+	  "type": "master_tag"
+	}
   ]
 }

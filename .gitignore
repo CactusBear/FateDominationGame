@@ -1,2 +1,51 @@
-# Godot 4+ specific ignores
+# Godot 4+ 自动生成的导入缓存与编辑器数据
 .godot/
+# 4.x 之前的旧缓存目录，防止从旧版本迁移时误提交
+.import/
+
+# 导出产物与导出配置。export_presets.cfg 可能含有签名密钥、发布路径等本地信息
+export.cfg
+export_presets.cfg
+/build/
+/builds/
+/export/
+*.exe
+*.pck
+*.zip
+*.apk
+*.aab
+*.ipa
+*.dmg
+*.app
+
+# Mono/C# 构建产物
+.mono/
+data_*/
+/mono_crash.*.json
+*.csproj.user
+[Oo]bj/
+[Bb]in/
+
+# GDExtension 热重载时生成的临时副本。
+# 编辑器崩溃后残留的这类文件会占住写入位置，导致插件加载失败
+~*.dll
+*.TMP
+*~RF*.TMP
+
+# 运行时生成的游戏数据缓存，由 load_game.gd 自动重建
+game_data/stored_jsons.dat
+
+# Claude Code / agent 工具的本地脚手架，与游戏无关
+.claude/
+.agent/
+skills/
+
+# 编辑器与系统杂项
+.vscode/
+.idea/
+*.swp
+*.tmp
+*.log
+Thumbs.db
+desktop.ini
+.DS_Store
