@@ -1,0 +1,102 @@
+{
+  "servant_name": "cu_chulainn",
+  "shown_servant_name": "库·丘林",
+  "servant_class": "lancer",
+  "header_img": "00003_cu_chulainn_header.png",
+  "servant_card_img": "00003_cu_chulainn_cd.png",
+  "effects": [],
+  "specials": {
+    "SKILLS": [
+      {
+        "skill_name": "battle_continuation",
+        "shown_skill_name": "战斗续行",
+        "skill_card_img": "00003_cu_chulainn_battle_continuation.png",
+        "attributes": ["agility", "special"],
+        "cost": { "number": 3, "can_change": true, "is_pure_number": true },
+        "power": { "number": 5, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_move_anywhere_except_workshop",
+            "shown_effect_name": "占位：行动阶段：移动至除魔术工房外的任意地点（需要『限定目标位置的自由移动』机制）",
+            "time_points": ["self_action_phase"],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "skill_name": "gae_bolg_piercing",
+        "shown_skill_name": "突穿死翔之枪",
+        "skill_card_img": "00003_cu_chulainn_gae_bolg_piercing.png",
+        "attributes": ["agility", "noble_phantasm"],
+        "cost": { "number": 7, "can_change": true, "is_pure_number": true },
+        "power": { "number": 10, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_battle_end_score_per_opponent",
+            "shown_effect_name": "占位：【真名解放】战斗阶段：战斗阶段结束后，每与一名对手进行了战斗便获得1点战果。若你获得胜利，每名交战对手失去该数量的战果（需要『本战斗阶段交战对手计数』与『胜负判定后按对手扣除战果』机制）",
+            "time_points": ["self_battle_phase"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 1, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "skill_name": "gae_bolg_piercing_heart",
+        "shown_skill_name": "穿刺死棘之枪",
+        "skill_card_img": "00003_cu_chulainn_gae_bolg_piercing_heart.png",
+        "attributes": ["agility", "noble_phantasm"],
+        "cost": { "number": 3, "can_change": true, "is_pure_number": true },
+        "power": { "number": 6, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_permanent_cost_increase_on_play",
+            "shown_effect_name": "占位：【真名解放】打出时：此牌+2魔力消耗（可叠加）直至游戏结束（需要『卡牌消耗永久性递增，可叠加』机制）",
+            "time_points": ["self_played_card"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 2, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_pierce_heart_single_opponent_defeat",
+            "shown_effect_name": "占位：贯穿心脏 - 战斗阶段：若仅有一名对手与你位于同一战场，令其【败北】（需要『同战场对手数量判定』与『指定败北』机制）",
+            "time_points": ["self_battle_phase"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      }
+    ],
+    "ATTACKS": [],
+    "BUFFS": []
+  },
+  "tags": [
+    { "tag": "cu_chulainn", "name_list": ["cu_chulainn"], "type": "servant_tag" }
+  ]
+}

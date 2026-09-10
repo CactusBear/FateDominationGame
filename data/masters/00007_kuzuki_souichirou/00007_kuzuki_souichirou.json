@@ -1,0 +1,130 @@
+{
+  "master_name": "kuzuki_souichirou",
+  "shown_master_name": "葛木宗一郎",
+  "header_img": "00007_kuzuki_souichirou_header.png",
+  "master_card_img": "00007_kuzuki_souichirou_cd.png",
+  "command_spell_img": "00007_kuzuki_souichirou_cs.png",
+  "effects": [
+    {
+      "effect_name": "placeholder_assassination_add_snake_cards",
+      "shown_effect_name": "占位：暗杀术 - 游戏开始时，将两张【蛇】加入你的牌库（需要『生成自定义卡牌并加入牌库』机制）",
+      "time_points": ["game_start"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [
+        { "number": 2, "can_change": true, "is_pure_number": true }
+      ],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    },
+    {
+      "effect_name": "placeholder_outsider_no_magic_from_workshop",
+      "shown_effect_name": "占位：局外人 - 你无法通过部署于魔术工房获得魔力（需要『按位置屏蔽魔力收益』机制）",
+      "time_points": ["game_start"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    },
+    {
+      "effect_name": "placeholder_outsider_leave_workshop_discount",
+      "shown_effect_name": "占位：局外人 - 你以常规移动从魔术工房离开时，移动成本-1（需要『按位置调整移动成本』机制）",
+      "time_points": ["game_start"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [
+        { "number": -1, "can_change": true, "is_pure_number": true }
+      ],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    },
+    {
+      "effect_name": "placeholder_outsider_battle_phase_score_gain",
+      "shown_effect_name": "占位：局外人 - 每回合战斗阶段结束后，若你于该回合未获得战果，获得1点战果；若你于该回合同时是位于魔术工房的唯一玩家，改为获得2点战果（需要『本回合战果获取记录判定』与『位置唯一玩家判定』机制）",
+      "time_points": ["self_battle_phase"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [
+        { "number": 1, "can_change": true, "is_pure_number": true },
+        { "number": 2, "can_change": true, "is_pure_number": true }
+      ],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    }
+  ],
+  "specials": {
+    "SKILLS": [],
+    "ATTACKS": [],
+    "BUFFS": []
+  },
+  "upgrade_skill": [
+    {
+      "skill_name": "perfect_breathing",
+      "shown_skill_name": "完美呼吸",
+      "skill_card_img": "00007_kuzuki_souichirou_perfect_breathing.png",
+      "attributes": ["agility"],
+      "cost": { "number": 0, "can_change": true, "is_pure_number": true },
+      "power": { "number": 0, "can_change": true, "is_pure_number": true },
+      "ignore_limit": false,
+      "effects": [
+        {
+          "effect_name": "placeholder_perfect_breathing_remove_magic_cards",
+          "shown_effect_name": "占位：解锁此技能后立刻从牌库、弃牌堆及手牌中移除所有魔术牌（需要『按属性批量移除卡牌』机制）",
+          "time_points": ["game_start"],
+          "priority": 0,
+          "is_pure_passive": false,
+          "is_residue": false,
+          "effect_numbers": [],
+          "funcs": [
+            { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+          ]
+        },
+        {
+          "effect_name": "passive",
+          "shown_effect_name": "被动 - 你的迅捷属性基本攻击获得+3威力",
+          "time_points": ["self_played_card"],
+          "priority": 0,
+          "is_pure_passive": true,
+          "is_residue": false,
+          "effect_numbers": [
+            { "number": 3, "can_change": true, "is_pure_number": true }
+          ],
+          "funcs": [
+            {
+              "func_name": "modify_attack_power_by_attribute",
+              "parameters": [["agility"], { "number_index": 0 }],
+              "var_index": -1
+            }
+          ]
+        },
+        {
+          "effect_name": "placeholder_perfect_breathing_snake_becomes_attack",
+          "shown_effect_name": "占位：你的【蛇】获得以下效果 - 被动/战斗阶段：花费6点魔力，将此牌加入你的攻击中（需要『动态修改已生成卡牌效果』机制）",
+          "time_points": ["self_battle_phase"],
+          "priority": 0,
+          "is_pure_passive": true,
+          "is_residue": false,
+          "effect_numbers": [
+            { "number": 6, "can_change": true, "is_pure_number": true }
+          ],
+          "funcs": [
+            { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "tags": [
+    { "tag": "kuzuki", "name_list": ["葛木"], "type": "master_tag" },
+    { "tag": "perfect_breathing", "name_list": ["完美呼吸"], "type": "master_tag" }
+  ]
+}

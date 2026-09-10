@@ -15,12 +15,12 @@ func _init(buff_name:String, buff_img:String):
 	_effects = []
 	_is_active = true
 	super.add_object()
-	
+
 
 func add_buff_effect(_effect:BaseEffect):
 	_effects.append(_effect)
 
-	
+
 func set_active(T_or_F:bool):
 	_is_active = T_or_F
 

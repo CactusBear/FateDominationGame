@@ -150,6 +150,32 @@ const OTHERS_BUFF_START = "others_buff_start"
 const OTHERS_BUFF = "others_buff"
 const OTHERS_BUFF_END = "others_buff_end"
 
+const TRUE_NAME_RELEASE = "true_name_release"
+const SELF_TRUE_NAME_RELEASE = "self_true_name_release"
+const OTHERS_TRUE_NAME_RELEASE = "others_true_name_release"
+
+const TRUE_NAME_HIDDEN = "true_name_hidden"
+const SELF_TRUE_NAME_HIDDEN = "self_true_name_hidden"
+const OTHERS_TRUE_NAME_HIDDEN = "others_true_name_hidden"
+
+const CARD_CLOSED = "card_closed"
+const SELF_CARD_CLOSED = "self_card_closed"
+const OTHERS_CARD_CLOSED = "others_card_closed"
+
+const COMMAND_SPELL_USED = "command_spell_used"
+const SELF_COMMAND_SPELL_USED = "self_command_spell_used"
+const OTHERS_COMMAND_SPELL_USED = "others_command_spell_used"
+
+const LOCATION_BENEFIT_CHANGED = "location_benefit_changed"
+const SELF_LOCATION_BENEFIT_CHANGED = "self_location_benefit_changed"
+const OTHERS_LOCATION_BENEFIT_CHANGED = "others_location_benefit_changed"
+
+const CARD_COST_CALCULATED = "card_cost_calculated"
+const SELF_CARD_COST_CALCULATED = "self_card_cost_calculated"
+const OTHERS_CARD_COST_CALCULATED = "others_card_cost_calculated"
+
+const ROUND_START_RESET = "round_start_reset"
+
 
 
 #dic
@@ -282,5 +308,24 @@ const shown_time_points:Dictionary = {
 	SELF_BUFF_END : "自己buff结束中",
 	OTHERS_BUFF_START : "他人buff开始时",
 	OTHERS_BUFF : "他人buff生效中",
-	OTHERS_BUFF_END : "他人buff结束中"
+	OTHERS_BUFF_END : "他人buff结束中",
+	TRUE_NAME_RELEASE : "真名解放时",
+	SELF_TRUE_NAME_RELEASE : "自己真名解放时",
+	OTHERS_TRUE_NAME_RELEASE : "他人真名解放时",
+	TRUE_NAME_HIDDEN : "真名隐藏时",
+	SELF_TRUE_NAME_HIDDEN : "自己真名隐藏时",
+	OTHERS_TRUE_NAME_HIDDEN : "他人真名隐藏时",
+	CARD_CLOSED : "卡牌关闭时",
+	SELF_CARD_CLOSED : "自己卡牌关闭时",
+	OTHERS_CARD_CLOSED : "他人卡牌关闭时",
+	COMMAND_SPELL_USED : "使用令咒时",
+	SELF_COMMAND_SPELL_USED : "自己使用令咒时",
+	OTHERS_COMMAND_SPELL_USED : "他人使用令咒时",
+	LOCATION_BENEFIT_CHANGED : "地利改变时",
+	SELF_LOCATION_BENEFIT_CHANGED : "自己所在地利改变时",
+	OTHERS_LOCATION_BENEFIT_CHANGED : "他人所在地利改变时",
+	CARD_COST_CALCULATED : "卡牌费用计算完成时",
+	SELF_CARD_COST_CALCULATED : "自己卡牌费用计算完成时",
+	OTHERS_CARD_COST_CALCULATED : "他人卡牌费用计算完成时",
+	ROUND_START_RESET : "回合开始重置时"
 }

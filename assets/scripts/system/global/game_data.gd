@@ -62,7 +62,24 @@ func new_player_data() -> Dictionary:
 		"skills" : [],
 		"buffs" : [],
 		"others" : []
-		}
+		},
+	"true_name_released" : false,
+	"command_spell_count" : BaseNumber.new(3),
+	"command_spell_used_this_game" : 0,
+	"command_spell_used_this_turn" : false,
+	"command_spell_gained_magic" : false,
+	"play_limit" : BaseNumber.new(2),
+	"can_draw_card" : true,
+	"score_gained_this_turn" : 0,
+	"played_attacks_this_turn" : [],
+	"last_turn_location" : null,
+	"is_magic_immune" : false,
+	"ignore_skill_zone_magic_limit" : false,
+	"ignore_engagement_for_move" : false,
+	"total_power_bonus" : BaseNumber.new(0),
+	"attack_cost_discount" : BaseNumber.new(0),
+	"move_cost_discount_from_workshop" : BaseNumber.new(0),
+	"victory_override" : false
 	}
 
 
@@ -74,6 +91,17 @@ func setup_players(num:int = player_num):
 			player_data_library[i] = new_player_data()
 	if !player_data_library.has(player_id):
 		player_data_library[player_id] = new_player_data()
+
+
+#局内会话重置：只重建本局玩家数据，不动已加载的御主/资源库(loaded_masters、objects、effects)。
+#调用方需要在返回后显式设置每个玩家的master/order/is_out等初始状态
+func reset_game_session(player_ids:Array):
+	player_data_library.clear()
+	for id in player_ids:
+		player_data_library[id] = new_player_data()
+	player_num = player_ids.size()
+	player_max = player_ids.size()
+	EffectManager.reset_runtime()
 
 
 func _ready():

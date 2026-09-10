@@ -20,20 +20,22 @@ config/version="0.0.1"
 run/main_scene="res://assets/scenes/game_scene/game_scene.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="FateDomination"
-config/features=PackedStringArray("4.6", "Mobile")
+config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
 
 CursorReplace="*res://assets/scripts/system/global/cursor_replace.gd"
 GameData="*res://assets/scripts/system/global/game_data.gd"
+GameStart="*res://assets/scripts/main_menu/game_start.gd"
 MasterManager="*res://assets/scripts/system/global/master_manager.gd"
+ServantManager="*res://assets/scripts/system/global/servant_manager.gd"
 GameDataManager="*res://assets/scripts/system/global/game_data_manager.gd"
-EffectManager="*res://assets/scripts/system/global/effect_manager.gd"
 TimePointChecker="*res://assets/scripts/system/global/time_point_checker.gd"
 LoadGame="*res://assets/scripts/system/global/load_game.gd"
-MapData="*res://assets/scripts/system/global/map_data.gd"
+MapData="*res://assets/scripts/system/map_data.gd"
 GameProgress="*res://assets/scripts/system/global/game_progress.gd"
+EffectManager="*res://assets/scripts/system/global/effect_manager.gd"
 _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [display]

@@ -1,0 +1,121 @@
+{
+  "servant_name": "emiya",
+  "shown_servant_name": "Emiya",
+  "servant_class": "archer",
+  "header_img": "00002_emiya_header.png",
+  "servant_card_img": "00002_emiya_cd.png",
+  "effects": [],
+  "specials": {
+    "SKILLS": [
+      {
+        "skill_name": "seven_rings_of_blazing_heaven",
+        "shown_skill_name": "炽天覆七重圆环",
+        "skill_card_img": "00002_emiya_seven_rings_of_blazing_heaven.png",
+        "attributes": ["special"],
+        "cost": { "number": 2, "can_change": true, "is_pure_number": true },
+        "power": { "number": 4, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_zero_opponent_special",
+            "shown_effect_name": "占位：战斗阶段，将同一战场所有对手的特殊属性威力变为0（需要『同战场对手』识别机制）",
+            "time_points": ["self_battle_phase"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 0, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "skill_name": "pseudo_spiral_sword",
+        "shown_skill_name": "伪·螺旋剑",
+        "skill_card_img": "00002_emiya_pseudo_spiral_sword.png",
+        "attributes": ["agility", "noble_phantasm"],
+        "cost": { "number": 2, "can_change": true, "is_pure_number": true },
+        "power": { "number": 4, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_terrain_advantage_triple",
+            "shown_effect_name": "占位：【真名解放】〈每局游戏限一次〉行动阶段：将你的地利变为3倍（需要『地利数值判定与倍率修改』机制）",
+            "time_points": ["self_action_phase"],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 3, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_battle_win_score_gain",
+            "shown_effect_name": "占位：战斗阶段：若赢得本场战斗，获得4战果（需要『本场战斗胜负判定』机制）",
+            "time_points": ["self_battle_win"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 4, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "skill_name": "unlimited_blade_works",
+        "shown_skill_name": "无限剑制",
+        "skill_card_img": "00002_emiya_unlimited_blade_works.png",
+        "attributes": ["special"],
+        "cost": { "number": 8, "can_change": true, "is_pure_number": true },
+        "power": { "number": 0, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_rebuild_hand_from_all_zones",
+            "shown_effect_name": "占位：【真名解放】打出时：以你打出的牌、手牌、牌库和弃牌堆任意组一组至多12张牌的手牌（需要『跨区域重组手牌』机制）",
+            "time_points": ["self_played_card"],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 12, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_residue_limited_play_no_draw",
+            "shown_effect_name": "占位：残留：你的常规出牌改为打出0~4张牌，你不能抽牌，当你的手牌数为0时，关闭此牌（需要『出牌数量上限覆盖』与『持续状态自动关闭』机制）",
+            "time_points": ["game"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": true,
+            "effect_numbers": [
+              { "number": 0, "can_change": true, "is_pure_number": true },
+              { "number": 4, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      }
+    ],
+    "ATTACKS": [],
+    "BUFFS": []
+  },
+  "tags": [
+    { "tag": "emiya", "name_list": ["emiya"], "type": "servant_tag" }
+  ]
+}

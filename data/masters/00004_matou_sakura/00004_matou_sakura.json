@@ -1,0 +1,134 @@
+{
+  "master_name": "matou_sakura",
+  "shown_master_name": "间桐樱",
+  "header_img": "00004_matou_sakura_header.png",
+  "master_card_img": "00004_matou_sakura_cd.png",
+  "command_spell_img": "00004_matou_sakura_cs.png",
+  "effects": [
+    {
+      "effect_name": "placeholder_deficient_vessel_black_mud",
+      "shown_effect_name": "占位：欠损容器 - 回合结束时，若你的战果低于所有其他玩家且你的第一名御主不是【间桐慎二】，激活【黑泥】（需要『战果排名比较』『第一名御主历史记录判定』『激活Buff』机制）",
+      "time_points": ["day_end"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    },
+    {
+      "effect_name": "placeholder_all_evil_grail",
+      "shown_effect_name": "占位：此世全部之恶 - 第8回合结束时，若你的战果排名不为第一，激活【被污染的圣杯】（需要『回合数判定』『战果排名判定』『激活Buff』机制）",
+      "time_points": ["day_end"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [
+        { "number": 8, "can_change": true, "is_pure_number": true }
+      ],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    }
+  ],
+  "specials": {
+    "SKILLS": [],
+    "ATTACKS": [],
+    "BUFFS": [
+      {
+        "buff_name": "black_mud",
+        "buff_img": "00004_matou_sakura_black_mud.png",
+        "is_active": true,
+        "buff_level": {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "effects": [
+          {
+            "effect_name": "placeholder_black_mud_score_gain",
+            "shown_effect_name": "占位：准备阶段 - 花费2点魔力，若你未激活【被污染的圣杯】，获得2点战果（需要『Buff激活状态查询』机制）",
+            "time_points": ["self_prepare_phase"],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 2, "can_change": true, "is_pure_number": true },
+              { "number": 2, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "buff_name": "corrupted_grail",
+        "buff_img": "00004_matou_sakura_corrupted_grail.png",
+        "is_active": false,
+        "buff_level": {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "effects": [
+          {
+            "effect_name": "placeholder_corrupted_grail_infinite_magic",
+            "shown_effect_name": "占位：你拥有无限魔力（此状态下无法获得或失去魔力）（需要『魔力免疫变化』机制）",
+            "time_points": ["game_start"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_corrupted_grail_extra_attack",
+            "shown_effect_name": "占位：每回合常规攻击可以多打一张牌（需要『出牌数量上限调整』机制）",
+            "time_points": ["game_start"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 1, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "buff_name": "corrosion",
+        "buff_img": "00004_matou_sakura_corrosion.png",
+        "is_active": true,
+        "buff_level": {
+          "number": 4,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "effects": [
+          {
+            "effect_name": "placeholder_corrosion_steal_skill",
+            "shown_effect_name": "占位：你只能在游戏的前四回合中解锁此牌。每局游戏限一次，当一名玩家被淘汰且【被污染的圣杯】处于激活状态，你可将其拥有的任意一张从者技能牌加入你的技能区（需要『解锁回合限制』『淘汰事件监听』『跨玩家夺取技能牌』机制）",
+            "time_points": ["others_eliminated"],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "tags": [
+    { "tag": "matou", "name_list": ["间桐"], "type": "master_tag" },
+    { "tag": "corrupted_grail", "name_list": ["被污染的圣杯"], "type": "master_tag" }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "servant_name": "artoria_pendragon",
+  "shown_servant_name": "阿尔托莉雅·潘德拉贡",
+  "servant_class": "saber",
+  "header_img": "00001_artoria_pendragon_header.png",
+  "servant_card_img": "00001_artoria_pendragon_cd.png",
+  "effects": [],
+  "specials": {
+	"SKILLS": [
+	  {
+		"skill_name": "mana_resistance",
+		"shown_skill_name": "对魔力",
+		"skill_card_img": "00001_artoria_pendragon_mana_resistance.png",
+		"attributes": ["special", "noble_phantasm"],
+		"cost": { "number": 3, "can_change": true, "is_pure_number": true },
+		"power": { "number": 3, "can_change": true, "is_pure_number": true },
+		"ignore_limit": false,
+		"effects": [
+		  {
+			"effect_name": "placeholder_np_bloom_score",
+			"shown_effect_name": "占位：宝具绽放(需要『本战斗中打出的消费最高宝具攻击』查询机制)",
+			"time_points": ["self_battle_phase"],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+			  { "number": 1, "can_change": true, "is_pure_number": true },
+			  { "number": 1, "can_change": true, "is_pure_number": true }
+			],
+			"funcs": [
+			  {
+				"func_name": "do_nothing",
+				"parameters": [],
+				"var_index": -1
+			  }
+			]
+		  },
+		  {
+			"effect_name": "placeholder_mana_resistance",
+			"shown_effect_name": "占位：魔术抗性，将同战场对手的魔术属性攻击威力变为0(需要『同战场对手』识别机制)",
+			"time_points": ["self_battle_phase"],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+			  { "number": 0, "can_change": true, "is_pure_number": true }
+			],
+			"funcs": [
+			  {
+				"func_name": "do_nothing",
+				"parameters": [],
+				"var_index": -1
+			  }
+			]
+		  }
+		]
+	  },
+	  {
+		"skill_name": "wind_barrier",
+		"shown_skill_name": "风王结界",
+		"skill_card_img": "00001_artoria_pendragon_wind_barrier.png",
+		"attributes": ["magic", "noble_phantasm"],
+		"cost": { "number": 4, "can_change": true, "is_pure_number": true },
+		"power": { "number": 4, "can_change": true, "is_pure_number": true },
+		"ignore_limit": false,
+		"effects": [
+		  {
+			"effect_name": "placeholder_true_name_hidden_discount",
+			"shown_effect_name": "占位：若真名隐藏，此牌消费-2(需要『真名隐藏』状态机制)",
+			"time_points": ["self_played_card"],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+			  { "number": -2, "can_change": true, "is_pure_number": true }
+			],
+			"funcs": [
+			  {
+				"func_name": "do_nothing",
+				"parameters": [],
+				"var_index": -1
+			  }
+			]
+		  },
+		  {
+			"effect_name": "placeholder_zero_opponent_strength",
+			"shown_effect_name": "占位：战斗阶段，将同战场对手的力量属性攻击威力变为0(需要『同战场对手』识别机制)",
+			"time_points": ["self_battle_phase"],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+			  { "number": 0, "can_change": true, "is_pure_number": true }
+			],
+			"funcs": [
+			  {
+				"func_name": "do_nothing",
+				"parameters": [],
+				"var_index": -1
+			  }
+			]
+		  }
+		]
+	  },
+	  {
+		"skill_name": "excalibur",
+		"shown_skill_name": "誓约胜利之剑",
+		"skill_card_img": "00001_artoria_pendragon_excalibur.png",
+		"attributes": ["strength", "noble_phantasm"],
+		"cost": { "number": 8, "can_change": true, "is_pure_number": true },
+		"power": { "number": 12, "can_change": true, "is_pure_number": true },
+		"ignore_limit": false,
+		"effects": [
+		  {
+			"effect_name": "combat",
+			"shown_effect_name": "战斗阶段",
+			"time_points": ["self_climax"],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+			  { "number": 4, "can_change": true, "is_pure_number": true }
+			],
+			"funcs": [
+			  {
+				"func_name": "get_eff_source_card",
+				"parameters": [],
+				"var_index": 0
+			  },
+			  {
+				"func_name": "edit_card_power",
+				"parameters": [{ "self_var": 0 }, { "number_index": 0 }],
+				"var_index": -1
+			  }
+			]
+		  },
+		  {
+			"effect_name": "placeholder_round11_win_victory",
+			"shown_effect_name": "占位：若你赢得第11回合的战斗，获得游戏胜利(需要『指定回合战斗胜利→直接判定游戏胜利』的胜利条件覆盖机制)",
+			"time_points": ["self_battle_win"],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [],
+			"funcs": [
+			  {
+				"func_name": "do_nothing",
+				"parameters": [],
+				"var_index": -1
+			  }
+			]
+		  }
+		]
+	  }
+	],
+	"ATTACKS": [],
+	"BUFFS": []
+  },
+  "tags": [
+	{
+	  "tag": "artoria_pendragon",
+	  "name_list": ["artoria_pendragon"],
+	  "type": "servant_tag"
+	}
+  ]
+}

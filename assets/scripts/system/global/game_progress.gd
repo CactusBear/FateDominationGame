@@ -16,6 +16,14 @@ var current_phase_player_index:int = 0
 #当前正在进行自己阶段的玩家
 var current_player_id:int = -1
 var is_game_over:bool = false
+var has_battle_resolved:bool = false
+#本回合战斗阶段结算结果，供最终回合判定胜负时查询深山町战斗胜者
+var last_battle_result:Dictionary = {}
+var climax_keep_counts:Dictionary = {
+	8: BaseNumber.new(4),
+	9: BaseNumber.new(3),
+	10: BaseNumber.new(2)
+}
 
 #四个阶段：准备、前哨、行动、战斗
 var phases:Array = [
@@ -61,7 +69,7 @@ func get_current_phase() -> Dictionary:
 func start_game():
 	is_game_over = false
 	current_round = 0
-	#开局把已加载的效果全部入池，之后各卡牌进场时再补登记归属
+	has_battle_resolved = false
 	EffectManager.sync_loaded_effect_pool()
 	TimePointChecker.set_phase_time_points([TimePoints.GAME])
 	TimePointChecker.global_time_point([TimePoints.GAME_START])
@@ -85,7 +93,17 @@ func start_round():
 	current_phase_index = -1
 	current_phase_player_index = 0
 	current_player_id = -1
+	has_battle_resolved = false
 	refresh_first_player()
+	#每回合开始时重置本回合类记录字段，并派发ROUND_START_RESET供效果监听
+	for id in GameDataManager.get_active_player_ids():
+		var player_data = GameDataManager.get_player_data(id) as Dictionary
+		player_data["played_attacks_this_turn"] = []
+		player_data["score_gained_this_turn"] = 0
+		player_data["command_spell_used_this_turn"] = false
+		player_data["command_spell_gained_magic"] = false
+		player_data["temp_locations"] = []
+		TimePointChecker.dynamic_time_point([TimePoints.ROUND_START_RESET], id)
 	TimePointChecker.set_phase_time_points([TimePoints.DAY])
 	TimePointChecker.global_time_point([TimePoints.DAY_START])
 	advance_phase()
@@ -97,6 +115,27 @@ func end_round():
 	current_player_id = -1
 	TimePointChecker.set_phase_time_points([TimePoints.DAY])
 	TimePointChecker.global_time_point([TimePoints.DAY_END])
+	if climax_keep_counts.has(current_round):
+		TimePointChecker.global_time_point([TimePoints.CLIMAX_START])
+		ClimaxResolver.new().exec(climax_keep_counts[current_round])
+		TimePointChecker.global_time_point([TimePoints.CLIMAX_END])
+	if current_round == total_rounds.number or GameDataManager.get_active_player_ids().size() <= 1:
+		VictoryResolver.new().exec(last_battle_result)
+		end_game()
+		return
+	for id in GameDataManager.get_active_player_ids():
+		var player_data = GameDataManager.get_player_data(id) as Dictionary
+		player_data["last_turn_location"] = player_data["location"]
+		player_data["is_battle"] = false
+		player_data["is_battle_win"] = false
+		player_data["is_battle_lose"] = false
+		#残留牌留在场上，回合结束不处理（残留牌只在自身效果满足条件时自行关闭）
+		DiscardPlayedCards.new().exec(id)
+		#先清理再重建合计威力基线：规则上残留牌跨回合留场并继续提供威力，
+		#所以基线是留场明置牌的威力之和，同时丢弃回合内的非卡牌来源加成
+		SyncPower.new().exec(id)
+	#规则：【败北】状态持续至回合结束
+	DefeatBuff.clear_all()
 	#规则：每个回合结束时，将回合顺位顺时针后移一位
 	ChangePlOrder.new().exec(null, BaseNumber.new(1))
 	start_round()
@@ -137,6 +176,9 @@ func end_phase():
 	var phase = get_current_phase()
 	if phase.is_empty():
 		return
+	if phase["name"] == "battle" and !has_battle_resolved:
+		has_battle_resolved = true
+		last_battle_result = BattleResolver.new().exec(GameDataManager.get_active_player_ids(), BaseNumber.new(1))
 	TimePointChecker.global_time_point([TimePoints.PHASE_END, phase["end"]])
 	advance_phase()
 
@@ -151,13 +193,24 @@ func next_player_in_phase():
 	if phase.is_empty():
 		return
 	var ids = get_ordered_player_ids()
-	if current_phase_player_index >= ids.size():
-		end_phase()
+	while current_phase_player_index < ids.size():
+		var id:int = ids[current_phase_player_index]
+		current_phase_player_index += 1
+		var player_data = GameDataManager.get_player_data(id) as Dictionary
+		if player_data["is_out"]:
+			continue
+		current_player_id = id
+		TimePointChecker.dynamic_time_point([phase["mid"]], current_player_id)
 		return
-	current_player_id = ids[current_phase_player_index]
-	current_phase_player_index += 1
-	TimePointChecker.dynamic_time_point([phase["mid"]], current_player_id)
-	#该玩家在这个阶段的实际动作由UI/规则动作完成，做完后再调用next_player_in_phase()继续
+	end_phase()
+
+
+#当前玩家完成本阶段行动后使用的唯一推进入口。
+func end_current_player_action() -> bool:
+	if is_game_over or current_player_id == -1 or get_current_phase().is_empty():
+		return false
+	next_player_in_phase()
+	return true
 
 
 #供UI和各处派发临时时点

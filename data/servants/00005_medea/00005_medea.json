@@ -1,0 +1,106 @@
+{
+  "servant_name": "medea",
+  "shown_servant_name": "Medea",
+  "servant_class": "caster",
+  "header_img": "00005_medea_header.png",
+  "servant_card_img": "00005_medea_cd.png",
+  "effects": [],
+  "specials": {
+    "SKILLS": [
+      {
+        "skill_name": "base_construction",
+        "shown_skill_name": "阵地建造",
+        "skill_card_img": "00005_medea_base_construction.png",
+        "attributes": ["magic"],
+        "cost": { "number": 16, "can_change": true, "is_pure_number": false },
+        "power": { "number": 2, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_base_construction_dynamic_cost",
+            "shown_effect_name": "占位：此牌费用为X，X为16-（当前回合数×2）（需要『按当前回合数动态计算卡牌费用』机制）",
+            "time_points": ["self_played_card"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 16, "can_change": true, "is_pure_number": true },
+              { "number": 2, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_base_construction_deploy_workshop_gain",
+            "shown_effect_name": "占位：残留：当你部署于魔术工房时，获得1点魔力和2点战果（需要『按位置判断部署地点』机制）",
+            "time_points": ["self_deploy"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": true,
+            "effect_numbers": [
+              { "number": 1, "can_change": true, "is_pure_number": true },
+              { "number": 2, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "skill_name": "rule_breaker",
+        "shown_skill_name": "万符必应破戒",
+        "skill_card_img": "00005_medea_rule_breaker.png",
+        "attributes": ["strength", "noble_phantasm"],
+        "cost": { "number": 3, "can_change": true, "is_pure_number": true },
+        "power": { "number": 0, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_rule_breaker_remove_command_spell",
+            "shown_effect_name": "占位：【真名解放】〈每局游戏限一次〉行动阶段：你所在战场的一名玩家失去一枚令咒，若其原本只有一枚或更少的令咒，另其【败北】。若其原本没有令咒，你总威力+10（需要『令咒数量判定』与『按条件败北/加威力』机制）",
+            "time_points": ["self_action_phase"],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 10, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "skill_name": "divine_words",
+        "shown_skill_name": "神言魔术式",
+        "skill_card_img": "00005_medea_divine_words.png",
+        "attributes": ["magic"],
+        "cost": { "number": 5, "can_change": true, "is_pure_number": true },
+        "power": { "number": 8, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_divine_words_retrieve_rule_breaker",
+            "shown_effect_name": "占位：【真名解放】战斗阶段：若你在战斗中失败，将一张被移除的【万符必应破戒】加入你的技能区（需要『从移除区取回特定卡牌』机制）",
+            "time_points": ["self_battle_lose"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      }
+    ],
+    "ATTACKS": [],
+    "BUFFS": []
+  },
+  "tags": [
+    { "tag": "medea", "name_list": ["medea"], "type": "servant_tag" }
+  ]
+}

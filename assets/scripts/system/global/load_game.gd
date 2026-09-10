@@ -2,11 +2,14 @@ extends Node
 
 
 var masters_path = "data/masters"
+var servants_path = "data/servants"
 var tag_list_path = "data"
 var tag_list:Array
 var temp_stored_jsons_arr:Array#[String]
 var _loaded_path = []
 var load_masters_finished:bool = false
+var _servants_loaded_path = []
+var load_servants_finished:bool = false
 
 func _ready():
 	load_game()
@@ -14,6 +17,8 @@ func _ready():
 
 func load_game():
 	load_masters_from_jsons(masters_path)
+	load_servants_from_jsons(servants_path)
+	write_tag_list()
 	load_stored_jsons()
 	store_jsons()
 	
@@ -147,7 +152,6 @@ func load_masters_from_jsons(load_path:String):
 				if last_path.right(end_path_last.length()) == end_path_last:
 					_loaded_path = []
 					load_masters_finished = true
-					write_tag_list()
 					return
 				else: 
 					_loaded_path.append(current_path)
@@ -161,6 +165,38 @@ func load_masters_from_jsons(load_path:String):
 				GameData.loaded_masters.append(load_master_file(load_dir.get_current_dir(), load_file_name))
 			load_file_name = load_dir.get_next()
 			
+	else:
+		print("尝试访问路径时出错。")
+
+
+func load_servants_from_jsons(load_path:String):
+	var load_dir = DirAccess.open(load_path)
+	if load_dir:
+		load_dir.list_dir_begin()
+		var load_file_name = load_dir.get_next()
+		while !load_servants_finished:
+			if load_file_name == "":
+				var current_path = load_dir.get_current_dir()
+				var rev_path = current_path.reverse()
+				var index = rev_path.find("/")
+				var last_path = current_path.left(current_path.length() - index - 1)
+				var end_path_last = "/data"
+				if last_path.right(end_path_last.length()) == end_path_last:
+					_servants_loaded_path = []
+					load_servants_finished = true
+					return
+				else:
+					_servants_loaded_path.append(current_path)
+					load_servants_from_jsons(last_path)
+			if load_dir.current_is_dir() and !_servants_loaded_path.has(load_dir.get_current_dir() + "/" + load_file_name):
+				load_servants_from_jsons(load_dir.get_current_dir() + "/" + load_file_name)
+			elif !load_dir.current_is_dir():
+				if load_file_name.right(5) != ".json":
+					load_file_name = load_dir.get_next()
+					continue
+				GameData.loaded_servants.append(load_servant_file(load_dir.get_current_dir(), load_file_name))
+			load_file_name = load_dir.get_next()
+
 	else:
 		print("尝试访问路径时出错。")
 
@@ -211,7 +247,7 @@ func load_master_file(path:String, master_file_name:String):
 	var master = BaseMaster.new(master_name, shown_master_name, header_img, master_card_img, command_spell_img)
 	var effects = load_effects(data["effects"], master)
 	var specials = data["specials"] as Dictionary
-	var upgrade_skill = load_skills(data["upgrade_skill"], path, master)
+	var upgrade_skill = load_skills(data.get("upgrade_skill", []), path, master)
 	if specials.has("SKILLS") :
 		specials["SKILLS"] = load_skills(specials["SKILLS"], path, master)
 	if specials.has("ATTACKS") :
@@ -247,6 +283,40 @@ func load_master_file(path:String, master_file_name:String):
 	tag_list.append_array(tags)
 	
 	return master
+
+
+func load_servant_file(path:String, servant_file_name:String):
+	var servant_file = FileAccess.open(path + "/" + servant_file_name, FileAccess.READ)
+	var json = servant_file.get_as_text()
+	servant_file.close()
+	temp_stored_jsons_arr.append(json)
+
+	var data = JSON.parse_string(json)
+	var servant_name = data["servant_name"]
+	var shown_servant_name = data["shown_servant_name"]
+	var servant_class = data["servant_class"]
+	var header_img = path + "/" + data["header_img"]
+	var servant_card_img = path + "/" + data["servant_card_img"]
+
+	var servant = BaseServant.new(servant_name, shown_servant_name, servant_class, header_img, servant_card_img)
+	var effects = load_effects(data["effects"], servant)
+	var specials = data["specials"] as Dictionary
+	if specials.has("SKILLS") :
+		specials["SKILLS"] = load_skills(specials["SKILLS"], path, servant)
+	if specials.has("ATTACKS") :
+		specials["ATTACKS"] = load_attacks(specials["ATTACKS"], path, servant)
+	if specials.has("BUFFS") :
+		specials["BUFFS"] = load_buffs(specials["BUFFS"], path, servant)
+	servant._effects = effects
+	servant._specials = specials
+
+	var tags = data["tags"] as Array
+	#同上，存名字避免循环引用
+	for tag in tags:
+		tag["from"] = servant._name
+	tag_list.append_array(tags)
+
+	return servant
 
 
 func func_name_to_class_name(func_name:String) -> String:
@@ -286,15 +356,15 @@ func load_effects(effects:Array, from):
 			if _func.has("func_name"):
 				var key = _func["func_name"] as String
 				var _class_name = func_name_to_class_name(key)
-				var effect_path = "res://assets/scripts/system/effects/" + _class_name + ".gd"
-				if !ResourceLoader.exists(effect_path):
-					print("没有函数:" + "'" + key + "'")
+				var func_path = "res://assets/scripts/system/operations/" + _class_name + ".gd"
+				if !ResourceLoader.exists(func_path):
+					print("没有操作:" + "'" + key + "'")
 					continue
-				var effect_instance = load(effect_path).new()
-				var main_callable = Callable(effect_instance, "exec")
+				var func_instance = load(func_path).new()
+				var main_callable = Callable(func_instance, "exec")
 				var eff_func = BaseFunc.new(main_callable, paras, var_index, condition)
 				#Callable不会保活实例，必须由func自己持有引用，否则加载完就被释放
-				eff_func._instance = effect_instance
+				eff_func._instance = func_instance
 				effect.add_func(eff_func)
 
 			elif _func.has("self_var"):
@@ -471,7 +541,7 @@ func load_masters(masters:Array, pic_path:String, from):
 		var master = BaseMaster.new(master_name, shown_master_name, header_img, master_card_img, command_spell_img)
 		var effects = load_effects(mas["effects"], master)
 		var specials = mas["specials"] as Dictionary
-		var upgrade_skill = load_skills(mas["upgrade_skill"], pic_path, master)
+		var upgrade_skill = load_skills(mas.get("upgrade_skill", []), pic_path, master)
 		
 		if specials.has("SKILLS") :
 			specials["SKILLS"] = load_skills(specials["SKILLS"], pic_path, master)

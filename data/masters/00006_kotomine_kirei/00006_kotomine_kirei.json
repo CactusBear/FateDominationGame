@@ -1,0 +1,121 @@
+{
+  "master_name": "kotomine_kirei",
+  "shown_master_name": "言峰绮礼",
+  "header_img": "00006_kotomine_kirei_header.png",
+  "master_card_img": "00006_kotomine_kirei_cd.png",
+  "command_spell_img": "00006_kotomine_kirei_cs.png",
+  "effects": [
+    {
+      "effect_name": "placeholder_two_faces_identity_switch",
+      "shown_effect_name": "占位：两幅面孔 - 当从者真名隐藏时，你是【监督者】；其他情况下，你是【执行者】（包括且不限于你没有从者）（需要『从者真名隐藏状态判定』与『身份状态切换』机制）",
+      "time_points": ["game_start"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    }
+  ],
+  "specials": {
+    "SKILLS": [],
+    "ATTACKS": [],
+    "BUFFS": [
+      {
+        "buff_name": "overseer",
+        "buff_img": "00006_kotomine_kirei_overseer.png",
+        "is_active": false,
+        "buff_level": {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "effects": [
+          {
+            "effect_name": "placeholder_overseer_reveal_class",
+            "shown_effect_name": "占位：管理者 - 所有玩家秘密告诉你从者职阶（需要『秘密信息传递』机制）",
+            "time_points": ["game_start"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_overseer_neutral_move",
+            "shown_effect_name": "占位：中立 - 行动阶段：你可以无视交战状态，花费2魔力移动至侦查（需要『交战状态豁免』机制）",
+            "time_points": ["self_action_phase"],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 2, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_overseer_true_name_release_defeat",
+            "shown_effect_name": "占位：战斗阶段：可【真名解放】使与你位于同一战场的一名玩家【败北】（需要『真名解放联动』与『指定败北』机制）",
+            "time_points": ["self_battle_phase"],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "buff_name": "executor",
+        "buff_img": "00006_kotomine_kirei_executor.png",
+        "is_active": true,
+        "buff_level": {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "effects": [
+          {
+            "effect_name": "placeholder_executor_total_power_boost",
+            "shown_effect_name": "占位：战斗阶段：你的总威力+2（需要『战斗阶段己方总威力加成』机制）",
+            "time_points": ["self_battle_phase"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 2, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_executor_basic_attack_boost_ignore_defeat",
+            "shown_effect_name": "占位：你的所有基本攻击牌威力+2且无视【败北】（需要『基本攻击牌识别』与『无视败北』机制）",
+            "time_points": ["self_played_card"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 2, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "tags": [
+    { "tag": "kotomine", "name_list": ["言峰"], "type": "master_tag" },
+    { "tag": "two_faces", "name_list": ["两幅面孔"], "type": "master_tag" }
+  ]
+}

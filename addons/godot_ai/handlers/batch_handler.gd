@@ -1,5 +1,5 @@
 @tool
-extends RefCounted
+extends "res://addons/godot_ai/handlers/command_handler.gd"
 
 const ErrorCodes := preload("res://addons/godot_ai/utils/error_codes.gd")
 
@@ -28,6 +28,12 @@ const FORBIDDEN_SUBCOMMANDS := {
 	"game_command":
 		"game_command ops are deferred (their reply arrives out-of-band) and "
 		+ "have no completion channel inside a batch — run them as their own tool call",
+	"configure_client":
+		"configure_client is deferred and has no completion channel inside a batch — "
+		+ "run it as its own tool call",
+	"remove_client":
+		"remove_client is deferred and has no completion channel inside a batch — "
+		+ "run it as its own tool call",
 }
 
 ## The whole batch executes synchronously inside one dispatcher tick,

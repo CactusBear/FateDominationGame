@@ -9,7 +9,23 @@ extends RefCounted
 ## Canonical pid-file path. plugin.gd::SERVER_PID_FILE re-exports this so
 ## external readers and tests can use either name.
 const SERVER_PID_FILE := "user://godot_ai_server.pid"
+## Where a plugin-spawned server reports a failure that happens before it
+## publishes its capability record (`--startup-report`). Removed before every
+## spawn, so a report that exists afterwards belongs to that launch.
+const SERVER_STARTUP_REPORT := "user://godot_ai_server_startup.json"
 const WindowsPortReservation := preload("res://addons/godot_ai/utils/windows_port_reservation.gd")
+static var _process_spawn_mutex := Mutex.new()
+
+
+## Serialize plugin-owned subprocess creation across the brief process-global
+## environment override used for server capabilities. Callers must keep this
+## window to environment mutation + one spawn and release it immediately.
+static func lock_process_spawn() -> void:
+	_process_spawn_mutex.lock()
+
+
+static func unlock_process_spawn() -> void:
+	_process_spawn_mutex.unlock()
 
 
 static func can_bind_local_port(port: int) -> bool:
@@ -60,7 +76,16 @@ static func is_port_in_use_via_scrape(port: int, trace: Callable = Callable()) -
 		return not find_listener_pids_windows(port).is_empty()
 	_trace(trace, "lsof")
 	var exit_code := OS.execute("lsof", ["-ti:%d" % port, "-sTCP:LISTEN"], output, true)
-	return exit_code == 0 and output.size() > 0 and not output[0].strip_edges().is_empty()
+	if exit_code == 0 and output.size() > 0 and not output[0].strip_edges().is_empty():
+		return true
+	if OS.get_name() != "Linux":
+		return false
+	_trace(trace, "ss")
+	output.clear()
+	return (
+		OS.execute("ss", ["-H", "-ltnp"], output, true) == 0
+		and not parse_linux_ss_pids(str(output[0]) if not output.is_empty() else "", port).is_empty()
+	)
 
 
 ## Return the PID currently listening on the given TCP port, or 0 if
@@ -76,7 +101,7 @@ static func find_pid_on_port(port: int, trace: Callable = Callable()) -> int:
 ## both bind the same port.
 ##
 ## `trace` is an optional Callable that fires once per OS invocation with
-## a counter name (`"netstat"` / `"powershell"` / `"lsof"`) so the plugin
+## a counter name (`"netstat"` / `"powershell"` / `"lsof"` / `"ss"`) so the plugin
 ## can keep its cold-start trace accurate. The Windows path may fall
 ## through netstat → PowerShell, and a wrapping caller can't see which
 ## scraper actually ran without the hook.
@@ -105,10 +130,19 @@ static func find_all_pids_on_port(port: int, trace: Callable = Callable()) -> Ar
 	var output: Array = []
 	_trace(trace, "lsof")
 	var exit_code := OS.execute("lsof", ["-ti:%d" % port, "-sTCP:LISTEN"], output, true)
-	if exit_code != 0 or output.is_empty():
+	if exit_code == 0 and not output.is_empty():
+		var lsof_pids := parse_lsof_pids(str(output[0]))
+		if not lsof_pids.is_empty() or OS.get_name() != "Linux":
+			return lsof_pids
+	elif OS.get_name() != "Linux":
 		var empty: Array[int] = []
 		return empty
-	return parse_lsof_pids(str(output[0]))
+	_trace(trace, "ss")
+	output.clear()
+	if OS.execute("ss", ["-H", "-ltnp"], output, true) != 0 or output.is_empty():
+		var empty: Array[int] = []
+		return empty
+	return parse_linux_ss_pids(str(output[0]), port)
 
 
 static func _trace(trace: Callable, counter: String) -> void:
@@ -161,16 +195,32 @@ static func windows_listener_execute_result_in_use(exit_code: int, output: Array
 
 
 ## Pure parser for `lsof -ti` output — newline-separated decimal PIDs.
-## Empty lines and non-numeric tokens are dropped. Duplicates pass
-## through (uvicorn reloader + worker can produce the same PID twice
-## across runs but typically two distinct PIDs).
+## Empty lines, non-positive values, non-numeric tokens, and duplicate
+## IPv4/IPv6 rows for the same listener are dropped.
 static func parse_lsof_pids(raw: String) -> Array[int]:
-	var pids: Array[int] = []
-	for line in raw.strip_edges().split("\n", false):
-		var stripped := line.strip_edges()
-		if stripped.is_valid_int():
-			pids.append(int(stripped))
-	return pids
+	return parse_pid_lines(raw)
+
+
+## Parse Linux `ss -H -ltnp` without trusting process names or localized
+## state text. The local endpoint is the fourth whitespace-delimited field;
+## every `pid=` value on an exact-port row is retained for later brand,
+## lineage, and fingerprint checks.
+static func parse_linux_ss_pids(raw: String, port: int) -> Array[int]:
+	var result: Array[int] = []
+	if port < 1 or port > 65535:
+		return result
+	var expression := RegEx.new()
+	if expression.compile("(?:^|,)pid=([0-9]+)(?:,|\\))") != OK:
+		return result
+	for line in raw.split("\n", false):
+		var fields := line.split(" ", false)
+		if fields.size() < 4 or not str(fields[3]).ends_with(":%d" % port):
+			continue
+		for matched in expression.search_all(line):
+			var pid := int(matched.get_string(1))
+			if pid > 0 and not result.has(pid):
+				result.append(pid)
+	return result
 
 
 static func parse_pid_lines(raw: String) -> Array[int]:
@@ -262,10 +312,10 @@ static func split_on_whitespace(s: String) -> PackedStringArray:
 	return out
 
 
-static func read_pid_file() -> int:
-	if not FileAccess.file_exists(SERVER_PID_FILE):
+static func read_pid_file(path := SERVER_PID_FILE) -> int:
+	if not FileAccess.file_exists(path):
 		return 0
-	var f := FileAccess.open(SERVER_PID_FILE, FileAccess.READ)
+	var f := FileAccess.open(path, FileAccess.READ)
 	if f == null:
 		return 0
 	var content := f.get_as_text().strip_edges()
@@ -306,11 +356,208 @@ static func pid_alive(pid: int) -> bool:
 	return not stat.is_empty() and not stat.begins_with("Z")
 
 
+## Read-only process identity helpers.  Lifecycle authority is granted only
+## after capturing a fingerprint and every later stop re-reads the fingerprint
+## before acting, so PID reuse fails closed.
+static func process_commandline(pid: int) -> String:
+	if pid <= 1:
+		return ""
+	if OS.get_name() == "Windows":
+		var output: Array = []
+		var script := (
+			"Get-CimInstance Win32_Process -Filter 'ProcessId = %d' | "
+			+ "Select-Object -ExpandProperty CommandLine"
+		) % pid
+		if execute_windows_powershell(script, output) != 0 or output.is_empty():
+			return ""
+		return str(output[0]).strip_edges()
+	var proc_path := "/proc/%d/cmdline" % pid
+	if FileAccess.file_exists(proc_path):
+		var file := FileAccess.open(proc_path, FileAccess.READ)
+		if file != null:
+			var bytes := PackedByteArray()
+			while bytes.size() < (1 << 20):
+				var chunk := file.get_buffer(4096)
+				if chunk.is_empty():
+					break
+				bytes.append_array(chunk)
+				if file.eof_reached():
+					break
+			file.close()
+			for index in range(bytes.size()):
+				if bytes[index] == 0:
+					bytes[index] = 0x20
+			return bytes.get_string_from_utf8().strip_edges()
+	var output: Array = []
+	if OS.execute("ps", ["-ww", "-p", str(pid), "-o", "args="], output, true) != 0:
+		return ""
+	return str(output[0]).strip_edges() if not output.is_empty() else ""
+
+
+static func process_parent(pid: int) -> int:
+	if pid <= 1:
+		return 0
+	var output: Array = []
+	if OS.get_name() == "Windows":
+		var script := (
+			"Get-CimInstance Win32_Process -Filter 'ProcessId = %d' | "
+			+ "Select-Object -ExpandProperty ParentProcessId"
+		) % pid
+		if execute_windows_powershell(script, output) != 0 or output.is_empty():
+			return 0
+	else:
+		if OS.execute("ps", ["-o", "ppid=", "-p", str(pid)], output, true) != 0 or output.is_empty():
+			return 0
+	var raw := str(output[0]).strip_edges()
+	return int(raw) if raw.is_valid_int() else 0
+
+
+static func process_descends_from(pid: int, ancestor_pid: int) -> bool:
+	if pid <= 1 or ancestor_pid <= 1:
+		return false
+	var current := pid
+	for _depth in range(16):
+		if current == ancestor_pid:
+			return true
+		var parent := process_parent(current)
+		if parent <= 1 or parent == current:
+			return false
+		current = parent
+	return false
+
+
+static func commandline_is_godot_ai_server(commandline: String) -> bool:
+	if commandline.is_empty():
+		return false
+	var lower := commandline.to_lower()
+	var expression := RegEx.new()
+	var brand_search := lower
+	## Paths we choose ourselves must not satisfy the brand: strip the pid-file
+	## and startup-report values (they live under user:// and carry our name)
+	## before searching for it.
+	if expression.compile("--(pid-file|startup-report)(?:=|\\s+)\\S+") == OK:
+		brand_search = expression.sub(lower, "--$1 ", true)
+	var branded := brand_search.contains("godot-ai") or brand_search.contains("godot_ai")
+	return branded and (lower.contains("--pid-file") or lower.contains("--transport"))
+
+
+static func pid_cmdline_is_godot_ai(pid: int) -> bool:
+	var current := pid
+	for _depth in range(5):
+		if current <= 1:
+			return false
+		if commandline_is_godot_ai_server(process_commandline(current)):
+			return true
+		current = process_parent(current)
+	return false
+
+
+static func process_fingerprint(pid: int) -> String:
+	if not pid_alive(pid):
+		return ""
+	var output: Array = []
+	var identity := ""
+	if OS.get_name() == "Windows":
+		var script := (
+			"Get-CimInstance Win32_Process -Filter 'ProcessId = %d' | "
+			+ "ForEach-Object { \"$($_.CreationDate)|$($_.CommandLine)\" }"
+		) % pid
+		if execute_windows_powershell(script, output) == 0 and not output.is_empty():
+			identity = str(output[0]).strip_edges()
+		if identity.is_empty():
+			## Some restricted Windows hosts expose process start time through
+			## Get-Process while CIM returns no Win32_Process projection. PID +
+			## creation time is the reuse-resistant identity; command-line brand
+			## is checked independently before destructive authority is minted.
+			output.clear()
+			script = (
+				"(Get-Process -Id %d -ErrorAction Stop).StartTime.ToFileTimeUtc()"
+			) % pid
+			if execute_windows_powershell(script, output) == 0 and not output.is_empty():
+				identity = str(output[0]).strip_edges()
+	else:
+		if OS.execute(
+			"ps", ["-ww", "-p", str(pid), "-o", "lstart=", "-o", "args="], output, true
+		) == 0 and not output.is_empty():
+			identity = str(output[0]).strip_edges()
+	if identity.is_empty():
+		return ""
+	var context := HashingContext.new()
+	context.start(HashingContext.HASH_SHA256)
+	context.update((str(pid) + "|" + identity).to_utf8_buffer())
+	return context.finish().hex_encode()
+
+
+## Capture the process identity that a later destructive call must present.
+## A PID or command-line brand alone is never kill authority: either can refer
+## to a different process by the time a worker reaches the effect boundary.
+## `diagnostics`, when given, receives one word naming the check that
+## refused the grant. It costs no extra probe and never changes the result.
+static func capture_process_kill_grant(
+	pid: int, require_brand := false, diagnostics: Array = []
+) -> Dictionary:
+	if pid <= 1 or pid == OS.get_process_id():
+		diagnostics.append("invalid_pid")
+		return {}
+	if not pid_alive(pid):
+		diagnostics.append("not_alive")
+		return {}
+	if require_brand and not pid_cmdline_is_godot_ai(pid):
+		diagnostics.append("unbranded")
+		return {}
+	var fingerprint := process_fingerprint(pid)
+	if fingerprint.is_empty():
+		diagnostics.append("fingerprint_unavailable")
+		return {}
+	## Close the capture window: both identity and optional lineage/brand must
+	## still describe the same process after the fingerprint read.
+	if process_fingerprint(pid) != fingerprint:
+		diagnostics.append("fingerprint_changed")
+		return {}
+	if require_brand and not pid_cmdline_is_godot_ai(pid):
+		diagnostics.append("brand_changed")
+		return {}
+	return {"pid": pid, "fingerprint": fingerprint}
+
+
+## Kill only exact process grants and re-read identity immediately before the
+## OS call. On Windows, taskkill /T already handles real descendants; do not
+## append command-line lookalikes such as spoofed multiprocessing children.
+static func kill_exact_processes(
+	grants: Array[Dictionary], require_brand := false, require_tree_proof := false
+) -> Array[int]:
+	var killed: Array[int] = []
+	var seen: Array[int] = []
+	for grant in grants:
+		if grant.keys().size() != 2 or not grant.has("pid") or not grant.has("fingerprint"):
+			continue
+		var pid := int(grant.get("pid", 0))
+		var fingerprint := str(grant.get("fingerprint", ""))
+		if (
+			pid <= 1
+			or pid == OS.get_process_id()
+			or seen.has(pid)
+			or fingerprint.is_empty()
+			or process_fingerprint(pid) != fingerprint
+			or (require_brand and not pid_cmdline_is_godot_ai(pid))
+		):
+			continue
+		seen.append(pid)
+		if OS.get_name() == "Windows":
+			var output: Array = []
+			var code := OS.execute("taskkill", ["/PID", str(pid), "/T", "/F"], output, true)
+			## A vanished direct PID is enough for ordinary exact-process callers.
+			## Timeout safety needs stronger evidence: only taskkill /T success
+			## proves that Windows accepted termination of the whole child tree.
+			if code == 0 or (not require_tree_proof and not pid_alive(pid)):
+				killed.append(pid)
+		elif OS.kill(pid) == OK or not pid_alive(pid):
+			killed.append(pid)
+	return killed
+
+
 ## Poll until the given port is no longer bound, or the timeout elapses.
 ## Used after `OS.kill` so we don't race the port-in-use check on rebind.
-## NOTE: plugin.gd::_wait_for_port_free (and _is_port_in_use) is a
-## deliberate line-for-line fork of this pair kept for _ProofPlugin
-## isolation — keep the two in sync when editing either.
 static func wait_for_port_free(port: int, timeout_s: float) -> void:
 	var deadline := Time.get_ticks_msec() + int(timeout_s * 1000.0)
 	while is_port_in_use(port):
@@ -336,24 +583,6 @@ static func resolve_ws_port(configured: int, max_port: int, log_buffer = null) -
 		if log_buffer != null:
 			log_buffer.log(message)
 	return resolved
-
-
-## Trust the cached ws_port from the managed record only when the record
-## is current ownership proof — i.e. record version matches the installed
-## plugin. Otherwise a stale record from an older install (e.g. a 9500
-## value pre-Windows-reservation collision) would mislead the
-## compatibility check into killing an unrelated external process. #259.
-static func resolved_ws_port_for_existing_server(
-	record_ws_port: int,
-	record_version: String,
-	current_version: String,
-	fresh_resolved: int
-) -> int:
-	if record_ws_port <= 0:
-		return fresh_resolved
-	if current_version.is_empty() or record_version != current_version:
-		return fresh_resolved
-	return record_ws_port
 
 
 static func resolve_ws_port_from_output(

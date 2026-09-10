@@ -1,0 +1,38 @@
+class_name ModifyAttackPowerByAttribute
+extends RefCounted
+
+#按属性增减玩家的合计威力：场上每有一张匹配指定属性的攻击牌，合计威力就增减一份power_delta。
+#不改动卡牌自身的_power，牌的印刷威力保持不变，改牌威力请用EditCardPower。
+#required_attributes留空表示匹配所有攻击牌；
+#传入attack时只判定这一张，不传则扫描该玩家场上所有攻击牌
+func exec(required_attributes:Array, power_delta:BaseNumber = BaseNumber.new(0), player_id:int = -1, attack:BaseAttack = null):
+
+	var id = EffectManager.resolve_player_id(player_id)
+	if power_delta.number == 0:
+		return
+	var counts_power = CardCountsPower.new()
+	var total:int = 0
+	if attack != null:
+		#暗置等不计合计威力的牌不参与加成，是否计入统一由CardCountsPower判定
+		if _match(attack, required_attributes) and counts_power.exec(attack, id):
+			total = power_delta.number
+	else:
+		if !GameData.player_data_library.has(id):
+			return
+		var player_data:Dictionary = GameDataManager.get_player_data(id)
+		for card in player_data["played_cards"]:
+			if card is BaseAttack and _match(card, required_attributes) and counts_power.exec(card, id):
+				total += power_delta.number
+	if total == 0:
+		return
+	#复用EditPower统一改写玩家的合计威力
+	EditPower.new().exec(null, BaseNumber.new(total), id)
+
+
+func _match(attack:BaseAttack, required_attributes:Array) -> bool:
+	if required_attributes.is_empty():
+		return true
+	for attr in required_attributes:
+		if attack._attributes.has(attr):
+			return true
+	return false

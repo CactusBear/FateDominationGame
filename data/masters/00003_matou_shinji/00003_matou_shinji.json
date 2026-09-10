@@ -1,0 +1,161 @@
+{
+  "master_name": "matou_shinji",
+  "shown_master_name": "间桐慎二",
+  "header_img": "00003_matou_shinji_header.png",
+  "master_card_img": "00003_matou_shinji_cd.png",
+  "command_spell_img": "00003_matou_shinji_cs.png",
+  "effects": [
+    {
+      "effect_name": "placeholder_servant_treated_as_rider",
+      "shown_effect_name": "占位：被动 - 你的从者视为「Rider」职阶（需要『职阶覆盖/视为』机制）",
+      "time_points": ["game_start"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    },
+    {
+      "effect_name": "placeholder_prepare_phase_view_skill",
+      "shown_effect_name": "占位：准备阶段 - 选择一名对手，观看其技能区的一张牌（需要『查看对手技能区卡牌』机制）",
+      "time_points": ["self_prepare_phase"],
+      "priority": 0,
+      "is_pure_passive": false,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    },
+    {
+      "effect_name": "placeholder_action_phase_treat_as_caster",
+      "shown_effect_name": "占位：行动阶段 - 你可以令你的从者视为「Caster」职阶直至回合结束（需要『职阶覆盖/视为』机制）",
+      "time_points": ["self_action_phase"],
+      "priority": 0,
+      "is_pure_passive": false,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    },
+    {
+      "effect_name": "placeholder_reconnaissance_command_spell_bonus",
+      "shown_effect_name": "占位：被动 - 当你位于【侦查】时，你的令咒获得：\"行动阶段：令一名对手败北。\"（需要『位置判定』与『令咒动态追加效果』机制）",
+      "time_points": ["self_action_phase"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    }
+  ],
+  "specials": {
+    "SKILLS": [],
+    "ATTACKS": [],
+    "BUFFS": [
+      {
+        "buff_name": "false_servant_book",
+        "buff_img": "00003_matou_shinji_false_servant_book.png",
+        "is_active": true,
+        "buff_level": {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "effects": [
+          {
+            "effect_name": "placeholder_false_servant_book_master_replace",
+            "shown_effect_name": "占位：替代品 - 间桐樱不在场时，当你第一次失去所有令咒，该回合结束时将你的御主替换为【间桐樱】，重置魔力，获得2令咒，保持战果不变（需要『令咒清零检测』与『御主替换』机制）",
+            "time_points": ["day_end"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 2, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_false_servant_book_servant_replace",
+            "shown_effect_name": "占位：契约再续 - 间桐樱在场时，当你第一次失去所有令咒，该回合结束时将从者替换为一个随机的、未被使用的从者，重新获得3令咒（需要『令咒清零检测』『随机未使用从者抽取』与『从者替换』机制）",
+            "time_points": ["day_end"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 3, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "buff_name": "grail_core",
+        "buff_img": "00003_matou_shinji_grail_core.png",
+        "is_active": true,
+        "buff_level": {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "effects": [
+          {
+            "effect_name": "placeholder_grail_core_activation",
+            "shown_effect_name": "占位：此牌在第八回合结束后，且莎士比亚是你的从者时生效，你失去【伪臣之书】（需要『回合数判定』『从者名称判定』『移除Buff』机制）",
+            "time_points": ["day_end"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 8, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_grail_core_first_servant_bonus",
+            "shown_effect_name": "占位：若莎士比亚是你的第一名从者，你位于深山町时合计威力+12，当你获得X点战果时，所有位于深山町的对手失去X点战果（需要『从者出场顺序判定』『地图区域判定』『战果联动扣除』机制）",
+            "time_points": ["self_battle_phase"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 12, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_grail_core_not_first_servant_bonus",
+            "shown_effect_name": "占位：若莎士比亚并非你的第一名从者，你获得8点战果（需要『从者出场顺序判定』机制）",
+            "time_points": ["day_end"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 8, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "tags": [
+    { "tag": "matou", "name_list": ["间桐"], "type": "master_tag" },
+    { "tag": "false_servant_book", "name_list": ["伪臣之书"], "type": "master_tag" }
+  ]
+}

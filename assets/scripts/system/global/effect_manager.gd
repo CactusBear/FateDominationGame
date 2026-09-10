@@ -31,6 +31,24 @@ var time_point_id:int = 0
 var is_running:bool = false
 
 
+#清理本局运行时状态，保留已经加载的游戏资源和效果对象
+func reset_runtime():
+	effect_pool.clear()
+	activating_eff = null
+	decision_queue.clear()
+	activation_pool.clear()
+	waiting_effect = null
+	matched_time_points.clear()
+	resolved_effects.clear()
+	closed_time_points.clear()
+	countered_funcs.clear()
+	time_point_id = 0
+	is_running = false
+	for id in GameData.player_data_library.keys():
+		var player_data = GameData.player_data_library[id] as Dictionary
+		(player_data["self_effects"] as Array).clear()
+
+
 func get_all_players_id():
 	return GameData.player_data_library.keys()
 
@@ -413,46 +431,88 @@ func check_condition(_func:BaseFunc, effect:BaseEffect) -> bool:
 	return bool(value)
 
 
+#执行单个BaseFunc：反制检查、条件检查、延迟绑定、参数解析、调用、写回var_index。
+#抽成公共入口，好让循环类operation(ForFunc/ForeachFunc/WhileFunc)复用同一套规则，
+#而不是直接调callable绕开self_var/number_index/condition。
+#返回[是否真正调用了callable, 调用结果]；未调用时结果为null
+func run_base_func(f:BaseFunc, effect:BaseEffect) -> Array:
+	if is_func_countered(effect, f):
+		return [false, null]
+	if !check_condition(f, effect):
+		return [false, null]
+
+	var callable = f._func
+	#延迟绑定的方法调用，目标对象此刻才从变量表里取出
+	if f._self_var_index != -1:
+		if f._self_var_index >= effect._self_vars.size():
+			return [false, null]
+		var target = effect._self_vars[f._self_var_index]
+		if target == null or !target.has_method(f._method_name):
+			return [false, null]
+		callable = Callable(target, f._method_name)
+	if !callable.is_valid():
+		return [false, null]
+
+	var paras = f._parameters.duplicate()
+	var paras_ready:bool = true
+	for i in paras.size():
+		var resolved = resolve_placeholder(paras[i], effect)
+		if !resolved[0]:
+			paras_ready = false
+			break
+		paras[i] = resolved[1]
+	#参数解析不出来就跳过这个func，但效果里后续的func照常处理
+	if !paras_ready:
+		return [false, null]
+
+	var result = callable.callv(paras)
+	if f._var_index != -1:
+		while effect._self_vars.size() <= f._var_index:
+			effect._self_vars.append(null)
+		effect._self_vars[f._var_index] = result
+	return [true, result]
+
+
+#按JSON可表达的函数描述{"func_name":.., "parameters":[..], "var_index":-1, "condition":null}
+#动态加载operation并执行，规则与load_game.gd里加载func_name的方式一致。
+#兼容直接传入BaseFunc(内部/旧代码构造的循环体)。
+#用于循环体这类"JSON里无法直接构造BaseFunc/Callable"的场合，
+#让self_var既能传数组/次数，也能传循环体本身需要的参数。
+#返回同run_base_func：[是否真正调用了callable, 调用结果]
+func run_func_descriptor(desc, effect:BaseEffect) -> Array:
+	if desc is BaseFunc:
+		return run_base_func(desc, effect)
+
+	if !(desc is Dictionary):
+		return [false, null]
+
+	var key = desc.get("func_name", "") as String
+	if key == "":
+		return [false, null]
+	var _class_name = LoadGame.func_name_to_class_name(key)
+	var func_path = "res://assets/scripts/system/operations/" + _class_name + ".gd"
+	if !ResourceLoader.exists(func_path):
+		print("没有操作:" + "'" + key + "'")
+		return [false, null]
+
+	var func_instance = load(func_path).new()
+	var main_callable = Callable(func_instance, "exec")
+	var paras = desc.get("parameters", []) as Array
+	var var_index = desc.get("var_index", -1) as int
+	var condition = desc.get("condition", null)
+	var _func = BaseFunc.new(main_callable, paras, var_index, condition)
+	#Callable不会保活实例，必须由func自己持有引用，否则调用完就被释放
+	_func._instance = func_instance
+
+	return run_base_func(_func, effect)
+
+
 func activate_effect(effect:BaseEffect):
 	start_effect()
 	#每次激活都从空白的变量表开始，避免读到上一次激活的残留值
 	effect._self_vars = []
 
 	for f:BaseFunc in effect._funcs:
-		if is_func_countered(effect, f):
-			continue
-		if !check_condition(f, effect):
-			continue
-
-		var callable = f._func
-		#延迟绑定的方法调用，目标对象此刻才从变量表里取出
-		if f._self_var_index != -1:
-			if f._self_var_index >= effect._self_vars.size():
-				continue
-			var target = effect._self_vars[f._self_var_index]
-			if target == null or !target.has_method(f._method_name):
-				continue
-			callable = Callable(target, f._method_name)
-		if !callable.is_valid():
-			continue
-
-		var paras = f._parameters.duplicate()
-		var paras_ready:bool = true
-		for i in paras.size():
-			var resolved = resolve_placeholder(paras[i], effect)
-			if !resolved[0]:
-				paras_ready = false
-				break
-			paras[i] = resolved[1]
-		#参数解析不出来就跳过这个func，但效果里后续的func照常处理
-		if !paras_ready:
-			continue
-
-		if f._var_index == -1:
-			callable.callv(paras)
-		else:
-			while effect._self_vars.size() <= f._var_index:
-				effect._self_vars.append(null)
-			effect._self_vars[f._var_index] = callable.callv(paras)
+		run_base_func(f, effect)
 
 	end_effect()

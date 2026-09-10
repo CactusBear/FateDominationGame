@@ -1,0 +1,156 @@
+{
+  "master_name": "illyasviel_von_einzbern",
+  "shown_master_name": "伊莉雅斯菲尔",
+  "header_img": "00005_illyasviel_von_einzbern_header.png",
+  "master_card_img": "00005_illyasviel_von_einzbern_cd.png",
+  "command_spell_img": "00005_illyasviel_von_einzbern_cs.png",
+  "effects": [
+    {
+      "effect_name": "placeholder_artificial_life_initial_magic",
+      "shown_effect_name": "占位：人工生命体 - 你的魔力初始值为6（需要『设置初始魔力值』机制，区别于常规魔力增减）",
+      "time_points": ["game_start"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [
+        { "number": 6, "can_change": true, "is_pure_number": true }
+      ],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    },
+    {
+      "effect_name": "placeholder_grail_vessel_activate_heavenly_robe",
+      "shown_effect_name": "占位：圣杯容器 - 第八回合开始时，激活【天之衣】（需要『回合数判定』与『激活Buff』机制）",
+      "time_points": ["day_start"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [
+        { "number": 8, "can_change": true, "is_pure_number": true }
+      ],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    },
+    {
+      "effect_name": "placeholder_little_grail_attack_discount",
+      "shown_effect_name": "占位：小圣杯 - 你打出攻击时所需的魔力消耗-1（需要『攻击类卡牌统一消费折扣』机制）",
+      "time_points": ["self_played_card"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [
+        { "number": -1, "can_change": true, "is_pure_number": true }
+      ],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    },
+    {
+      "effect_name": "placeholder_all_conceal_magic_gain",
+      "shown_effect_name": "占位：回合结束时，若你本回合打出的攻击均为暗置，获得1点魔力（需要『本回合所有攻击暗置状态检查』机制）",
+      "time_points": ["day_end"],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [
+        { "number": 1, "can_change": true, "is_pure_number": true }
+      ],
+      "funcs": [
+        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+      ]
+    }
+  ],
+  "specials": {
+    "SKILLS": [],
+    "ATTACKS": [],
+    "BUFFS": [
+      {
+        "buff_name": "heavenly_robe",
+        "buff_img": "00005_illyasviel_von_einzbern_heavenly_robe.png",
+        "is_active": false,
+        "buff_level": {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "effects": [
+          {
+            "effect_name": "placeholder_return_to_nothingness",
+            "shown_effect_name": "占位：归于虚无 - 回合开始时，若你上回合在战斗阶段时与至少一名被淘汰的玩家位于同一战场，获得2点战果（需要『上一回合场地历史记录』与『同战场淘汰玩家判定』机制）",
+            "time_points": ["day_start"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 2, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "upgrade_skill": [
+    {
+      "skill_name": "third_magic",
+      "shown_skill_name": "第三法",
+      "skill_card_img": "00005_illyasviel_von_einzbern_third_magic.png",
+      "attributes": ["magic", "special"],
+      "cost": { "number": 0, "can_change": true, "is_pure_number": true },
+      "power": { "number": 0, "can_change": true, "is_pure_number": true },
+      "ignore_limit": false,
+      "effects": [
+        {
+          "effect_name": "placeholder_third_magic_remove_strength_cards",
+          "shown_effect_name": "占位：解锁此技能后，你立即从手牌、牌库及弃牌堆中移除所有力量牌（需要『按属性批量移除卡牌』机制）",
+          "time_points": ["game_start"],
+          "priority": 0,
+          "is_pure_passive": false,
+          "is_residue": false,
+          "effect_numbers": [],
+          "funcs": [
+            { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+          ]
+        },
+        {
+          "effect_name": "passive",
+          "shown_effect_name": "被动 - 你的魔术和特殊属性基本攻击获得+2威力",
+          "time_points": ["self_played_card"],
+          "priority": 0,
+          "is_pure_passive": true,
+          "is_residue": false,
+          "effect_numbers": [
+            { "number": 2, "can_change": true, "is_pure_number": true }
+          ],
+          "funcs": [
+            {
+              "func_name": "modify_attack_power_by_attribute",
+              "parameters": [["magic", "special"], { "number_index": 0 }],
+              "var_index": -1
+            }
+          ]
+        },
+        {
+          "effect_name": "placeholder_third_magic_heavens_feel_win",
+          "shown_effect_name": "占位：当局势牌为【天之杯】时，未被淘汰的玩家全部获胜（需要『局势牌类型判定』与『胜利条件覆盖』机制）",
+          "time_points": ["game"],
+          "priority": 0,
+          "is_pure_passive": true,
+          "is_residue": false,
+          "effect_numbers": [],
+          "funcs": [
+            { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+          ]
+        }
+      ]
+    }
+  ],
+  "tags": [
+    { "tag": "einzbern", "name_list": ["爱因兹贝伦"], "type": "master_tag" },
+    { "tag": "heavenly_robe", "name_list": ["天之衣"], "type": "master_tag" }
+  ]
+}

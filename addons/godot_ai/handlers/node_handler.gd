@@ -1,5 +1,5 @@
 @tool
-extends RefCounted
+extends "res://addons/godot_ai/handlers/command_handler.gd"
 
 const ErrorCodes := preload("res://addons/godot_ai/utils/error_codes.gd")
 const VariantSerializer := preload("res://addons/godot_ai/utils/variant_serializer.gd")
@@ -148,9 +148,11 @@ func reparent_node(params: Dictionary) -> Dictionary:
 
 	var old_parent := node.get_parent()
 	var old_idx := node.get_index()
-	## Snapshot descendants before commit: remove_child clears owner on any
-	## child whose owner sits outside the pruned subtree, so both do and undo
-	## must restore those owners as part of the recorded action (#904).
+	## Ported from upstream PR #927 at
+	## 1a95bcca51d81d29de925c2f636814eaa037c1c2 (issue #904). Snapshot
+	## descendants before commit: remove_child clears owner on any child whose
+	## owner sits outside the pruned subtree, so both do and undo must restore
+	## those owners as part of the recorded action.
 	var descendants := _collect_descendants(node)
 
 	_undo_redo.create_action("MCP: Reparent %s" % node.name)
@@ -389,9 +391,10 @@ func duplicate_node(params: Dictionary) -> Dictionary:
 	if not new_name.is_empty():
 		dup.name = new_name
 
-	## Record descendant owners inside the action so redo restores them.
-	## Undo is just remove_child of the copy; descendants live on `dup`
-	## via add_do_reference and do not need their own undo set_owner (#904).
+	## Ported from upstream PR #927 (issue #904). Record descendant owners
+	## inside the action so redo restores them. Undo is just remove_child of
+	## the copy; descendants live on `dup` via add_do_reference and do not need
+	## their own undo set_owner.
 	var descendants := _collect_descendants(dup)
 
 	_undo_redo.create_action("MCP: Duplicate %s" % node.name)
@@ -549,8 +552,8 @@ func set_selection(params: Dictionary) -> Dictionary:
 
 
 ## All descendants of `node` (not including `node` itself), depth-first.
-## Used to record per-child set_owner inside an undo action without
-## targeting the handler as an UndoRedo receiver (#904).
+## Used to record per-child set_owner inside an undo action without targeting
+## the handler as an UndoRedo receiver (upstream PR #927 / issue #904).
 static func _collect_descendants(node: Node) -> Array[Node]:
 	var out: Array[Node] = []
 	for child in node.get_children():
@@ -763,6 +766,14 @@ static func _coerce_value(value: Variant, target_type: int) -> Variant:
 		TYPE_FLOAT:
 			if value is int:
 				return float(value)
+			if value is String:
+				## #964: some MCP clients stringify float arguments ("4.0").
+				## Accept strictly-numeric strings; unparseable ones flow
+				## through unchanged so _check_coerced raises the typed
+				## WRONG_TYPE error instead of a silent zero/null write.
+				var parsed: Variant = McpJsonValues.parse_float(value)
+				if parsed != null:
+					return parsed
 		TYPE_STRING_NAME:
 			if value is String:
 				return StringName(value)

@@ -14,8 +14,8 @@ extends RefCounted
 ## Why poll/kill instead of `OS.execute(..., true)`: GDScript can't
 ## interrupt a blocking `OS.execute`, so a hung CLI takes its caller's
 ## thread with it. `OS.execute_with_pipe` returns immediately with a PID;
-## we drive the wait ourselves and `OS.kill` the orphan if budget
-## expires. CLI registry commands have bounded output (a few hundred
+## we drive the wait ourselves and terminate the exact captured process if
+## budget expires. CLI registry commands have bounded output (a few hundred
 ## bytes), so we don't bother draining the pipe during the poll loop —
 ## the kernel buffer absorbs it.
 ##
@@ -29,13 +29,19 @@ extends RefCounted
 ##                 failed" — `claude mcp add` writes its real diagnostics to
 ##                 stderr, so callers that only read `stdout` would surface
 ##                 a generic "exit code 1" instead.
-##   timed_out:    true if we killed the process at the wall-clock budget.
+##   timed_out:    true if the wall-clock budget expired.
 ##   cancelled:    true if the caller requested a cooperative early stop.
 ##   spawn_failed: true if `OS.execute_with_pipe` didn't return a usable PID.
+##   termination_failed: true if an expired/cancelled process or any of its
+##                 possible descendants could not be proven stopped. POSIX
+##                 only gives this helper exact-PID authority, so timeout and
+##                 cancellation are necessarily unproven there.
 
 const DEFAULT_TIMEOUT_MS := 8000
 const _POLL_INTERVAL_MS := 50
 const _KILL_GRACE_MS := 500
+const PortResolver := preload("res://addons/godot_ai/utils/port_resolver.gd")
+const UvResolution := preload("res://addons/godot_ai/utils/uv_resolution_policy.gd")
 
 
 static func run(
@@ -44,10 +50,13 @@ static func run(
 	timeout_ms: int = DEFAULT_TIMEOUT_MS,
 	capture_stderr: bool = true,
 	cancel_check: Callable = Callable(),
+	isolate_uv_resolution: bool = false,
 ) -> Dictionary:
 	if exe.is_empty():
 		return _spawn_failed_result()
-	return _run_piped(exe, args, timeout_ms, capture_stderr, cancel_check)
+	return _run_piped(
+		exe, args, timeout_ms, capture_stderr, cancel_check, isolate_uv_resolution
+	)
 
 
 static func _run_piped(
@@ -56,6 +65,7 @@ static func _run_piped(
 	timeout_ms: int,
 	capture_stderr: bool,
 	cancel_check: Callable,
+	isolate_uv_resolution: bool,
 ) -> Dictionary:
 
 	var spawn_exe := exe
@@ -75,7 +85,13 @@ static func _run_piped(
 			spawn_args = ["/c", exe]
 			spawn_args.append_array(args)
 
+	PortResolver.lock_process_spawn()
+	var saved_uv_environment := (
+		UvResolution.isolate_environment() if isolate_uv_resolution else {}
+	)
 	var info := OS.execute_with_pipe(spawn_exe, spawn_args)
+	UvResolution.restore_environment(saved_uv_environment)
+	PortResolver.unlock_process_spawn()
 	if info.is_empty():
 		return _spawn_failed_result()
 
@@ -85,21 +101,31 @@ static func _run_piped(
 	if pid <= 0:
 		_close_pipes(stdio, stderr_pipe)
 		return _spawn_failed_result()
+	var kill_grant := PortResolver.capture_process_kill_grant(pid)
 
 	var deadline := Time.get_ticks_msec() + maxi(timeout_ms, _POLL_INTERVAL_MS)
 	while OS.is_process_running(pid):
 		var cancelled := cancel_check.is_valid() and bool(cancel_check.call())
 		if cancelled or Time.get_ticks_msec() >= deadline:
-			## Kill before draining: a pipe read can block while the child is
-			## still alive. Once it exits, drain any buffered partial output.
-			OS.kill(pid)
+			## Kill before draining: a pipe read can block while the launcher or
+			## one of its descendants still owns the write end. Windows taskkill
+			## /T gives us tree authority; POSIX OS.kill only targets this exact
+			## PID, so even a dead launcher cannot prove its descendants stopped.
+			var killed: Array[int] = []
+			if not kill_grant.is_empty():
+				killed = PortResolver.kill_exact_processes([kill_grant], false, true)
 			var kill_deadline := Time.get_ticks_msec() + _KILL_GRACE_MS
-			while OS.is_process_running(pid) and Time.get_ticks_msec() < kill_deadline:
+			while PortResolver.pid_alive(pid) and Time.get_ticks_msec() < kill_deadline:
 				OS.delay_msec(_POLL_INTERVAL_MS)
 
+			var termination_failed := (
+				PortResolver.pid_alive(pid)
+				or OS.get_name() != "Windows"
+				or not killed.has(pid)
+			)
 			var partial_stdout := ""
 			var partial_stderr := ""
-			if not OS.is_process_running(pid):
+			if not termination_failed:
 				partial_stdout = _drain_pipe(stdio)
 				partial_stderr = _drain_pipe(stderr_pipe) if capture_stderr else ""
 			_close_pipes(stdio, stderr_pipe)
@@ -111,6 +137,7 @@ static func _run_piped(
 				"timed_out": not cancelled,
 				"cancelled": cancelled,
 				"spawn_failed": false,
+				"termination_failed": termination_failed,
 			}
 		OS.delay_msec(_POLL_INTERVAL_MS)
 
@@ -126,6 +153,7 @@ static func _run_piped(
 		"timed_out": false,
 		"cancelled": false,
 		"spawn_failed": false,
+		"termination_failed": false,
 	}
 
 
@@ -138,6 +166,7 @@ static func _spawn_failed_result() -> Dictionary:
 		"timed_out": false,
 		"cancelled": false,
 		"spawn_failed": true,
+		"termination_failed": false,
 	}
 
 

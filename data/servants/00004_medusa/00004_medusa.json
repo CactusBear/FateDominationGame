@@ -1,0 +1,103 @@
+{
+  "servant_name": "medusa",
+  "shown_servant_name": "美杜莎",
+  "servant_class": "rider",
+  "header_img": "00004_medusa_header.png",
+  "servant_card_img": "00004_medusa_cd.png",
+  "effects": [],
+  "specials": {
+    "SKILLS": [
+      {
+        "skill_name": "riding",
+        "shown_skill_name": "骑乘",
+        "skill_card_img": "00004_medusa_riding.png",
+        "attributes": ["special"],
+        "cost": { "number": 3, "can_change": true, "is_pure_number": true },
+        "power": { "number": 0, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_riding_draw_with_basic_attack",
+            "shown_effect_name": "占位：打出时：若此牌与一张基础攻击一同打出，抽一张牌（需要『同时打出多张牌的关联判定』机制）",
+            "time_points": ["self_played_card"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          },
+          {
+            "effect_name": "placeholder_riding_mount_summon_play_low_power_cards",
+            "shown_effect_name": "占位：坐骑召唤 - 行动阶段：打出至多3张基本威力为3或更低的手牌（需要『按威力阈值筛选手牌并批量打出』机制）",
+            "time_points": ["self_action_phase"],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 3, "can_change": true, "is_pure_number": true },
+              { "number": 3, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "skill_name": "bellerophon",
+        "shown_skill_name": "骑英之缰绳",
+        "skill_card_img": "00004_medusa_bellerophon.png",
+        "attributes": ["agility", "noble_phantasm"],
+        "cost": { "number": 9, "can_change": true, "is_pure_number": true },
+        "power": { "number": 8, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_bellerophon_redeploy_terrain",
+            "shown_effect_name": "占位：【真名解放】行动阶段：移动到任一地点，若为战场，重新部署于该地点的2个地利，原地利占领者失去该地利（需要『指定地点地利重新分配』机制）",
+            "time_points": ["self_action_phase"],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [
+              { "number": 2, "can_change": true, "is_pure_number": true }
+            ],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      },
+      {
+        "skill_name": "eyes_of_petrification",
+        "shown_skill_name": "石化之魔眼",
+        "skill_card_img": "00004_medusa_eyes_of_petrification.png",
+        "attributes": ["magic"],
+        "cost": { "number": 4, "can_change": true, "is_pure_number": true },
+        "power": { "number": 1, "can_change": true, "is_pure_number": true },
+        "ignore_limit": false,
+        "effects": [
+          {
+            "effect_name": "placeholder_petrification_defeat_if_no_magic_attack",
+            "shown_effect_name": "占位：【真名解放】行动阶段：在战斗阶段开始前，若与你进行战斗的对手本回合没有打出/加入魔术属性攻击，则其【败北】（需要『本回合对手已打出攻击的属性记录』与『指定败北』机制）",
+            "time_points": ["self_action_phase"],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            ]
+          }
+        ]
+      }
+    ],
+    "ATTACKS": [],
+    "BUFFS": []
+  },
+  "tags": [
+    { "tag": "medusa", "name_list": ["medusa"], "type": "servant_tag" }
+  ]
+}
