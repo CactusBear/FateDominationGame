@@ -76,6 +76,9 @@ func _resolve_battle_area(area:BaseMapArea, player_ids:Array, result:Dictionary)
 		result["draw_areas"].append(area._area_name)
 		return
 
+	#派发战斗结算时点：归零类效果在比较威力前统一扣减，再结算胜负（全局时点，所有人一起）
+	TimePointChecker.global_time_point([TimePoints.BATTLE_RESOLVE])
+
 	var highest_power = null
 	var winners:Array = []
 	for id in effective_ids:

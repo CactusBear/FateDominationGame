@@ -11,10 +11,12 @@ func exec(body, count):
 		return
 
 	var times = count.number if count is BaseNumber else int(count)
+	var bodies:Array = body if body is Array else [body]
 	var last_result = null
 	for i in range(times):
-		var res = EffectManager.run_func_descriptor(body, effect)
-		if res[0]:
-			last_result = res[1]
+		for one in bodies:
+			var res = EffectManager.run_func_descriptor(one, effect)
+			if res[0]:
+				last_result = res[1]
 
 	return last_result

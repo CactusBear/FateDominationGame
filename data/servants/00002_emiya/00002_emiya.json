@@ -17,17 +17,25 @@
         "ignore_limit": false,
         "effects": [
           {
-            "effect_name": "placeholder_zero_opponent_special",
-            "shown_effect_name": "占位：战斗阶段，将同一战场所有对手的特殊属性威力变为0（需要『同战场对手』识别机制）",
-            "time_points": ["self_battle_phase"],
+            "effect_name": "zero_opponent_agility_power",
+            "shown_effect_name": "战斗阶段：将同一战场所有对手的迅捷属性攻击威力变为0",
+            "time_points": ["battle_resolve"],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
-            "effect_numbers": [
-              { "number": 0, "can_change": true, "is_pure_number": true }
-            ],
+            "effect_numbers": [],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              { "func_name": "get_players_in_same_area", "parameters": [], "var_index": 0 },
+              {
+                "func_name": "foreach_func",
+                "parameters": [
+                  [
+                    { "func_name": "zero_attribute_power", "parameters": [null, ["agility"]], "var_index": -1 }
+                  ],
+                  { "self_var": 0 }
+                ],
+                "var_index": -1
+              }
             ]
           }
         ]
@@ -42,8 +50,8 @@
         "ignore_limit": false,
         "effects": [
           {
-            "effect_name": "placeholder_terrain_advantage_triple",
-            "shown_effect_name": "占位：【真名解放】〈每局游戏限一次〉行动阶段：将你的地利变为3倍（需要『地利数值判定与倍率修改』机制）",
+            "effect_name": "terrain_advantage_triple",
+            "shown_effect_name": "【真名解放】行动阶段：将你的地利变为3倍",
             "time_points": ["self_action_phase"],
             "priority": 0,
             "is_pure_passive": false,
@@ -52,12 +60,16 @@
               { "number": 3, "can_change": true, "is_pure_number": true }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              { "func_name": "get_player_data_value", "parameters": ["true_name_released"], "var_index": 0 },
+              { "func_name": "get_location", "parameters": [], "var_index": 1 },
+              { "func_name": "get_location_benefit", "parameters": [{ "self_var": 1 }], "var_index": 2 },
+              { "func_name": "calculate_number", "parameters": [{ "self_var": 2 }, "*", { "number_index": 0 }], "var_index": 3 },
+              { "func_name": "edit_location_benefit", "parameters": [{ "self_var": 1 }, { "self_var": 3 }], "var_index": -1, "condition": { "self_var": 0 } }
             ]
           },
           {
-            "effect_name": "placeholder_battle_win_score_gain",
-            "shown_effect_name": "占位：战斗阶段：若赢得本场战斗，获得4战果（需要『本场战斗胜负判定』机制）",
+            "effect_name": "battle_win_score_gain",
+            "shown_effect_name": "战斗阶段：若赢得本场战斗，获得4战果",
             "time_points": ["self_battle_win"],
             "priority": 0,
             "is_pure_passive": true,
@@ -66,7 +78,7 @@
               { "number": 4, "can_change": true, "is_pure_number": true }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              { "func_name": "edit_score", "parameters": [null, { "number_index": 0 }], "var_index": -1 }
             ]
           }
         ]
@@ -82,7 +94,7 @@
         "effects": [
           {
             "effect_name": "placeholder_rebuild_hand_from_all_zones",
-            "shown_effect_name": "占位：【真名解放】打出时：以你打出的牌、手牌、牌库和弃牌堆任意组一组至多12张牌的手牌（需要『跨区域重组手牌』机制）",
+            "shown_effect_name": "【真名解放】打出时：以你打出的牌、手牌、牌库和弃牌堆任意组建一组至多12张牌的手牌",
             "time_points": ["self_played_card"],
             "priority": 0,
             "is_pure_passive": false,
@@ -95,18 +107,24 @@
             ]
           },
           {
-            "effect_name": "placeholder_residue_limited_play_no_draw",
-            "shown_effect_name": "占位：残留：你的常规出牌改为打出0~4张牌，你不能抽牌，当你的手牌数为0时，关闭此牌（需要『出牌数量上限覆盖』与『持续状态自动关闭』机制）",
-            "time_points": ["game"],
+            "effect_name": "residue_limited_play_no_draw",
+            "shown_effect_name": "残留：常规出牌上��改��4，且不能抽牌；手牌为0时关闭此牌",
+            "time_points": ["self_played_card", "self_prepare_phase"],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": true,
             "effect_numbers": [
-              { "number": 0, "can_change": true, "is_pure_number": true },
               { "number": 4, "can_change": true, "is_pure_number": true }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              { "func_name": "when", "parameters": [["self_played_card"]], "var_index": 0 },
+              { "func_name": "edit_data_number", "parameters": ["play_limit", { "number_index": 0 }], "var_index": -1, "condition": { "self_var": 0 } },
+              { "func_name": "set_player_data", "parameters": ["can_draw_card", false], "var_index": -1, "condition": { "self_var": 0 } },
+              { "func_name": "get_player_hand_cards", "parameters": [], "var_index": 1 },
+              { "func_name": "array_length", "parameters": [{ "self_var": 1 }], "var_index": 2 },
+              { "func_name": "if_func", "parameters": [{ "self_var": 2 }, 0], "var_index": 3 },
+              { "func_name": "get_eff_source_card", "parameters": [], "var_index": 4 },
+              { "func_name": "close_card", "parameters": [{ "self_var": 4 }], "var_index": -1, "condition": { "self_var": 3 } }
             ]
           }
         ]

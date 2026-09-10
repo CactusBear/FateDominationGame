@@ -1,15 +1,12 @@
 class_name GetBuffByNameFrArr
 extends RefCounted
 
-func exec(buff_name:String, buffs:Array):
+func exec(buff_name:String, buffs:Array) -> Array:
 
-	var got_buffs:Array#[BaseBuff]
-	for buff:BaseBuff in buffs:
-		if buff._buff_name == buff_name:
+	var got_buffs:Array = []
+	if buffs == null:
+		return got_buffs
+	for buff in buffs:
+		if buff is BaseBuff and buff._name == buff_name:
 			got_buffs.append(buff)
-	if got_buffs.size() > 1:
-		#show_check()
-		pass
-	else :
-		for b in got_buffs:
-			return b
+	return got_buffs

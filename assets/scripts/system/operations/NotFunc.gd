@@ -1,7 +1,6 @@
 class_name NotFunc
 extends RefCounted
 
-func exec(_bool:bool):
+func exec(_bool:bool) -> bool:
 
-	if _bool:
-		return false
+	return !_bool

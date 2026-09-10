@@ -35,10 +35,13 @@ data_*/
 # 运行时生成的游戏数据缓存，由 load_game.gd 自动重建
 game_data/stored_jsons.dat
 
-# Claude Code / agent 工具的本地脚手架，与游戏无关
+# Claude Code / Hermes / agent 工具的本地脚手架与工作产物，与游戏无关
 .claude/
 .agent/
 skills/
+CLAUDE.md
+IDEA.md
+FSN角色制作任务清单.txt
 
 # 编辑器与系统杂项
 .vscode/

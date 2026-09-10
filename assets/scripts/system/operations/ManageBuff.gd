@@ -15,6 +15,7 @@ func exec(buff, player_id:int = -1, add_or_del:bool = true):
 		buffs.append(buff)
 		if buff is BaseBuff:
 			EffectManager.register_effects(buff._effects, id)
+			TimePointChecker.dynamic_time_point([TimePoints.BUFF_START], id)
 		return true
 
 	if !buffs.has(buff):
@@ -22,5 +23,6 @@ func exec(buff, player_id:int = -1, add_or_del:bool = true):
 	if buff is BaseBuff:
 		for effect:BaseEffect in buff._effects:
 			EffectManager.unregister_effect(effect)
+		TimePointChecker.dynamic_time_point([TimePoints.BUFF_END], id)
 	buffs.erase(buff)
 	return true

@@ -9,6 +9,7 @@ func exec(card:BaseCard, from:Array, to:Array, to_index:BaseNumber = BaseNumber.
 	from.pop_at(i)
 	if to_index.number == -1:
 		to.append(card)
+		return
 	if !(to_index.number is int):
 		#show("index只能为整数")
 		return

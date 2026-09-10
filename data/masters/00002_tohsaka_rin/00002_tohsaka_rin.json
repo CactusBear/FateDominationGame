@@ -6,8 +6,8 @@
   "command_spell_img": "00002_tohsaka_rin_cs.png",
   "effects": [
 	{
-	  "effect_name": "placeholder_jewel_sorcery_gain",
-	  "shown_effect_name": "占位：宝石魔术·聚宝 - 游戏开始时创建并获得10枚【宝石】Buff（需要『Buff加入玩家区域及数量管理机制』）",
+	  "effect_name": "jewel_sorcery_gain",
+	  "shown_effect_name": "宝石魔术·聚宝 - 游戏开始时获得【宝石】",
 	  "time_points": ["game_start"],
 	  "priority": 0,
 	  "is_pure_passive": true,
@@ -16,12 +16,18 @@
 		{ "number": 10, "can_change": true, "is_pure_number": true }
 	  ],
 	  "funcs": [
-		{ "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+		{ "func_name": "get_player_master", "parameters": [], "var_index": 0 },
+		{ "func_name": "get_property", "parameters": [{ "self_var": 0 }, "_specials"], "var_index": 1 },
+		{ "func_name": "get_dictionary_value", "parameters": [{ "self_var": 1 }, "BUFFS"], "var_index": 2 },
+		{ "func_name": "get_objects_by_name_fr_arr", "parameters": ["jewels", { "self_var": 2 }], "var_index": 3 },
+		{ "func_name": "get_card_by_index_fr_arr", "parameters": [0, { "self_var": 3 }], "var_index": 4 },
+		{ "func_name": "set_property", "parameters": [{ "self_var": 4 }, "_buff_level", { "number_index": 0 }], "var_index": -1 },
+		{ "func_name": "manage_buff", "parameters": [{ "self_var": 4 }], "var_index": -1 }
 	  ]
 	},
 	{
 	  "effect_name": "placeholder_absolute_order_first_turn",
-	  "shown_effect_name": "占位：绝对服从的命令 - 第一回合必须使用一枚令咒，否则该回合结束时失去一枚令咒（需要『令咒使用追踪机制』；不在普通御主效果中执行令咒）",
+	  "shown_effect_name": "绝对服从的命令 - 你必须于第一回合使用一枚令咒。否则于该回合结束失去一枚令咒",
 	  "time_points": ["game_start"],
 	  "priority": 0,
 	  "is_pure_passive": true,
@@ -31,7 +37,7 @@
 	},
 	{
 	  "effect_name": "placeholder_absolute_order_penalty",
-	  "shown_effect_name": "占位：绝对服从的命令 - 若通过该令咒获得魔力，战斗阶段结束后失去4点魔力（需要『令咒效果追踪机制』；不在普通御主效果中执行令咒）",
+	  "shown_effect_name": "绝对服从的命令 - 若你以该令咒获得了魔力，战斗阶段结束后，你失去4点魔力",
 	  "time_points": ["self_battle_phase_end"],
 	  "priority": 0,
 	  "is_pure_passive": true,
@@ -43,9 +49,36 @@
 	}
   ],
   "specials": {
-	"SKILLS": [],
-	"ATTACKS": [],
-	"BUFFS": [
+    "SKILLS": [],
+    "ATTACKS": [
+      {
+        "attack_name": "yin_qi_bullet",
+        "shown_attack_name": "阴炁弹",
+        "attack_card_img": "00002_tohsaka_rin_yin_qi_bullet.png",
+        "attributes": ["magic"],
+        "cost": { "number": 0, "can_change": true, "is_pure_number": true },
+        "power": { "number": 1, "can_change": true, "is_pure_number": true },
+        "effects": [
+          {
+            "effect_name": "yin_qi_bullet_remove_after_close",
+            "shown_effect_name": "每局游戏限一次，关闭后移除游戏",
+            "time_points": ["self_card_closed"],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+              { "func_name": "get_eff_source_card", "parameters": [], "var_index": 0 },
+              { "func_name": "find_player_array_containing", "parameters": [{ "self_var": 0 }], "var_index": 1 },
+              { "func_name": "get_pl_attacks_out_game", "parameters": [], "var_index": 2 },
+              { "func_name": "draw_card_by_card", "parameters": [{ "self_var": 0 }, { "self_var": 1 }, { "self_var": 2 }], "var_index": -1 },
+              { "func_name": "unregister_object_effects", "parameters": [{ "self_var": 0 }], "var_index": -1 }
+            ]
+          }
+        ]
+      }
+    ],
+    "BUFFS": [
 	  {
 		"buff_name": "jewels",
 		"buff_img": "00002_tohsaka_rin_jewels.png",
@@ -58,7 +91,7 @@
 		"effects": [
 		  {
 			"effect_name": "placeholder_jewel_sorcery_climax",
-			"shown_effect_name": "占位：宝石魔术·高潮 - 高潮阶段时可在【宝石】上选择相同的选项，每个选项至多3次，共计9次（需要『Buff数量消耗及高潮阶段选项复用机制』）",
+			"shown_effect_name": "宝石魔术·高潮 - 高潮阶段时你可以在【宝石】上选择相同的选项，每个选项至多3次(共计9次)",
 			"time_points": ["self_climax"],
 			"priority": 0,
 			"is_pure_passive": true,
@@ -95,7 +128,7 @@
 	  "effects": [
 		{
 		  "effect_name": "placeholder_jewel_sword_passive_power",
-		  "shown_effect_name": "占位：被动 - 你的✳魔术基础牌和【阴炁弹】的威力+2（需要『按卡牌属性及基础牌类型筛选卡牌机制』）",
+		  "shown_effect_name": "被动 - 你的魔术基础牌和【阴炁弹】的威力+2",
 		  "time_points": ["game_start"],
 		  "priority": 0,
 		  "is_pure_passive": true,
@@ -109,7 +142,7 @@
 		},
 		{
 		  "effect_name": "placeholder_jewel_sword_drain",
-		  "shown_effect_name": "占位：行动阶段 - 获得本回合所有玩家花费的魔力（需要『全场魔力花费统计机制』）",
+		  "shown_effect_name": "行动阶段 - 获得本回合所有玩家花费的魔力。战斗结束后，将此牌移除游戏",
 		  "time_points": ["self_action_phase"],
 		  "priority": 0,
 		  "is_pure_passive": false,
@@ -120,15 +153,19 @@
 		  ]
 		},
 		{
-		  "effect_name": "placeholder_jewel_sword_remove_after_battle",
-		  "shown_effect_name": "占位：战斗阶段结束后 - 将此牌移除游戏（需要『移除游戏机制』）",
+		  "effect_name": "jewel_sword_remove_after_battle",
+		  "shown_effect_name": "战斗阶段结束后 - 将此牌移除游戏",
 		  "time_points": ["self_battle_phase_end"],
 		  "priority": 0,
 		  "is_pure_passive": false,
 		  "is_residue": false,
 		  "effect_numbers": [],
 		  "funcs": [
-			{ "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+			{ "func_name": "get_eff_source_card", "parameters": [], "var_index": 0 },
+			{ "func_name": "find_player_array_containing", "parameters": [{ "self_var": 0 }], "var_index": 1 },
+			{ "func_name": "get_pl_skills_out_game", "parameters": [], "var_index": 2 },
+			{ "func_name": "draw_card_by_card", "parameters": [{ "self_var": 0 }, { "self_var": 1 }, { "self_var": 2 }], "var_index": -1 },
+			{ "func_name": "unregister_object_effects", "parameters": [{ "self_var": 0 }], "var_index": -1 }
 		  ]
 		}
 	  ]

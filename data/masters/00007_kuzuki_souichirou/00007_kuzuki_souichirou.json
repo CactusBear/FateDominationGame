@@ -6,8 +6,8 @@
   "command_spell_img": "00007_kuzuki_souichirou_cs.png",
   "effects": [
     {
-      "effect_name": "placeholder_assassination_add_snake_cards",
-      "shown_effect_name": "占位：暗杀术 - 游戏开始时，将两张【蛇】加入你的牌库（需要『生成自定义卡牌并加入牌库』机制）",
+      "effect_name": "assassination_add_snake_cards",
+      "shown_effect_name": "暗杀术 - 游戏开始时，将两张【蛇】加入你的牌库",
       "time_points": ["game_start"],
       "priority": 0,
       "is_pure_passive": true,
@@ -16,39 +16,60 @@
         { "number": 2, "can_change": true, "is_pure_number": true }
       ],
       "funcs": [
-        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+        { "func_name": "get_player_master", "parameters": [], "var_index": 0 },
+        { "func_name": "get_property", "parameters": [{ "self_var": 0 }, "_specials"], "var_index": 1 },
+        { "func_name": "get_dictionary_value", "parameters": [{ "self_var": 1 }, "ATTACKS"], "var_index": 2 },
+        { "func_name": "get_objects_by_name_fr_arr", "parameters": ["snake", { "self_var": 2 }], "var_index": 3 },
+        { "func_name": "get_card_by_index_fr_arr", "parameters": [0, { "self_var": 3 }], "var_index": 4 },
+        { "func_name": "get_player_deck", "parameters": [], "var_index": 5 },
+        {
+          "func_name": "for_func",
+          "parameters": [
+            [
+              { "func_name": "clone_object", "parameters": [{ "self_var": 4 }], "var_index": 6 },
+              { "func_name": "add_to_array", "parameters": [{ "self_var": 6 }, { "self_var": 5 }], "var_index": -1 }
+            ],
+            { "number_index": 0 }
+          ],
+          "var_index": -1
+        }
       ]
     },
     {
-      "effect_name": "placeholder_outsider_no_magic_from_workshop",
-      "shown_effect_name": "占位：局外人 - 你无法通过部署于魔术工房获得魔力（需要『按位置屏蔽魔力收益』机制）",
+      "effect_name": "outsider_no_magic_from_workshop",
+      "shown_effect_name": "局外人 - 你无法通过部署于魔术工房获得魔力",
       "time_points": ["game_start"],
       "priority": 0,
       "is_pure_passive": true,
       "is_residue": false,
       "effect_numbers": [],
       "funcs": [
-        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+        { "func_name": "get_player_master", "parameters": [], "var_index": 0 },
+        { "func_name": "get_property", "parameters": [{ "self_var": 0 }, "_specials"], "var_index": 1 },
+        { "func_name": "get_dictionary_value", "parameters": [{ "self_var": 1 }, "BUFFS"], "var_index": 2 },
+        { "func_name": "get_objects_by_name_fr_arr", "parameters": ["outsider_workshop_block", { "self_var": 2 }], "var_index": 3 },
+        { "func_name": "get_card_by_index_fr_arr", "parameters": [0, { "self_var": 3 }], "var_index": 4 },
+        { "func_name": "manage_buff", "parameters": [{ "self_var": 4 }], "var_index": -1 }
       ]
     },
     {
-      "effect_name": "placeholder_outsider_leave_workshop_discount",
-      "shown_effect_name": "占位：局外人 - 你以常规移动从魔术工房离开时，移动成本-1（需要『按位置调整移动成本』机制）",
+      "effect_name": "outsider_leave_workshop_discount",
+      "shown_effect_name": "局外人 - 你以常规移动从魔术工房离开时，移动成本-1",
       "time_points": ["game_start"],
       "priority": 0,
       "is_pure_passive": true,
       "is_residue": false,
       "effect_numbers": [
-        { "number": -1, "can_change": true, "is_pure_number": true }
+        { "number": 1, "can_change": true, "is_pure_number": true }
       ],
       "funcs": [
-        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+        { "func_name": "edit_data_number", "parameters": ["move_cost_discount_from_workshop", null, { "number_index": 0 }], "var_index": -1 }
       ]
     },
     {
-      "effect_name": "placeholder_outsider_battle_phase_score_gain",
-      "shown_effect_name": "占位：局外人 - 每回合战斗阶段结束后，若你于该回合未获得战果，获得1点战果；若你于该回合同时是位于魔术工房的唯一玩家，改为获得2点战果（需要『本回合战果获取记录判定』与『位置唯一玩家判定』机制）",
-      "time_points": ["self_battle_phase"],
+      "effect_name": "outsider_battle_phase_score_gain",
+      "shown_effect_name": "局外人 - 战斗阶段结束后，若本回合未获得战果，获得1点战果；若同时是魔术工房唯一玩家，改为获得2点",
+      "time_points": ["self_battle_phase_end"],
       "priority": 0,
       "is_pure_passive": true,
       "is_residue": false,
@@ -57,14 +78,53 @@
         { "number": 2, "can_change": true, "is_pure_number": true }
       ],
       "funcs": [
-        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+        { "func_name": "get_data_number", "parameters": ["score_gained_this_turn"], "var_index": 0 },
+        { "func_name": "if_func", "parameters": [{ "self_var": 0 }, 0], "var_index": 1 },
+        { "func_name": "get_location_map_area", "parameters": [], "var_index": 2 },
+        { "func_name": "get_property", "parameters": [{ "self_var": 2 }, "_area_name"], "var_index": 3 },
+        { "func_name": "if_func", "parameters": [{ "self_var": 3 }, "魔术工房"], "var_index": 4 },
+        { "func_name": "get_players_in_map_area", "parameters": [{ "self_var": 2 }], "var_index": 5 },
+        { "func_name": "array_length", "parameters": [{ "self_var": 5 }], "var_index": 6 },
+        { "func_name": "if_func", "parameters": [{ "self_var": 6 }, 1], "var_index": 7 },
+        { "func_name": "and_func", "parameters": [{ "self_var": 4 }, { "self_var": 7 }], "var_index": 8 },
+        { "func_name": "if_else_func", "parameters": [{ "self_var": 8 }, { "number_index": 1 }, { "number_index": 0 }], "var_index": 9 },
+        { "func_name": "edit_score", "parameters": [null, { "self_var": 9 }], "var_index": -1, "condition": { "self_var": 1 } }
       ]
     }
   ],
   "specials": {
     "SKILLS": [],
-    "ATTACKS": [],
-    "BUFFS": []
+    "ATTACKS": [
+      {
+        "attack_name": "snake",
+        "shown_attack_name": "蛇",
+        "attack_card_img": "00007_kuzuki_souichirou_cd.png",
+        "attributes": ["strength", "agility"],
+        "cost": { "number": 0, "can_change": true, "is_pure_number": true },
+        "power": { "number": 5, "can_change": true, "is_pure_number": true },
+        "effects": []
+      }
+    ],
+    "BUFFS": [
+      {
+        "buff_name": "outsider_workshop_block",
+        "buff_img": "",
+        "is_active": true,
+        "buff_level": { "number": 1, "can_change": true, "is_pure_number": true },
+        "effects": [
+          {
+            "effect_name": "cannot_gain_magic_from_workshop",
+            "shown_effect_name": "无法从魔术工房获得魔力",
+            "time_points": [],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": []
+          }
+        ]
+      }
+    ]
   },
   "upgrade_skill": [
     {
@@ -77,15 +137,31 @@
       "ignore_limit": false,
       "effects": [
         {
-          "effect_name": "placeholder_perfect_breathing_remove_magic_cards",
-          "shown_effect_name": "占位：解锁此技能后立刻从牌库、弃牌堆及手牌中移除所有魔术牌（需要『按属性批量移除卡牌』机制）",
+          "effect_name": "perfect_breathing_remove_magic_cards",
+          "shown_effect_name": "解锁此技能后立刻从牌库、弃牌堆及手牌中移除所有魔术牌",
           "time_points": ["game_start"],
           "priority": 0,
           "is_pure_passive": false,
           "is_residue": false,
           "effect_numbers": [],
           "funcs": [
-            { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            { "func_name": "get_player_hand_cards", "parameters": [], "var_index": 0 },
+            { "func_name": "get_player_deck", "parameters": [], "var_index": 1 },
+            { "func_name": "get_player_discard", "parameters": [], "var_index": 2 },
+            { "func_name": "merge_arrays", "parameters": [{ "self_var": 0 }, { "self_var": 1 }, { "self_var": 2 }], "var_index": 3 },
+            { "func_name": "get_cards_by_attributes_fr_arr", "parameters": [["magic"], { "self_var": 3 }], "var_index": 4 },
+            { "func_name": "get_pl_attacks_out_game", "parameters": [], "var_index": 5 },
+            {
+              "func_name": "foreach_func",
+              "parameters": [
+                [
+                  { "func_name": "find_player_array_containing", "parameters": [null], "var_index": 6 },
+                  { "func_name": "draw_card_by_card", "parameters": [null, { "self_var": 6 }, { "self_var": 5 }], "var_index": -1 }
+                ],
+                { "self_var": 4 }
+              ],
+              "var_index": -1
+            }
           ]
         },
         {
@@ -108,7 +184,7 @@
         },
         {
           "effect_name": "placeholder_perfect_breathing_snake_becomes_attack",
-          "shown_effect_name": "占位：你的【蛇】获得以下效果 - 被动/战斗阶段：花费6点魔力，将此牌加入你的攻击中（需要『动态修改已生成卡牌效果』机制）",
+          "shown_effect_name": "你的【蛇】获得以下效果 - 被动/战斗阶段：花费6点魔力，将此牌加入你的攻击中",
           "time_points": ["self_battle_phase"],
           "priority": 0,
           "is_pure_passive": true,

@@ -102,6 +102,7 @@ const SELF_BATTLE_LOSE = "self_battle_lose"
 const OTHERS_BATTLE_WIN = "others_battle_win"
 const OTHERS_BATTLE = "others_battle"
 const OTHERS_BATTLE_LOSE = "others_battle_lose"
+const BATTLE_RESOLVE = "battle_resolve"
 
 const CLIMAX_START = "climax_start"
 const CLIMAX = "climax"
@@ -267,6 +268,7 @@ const shown_time_points:Dictionary = {
 	OTHERS_BATTLE_WIN : "他人赢得战斗时",
 	OTHERS_BATTLE : "他人交战时",
 	OTHERS_BATTLE_LOSE : "他人败北时",
+	BATTLE_RESOLVE : "战斗结算时",
 	CLIMAX_START : "高潮开始时",
 	CLIMAX : "高潮时",
 	CLIMAX_END : "高潮结束时",

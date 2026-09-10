@@ -7,7 +7,7 @@
   "effects": [
 	{
 	  "effect_name": "inexperienced",
-	  "shown_effect_name": "未熟",
+	  "shown_effect_name": "未熟 - 你的魔力初始值为2",
 	  "time_points": ["game_start"],
 	  "priority": 0,
 	  "is_pure_passive": true,
@@ -25,7 +25,7 @@
 	},
 	{
 	  "effect_name": "projection_magic",
-	  "shown_effect_name": "投影魔术",
+	  "shown_effect_name": "投影 - 将【干将·莫邪】加入你的技能区",
 	  "time_points": ["game_start"],
 	  "priority": 1,
 	  "is_pure_passive": true,
@@ -41,7 +41,7 @@
 	},
 	{
 	  "effect_name": "avalon",
-	  "shown_effect_name": "全世界的远望",
+	  "shown_effect_name": "远离尘世的理想乡 - 当你首次被淘汰时你将失去所有的魔力来继续游戏",
 	  "time_points": ["game_start", "self_lives_decrease"],
 	  "priority": 0,
 	  "is_pure_passive": true,
@@ -93,7 +93,7 @@
 	"SKILLS": [
 	  {
 		"skill_name": "kanshou_and_bakuya",
-		"shown_skill_name": "干将莫邪",
+		"shown_skill_name": "干将·莫邪",
 		"skill_card_img": "00001_emiya_shirou_kanshou_and_bakuya.png",
 		"attributes": ["strength", "noble_phantasm"],
 		"cost": { "number": 1, "can_change": true, "is_pure_number": true },
@@ -108,7 +108,7 @@
   "upgrade_skill": [
 	{
 	  "skill_name": "caliburn",
-	  "shown_skill_name": "誓约胜利之剑",
+	  "shown_skill_name": "必胜黄金之剑",
 	  "skill_card_img": "00001_emiya_shirou_caliburn.png",
 	  "attributes": ["strength", "noble_phantasm"],
 	  "cost": { "number": 6, "can_change": true, "is_pure_number": true },

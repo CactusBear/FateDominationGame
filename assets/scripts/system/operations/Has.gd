@@ -11,17 +11,15 @@ func exec(parent_var, children_var, key = null):
 			
 	if parent_var is Dictionary:
 		if key == null:
-			 #show("请输入字典的键")
-			return
+			return parent_var.has(children_var)
+		if !parent_var.has(key):
+			return false
 		if parent_var[key] is Array:
-			var array:Array = parent_var[key]
-			array.find(children_var)
+			return (parent_var[key] as Array).has(children_var)
 		if parent_var[key] is Dictionary:
-			var dic:Dictionary = parent_var[key]
-			if dic.has(children_var):
-				return true
-			else :
-				return false
+			return (parent_var[key] as Dictionary).has(children_var)
+		return parent_var[key] == children_var
+	return false
 
 
 #循环

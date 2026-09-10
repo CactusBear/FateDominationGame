@@ -7,7 +7,7 @@
   "effects": [
     {
       "effect_name": "placeholder_deficient_vessel_black_mud",
-      "shown_effect_name": "占位：欠损容器 - 回合结束时，若你的战果低于所有其他玩家且你的第一名御主不是【间桐慎二】，激活【黑泥】（需要『战果排名比较』『第一名御主历史记录判定』『激活Buff』机制）",
+      "shown_effect_name": "欠损容器 - 回合结束时，若你的战果低于所有其他玩家且你的第一名御主不是【间桐慎二】，激活【黑泥】",
       "time_points": ["day_end"],
       "priority": 0,
       "is_pure_passive": true,
@@ -18,17 +18,38 @@
       ]
     },
     {
-      "effect_name": "placeholder_all_evil_grail",
-      "shown_effect_name": "占位：此世全部之恶 - 第8回合结束时，若你的战果排名不为第一，激活【被污染的圣杯】（需要『回合数判定』『战果排名判定』『激活Buff』机制）",
-      "time_points": ["day_end"],
+      "effect_name": "all_evil_grail",
+      "shown_effect_name": "此世全部之恶 - 第8回合结束时，若你的战果排名不为第一，激活【被污染的圣杯】",
+      "time_points": ["game_start", "day_end"],
       "priority": 0,
       "is_pure_passive": true,
       "is_residue": false,
       "effect_numbers": [
-        { "number": 8, "can_change": true, "is_pure_number": true }
+        { "number": 8, "can_change": true, "is_pure_number": true },
+        { "number": 1, "can_change": true, "is_pure_number": true }
       ],
       "funcs": [
-        { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+        { "func_name": "when", "parameters": [["game_start"]], "var_index": 0 },
+        { "func_name": "get_player_master", "parameters": [], "var_index": 1, "condition": { "self_var": 0 } },
+        { "func_name": "get_property", "parameters": [{ "self_var": 1 }, "_specials"], "var_index": 2, "condition": { "self_var": 0 } },
+        { "func_name": "get_dictionary_value", "parameters": [{ "self_var": 2 }, "BUFFS"], "var_index": 3, "condition": { "self_var": 0 } },
+        { "func_name": "get_objects_by_name_fr_arr", "parameters": ["corrupted_grail", { "self_var": 3 }], "var_index": 4, "condition": { "self_var": 0 } },
+        { "func_name": "get_card_by_index_fr_arr", "parameters": [0, { "self_var": 4 }], "var_index": 5, "condition": { "self_var": 0 } },
+        { "func_name": "manage_buff", "parameters": [{ "self_var": 5 }], "var_index": -1, "condition": { "self_var": 0 } },
+        { "func_name": "when", "parameters": [["day_end"]], "var_index": 6 },
+        { "func_name": "get_current_round", "parameters": [], "var_index": 7, "condition": { "self_var": 6 } },
+        { "func_name": "if_func", "parameters": [{ "self_var": 7 }, { "number_index": 0 }], "var_index": 8, "condition": { "self_var": 6 } },
+        { "func_name": "get_rank_by_data_number", "parameters": ["score"], "var_index": 9, "condition": { "self_var": 6 } },
+        { "func_name": "compare_number", "parameters": [{ "self_var": 9 }, 1], "var_index": 10, "condition": { "self_var": 6 } },
+        { "func_name": "if_func", "parameters": [{ "self_var": 10 }, 0], "var_index": 11, "condition": { "self_var": 6 } },
+        { "func_name": "not_func", "parameters": [{ "self_var": 11 }], "var_index": 12, "condition": { "self_var": 6 } },
+        { "func_name": "and_func", "parameters": [{ "self_var": 8 }, { "self_var": 12 }], "var_index": 13, "condition": { "self_var": 6 } },
+        { "func_name": "get_player_buffs", "parameters": [], "var_index": 14, "condition": { "self_var": 6 } },
+        { "func_name": "get_objects_by_name_fr_arr", "parameters": ["corrupted_grail", { "self_var": 14 }], "var_index": 15, "condition": { "self_var": 6 } },
+        { "func_name": "get_card_by_index_fr_arr", "parameters": [0, { "self_var": 15 }], "var_index": 16, "condition": { "self_var": 6 } },
+        { "func_name": "set_property", "parameters": [{ "self_var": 16 }, "_is_active", true], "var_index": -1, "condition": { "self_var": 13 } },
+        { "func_name": "set_player_data", "parameters": ["is_magic_immune", true], "var_index": -1, "condition": { "self_var": 13 } },
+        { "func_name": "edit_data_number", "parameters": ["play_limit", null, { "number_index": 1 }], "var_index": -1, "condition": { "self_var": 13 } }
       ]
     }
   ],
@@ -48,7 +69,7 @@
         "effects": [
           {
             "effect_name": "placeholder_black_mud_score_gain",
-            "shown_effect_name": "占位：准备阶段 - 花费2点魔力，若你未激活【被污染的圣杯】，获得2点战果（需要『Buff激活状态查询』机制）",
+            "shown_effect_name": "黑泥 - 准备阶段：花费2点魔力，若你未激活【被污染的圣杯】，获得2点战果",
             "time_points": ["self_prepare_phase"],
             "priority": 0,
             "is_pure_passive": false,
@@ -74,30 +95,26 @@
         },
         "effects": [
           {
-            "effect_name": "placeholder_corrupted_grail_infinite_magic",
-            "shown_effect_name": "占位：你拥有无限魔力（此状态下无法获得或失去魔力）（需要『魔力免疫变化』机制）",
-            "time_points": ["game_start"],
+            "effect_name": "corrupted_grail_infinite_magic",
+            "shown_effect_name": "你拥有无限魔力（此状态下无法获得或失去魔力）。由【此世全部之恶】激活时写入is_magic_immune，不在持续时点重复执行",
+            "time_points": [],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
             "effect_numbers": [],
-            "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
-            ]
+            "funcs": []
           },
           {
-            "effect_name": "placeholder_corrupted_grail_extra_attack",
-            "shown_effect_name": "占位：每回合常规攻击可以多打一张牌（需要『出牌数量上限调整』机制）",
-            "time_points": ["game_start"],
+            "effect_name": "corrupted_grail_extra_attack",
+            "shown_effect_name": "每回合常规攻击可以多打一张牌。由【此世全部之恶】激活时改play_limit，不在持续时点重复叠加",
+            "time_points": [],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
             "effect_numbers": [
               { "number": 1, "can_change": true, "is_pure_number": true }
             ],
-            "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
-            ]
+            "funcs": []
           }
         ]
       },
@@ -113,7 +130,7 @@
         "effects": [
           {
             "effect_name": "placeholder_corrosion_steal_skill",
-            "shown_effect_name": "占位：你只能在游戏的前四回合中解锁此牌。每局游戏限一次，当一名玩家被淘汰且【被污染的圣杯】处于激活状态，你可将其拥有的任意一张从者技能牌加入你的技能区（需要『解锁回合限制』『淘汰事件监听』『跨玩家夺取技能牌』机制）",
+            "shown_effect_name": "你只能在游戏的前四回合中解锁此牌。每局游戏限一次，当一名玩家被淘汰且【被污染的圣杯】处于激活状态，你可将其拥有的任意张从者技能牌加入你的技能区",
             "time_points": ["others_eliminated"],
             "priority": 0,
             "is_pure_passive": false,
