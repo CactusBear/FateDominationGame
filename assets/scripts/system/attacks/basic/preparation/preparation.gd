@@ -1,0 +1,45 @@
+extends BaseAttack
+class_name Preparation
+
+
+func _init():
+	super("preparation", "res://assets/scripts/system/attacks/basic/preparation/preparation.png", ["special"], BaseNumber.new(1), BaseNumber.new(2))
+	_category = BaseAttack.CATEGORY_BASIC
+	_shown_name = "远隔操作"
+	_effects = LoadGame.load_effects(_effects_data(), self)
+
+
+func _effects_data() -> Array:
+	return [
+		{
+			"effect_name": "preparation_double_terrain",
+			"shown_effect_name": "行动阶段：地利效果翻倍",
+			"time_points": ["self_action_phase"],
+			"priority": 0,
+			"is_pure_passive": false,
+			"is_residue": false,
+			"effect_numbers": [
+				{ "number": 2, "can_change": true, "is_pure_number": true }
+			],
+			"funcs": [
+				{ "func_name": "get_location", "parameters": [], "var_index": 0 },
+				{ "func_name": "get_location_benefit", "parameters": [{ "self_var": 0 }], "var_index": 1 },
+				{ "func_name": "calculate_number", "parameters": [{ "self_var": 1 }, "*", { "number_index": 0 }], "var_index": 2 },
+				{ "func_name": "edit_location_benefit", "parameters": [{ "self_var": 0 }, { "self_var": 2 }], "var_index": -1 }
+			]
+		},
+		{
+			"effect_name": "preparation_win_vp",
+			"shown_effect_name": "战斗阶段：若你赢得战斗，获得2点战果",
+			"time_points": ["self_battle_win"],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+				{ "number": 2, "can_change": true, "is_pure_number": true }
+			],
+			"funcs": [
+				{ "func_name": "edit_score", "parameters": [null, { "number_index": 0 }], "var_index": -1 }
+			]
+		}
+	]

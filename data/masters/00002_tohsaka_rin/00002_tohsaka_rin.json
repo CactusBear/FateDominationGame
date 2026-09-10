@@ -49,36 +49,36 @@
 	}
   ],
   "specials": {
-    "SKILLS": [],
-    "ATTACKS": [
-      {
-        "attack_name": "yin_qi_bullet",
-        "shown_attack_name": "阴炁弹",
-        "attack_card_img": "00002_tohsaka_rin_yin_qi_bullet.png",
-        "attributes": ["magic"],
-        "cost": { "number": 0, "can_change": true, "is_pure_number": true },
-        "power": { "number": 1, "can_change": true, "is_pure_number": true },
-        "effects": [
-          {
-            "effect_name": "yin_qi_bullet_remove_after_close",
-            "shown_effect_name": "每局游戏限一次，关闭后移除游戏",
-            "time_points": ["self_card_closed"],
-            "priority": 0,
-            "is_pure_passive": true,
-            "is_residue": false,
-            "effect_numbers": [],
-            "funcs": [
-              { "func_name": "get_eff_source_card", "parameters": [], "var_index": 0 },
-              { "func_name": "find_player_array_containing", "parameters": [{ "self_var": 0 }], "var_index": 1 },
-              { "func_name": "get_pl_attacks_out_game", "parameters": [], "var_index": 2 },
-              { "func_name": "draw_card_by_card", "parameters": [{ "self_var": 0 }, { "self_var": 1 }, { "self_var": 2 }], "var_index": -1 },
-              { "func_name": "unregister_object_effects", "parameters": [{ "self_var": 0 }], "var_index": -1 }
-            ]
-          }
-        ]
-      }
-    ],
-    "BUFFS": [
+	"SKILLS": [],
+	"ATTACKS": [
+	  {
+		"attack_name": "yin_qi_bullet",
+		"shown_attack_name": "阴炁弹",
+		"attack_card_img": "00002_tohsaka_rin_yin_qi_bullet.png",
+		"attributes": ["magic"],
+		"cost": { "number": 0, "can_change": true, "is_pure_number": true },
+		"power": { "number": 1, "can_change": true, "is_pure_number": true },
+		"effects": [
+		  {
+			"effect_name": "yin_qi_bullet_remove_after_close",
+			"shown_effect_name": "每局游戏限一次，关闭后移除游戏",
+			"time_points": ["self_card_closed"],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [],
+			"funcs": [
+			  { "func_name": "get_eff_source_card", "parameters": [], "var_index": 0 },
+			  { "func_name": "find_player_array_containing", "parameters": [{ "self_var": 0 }], "var_index": 1 },
+			  { "func_name": "get_pl_attacks_out_game", "parameters": [], "var_index": 2 },
+			  { "func_name": "draw_card_by_card", "parameters": [{ "self_var": 0 }, { "self_var": 1 }, { "self_var": 2 }], "var_index": -1 },
+			  { "func_name": "unregister_object_effects", "parameters": [{ "self_var": 0 }], "var_index": -1 }
+			]
+		  }
+		]
+	  }
+	],
+	"BUFFS": [
 	  {
 		"buff_name": "jewels",
 		"buff_img": "00002_tohsaka_rin_jewels.png",

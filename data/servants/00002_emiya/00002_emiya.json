@@ -130,7 +130,20 @@
         ]
       }
     ],
-    "ATTACKS": [],
+    "ATTACKS": [
+						"strength:2",
+			"strength:3",
+			"agility:2",
+			"agility:2",
+			"agility:3",
+			"agility:4",
+			"magic:2",
+			"magic:3",
+			"magic:4",
+			"special:surveil",
+			"special:preparation",
+			"special:preparation"
+		],
     "BUFFS": []
   },
   "tags": [

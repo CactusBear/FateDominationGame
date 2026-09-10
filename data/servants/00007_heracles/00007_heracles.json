@@ -89,7 +89,20 @@
         ]
       }
     ],
-    "ATTACKS": [],
+    "ATTACKS": [
+						"strength:2",
+			"strength:2",
+			"strength:3",
+			"strength:5",
+			"strength:5",
+			"strength:7",
+			"strength:9",
+			"agility:2",
+			"agility:4",
+			"agility:7",
+			"special:luck",
+			"special:luck"
+		],
     "BUFFS": []
   },
   "tags": [

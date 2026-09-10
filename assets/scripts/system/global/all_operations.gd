@@ -194,6 +194,7 @@ const TABLE := {
 
 	"manage_buff" : { "category": BUFF, "class": "ManageBuff", "summary": "给玩家加或删buff" },
 	"defeat" : { "category": BUFF, "class": "Defeat", "summary": "赋予败北" },
+	"remove_defeat" : { "category": BUFF, "class": "RemoveDefeat", "summary": "移除所有败北" },
 
 	"register_object_effects" : { "category": EFFECT, "class": "RegisterObjectEffects", "summary": "登记对象上的效果" },
 	"unregister_object_effects" : { "category": EFFECT, "class": "UnregisterObjectEffects", "summary": "取消登记对象上的效果" },

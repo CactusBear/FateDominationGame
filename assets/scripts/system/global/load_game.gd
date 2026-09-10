@@ -412,7 +412,14 @@ func load_skills(skills:Array, pic_path:String, from):
 
 func load_attacks(attacks:Array, pic_path:String, from):
 	var att_arr:Array
-	for att:Dictionary in attacks:
+	for att in attacks:
+		if att is String:
+			#牌库构成引用："attribute:power"（如 strength:2）或 "special:name"（如 special:surveil）
+			var card: BaseAttack = AttackPool.resolve(att)
+			if card != null:
+				card.from = from
+				att_arr.append(card)
+			continue
 		var attack_name = att["attack_name"]
 		var attack_card_img = pic_path + "/" + att["attack_card_img"]
 		var attributes = att["attributes"]
