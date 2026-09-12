@@ -1,0 +1,20 @@
+{
+    "attack_name": "precision_strike_0_4",
+    "shown_attack_name": "瞬间的一击",
+    "category": "basic",
+    "attributes": [
+        "agility"
+    ],
+    "cost": {
+        "number": 0,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "power": {
+        "number": 4,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "attack_card_img": "precision_strike_0_4.png",
+    "effects": []
+}

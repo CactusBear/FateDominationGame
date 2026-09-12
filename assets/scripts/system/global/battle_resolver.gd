@@ -50,6 +50,11 @@ func exec(active_player_ids:Array = [], area_battle_score:BaseNumber = BaseNumbe
 			area_to_players[area] = []
 		area_to_players[area].append(id)
 
+	#注册场上所有事件牌效果（归属存活玩家作锚点），再派发一次全局战斗结算时点。
+	#事件牌效果挂battle_resolve时点，触发时用event.from反查所在战场遍历战场玩家。
+	_register_event_effects(ids)
+	TimePointChecker.global_time_point([TimePoints.BATTLE_RESOLVE])
+
 	#逐区域结算
 	for area:BaseMapArea in area_to_players.keys():
 		var player_ids:Array = area_to_players[area]
@@ -59,6 +64,24 @@ func exec(active_player_ids:Array = [], area_battle_score:BaseNumber = BaseNumbe
 			_resolve_non_battle_area(area, player_ids, result)
 
 	return result
+
+
+#把场上所有事件牌的效果登记进效果池，归属一个存活玩家作锚点。
+#事件牌效果挂battle_resolve时点，触发时用event.from反查所在战场再遍历战场玩家，
+#所以锚点玩家是谁不影响效果作用对象。只对尚未归属的效果登记一次，避免重复入池。
+func _register_event_effects(ids:Array):
+	var anchor:int = -1
+	for id in ids:
+		if !(GameDataManager.get_player_data(id) as Dictionary)["is_out"]:
+			anchor = id
+			break
+	if anchor == -1:
+		return
+	for area:BaseMapArea in MapData.areas:
+		for event:BaseEvent in area._events:
+			for effect in event._effects:
+				if effect._trigger_player_id == -1:
+					EffectManager.register_effect(effect, anchor)
 
 
 #处理需要战斗胜利才能拿战果的战场
@@ -75,9 +98,6 @@ func _resolve_battle_area(area:BaseMapArea, player_ids:Array, result:Dictionary)
 	if effective_ids.is_empty():
 		result["draw_areas"].append(area._area_name)
 		return
-
-	#派发战斗结算时点：归零类效果在比较威力前统一扣减，再结算胜负（全局时点，所有人一起）
-	TimePointChecker.global_time_point([TimePoints.BATTLE_RESOLVE])
 
 	var highest_power = null
 	var winners:Array = []

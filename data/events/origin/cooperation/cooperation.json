@@ -1,0 +1,30 @@
+{
+    "card_name": "cooperation",
+    "shown_name": "协同",
+    "score": {
+        "number": 2,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "card_img": "cooperation.png",
+    "effects": [
+        {
+            "effect_name": "cooperation_placeholder",
+            "shown_effect_name": "于此战场玩家，其所有攻击若至少一种属性相同则合计威力+4",
+            "time_points": [
+                "battle_resolve"
+            ],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+                {
+                    "func_name": "do_nothing",
+                    "parameters": [],
+                    "var_index": -1
+                }
+            ]
+        }
+    ]
+}

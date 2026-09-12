@@ -1,7 +1,7 @@
 class_name AllOperations
 extends RefCounted
 
-#JSON里的func_name(下划线) -> 本表的键。加载时由LoadGame.func_name_to_class_name转成类名。
+#JSON里的func_name(下划线) -> 本表的键。加载时由LoadHelper.func_name_to_class_name转成类名。
 #分类只用于查阅，不参与运行。效果结算仍按文件名动态load。
 
 const QUERY_PLAYER := "query_player"
@@ -212,6 +212,7 @@ const TABLE := {
 
 	"for_func" : { "category": CONTROL, "class": "ForFunc", "summary": "按次数执行" },
 	"foreach_func" : { "category": CONTROL, "class": "ForeachFunc", "summary": "遍历数组执行" },
+	"store_value" : { "category": CONTROL, "class": "StoreValue", "summary": "透传参数供循环体存self_var" },
 	"while_func" : { "category": CONTROL, "class": "WhileFunc", "summary": "条件循环" },
 	"do_nothing" : { "category": CONTROL, "class": "DoNothing", "summary": "空操作" },
 

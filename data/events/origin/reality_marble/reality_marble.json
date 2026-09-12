@@ -1,0 +1,30 @@
+{
+    "card_name": "reality_marble",
+    "shown_name": "固有结界",
+    "score": {
+        "number": 2,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "card_img": "reality_marble.png",
+    "effects": [
+        {
+            "effect_name": "reality_marble_placeholder",
+            "shown_effect_name": "特殊攻击禁止打出；所有玩家不能移动至此地点也不能离开此地点",
+            "time_points": [
+                "battle_resolve"
+            ],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+                {
+                    "func_name": "do_nothing",
+                    "parameters": [],
+                    "var_index": -1
+                }
+            ]
+        }
+    ]
+}

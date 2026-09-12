@@ -24,6 +24,18 @@ var climax_keep_counts:Dictionary = {
 	9: BaseNumber.new(3),
 	10: BaseNumber.new(2)
 }
+#开局时从从者的_specials发放到玩家区域的内容。
+#取不到键就当没有，以后从者多出别的卡在这里加一行即可，不写死
+var card_deal_rules:Array = [
+	{"special_key" : "ATTACKS", "area" : "deck", "shuffle" : true, "concealed" : false},
+	{"special_key" : "SKILLS", "area" : "servant_skills", "shuffle" : false, "concealed" : true}
+]
+#每回合开始时事件牌的放置计划：抽几张、放哪个战场、明置还是暗置。
+#规则数字不写死，默认是深山町一张明置、新都一张暗置，效果可以改动它
+var event_placements:Array = [
+	{"area_name" : "深山町", "concealed" : false},
+	{"area_name" : "新都", "concealed" : true}
+]
 
 #四个阶段：准备、前哨、行动、战斗
 var phases:Array = [
@@ -71,9 +83,40 @@ func start_game():
 	current_round = 0
 	has_battle_resolved = false
 	EffectManager.sync_loaded_effect_pool()
+	#规则：将所有事件牌洗混为事件牌堆(B1)，每局重新洗
+	MapData.reset_event_deck()
+	#规则：将12张攻击牌洗混后暗置作为自己的牌堆，将3张技能牌暗置于自己的技能区
+	deal_player_cards()
 	TimePointChecker.set_phase_time_points([TimePoints.GAME])
 	TimePointChecker.global_time_point([TimePoints.GAME_START])
 	start_round()
+
+
+#把每名玩家从者的_specials按card_deal_rules发放到对应区域。
+#发出去的是克隆体、模板留在从者身上：否则牌堆里的牌会改到同一组数字和效果，
+#重开一局也会带着上一局的状态
+func deal_player_cards():
+	for id in GameDataManager.get_active_player_ids():
+		var player_data = GameDataManager.get_player_data(id) as Dictionary
+		var servant = player_data["servant"]
+		if servant == null or !("_specials" in servant):
+			continue
+		for rule in card_deal_rules:
+			var cards:Array = clone_cards(servant._specials.get(rule["special_key"], []))
+			if rule.get("shuffle", false):
+				ShuffleArray.new().exec(cards)
+			if rule.get("concealed", false):
+				for card in cards:
+					card.set_concealed(true)
+			player_data[rule["area"]] = cards
+
+
+#克隆一份卡牌数组，供发放牌堆/技能区使用
+func clone_cards(cards:Array) -> Array:
+	var cloned:Array = []
+	for card in cards:
+		cloned.append(CloneObject.new().exec(card))
+	return cloned
 
 
 func end_game():
@@ -106,6 +149,8 @@ func start_round():
 		TimePointChecker.dynamic_time_point([TimePoints.ROUND_START_RESET], id)
 	TimePointChecker.set_phase_time_points([TimePoints.DAY])
 	TimePointChecker.global_time_point([TimePoints.DAY_START])
+	#规则：每一回合开始时，为深山町抽一张明置事件牌、为新都抽一张暗置事件牌
+	EventResolver.new().place(event_placements)
 	advance_phase()
 
 
@@ -134,8 +179,12 @@ func end_round():
 		#先清理再重建合计威力基线：规则上残留牌跨回合留场并继续提供威力，
 		#所以基线是留场明置牌的威力之和，同时丢弃回合内的非卡牌来源加成
 		SyncPower.new().exec(id)
+		#规则：合计威力加成只在本回合有效，回合一结束就归零
+		(player_data["total_power_bonus"] as BaseNumber).set_num(BaseNumber.new(0))
 	#规则：【败北】状态持续至回合结束
 	DefeatBuff.clear_all()
+	#规则：回合结束时弃置所有激活的事件牌
+	EventResolver.new().clear_all()
 	#规则：每个回合结束时，将回合顺位顺时针后移一位
 	ChangePlOrder.new().exec(null, BaseNumber.new(1))
 	start_round()

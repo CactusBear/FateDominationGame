@@ -23,11 +23,11 @@ func get_from():
 
 var _locations:Array
 var _area_name:String
-var _events:Array
+var _events:Array = []
 var _score:BaseNumber
 var _score_need_win:bool = true
 var _printed_score:BaseNumber
-var _buffs:Array
+var _buffs:Array = []
 var _linked_map_area:BaseMapArea
 var _move_cost:BaseNumber
 var _printed_move_cost:BaseNumber

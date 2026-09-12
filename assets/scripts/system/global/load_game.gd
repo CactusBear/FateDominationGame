@@ -16,12 +16,15 @@ func _ready():
 	pass
 
 func load_game():
+	LoadAttack.load_all()
+	LoadEvent.load_all()
 	load_masters_from_jsons(masters_path)
 	load_servants_from_jsons(servants_path)
 	write_tag_list()
 	load_stored_jsons()
 	store_jsons()
 	
+
 
 func write_tag_list():
 	var tag_list_file = FileAccess.open(tag_list_path + "/" + "tag_list.json", FileAccess.WRITE)
@@ -254,8 +257,6 @@ func load_master_file(path:String, master_file_name:String):
 		specials["ATTACKS"] = load_attacks(specials["ATTACKS"], path, master)
 	if specials.has("BUFFS") :
 		specials["BUFFS"] = load_buffs(specials["BUFFS"], path, master)
-	if specials.has("COUNTERS") :
-		specials["COUNTERS"] = load_counters(specials["COUNTERS"], master)
 	if specials.has("MAP_AREAS") :
 		specials["MAP_AREAS"] = load_map_areas(specials["MAP_AREAS"], master)
 	if specials.has("LOCATIONS") :
@@ -319,76 +320,12 @@ func load_servant_file(path:String, servant_file_name:String):
 	return servant
 
 
-func func_name_to_class_name(func_name:String) -> String:
-	var parts = func_name.split("_")
-	var _class_name = ""
-	for part in parts:
-		if part == "":
-			continue
-		_class_name += part.substr(0, 1).to_upper() + part.substr(1)
-	return _class_name
-
-
 func load_effects(effects:Array, from):
-	var eff_arr:Array#[BaseEffect]
-	for eff:Dictionary in effects:
-		var priority = eff["priority"] as int
-		var is_pure_passive = eff["is_pure_passive"] as bool
-		var is_residue = eff["is_residue"] as bool
-		var numbers = eff["effect_numbers"] as Array
-		var nums:Array
-		for number:Dictionary in numbers:
-			var num = load_number(number)
-			nums.append(num)
-		
-		var effect = BaseEffect.new(eff["effect_name"], eff["time_points"], priority, is_pure_passive, is_residue)
-		effect._shown_name = eff.get("shown_effect_name", "")
-		effect.from = from
-		effect.set_numbers(nums)
-		effect._using_numbers = nums
-		#from和numbers都已就绪，此时才能把数字登记到所属对象上
-		effect.register_numbers_to_source()
-		for _func:Dictionary in eff["funcs"]:
-			var condition = _func.get("condition", null)
-			var var_index = _func.get("var_index", -1)
-			var paras = _func.get("parameters", []) as Array
-
-			if _func.has("func_name"):
-				var key = _func["func_name"] as String
-				var _class_name = func_name_to_class_name(key)
-				var func_path = "res://assets/scripts/system/operations/" + _class_name + ".gd"
-				if !ResourceLoader.exists(func_path):
-					print("没有操作:" + "'" + key + "'")
-					continue
-				var func_instance = load(func_path).new()
-				var main_callable = Callable(func_instance, "exec")
-				var eff_func = BaseFunc.new(main_callable, paras, var_index, condition)
-				#Callable不会保活实例，必须由func自己持有引用，否则加载完就被释放
-				eff_func._instance = func_instance
-				effect.add_func(eff_func)
-
-			elif _func.has("self_var"):
-				#调用存在变量表里的对象自身的方法。目标对象只在效果激活时才存在，
-				#所以这里只记下下标和方法名，绑定推迟到activate_effect
-				var self_var_index = _func["self_var"] as int
-				if self_var_index == -1: continue
-				var method_name = _func.get("sub_func", "") as String
-				if method_name == "": continue
-				var eff_func = BaseFunc.new_method_func(self_var_index, method_name, paras, var_index, condition)
-				effect.add_func(eff_func)
-		
-		eff_arr.append(effect)
-	
-	return eff_arr
+	return LoadHelper.load_effects(effects, from)
 
 
 func load_number(number:Dictionary):
-	#JSON里的数字一律解析成float，整数值要还原成int，否则is_float会全部判成true
-	var raw = number["number"]
-	if raw is float and raw == floor(raw) and !number.get("is_float", false):
-		raw = int(raw)
-	var num = BaseNumber.new(raw, number["can_change"], number["is_pure_number"])
-	return num
+	return LoadHelper.load_number(number)
 
 
 func load_skills(skills:Array, pic_path:String, from):
@@ -415,7 +352,7 @@ func load_attacks(attacks:Array, pic_path:String, from):
 	for att in attacks:
 		if att is String:
 			#牌库构成引用："attribute:power"（如 strength:2）或 "special:name"（如 special:surveil）
-			var card: BaseAttack = AttackPool.resolve(att)
+			var card: BaseAttack = LoadAttack.resolve(att)
 			if card != null:
 				card.from = from
 				att_arr.append(card)
@@ -451,19 +388,6 @@ func load_buffs(buffs:Array, pic_path:String, from):
 		buff_arr.append(buff)
 	
 	return buff_arr
-
-
-func load_counters(counters:Array, from):
-	var counter_arr:Array
-	for coun:Dictionary in counters:
-		var counter_name = coun["counter_name"]
-		var is_active = coun["is_active"]
-		var num = load_number(coun["num"])
-		var counter = BaseCounter.new(counter_name, is_active, num)
-		counter.from = from
-		counter_arr.append(counter)
-		
-	return counter_arr
 
 
 func load_map_areas(map_areas:Array, from):
@@ -556,8 +480,6 @@ func load_masters(masters:Array, pic_path:String, from):
 			specials["ATTACKS"] = load_attacks(specials["ATTACKS"], pic_path, master)
 		if specials.has("BUFFS") :
 			specials["BUFFS"] = load_buffs(specials["BUFFS"], pic_path, master)
-		if specials.has("COUNTERS") :
-			specials["COUNTERS"] = load_counters(specials["COUNTERS"], master)
 		if specials.has("MAP_AREAS") :
 			specials["MAP_AREAS"] = load_map_areas(specials["MAP_AREAS"], master)
 		if specials.has("LOCATIONS") :

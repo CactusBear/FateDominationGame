@@ -22,7 +22,6 @@ func game_start(player_ids:Array = [0, 1]) -> bool:
 		return false
 
 	_started = true
-	MapData.player_id = get_id()
 	masters_can_use = get_masters_can_use()
 	servants_can_use = get_servants_can_use()
 	GameData.reset_game_session(ids)

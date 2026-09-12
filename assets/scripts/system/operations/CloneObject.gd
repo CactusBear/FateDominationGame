@@ -25,8 +25,6 @@ func exec(object):
 		return _clone_event(object)
 	if object is BaseSituation:
 		return _clone_situation(object)
-	if object is BaseCounter:
-		return _clone_counter(object)
 	if object is BaseLocation:
 		return _clone_location(object)
 	if object is BaseMaster:
@@ -149,14 +147,6 @@ func _clone_situation(src:BaseSituation) -> BaseSituation:
 	return cloned
 
 
-func _clone_counter(src:BaseCounter) -> BaseCounter:
-	var cloned = BaseCounter.new(src._name, src._is_active, _clone_number(src._num))
-	cloned.from = src.from
-	cloned.tags = _clone_tags(src.tags)
-	cloned._shown_name = src._shown_name
-	return cloned
-
-
 func _clone_location(src:BaseLocation) -> BaseLocation:
 	var cloned = BaseLocation.new(_clone_number(src._magic), _clone_number(src._benefit), src._pl_num_limit, src._will_move_to)
 	cloned.from = src.from
@@ -216,10 +206,11 @@ func _copy_card_common(src:BaseCard, cloned:BaseCard) -> void:
 	cloned.tags = _clone_tags(src.tags)
 	cloned._shown_name = src._shown_name
 	cloned._attributes = src._attributes.duplicate()
+	#明暗是场上状态，克隆体一律从明置开始
+	cloned._is_concealed = false
 	if cloned is BaseHandCard and src is BaseHandCard:
 		cloned._is_activating = false
 		cloned._is_closed = false
-		cloned._is_concealed = false
 		cloned._cost_discount = _clone_number(src._cost_discount)
 
 

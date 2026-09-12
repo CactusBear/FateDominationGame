@@ -1,0 +1,20 @@
+{
+    "attack_name": "physical_attack_1_5",
+    "shown_attack_name": "会心的一击",
+    "category": "basic",
+    "attributes": [
+        "strength"
+    ],
+    "cost": {
+        "number": 1,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "power": {
+        "number": 5,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "attack_card_img": "physical_attack_1_5.png",
+    "effects": []
+}

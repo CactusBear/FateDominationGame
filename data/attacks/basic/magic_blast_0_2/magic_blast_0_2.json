@@ -1,0 +1,20 @@
+{
+	"attack_name": "magic_blast_0_2",
+	"shown_attack_name": "低位魔术",
+	"category": "basic",
+	"attributes": [
+        "magic"
+	],
+	"cost": {
+		"number": 0,
+		"can_change": true,
+		"is_pure_number": true
+	},
+	"power": {
+		"number": 2,
+		"can_change": true,
+		"is_pure_number": true
+	},
+	"attack_card_img": "magic_blast_0_2.png",
+	"effects": []
+}

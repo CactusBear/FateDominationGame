@@ -1,0 +1,39 @@
+{
+    "attack_name": "mooncancer_class",
+    "shown_attack_name": "月之癌",
+    "category": "class",
+    "attributes": [
+        "magic"
+    ],
+    "cost": {
+        "number": 0,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "power": {
+        "number": 4,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "attack_card_img": "mooncancer_class.png",
+    "effects": [
+        {
+            "effect_name": "mooncancer_event_swap",
+            "shown_effect_name": "行动阶段：将你所在地点的事件牌与一张月之圣杯的事件牌互换",
+            "time_points": [
+                "self_action_phase"
+            ],
+            "priority": 0,
+            "is_pure_passive": false,
+            "is_residue": false,
+            "effect_numbers": [],
+            "funcs": [
+                {
+                    "func_name": "do_nothing",
+                    "parameters": [],
+                    "var_index": -1
+                }
+            ]
+        }
+    ]
+}

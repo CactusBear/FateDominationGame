@@ -1,0 +1,20 @@
+{
+    "attack_name": "physical_attack_0_3",
+    "shown_attack_name": "强打",
+    "category": "basic",
+    "attributes": [
+        "strength"
+    ],
+    "cost": {
+        "number": 0,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "power": {
+        "number": 3,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "attack_card_img": "physical_attack_0_3.png",
+    "effects": []
+}

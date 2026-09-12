@@ -3,6 +3,10 @@ extends Node
 
 var situations:Array
 
+#事件牌库区(B1)。事件牌是全局共用的一副牌，不属于任何玩家。
+#里面的牌是LoadEvent.events模板的克隆，模板本身不进场
+var event_deck:Array = []
+
 var magic_workshop0 = BaseLocation.new(BaseNumber.new(2),BaseNumber.new(0),1,true)
 var magic_workshop1 = BaseLocation.new(BaseNumber.new(1),BaseNumber.new(0),1,true)
 var magic_workshop2 = BaseLocation.new(BaseNumber.new(1),BaseNumber.new(0),1,true)
@@ -82,3 +86,12 @@ func _init():
 		shinto,
 		scout
 	]
+
+#重建事件牌库：把模板池深拷贝一份洗混，每局开始时调用。
+#克隆是为了让场上的牌改不到模板，重开一局还能从模板重新发牌
+func reset_event_deck():
+	var deck:Array = []
+	for template in LoadEvent.events:
+		deck.append(CloneObject.new().exec(template))
+	ShuffleArray.new().exec(deck)
+	event_deck = deck

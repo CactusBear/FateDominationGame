@@ -489,7 +489,7 @@ func run_func_descriptor(desc, effect:BaseEffect) -> Array:
 	var key = desc.get("func_name", "") as String
 	if key == "":
 		return [false, null]
-	var _class_name = LoadGame.func_name_to_class_name(key)
+	var _class_name = LoadHelper.func_name_to_class_name(key)
 	var func_path = "res://assets/scripts/system/operations/" + _class_name + ".gd"
 	if !ResourceLoader.exists(func_path):
 		print("没有操作:" + "'" + key + "'")

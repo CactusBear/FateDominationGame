@@ -1,0 +1,20 @@
+{
+    "attack_name": "berserker_class_strength_5_9",
+    "shown_attack_name": "狂战士",
+    "category": "class",
+    "attributes": [
+        "strength"
+    ],
+    "cost": {
+        "number": 5,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "power": {
+        "number": 9,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "attack_card_img": "berserker_class_strength_5_9.png",
+    "effects": []
+}

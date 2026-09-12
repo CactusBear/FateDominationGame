@@ -1,0 +1,126 @@
+{
+    "card_name": "sneak_attack",
+    "shown_name": "偷袭",
+    "score": {
+        "number": 2,
+        "can_change": true,
+        "is_pure_number": true
+    },
+    "card_img": "sneak_attack.png",
+    "effects": [
+        {
+            "effect_name": "sneak_attack_hidden_name_plus_5",
+            "shown_effect_name": "从者真名隐藏的玩家于此战场合计威力+5",
+            "time_points": [
+                "battle_resolve"
+            ],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+                {
+                    "number": 5,
+                    "can_change": true,
+                    "is_pure_number": true
+                },
+                {
+                    "number": 0,
+                    "can_change": true,
+                    "is_pure_number": true
+                }
+            ],
+            "funcs": [
+                {
+                    "func_name": "get_eff_source_card",
+                    "parameters": [],
+                    "var_index": 0
+                },
+                {
+                    "func_name": "get_property",
+                    "parameters": [
+                        {
+                            "self_var": 0
+                        },
+                        "from"
+                    ],
+                    "var_index": 1
+                },
+                {
+                    "func_name": "get_players_in_map_area",
+                    "parameters": [
+                        {
+                            "self_var": 1
+                        }
+                    ],
+                    "var_index": 2
+                },
+                {
+                    "func_name": "foreach_func",
+                    "parameters": [
+                        [
+                            {
+                                "func_name": "store_value",
+                                "parameters": [
+                                    null
+                                ],
+                                "var_index": 3
+                            },
+                            {
+                                "func_name": "get_player_data_value",
+                                "parameters": [
+                                    "true_name_released",
+                                    {
+                                        "self_var": 3
+                                    }
+                                ],
+                                "var_index": 4
+                            },
+                            {
+                                "func_name": "not_func",
+                                "parameters": [
+                                    {
+                                        "self_var": 4
+                                    }
+                                ],
+                                "var_index": 5
+                            },
+                            {
+                                "func_name": "if_else_func",
+                                "parameters": [
+                                    {
+                                        "self_var": 5
+                                    },
+                                    {
+                                        "number_index": 0
+                                    },
+                                    {
+                                        "number_index": 1
+                                    }
+                                ],
+                                "var_index": 6
+                            },
+                            {
+                                "func_name": "edit_power",
+                                "parameters": [
+                                    null,
+                                    {
+                                        "self_var": 6
+                                    },
+                                    {
+                                        "self_var": 3
+                                    }
+                                ],
+                                "var_index": -1
+                            }
+                        ],
+                        {
+                            "self_var": 2
+                        },
+                        0
+                    ],
+                    "var_index": -1
+                }
+            ]
+        }
+    ]
+}
