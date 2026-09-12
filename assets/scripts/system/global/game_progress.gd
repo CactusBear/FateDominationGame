@@ -85,6 +85,8 @@ func start_game():
 	EffectManager.sync_loaded_effect_pool()
 	#规则：将所有事件牌洗混为事件牌堆(B1)，每局重新洗
 	MapData.reset_event_deck()
+	#规则：10张非高潮局势牌洗混后烧2张，剩8张作为局势牌堆(A1)
+	MapData.reset_situation_deck()
 	#规则：将12张攻击牌洗混后暗置作为自己的牌堆，将3张技能牌暗置于自己的技能区
 	deal_player_cards()
 	TimePointChecker.set_phase_time_points([TimePoints.GAME])
@@ -148,6 +150,8 @@ func start_round():
 		player_data["temp_locations"] = []
 		TimePointChecker.dynamic_time_point([TimePoints.ROUND_START_RESET], id)
 	TimePointChecker.set_phase_time_points([TimePoints.DAY])
+	#规则：每一回合开始时抽一张局势牌展示，所有玩家获得其魔力
+	SituationResolver.new().activate()
 	TimePointChecker.global_time_point([TimePoints.DAY_START])
 	#规则：每一回合开始时，为深山町抽一张明置事件牌、为新都抽一张暗置事件牌
 	EventResolver.new().place(event_placements)
@@ -183,7 +187,8 @@ func end_round():
 		(player_data["total_power_bonus"] as BaseNumber).set_num(BaseNumber.new(0))
 	#规则：【败北】状态持续至回合结束
 	DefeatBuff.clear_all()
-	#规则：回合结束时弃置所有激活的事件牌
+	#规则：回合结束时弃置所有激活的局势牌和事件牌
+	SituationResolver.new().clear_all()
 	EventResolver.new().clear_all()
 	#规则：每个回合结束时，将回合顺位顺时针后移一位
 	ChangePlOrder.new().exec(null, BaseNumber.new(1))

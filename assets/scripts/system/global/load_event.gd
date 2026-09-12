@@ -48,4 +48,5 @@ static func load_event_file(dir_path:String, file_name:String) -> BaseEvent:
 	)
 	event._shown_name = data.get("shown_name", "")
 	event._effects = LoadHelper.load_effects(data.get("effects", []), event)
+	event._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), dir_path, "event")
 	return event

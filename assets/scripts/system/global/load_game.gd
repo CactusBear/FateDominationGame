@@ -18,6 +18,7 @@ func _ready():
 func load_game():
 	LoadAttack.load_all()
 	LoadEvent.load_all()
+	LoadSituation.load_all()
 	load_masters_from_jsons(masters_path)
 	load_servants_from_jsons(servants_path)
 	write_tag_list()
@@ -248,9 +249,11 @@ func load_master_file(path:String, master_file_name:String):
 	
 	
 	var master = BaseMaster.new(master_name, shown_master_name, header_img, master_card_img, command_spell_img)
+	master._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), path, "master")
 	var effects = load_effects(data["effects"], master)
 	var specials = data["specials"] as Dictionary
-	var upgrade_skill = load_skills(data.get("upgrade_skill", []), path, master)
+	var upgrade_skill = load_skills(data.get("upgrade_skill", []), path, master, "upgrade_skill")
+	var other_things = load_other_master_things(data.get("other_master_things", []), path, master)
 	if specials.has("SKILLS") :
 		specials["SKILLS"] = load_skills(specials["SKILLS"], path, master)
 	if specials.has("ATTACKS") :
@@ -263,8 +266,6 @@ func load_master_file(path:String, master_file_name:String):
 		specials["LOCATIONS"] = load_locations(specials["LOCATIONS"], master)
 	if specials.has("EVENTS") :
 		specials["EVENTS"] = load_events(specials["EVENTS"], path, master)
-	if specials.has("SITUATIONS") :
-		specials["SITUATIONS"] = load_situations(specials["SITUATIONS"], path, master)
 	if specials.has("NPCS") :
 		specials["NPCS"]
 	if specials.has("COMMAND_SPELLS") :
@@ -276,6 +277,7 @@ func load_master_file(path:String, master_file_name:String):
 	master._effects = effects
 	master._specials = specials
 	master._upgrade_skill = upgrade_skill
+	master._other_things = other_things
 	
 	var tags = data["tags"] as Array
 	#存名字而不是对象本身。master.tags里的字典再指回master会形成循环引用，对象永远不释放
@@ -300,6 +302,7 @@ func load_servant_file(path:String, servant_file_name:String):
 	var servant_card_img = path + "/" + data["servant_card_img"]
 
 	var servant = BaseServant.new(servant_name, shown_servant_name, servant_class, header_img, servant_card_img)
+	servant._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), path, "servant")
 	var effects = load_effects(data["effects"], servant)
 	var specials = data["specials"] as Dictionary
 	if specials.has("SKILLS") :
@@ -328,7 +331,7 @@ func load_number(number:Dictionary):
 	return LoadHelper.load_number(number)
 
 
-func load_skills(skills:Array, pic_path:String, from):
+func load_skills(skills:Array, pic_path:String, from, type_name:String = "skill"):
 	var ski_arr:Array
 	for ski:Dictionary in skills:
 		var skill_name = ski["skill_name"]
@@ -342,6 +345,7 @@ func load_skills(skills:Array, pic_path:String, from):
 		var effects = load_effects(ski["effects"], skill)
 		skill._effects = effects
 		skill.from = from
+		skill._card_back_img = LoadHelper.resolve_card_back(ski.get("card_back_img", ""), pic_path, type_name)
 		ski_arr.append(skill)
 
 	return ski_arr
@@ -367,6 +371,8 @@ func load_attacks(attacks:Array, pic_path:String, from):
 		var effects = load_effects(att["effects"], attack)
 		attack._effects = effects
 		attack.from = from
+		#御主附带攻击牌默认用skill卡背，可用card_back_img覆盖
+		attack._card_back_img = LoadHelper.resolve_card_back(att.get("card_back_img", ""), pic_path, "skill")
 		att_arr.append(attack)
 
 	return att_arr
@@ -376,7 +382,10 @@ func load_buffs(buffs:Array, pic_path:String, from):
 	var buff_arr:Array
 	for buf:Dictionary in buffs:
 		var buff_name = buf["buff_name"]
-		var buff_img = pic_path + "/" + buf["buff_img"]
+		#buff一般没有卡图，有也是头像/token规格，buff_img为空就留空
+		var buff_img = ""
+		if buf.get("buff_img", "") != "":
+			buff_img = pic_path + "/" + buf["buff_img"]
 		var is_active = buf["is_active"]
 		var buff_level = load_number(buf["buff_level"])
 		var buff = BaseBuff.new(buff_name, buff_img)
@@ -388,6 +397,26 @@ func load_buffs(buffs:Array, pic_path:String, from):
 		buff_arr.append(buff)
 	
 	return buff_arr
+
+
+#不能归类为技能/攻击/buff的御主附带物件(如宝石卡)。用BaseCard承载卡面/卡背/效果，
+#卡背默认走skill卡背，JSON可写card_back_img覆盖
+func load_other_master_things(things:Array, pic_path:String, from):
+	var thing_arr:Array
+	for thing:Dictionary in things:
+		var thing_name = thing["thing_name"]
+		var card = BaseCard.new()
+		card._name = thing_name
+		card._shown_name = thing.get("shown_thing_name", "")
+		card._card_img = pic_path + "/" + thing["card_img"]
+		card._card_back_img = LoadHelper.resolve_card_back(thing.get("card_back_img", ""), pic_path, "skill")
+		card._effects = load_effects(thing.get("effects", []), card)
+		card._attributes = []
+		card.from = from
+		card.add_object()
+		thing_arr.append(card)
+	
+	return thing_arr
 
 
 func load_map_areas(map_areas:Array, from):
@@ -446,20 +475,6 @@ func load_events(events:Array, pic_path:String, from):
 	
 
 
-func load_situations(situations:Array, pic_path:String, from):
-	var situation_arr:Array
-	for situa:Dictionary in situations:
-		var card_name = situa["card_name"]
-		var card_img = situa["card_img"]
-		var magic = load_number(situa["magic"])
-		var situation = BaseSituation.new(card_name, card_img, magic)
-		situation._effects = load_effects(situa["effects"], situation)
-		situation.from = from
-		situation_arr.append(situation)
-	
-	return situation_arr
-
-
 func load_masters(masters:Array, pic_path:String, from):
 	var master_arr:Array
 	for mas:Dictionary in masters:
@@ -486,8 +501,6 @@ func load_masters(masters:Array, pic_path:String, from):
 			specials["LOCATIONS"] = load_locations(specials["LOCATIONS"], master)
 		if specials.has("EVENTS") :
 			specials["EVENTS"] = load_events(specials["EVENTS"], pic_path, master)
-		if specials.has("SITUATIONS") :
-			specials["SITUATIONS"] = load_situations(specials["SITUATIONS"], pic_path, master)
 		if specials.has("NPCS") :
 			specials["NPCS"]
 		if specials.has("COMMAND_SPELLS") :

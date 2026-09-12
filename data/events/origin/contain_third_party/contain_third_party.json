@@ -1,30 +1,30 @@
 {
-    "card_name": "contain_third_party",
-    "shown_name": "遏制第三方威胁",
-    "score": {
-        "number": 2,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "card_img": "contain_third_party.png",
-    "effects": [
-        {
-            "effect_name": "contain_third_party_placeholder",
-            "shown_effect_name": "基本威力≥4的攻击威力+1；此战场胜者可恢复1枚令咒",
-            "time_points": [
+	"card_name": "contain_third_party",
+	"shown_name": "遏制第三方威胁",
+	"score": {
+		"number": 2,
+		"can_change": true,
+		"is_pure_number": true
+	},
+	"card_img": "contain_third_party.png",
+	"effects": [
+		{
+			"effect_name": "contain_third_party_placeholder",
+			"shown_effect_name": "基本威力≥4的攻击威力+1；此战场胜者可恢复1枚令咒",
+			"time_points": [
                 "battle_resolve"
-            ],
-            "priority": 0,
-            "is_pure_passive": true,
-            "is_residue": false,
-            "effect_numbers": [],
-            "funcs": [
-                {
-                    "func_name": "do_nothing",
-                    "parameters": [],
-                    "var_index": -1
-                }
-            ]
-        }
-    ]
+			],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [],
+			"funcs": [
+				{
+					"func_name": "do_nothing",
+					"parameters": [],
+					"var_index": -1
+				}
+			]
+		}
+	]
 }

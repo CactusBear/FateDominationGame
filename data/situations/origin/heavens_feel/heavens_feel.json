@@ -1,0 +1,32 @@
+{
+  "card_name": "heavens_feel",
+  "shown_name": "天之杯",
+  "magic": {
+    "number": 6,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "is_climax": true,
+  "climax_round": 11,
+  "card_img": "heavens_feel.png",
+  "effects": [
+    {
+      "effect_name": "heavens_feel_climax_effect",
+      "shown_effect_name": "高潮：剩余2+人。无法部署/进入新都与侦察。魔术工房仅限一人部署。于深山町增加两张正面事件牌",
+      "time_points": [
+        "battle_resolve"
+      ],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        {
+          "func_name": "do_nothing",
+          "parameters": [],
+          "var_index": -1
+        }
+      ]
+    }
+  ]
+}

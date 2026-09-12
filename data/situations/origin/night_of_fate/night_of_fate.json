@@ -1,0 +1,32 @@
+{
+  "card_name": "night_of_fate",
+  "shown_name": "命运之夜",
+  "magic": {
+    "number": 4,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "is_climax": true,
+  "climax_round": 9,
+  "card_img": "night_of_fate.png",
+  "effects": [
+    {
+      "effect_name": "night_of_fate_add_events",
+      "shown_effect_name": "高潮：剩余4+人。于深山町和新都增加一张正面事件牌",
+      "time_points": [
+        "battle_resolve"
+      ],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        {
+          "func_name": "do_nothing",
+          "parameters": [],
+          "var_index": -1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "card_name": "hope_for_future",
+  "shown_name": "对未来的憧憬",
+  "magic": {
+    "number": 0,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "is_climax": false,
+  "climax_round": 0,
+  "card_img": "hope_for_future.png",
+  "effects": [
+    {
+      "effect_name": "hope_for_future_same_attr_plus_3",
+      "shown_effect_name": "位于深山町和新都的玩家，若其所有攻击至少有一种属性相同，则合计威力+3",
+      "time_points": [
+        "battle_resolve"
+      ],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        {
+          "func_name": "do_nothing",
+          "parameters": [],
+          "var_index": -1
+        }
+      ]
+    }
+  ]
+}

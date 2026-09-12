@@ -4,6 +4,8 @@ class_name BaseCard
 
 
 var _card_img:String
+#卡背图。JSON里card_back_img为空时，用data/card_backs里的通用卡背
+var _card_back_img:String = ""
 var _effects:Array#[BaseEffect]
 #属性。属性主要出现在攻击卡上，但事件、目标等非手牌卡也可能带有属性，所以放在卡牌基类上
 var _attributes:Array#[String]

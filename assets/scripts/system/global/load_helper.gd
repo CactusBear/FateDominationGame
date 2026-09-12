@@ -2,8 +2,8 @@ class_name LoadHelper
 extends RefCounted
 
 
-#卡牌 JSON 加载的共享工具类：数字解析、效果解析、func_name 转类名。
-#独立成 class_name 供 LoadGame / LoadAttack / LoadEvent 复用，
+#卡牌 JSON 加载的共享工具类：数字解析、效果解析、func_name 转类名、卡背解析。
+#独立成 class_name 供 LoadGame / LoadAttack / LoadEvent / LoadSituation 复用，
 #避免 LoadAttack / LoadEvent 直接引用 LoadGame autoload 造成编译期循环依赖。
 #本类只依赖 class_name（BaseEffect / BaseFunc / BaseNumber），不引用任何 autoload。
 
@@ -81,3 +81,27 @@ static func load_effects(effects:Array, from) -> Array:
 		eff_arr.append(effect)
 	
 	return eff_arr
+
+
+#卡类型 → 通用卡背文件名。卡背是通用的，按类型分类放在 data/card_backs 里
+static var CARD_BACK_FILES = {
+	"master" : "master_card_back.png",
+	"servant" : "servant_card_back.png",
+	"attack" : "attack_card_back.png",
+	"skill" : "skill_card_back.png",
+	"event" : "event_card_back.png",
+	"situation" : "situation_card_back.png",
+	"climax_situation" : "climax_situation_card_back.png",
+	"command_spell" : "command_spell_card_back.png",
+	"upgrade_skill" : "upgrade_skill_card_back.png"
+}
+
+
+#解析卡背路径：JSON里card_back_img非空就用同目录的特殊卡背，否则用data/card_backs里的通用卡背。
+#每个json都可以写card_back_img覆盖通用卡背，不写就用类型对应的通用卡背
+static func resolve_card_back(card_back_img:String, dir_path:String, type_name:String) -> String:
+	if card_back_img != "":
+		return dir_path + "/" + card_back_img
+	if !CARD_BACK_FILES.has(type_name):
+		return ""
+	return "res://data/card_backs/" + CARD_BACK_FILES[type_name]

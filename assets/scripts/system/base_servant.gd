@@ -7,6 +7,8 @@ var _shown_servant_name:String
 var _servant_class:String
 var _header_img:String
 var _servant_card_img:String
+#卡背图。为空时用通用卡背
+var _card_back_img:String = ""
 var _effects:Array
 var _specials:Dictionary
 

@@ -1,0 +1,32 @@
+{
+  "card_name": "battle_of_shinto",
+  "shown_name": "新都之战",
+  "magic": {
+    "number": 2,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "is_climax": false,
+  "climax_round": 0,
+  "card_img": "battle_of_shinto.png",
+  "effects": [
+    {
+      "effect_name": "battle_of_shinto_add_event",
+      "shown_effect_name": "于新都增加一张正面事件牌",
+      "time_points": [
+        "battle_resolve"
+      ],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        {
+          "func_name": "do_nothing",
+          "parameters": [],
+          "var_index": -1
+        }
+      ]
+    }
+  ]
+}
