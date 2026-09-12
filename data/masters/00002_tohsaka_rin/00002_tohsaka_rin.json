@@ -5,390 +5,390 @@
   "master_card_img": "00002_tohsaka_rin_cd.png",
   "command_spell_img": "00002_tohsaka_rin_cs.png",
   "effects": [
-    {
-      "effect_name": "jewel_sorcery_gain",
-      "shown_effect_name": "宝石魔术·聚宝 - 游戏开始时获得【宝石】",
-      "time_points": [
+	{
+	  "effect_name": "jewel_sorcery_gain",
+	  "shown_effect_name": "宝石魔术·聚宝 - 游戏开始时获得【宝石】",
+	  "time_points": [
         "game_start"
-      ],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [
-        {
-          "number": 10,
-          "can_change": true,
-          "is_pure_number": true
-        }
-      ],
-      "funcs": [
-        {
-          "func_name": "get_player_master",
-          "parameters": [],
-          "var_index": 0
-        },
-        {
-          "func_name": "get_property",
-          "parameters": [
-            {
-              "self_var": 0
-            },
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [
+		{
+		  "number": 10,
+		  "can_change": true,
+		  "is_pure_number": true
+		}
+	  ],
+	  "funcs": [
+		{
+		  "func_name": "get_player_master",
+		  "parameters": [],
+		  "var_index": 0
+		},
+		{
+		  "func_name": "get_property",
+		  "parameters": [
+			{
+			  "self_var": 0
+			},
             "_specials"
-          ],
-          "var_index": 1
-        },
-        {
-          "func_name": "get_dictionary_value",
-          "parameters": [
-            {
-              "self_var": 1
-            },
+		  ],
+		  "var_index": 1
+		},
+		{
+		  "func_name": "get_dictionary_value",
+		  "parameters": [
+			{
+			  "self_var": 1
+			},
             "BUFFS"
-          ],
-          "var_index": 2
-        },
-        {
-          "func_name": "get_objects_by_name_fr_arr",
-          "parameters": [
-            "jewels",
-            {
-              "self_var": 2
-            }
-          ],
-          "var_index": 3
-        },
-        {
-          "func_name": "get_card_by_index_fr_arr",
-          "parameters": [
-            0,
-            {
-              "self_var": 3
-            }
-          ],
-          "var_index": 4
-        },
-        {
-          "func_name": "set_property",
-          "parameters": [
-            {
-              "self_var": 4
-            },
-            "_buff_level",
-            {
-              "number_index": 0
-            }
-          ],
-          "var_index": -1
-        },
-        {
-          "func_name": "manage_buff",
-          "parameters": [
-            {
-              "self_var": 4
-            }
-          ],
-          "var_index": -1
-        }
-      ]
-    },
-    {
-      "effect_name": "placeholder_absolute_order_first_turn",
-      "shown_effect_name": "绝对服从的命令 - 你必须于第一回合使用一枚令咒。否则于该回合结束失去一枚令咒",
-      "time_points": [
+		  ],
+		  "var_index": 2
+		},
+		{
+		  "func_name": "get_objects_by_name_fr_arr",
+		  "parameters": [
+			"jewels",
+			{
+			  "self_var": 2
+			}
+		  ],
+		  "var_index": 3
+		},
+		{
+		  "func_name": "get_card_by_index_fr_arr",
+		  "parameters": [
+			0,
+			{
+			  "self_var": 3
+			}
+		  ],
+		  "var_index": 4
+		},
+		{
+		  "func_name": "set_property",
+		  "parameters": [
+			{
+			  "self_var": 4
+			},
+			"_buff_level",
+			{
+			  "number_index": 0
+			}
+		  ],
+		  "var_index": -1
+		},
+		{
+		  "func_name": "manage_buff",
+		  "parameters": [
+			{
+			  "self_var": 4
+			}
+		  ],
+		  "var_index": -1
+		}
+	  ]
+	},
+	{
+	  "effect_name": "placeholder_absolute_order_first_turn",
+	  "shown_effect_name": "绝对服从的命令 - 你必须于第一回合使用一枚令咒。否则于该回合结束失去一枚令咒",
+	  "time_points": [
         "game_start"
-      ],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [],
-      "funcs": []
-    },
-    {
-      "effect_name": "placeholder_absolute_order_penalty",
-      "shown_effect_name": "绝对服从的命令 - 若你以该令咒获得了魔力，战斗阶段结束后，你失去4点魔力",
-      "time_points": [
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [],
+	  "funcs": []
+	},
+	{
+	  "effect_name": "placeholder_absolute_order_penalty",
+	  "shown_effect_name": "绝对服从的命令 - 若你以该令咒获得了魔力，战斗阶段结束后，你失去4点魔力",
+	  "time_points": [
         "self_battle_phase_end"
-      ],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [
-        {
-          "number": 4,
-          "can_change": true,
-          "is_pure_number": true
-        }
-      ],
-      "funcs": []
-    }
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [
+		{
+		  "number": 4,
+		  "can_change": true,
+		  "is_pure_number": true
+		}
+	  ],
+	  "funcs": []
+	}
   ],
   "specials": {
-    "SKILLS": [],
-    "ATTACKS": [
-      {
-        "attack_name": "yin_qi_bullet",
-        "shown_attack_name": "阴炁弹",
-        "attack_card_img": "00002_tohsaka_rin_yin_qi_bullet.png",
-        "attributes": [
+	"SKILLS": [],
+	"ATTACKS": [
+	  {
+		"attack_name": "yin_qi_bullet",
+		"shown_attack_name": "阴炁弹",
+		"attack_card_img": "00002_tohsaka_rin_yin_qi_bullet.png",
+		"attributes": [
           "magic"
-        ],
-        "cost": {
-          "number": 0,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        "power": {
-          "number": 1,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        "effects": [
-          {
-            "effect_name": "yin_qi_bullet_remove_after_close",
-            "shown_effect_name": "每局游戏限一次，关闭后移除游戏",
-            "time_points": [
+		],
+		"cost": {
+		  "number": 0,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"power": {
+		  "number": 1,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"effects": [
+		  {
+			"effect_name": "yin_qi_bullet_remove_after_close",
+			"shown_effect_name": "每局游戏限一次，关闭后移除游戏",
+			"time_points": [
               "self_card_closed"
-            ],
-            "priority": 0,
-            "is_pure_passive": true,
-            "is_residue": false,
-            "effect_numbers": [],
-            "funcs": [
-              {
-                "func_name": "get_eff_source_card",
-                "parameters": [],
-                "var_index": 0
-              },
-              {
-                "func_name": "find_player_array_containing",
-                "parameters": [
-                  {
-                    "self_var": 0
-                  }
-                ],
-                "var_index": 1
-              },
-              {
-                "func_name": "get_pl_attacks_out_game",
-                "parameters": [],
-                "var_index": 2
-              },
-              {
-                "func_name": "draw_card_by_card",
-                "parameters": [
-                  {
-                    "self_var": 0
-                  },
-                  {
-                    "self_var": 1
-                  },
-                  {
-                    "self_var": 2
-                  }
-                ],
-                "var_index": -1
-              },
-              {
-                "func_name": "unregister_object_effects",
-                "parameters": [
-                  {
-                    "self_var": 0
-                  }
-                ],
-                "var_index": -1
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "BUFFS": [
-      {
-        "buff_name": "jewels",
-        "is_active": true,
-        "buff_level": {
-          "number": 10,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        "effects": [
-          {
-            "effect_name": "placeholder_jewel_sorcery_climax",
-            "shown_effect_name": "宝石魔术·高潮 - 高潮阶段时你可以在【宝石】上选择相同的选项，每个选项至多3次(共计9次)",
-            "time_points": [
+			],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [],
+			"funcs": [
+			  {
+				"func_name": "get_eff_source_card",
+				"parameters": [],
+				"var_index": 0
+			  },
+			  {
+				"func_name": "find_player_array_containing",
+				"parameters": [
+				  {
+					"self_var": 0
+				  }
+				],
+				"var_index": 1
+			  },
+			  {
+				"func_name": "get_pl_attacks_out_game",
+				"parameters": [],
+				"var_index": 2
+			  },
+			  {
+				"func_name": "draw_card_by_card",
+				"parameters": [
+				  {
+					"self_var": 0
+				  },
+				  {
+					"self_var": 1
+				  },
+				  {
+					"self_var": 2
+				  }
+				],
+				"var_index": -1
+			  },
+			  {
+				"func_name": "unregister_object_effects",
+				"parameters": [
+				  {
+					"self_var": 0
+				  }
+				],
+				"var_index": -1
+			  }
+			]
+		  }
+		]
+	  }
+	],
+	"BUFFS": [
+	  {
+		"buff_name": "jewels",
+		"is_active": true,
+		"buff_level": {
+		  "number": 10,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"effects": [
+		  {
+			"effect_name": "placeholder_jewel_sorcery_climax",
+			"shown_effect_name": "宝石魔术·高潮 - 高潮阶段时你可以在【宝石】上选择相同的选项，每个选项至多3次(共计9次)",
+			"time_points": [
               "self_climax"
-            ],
-            "priority": 0,
-            "is_pure_passive": true,
-            "is_residue": false,
-            "effect_numbers": [
-              {
-                "number": 3,
-                "can_change": true,
-                "is_pure_number": true
-              },
-              {
-                "number": 9,
-                "can_change": true,
-                "is_pure_number": true
-              }
-            ],
-            "funcs": [
-              {
-                "func_name": "do_nothing",
-                "parameters": [],
-                "var_index": -1
-              }
-            ]
-          }
-        ]
-      }
-    ]
+			],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+			  {
+				"number": 3,
+				"can_change": true,
+				"is_pure_number": true
+			  },
+			  {
+				"number": 9,
+				"can_change": true,
+				"is_pure_number": true
+			  }
+			],
+			"funcs": [
+			  {
+				"func_name": "do_nothing",
+				"parameters": [],
+				"var_index": -1
+			  }
+			]
+		  }
+		]
+	  }
+	]
   },
   "upgrade_skill": [
-    {
-      "skill_name": "jewel_sword_zelretch",
-      "shown_skill_name": "宝石剑泽尔里奇",
-      "skill_card_img": "00002_tohsaka_rin_jewel_sword_zelretch.png",
-      "attributes": [
+	{
+	  "skill_name": "jewel_sword_zelretch",
+	  "shown_skill_name": "宝石剑泽尔里奇",
+	  "skill_card_img": "00002_tohsaka_rin_jewel_sword_zelretch.png",
+	  "attributes": [
         "magic"
-      ],
-      "cost": {
-        "number": 0,
-        "can_change": true,
-        "is_pure_number": true
-      },
-      "power": {
-        "number": 6,
-        "can_change": true,
-        "is_pure_number": true
-      },
-      "ignore_limit": false,
-      "effects": [
-        {
-          "effect_name": "placeholder_jewel_sword_passive_power",
-          "shown_effect_name": "被动 - 你的魔术基础牌和【阴炁弹】的威力+2",
-          "time_points": [
+	  ],
+	  "cost": {
+		"number": 0,
+		"can_change": true,
+		"is_pure_number": true
+	  },
+	  "power": {
+		"number": 6,
+		"can_change": true,
+		"is_pure_number": true
+	  },
+	  "ignore_limit": false,
+	  "effects": [
+		{
+		  "effect_name": "placeholder_jewel_sword_passive_power",
+		  "shown_effect_name": "被动 - 你的魔术基础牌和【阴炁弹】的威力+2",
+		  "time_points": [
             "game_start"
-          ],
-          "priority": 0,
-          "is_pure_passive": true,
-          "is_residue": false,
-          "effect_numbers": [
-            {
-              "number": 2,
-              "can_change": true,
-              "is_pure_number": true
-            }
-          ],
-          "funcs": [
-            {
-              "func_name": "do_nothing",
-              "parameters": [],
-              "var_index": -1
-            }
-          ]
-        },
-        {
-          "effect_name": "placeholder_jewel_sword_drain",
-          "shown_effect_name": "行动阶段 - 获得本回合所有玩家花费的魔力。战斗结束后，将此牌移除游戏",
-          "time_points": [
+		  ],
+		  "priority": 0,
+		  "is_pure_passive": true,
+		  "is_residue": false,
+		  "effect_numbers": [
+			{
+			  "number": 2,
+			  "can_change": true,
+			  "is_pure_number": true
+			}
+		  ],
+		  "funcs": [
+			{
+			  "func_name": "do_nothing",
+			  "parameters": [],
+			  "var_index": -1
+			}
+		  ]
+		},
+		{
+		  "effect_name": "placeholder_jewel_sword_drain",
+		  "shown_effect_name": "行动阶段 - 获得本回合所有玩家花费的魔力。战斗结束后，将此牌移除游戏",
+		  "time_points": [
             "self_action_phase"
-          ],
-          "priority": 0,
-          "is_pure_passive": false,
-          "is_residue": false,
-          "effect_numbers": [],
-          "funcs": [
-            {
-              "func_name": "do_nothing",
-              "parameters": [],
-              "var_index": -1
-            }
-          ]
-        },
-        {
-          "effect_name": "jewel_sword_remove_after_battle",
-          "shown_effect_name": "战斗阶段结束后 - 将此牌移除游戏",
-          "time_points": [
+		  ],
+		  "priority": 0,
+		  "is_pure_passive": false,
+		  "is_residue": false,
+		  "effect_numbers": [],
+		  "funcs": [
+			{
+			  "func_name": "do_nothing",
+			  "parameters": [],
+			  "var_index": -1
+			}
+		  ]
+		},
+		{
+		  "effect_name": "jewel_sword_remove_after_battle",
+		  "shown_effect_name": "战斗阶段结束后 - 将此牌移除游戏",
+		  "time_points": [
             "self_battle_phase_end"
-          ],
-          "priority": 0,
-          "is_pure_passive": false,
-          "is_residue": false,
-          "effect_numbers": [],
-          "funcs": [
-            {
-              "func_name": "get_eff_source_card",
-              "parameters": [],
-              "var_index": 0
-            },
-            {
-              "func_name": "find_player_array_containing",
-              "parameters": [
-                {
-                  "self_var": 0
-                }
-              ],
-              "var_index": 1
-            },
-            {
-              "func_name": "get_pl_skills_out_game",
-              "parameters": [],
-              "var_index": 2
-            },
-            {
-              "func_name": "draw_card_by_card",
-              "parameters": [
-                {
-                  "self_var": 0
-                },
-                {
-                  "self_var": 1
-                },
-                {
-                  "self_var": 2
-                }
-              ],
-              "var_index": -1
-            },
-            {
-              "func_name": "unregister_object_effects",
-              "parameters": [
-                {
-                  "self_var": 0
-                }
-              ],
-              "var_index": -1
-            }
-          ]
-        }
-      ]
-    }
+		  ],
+		  "priority": 0,
+		  "is_pure_passive": false,
+		  "is_residue": false,
+		  "effect_numbers": [],
+		  "funcs": [
+			{
+			  "func_name": "get_eff_source_card",
+			  "parameters": [],
+			  "var_index": 0
+			},
+			{
+			  "func_name": "find_player_array_containing",
+			  "parameters": [
+				{
+				  "self_var": 0
+				}
+			  ],
+			  "var_index": 1
+			},
+			{
+			  "func_name": "get_pl_skills_out_game",
+			  "parameters": [],
+			  "var_index": 2
+			},
+			{
+			  "func_name": "draw_card_by_card",
+			  "parameters": [
+				{
+				  "self_var": 0
+				},
+				{
+				  "self_var": 1
+				},
+				{
+				  "self_var": 2
+				}
+			  ],
+			  "var_index": -1
+			},
+			{
+			  "func_name": "unregister_object_effects",
+			  "parameters": [
+				{
+				  "self_var": 0
+				}
+			  ],
+			  "var_index": -1
+			}
+		  ]
+		}
+	  ]
+	}
   ],
   "tags": [
-    {
-      "tag": "tohsaka",
-      "name_list": [
+	{
+	  "tag": "tohsaka",
+	  "name_list": [
         "远坂"
-      ],
-      "type": "master_tag"
-    },
-    {
-      "tag": "jewel_sorcery",
-      "name_list": [
+	  ],
+	  "type": "master_tag"
+	},
+	{
+	  "tag": "jewel_sorcery",
+	  "name_list": [
         "宝石魔术"
-      ],
-      "type": "master_tag"
-    }
+	  ],
+	  "type": "master_tag"
+	}
   ],
   "other_master_things": [
-    {
-      "thing_name": "jewel_card",
-      "shown_thing_name": "宝石",
-      "card_img": "00002_tohsaka_rin_jewels.png",
-      "card_back_img": "00002_tohsaka_rin_jewels_back.png",
-      "effects": []
-    }
+	{
+	  "thing_name": "jewel_card",
+	  "shown_thing_name": "宝石",
+	  "card_img": "00002_tohsaka_rin_jewels.png",
+	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
+	  "effects": []
+	}
   ]
 }
