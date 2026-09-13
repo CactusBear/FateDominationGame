@@ -5,7 +5,7 @@ extends RefCounted
 #局势牌加载：从 data/situations 递归加载所有局势牌 JSON，生成 BaseSituation 实例。
 #局势牌是全局共用的一副牌堆(A1)，不属于任何从者/御主，进场逻辑从池里抽牌放激活区(A2)。
 
-const SITUATIONS_PATH := "res://data/situations"
+const SITUATIONS_PATH := LoadHelper.DATA_DIR + "/situations"
 
 #已加载的非高潮局势牌实例池(模板)
 static var situations:Array = []
@@ -48,6 +48,7 @@ static func _load_file(dir_path:String, file_name:String) -> void:
 		LoadHelper.load_number(data["magic"])
 	)
 	situation._shown_name = data.get("shown_name", "")
+	situation._zoom_kind = LoadHelper.resolve_zoom_kind(data, "card_img")
 	situation._effects = LoadHelper.load_effects(data.get("effects", []), situation)
 	#高潮牌按展示回合索引，非高潮牌进牌堆
 	if data.get("is_climax", false):

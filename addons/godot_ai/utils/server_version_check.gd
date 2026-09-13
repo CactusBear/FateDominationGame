@@ -6,6 +6,21 @@ extends RefCounted
 ## handshake and episode transition; this class intentionally owns no timer,
 ## connection, or manager reference.
 
+## First release whose attached bridge follows servers of the same major.
+const FIRST_BRIDGE_TOLERANT_VERSION := "4.0.4"
+
+
+## Whether clients attached at `from_version` can reconnect after updating
+## to `to_version` without restarting their bridge (#1024).
+static func attached_bridges_follow(from_version: String, to_version: String) -> bool:
+	var from_tuple := version_tuple(from_version)
+	var to_tuple := version_tuple(to_version)
+	if from_tuple.is_empty() or to_tuple.is_empty():
+		return false
+	if int(from_tuple[0]) != int(to_tuple[0]):
+		return false
+	return compare(from_tuple, version_tuple(FIRST_BRIDGE_TOLERANT_VERSION)) >= 0
+
 
 ## Leading numeric `major.minor.patch` of a version as `[major, minor, patch]`,
 ## or `[]` when it does not start that way (a dev build, a malformed pin).

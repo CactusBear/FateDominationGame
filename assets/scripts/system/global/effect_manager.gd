@@ -29,6 +29,32 @@ var countered_funcs:Dictionary
 var time_point_id:int = 0
 #结算中标记。结算过程里派发的新时点只追加效果，不另起批次
 var is_running:bool = false
+#待展示的提示消息队列：[{"text":String, "player_id":int}]，player_id=-1表示全员可见。
+#operation只负责产生消息，界面取走并展示(取走即移除)，显示形态由界面决定
+var messages:Array = []
+
+
+#产生一条提示消息。消息先入队，由界面在刷新时取走展示——
+#效果结算过程中不应直接操作界面节点，否则界面没加载时效果会崩
+func push_message(text:String, player_id:int = -1):
+	if text == "":
+		return
+	messages.append({"text" : text, "player_id" : player_id})
+
+
+#取走该玩家的全部消息(取走即移除)。界面每次刷新时调用。
+#不属于该玩家的消息留在队列里，等对应玩家来取，不会串看别人的提示
+func pop_messages(player_id:int) -> Array:
+	var taken:Array = []
+	var left:Array = []
+	for msg in messages:
+		var pid:int = int(msg.get("player_id", -1))
+		if pid == -1 or pid == player_id:
+			taken.append(str(msg.get("text", "")))
+		else:
+			left.append(msg)
+	messages = left
+	return taken
 
 
 #清理本局运行时状态，保留已经加载的游戏资源和效果对象
@@ -38,6 +64,7 @@ func reset_runtime():
 	decision_queue.clear()
 	activation_pool.clear()
 	waiting_effect = null
+	messages.clear()
 	matched_time_points.clear()
 	resolved_effects.clear()
 	closed_time_points.clear()
@@ -47,6 +74,126 @@ func reset_runtime():
 	for id in GameData.player_data_library.keys():
 		var player_data = GameData.player_data_library[id] as Dictionary
 		(player_data["self_effects"] as Array).clear()
+
+
+#每回合开始时调用：清空所有声明了"每回合重置"的选项类效果的用量计数，
+#让"本回合选过的选项"这类限制在新回合重新可选
+func reset_round_option_counts():
+	for effect:BaseEffect in effect_pool:
+		if effect.has_options():
+			reset_effect_option_counts(effect)
+
+
+#单个效果的计数重置：若声明了_reset_counts_each_round才清空，不声明的效果维持全局永久计数不变
+func reset_effect_option_counts(effect:BaseEffect):
+	if effect._reset_counts_each_round:
+		effect._option_use_counts.clear()
+		effect._option_quantities.clear()
+
+
+#某个选项在当前重置周期内已用了几次
+func get_option_use_count(effect:BaseEffect, option_index:int) -> int:
+	return effect._option_use_counts.get(option_index, 0) as int
+
+
+#当前重置周期内该效果所有选项累计用了几次
+func get_total_use_count(effect:BaseEffect) -> int:
+	var total := 0
+	for v in effect._option_use_counts.values():
+		total += v as int
+	return total
+
+
+#来源对象(effect.from)的剩余资源层数；没有声明消耗或来源没有_buff_level时返回-1(不限)
+func get_source_resource_level(effect:BaseEffect) -> int:
+	if !effect._consumes_source_resource or effect.from == null:
+		return -1
+	if !("_buff_level" in effect.from):
+		return -1
+	var lvl = effect.from._buff_level
+	return (lvl.number as int) if lvl is BaseNumber else -1
+
+
+#某个选项还能不能再选extra_count次：没超过该选项自身的max_uses(累计)、没超过效果整体的max_total_uses(累计)、
+#没超过这一次提交的max_choices限额、来源资源层数够扣。extra_count默认1，供UI/AI判断"至少还能选一次"用
+func is_option_available(effect:BaseEffect, option_index:int, extra_count:int = 1) -> bool:
+	if option_index < 0 or option_index >= effect._options.size():
+		return false
+	var opt_max:int = effect._options[option_index].get("max_uses", -1) as int
+	if opt_max != -1 and get_option_use_count(effect, option_index) + extra_count > opt_max:
+		return false
+	if effect._max_total_uses != -1 and get_total_use_count(effect) + extra_count > effect._max_total_uses:
+		return false
+	if effect._max_choices != -1 and extra_count > effect._max_choices:
+		return false
+	var res_level := get_source_resource_level(effect)
+	if res_level != -1 and extra_count > res_level:
+		return false
+	return true
+
+
+#是否还有任何一个选项可选；全部耗尽(次数上限用完或来源资源为0)时UI/AI都不应再弹出这个效果
+func has_available_options(effect:BaseEffect) -> bool:
+	if effect._consumes_source_resource and get_source_resource_level(effect) == 0:
+		return false
+	for i in range(effect._options.size()):
+		if is_option_available(effect, i, 1):
+			return true
+	return false
+
+
+#校验一份完整的选择提交是否合法：每项次数、这一次提交的总次数、累计总次数、来源资源都要够，
+#任一超限则整体不合法。selection为{选项下标:本次要用几次}
+func validate_selection(effect:BaseEffect, selection:Dictionary) -> bool:
+	if selection.is_empty():
+		return false
+	var total := 0
+	for idx in selection.keys():
+		var count:int = selection[idx] as int
+		if !(idx is int) or count <= 0:
+			return false
+		if idx < 0 or idx >= effect._options.size():
+			return false
+		var opt_max:int = effect._options[idx].get("max_uses", -1) as int
+		if opt_max != -1 and get_option_use_count(effect, idx) + count > opt_max:
+			return false
+		total += count
+	if effect._max_choices != -1 and total > effect._max_choices:
+		return false
+	if effect._max_total_uses != -1 and get_total_use_count(effect) + total > effect._max_total_uses:
+		return false
+	var res_level := get_source_resource_level(effect)
+	if res_level != -1 and total > res_level:
+		return false
+	return true
+
+
+#把一份已校验通过的选择计入用量，并按声明消耗来源资源层数。
+#在validate_selection通过、确定要发动之后调用一次
+func record_selection_usage(effect:BaseEffect, selection:Dictionary):
+	var total := 0
+	for idx in selection.keys():
+		var count:int = selection[idx] as int
+		effect._option_use_counts[idx] = get_option_use_count(effect, idx) + count
+		total += count
+	if effect._consumes_source_resource and effect.from != null and ("_buff_level" in effect.from):
+		var lvl = effect.from._buff_level
+		if lvl is BaseNumber:
+			lvl.minus(BaseNumber.new(total))
+	effect._chosen_selection = selection.duplicate()
+
+
+#按选中的选择字典取要结算的funcs：次数>1的选项，其funcs重复追加相应次数
+func get_chosen_funcs(effect:BaseEffect) -> Array:
+	var result:Array = []
+	for idx in effect._chosen_selection.keys():
+		if !(idx is int) or idx < 0 or idx >= effect._options.size():
+			continue
+		var count:int = effect._chosen_selection[idx] as int
+		var opt_funcs:Array = effect._options[idx].get("funcs", [])
+		for i in range(count):
+			result.append_array(opt_funcs)
+	return result
 
 
 func get_all_players_id():
@@ -184,7 +331,9 @@ func card_state_allows(effect:BaseEffect) -> bool:
 
 
 #返回效果在其归属玩家的当前时点表里命中的所有时点。
-#命中多个时，关掉其中一个不会让效果整体失效
+#命中多个时，关掉其中一个不会让效果整体失效。
+#AND模式(_time_points_require_all)下要求全部时点同时命中，任一未命中就返回空数组
+#——用于"高潮回合且正处于自己行动阶段"这类需要两个时点同时成立的规则。
 func get_matched_time_points(effect:BaseEffect) -> Array:
 	var pl_data = GameDataManager.get_player_data(effect._trigger_player_id) as Dictionary
 	var current_tps = pl_data["current_time_points"] as Array
@@ -192,9 +341,14 @@ func get_matched_time_points(effect:BaseEffect) -> Array:
 	var matched:Array = []
 	for tp in effect._time_points:
 		if closed.has(tp):
+			if effect._time_points_require_all:
+				return []
 			continue
-		if current_tps.has(tp) and !matched.has(tp):
-			matched.append(tp)
+		if current_tps.has(tp):
+			if !matched.has(tp):
+				matched.append(tp)
+		elif effect._time_points_require_all:
+			return []
 	return matched
 
 
@@ -254,6 +408,10 @@ func drain_decision_queue():
 			decision_queue.pop_front()
 			add_to_activation_pool(effect)
 			continue
+		#选项类效果所有选项都已耗尽用量：没有可选的分支，直接视为放弃，不打扰玩家
+		if effect.has_options() and !has_available_options(effect):
+			decision_queue.pop_front()
+			continue
 		waiting_effect = effect
 		return
 
@@ -279,6 +437,27 @@ func submit_active_choice(effect:BaseEffect, should_activate:bool) -> bool:
 	if !is_running:
 		run_pipeline()
 	return true
+
+
+#选项类效果的玩家答复。selection可以是：
+#  - Array[int]：下标数组，每项默认用1次(简单单选/多选场景，如令咒三选一)
+#  - Dictionary{下标:次数}：同一下标可以要求用多次(一次提交里连用同一选项多次)
+#校验不通过(超过用量上限/来源资源不够)时整体视为放弃，避免UI传坏数据时结算到不该结算的分支
+func submit_option_choice(effect:BaseEffect, selection) -> bool:
+	if effect == null or waiting_effect != effect:
+		return false
+	var selection_dict:Dictionary = {}
+	if selection is Array:
+		for idx in selection:
+			selection_dict[idx] = selection_dict.get(idx, 0) + 1
+	elif selection is Dictionary:
+		selection_dict = selection
+	else:
+		return submit_active_choice(effect, false)
+	if !validate_selection(effect, selection_dict):
+		return submit_active_choice(effect, false)
+	record_selection_usage(effect, selection_dict)
+	return submit_active_choice(effect, true)
 
 
 func add_to_activation_pool(effect:BaseEffect):
@@ -512,7 +691,9 @@ func activate_effect(effect:BaseEffect):
 	#每次激活都从空白的变量表开始，避免读到上一次激活的残留值
 	effect._self_vars = []
 
-	for f:BaseFunc in effect._funcs:
+	#多选一效果结算选中分支的funcs，不结算effect自身的_funcs(那里本就是空的)
+	var funcs_to_run:Array = get_chosen_funcs(effect) if effect.has_options() else effect._funcs
+	for f:BaseFunc in funcs_to_run:
 		run_base_func(f, effect)
 
 	end_effect()

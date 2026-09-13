@@ -90,6 +90,13 @@ func _init():
 		scout
 	]
 
+	#反向登记每个位置所属的战区。BaseLocation.get_from()要能取回map_area，
+	#UI/规则按area._area_name分流(部署槽位/信息栏/头像放置)全靠这份归属，
+	#只填_locations不反向设置from的话，from永远是null
+	for area:BaseMapArea in areas:
+		for loc:BaseLocation in area._locations:
+			loc.from = area
+
 #重建事件牌库：把模板池深拷贝一份洗混，每局开始时调用。
 #克隆是为了让场上的牌改不到模板，重开一局还能从模板重新发牌
 func reset_event_deck():

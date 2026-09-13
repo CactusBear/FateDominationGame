@@ -1,20 +1,21 @@
 {
-    "attack_name": "precision_strike_1_5",
-    "shown_attack_name": "刹那的一击",
-    "category": "basic",
-    "attributes": [
-        "agility"
-    ],
-    "cost": {
-        "number": 1,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "power": {
-        "number": 5,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "attack_card_img": "precision_strike_1_5.png",
-    "effects": []
+  "attack_name": "precision_strike_1_5",
+  "shown_attack_name": "刹那的一击",
+  "category": "basic",
+  "attributes": [
+    "agility"
+  ],
+  "cost": {
+    "number": 1,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "power": {
+    "number": 5,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "attack_card_img": "precision_strike_1_5.png",
+  "effects": [],
+  "zoom_kind": "card"
 }

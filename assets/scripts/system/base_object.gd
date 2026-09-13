@@ -12,6 +12,21 @@ var from : set = set_from, get = get_from
 var _from_ref:WeakRef
 #非Object的from(如id、字符串)没法做弱引用，直接存
 var _from_value
+#这个对象的展示图属于哪一类：card/avatar/token（取值见 LoadHelper.ZOOM_KINDS）。
+#由 JSON 里紧跟图片路径的 zoom_kind 声明，空串表示未声明——UI 据此不给放大。
+#放在最基类：卡、御主、从者、buff 都要被展示，各子类无需重复定义
+var _zoom_kind:String = ""
+#多图对象(御主同时有头像/御主卡/令咒卡)按图片字段各记一档：{图片字段名:分类}。
+#UI 展示某张图时用 get_zoom_kind(该图片字段) 取，取不到再回退到 _zoom_kind
+var _zoom_kinds:Dictionary = {}
+
+
+#取某张展示图的放大分类。img_field 传该图在 JSON/运行时的字段名（如 "_header_img"）；
+#不传则取对象默认分类。返回空串表示未声明，UI 不应给它放大
+func get_zoom_kind(img_field:String = "") -> String:
+	if img_field != "" and _zoom_kinds.has(img_field):
+		return str(_zoom_kinds[img_field])
+	return _zoom_kind
 
 
 func set_from(value):

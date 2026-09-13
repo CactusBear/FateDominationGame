@@ -2,7 +2,7 @@
 extends VBoxContainer
 
 ## Dock subpanel — port-change escape hatch surfaced inside the spawn-failure
-## crash panel when a port is contested (PORT_EXCLUDED, FOREIGN_PORT).
+## crash panel when a port is contested or an incompatible server cannot be reclaimed.
 ##
 ## It moves BOTH ports. A godot-ai server binds its HTTP and WebSocket ports
 ## together, so moving only the HTTP port onto a free number lands the next
@@ -44,15 +44,15 @@ func _build_ui() -> void:
 	var picker_row := HBoxContainer.new()
 	picker_row.add_theme_constant_override("separation", 6)
 
-	_spinbox = _port_spinbox(ClientConfigurator.http_port(), "HTTP port (godot_ai/http_port)")
+	_spinbox = _port_spinbox(ClientConfigurator.http_port(), "Effective HTTP port")
 	picker_row.add_child(_spinbox)
-	_ws_spinbox = _port_spinbox(ClientConfigurator.ws_port(), "WebSocket port (godot_ai/ws_port)")
+	_ws_spinbox = _port_spinbox(ClientConfigurator.ws_port(), "Effective WebSocket port")
 	picker_row.add_child(_ws_spinbox)
 
 	var apply_btn := Button.new()
 	apply_btn.text = "Apply + Reload"
 	apply_btn.tooltip_text = (
-		"Saves godot_ai/http_port and godot_ai/ws_port to Editor Settings and reloads"
+		"Saves the effective HTTP and WebSocket ports to Editor Settings and reloads"
 		+ " the plugin so the server spawns on the new ports. Reconfigure your AI"
 		+ " clients afterwards so their bridges use the new ports."
 	)

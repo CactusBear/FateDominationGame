@@ -1,9 +1,9 @@
 extends Node
 
 
-var masters_path = "data/masters"
-var servants_path = "data/servants"
-var tag_list_path = "data"
+var masters_path = LoadHelper.DATA_DIR + "/masters"
+var servants_path = LoadHelper.DATA_DIR + "/servants"
+var tag_list_path = LoadHelper.DATA_DIR
 var tag_list:Array
 var temp_stored_jsons_arr:Array#[String]
 var _loaded_path = []
@@ -19,6 +19,7 @@ func load_game():
 	LoadAttack.load_all()
 	LoadEvent.load_all()
 	LoadSituation.load_all()
+	LoadCommandSpell.load_all()
 	load_masters_from_jsons(masters_path)
 	load_servants_from_jsons(servants_path)
 	write_tag_list()
@@ -29,6 +30,11 @@ func load_game():
 
 func write_tag_list():
 	var tag_list_file = FileAccess.open(tag_list_path + "/" + "tag_list.json", FileAccess.WRITE)
+	#data 目录在导出后是外部目录，可能因安装位置无写权限而打不开。
+	#写不了只是少一份缓存清单，不该让整个加载流程崩掉
+	if tag_list_file == null:
+		push_warning("tag_list.json 写入失败，跳过：" + tag_list_path)
+		return
 	var tags = tag_list.duplicate(true)
 	for tag:Dictionary in tags:
 		tag.erase("from")
@@ -205,13 +211,23 @@ func load_servants_from_jsons(load_path:String):
 		print("尝试访问路径时出错。")
 
 
+#JSON 内容快照的存放路径。必须是 user://：res:// 导出后是只读的 pck，写不进去。
+#这只是一份"卡数据有没有变过"的缓存，放用户数据目录即可
+const STORED_JSONS_PATH := "user://game_data/stored_jsons.dat"
+
+
 func store_jsons():
-	var stored_jsons = FileAccess.open("res://game_data/stored_jsons.dat", FileAccess.WRITE_READ)
+	DirAccess.make_dir_recursive_absolute(STORED_JSONS_PATH.get_base_dir())
+	var stored_jsons = FileAccess.open(STORED_JSONS_PATH, FileAccess.WRITE)
+	if stored_jsons == null:
+		push_warning("stored_jsons.dat 写入失败，跳过缓存")
+		return
 	stored_jsons.store_var(temp_stored_jsons_arr)
+	stored_jsons.close()
 
 
 func load_stored_jsons():
-	var stored_jsons = FileAccess.open("res://game_data/stored_jsons.dat", FileAccess.READ)
+	var stored_jsons = FileAccess.open(STORED_JSONS_PATH, FileAccess.READ)
 	if stored_jsons == null: 
 		load_tags(true)
 		return
@@ -250,6 +266,13 @@ func load_master_file(path:String, master_file_name:String):
 	
 	var master = BaseMaster.new(master_name, shown_master_name, header_img, master_card_img, command_spell_img)
 	master._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), path, "master")
+	#御主同时有头像/御主卡/令咒卡三张图，用途不同，各自按JSON声明记一档
+	master._zoom_kinds = {
+		"_header_img" : LoadHelper.resolve_zoom_kind(data, "header_img"),
+		"_master_card_img" : LoadHelper.resolve_zoom_kind(data, "master_card_img"),
+		"_command_spell_img" : LoadHelper.resolve_zoom_kind(data, "command_spell_img")
+	}
+	master._zoom_kind = str(master._zoom_kinds["_master_card_img"])
 	var effects = load_effects(data["effects"], master)
 	var specials = data["specials"] as Dictionary
 	var upgrade_skill = load_skills(data.get("upgrade_skill", []), path, master, "upgrade_skill")
@@ -257,9 +280,14 @@ func load_master_file(path:String, master_file_name:String):
 	if specials.has("SKILLS") :
 		specials["SKILLS"] = load_skills(specials["SKILLS"], path, master)
 	if specials.has("ATTACKS") :
-		specials["ATTACKS"] = load_attacks(specials["ATTACKS"], path, master)
+		#御主附带攻击牌的卡背要按"这张卡最终去哪"分类，搬进牌库的声明写在御主效果里，
+		#所以把御主效果原始数据传进去一起判定
+		specials["ATTACKS"] = load_attacks(specials["ATTACKS"], path, master, data.get("effects", []))
 	if specials.has("BUFFS") :
 		specials["BUFFS"] = load_buffs(specials["BUFFS"], path, master)
+		#御主物品卡(黑泥、宝石等)是某个buff的卡面形态：接上buff实例，
+		#渲染时才能按它此刻的激活状态给卡面加深红遮罩。对应关系写在数据的relate_buff里
+		LoadHelper.bind_things_to_buffs(data.get("other_master_things", []), other_things, specials["BUFFS"])
 	if specials.has("MAP_AREAS") :
 		specials["MAP_AREAS"] = load_map_areas(specials["MAP_AREAS"], master)
 	if specials.has("LOCATIONS") :
@@ -268,8 +296,10 @@ func load_master_file(path:String, master_file_name:String):
 		specials["EVENTS"] = load_events(specials["EVENTS"], path, master)
 	if specials.has("NPCS") :
 		specials["NPCS"]
+	#令咒：声明本角色专属令咒(card_name，或数组按顺序取)，界面按名从 LoadCommandSpell 池取用，
+	#未声明时回退通用常规令咒，这里无需额外处理
 	if specials.has("COMMAND_SPELLS") :
-		specials["COMMAND_SPELLS"]
+		pass
 	if specials.has("MASTERS") :
 		specials["MASTERS"]
 	if specials.has("SERVANTS") :
@@ -303,6 +333,12 @@ func load_servant_file(path:String, servant_file_name:String):
 
 	var servant = BaseServant.new(servant_name, shown_servant_name, servant_class, header_img, servant_card_img)
 	servant._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), path, "servant")
+	#从者有头像与概览卡两张图，各自按JSON声明记一档
+	servant._zoom_kinds = {
+		"_header_img" : LoadHelper.resolve_zoom_kind(data, "header_img"),
+		"_servant_card_img" : LoadHelper.resolve_zoom_kind(data, "servant_card_img")
+	}
+	servant._zoom_kind = str(servant._zoom_kinds["_servant_card_img"])
 	var effects = load_effects(data["effects"], servant)
 	var specials = data["specials"] as Dictionary
 	if specials.has("SKILLS") :
@@ -346,12 +382,17 @@ func load_skills(skills:Array, pic_path:String, from, type_name:String = "skill"
 		skill._effects = effects
 		skill.from = from
 		skill._card_back_img = LoadHelper.resolve_card_back(ski.get("card_back_img", ""), pic_path, type_name)
+		skill._zoom_kind = LoadHelper.resolve_zoom_kind(ski, "skill_card_img")
+		#升华技默认未觉醒(要靠特定从者激活)，其它技能牌默认已获得
+		skill._is_awakened = bool(ski.get("is_awakened", type_name != "upgrade_skill"))
 		ski_arr.append(skill)
 
 	return ski_arr
 	
 
-func load_attacks(attacks:Array, pic_path:String, from):
+#owner_effects_data 是持有者(御主)的效果原始 JSON：御主附带攻击牌的卡背要按"这张卡最终去哪"分类，
+#而"加入牌库"的声明写在持有者效果里而不是这张卡上，所以要一并传进来判定。从者牌库不传，走默认
+func load_attacks(attacks:Array, pic_path:String, from, owner_effects_data:Array = []):
 	var att_arr:Array
 	for att in attacks:
 		if att is String:
@@ -371,8 +412,13 @@ func load_attacks(attacks:Array, pic_path:String, from):
 		var effects = load_effects(att["effects"], attack)
 		attack._effects = effects
 		attack.from = from
-		#御主附带攻击牌默认用skill卡背，可用card_back_img覆盖
-		attack._card_back_img = LoadHelper.resolve_card_back(att.get("card_back_img", ""), pic_path, "skill")
+		#会被持有者效果搬进牌库的（如葛木的蛇）印攻击牌卡背，留在持有者身上随时打出的
+		#（如凛的阴炁弹）印技能牌卡背；JSON 写了 card_back_img 的走同目录特殊卡背
+		var back_type := "skill"
+		if LoadHelper.is_card_inserted_to_deck(str(attack_name), owner_effects_data):
+			back_type = "attack"
+		attack._card_back_img = LoadHelper.resolve_card_back(att.get("card_back_img", ""), pic_path, back_type)
+		attack._zoom_kind = LoadHelper.resolve_zoom_kind(att, "attack_card_img")
 		att_arr.append(attack)
 
 	return att_arr
@@ -389,6 +435,8 @@ func load_buffs(buffs:Array, pic_path:String, from):
 		var is_active = buf["is_active"]
 		var buff_level = load_number(buf["buff_level"])
 		var buff = BaseBuff.new(buff_name, buff_img)
+		buff._shown_name = buf.get("shown_buff_name", "")
+		buff._zoom_kind = LoadHelper.resolve_zoom_kind(buf, "buff_img")
 		var effects = load_effects(buf["effects"], buff)
 		buff._effects = effects
 		buff._is_active = is_active
@@ -410,6 +458,7 @@ func load_other_master_things(things:Array, pic_path:String, from):
 		card._shown_name = thing.get("shown_thing_name", "")
 		card._card_img = pic_path + "/" + thing["card_img"]
 		card._card_back_img = LoadHelper.resolve_card_back(thing.get("card_back_img", ""), pic_path, "skill")
+		card._zoom_kind = LoadHelper.resolve_zoom_kind(thing, "card_img")
 		card._effects = load_effects(thing.get("effects", []), card)
 		card._attributes = []
 		card.from = from
@@ -503,8 +552,10 @@ func load_masters(masters:Array, pic_path:String, from):
 			specials["EVENTS"] = load_events(specials["EVENTS"], pic_path, master)
 		if specials.has("NPCS") :
 			specials["NPCS"]
+		#令咒：specials.COMMAND_SPELLS 里声明本角色专属令咒(card_name，或数组按顺序取)，
+		#界面按名从 LoadCommandSpell 池取用，未声明时回退通用常规令咒，这里无需额外处理
 		if specials.has("COMMAND_SPELLS") :
-			specials["COMMAND_SPELLS"]
+			pass
 		if specials.has("MASTERS") :
 			specials["MASTERS"] = load_masters(specials["MASTERS"], pic_path, master)
 		if specials.has("SERVANTS") :

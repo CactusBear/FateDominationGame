@@ -1,30 +1,31 @@
 {
-    "card_name": "occupy_high_ground",
-    "shown_name": "占领高地",
-    "score": {
-        "number": 3,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "card_img": "occupy_high_ground.png",
-    "effects": [
+  "card_name": "occupy_high_ground",
+  "shown_name": "占领高地",
+  "score": {
+    "number": 3,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "card_img": "occupy_high_ground.png",
+  "effects": [
+    {
+      "effect_name": "occupy_high_ground_placeholder",
+      "shown_effect_name": "于此战场玩家计算战力时地利翻倍",
+      "time_points": [
+        "battle_resolve"
+      ],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
         {
-            "effect_name": "occupy_high_ground_placeholder",
-            "shown_effect_name": "于此战场玩家计算战力时地利翻倍",
-            "time_points": [
-                "battle_resolve"
-            ],
-            "priority": 0,
-            "is_pure_passive": true,
-            "is_residue": false,
-            "effect_numbers": [],
-            "funcs": [
-                {
-                    "func_name": "do_nothing",
-                    "parameters": [],
-                    "var_index": -1
-                }
-            ]
+          "func_name": "do_nothing",
+          "parameters": [],
+          "var_index": -1
         }
-    ]
+      ]
+    }
+  ],
+  "zoom_kind": "card"
 }

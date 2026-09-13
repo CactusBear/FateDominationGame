@@ -1,20 +1,21 @@
 {
-    "attack_name": "magic_blast_0_4",
-    "shown_attack_name": "高位魔术",
-    "category": "basic",
-    "attributes": [
-        "magic"
-    ],
-    "cost": {
-        "number": 0,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "power": {
-        "number": 4,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "attack_card_img": "magic_blast_0_4.png",
-    "effects": []
+  "attack_name": "magic_blast_0_4",
+  "shown_attack_name": "高位魔术",
+  "category": "basic",
+  "attributes": [
+    "magic"
+  ],
+  "cost": {
+    "number": 0,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "power": {
+    "number": 4,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "attack_card_img": "magic_blast_0_4.png",
+  "effects": [],
+  "zoom_kind": "card"
 }

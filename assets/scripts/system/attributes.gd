@@ -33,7 +33,7 @@ const shown_attributes:Dictionary = {
 
 #运行时注册的自定义属性，{属性名 : 显示名}。
 #属性不写死，特殊卡牌或扩展可以注册上表以外的新属性
-static var custom_attributes:Dictionary
+static var custom_attributes:Dictionary = {}
 
 
 #注册自定义属性，shown_name留空时显示名与属性名相同

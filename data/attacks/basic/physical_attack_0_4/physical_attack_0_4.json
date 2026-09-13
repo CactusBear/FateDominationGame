@@ -1,20 +1,21 @@
 {
-    "attack_name": "physical_attack_0_4",
-    "shown_attack_name": "浑身的一击",
-    "category": "basic",
-    "attributes": [
-        "strength"
-    ],
-    "cost": {
-        "number": 0,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "power": {
-        "number": 4,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "attack_card_img": "physical_attack_0_4.png",
-    "effects": []
+  "attack_name": "physical_attack_0_4",
+  "shown_attack_name": "浑身的一击",
+  "category": "basic",
+  "attributes": [
+    "strength"
+  ],
+  "cost": {
+    "number": 0,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "power": {
+    "number": 4,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "attack_card_img": "physical_attack_0_4.png",
+  "effects": [],
+  "zoom_kind": "card"
 }

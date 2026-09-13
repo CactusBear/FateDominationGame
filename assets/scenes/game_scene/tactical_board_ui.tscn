@@ -1,0 +1,2656 @@
+[gd_scene format=3 uid="uid://df7k1x5alq5n0"]
+
+[ext_resource type="Texture2D" uid="uid://c5rr8wykga03a" path="res://assets/images/game_scene/back_ground.png" id="1_bg"]
+[ext_resource type="Texture2D" uid="uid://jod4v84hg5b3" path="res://data/situations/origin/perfect_flow/perfect_flow.png" id="2_situation"]
+[ext_resource type="Texture2D" uid="uid://cvc7xkj3dx773" path="res://data/events/origin/glorious_duel/glorious_duel.png" id="3_event_miyama"]
+[ext_resource type="Texture2D" uid="uid://c6eo58e5jt40t" path="res://data/card_backs/event_card_back.png" id="4_event_back"]
+[ext_resource type="Texture2D" uid="uid://do1b7fsihl3k2" path="res://data/masters/00001_emiya_shirou/00001_emiya_shirou_header.png" id="5_avatar_shirou"]
+[ext_resource type="Texture2D" uid="uid://buyo2tuwltu0r" path="res://data/masters/00002_tohsaka_rin/00002_tohsaka_rin_header.png" id="6_avatar_rin"]
+[ext_resource type="Texture2D" uid="uid://5m50hko6f23p" path="res://data/masters/00003_matou_shinji/00003_matou_shinji_header.png" id="7_avatar_shinji"]
+[ext_resource type="Texture2D" uid="uid://4l8oaxmj3evy" path="res://data/masters/00004_matou_sakura/00004_matou_sakura_header.png" id="8_avatar_sakura"]
+[ext_resource type="Texture2D" uid="uid://c0ngeq527tw44" path="res://data/masters/00005_illyasviel_von_einzbern/00005_illyasviel_von_einzbern_header.png" id="9_avatar_illya"]
+[ext_resource type="Texture2D" uid="uid://cqbe7bgeofc7g" path="res://data/masters/00006_kotomine_kirei/00006_kotomine_kirei_header.png" id="10_avatar_kirei"]
+[ext_resource type="Texture2D" uid="uid://s5ujabvtluxm" path="res://data/masters/00007_kuzuki_souichirou/00007_kuzuki_souichirou_header.png" id="11_avatar_kuzuki"]
+[ext_resource type="Texture2D" uid="uid://2mb75jdsbs2l" path="res://data/attacks/basic/physical_attack_0_3/physical_attack_0_3.png" id="12_atk_str"]
+[ext_resource type="Texture2D" uid="uid://dseoidnlp2wyu" path="res://data/attacks/basic/precision_strike_0_3/precision_strike_0_3.png" id="13_atk_agi"]
+[ext_resource type="Texture2D" uid="uid://uj8l4s43knmv" path="res://data/attacks/basic/luck/luck.png" id="14_atk_luck"]
+[ext_resource type="Texture2D" uid="uid://df6mu42makfmb" path="res://data/card_backs/skill_card_back.png" id="15_skill_back"]
+[ext_resource type="Texture2D" uid="uid://bqhddldvbgm3r" path="res://data/card_backs/attack_card_back.png" id="16_deck_back"]
+[ext_resource type="Texture2D" uid="uid://bjs7626uthb4w" path="res://data/masters/00001_emiya_shirou/00001_emiya_shirou_cd.png" id="17_master_cd"]
+[ext_resource type="Texture2D" uid="uid://djg1uroqoj2im" path="res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_cd.png" id="18_servant_cd"]
+[ext_resource type="Texture2D" uid="uid://c2vv78ak1had8" path="res://data/masters/00001_emiya_shirou/00001_emiya_shirou_cs.png" id="19_command_spell"]
+[ext_resource type="Texture2D" uid="uid://3t1wc8i858tc" path="res://data/masters/00002_tohsaka_rin/00002_tohsaka_rin_cd.png" id="20_rin_cd"]
+[ext_resource type="Texture2D" uid="uid://c6fhvymljk01g" path="res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_wind_barrier.png" id="21_skill_wind"]
+[ext_resource type="Texture2D" uid="uid://ce0ypof1vx87h" path="res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_mana_resistance.png" id="22_skill_mana"]
+[ext_resource type="Texture2D" uid="uid://dabn4r07nq7cy" path="res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_excalibur.png" id="23_skill_excalibur"]
+[ext_resource type="Texture2D" uid="uid://dj6onobegw6ls" path="res://data/masters/00001_emiya_shirou/00001_emiya_shirou_kanshou_and_bakuya.png" id="24_extra_kanshou"]
+[ext_resource type="Texture2D" uid="uid://d2g0xvjidqf5f" path="res://data/masters/00001_emiya_shirou/00001_emiya_shirou_caliburn.png" id="25_extra_caliburn"]
+[ext_resource type="Script" uid="uid://c53pthermh42y" path="res://assets/scripts/game_scene/tactical_board_ui.gd" id="27_ui_script"]
+[ext_resource type="Texture2D" uid="uid://deosk88yw3cu6" path="res://assets/images/ui/icons/icon_mana_orb.png" id="28_icon_mana"]
+[ext_resource type="Texture2D" uid="uid://dkfomrxfg323l" path="res://assets/images/ui/icons/icon_holy_grail.png" id="29_icon_grail"]
+
+[sub_resource type="StyleBoxFlat" id="sb_topbar"]
+bg_color = Color(0.04, 0.055, 0.09, 0.82)
+border_width_bottom = 1
+border_color = Color(0.24, 0.32, 0.48, 1)
+
+[sub_resource type="StyleBoxFlat" id="sb_order_avatar_only_me"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.12, 0.22, 0.35, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.88, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.2, 0.7, 1, 0.6)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="sb_order_player_other"]
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
+bg_color = Color(0.06, 0.085, 0.14, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.22, 0.32, 0.48, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="sb_grail_scroll"]
+bg_color = Color(0.06, 0.07, 0.12, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.82, 0.35, 0.95)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(1, 0.7, 0.1, 0.35)
+shadow_size = 20
+
+[sub_resource type="StyleBoxFlat" id="sb_rank_item_top1"]
+bg_color = Color(0.28, 0.2, 0.05, 0.9)
+border_width_left = 2
+border_color = Color(1, 0.85, 0.25, 1)
+corner_radius_top_left = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="sb_rank_item_normal"]
+bg_color = Color(0.08, 0.1, 0.16, 0.75)
+border_width_left = 2
+border_color = Color(0.3, 0.4, 0.55, 0.8)
+corner_radius_top_left = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="sb_order_item_active"]
+bg_color = Color(0.12, 0.25, 0.35, 0.95)
+border_width_left = 2
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.85, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="sb_drawer_panel"]
+bg_color = Color(0.05, 0.07, 0.12, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.8, 0.35, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_size = 22
+
+[sub_resource type="StyleBoxFlat" id="sb_sit_podium"]
+bg_color = Color(0.07, 0.08, 0.14, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.82, 0.35, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(1, 0.75, 0.2, 0.25)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="sb_area_card"]
+bg_color = Color(0.05, 0.07, 0.12, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.26, 0.35, 0.5, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="sb_circle_gold"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.16, 0.11, 0.03, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.82, 0.3, 1)
+corner_radius_top_left = 27
+corner_radius_top_right = 27
+corner_radius_bottom_right = 27
+corner_radius_bottom_left = 27
+shadow_color = Color(1, 0.75, 0.1, 0.45)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="sb_circle_blue"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.05, 0.14, 0.24, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.8, 1, 1)
+corner_radius_top_left = 27
+corner_radius_top_right = 27
+corner_radius_bottom_right = 27
+corner_radius_bottom_left = 27
+shadow_color = Color(0.2, 0.7, 1, 0.45)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="sb_circle_gray"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.1, 0.1, 0.12, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.5, 0.55, 1)
+corner_radius_top_left = 27
+corner_radius_top_right = 27
+corner_radius_bottom_right = 27
+corner_radius_bottom_left = 27
+
+[sub_resource type="StyleBoxFlat" id="sb_arrow"]
+content_margin_left = 12.0
+content_margin_top = 0.0
+content_margin_right = 12.0
+content_margin_bottom = 0.0
+bg_color = Color(0.04, 0.14, 0.26, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.8, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0.2, 0.6, 0.9, 0.5)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="sb_area_active"]
+bg_color = Color(0.1, 0.07, 0.14, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.45, 0.35, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="sb_melee_pad"]
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
+bg_color = Color(0.05, 0.14, 0.2, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.85, 0.85, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="sb_bottom_dock"]
+bg_color = Color(0.05490196, 0.047058824, 0.11764706, 0)
+border_width_top = 1
+border_color = Color(0.8, 0.8, 0.8, 0)
+
+[sub_resource type="StyleBoxFlat" id="sb_score_integrated"]
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+bg_color = Color(0.25, 0.16, 0.04, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.82, 0.3, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="sb_magic_bar_bg"]
+bg_color = Color(0.06, 0.1, 0.18, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.55, 0.85, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="sb_magic_bar_fill"]
+bg_color = Color(0.15, 0.75, 1, 1)
+border_width_top = 1
+border_width_bottom = 1
+border_color = Color(0.65, 0.95, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0.1, 0.8, 1, 0.7)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="sb_end_phase_btn"]
+bg_color = Color(0.72, 0.12, 0.15, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.45, 0.45, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.9, 0.1, 0.1, 0.6)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="sb_podium_box"]
+bg_color = Color(0.05, 0.065, 0.11, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.5, 0.75, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="sb_play_zone"]
+bg_color = Color(0.06, 0.075, 0.13, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.45, 0.35, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="sb_skills_rack"]
+bg_color = Color(0.05, 0.065, 0.11, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.75, 0.9, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="sb_noble_frame"]
+bg_color = Color(0.18, 0.13, 0.05, 0.8)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.82, 0.3, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(1, 0.75, 0.1, 0.4)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="sb_hand_drawer"]
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
+bg_color = Color(0.05, 0.07, 0.13, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_color = Color(0.35, 0.65, 1, 0.95)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+shadow_color = Color(0.1, 0.4, 0.8, 0.4)
+shadow_size = 16
+
+[node name="TacticalBoardUIDraft" type="Control" unique_id=1349512373]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("27_ui_script")
+
+[node name="Background" type="TextureRect" parent="." unique_id=504529844]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_bg")
+expand_mode = 1
+stretch_mode = 6
+metadata/zoom_disabled = true
+
+[node name="TopPanel_AllPlayers" type="Panel" parent="." unique_id=505390924]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 86.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("sb_topbar")
+
+[node name="PhaseInfo" type="VBoxContainer" parent="TopPanel_AllPlayers" unique_id=546367440]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 6.0
+offset_right = 180.0
+offset_bottom = 80.0
+alignment = 1
+
+[node name="Round" type="Label" parent="TopPanel_AllPlayers/PhaseInfo" unique_id=51011101]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.35, 1)
+theme_override_font_sizes/font_size = 16
+text = "第 3 回合 · 行动阶段"
+
+[node name="TurnSeq" type="Label" parent="TopPanel_AllPlayers/PhaseInfo" unique_id=430205644]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "顺位流转 (首家 ➔ 末家)"
+
+[node name="AllPlayersOrderScroll" type="ScrollContainer" parent="TopPanel_AllPlayers" unique_id=1902599324]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 185.0
+offset_top = 6.0
+offset_right = -175.0
+offset_bottom = 80.0
+grow_horizontal = 2
+vertical_scroll_mode = 0
+
+[node name="OrderHBox" type="HBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll" unique_id=315372402]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="P1_Me_AvatarOnly" type="PanelContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=610324246]
+custom_minimum_size = Vector2(62, 66)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_order_avatar_only_me")
+
+[node name="V" type="VBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P1_Me_AvatarOnly" unique_id=1287412026]
+layout_mode = 2
+alignment = 1
+
+[node name="Avatar" type="TextureRect" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P1_Me_AvatarOnly/V" unique_id=305252666]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("5_avatar_shirou")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Tag" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P1_Me_AvatarOnly/V" unique_id=928069097]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "1st [你]"
+horizontal_alignment = 1
+
+[node name="Arrow1" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=770060081]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "➔"
+
+[node name="P2" type="PanelContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=1957380521]
+custom_minimum_size = Vector2(175, 66)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_order_player_other")
+
+[node name="HBox" type="HBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P2" unique_id=1144980682]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Avatar" type="TextureRect" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P2/HBox" unique_id=2027680144]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("6_avatar_rin")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Info" type="VBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P2/HBox" unique_id=1678596592]
+layout_mode = 2
+alignment = 1
+
+[node name="Name" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P2/HBox/Info" unique_id=976669856]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "2nd 远坂凛 ▼"
+
+[node name="Stats" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P2/HBox/Info" unique_id=2145277703]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 11
+text = "深山町 | 魔8 战6 令2"
+
+[node name="Arrow2" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=1377498841]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.55, 0.85, 1)
+theme_override_font_sizes/font_size = 18
+text = "➔"
+
+[node name="P3" type="PanelContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=1131578201]
+custom_minimum_size = Vector2(175, 66)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_order_player_other")
+
+[node name="HBox" type="HBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P3" unique_id=2017329497]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Avatar" type="TextureRect" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P3/HBox" unique_id=1207959316]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("9_avatar_illya")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Info" type="VBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P3/HBox" unique_id=1181859257]
+layout_mode = 2
+alignment = 1
+
+[node name="Name" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P3/HBox/Info" unique_id=1938740852]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "3rd 伊莉雅 ▼"
+
+[node name="Stats" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P3/HBox/Info" unique_id=682647522]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 11
+text = "深山町 | 魔9 战5 令3"
+
+[node name="Arrow3" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=1753955676]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.55, 0.85, 1)
+theme_override_font_sizes/font_size = 18
+text = "➔"
+
+[node name="P4" type="PanelContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=509922664]
+custom_minimum_size = Vector2(175, 66)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_order_player_other")
+
+[node name="HBox" type="HBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P4" unique_id=112057584]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Avatar" type="TextureRect" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P4/HBox" unique_id=1385719689]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("7_avatar_shinji")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Info" type="VBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P4/HBox" unique_id=1393900621]
+layout_mode = 2
+alignment = 1
+
+[node name="Name" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P4/HBox/Info" unique_id=345773762]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "4th 间桐慎二 ▼"
+
+[node name="Stats" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P4/HBox/Info" unique_id=1515713290]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 11
+text = "工房 | 魔5 战2 令2"
+
+[node name="Arrow4" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=1067004113]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.55, 0.85, 1)
+theme_override_font_sizes/font_size = 18
+text = "➔"
+
+[node name="P5" type="PanelContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=2068066163]
+custom_minimum_size = Vector2(175, 66)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_order_player_other")
+
+[node name="HBox" type="HBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P5" unique_id=1804098990]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Avatar" type="TextureRect" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P5/HBox" unique_id=1635204557]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("8_avatar_sakura")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Info" type="VBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P5/HBox" unique_id=885644197]
+layout_mode = 2
+alignment = 1
+
+[node name="Name" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P5/HBox/Info" unique_id=1786529573]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "5th 间桐樱 ▼"
+
+[node name="Stats" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P5/HBox/Info" unique_id=262207329]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 11
+text = "新都 | 魔4 战4 令3"
+
+[node name="Arrow5" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=1800425340]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.55, 0.85, 1)
+theme_override_font_sizes/font_size = 18
+text = "➔"
+
+[node name="P6" type="PanelContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=471587850]
+custom_minimum_size = Vector2(175, 66)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_order_player_other")
+
+[node name="HBox" type="HBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P6" unique_id=1155002466]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Avatar" type="TextureRect" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P6/HBox" unique_id=1157949446]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("10_avatar_kirei")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Info" type="VBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P6/HBox" unique_id=1249114400]
+layout_mode = 2
+alignment = 1
+
+[node name="Name" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P6/HBox/Info" unique_id=139150464]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "6th 言峰绮礼 ▼"
+
+[node name="Stats" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P6/HBox/Info" unique_id=901025162]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 11
+text = "侦察 | 魔6 战3 令3"
+
+[node name="Arrow6" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=1058276371]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.55, 0.85, 1)
+theme_override_font_sizes/font_size = 18
+text = "➔"
+
+[node name="P7" type="PanelContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=30153437]
+custom_minimum_size = Vector2(175, 66)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_order_player_other")
+
+[node name="HBox" type="HBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P7" unique_id=83689262]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Avatar" type="TextureRect" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P7/HBox" unique_id=1619449148]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("11_avatar_kuzuki")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Info" type="VBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P7/HBox" unique_id=1893614290]
+layout_mode = 2
+alignment = 1
+
+[node name="Name" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P7/HBox/Info" unique_id=271594963]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "7th [末家] 葛木 ▼"
+
+[node name="Stats" type="Label" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P7/HBox/Info" unique_id=102264814]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 11
+text = "工房 | 魔7 战1 令3"
+
+[node name="BtnRankMenu" type="Button" parent="TopPanel_AllPlayers" unique_id=47924737]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -165.0
+offset_top = 18.0
+offset_right = -16.0
+offset_bottom = -18.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 14
+text = "战果榜 ▼"
+icon = ExtResource("29_icon_grail")
+expand_icon = true
+
+[node name="Drawer_Leaderboard" type="PanelContainer" parent="." unique_id=459067259]
+visible = false
+z_index = 12
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -225.0
+offset_top = 88.0
+offset_right = -16.0
+offset_bottom = 410.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("sb_grail_scroll")
+
+[node name="VBox" type="VBoxContainer" parent="Drawer_Leaderboard" unique_id=179836168]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Header" type="HBoxContainer" parent="Drawer_Leaderboard/VBox" unique_id=1331337533]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="Drawer_Leaderboard/VBox/Header" unique_id=1490799920]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 14
+text = "圣杯战争战果天梯榜"
+
+[node name="R1" type="PanelContainer" parent="Drawer_Leaderboard/VBox" unique_id=1758595243]
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_rank_item_top1")
+
+[node name="H" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R1" unique_id=776797050]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Av" type="TextureRect" parent="Drawer_Leaderboard/VBox/R1/H" unique_id=1841922387]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+texture = ExtResource("6_avatar_rin")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Drawer_Leaderboard/VBox/R1/H" unique_id=278911433]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "🥇 远坂凛"
+
+[node name="ScoreH" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R1/H" unique_id=695584197]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="GrailIcon" type="TextureRect" parent="Drawer_Leaderboard/VBox/R1/H/ScoreH" unique_id=1822102848]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("29_icon_grail")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Score" type="Label" parent="Drawer_Leaderboard/VBox/R1/H/ScoreH" unique_id=1844319756]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.5, 1)
+theme_override_font_sizes/font_size = 13
+text = "6"
+
+[node name="R2" type="PanelContainer" parent="Drawer_Leaderboard/VBox" unique_id=190946535]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_rank_item_normal")
+
+[node name="H" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R2" unique_id=1717862356]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Av" type="TextureRect" parent="Drawer_Leaderboard/VBox/R2/H" unique_id=399241289]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("9_avatar_illya")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Drawer_Leaderboard/VBox/R2/H" unique_id=888239940]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.9, 0.95, 1)
+theme_override_font_sizes/font_size = 12
+text = "🥈 伊莉雅"
+
+[node name="ScoreH" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R2/H" unique_id=1659233452]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="GrailIcon" type="TextureRect" parent="Drawer_Leaderboard/VBox/R2/H/ScoreH" unique_id=1494039088]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("29_icon_grail")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Score" type="Label" parent="Drawer_Leaderboard/VBox/R2/H/ScoreH" unique_id=420256677]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "5"
+
+[node name="R3" type="PanelContainer" parent="Drawer_Leaderboard/VBox" unique_id=815867824]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_order_item_active")
+
+[node name="H" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R3" unique_id=109517687]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Av" type="TextureRect" parent="Drawer_Leaderboard/VBox/R3/H" unique_id=610698589]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("5_avatar_shirou")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Drawer_Leaderboard/VBox/R3/H" unique_id=1067071964]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "🥉 士郎 (你)"
+
+[node name="ScoreH" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R3/H" unique_id=1509811029]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="GrailIcon" type="TextureRect" parent="Drawer_Leaderboard/VBox/R3/H/ScoreH" unique_id=1593901560]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("29_icon_grail")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Score" type="Label" parent="Drawer_Leaderboard/VBox/R3/H/ScoreH" unique_id=1524608309]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "4"
+
+[node name="R4" type="PanelContainer" parent="Drawer_Leaderboard/VBox" unique_id=1235084577]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_rank_item_normal")
+
+[node name="H" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R4" unique_id=1223185347]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Av" type="TextureRect" parent="Drawer_Leaderboard/VBox/R4/H" unique_id=1629884396]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("8_avatar_sakura")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Drawer_Leaderboard/VBox/R4/H" unique_id=1455046156]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "4. 间桐樱"
+
+[node name="ScoreH" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R4/H" unique_id=236273296]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="GrailIcon" type="TextureRect" parent="Drawer_Leaderboard/VBox/R4/H/ScoreH" unique_id=1451921796]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("29_icon_grail")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Score" type="Label" parent="Drawer_Leaderboard/VBox/R4/H/ScoreH" unique_id=872224630]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "4"
+
+[node name="R5" type="PanelContainer" parent="Drawer_Leaderboard/VBox" unique_id=39927498]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_rank_item_normal")
+
+[node name="H" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R5" unique_id=1316503802]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Av" type="TextureRect" parent="Drawer_Leaderboard/VBox/R5/H" unique_id=507142260]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("10_avatar_kirei")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Drawer_Leaderboard/VBox/R5/H" unique_id=1797781515]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "5. 言峰绮礼"
+
+[node name="ScoreH" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R5/H" unique_id=1027093182]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="GrailIcon" type="TextureRect" parent="Drawer_Leaderboard/VBox/R5/H/ScoreH" unique_id=71661709]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("29_icon_grail")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Score" type="Label" parent="Drawer_Leaderboard/VBox/R5/H/ScoreH" unique_id=1122523376]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "3"
+
+[node name="R6" type="PanelContainer" parent="Drawer_Leaderboard/VBox" unique_id=829251211]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_rank_item_normal")
+
+[node name="H" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R6" unique_id=179327515]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Av" type="TextureRect" parent="Drawer_Leaderboard/VBox/R6/H" unique_id=1410232579]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("7_avatar_shinji")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Drawer_Leaderboard/VBox/R6/H" unique_id=1069066762]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "6. 慎二"
+
+[node name="ScoreH" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R6/H" unique_id=1764271945]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="GrailIcon" type="TextureRect" parent="Drawer_Leaderboard/VBox/R6/H/ScoreH" unique_id=1605441840]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("29_icon_grail")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Score" type="Label" parent="Drawer_Leaderboard/VBox/R6/H/ScoreH" unique_id=1909541473]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "2"
+
+[node name="R7" type="PanelContainer" parent="Drawer_Leaderboard/VBox" unique_id=1866919268]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_rank_item_normal")
+
+[node name="H" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R7" unique_id=1147907186]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Av" type="TextureRect" parent="Drawer_Leaderboard/VBox/R7/H" unique_id=680625043]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("11_avatar_kuzuki")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Drawer_Leaderboard/VBox/R7/H" unique_id=183115992]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "7. 葛木宗一郎"
+
+[node name="ScoreH" type="HBoxContainer" parent="Drawer_Leaderboard/VBox/R7/H" unique_id=242589211]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="GrailIcon" type="TextureRect" parent="Drawer_Leaderboard/VBox/R7/H/ScoreH" unique_id=1353290891]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("29_icon_grail")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Score" type="Label" parent="Drawer_Leaderboard/VBox/R7/H/ScoreH" unique_id=992180414]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "1"
+
+[node name="OpponentDrawer_Expanded" type="PanelContainer" parent="." unique_id=461943058]
+visible = false
+z_index = 25
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 88.0
+offset_right = -16.0
+offset_bottom = 370.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("sb_drawer_panel")
+
+[node name="VBox" type="VBoxContainer" parent="OpponentDrawer_Expanded" unique_id=659708937]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeaderBar" type="HBoxContainer" parent="OpponentDrawer_Expanded/VBox" unique_id=846828705]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SelectedAvatarFrame" type="PanelContainer" parent="OpponentDrawer_Expanded/VBox/HeaderBar" unique_id=1288151464]
+custom_minimum_size = Vector2(54, 54)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_order_avatar_only_me")
+
+[node name="Avatar" type="TextureRect" parent="OpponentDrawer_Expanded/VBox/HeaderBar/SelectedAvatarFrame" unique_id=1889402353]
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+texture = ExtResource("6_avatar_rin")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="OrderBadge" type="Label" parent="OpponentDrawer_Expanded/VBox/HeaderBar" unique_id=392234187]
+custom_minimum_size = Vector2(48, 54)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 18
+text = "2nd
+战果6"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ResourceVisuals" type="VBoxContainer" parent="OpponentDrawer_Expanded/VBox/HeaderBar" unique_id=561882027]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="MagicH" type="HBoxContainer" parent="OpponentDrawer_Expanded/VBox/HeaderBar/ResourceVisuals" unique_id=596217011]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ManaIcon" type="TextureRect" parent="OpponentDrawer_Expanded/VBox/HeaderBar/ResourceVisuals/MagicH" unique_id=2078965004]
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+texture = ExtResource("28_icon_mana")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Magic" type="Label" parent="OpponentDrawer_Expanded/VBox/HeaderBar/ResourceVisuals/MagicH" unique_id=106125879]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "以太魔力: 8 / 12"
+
+[node name="CommandSpells" type="Label" parent="OpponentDrawer_Expanded/VBox/HeaderBar/ResourceVisuals" unique_id=1736824435]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+text = "令咒 ×2"
+
+[node name="BattleMarker" type="Label" parent="OpponentDrawer_Expanded/VBox/HeaderBar/ResourceVisuals" unique_id=1234727529]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.55, 0.4, 1)
+theme_override_font_sizes/font_size = 11
+text = "深山町 · 交战"
+
+[node name="IdentityHint" type="Label" parent="OpponentDrawer_Expanded/VBox/HeaderBar" unique_id=1974821373]
+custom_minimum_size = Vector2(110, 54)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.82, 0.95, 1)
+theme_override_font_sizes/font_size = 11
+text = "头像对应
+顶部顺位第2格"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BtnCloseOppDrawer" type="Button" parent="OpponentDrawer_Expanded/VBox/HeaderBar" unique_id=1104833543]
+visible = false
+custom_minimum_size = Vector2(96, 34)
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "收起 ▲"
+
+[node name="CardsContentRow" type="HBoxContainer" parent="OpponentDrawer_Expanded/VBox" unique_id=1851693991]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="Col_MasterServant" type="VBoxContainer" parent="OpponentDrawer_Expanded/VBox/CardsContentRow" unique_id=743496194]
+layout_mode = 2
+alignment = 1
+
+[node name="CardsH" type="HBoxContainer" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_MasterServant" unique_id=247396830]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="MasterCard" type="TextureRect" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_MasterServant/CardsH" unique_id=1659994527]
+custom_minimum_size = Vector2(150, 213)
+layout_mode = 2
+texture = ExtResource("20_rin_cd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ServantCard" type="TextureRect" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_MasterServant/CardsH" unique_id=444763521]
+custom_minimum_size = Vector2(150, 213)
+layout_mode = 2
+texture = ExtResource("18_servant_cd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VSep1" type="VSeparator" parent="OpponentDrawer_Expanded/VBox/CardsContentRow" unique_id=1954500515]
+layout_mode = 2
+
+[node name="Col_PlayedCards_Opponent" type="VBoxContainer" parent="OpponentDrawer_Expanded/VBox/CardsContentRow" unique_id=1549897693]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_PlayedCards_Opponent" unique_id=425863539]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "⚔️ 深山町已打出牌 (威力: 8)"
+horizontal_alignment = 1
+
+[node name="CardsOverlapRow" type="HBoxContainer" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_PlayedCards_Opponent" unique_id=1744986477]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Card1" type="TextureRect" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_PlayedCards_Opponent/CardsOverlapRow" unique_id=1516030663]
+custom_minimum_size = Vector2(100, 142)
+layout_mode = 2
+texture = ExtResource("12_atk_str")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Card2" type="TextureRect" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_PlayedCards_Opponent/CardsOverlapRow" unique_id=1733810460]
+custom_minimum_size = Vector2(100, 142)
+layout_mode = 2
+texture = ExtResource("13_atk_agi")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VSep2" type="VSeparator" parent="OpponentDrawer_Expanded/VBox/CardsContentRow" unique_id=1777395446]
+layout_mode = 2
+
+[node name="Col_Skills" type="VBoxContainer" parent="OpponentDrawer_Expanded/VBox/CardsContentRow" unique_id=1613199184]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_Skills" unique_id=440280176]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "✨ 技能与附加牌"
+horizontal_alignment = 1
+
+[node name="CardsH" type="HBoxContainer" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_Skills" unique_id=317786903]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Skill1" type="TextureRect" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_Skills/CardsH" unique_id=2079103660]
+custom_minimum_size = Vector2(100, 142)
+layout_mode = 2
+texture = ExtResource("21_skill_wind")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Skill2" type="TextureRect" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_Skills/CardsH" unique_id=1230442287]
+custom_minimum_size = Vector2(100, 142)
+layout_mode = 2
+texture = ExtResource("15_skill_back")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VSep3" type="VSeparator" parent="OpponentDrawer_Expanded/VBox/CardsContentRow" unique_id=1900549694]
+layout_mode = 2
+
+[node name="Col_Buffs" type="VBoxContainer" parent="OpponentDrawer_Expanded/VBox/CardsContentRow" unique_id=1146565965]
+custom_minimum_size = Vector2(88, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_Buffs" unique_id=660094897]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.7, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "🔮 状态"
+horizontal_alignment = 1
+
+[node name="BuffsH" type="VBoxContainer" parent="OpponentDrawer_Expanded/VBox/CardsContentRow/Col_Buffs" unique_id=1854655227]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Middle_MainPlayground" type="HBoxContainer" parent="." unique_id=1445471153]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 90.0
+offset_right = -16.0
+offset_bottom = 590.0
+grow_horizontal = 2
+theme_override_constants/separation = 12
+
+[node name="LeftSituationSpot" type="PanelContainer" parent="Middle_MainPlayground" unique_id=332498121]
+custom_minimum_size = Vector2(270, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_sit_podium")
+
+[node name="VBox" type="VBoxContainer" parent="Middle_MainPlayground/LeftSituationSpot" unique_id=447719933]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="SitHeader" type="Label" parent="Middle_MainPlayground/LeftSituationSpot/VBox" unique_id=1004740589]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 17
+text = "局势"
+horizontal_alignment = 1
+
+[node name="BigSituationCard" type="TextureRect" parent="Middle_MainPlayground/LeftSituationSpot/VBox" unique_id=397246378]
+custom_minimum_size = Vector2(240, 340)
+layout_mode = 2
+texture = ExtResource("2_situation")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SitEffectNote" type="Label" parent="Middle_MainPlayground/LeftSituationSpot/VBox" unique_id=1537198330]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "完美的流动 · 魔术属性+2
+每位玩家每天开局获得2魔力"
+horizontal_alignment = 1
+
+[node name="Battlefields_CenterContainer" type="HBoxContainer" parent="Middle_MainPlayground" unique_id=647753047]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Area_Workshop" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer" unique_id=1803935163]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("sb_area_card")
+
+[node name="VBox" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop" unique_id=1900452222]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox" unique_id=1492701130]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "魔术工房"
+horizontal_alignment = 1
+
+[node name="Bonus" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox" unique_id=1412378430]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+
+[node name="WorkshopSlots" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox" unique_id=1894861716]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TierTop" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots" unique_id=294234918]
+layout_mode = 2
+alignment = 1
+
+[node name="SlotMagicPlus2" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierTop" unique_id=1314901294]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Circle" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierTop/SlotMagicPlus2" unique_id=1281585606]
+custom_minimum_size = Vector2(66, 66)
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_circle_gold")
+
+[node name="Holder" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierTop/SlotMagicPlus2/Circle" unique_id=1185214443]
+layout_mode = 2
+
+[node name="Avatar" type="TextureRect" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierTop/SlotMagicPlus2/Circle/Holder" unique_id=1915761231]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+texture = ExtResource("11_avatar_kuzuki")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierTop/SlotMagicPlus2" unique_id=797913945]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 11
+text = "+2魔力"
+horizontal_alignment = 1
+
+[node name="TierMid" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots" unique_id=501700593]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="SlotMagicPlus1A" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid" unique_id=47952915]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Circle" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid/SlotMagicPlus1A" unique_id=792620466]
+custom_minimum_size = Vector2(58, 58)
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_circle_blue")
+
+[node name="Holder" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid/SlotMagicPlus1A/Circle" unique_id=1352365827]
+layout_mode = 2
+
+[node name="Avatar" type="TextureRect" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid/SlotMagicPlus1A/Circle/Holder" unique_id=987899514]
+custom_minimum_size = Vector2(46, 46)
+layout_mode = 2
+texture = ExtResource("7_avatar_shinji")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid/SlotMagicPlus1A" unique_id=2078689383]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "+1魔力"
+horizontal_alignment = 1
+
+[node name="SlotMagicPlus1B" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid" unique_id=2125073911]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Circle" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid/SlotMagicPlus1B" unique_id=1808450350]
+custom_minimum_size = Vector2(58, 58)
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_circle_blue")
+
+[node name="Holder" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid/SlotMagicPlus1B/Circle" unique_id=105588420]
+layout_mode = 2
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid/SlotMagicPlus1B" unique_id=116148223]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "+1魔力"
+horizontal_alignment = 1
+
+[node name="SlotMagicPlus1C" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid" unique_id=1569927904]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Circle" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid/SlotMagicPlus1C" unique_id=511639534]
+custom_minimum_size = Vector2(58, 58)
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_circle_blue")
+
+[node name="Holder" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid/SlotMagicPlus1C/Circle" unique_id=2036252073]
+layout_mode = 2
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierMid/SlotMagicPlus1C" unique_id=310006370]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "+1魔力"
+horizontal_alignment = 1
+
+[node name="TierBottom" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots" unique_id=1376549821]
+layout_mode = 2
+alignment = 1
+
+[node name="SlotExtra" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierBottom" unique_id=1117891771]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Circle" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierBottom/SlotExtra" unique_id=1649910198]
+custom_minimum_size = Vector2(56, 56)
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_circle_gray")
+
+[node name="Holder" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierBottom/SlotExtra/Circle" unique_id=521852045]
+layout_mode = 2
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/WorkshopSlots/TierBottom/SlotExtra" unique_id=736211456]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
+theme_override_font_sizes/font_size = 10
+text = "额外"
+horizontal_alignment = 1
+
+[node name="EventSlot" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox" unique_id=1786193120]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="EventScroll" type="ScrollContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/EventSlot" unique_id=138856993]
+layout_mode = 2
+size_flags_vertical = 0
+vertical_scroll_mode = 0
+
+[node name="EventCardsRow" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Workshop/VBox/EventSlot/EventScroll" unique_id=2031202752]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Arrow_WS_Miyama" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer" unique_id=71415450]
+custom_minimum_size = Vector2(80, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("sb_arrow")
+text = "▶▶"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Area_Miyama" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer" unique_id=641389903]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("sb_area_active")
+
+[node name="VBox" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama" unique_id=2081639771]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox" unique_id=1322749538]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.35, 1)
+theme_override_font_sizes/font_size = 17
+text = "深山町 2战果"
+horizontal_alignment = 1
+
+[node name="Bonus" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox" unique_id=139070380]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+
+[node name="MiyamaSlots" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox" unique_id=1886783739]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="SlotPowerPlus3" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/MiyamaSlots" unique_id=564391413]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Circle" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/MiyamaSlots/SlotPowerPlus3" unique_id=1951436090]
+custom_minimum_size = Vector2(56, 56)
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_circle_gold")
+
+[node name="Holder" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/MiyamaSlots/SlotPowerPlus3/Circle" unique_id=144064595]
+layout_mode = 2
+
+[node name="Avatar" type="TextureRect" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/MiyamaSlots/SlotPowerPlus3/Circle/Holder" unique_id=492726701]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("6_avatar_rin")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/MiyamaSlots/SlotPowerPlus3" unique_id=737663668]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 10
+text = "+3地利"
+horizontal_alignment = 1
+
+[node name="SlotPowerPlus1" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/MiyamaSlots" unique_id=1218448986]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Circle" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/MiyamaSlots/SlotPowerPlus1" unique_id=1045000969]
+custom_minimum_size = Vector2(56, 56)
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_circle_blue")
+
+[node name="Holder" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/MiyamaSlots/SlotPowerPlus1/Circle" unique_id=1611217682]
+layout_mode = 2
+
+[node name="Avatar" type="TextureRect" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/MiyamaSlots/SlotPowerPlus1/Circle/Holder" unique_id=277298211]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("9_avatar_illya")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/MiyamaSlots/SlotPowerPlus1" unique_id=348487929]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.7, 0.5, 1)
+theme_override_font_sizes/font_size = 10
+text = "+1地利"
+horizontal_alignment = 1
+
+[node name="SlotBattleCommon" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox" unique_id=1887656142]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/SlotBattleCommon" unique_id=730393294]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "混战"
+horizontal_alignment = 1
+
+[node name="Pad" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/SlotBattleCommon" unique_id=2109115624]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_melee_pad")
+
+[node name="Holder" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/SlotBattleCommon/Pad" unique_id=1154176935]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Avatar" type="TextureRect" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/SlotBattleCommon/Pad/Holder" unique_id=30401090]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = ExtResource("5_avatar_shirou")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PeopleEventSep" type="HSeparator" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox" unique_id=1575279703]
+layout_mode = 2
+
+[node name="EventSlot" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox" unique_id=1506851431]
+layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="EventScroll" type="ScrollContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/EventSlot" unique_id=2045249662]
+layout_mode = 2
+size_flags_vertical = 0
+vertical_scroll_mode = 0
+
+[node name="EventCardsRow" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/EventSlot/EventScroll" unique_id=416404534]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="EventCard" type="TextureRect" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/EventSlot/EventScroll/EventCardsRow" unique_id=1011106653]
+custom_minimum_size = Vector2(160, 226)
+layout_mode = 2
+texture = ExtResource("3_event_miyama")
+expand_mode = 1
+stretch_mode = 5
+metadata/event_zoom_img = "res://data/events/origin/glorious_duel/glorious_duel.png"
+metadata/event_title = "【光荣的决斗】"
+metadata/event_desc = "深山町明置事件牌
+
+效果：本战场所有英灵进行光荣的正面对决，力量属性攻击的威力 +2。"
+
+[node name="Arrow_Miyama_Shinto" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer" unique_id=1135977866]
+custom_minimum_size = Vector2(80, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("sb_arrow")
+text = "▶▶"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Area_Shinto" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer" unique_id=1843303422]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("sb_area_card")
+
+[node name="VBox" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto" unique_id=1725181861]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox" unique_id=589276356]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.65, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "新都 3战果"
+horizontal_alignment = 1
+
+[node name="Bonus" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox" unique_id=964046095]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+
+[node name="ShintoSlots" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox" unique_id=1959132568]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="SlotPowerPlus3" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/ShintoSlots" unique_id=947132160]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Circle" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/ShintoSlots/SlotPowerPlus3" unique_id=1023234845]
+custom_minimum_size = Vector2(56, 56)
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_circle_gold")
+
+[node name="Holder" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/ShintoSlots/SlotPowerPlus3/Circle" unique_id=2062165343]
+layout_mode = 2
+
+[node name="Avatar" type="TextureRect" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/ShintoSlots/SlotPowerPlus3/Circle/Holder" unique_id=1703448660]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("8_avatar_sakura")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/ShintoSlots/SlotPowerPlus3" unique_id=1929448808]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 10
+text = "+3地利"
+horizontal_alignment = 1
+
+[node name="SlotPowerPlus1" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/ShintoSlots" unique_id=2012329001]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Circle" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/ShintoSlots/SlotPowerPlus1" unique_id=376919725]
+custom_minimum_size = Vector2(56, 56)
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_circle_blue")
+
+[node name="Holder" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/ShintoSlots/SlotPowerPlus1/Circle" unique_id=1197867920]
+layout_mode = 2
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/ShintoSlots/SlotPowerPlus1" unique_id=310724839]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.7, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "+1地利"
+horizontal_alignment = 1
+
+[node name="SlotBattleCommon" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox" unique_id=97176829]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/SlotBattleCommon" unique_id=1117679276]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "混战"
+horizontal_alignment = 1
+
+[node name="Pad" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/SlotBattleCommon" unique_id=732625369]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_melee_pad")
+
+[node name="Holder" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/SlotBattleCommon/Pad" unique_id=1364984804]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="PeopleEventSep" type="HSeparator" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox" unique_id=1143849302]
+layout_mode = 2
+
+[node name="EventSlot" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox" unique_id=4157671]
+layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="EventScroll" type="ScrollContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/EventSlot" unique_id=2086993661]
+layout_mode = 2
+size_flags_vertical = 0
+vertical_scroll_mode = 0
+
+[node name="EventCardsRow" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/EventSlot/EventScroll" unique_id=367227336]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="EventCard" type="TextureRect" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/EventSlot/EventScroll/EventCardsRow" unique_id=1827684832]
+custom_minimum_size = Vector2(160, 226)
+layout_mode = 2
+texture = ExtResource("4_event_back")
+expand_mode = 1
+stretch_mode = 5
+metadata/event_zoom_img = "res://data/card_backs/event_card_back.png"
+metadata/event_title = "【未知事件】"
+metadata/event_desc = "新都暗置事件牌
+
+该事件尚未公开，将在行动阶段战斗时揭示。"
+
+[node name="Arrow_Shinto_Scout" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer" unique_id=522006157]
+custom_minimum_size = Vector2(80, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("sb_arrow")
+text = "▶▶"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Area_Scout" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer" unique_id=1559292533]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("sb_area_card")
+
+[node name="VBox" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout" unique_id=1704318594]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox" unique_id=1173127786]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.9, 0.75, 1)
+theme_override_font_sizes/font_size = 17
+text = "侦察"
+horizontal_alignment = 1
+
+[node name="Bonus" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox" unique_id=1113540164]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 1, 0.9, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+
+[node name="ScoutSlots" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox" unique_id=424747284]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TierFirst" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/ScoutSlots" unique_id=2018425539]
+layout_mode = 2
+alignment = 1
+
+[node name="SlotScoutFirst" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/ScoutSlots/TierFirst" unique_id=1285755148]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Circle" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/ScoutSlots/TierFirst/SlotScoutFirst" unique_id=1332910001]
+custom_minimum_size = Vector2(72, 72)
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_circle_gold")
+
+[node name="Holder" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/ScoutSlots/TierFirst/SlotScoutFirst/Circle" unique_id=1195092073]
+layout_mode = 2
+
+[node name="Avatar" type="TextureRect" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/ScoutSlots/TierFirst/SlotScoutFirst/Circle/Holder" unique_id=1996112639]
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+texture = ExtResource("10_avatar_kirei")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/ScoutSlots/TierFirst/SlotScoutFirst" unique_id=79314971]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "+2战果"
+horizontal_alignment = 1
+
+[node name="TierExtra" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/ScoutSlots" unique_id=1573364614]
+layout_mode = 2
+alignment = 1
+
+[node name="SlotScoutExtra" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/ScoutSlots/TierExtra" unique_id=1237769234]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Circle" type="PanelContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/ScoutSlots/TierExtra/SlotScoutExtra" unique_id=1458503310]
+custom_minimum_size = Vector2(56, 56)
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_circle_gray")
+
+[node name="Holder" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/ScoutSlots/TierExtra/SlotScoutExtra/Circle" unique_id=85330540]
+layout_mode = 2
+
+[node name="Tag" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/ScoutSlots/TierExtra/SlotScoutExtra" unique_id=1572579760]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
+theme_override_font_sizes/font_size = 10
+text = "额外"
+horizontal_alignment = 1
+
+[node name="EventSlot" type="VBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox" unique_id=355143853]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="EventScroll" type="ScrollContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/EventSlot" unique_id=965045785]
+layout_mode = 2
+size_flags_vertical = 0
+vertical_scroll_mode = 0
+
+[node name="EventCardsRow" type="HBoxContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Scout/VBox/EventSlot/EventScroll" unique_id=1156409550]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Bottom_PlayerDock" type="Panel" parent="." unique_id=1777218944]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -490.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("sb_bottom_dock")
+
+[node name="MyIdentityRow" type="HBoxContainer" parent="Bottom_PlayerDock" unique_id=254716668]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = -370.0
+offset_right = -18.0
+offset_bottom = -328.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Avatar" type="TextureRect" parent="Bottom_PlayerDock/MyIdentityRow" unique_id=477620798]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = ExtResource("5_avatar_shirou")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBox" type="VBoxContainer" parent="Bottom_PlayerDock/MyIdentityRow" unique_id=639408367]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="Bottom_PlayerDock/MyIdentityRow/VBox" unique_id=1757334746]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.65, 1)
+theme_override_font_sizes/font_size = 14
+text = "卫宫士郎 · Saber · 深山町"
+
+[node name="Subtitle" type="HBoxContainer" parent="Bottom_PlayerDock/MyIdentityRow/VBox" unique_id=2058080960]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CommandSpellOnly" type="Label" parent="Bottom_PlayerDock/MyIdentityRow/VBox/Subtitle" unique_id=1409311302]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 0.95, 1)
+theme_override_font_sizes/font_size = 11
+text = "令咒 ×3"
+
+[node name="ScoreBadgeIntegrated" type="PanelContainer" parent="Bottom_PlayerDock/MyIdentityRow/VBox/Subtitle" unique_id=604156936]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_score_integrated")
+
+[node name="H" type="HBoxContainer" parent="Bottom_PlayerDock/MyIdentityRow/VBox/Subtitle/ScoreBadgeIntegrated" unique_id=119061692]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="GrailIcon" type="TextureRect" parent="Bottom_PlayerDock/MyIdentityRow/VBox/Subtitle/ScoreBadgeIntegrated/H" unique_id=1195965493]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("29_icon_grail")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ScoreText" type="Label" parent="Bottom_PlayerDock/MyIdentityRow/VBox/Subtitle/ScoreBadgeIntegrated/H" unique_id=1427454265]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+text = "战果: 4"
+
+[node name="MagicLongBarBox" type="VBoxContainer" parent="Bottom_PlayerDock/MyIdentityRow" unique_id=1689964250]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="BarTopLabel" type="HBoxContainer" parent="Bottom_PlayerDock/MyIdentityRow/MagicLongBarBox" unique_id=424480734]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ManaIcon" type="TextureRect" parent="Bottom_PlayerDock/MyIdentityRow/MagicLongBarBox/BarTopLabel" unique_id=1565413203]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+texture = ExtResource("28_icon_mana")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Tag" type="Label" parent="Bottom_PlayerDock/MyIdentityRow/MagicLongBarBox/BarTopLabel" unique_id=731583336]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "魔力"
+
+[node name="Num" type="Label" parent="Bottom_PlayerDock/MyIdentityRow/MagicLongBarBox/BarTopLabel" unique_id=1281275909]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.75, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "6 / 12 (50%)"
+horizontal_alignment = 2
+
+[node name="MagicProgressBar" type="ProgressBar" parent="Bottom_PlayerDock/MyIdentityRow/MagicLongBarBox" unique_id=764179402]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+theme_override_styles/background = SubResource("sb_magic_bar_bg")
+theme_override_styles/fill = SubResource("sb_magic_bar_fill")
+max_value = 12.0
+value = 6.0
+show_percentage = false
+
+[node name="BtnEndPhaseBar" type="Button" parent="Bottom_PlayerDock/MyIdentityRow" unique_id=2043028919]
+custom_minimum_size = Vector2(150, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("sb_end_phase_btn")
+text = "结束阶段"
+
+[node name="BtnToggleHandTray" type="Button" parent="Bottom_PlayerDock/MyIdentityRow" unique_id=409240743]
+custom_minimum_size = Vector2(140, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "手牌 展开/关闭"
+
+[node name="TacticalDeskLayout" type="HBoxContainer" parent="Bottom_PlayerDock" unique_id=700367263]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = -324.0
+offset_right = -18.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="Section_CommandPodium" type="PanelContainer" parent="Bottom_PlayerDock/TacticalDeskLayout" unique_id=451026661]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_podium_box")
+
+[node name="VBox" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium" unique_id=1619608447]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="PodiumTitle" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox" unique_id=2133322366]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 12
+text = "👑 御主与从者核心御座"
+horizontal_alignment = 1
+
+[node name="UpperRow" type="HBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox" unique_id=1047884654]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="MasterCardBox" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/UpperRow" unique_id=1708135942]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/UpperRow/MasterCardBox" unique_id=586165230]
+custom_minimum_size = Vector2(105, 148)
+layout_mode = 2
+texture = ExtResource("17_master_cd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/UpperRow/MasterCardBox" unique_id=1536532600]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 10
+text = "御主卡 (士郎)"
+horizontal_alignment = 1
+
+[node name="ServantCardBox" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/UpperRow" unique_id=721598207]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/UpperRow/ServantCardBox" unique_id=1300362462]
+custom_minimum_size = Vector2(105, 148)
+layout_mode = 2
+texture = ExtResource("18_servant_cd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/UpperRow/ServantCardBox" unique_id=248292589]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "从者卡 · Saber"
+horizontal_alignment = 1
+
+[node name="LowerCommandSpellRow" type="HBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox" unique_id=1938357866]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/LowerCommandSpellRow" unique_id=2002107950]
+custom_minimum_size = Vector2(80, 110)
+layout_mode = 2
+texture = ExtResource("19_command_spell")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InfoV" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/LowerCommandSpellRow" unique_id=741605263]
+layout_mode = 2
+alignment = 1
+
+[node name="Lbl" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/LowerCommandSpellRow/InfoV" unique_id=1638314327]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+text = "令咒 ×3"
+
+[node name="Desc" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/LowerCommandSpellRow/InfoV" unique_id=144935510]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 10
+text = "魔力+4/瞬移/威力+2"
+
+[node name="Section_PlayBattleZone" type="PanelContainer" parent="Bottom_PlayerDock/TacticalDeskLayout" unique_id=1975362951]
+custom_minimum_size = Vector2(430, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_play_zone")
+
+[node name="VBox" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone" unique_id=573357876]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="ZoneHeader" type="HBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox" unique_id=394093311]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/ZoneHeader" unique_id=1359404811]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "⚔️ 出牌区 (深山町)"
+
+[node name="TotalPower" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/ZoneHeader" unique_id=1428307178]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.45, 0.35, 1)
+theme_override_font_sizes/font_size = 14
+text = "当前合计威力: 13"
+horizontal_alignment = 2
+
+[node name="CardsScroll" type="ScrollContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox" unique_id=1476153061]
+layout_mode = 2
+size_flags_vertical = 3
+vertical_scroll_mode = 0
+
+[node name="CardsH" type="HBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/CardsScroll" unique_id=1927804079]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="C1" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/CardsScroll/CardsH" unique_id=2045526376]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/CardsScroll/CardsH/C1" unique_id=1444469227]
+custom_minimum_size = Vector2(120, 170)
+layout_mode = 2
+texture = ExtResource("12_atk_str")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Lbl" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/CardsScroll/CardsH/C1" unique_id=1522248269]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.5, 0.5, 1)
+theme_override_font_sizes/font_size = 11
+text = "力量3 (常规)"
+horizontal_alignment = 1
+
+[node name="C2" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/CardsScroll/CardsH" unique_id=1055372164]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/CardsScroll/CardsH/C2" unique_id=349789070]
+custom_minimum_size = Vector2(120, 170)
+layout_mode = 2
+texture = ExtResource("13_atk_agi")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Lbl" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/CardsScroll/CardsH/C2" unique_id=1733857261]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 1, 0.6, 1)
+theme_override_font_sizes/font_size = 11
+text = "敏捷3 (常规)"
+horizontal_alignment = 1
+
+[node name="C3" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/CardsScroll/CardsH" unique_id=834648477]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/CardsScroll/CardsH/C3" unique_id=1997892172]
+custom_minimum_size = Vector2(120, 170)
+layout_mode = 2
+texture = ExtResource("14_atk_luck")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Lbl" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/CardsScroll/CardsH/C3" unique_id=169273888]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.5, 1)
+theme_override_font_sizes/font_size = 11
+text = "幸运4 (追加)"
+horizontal_alignment = 1
+
+[node name="ZoneTip" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox" unique_id=464159458]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "常规2张 + 幸运追加 (已计入深山町地利+3)"
+horizontal_alignment = 1
+
+[node name="Section_SkillsAndPhantasms" type="PanelContainer" parent="Bottom_PlayerDock/TacticalDeskLayout" unique_id=1717883799]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("sb_skills_rack")
+
+[node name="VBox" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms" unique_id=1274692491]
+layout_mode = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="RackHeader" type="HBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox" unique_id=1376247061]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/RackHeader" unique_id=1170715903]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "✨ 技能/额外"
+
+[node name="Tip" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/RackHeader" unique_id=1394199035]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 11
+text = "★金色为终极升华技"
+horizontal_alignment = 2
+
+[node name="CardsScroll" type="ScrollContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox" unique_id=28823222]
+layout_mode = 2
+size_flags_vertical = 3
+vertical_scroll_mode = 0
+
+[node name="H" type="HBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll" unique_id=67289663]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Sk1" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H" unique_id=1306059589]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/Sk1" unique_id=1565983351]
+custom_minimum_size = Vector2(110, 155)
+layout_mode = 2
+texture = ExtResource("21_skill_wind")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Lbl" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/Sk1" unique_id=191313235]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.95, 0.75, 1)
+theme_override_font_sizes/font_size = 10
+text = "风王结界"
+horizontal_alignment = 1
+
+[node name="Sk2" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H" unique_id=1622902653]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/Sk2" unique_id=1153995056]
+custom_minimum_size = Vector2(110, 155)
+layout_mode = 2
+texture = ExtResource("22_skill_mana")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Lbl" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/Sk2" unique_id=1279489454]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "对魔力"
+horizontal_alignment = 1
+
+[node name="SkEx" type="PanelContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H" unique_id=1067532910]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_noble_frame")
+
+[node name="V" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/SkEx" unique_id=754944253]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/SkEx/V" unique_id=858049663]
+custom_minimum_size = Vector2(110, 155)
+layout_mode = 2
+texture = ExtResource("23_skill_excalibur")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Lbl" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/SkEx/V" unique_id=230493992]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+theme_override_font_sizes/font_size = 10
+text = "★誓约胜利之剑"
+horizontal_alignment = 1
+
+[node name="VSep" type="VSeparator" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H" unique_id=191375842]
+layout_mode = 2
+
+[node name="Ex1" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H" unique_id=1368085630]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/Ex1" unique_id=821858795]
+custom_minimum_size = Vector2(110, 155)
+layout_mode = 2
+texture = ExtResource("24_extra_kanshou")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Lbl" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/Ex1" unique_id=178202311]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "干将·莫邪"
+horizontal_alignment = 1
+
+[node name="Ex2" type="PanelContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H" unique_id=1861531843]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_noble_frame")
+
+[node name="V" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/Ex2" unique_id=202342320]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/Ex2/V" unique_id=362396985]
+custom_minimum_size = Vector2(110, 155)
+layout_mode = 2
+texture = ExtResource("25_extra_caliburn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Lbl" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/Ex2/V" unique_id=755430014]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 10
+text = "★必胜黄金之剑"
+horizontal_alignment = 1
+
+[node name="Section_Logistics" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout" unique_id=1556910284]
+custom_minimum_size = Vector2(115, 0)
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="DeckBox" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_Logistics" unique_id=2005437962]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_Logistics/DeckBox" unique_id=1455020643]
+custom_minimum_size = Vector2(95, 130)
+layout_mode = 2
+texture = ExtResource("16_deck_back")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Lbl" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_Logistics/DeckBox" unique_id=1888878088]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "牌库 (7)"
+horizontal_alignment = 1
+
+[node name="DiscardBox" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_Logistics" unique_id=2012929560]
+layout_mode = 2
+alignment = 1
+
+[node name="Tex" type="TextureRect" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_Logistics/DiscardBox" unique_id=137674330]
+custom_minimum_size = Vector2(95, 130)
+layout_mode = 2
+texture = ExtResource("16_deck_back")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Lbl" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_Logistics/DiscardBox" unique_id=117657807]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 11
+text = "弃牌 (2)"
+horizontal_alignment = 1
+
+[node name="Section_MyBuffs" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout" unique_id=1771882301]
+custom_minimum_size = Vector2(88, 0)
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_MyBuffs" unique_id=1771882302]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.7, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "🔮 状态"
+horizontal_alignment = 1
+
+[node name="BuffsH" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_MyBuffs" unique_id=1771882303]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="HandTray_Collapsible" type="Panel" parent="." unique_id=1633751106]
+z_index = 30
+clip_contents = true
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 220.0
+offset_top = -64.0
+offset_right = -220.0
+offset_bottom = 208.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("sb_hand_drawer")
+
+[node name="VBox" type="VBoxContainer" parent="HandTray_Collapsible" unique_id=884108720]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="TopCardPadding" type="Control" parent="HandTray_Collapsible/VBox" unique_id=521636110]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HandCardsRow" type="HBoxContainer" parent="HandTray_Collapsible/VBox" unique_id=130926055]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Card1" type="TextureRect" parent="HandTray_Collapsible/VBox/HandCardsRow" unique_id=143356600]
+custom_minimum_size = Vector2(175, 238)
+layout_mode = 2
+texture = ExtResource("12_atk_str")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Card2" type="TextureRect" parent="HandTray_Collapsible/VBox/HandCardsRow" unique_id=482414103]
+custom_minimum_size = Vector2(175, 238)
+layout_mode = 2
+texture = ExtResource("13_atk_agi")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Card3" type="TextureRect" parent="HandTray_Collapsible/VBox/HandCardsRow" unique_id=651577128]
+custom_minimum_size = Vector2(175, 238)
+layout_mode = 2
+texture = ExtResource("14_atk_luck")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TrayHandle" type="HBoxContainer" parent="HandTray_Collapsible/VBox" unique_id=1312684175]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+alignment = 1
+
+[node name="HandleBar" type="Label" parent="HandTray_Collapsible/VBox/TrayHandle" unique_id=290847585]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "▲ [手牌 3张] 鼠标靠近自动展开 / 移开自动收起 ▲"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EventCardZoomPreview" type="PanelContainer" parent="." unique_id=1484463259]
+visible = false
+z_index = 40
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -220.0
+offset_right = 160.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("sb_drawer_panel")
+
+[node name="BigCard" type="TextureRect" parent="EventCardZoomPreview" unique_id=154997617]
+custom_minimum_size = Vector2(300, 425)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_event_miyama")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EventCardDescPanel" type="PanelContainer" parent="." unique_id=1067844345]
+visible = false
+z_index = 45
+layout_mode = 0
+offset_left = 330.0
+offset_top = 250.0
+offset_right = 750.0
+offset_bottom = 490.0
+theme_override_styles/panel = SubResource("sb_drawer_panel")
+
+[node name="VBox" type="VBoxContainer" parent="EventCardDescPanel" unique_id=1049775088]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Title" type="Label" parent="EventCardDescPanel/VBox" unique_id=1565230998]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 16
+text = "【事件牌说明】"
+horizontal_alignment = 1
+
+[node name="Desc" type="Label" parent="EventCardDescPanel/VBox" unique_id=1752392298]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "事件效果文字描述"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Modal_EffectChoice" type="PanelContainer" parent="." unique_id=1107429198]
+visible = false
+z_index = 50
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -110.0
+offset_right = 240.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("sb_drawer_panel")
+
+[node name="Box" type="MarginContainer" parent="Modal_EffectChoice" unique_id=514700510]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 22
+
+[node name="VBox" type="VBoxContainer" parent="Modal_EffectChoice/Box" unique_id=538178235]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Desc" type="Label" parent="Modal_EffectChoice/Box/VBox" unique_id=1731734764]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "发动效果
+消耗资源：无"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="OptionsRow" type="VBoxContainer" parent="Modal_EffectChoice/Box/VBox" unique_id=1731734765]
+visible = false
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ButtonsRow" type="HBoxContainer" parent="Modal_EffectChoice/Box/VBox" unique_id=168467086]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="BtnConfirm" type="Button" parent="Modal_EffectChoice/Box/VBox/ButtonsRow" unique_id=315163114]
+custom_minimum_size = Vector2(140, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("sb_end_phase_btn")
+text = "确认发动"
+
+[node name="BtnCancel" type="Button" parent="Modal_EffectChoice/Box/VBox/ButtonsRow" unique_id=403976931]
+custom_minimum_size = Vector2(140, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "放弃"
+
+[node name="Modal_BattleReport" type="PanelContainer" parent="." unique_id=184920184]
+visible = false
+z_index = 50
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -220.0
+offset_right = 320.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("sb_drawer_panel")
+
+[node name="Box" type="MarginContainer" parent="Modal_BattleReport" unique_id=1990949633]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="Modal_BattleReport/Box" unique_id=83802188]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Header" type="HBoxContainer" parent="Modal_BattleReport/Box/VBox" unique_id=921143829]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="Modal_BattleReport/Box/VBox/Header" unique_id=108823925]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 20
+text = "🏆 战斗结算战报"
+
+[node name="ReportScroll" type="ScrollContainer" parent="Modal_BattleReport/Box/VBox" unique_id=876027636]
+custom_minimum_size = Vector2(0, 240)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ReportList" type="VBoxContainer" parent="Modal_BattleReport/Box/VBox/ReportScroll" unique_id=1242629006]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="BtnCloseReport" type="Button" parent="Modal_BattleReport/Box/VBox" unique_id=975042589]
+custom_minimum_size = Vector2(160, 42)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("sb_end_phase_btn")
+text = "确认 / 继续"
+
+[node name="Modal_TacticalConfirm" type="PanelContainer" parent="." unique_id=1982736451]
+visible = false
+z_index = 50
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -110.0
+offset_right = 240.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("sb_drawer_panel")
+
+[node name="Box" type="MarginContainer" parent="Modal_TacticalConfirm" unique_id=53351649]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 22
+
+[node name="VBox" type="VBoxContainer" parent="Modal_TacticalConfirm/Box" unique_id=660387439]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="ConfirmDesc" type="Label" parent="Modal_TacticalConfirm/Box/VBox" unique_id=1855999983]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "是否确认执行该行动？"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ButtonsRow" type="HBoxContainer" parent="Modal_TacticalConfirm/Box/VBox" unique_id=1715864971]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="BtnConfirmAction" type="Button" parent="Modal_TacticalConfirm/Box/VBox/ButtonsRow" unique_id=2029478496]
+custom_minimum_size = Vector2(140, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("sb_end_phase_btn")
+text = "确认执行"
+
+[node name="BtnCancelAction" type="Button" parent="Modal_TacticalConfirm/Box/VBox/ButtonsRow" unique_id=208612246]
+custom_minimum_size = Vector2(140, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "取消"

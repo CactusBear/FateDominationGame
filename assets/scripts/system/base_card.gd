@@ -13,6 +13,10 @@ var _attributes:Array#[String]
 #手牌暗置时不计入合计威力、也不消耗魔力(伊莉雅斯菲尔暗置检查等效果依赖此字段)，
 #翻面统一走SetCardConcealed，不要在效果里手动加减威力
 var _is_concealed:bool = false
+#这张卡展示的是哪个buff的状态(御主物品卡：黑泥、宝石、天之衣等)。没有对应buff时为空。
+#物品卡和buff是两个独立对象，这里存引用而不是拷状态——buff的激活状态会变，
+#渲染时要读的是它此刻的值(未激活的卡面要盖深红遮罩)。对应关系写在JSON的relate_buff里
+var _relate_buff
 
 func edit_card_name(card_name:String):
 	_name = card_name

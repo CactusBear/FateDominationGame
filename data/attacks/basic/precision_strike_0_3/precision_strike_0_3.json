@@ -1,20 +1,21 @@
 {
-    "attack_name": "precision_strike_0_3",
-    "shown_attack_name": "高速移动",
-    "category": "basic",
-    "attributes": [
-        "agility"
-    ],
-    "cost": {
-        "number": 0,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "power": {
-        "number": 3,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "attack_card_img": "precision_strike_0_3.png",
-    "effects": []
+  "attack_name": "precision_strike_0_3",
+  "shown_attack_name": "高速移动",
+  "category": "basic",
+  "attributes": [
+    "agility"
+  ],
+  "cost": {
+    "number": 0,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "power": {
+    "number": 3,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "attack_card_img": "precision_strike_0_3.png",
+  "effects": [],
+  "zoom_kind": "card"
 }

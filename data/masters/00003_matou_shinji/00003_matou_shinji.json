@@ -8,49 +8,156 @@
     {
       "effect_name": "absorb_magic_command",
       "shown_effect_name": "吸魔命令 - 进入深山町时，获得1点魔力",
-      "time_points": ["self_deploy", "self_move_end"],
+      "time_points": [
+        "self_deploy",
+        "self_move_end"
+      ],
       "priority": 0,
       "is_pure_passive": true,
       "is_residue": false,
       "effect_numbers": [
-        { "number": 1, "can_change": true, "is_pure_number": true }
+        {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        }
       ],
       "funcs": [
-        { "func_name": "get_location_map_area", "parameters": [], "var_index": 0 },
-        { "func_name": "get_property", "parameters": [{ "self_var": 0 }, "_area_name"], "var_index": 1 },
-        { "func_name": "if_func", "parameters": [{ "self_var": 1 }, "深山町"], "var_index": 2 },
-        { "func_name": "edit_magic", "parameters": [null, { "number_index": 0 }], "var_index": -1, "condition": { "self_var": 2 } }
+        {
+          "func_name": "get_location_map_area",
+          "parameters": [],
+          "var_index": 0
+        },
+        {
+          "func_name": "get_property",
+          "parameters": [
+            {
+              "self_var": 0
+            },
+            "_area_name"
+          ],
+          "var_index": 1
+        },
+        {
+          "func_name": "if_func",
+          "parameters": [
+            {
+              "self_var": 1
+            },
+            "深山町"
+          ],
+          "var_index": 2
+        },
+        {
+          "func_name": "edit_magic",
+          "parameters": [
+            null,
+            {
+              "number_index": 0
+            }
+          ],
+          "var_index": -1,
+          "condition": {
+            "self_var": 2
+          }
+        }
       ]
     },
     {
       "effect_name": "useless_person",
       "shown_effect_name": "无用之人 - 游戏开始时，获得【伪臣之书】",
-      "time_points": ["game_start"],
+      "time_points": [
+        "game_start"
+      ],
       "priority": 0,
       "is_pure_passive": true,
       "is_residue": false,
       "effect_numbers": [],
       "funcs": [
-        { "func_name": "get_player_master", "parameters": [], "var_index": 0 },
-        { "func_name": "get_property", "parameters": [{ "self_var": 0 }, "_specials"], "var_index": 1 },
-        { "func_name": "get_dictionary_value", "parameters": [{ "self_var": 1 }, "BUFFS"], "var_index": 2 },
-        { "func_name": "get_objects_by_name_fr_arr", "parameters": ["false_servant_book", { "self_var": 2 }], "var_index": 3 },
-        { "func_name": "get_card_by_index_fr_arr", "parameters": [0, { "self_var": 3 }], "var_index": 4 },
-        { "func_name": "manage_buff", "parameters": [{ "self_var": 4 }], "var_index": -1 }
+        {
+          "func_name": "get_player_master",
+          "parameters": [],
+          "var_index": 0
+        },
+        {
+          "func_name": "get_property",
+          "parameters": [
+            {
+              "self_var": 0
+            },
+            "_specials"
+          ],
+          "var_index": 1
+        },
+        {
+          "func_name": "get_dictionary_value",
+          "parameters": [
+            {
+              "self_var": 1
+            },
+            "BUFFS"
+          ],
+          "var_index": 2
+        },
+        {
+          "func_name": "get_objects_by_name_fr_arr",
+          "parameters": [
+            "false_servant_book",
+            {
+              "self_var": 2
+            }
+          ],
+          "var_index": 3
+        },
+        {
+          "func_name": "get_card_by_index_fr_arr",
+          "parameters": [
+            0,
+            {
+              "self_var": 3
+            }
+          ],
+          "var_index": 4
+        },
+        {
+          "func_name": "manage_buff",
+          "parameters": [
+            {
+              "self_var": 4
+            }
+          ],
+          "var_index": -1
+        }
       ]
     },
     {
       "effect_name": "clown",
       "shown_effect_name": "小丑 - 当你战败时，失去一枚令咒",
-      "time_points": ["self_battle_lose"],
+      "time_points": [
+        "self_battle_lose"
+      ],
       "priority": 0,
       "is_pure_passive": true,
       "is_residue": false,
       "effect_numbers": [
-        { "number": -1, "can_change": true, "is_pure_number": true }
+        {
+          "number": -1,
+          "can_change": true,
+          "is_pure_number": true
+        }
       ],
       "funcs": [
-        { "func_name": "edit_data_number", "parameters": ["command_spell_count", null, { "number_index": 0 }], "var_index": -1 }
+        {
+          "func_name": "edit_data_number",
+          "parameters": [
+            "command_spell_count",
+            null,
+            {
+              "number_index": 0
+            }
+          ],
+          "var_index": -1
+        }
       ]
     }
   ],
@@ -60,7 +167,8 @@
     "BUFFS": [
       {
         "buff_name": "false_servant_book",
-        "buff_img": "00003_matou_shinji_false_servant_book.png",
+        "shown_buff_name": "伪臣之书",
+        "buff_img": "",
         "is_active": true,
         "buff_level": {
           "number": 1,
@@ -69,34 +177,629 @@
         },
         "effects": [
           {
-            "effect_name": "placeholder_false_servant_book_master_replace",
+            "effect_name": "false_servant_book_master_replace",
             "shown_effect_name": "替代品 - 间桐樱不在场时，当你第一次失去所有令咒，该回合结束时将你的御主替换为【间桐樱】，重置魔力，获得2令咒，保持战果不变",
-            "time_points": ["day_end"],
+            "time_points": [
+              "day_end"
+            ],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
             "effect_numbers": [
-              { "number": 2, "can_change": true, "is_pure_number": true }
+              {
+                "number": 2,
+                "can_change": true,
+                "is_pure_number": true
+              },
+              {
+                "number": 4,
+                "can_change": true,
+                "is_pure_number": true
+              }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              {
+                "func_name": "get_player_data_value",
+                "parameters": [
+                  "used_once_effects"
+                ],
+                "var_index": 0
+              },
+              {
+                "func_name": "is_in_array",
+                "parameters": [
+                  "false_servant_book_master_replace",
+                  {
+                    "self_var": 0
+                  }
+                ],
+                "var_index": 1
+              },
+              {
+                "func_name": "not_func",
+                "parameters": [
+                  {
+                    "self_var": 1
+                  }
+                ],
+                "var_index": 2
+              },
+              {
+                "func_name": "get_data_number",
+                "parameters": [
+                  "command_spell_count"
+                ],
+                "var_index": 3
+              },
+              {
+                "func_name": "if_func",
+                "parameters": [
+                  {
+                    "self_var": 3
+                  },
+                  0
+                ],
+                "var_index": 4
+              },
+              {
+                "func_name": "get_players_field",
+                "parameters": [
+                  "master"
+                ],
+                "var_index": 5
+              },
+              {
+                "func_name": "get_objects_by_name_fr_arr",
+                "parameters": [
+                  "matou_sakura",
+                  {
+                    "self_var": 5
+                  }
+                ],
+                "var_index": 6
+              },
+              {
+                "func_name": "array_length",
+                "parameters": [
+                  {
+                    "self_var": 6
+                  }
+                ],
+                "var_index": 7
+              },
+              {
+                "func_name": "if_func",
+                "parameters": [
+                  {
+                    "self_var": 7
+                  },
+                  0
+                ],
+                "var_index": 8
+              },
+              {
+                "func_name": "and_func",
+                "parameters": [
+                  {
+                    "self_var": 2
+                  },
+                  {
+                    "self_var": 4
+                  }
+                ],
+                "var_index": 9
+              },
+              {
+                "func_name": "and_func",
+                "parameters": [
+                  {
+                    "self_var": 9
+                  },
+                  {
+                    "self_var": 8
+                  }
+                ],
+                "var_index": 10
+              },
+              {
+                "func_name": "get_game_data_value",
+                "parameters": [
+                  "loaded_masters"
+                ],
+                "var_index": 11,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "get_objects_by_name_fr_arr",
+                "parameters": [
+                  "matou_sakura",
+                  {
+                    "self_var": 11
+                  }
+                ],
+                "var_index": 12,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "get_card_by_index_fr_arr",
+                "parameters": [
+                  0,
+                  {
+                    "self_var": 12
+                  }
+                ],
+                "var_index": 13,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "get_player_master",
+                "parameters": [],
+                "var_index": 14,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "unregister_object_effects",
+                "parameters": [
+                  {
+                    "self_var": 14
+                  }
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "set_player_data",
+                "parameters": [
+                  "master",
+                  {
+                    "self_var": 13
+                  }
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "register_object_effects",
+                "parameters": [
+                  {
+                    "self_var": 13
+                  }
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "edit_magic",
+                "parameters": [
+                  {
+                    "number_index": 1
+                  }
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "edit_data_number",
+                "parameters": [
+                  "command_spell_count",
+                  null,
+                  {
+                    "number_index": 0
+                  }
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "get_player_buffs",
+                "parameters": [],
+                "var_index": 15,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "get_objects_by_name_fr_arr",
+                "parameters": [
+                  "false_servant_book",
+                  {
+                    "self_var": 15
+                  }
+                ],
+                "var_index": 16,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "get_card_by_index_fr_arr",
+                "parameters": [
+                  0,
+                  {
+                    "self_var": 16
+                  }
+                ],
+                "var_index": 17,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "manage_buff",
+                "parameters": [
+                  {
+                    "self_var": 17
+                  },
+                  -1,
+                  false
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "add_to_array",
+                "parameters": [
+                  "false_servant_book_master_replace",
+                  {
+                    "self_var": 0
+                  }
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 10
+                }
+              }
             ]
           },
           {
-            "effect_name": "placeholder_false_servant_book_servant_replace",
+            "effect_name": "false_servant_book_servant_replace",
             "shown_effect_name": "契约再续 - 间桐樱在场时，当你第一次失去所有令咒，该回合结束时将从者替换为一个随机的、未被使用的从者，重新获得3令咒",
-            "time_points": ["day_end"],
+            "time_points": [
+              "day_end"
+            ],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
             "effect_numbers": [
-              { "number": 3, "can_change": true, "is_pure_number": true }
+              {
+                "number": 3,
+                "can_change": true,
+                "is_pure_number": true
+              }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              {
+                "func_name": "get_player_data_value",
+                "parameters": [
+                  "used_once_effects"
+                ],
+                "var_index": 0
+              },
+              {
+                "func_name": "is_in_array",
+                "parameters": [
+                  "false_servant_book_servant_replace",
+                  {
+                    "self_var": 0
+                  }
+                ],
+                "var_index": 1
+              },
+              {
+                "func_name": "not_func",
+                "parameters": [
+                  {
+                    "self_var": 1
+                  }
+                ],
+                "var_index": 2
+              },
+              {
+                "func_name": "get_data_number",
+                "parameters": [
+                  "command_spell_count"
+                ],
+                "var_index": 3
+              },
+              {
+                "func_name": "if_func",
+                "parameters": [
+                  {
+                    "self_var": 3
+                  },
+                  0
+                ],
+                "var_index": 4
+              },
+              {
+                "func_name": "get_players_field",
+                "parameters": [
+                  "master"
+                ],
+                "var_index": 5
+              },
+              {
+                "func_name": "get_objects_by_name_fr_arr",
+                "parameters": [
+                  "matou_sakura",
+                  {
+                    "self_var": 5
+                  }
+                ],
+                "var_index": 6
+              },
+              {
+                "func_name": "array_length",
+                "parameters": [
+                  {
+                    "self_var": 6
+                  }
+                ],
+                "var_index": 7
+              },
+              {
+                "func_name": "compare_number",
+                "parameters": [
+                  {
+                    "self_var": 7
+                  },
+                  0
+                ],
+                "var_index": 8
+              },
+              {
+                "func_name": "if_func",
+                "parameters": [
+                  {
+                    "self_var": 8
+                  },
+                  1
+                ],
+                "var_index": 9
+              },
+              {
+                "func_name": "and_func",
+                "parameters": [
+                  {
+                    "self_var": 2
+                  },
+                  {
+                    "self_var": 4
+                  }
+                ],
+                "var_index": 10
+              },
+              {
+                "func_name": "and_func",
+                "parameters": [
+                  {
+                    "self_var": 10
+                  },
+                  {
+                    "self_var": 9
+                  }
+                ],
+                "var_index": 11
+              },
+              {
+                "func_name": "get_game_data_value",
+                "parameters": [
+                  "loaded_servants"
+                ],
+                "var_index": 12,
+                "condition": {
+                  "self_var": 11
+                }
+              },
+              {
+                "func_name": "get_players_field",
+                "parameters": [
+                  "servant"
+                ],
+                "var_index": 13,
+                "condition": {
+                  "self_var": 11
+                }
+              },
+              {
+                "func_name": "array_difference",
+                "parameters": [
+                  {
+                    "self_var": 12
+                  },
+                  {
+                    "self_var": 13
+                  }
+                ],
+                "var_index": 14,
+                "condition": {
+                  "self_var": 11
+                }
+              },
+              {
+                "func_name": "array_length",
+                "parameters": [
+                  {
+                    "self_var": 14
+                  }
+                ],
+                "var_index": 15,
+                "condition": {
+                  "self_var": 11
+                }
+              },
+              {
+                "func_name": "compare_number",
+                "parameters": [
+                  {
+                    "self_var": 15
+                  },
+                  0
+                ],
+                "var_index": 16,
+                "condition": {
+                  "self_var": 11
+                }
+              },
+              {
+                "func_name": "if_func",
+                "parameters": [
+                  {
+                    "self_var": 16
+                  },
+                  1
+                ],
+                "var_index": 17,
+                "condition": {
+                  "self_var": 11
+                }
+              },
+              {
+                "func_name": "calculate_number",
+                "parameters": [
+                  {
+                    "self_var": 15
+                  },
+                  "-",
+                  1
+                ],
+                "var_index": 18,
+                "condition": {
+                  "self_var": 17
+                }
+              },
+              {
+                "func_name": "random_int",
+                "parameters": [
+                  0,
+                  {
+                    "self_var": 18
+                  }
+                ],
+                "var_index": 19,
+                "condition": {
+                  "self_var": 17
+                }
+              },
+              {
+                "func_name": "get_card_by_index_fr_arr",
+                "parameters": [
+                  {
+                    "self_var": 19
+                  },
+                  {
+                    "self_var": 14
+                  }
+                ],
+                "var_index": 20,
+                "condition": {
+                  "self_var": 17
+                }
+              },
+              {
+                "func_name": "get_player_servant",
+                "parameters": [],
+                "var_index": 21,
+                "condition": {
+                  "self_var": 17
+                }
+              },
+              {
+                "func_name": "unregister_object_effects",
+                "parameters": [
+                  {
+                    "self_var": 21
+                  }
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 17
+                }
+              },
+              {
+                "func_name": "set_player_data",
+                "parameters": [
+                  "servant",
+                  {
+                    "self_var": 20
+                  }
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 17
+                }
+              },
+              {
+                "func_name": "register_object_effects",
+                "parameters": [
+                  {
+                    "self_var": 20
+                  }
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 17
+                }
+              },
+              {
+                "func_name": "deal_player_cards",
+                "parameters": [],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 17
+                }
+              },
+              {
+                "func_name": "edit_data_number",
+                "parameters": [
+                  "command_spell_count",
+                  null,
+                  {
+                    "number_index": 0
+                  }
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 17
+                }
+              },
+              {
+                "func_name": "add_to_array",
+                "parameters": [
+                  "false_servant_book_servant_replace",
+                  {
+                    "self_var": 0
+                  }
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 17
+                }
+              }
             ]
           }
-        ]
+        ],
+        "zoom_kind": "token"
       }
     ]
   },
@@ -106,57 +809,122 @@
       "shown_skill_name": "圣杯核心",
       "skill_card_img": "00003_matou_shinji_grail_core.png",
       "attributes": [],
-      "cost": { "number": 0, "can_change": true, "is_pure_number": true },
-      "power": { "number": 0, "can_change": true, "is_pure_number": true },
+      "cost": {
+        "number": 0,
+        "can_change": true,
+        "is_pure_number": true
+      },
+      "power": {
+        "number": 0,
+        "can_change": true,
+        "is_pure_number": true
+      },
       "ignore_limit": false,
       "effects": [
         {
           "effect_name": "placeholder_grail_core_activation",
           "shown_effect_name": "此牌在第八回合结束后，并且莎士比亚是你的从者时生效。你失去【伪臣之书】",
-          "time_points": ["day_end"],
+          "time_points": [
+            "day_end"
+          ],
           "priority": 0,
           "is_pure_passive": true,
           "is_residue": false,
           "effect_numbers": [
-            { "number": 8, "can_change": true, "is_pure_number": true }
+            {
+              "number": 8,
+              "can_change": true,
+              "is_pure_number": true
+            }
           ],
           "funcs": [
-            { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            {
+              "func_name": "do_nothing",
+              "parameters": [],
+              "var_index": -1
+            }
           ]
         },
         {
           "effect_name": "placeholder_grail_core_first_servant_bonus",
           "shown_effect_name": "若莎士比亚是你的第一名从者，你位于深山町时合计威力+12，当你获得X点战果时，所有位于深山町的对手失去X点战果",
-          "time_points": ["self_battle_phase"],
+          "time_points": [
+            "self_battle_phase"
+          ],
           "priority": 0,
           "is_pure_passive": true,
           "is_residue": false,
           "effect_numbers": [
-            { "number": 12, "can_change": true, "is_pure_number": true }
+            {
+              "number": 12,
+              "can_change": true,
+              "is_pure_number": true
+            }
           ],
           "funcs": [
-            { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            {
+              "func_name": "do_nothing",
+              "parameters": [],
+              "var_index": -1
+            }
           ]
         },
         {
           "effect_name": "placeholder_grail_core_not_first_servant_bonus",
           "shown_effect_name": "若莎士比亚并非你的第一名从者，你获得8点战果",
-          "time_points": ["day_end"],
+          "time_points": [
+            "day_end"
+          ],
           "priority": 0,
           "is_pure_passive": true,
           "is_residue": false,
           "effect_numbers": [
-            { "number": 8, "can_change": true, "is_pure_number": true }
+            {
+              "number": 8,
+              "can_change": true,
+              "is_pure_number": true
+            }
           ],
           "funcs": [
-            { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+            {
+              "func_name": "do_nothing",
+              "parameters": [],
+              "var_index": -1
+            }
           ]
         }
-      ]
+      ],
+      "zoom_kind": "card",
+      "is_awakened": false
     }
   ],
   "tags": [
-    { "tag": "matou", "name_list": ["间桐"], "type": "master_tag" },
-    { "tag": "false_servant_book", "name_list": ["伪臣之书"], "type": "master_tag" }
+    {
+      "tag": "matou",
+      "name_list": [
+        "间桐"
+      ],
+      "type": "master_tag"
+    },
+    {
+      "tag": "false_servant_book",
+      "name_list": [
+        "伪臣之书"
+      ],
+      "type": "master_tag"
+    }
+  ],
+  "header_img_zoom_kind": "avatar",
+  "master_card_img_zoom_kind": "card",
+  "command_spell_img_zoom_kind": "card",
+  "other_master_things": [
+    {
+      "thing_name": "false_servant_book_card",
+      "shown_thing_name": "伪臣之书",
+      "card_img": "00003_matou_shinji_false_servant_book.png",
+      "zoom_kind": "card",
+      "effects": [],
+      "relate_buff": "false_servant_book"
+    }
   ]
 }

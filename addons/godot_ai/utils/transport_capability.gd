@@ -269,24 +269,13 @@ static func directory_write_problem_for(directory: String) -> String:
 
 
 static func windows_repair_hint(directory: String, detail: String) -> String:
-	var root := directory
-	var current := directory
-	while not current.is_empty():
-		if current.get_file() == "godot-ai":
-			root = current
-			break
-		var parent := current.get_base_dir()
-		if parent.is_empty() or parent == current:
-			break
-		current = parent
 	return (
-		"Godot AI cannot use its private directory %s (%s): this Windows account "
-		+ "has no access to it, which happens when it was first created by an "
-		+ "elevated (Run as administrator) process. Close Godot and every AI "
-		+ "client, then from an elevated PowerShell run: "
-		+ "Remove-Item -Recurse -Force \"%s\" ; reopen the project unelevated and "
-		+ "the directory is recreated with your account's permissions."
-	) % [directory, detail, root]
+		"Godot AI cannot use the directory %s (%s): this Windows account cannot "
+		+ "access it. This can happen when an elevated (Run as administrator) "
+		+ "process created it. Check this directory's permissions and grant your "
+		+ "Windows account access, then reopen Godot and your AI clients without "
+		+ "Run as administrator."
+	) % [directory, detail]
 
 
 static func path_for_http_port(http_port: int) -> String:

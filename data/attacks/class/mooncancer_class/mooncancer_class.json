@@ -1,39 +1,58 @@
 {
-    "attack_name": "mooncancer_class",
-    "shown_attack_name": "月之癌",
-    "category": "class",
-    "attributes": [
-        "magic"
-    ],
-    "cost": {
-        "number": 0,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "power": {
-        "number": 4,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "attack_card_img": "mooncancer_class.png",
-    "effects": [
+  "attack_name": "mooncancer_class",
+  "shown_attack_name": "月之癌",
+  "category": "class",
+  "attributes": [
+    "magic"
+  ],
+  "cost": {
+    "number": 0,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "power": {
+    "number": 4,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "attack_card_img": "mooncancer_class.png",
+  "effects": [
+    {
+      "effect_name": "mooncancer_passive_grail_events",
+      "shown_effect_name": "被动：弃置此牌，月之圣杯的事件牌效果只影响你所在的地点，战斗阶段结束后弃置月之圣杯事件牌",
+      "time_points": [
+        "game"
+      ],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
         {
-            "effect_name": "mooncancer_event_swap",
-            "shown_effect_name": "行动阶段：将你所在地点的事件牌与一张月之圣杯的事件牌互换",
-            "time_points": [
-                "self_action_phase"
-            ],
-            "priority": 0,
-            "is_pure_passive": false,
-            "is_residue": false,
-            "effect_numbers": [],
-            "funcs": [
-                {
-                    "func_name": "do_nothing",
-                    "parameters": [],
-                    "var_index": -1
-                }
-            ]
+          "func_name": "do_nothing",
+          "parameters": [],
+          "var_index": -1
         }
-    ]
+      ]
+    },
+    {
+      "effect_name": "mooncancer_event_swap",
+      "shown_effect_name": "行动阶段：将你所在地点的一张事件牌与月之圣杯的事件牌互换",
+      "time_points": [
+        "self_action_phase"
+      ],
+      "priority": 0,
+      "is_pure_passive": false,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
+        {
+          "func_name": "do_nothing",
+          "parameters": [],
+          "var_index": -1
+        }
+      ]
+    }
+  ],
+  "zoom_kind": "card"
 }

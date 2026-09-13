@@ -1,11 +1,12 @@
 {
-    "card_name": "rescue_illya",
-    "shown_name": "夺回伊莉雅",
-    "score": {
-        "number": 5,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "card_img": "rescue_illya.png",
-    "effects": []
+  "card_name": "rescue_illya",
+  "shown_name": "夺回伊莉雅",
+  "score": {
+    "number": 5,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "card_img": "rescue_illya.png",
+  "effects": [],
+  "zoom_kind": "card"
 }

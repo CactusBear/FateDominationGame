@@ -1,20 +1,21 @@
 {
-    "attack_name": "berserker_class_strength_3_7",
-    "shown_attack_name": "狂战士",
-    "category": "class",
-    "attributes": [
-        "strength"
-    ],
-    "cost": {
-        "number": 3,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "power": {
-        "number": 7,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "attack_card_img": "berserker_class_strength_3_7.png",
-    "effects": []
+  "attack_name": "berserker_class_strength_3_7",
+  "shown_attack_name": "狂战士",
+  "category": "class",
+  "attributes": [
+    "strength"
+  ],
+  "cost": {
+    "number": 3,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "power": {
+    "number": 7,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "attack_card_img": "berserker_class_strength_3_7.png",
+  "effects": [],
+  "zoom_kind": "card"
 }

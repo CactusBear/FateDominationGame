@@ -5,7 +5,7 @@ extends RefCounted
 #事件牌加载：从 data/events 递归加载所有事件牌 JSON，生成 BaseEvent 实例。
 #事件牌不像攻击牌有牌库引用，直接生成实例池即可；进场逻辑从池里取牌挂到战场。
 
-const EVENTS_PATH := "res://data/events"
+const EVENTS_PATH := LoadHelper.DATA_DIR + "/events"
 
 #已加载的事件牌实例池
 static var events:Array = []
@@ -47,6 +47,7 @@ static func load_event_file(dir_path:String, file_name:String) -> BaseEvent:
 		LoadHelper.load_number(data["score"])
 	)
 	event._shown_name = data.get("shown_name", "")
+	event._zoom_kind = LoadHelper.resolve_zoom_kind(data, "card_img")
 	event._effects = LoadHelper.load_effects(data.get("effects", []), event)
 	event._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), dir_path, "event")
 	return event

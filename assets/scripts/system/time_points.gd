@@ -113,6 +113,11 @@ const SELF_CLIMAX_END = "self_climax_end"
 const OTHERS_CLIMAX_START = "others_climax_start"
 const OTHERS_CLIMAX = "others_climax"
 const OTHERS_CLIMAX_END = "others_climax_end"
+#高潮回合的反面。与CLIMAX成对派发，让效果能表达"仅非高潮回合"
+#（AND模式下写[self_action_phase, self_non_climax]即"非高潮回合的自己行动阶段"）
+const NON_CLIMAX = "non_climax"
+const SELF_NON_CLIMAX = "self_non_climax"
+const OTHERS_NON_CLIMAX = "others_non_climax"
 
 const DEPLOY_START = "deploy_start"
 const DEPLOY = "deploy"

@@ -49,6 +49,8 @@ func exec(attack:BaseAttack, player_id:int = -1, cost:BaseNumber = attack._cost,
 	var playered_cards_arr = player_data["played_cards"] as Array
 	playered_cards_arr.append(attack)
 	played_this_turn.append(attack)
+	#出牌即离手：从手牌移进打出区，手牌区不再显示
+	(player_data["hand_cards"] as Array).erase(attack)
 
 	#是否计入合计威力交给CardCountsPower判定(默认暗置牌不计，例外由卡上的效果声明)。
 	#必须在入场后再判定，因为判定包含"是否在场上"这一条

@@ -64,6 +64,9 @@ func new_player_data() -> Dictionary:
 		"others" : []
 		},
 	"true_name_released" : false,
+	#本局已经触发过的一次性效果名。效果触发后把名字加进来，靠它保证"第一次/每局限一次"。
+	#不按效果各写一个bool字段——新增一次性效果只需往这里加名字
+	"used_once_effects" : [],
 	"command_spell_count" : BaseNumber.new(3),
 	"command_spell_used_this_game" : 0,
 	"command_spell_used_this_turn" : false,

@@ -1,20 +1,21 @@
 {
-    "attack_name": "magic_blast_1_5",
-    "shown_attack_name": "超高位魔术",
-    "category": "basic",
-    "attributes": [
-        "magic"
-    ],
-    "cost": {
-        "number": 1,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "power": {
-        "number": 5,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "attack_card_img": "magic_blast_1_5.png",
-    "effects": []
+  "attack_name": "magic_blast_1_5",
+  "shown_attack_name": "超高位魔术",
+  "category": "basic",
+  "attributes": [
+    "magic"
+  ],
+  "cost": {
+    "number": 1,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "power": {
+    "number": 5,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "attack_card_img": "magic_blast_1_5.png",
+  "effects": [],
+  "zoom_kind": "card"
 }

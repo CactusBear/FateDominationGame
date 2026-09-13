@@ -11,121 +11,208 @@
         "skill_name": "ichi_no_tachi",
         "shown_skill_name": "一之太刀",
         "skill_card_img": "00006_sasaki_kojirou_ichi_no_tachi.png",
-        "attributes": ["agility"],
-        "cost": { "number": 5, "can_change": true, "is_pure_number": true },
-        "power": { "number": 7, "can_change": true, "is_pure_number": true },
+        "attributes": [
+          "agility"
+        ],
+        "cost": {
+          "number": 5,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "power": {
+          "number": 7,
+          "can_change": true,
+          "is_pure_number": true
+        },
         "ignore_limit": false,
         "effects": [
           {
             "effect_name": "placeholder_ichi_no_tachi_ignore_magic_threshold",
             "shown_effect_name": "你拥有的魔力少于8点也可打出此牌",
-            "time_points": ["self_played_card"],
+            "time_points": [
+              "self_played_card"
+            ],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
             "effect_numbers": [
-              { "number": 8, "can_change": true, "is_pure_number": true }
+              {
+                "number": 8,
+                "can_change": true,
+                "is_pure_number": true
+              }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              {
+                "func_name": "do_nothing",
+                "parameters": [],
+                "var_index": -1
+              }
             ]
           },
           {
             "effect_name": "placeholder_ichi_no_tachi_close_and_play_strength",
             "shown_effect_name": "战斗阶段：关闭此牌，然后从手牌打出一张力量基础攻击。若如此，获得2点魔力且关闭一名交战玩家至多一张基础攻击",
-            "time_points": ["self_battle_phase"],
+            "time_points": [
+              "self_battle_phase"
+            ],
             "priority": 0,
             "is_pure_passive": false,
             "is_residue": false,
             "effect_numbers": [
-              { "number": 2, "can_change": true, "is_pure_number": true }
+              {
+                "number": 2,
+                "can_change": true,
+                "is_pure_number": true
+              }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              {
+                "func_name": "do_nothing",
+                "parameters": [],
+                "var_index": -1
+              }
             ]
           }
-        ]
+        ],
+        "zoom_kind": "card"
       },
       {
         "skill_name": "ni_no_tachi",
         "shown_skill_name": "二之太刀",
         "skill_card_img": "00006_sasaki_kojirou_ni_no_tachi.png",
-        "attributes": ["agility"],
-        "cost": { "number": 3, "can_change": true, "is_pure_number": true },
-        "power": { "number": 5, "can_change": true, "is_pure_number": true },
+        "attributes": [
+          "agility"
+        ],
+        "cost": {
+          "number": 3,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "power": {
+          "number": 5,
+          "can_change": true,
+          "is_pure_number": true
+        },
         "ignore_limit": false,
         "effects": [
           {
             "effect_name": "placeholder_ni_no_tachi_lock_opponent_abilities",
             "shown_effect_name": "行动阶段：与你位于同一战场的对手无法使用【行动阶段】和【战斗阶段】能力（令咒为行动阶段能力）",
-            "time_points": ["self_action_phase"],
+            "time_points": [
+              "self_action_phase"
+            ],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
             "effect_numbers": [],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              {
+                "func_name": "do_nothing",
+                "parameters": [],
+                "var_index": -1
+              }
             ]
           }
-        ]
+        ],
+        "zoom_kind": "card"
       },
       {
         "skill_name": "san_no_tachi",
         "shown_skill_name": "三之太刀",
         "skill_card_img": "00006_sasaki_kojirou_san_no_tachi.png",
-        "attributes": ["agility"],
-        "cost": { "number": 2, "can_change": true, "is_pure_number": true },
-        "power": { "number": 3, "can_change": true, "is_pure_number": true },
+        "attributes": [
+          "agility"
+        ],
+        "cost": {
+          "number": 2,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "power": {
+          "number": 3,
+          "can_change": true,
+          "is_pure_number": true
+        },
         "ignore_limit": false,
         "effects": [
           {
             "effect_name": "placeholder_san_no_tachi_extra_play_with_two_agility",
             "shown_effect_name": "你可于打出2张迅捷攻击时追加打出此牌",
-            "time_points": ["self_played_card"],
+            "time_points": [
+              "self_played_card"
+            ],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
             "effect_numbers": [
-              { "number": 2, "can_change": true, "is_pure_number": true }
+              {
+                "number": 2,
+                "can_change": true,
+                "is_pure_number": true
+              }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              {
+                "func_name": "do_nothing",
+                "parameters": [],
+                "var_index": -1
+              }
             ]
           },
           {
             "effect_name": "placeholder_swallow_reversal_combo_true_name",
             "shown_effect_name": "燕返 - 若【一之太刀】和【二之太刀】同时位于战场时，则【真名解放】并合计威力+3",
-            "time_points": ["self_battle_phase"],
+            "time_points": [
+              "self_battle_phase"
+            ],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
             "effect_numbers": [
-              { "number": 3, "can_change": true, "is_pure_number": true }
+              {
+                "number": 3,
+                "can_change": true,
+                "is_pure_number": true
+              }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              {
+                "func_name": "do_nothing",
+                "parameters": [],
+                "var_index": -1
+              }
             ]
           }
-        ]
+        ],
+        "zoom_kind": "card"
       }
     ],
     "ATTACKS": [
-						"strength:2",
-			"strength:3",
-			"strength:4",
-			"agility:2",
-			"agility:3",
-			"agility:3",
-			"agility:4",
-			"agility:5",
-			"agility:5",
-			"special:surveil",
-			"special:luck",
-			"special:luck"
-		],
+      "strength:2",
+      "strength:3",
+      "strength:4",
+      "agility:2",
+      "agility:3",
+      "agility:3",
+      "agility:4",
+      "agility:5",
+      "agility:5",
+      "special:surveil",
+      "special:luck",
+      "special:luck"
+    ],
     "BUFFS": []
   },
   "tags": [
-    { "tag": "sasaki_kojirou", "name_list": ["sasaki_kojirou"], "type": "servant_tag" }
-  ]
+    {
+      "tag": "sasaki_kojirou",
+      "name_list": [
+        "sasaki_kojirou"
+      ],
+      "type": "servant_tag"
+    }
+  ],
+  "header_img_zoom_kind": "avatar",
+  "servant_card_img_zoom_kind": "card"
 }

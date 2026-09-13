@@ -19,15 +19,37 @@ static var _scan_timeout_seconds: float = SCAN_TIMEOUT_SECONDS
 static var _pending_scan: Dictionary = {}
 
 
+static func is_reload_pending() -> bool:
+	return not _pending_scan.is_empty()
+
+
+## Reserve before deferring the scan so the current dispatcher tick cannot
+## start another handler which pumps the already-scheduled reload callback.
+static func reserve_reload() -> int:
+	if is_reload_pending():
+		return 0
+	var work := ScriptWork.begin("reload_plugin")
+	_pending_scan = {"work": work}
+	return work
+
+
 static func reload_after_scan(work: int = 0) -> void:
 	if work == 0:
-		work = ScriptWork.begin("reload_plugin")
+		work = reserve_reload()
+		if work == 0:
+			return
+	elif _pending_scan.get("work", 0) != work or bool(_pending_scan.get("toggling", false)):
+		return  # A direct reload or cancellation consumed this deferred request.
 	_start_scan(EditorInterface.get_resource_filesystem(), null, work)
 
 
 static func _start_scan(filesystem: Object, timer: Object, work: int) -> void:
-	if not _pending_scan.is_empty():
-		ScriptWork.finish(work)
+	if not _pending_scan.is_empty() and (
+		_pending_scan.get("work", 0) != work or _pending_scan.has("filesystem")
+		or bool(_pending_scan.get("toggling", false))
+	):
+		if _pending_scan.get("work", 0) != work:
+			ScriptWork.finish(work)
 		push_error("MCP | a plugin reload is already waiting for its filesystem scan")
 		return
 	if timer == null:
@@ -45,7 +67,7 @@ static func _start_scan(filesystem: Object, timer: Object, work: int) -> void:
 static func _take_scan() -> Dictionary:
 	var pending := _pending_scan
 	_pending_scan = {}
-	if not pending.is_empty():
+	if pending.has("filesystem"):
 		if pending.filesystem.filesystem_changed.is_connected(pending.complete):
 			pending.filesystem.filesystem_changed.disconnect(pending.complete)
 		if pending.timer.timeout.is_connected(pending.timeout):
@@ -55,24 +77,37 @@ static func _take_scan() -> Dictionary:
 
 static func _finish_scan(work: int, timed_out: bool) -> void:
 	# A queued callback from an earlier scan can never consume a later request.
-	if _pending_scan.get("work", 0) != work:
+	if _pending_scan.get("work", 0) != work or not _pending_scan.has("filesystem"):
 		return
-	var pending := _take_scan()
 	if timed_out:
+		var pending := _take_scan()
+		ScriptWork.finish(pending.work)
 		push_error(
 			"MCP | filesystem scan did not finish within %d s; plugin left unchanged, retry reload"
 			% int(_scan_timeout_seconds)
 		)
 	else:
 		reload_enabled_plugin()
-	ScriptWork.finish(pending.work)
 
 
 static func reload_enabled_plugin() -> Error:
-	# An explicit direct reload supersedes a still-pending ordinary scan.
+	# Keep the existing reservation through teardown: toggling the plugin can
+	# itself pump frames. Direct callers also gate dispatch during the toggle.
+	if not is_reload_pending():
+		reserve_reload()
+	elif bool(_pending_scan.get("toggling", false)):
+		return ERR_BUSY
+	# Disconnect scan signals before a toggle pumps frames, but retain the
+	# work reservation so already-queued callbacks cannot start another toggle.
 	var pending := _take_scan()
-	if not pending.is_empty():
-		ScriptWork.finish(pending.work)
+	_pending_scan = {"work": pending.work, "toggling": true}
+	var result := _toggle_enabled_plugin()
+	_take_scan()
+	ScriptWork.finish(pending.work)
+	return result
+
+
+static func _toggle_enabled_plugin() -> Error:
 	if not EditorInterface.is_plugin_enabled(PLUGIN_CFG):
 		push_error("MCP | cannot reload a disabled plugin")
 		return ERR_UNAVAILABLE

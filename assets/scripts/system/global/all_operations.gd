@@ -21,6 +21,7 @@ const EFFECT := "effect"
 const CONSTRUCT := "construct"
 const CONTROL := "control"
 const MATH := "math"
+const MESSAGE := "message"
 
 const CATEGORY_SHOWN := {
 	QUERY_PLAYER : "查询/玩家字段",
@@ -39,7 +40,8 @@ const CATEGORY_SHOWN := {
 	EFFECT : "效果/登记反制时点",
 	CONSTRUCT : "构造",
 	CONTROL : "控制流",
-	MATH : "数值运算"
+	MATH : "数值运算",
+	MESSAGE : "提示/消息"
 }
 
 #键为JSON func_name。value: category, class, summary
@@ -190,6 +192,7 @@ const TABLE := {
 	"deploy" : { "category": ACTION, "class": "Deploy", "summary": "部署到地点" },
 	"move" : { "category": ACTION, "class": "Move", "summary": "常规移动并扣魔力" },
 	"move_location" : { "category": ACTION, "class": "MoveLocation", "summary": "只改位置并返回费用" },
+	"deal_player_cards" : { "category": ACTION, "class": "DealPlayerCards", "summary": "给某玩家(重)发从者牌" },
 	"played_cards" : { "category": ACTION, "class": "PlayedCards", "summary": "派发出牌时点" },
 
 	"manage_buff" : { "category": BUFF, "class": "ManageBuff", "summary": "给玩家加或删buff" },
@@ -219,7 +222,8 @@ const TABLE := {
 	"edit_num_and_return" : { "category": MATH, "class": "EditNumAndReturn", "summary": "就地加减乘并返回原对象" },
 	"calculate_number" : { "category": MATH, "class": "CalculateNumber", "summary": "运算后返回新数字，不改原值" },
 	"random_int" : { "category": MATH, "class": "RandomInt", "summary": "随机整数" },
-	"random_float" : { "category": MATH, "class": "RandomFloat", "summary": "随机浮点" }
+	"random_float" : { "category": MATH, "class": "RandomFloat", "summary": "随机浮点" },
+	"show_message" : { "category": MESSAGE, "class": "ShowMessage", "summary": "产生一条提示消息" }
 }
 
 

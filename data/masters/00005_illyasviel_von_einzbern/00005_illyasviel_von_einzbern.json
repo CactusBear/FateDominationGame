@@ -5,185 +5,553 @@
   "master_card_img": "00005_illyasviel_von_einzbern_cd.png",
   "command_spell_img": "00005_illyasviel_von_einzbern_cs.png",
   "effects": [
-    {
-      "effect_name": "artificial_life_initial_magic",
-      "shown_effect_name": "人工生命体 - 你的魔力初始值为6",
-      "time_points": ["game_start"],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [
-        { "number": 6, "can_change": true, "is_pure_number": true }
-      ],
-      "funcs": [
-        { "func_name": "edit_magic", "parameters": [{ "number_index": 0 }], "var_index": -1 }
-      ]
-    },
-    {
-      "effect_name": "grail_vessel_activate_heavenly_robe",
-      "shown_effect_name": "圣杯容器 - 第八回合开始时，激活【天之衣】",
-      "time_points": ["game_start", "day_start"],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [
-        { "number": 8, "can_change": true, "is_pure_number": true }
-      ],
-      "funcs": [
-        { "func_name": "when", "parameters": [["game_start"]], "var_index": 0 },
-        { "func_name": "get_player_master", "parameters": [], "var_index": 1, "condition": { "self_var": 0 } },
-        { "func_name": "get_property", "parameters": [{ "self_var": 1 }, "_specials"], "var_index": 2, "condition": { "self_var": 0 } },
-        { "func_name": "get_dictionary_value", "parameters": [{ "self_var": 2 }, "BUFFS"], "var_index": 3, "condition": { "self_var": 0 } },
-        { "func_name": "get_objects_by_name_fr_arr", "parameters": ["heavenly_robe", { "self_var": 3 }], "var_index": 4, "condition": { "self_var": 0 } },
-        { "func_name": "get_card_by_index_fr_arr", "parameters": [0, { "self_var": 4 }], "var_index": 5, "condition": { "self_var": 0 } },
-        { "func_name": "manage_buff", "parameters": [{ "self_var": 5 }], "var_index": -1, "condition": { "self_var": 0 } },
-        { "func_name": "when", "parameters": [["day_start"]], "var_index": 6 },
-        { "func_name": "get_current_round", "parameters": [], "var_index": 7, "condition": { "self_var": 6 } },
-        { "func_name": "if_func", "parameters": [{ "self_var": 7 }, { "number_index": 0 }], "var_index": 8, "condition": { "self_var": 6 } },
-        { "func_name": "get_player_buffs", "parameters": [], "var_index": 9, "condition": { "self_var": 6 } },
-        { "func_name": "get_objects_by_name_fr_arr", "parameters": ["heavenly_robe", { "self_var": 9 }], "var_index": 10, "condition": { "self_var": 6 } },
-        { "func_name": "get_card_by_index_fr_arr", "parameters": [0, { "self_var": 10 }], "var_index": 11, "condition": { "self_var": 6 } },
-        { "func_name": "set_property", "parameters": [{ "self_var": 11 }, "_is_active", true], "var_index": -1, "condition": { "self_var": 8 } }
-      ]
-    },
-    {
-      "effect_name": "little_grail_attack_discount",
-      "shown_effect_name": "小圣杯 - 你打出攻击时所需的魔力消耗-1",
-      "time_points": ["game_start"],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [
-        { "number": 1, "can_change": true, "is_pure_number": true }
-      ],
-      "funcs": [
-        { "func_name": "edit_data_number", "parameters": ["attack_cost_discount", null, { "number_index": 0 }], "var_index": -1 }
-      ]
-    },
-    {
-      "effect_name": "all_conceal_magic_gain",
-      "shown_effect_name": "回合结束时，若你本回合打出的攻击均为暗置，获得1点魔力",
-      "time_points": ["day_end"],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [
-        { "number": 1, "can_change": true, "is_pure_number": true }
-      ],
-      "funcs": [
-        { "func_name": "get_player_data_value", "parameters": ["played_attacks_this_turn"], "var_index": 0 },
-        { "func_name": "filter_by_property", "parameters": [{ "self_var": 0 }, "_is_concealed", false], "var_index": 1 },
-        { "func_name": "array_length", "parameters": [{ "self_var": 1 }], "var_index": 2 },
-        { "func_name": "if_func", "parameters": [{ "self_var": 2 }, 0], "var_index": 3 },
-        { "func_name": "edit_magic", "parameters": [null, { "number_index": 0 }], "var_index": -1, "condition": { "self_var": 3 } }
-      ]
-    }
+	{
+	  "effect_name": "artificial_life_initial_magic",
+	  "shown_effect_name": "人工生命体 - 你的魔力初始值为6",
+	  "time_points": [
+        "game_start"
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [
+		{
+		  "number": 6,
+		  "can_change": true,
+		  "is_pure_number": true
+		}
+	  ],
+	  "funcs": [
+		{
+		  "func_name": "edit_magic",
+		  "parameters": [
+			{
+			  "number_index": 0
+			}
+		  ],
+		  "var_index": -1
+		}
+	  ]
+	},
+	{
+	  "effect_name": "grail_vessel_activate_heavenly_robe",
+	  "shown_effect_name": "圣杯容器 - 第八回合开始时，激活【天之衣】",
+	  "time_points": [
+		"game_start",
+        "day_start"
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [
+		{
+		  "number": 8,
+		  "can_change": true,
+		  "is_pure_number": true
+		}
+	  ],
+	  "funcs": [
+		{
+		  "func_name": "when",
+		  "parameters": [
+			[
+              "game_start"
+			]
+		  ],
+		  "var_index": 0
+		},
+		{
+		  "func_name": "get_player_master",
+		  "parameters": [],
+		  "var_index": 1,
+		  "condition": {
+			"self_var": 0
+		  }
+		},
+		{
+		  "func_name": "get_property",
+		  "parameters": [
+			{
+			  "self_var": 1
+			},
+            "_specials"
+		  ],
+		  "var_index": 2,
+		  "condition": {
+			"self_var": 0
+		  }
+		},
+		{
+		  "func_name": "get_dictionary_value",
+		  "parameters": [
+			{
+			  "self_var": 2
+			},
+            "BUFFS"
+		  ],
+		  "var_index": 3,
+		  "condition": {
+			"self_var": 0
+		  }
+		},
+		{
+		  "func_name": "get_objects_by_name_fr_arr",
+		  "parameters": [
+			"heavenly_robe",
+			{
+			  "self_var": 3
+			}
+		  ],
+		  "var_index": 4,
+		  "condition": {
+			"self_var": 0
+		  }
+		},
+		{
+		  "func_name": "get_card_by_index_fr_arr",
+		  "parameters": [
+			0,
+			{
+			  "self_var": 4
+			}
+		  ],
+		  "var_index": 5,
+		  "condition": {
+			"self_var": 0
+		  }
+		},
+		{
+		  "func_name": "manage_buff",
+		  "parameters": [
+			{
+			  "self_var": 5
+			}
+		  ],
+		  "var_index": -1,
+		  "condition": {
+			"self_var": 0
+		  }
+		},
+		{
+		  "func_name": "when",
+		  "parameters": [
+			[
+              "day_start"
+			]
+		  ],
+		  "var_index": 6
+		},
+		{
+		  "func_name": "get_current_round",
+		  "parameters": [],
+		  "var_index": 7,
+		  "condition": {
+			"self_var": 6
+		  }
+		},
+		{
+		  "func_name": "if_func",
+		  "parameters": [
+			{
+			  "self_var": 7
+			},
+			{
+			  "number_index": 0
+			}
+		  ],
+		  "var_index": 8,
+		  "condition": {
+			"self_var": 6
+		  }
+		},
+		{
+		  "func_name": "get_player_buffs",
+		  "parameters": [],
+		  "var_index": 9,
+		  "condition": {
+			"self_var": 6
+		  }
+		},
+		{
+		  "func_name": "get_objects_by_name_fr_arr",
+		  "parameters": [
+			"heavenly_robe",
+			{
+			  "self_var": 9
+			}
+		  ],
+		  "var_index": 10,
+		  "condition": {
+			"self_var": 6
+		  }
+		},
+		{
+		  "func_name": "get_card_by_index_fr_arr",
+		  "parameters": [
+			0,
+			{
+			  "self_var": 10
+			}
+		  ],
+		  "var_index": 11,
+		  "condition": {
+			"self_var": 6
+		  }
+		},
+		{
+		  "func_name": "set_property",
+		  "parameters": [
+			{
+			  "self_var": 11
+			},
+			"_is_active",
+			true
+		  ],
+		  "var_index": -1,
+		  "condition": {
+			"self_var": 8
+		  }
+		}
+	  ]
+	},
+	{
+	  "effect_name": "little_grail_attack_discount",
+	  "shown_effect_name": "小圣杯 - 你打出攻击时所需的魔力消耗-1",
+	  "time_points": [
+        "game_start"
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [
+		{
+		  "number": 1,
+		  "can_change": true,
+		  "is_pure_number": true
+		}
+	  ],
+	  "funcs": [
+		{
+		  "func_name": "edit_data_number",
+		  "parameters": [
+			"attack_cost_discount",
+			null,
+			{
+			  "number_index": 0
+			}
+		  ],
+		  "var_index": -1
+		}
+	  ]
+	},
+	{
+	  "effect_name": "all_conceal_magic_gain",
+	  "shown_effect_name": "回合结束时，若你本回合打出的攻击均为暗置，获得1点魔力",
+	  "time_points": [
+        "day_end"
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [
+		{
+		  "number": 1,
+		  "can_change": true,
+		  "is_pure_number": true
+		}
+	  ],
+	  "funcs": [
+		{
+		  "func_name": "get_player_data_value",
+		  "parameters": [
+            "played_attacks_this_turn"
+		  ],
+		  "var_index": 0
+		},
+		{
+		  "func_name": "filter_by_property",
+		  "parameters": [
+			{
+			  "self_var": 0
+			},
+			"_is_concealed",
+			false
+		  ],
+		  "var_index": 1
+		},
+		{
+		  "func_name": "array_length",
+		  "parameters": [
+			{
+			  "self_var": 1
+			}
+		  ],
+		  "var_index": 2
+		},
+		{
+		  "func_name": "if_func",
+		  "parameters": [
+			{
+			  "self_var": 2
+			},
+			0
+		  ],
+		  "var_index": 3
+		},
+		{
+		  "func_name": "edit_magic",
+		  "parameters": [
+			null,
+			{
+			  "number_index": 0
+			}
+		  ],
+		  "var_index": -1,
+		  "condition": {
+			"self_var": 3
+		  }
+		}
+	  ]
+	}
   ],
   "specials": {
-    "SKILLS": [],
-    "ATTACKS": [],
-    "BUFFS": [
-      {
-        "buff_name": "heavenly_robe",
-        "buff_img": "00005_illyasviel_von_einzbern_heavenly_robe.png",
-        "is_active": false,
-        "buff_level": {
-          "number": 1,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        "effects": [
-          {
-            "effect_name": "placeholder_return_to_nothingness",
-            "shown_effect_name": "归于虚无 - 回合开始时，若你上回合在战斗阶段时与至少一名被淘汰的玩家位于同一战场，获得2点战果",
-            "time_points": ["day_start"],
-            "priority": 0,
-            "is_pure_passive": true,
-            "is_residue": false,
-            "effect_numbers": [
-              { "number": 2, "can_change": true, "is_pure_number": true }
-            ],
-            "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
-            ]
-          }
-        ]
-      }
-    ]
+	"SKILLS": [],
+	"ATTACKS": [],
+	"BUFFS": [
+	  {
+		"buff_name": "heavenly_robe",
+		"shown_buff_name": "天之衣",
+		"buff_img": "",
+		"is_active": false,
+		"buff_level": {
+		  "number": 1,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"effects": [
+		  {
+			"effect_name": "placeholder_return_to_nothingness",
+			"shown_effect_name": "归于虚无 - 回合开始时，若你上回合在战斗阶段时与至少一名被淘汰的玩家位于同一战场，获得2战果",
+			"time_points": [
+              "day_start"
+			],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+			  {
+				"number": 2,
+				"can_change": true,
+				"is_pure_number": true
+			  }
+			],
+			"funcs": [
+			  {
+				"func_name": "do_nothing",
+				"parameters": [],
+				"var_index": -1
+			  }
+			]
+		  }
+		],
+		"zoom_kind": "token"
+	  }
+	]
   },
   "upgrade_skill": [
-    {
-      "skill_name": "third_magic",
-      "shown_skill_name": "第三法",
-      "skill_card_img": "00005_illyasviel_von_einzbern_third_magic.png",
-      "attributes": ["magic", "special"],
-      "cost": { "number": 0, "can_change": true, "is_pure_number": true },
-      "power": { "number": 0, "can_change": true, "is_pure_number": true },
-      "ignore_limit": false,
-      "effects": [
-        {
-          "effect_name": "third_magic_remove_strength_cards",
-          "shown_effect_name": "解锁此技能后，立即从手牌、牌库及弃牌堆中移除所有力量牌",
-          "time_points": ["game_start"],
-          "priority": 0,
-          "is_pure_passive": false,
-          "is_residue": false,
-          "effect_numbers": [],
-          "funcs": [
-            { "func_name": "get_player_hand_cards", "parameters": [], "var_index": 0 },
-            { "func_name": "get_player_deck", "parameters": [], "var_index": 1 },
-            { "func_name": "get_player_discard", "parameters": [], "var_index": 2 },
-            { "func_name": "merge_arrays", "parameters": [{ "self_var": 0 }, { "self_var": 1 }, { "self_var": 2 }], "var_index": 3 },
-            { "func_name": "get_cards_by_attributes_fr_arr", "parameters": [["strength"], { "self_var": 3 }], "var_index": 4 },
-            { "func_name": "get_pl_attacks_out_game", "parameters": [], "var_index": 5 },
-            {
-              "func_name": "foreach_func",
-              "parameters": [
-                [
-                  { "func_name": "find_player_array_containing", "parameters": [null], "var_index": 6 },
-                  { "func_name": "draw_card_by_card", "parameters": [null, { "self_var": 6 }, { "self_var": 5 }], "var_index": -1 }
-                ],
-                { "self_var": 4 }
-              ],
-              "var_index": -1
-            }
-          ]
-        },
-        {
-          "effect_name": "passive",
-          "shown_effect_name": "被动 - 你的魔术和特殊属性基本攻击获得+2威力",
-          "time_points": ["self_played_card"],
-          "priority": 0,
-          "is_pure_passive": true,
-          "is_residue": false,
-          "effect_numbers": [
-            { "number": 2, "can_change": true, "is_pure_number": true }
-          ],
-          "funcs": [
-            {
-              "func_name": "modify_attack_power_by_attribute",
-              "parameters": [["magic", "special"], { "number_index": 0 }],
-              "var_index": -1
-            }
-          ]
-        },
-        {
-          "effect_name": "placeholder_third_magic_heavens_feel_win",
-          "shown_effect_name": "当局势牌为【天之杯】时，未被淘汰的玩家全部获胜",
-          "time_points": ["game"],
-          "priority": 0,
-          "is_pure_passive": true,
-          "is_residue": false,
-          "effect_numbers": [],
-          "funcs": [
-            { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
-          ]
-        }
-      ]
-    }
+	{
+	  "skill_name": "third_magic",
+	  "shown_skill_name": "第三法",
+	  "skill_card_img": "00005_illyasviel_von_einzbern_third_magic.png",
+	  "attributes": [
+		"magic",
+        "special"
+	  ],
+	  "cost": {
+		"number": 0,
+		"can_change": true,
+		"is_pure_number": true
+	  },
+	  "power": {
+		"number": 0,
+		"can_change": true,
+		"is_pure_number": true
+	  },
+	  "ignore_limit": false,
+	  "effects": [
+		{
+		  "effect_name": "third_magic_remove_strength_cards",
+		  "shown_effect_name": "解锁此技能后，立即从手牌、牌库及弃牌堆中移除所有力量牌",
+		  "time_points": [
+            "game_start"
+		  ],
+		  "priority": 0,
+		  "is_pure_passive": false,
+		  "is_residue": false,
+		  "effect_numbers": [],
+		  "funcs": [
+			{
+			  "func_name": "get_player_hand_cards",
+			  "parameters": [],
+			  "var_index": 0
+			},
+			{
+			  "func_name": "get_player_deck",
+			  "parameters": [],
+			  "var_index": 1
+			},
+			{
+			  "func_name": "get_player_discard",
+			  "parameters": [],
+			  "var_index": 2
+			},
+			{
+			  "func_name": "merge_arrays",
+			  "parameters": [
+				{
+				  "self_var": 0
+				},
+				{
+				  "self_var": 1
+				},
+				{
+				  "self_var": 2
+				}
+			  ],
+			  "var_index": 3
+			},
+			{
+			  "func_name": "get_cards_by_attributes_fr_arr",
+			  "parameters": [
+				[
+                  "strength"
+				],
+				{
+				  "self_var": 3
+				}
+			  ],
+			  "var_index": 4
+			},
+			{
+			  "func_name": "get_pl_attacks_out_game",
+			  "parameters": [],
+			  "var_index": 5
+			},
+			{
+			  "func_name": "foreach_func",
+			  "parameters": [
+				[
+				  {
+					"func_name": "find_player_array_containing",
+					"parameters": [
+					  null
+					],
+					"var_index": 6
+				  },
+				  {
+					"func_name": "draw_card_by_card",
+					"parameters": [
+					  null,
+					  {
+						"self_var": 6
+					  },
+					  {
+						"self_var": 5
+					  }
+					],
+					"var_index": -1
+				  }
+				],
+				{
+				  "self_var": 4
+				}
+			  ],
+			  "var_index": -1
+			}
+		  ]
+		},
+		{
+		  "effect_name": "passive",
+		  "shown_effect_name": "被动 - 你的魔术和特殊属性基本攻击获得+2威力",
+		  "time_points": [
+            "self_played_card"
+		  ],
+		  "priority": 0,
+		  "is_pure_passive": true,
+		  "is_residue": false,
+		  "effect_numbers": [
+			{
+			  "number": 2,
+			  "can_change": true,
+			  "is_pure_number": true
+			}
+		  ],
+		  "funcs": [
+			{
+			  "func_name": "modify_attack_power_by_attribute",
+			  "parameters": [
+				[
+				  "magic",
+                  "special"
+				],
+				{
+				  "number_index": 0
+				}
+			  ],
+			  "var_index": -1
+			}
+		  ]
+		},
+		{
+		  "effect_name": "placeholder_third_magic_heavens_feel_win",
+		  "shown_effect_name": "当局势牌为【天之杯】时，未被淘汰的玩家全部获胜",
+		  "time_points": [
+            "game"
+		  ],
+		  "priority": 0,
+		  "is_pure_passive": true,
+		  "is_residue": false,
+		  "effect_numbers": [],
+		  "funcs": [
+			{
+			  "func_name": "do_nothing",
+			  "parameters": [],
+			  "var_index": -1
+			}
+		  ]
+		}
+	  ],
+	  "zoom_kind": "card",
+	  "is_awakened": false
+	}
   ],
   "tags": [
-    { "tag": "einzbern", "name_list": ["爱因兹贝伦"], "type": "master_tag" },
-    { "tag": "heavenly_robe", "name_list": ["天之衣"], "type": "master_tag" }
+	{
+	  "tag": "einzbern",
+	  "name_list": [
+        "爱因兹贝伦"
+	  ],
+	  "type": "master_tag"
+	},
+	{
+	  "tag": "heavenly_robe",
+	  "name_list": [
+        "天之衣"
+	  ],
+	  "type": "master_tag"
+	}
+  ],
+  "header_img_zoom_kind": "avatar",
+  "master_card_img_zoom_kind": "card",
+  "command_spell_img_zoom_kind": "card",
+  "other_master_things": [
+	{
+	  "thing_name": "heavenly_robe_card",
+	  "shown_thing_name": "天之衣",
+	  "card_img": "00005_illyasviel_von_einzbern_heavenly_robe.png",
+	  "zoom_kind": "card",
+	  "effects": [],
+	  "relate_buff": "heavenly_robe"
+	}
   ]
 }

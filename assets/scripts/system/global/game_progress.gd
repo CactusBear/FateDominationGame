@@ -96,9 +96,12 @@ func start_game():
 
 #把每名玩家从者的_specials按card_deal_rules发放到对应区域。
 #发出去的是克隆体、模板留在从者身上：否则牌堆里的牌会改到同一组数字和效果，
-#重开一局也会带着上一局的状态
-func deal_player_cards():
-	for id in GameDataManager.get_active_player_ids():
+#重开一局也会带着上一局的状态。
+#player_id 传具体玩家时只发给他一个人——换从者这类效果只需重发当事玩家的牌，
+#不能顺手把其他玩家已有的牌堆也重置掉
+func deal_player_cards(player_id: int = -1):
+	var ids: Array = [player_id] if player_id != -1 else GameDataManager.get_active_player_ids()
+	for id in ids:
 		var player_data = GameDataManager.get_player_data(id) as Dictionary
 		var servant = player_data["servant"]
 		if servant == null or !("_specials" in servant):
@@ -141,6 +144,7 @@ func start_round():
 	has_battle_resolved = false
 	refresh_first_player()
 	#每回合开始时重置本回合类记录字段，并派发ROUND_START_RESET供效果监听
+	EffectManager.reset_round_option_counts()
 	for id in GameDataManager.get_active_player_ids():
 		var player_data = GameDataManager.get_player_data(id) as Dictionary
 		player_data["played_attacks_this_turn"] = []
@@ -216,12 +220,23 @@ func advance_phase():
 	begin_phase()
 
 
+#规则：高潮局势牌生效的回合（第9/10/11回合）称为高潮回合。
+#"高潮"是回合属性而不是独立阶段——这些回合里玩家的各阶段同时处于高潮状态，
+#所以效果写 self_climax 表达的是"高潮回合里我的阶段"。
+#回合号不写死，直接问局势牌池里登记了哪些高潮回合（与SituationResolver同源）
+func is_climax_round() -> bool:
+	return LoadSituation.climax_situations.has(current_round)
+
+
 func begin_phase():
 	var phase = get_current_phase()
 	if phase.is_empty():
 		return
-	#整个阶段内都成立的时点
-	TimePointChecker.set_phase_time_points([TimePoints.DAY, TimePoints.PHASE, phase["mid"]])
+	#整个阶段内都成立的时点。高潮回合额外挂CLIMAX、非高潮回合挂NON_CLIMAX，
+	#成对派发让效果两边都能表达（"仅高潮"与"仅非高潮"）
+	var phase_tps:Array = [TimePoints.DAY, TimePoints.PHASE, phase["mid"]]
+	phase_tps.append(TimePoints.CLIMAX if is_climax_round() else TimePoints.NON_CLIMAX)
+	TimePointChecker.set_phase_time_points(phase_tps)
 	TimePointChecker.global_time_point([TimePoints.PHASE_START, phase["start"]])
 	next_player_in_phase()
 
@@ -254,7 +269,11 @@ func next_player_in_phase():
 		if player_data["is_out"]:
 			continue
 		current_player_id = id
-		TimePointChecker.dynamic_time_point([phase["mid"]], current_player_id)
+		#高潮/非高潮与阶段时点一起按玩家派发：触发者拿到self_climax或self_non_climax，
+		#效果因此能表达"高潮回合里我的阶段"（如宝石魔术放宽上限）与"仅非高潮回合"
+		var tps:Array = [phase["mid"]]
+		tps.append(TimePoints.CLIMAX if is_climax_round() else TimePoints.NON_CLIMAX)
+		TimePointChecker.dynamic_time_point(tps, current_player_id)
 		return
 	end_phase()
 

@@ -1,0 +1,56 @@
+{
+  "card_name": "normal_command_spell",
+  "shown_name": "令咒",
+  "card_img": "normal_command_spell.png",
+  "effects": [
+	{
+	  "effect_name": "command_spell_use",
+	  "shown_effect_name": "令咒",
+	  "time_points": [
+        "action_phase"
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": false,
+	  "is_residue": false,
+	  "effect_numbers": [],
+	  "cost": {
+		"type": "command_spell",
+		"amount": 1
+	  },
+	  "max_choices": 1,
+	  "options": [
+		{
+		  "shown_option_name": "行动阶段：获得4魔力",
+		  "funcs": [
+			{
+			  "func_name": "do_nothing",
+			  "parameters": [],
+			  "var_index": -1
+			}
+		  ]
+		},
+		{
+		  "shown_option_name": "行动阶段：总威力+2。如果你本回合每赢得一场战斗，获得2战果",
+		  "funcs": [
+			{
+			  "func_name": "do_nothing",
+			  "parameters": [],
+			  "var_index": -1
+			}
+		  ]
+		},
+		{
+		  "shown_option_name": "行动阶段：从新都或深山町移动至任意位置，无视交战状态",
+		  "funcs": [
+			{
+			  "func_name": "do_nothing",
+			  "parameters": [],
+			  "var_index": -1
+			}
+		  ]
+		}
+	  ]
+	}
+  ],
+  "zoom_kind": "card"
+}

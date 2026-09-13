@@ -1,39 +1,40 @@
 {
-    "attack_name": "foreigner_class",
-    "shown_attack_name": "领域外生命",
-    "category": "class",
-    "attributes": [
-        "special"
-    ],
-    "cost": {
-        "number": 1,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "power": {
-        "number": 0,
-        "can_change": true,
-        "is_pure_number": true
-    },
-    "attack_card_img": "foreigner_class.png",
-    "effects": [
+  "attack_name": "foreigner_class",
+  "shown_attack_name": "领域外生命",
+  "category": "class",
+  "attributes": [
+    "special"
+  ],
+  "cost": {
+    "number": 1,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "power": {
+    "number": 0,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "attack_card_img": "foreigner_class.png",
+  "effects": [
+    {
+      "effect_name": "foreigner_true_name_plus_power",
+      "shown_effect_name": "【真名解放】你和降临者各获得合计威力+6。将此牌加入降临者的弃牌堆",
+      "time_points": [
+        "self_true_name_release"
+      ],
+      "priority": 0,
+      "is_pure_passive": false,
+      "is_residue": false,
+      "effect_numbers": [],
+      "funcs": [
         {
-            "effect_name": "foreigner_true_name_plus_power",
-            "shown_effect_name": "【真名解放】你和降临者各获得合计威力+6，将此牌加入降临者的弃牌堆",
-            "time_points": [
-                "self_true_name_release"
-            ],
-            "priority": 0,
-            "is_pure_passive": false,
-            "is_residue": false,
-            "effect_numbers": [],
-            "funcs": [
-                {
-                    "func_name": "do_nothing",
-                    "parameters": [],
-                    "var_index": -1
-                }
-            ]
+          "func_name": "do_nothing",
+          "parameters": [],
+          "var_index": -1
         }
-    ]
+      ]
+    }
+  ],
+  "zoom_kind": "card"
 }

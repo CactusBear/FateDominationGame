@@ -11,101 +11,196 @@
         "skill_name": "twelve_labors",
         "shown_skill_name": "十二试炼",
         "skill_card_img": "00007_heracles_twelve_labors_1.png",
-        "attributes": ["noble_phantasm"],
-        "cost": { "number": 1, "can_change": true, "is_pure_number": true },
-        "power": { "number": 5, "can_change": true, "is_pure_number": true },
+        "attributes": [
+          "noble_phantasm"
+        ],
+        "cost": {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "power": {
+          "number": 5,
+          "can_change": true,
+          "is_pure_number": true
+        },
         "ignore_limit": false,
         "effects": [
           {
             "effect_name": "placeholder_twelve_labors_defeat_bonus",
             "shown_effect_name": "【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束",
-            "time_points": ["self_battle_lose"],
+            "time_points": [
+              "self_battle_lose"
+            ],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
             "effect_numbers": [
-              { "number": 3, "can_change": true, "is_pure_number": true },
-              { "number": 3, "can_change": true, "is_pure_number": true },
-              { "number": 3, "can_change": true, "is_pure_number": true }
+              {
+                "number": 3,
+                "can_change": true,
+                "is_pure_number": true
+              },
+              {
+                "number": 3,
+                "can_change": true,
+                "is_pure_number": true
+              },
+              {
+                "number": 3,
+                "can_change": true,
+                "is_pure_number": true
+              }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              {
+                "func_name": "do_nothing",
+                "parameters": [],
+                "var_index": -1
+              }
             ]
           }
-        ]
+        ],
+        "zoom_kind": "card"
       },
       {
         "skill_name": "twelve_labors",
         "shown_skill_name": "十二试炼",
         "skill_card_img": "00007_heracles_twelve_labors_2.png",
-        "attributes": ["noble_phantasm"],
-        "cost": { "number": 1, "can_change": true, "is_pure_number": true },
-        "power": { "number": 5, "can_change": true, "is_pure_number": true },
+        "attributes": [
+          "noble_phantasm"
+        ],
+        "cost": {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "power": {
+          "number": 5,
+          "can_change": true,
+          "is_pure_number": true
+        },
         "ignore_limit": false,
         "effects": [
           {
             "effect_name": "placeholder_twelve_labors_defeat_bonus",
             "shown_effect_name": "【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束",
-            "time_points": ["self_battle_lose"],
+            "time_points": [
+              "self_battle_lose"
+            ],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
             "effect_numbers": [
-              { "number": 3, "can_change": true, "is_pure_number": true },
-              { "number": 3, "can_change": true, "is_pure_number": true },
-              { "number": 3, "can_change": true, "is_pure_number": true }
+              {
+                "number": 3,
+                "can_change": true,
+                "is_pure_number": true
+              },
+              {
+                "number": 3,
+                "can_change": true,
+                "is_pure_number": true
+              },
+              {
+                "number": 3,
+                "can_change": true,
+                "is_pure_number": true
+              }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              {
+                "func_name": "do_nothing",
+                "parameters": [],
+                "var_index": -1
+              }
             ]
           }
-        ]
+        ],
+        "zoom_kind": "card"
       },
       {
         "skill_name": "twelve_labors",
         "shown_skill_name": "十二试炼",
         "skill_card_img": "00007_heracles_twelve_labors_3.png",
-        "attributes": ["noble_phantasm"],
-        "cost": { "number": 1, "can_change": true, "is_pure_number": true },
-        "power": { "number": 5, "can_change": true, "is_pure_number": true },
+        "attributes": [
+          "noble_phantasm"
+        ],
+        "cost": {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "power": {
+          "number": 5,
+          "can_change": true,
+          "is_pure_number": true
+        },
         "ignore_limit": false,
         "effects": [
           {
             "effect_name": "placeholder_twelve_labors_defeat_bonus",
             "shown_effect_name": "【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束",
-            "time_points": ["self_battle_lose"],
+            "time_points": [
+              "self_battle_lose"
+            ],
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
             "effect_numbers": [
-              { "number": 3, "can_change": true, "is_pure_number": true },
-              { "number": 3, "can_change": true, "is_pure_number": true },
-              { "number": 3, "can_change": true, "is_pure_number": true }
+              {
+                "number": 3,
+                "can_change": true,
+                "is_pure_number": true
+              },
+              {
+                "number": 3,
+                "can_change": true,
+                "is_pure_number": true
+              },
+              {
+                "number": 3,
+                "can_change": true,
+                "is_pure_number": true
+              }
             ],
             "funcs": [
-              { "func_name": "do_nothing", "parameters": [], "var_index": -1 }
+              {
+                "func_name": "do_nothing",
+                "parameters": [],
+                "var_index": -1
+              }
             ]
           }
-        ]
+        ],
+        "zoom_kind": "card"
       }
     ],
     "ATTACKS": [
-						"strength:2",
-			"strength:2",
-			"strength:3",
-			"strength:5",
-			"strength:5",
-			"strength:7",
-			"strength:9",
-			"agility:2",
-			"agility:4",
-			"agility:7",
-			"special:luck",
-			"special:luck"
-		],
+      "strength:2",
+      "strength:2",
+      "strength:3",
+      "strength:5",
+      "strength:5",
+      "strength:7",
+      "strength:9",
+      "agility:2",
+      "agility:4",
+      "agility:7",
+      "special:luck",
+      "special:luck"
+    ],
     "BUFFS": []
   },
   "tags": [
-    { "tag": "heracles", "name_list": ["heracles"], "type": "servant_tag" }
-  ]
+    {
+      "tag": "heracles",
+      "name_list": [
+        "heracles"
+      ],
+      "type": "servant_tag"
+    }
+  ],
+  "header_img_zoom_kind": "avatar",
+  "servant_card_img_zoom_kind": "card"
 }
