@@ -105,9 +105,13 @@ func _clone_effect(src:BaseEffect) -> BaseEffect:
 	cloned._options = cloned_options
 	cloned._chosen_selection = {}
 	cloned._option_use_counts = {}
+	#玩家挑中的牌属于场上状态，克隆体从空开始
+	cloned._selected_cards = []
 	cloned._self_vars = []
 	cloned._trigger_player_id = -1
 	cloned._trigger_time_points = []
+	#每局限一次的声明属于效果规则，跟着效果走(用量计数才是场上进度)
+	cloned._once_per_game = src._once_per_game
 	return cloned
 
 
@@ -256,6 +260,10 @@ func _copy_card_common(src:BaseCard, cloned:BaseCard) -> void:
 		cloned._is_activating = false
 		cloned._is_closed = false
 		cloned._cost_discount = _clone_number(src._cost_discount)
+		#打出规则与卡面提示属于卡面信息，跟着卡走；漏复制会让克隆牌的打出条件静默消失
+		cloned._play_requirements = src._play_requirements.duplicate(true)
+		cloned._shown_notes = src._shown_notes.duplicate()
+		cloned._need_extra_play = src._need_extra_play
 
 
 func _clone_tags(tags:Array) -> Array:

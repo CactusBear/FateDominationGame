@@ -27,7 +27,7 @@
         "ignore_limit": false,
         "effects": [
           {
-            "effect_name": "placeholder_riding_draw_with_basic_attack",
+            "effect_name": "riding_draw_with_basic_attack",
             "shown_effect_name": "打出时：若此牌与一张基础攻击一同打出，抽一张牌",
             "time_points": [
               "self_played_card"
@@ -38,9 +38,61 @@
             "effect_numbers": [],
             "funcs": [
               {
-                "func_name": "do_nothing",
-                "parameters": [],
-                "var_index": -1
+                "func_name": "get_player_data_value",
+                "parameters": [
+                  "played_attacks_this_turn"
+                ],
+                "var_index": 0
+              },
+              {
+                "func_name": "filter_by_property",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  "_category",
+                  "basic"
+                ],
+                "var_index": 1
+              },
+              {
+                "func_name": "array_length",
+                "parameters": [
+                  {
+                    "self_var": 1
+                  }
+                ],
+                "var_index": 2
+              },
+              {
+                "func_name": "compare_number",
+                "parameters": [
+                  {
+                    "self_var": 2
+                  },
+                  0
+                ],
+                "var_index": 3
+              },
+              {
+                "func_name": "if_func",
+                "parameters": [
+                  {
+                    "self_var": 3
+                  },
+                  1
+                ],
+                "var_index": 4
+              },
+              {
+                "func_name": "draw_card_from_pl_deck_to_hand",
+                "parameters": [
+                  0
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 4
+                }
               }
             ]
           },
@@ -142,7 +194,7 @@
         "ignore_limit": false,
         "effects": [
           {
-            "effect_name": "placeholder_petrification_defeat_if_no_magic_attack",
+            "effect_name": "petrification_defeat_if_no_magic_attack",
             "shown_effect_name": "【真名解放】行动阶段：在战斗阶段开始前，若与你进行战斗的对手本回合没有打出/加入魔术属性攻击，则其【败北】",
             "time_points": [
               "self_action_phase"
@@ -153,8 +205,80 @@
             "effect_numbers": [],
             "funcs": [
               {
-                "func_name": "do_nothing",
-                "parameters": [],
+                "func_name": "get_players_in_same_area",
+                "parameters": [
+                  -1,
+                  false
+                ],
+                "var_index": 0
+              },
+              {
+                "func_name": "foreach_func",
+                "parameters": [
+                  [
+                    {
+                      "func_name": "get_player_played_cards",
+                      "parameters": [
+                        null
+                      ],
+                      "var_index": 1
+                    },
+                    {
+                      "func_name": "get_cards_by_attributes_fr_arr",
+                      "parameters": [
+                        [
+                          "magic"
+                        ],
+                        {
+                          "self_var": 1
+                        }
+                      ],
+                      "var_index": 2
+                    },
+                    {
+                      "func_name": "array_length",
+                      "parameters": [
+                        {
+                          "self_var": 2
+                        }
+                      ],
+                      "var_index": 3
+                    },
+                    {
+                      "func_name": "compare_number",
+                      "parameters": [
+                        {
+                          "self_var": 3
+                        },
+                        0
+                      ],
+                      "var_index": 4
+                    },
+                    {
+                      "func_name": "if_func",
+                      "parameters": [
+                        {
+                          "self_var": 4
+                        },
+                        0
+                      ],
+                      "var_index": 5
+                    },
+                    {
+                      "func_name": "defeat",
+                      "parameters": [
+                        null
+                      ],
+                      "var_index": -1,
+                      "condition": {
+                        "self_var": 5
+                      }
+                    }
+                  ],
+                  {
+                    "self_var": 0
+                  }
+                ],
                 "var_index": -1
               }
             ]

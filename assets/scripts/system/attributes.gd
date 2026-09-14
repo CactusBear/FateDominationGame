@@ -24,8 +24,8 @@ const all_attributes:Array = [
 #dic
 const shown_attributes:Dictionary = {
 	STRENGTH : "力量",
-	AGILITY : "敏捷",
-	MAGIC : "魔力",
+	AGILITY : "迅捷",
+	MAGIC : "魔术",
 	SPECIAL : "特殊",
 	NOBLE_PHANTASM : "宝具"
 }

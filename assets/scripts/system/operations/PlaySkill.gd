@@ -9,6 +9,9 @@ func exec(skill:BaseSkill, player_id:int = -1, ignore_limit:bool = false, cost:B
 	#但不影响已激活的牌和能力的其他使用。按效果名通用查询，不关心具体buff类型
 	if PlayerBuffsHaveEffect.new().exec(CannotPlayCardsEffect.EFFECT_NAME, id):
 		return
+	#卡面声明的打出条件与"需追加打出"，与攻击牌共用同一套判断
+	if !PlayRules.can_play(skill, player_data):
+		return
 	var pl_magic = player_data["magic"] as BaseNumber
 	var is_magic_immune = player_data["is_magic_immune"] as bool
 	var ignore_zone_limit = player_data["ignore_skill_zone_magic_limit"] as bool

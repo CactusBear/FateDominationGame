@@ -60,6 +60,11 @@ func _init():
 	magic_workshop._move_cost = BaseNumber.new(1)
 	#工房区的战果不通过战斗获得，因此不参与战力结算
 	magic_workshop._score_need_win = false
+	#前哨阶段可部署的战区由地图数据声明（缺声明的战区不具备部署席位）：
+	#工房=魔力充能席、深山町/新都=地利席，侦察区只作先锋席，不接受常规部署
+	magic_workshop._can_deploy = true
+	miyama._can_deploy = true
+	shinto._can_deploy = true
 	
 	miyama._locations = [
 		miyama0,

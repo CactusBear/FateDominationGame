@@ -217,115 +217,683 @@
 		},
 		"effects": [
 		  {
-			"effect_name": "jewel_sorcery_action",
-			"shown_effect_name": "行动阶段：选择一项本回合没有选择过的选项",
-			"time_points": [
-			  "self_action_phase",
-              "self_non_climax"
-			],
-			"priority": 0,
-			"is_pure_passive": false,
-			"is_residue": false,
-			"effect_numbers": [],
-			"max_choices": 1,
-			"reset_counts_each_round": true,
-			"consumes_source_resource": true,
-			"options": [
-			  {
-				"shown_option_name": "获得1点魔力",
-				"max_uses": 1,
-				"funcs": [
-				  {
-					"func_name": "do_nothing",
-					"parameters": [],
-					"var_index": -1
-				  }
-				]
-			  },
-			  {
-				"shown_option_name": "打出一张游戏外的【阴炁弹】",
-				"max_uses": 1,
-				"funcs": [
-				  {
-					"func_name": "do_nothing",
-					"parameters": [],
-					"var_index": -1
-				  }
-				]
-			  },
-			  {
-				"shown_option_name": "弃置1-3张牌，然后抽取相同数量的牌",
-				"max_uses": 1,
-				"quantity_range": [
-				  1,
-				  3
-				],
-				"funcs": [
-				  {
-					"func_name": "do_nothing",
-					"parameters": [],
-					"var_index": -1
-				  }
-				]
-			  }
-			],
-			"require_all_time_points": true
+		    "effect_name": "jewel_sorcery_action",
+		    "shown_effect_name": "行动阶段：选择一项本回合没有选择过的选项",
+		    "time_points": [
+		      "self_action_phase",
+		      "self_non_climax"
+		    ],
+		    "priority": 0,
+		    "is_pure_passive": false,
+		    "is_residue": false,
+		    "effect_numbers": [
+		      {
+		        "number": 1,
+		        "can_change": true,
+		        "is_pure_number": true
+		      }
+		    ],
+		    "max_choices": 1,
+		    "reset_counts_each_round": true,
+		    "consumes_source_resource": true,
+		    "options": [
+		      {
+		        "shown_option_name": "获得1点魔力",
+		        "max_uses": 1,
+		        "funcs": [
+		          {
+		            "func_name": "get_player_master",
+		            "parameters": [],
+		            "var_index": 0
+		          },
+		          {
+		            "func_name": "get_property",
+		            "parameters": [
+		              {
+		                "self_var": 0
+		              },
+		              "_other_things"
+		            ],
+		            "var_index": 1
+		          },
+		          {
+		            "func_name": "get_cards_by_name_fr_arr",
+		            "parameters": [
+		              "jewel_card",
+		              {
+		                "self_var": 1
+		              }
+		            ],
+		            "var_index": 2
+		          },
+		          {
+		            "func_name": "get_card_by_index_fr_arr",
+		            "parameters": [
+		              0,
+		              {
+		                "self_var": 2
+		              }
+		            ],
+		            "var_index": 3
+		          },
+		          {
+		            "func_name": "get_pl_others_out_game",
+		            "parameters": [],
+		            "var_index": 4
+		          },
+		          {
+		            "func_name": "draw_card_by_card",
+		            "parameters": [
+		              {
+		                "self_var": 3
+		              },
+		              {
+		                "self_var": 1
+		              },
+		              {
+		                "self_var": 4
+		              }
+		            ]
+		          },
+		          {
+		            "func_name": "edit_magic",
+		            "parameters": [
+		              null,
+		              {
+		                "number_index": 0
+		              }
+		            ]
+		          }
+		        ]
+		      },
+		      {
+		        "shown_option_name": "打出一张游戏外的【阴炁弹】",
+		        "max_uses": 1,
+		        "funcs": [
+		          {
+		            "func_name": "get_player_master",
+		            "parameters": [],
+		            "var_index": 0
+		          },
+		          {
+		            "func_name": "get_property",
+		            "parameters": [
+		              {
+		                "self_var": 0
+		              },
+		              "_other_things"
+		            ],
+		            "var_index": 1
+		          },
+		          {
+		            "func_name": "get_cards_by_name_fr_arr",
+		            "parameters": [
+		              "jewel_card",
+		              {
+		                "self_var": 1
+		              }
+		            ],
+		            "var_index": 2
+		          },
+		          {
+		            "func_name": "get_card_by_index_fr_arr",
+		            "parameters": [
+		              0,
+		              {
+		                "self_var": 2
+		              }
+		            ],
+		            "var_index": 3
+		          },
+		          {
+		            "func_name": "get_pl_others_out_game",
+		            "parameters": [],
+		            "var_index": 4
+		          },
+		          {
+		            "func_name": "draw_card_by_card",
+		            "parameters": [
+		              {
+		                "self_var": 3
+		              },
+		              {
+		                "self_var": 1
+		              },
+		              {
+		                "self_var": 4
+		              }
+		            ]
+		          },
+		          {
+		            "func_name": "get_pl_attacks_out_game",
+		            "parameters": [],
+		            "var_index": 5
+		          },
+		          {
+		            "func_name": "get_cards_by_name_fr_arr",
+		            "parameters": [
+		              "yin_qi_bullet",
+		              {
+		                "self_var": 5
+		              }
+		            ],
+		            "var_index": 6
+		          },
+		          {
+		            "func_name": "get_card_by_index_fr_arr",
+		            "parameters": [
+		              0,
+		              {
+		                "self_var": 6
+		              }
+		            ],
+		            "var_index": 7
+		          },
+		          {
+		            "func_name": "get_player_hand_cards",
+		            "parameters": [],
+		            "var_index": 8
+		          },
+		          {
+		            "func_name": "draw_card_by_card",
+		            "parameters": [
+		              {
+		                "self_var": 7
+		              },
+		              {
+		                "self_var": 5
+		              },
+		              {
+		                "self_var": 8
+		              }
+		            ]
+		          },
+		          {
+		            "func_name": "play_attack",
+		            "parameters": [
+		              {
+		                "self_var": 7
+		              }
+		            ]
+		          }
+		        ]
+		      },
+		      {
+		        "shown_option_name": "弃置1-3张牌，然后抽取相同数量的牌",
+		        "max_uses": 1,
+		        "funcs": [
+		          {
+		            "func_name": "get_player_master",
+		            "parameters": [],
+		            "var_index": 0
+		          },
+		          {
+		            "func_name": "get_property",
+		            "parameters": [
+		              {
+		                "self_var": 0
+		              },
+		              "_other_things"
+		            ],
+		            "var_index": 1
+		          },
+		          {
+		            "func_name": "get_cards_by_name_fr_arr",
+		            "parameters": [
+		              "jewel_card",
+		              {
+		                "self_var": 1
+		              }
+		            ],
+		            "var_index": 2
+		          },
+		          {
+		            "func_name": "get_card_by_index_fr_arr",
+		            "parameters": [
+		              0,
+		              {
+		                "self_var": 2
+		              }
+		            ],
+		            "var_index": 3
+		          },
+		          {
+		            "func_name": "get_pl_others_out_game",
+		            "parameters": [],
+		            "var_index": 4
+		          },
+		          {
+		            "func_name": "draw_card_by_card",
+		            "parameters": [
+		              {
+		                "self_var": 3
+		              },
+		              {
+		                "self_var": 1
+		              },
+		              {
+		                "self_var": 4
+		              }
+		            ]
+		          },
+		          {
+		            "func_name": "get_player_hand_cards",
+		            "parameters": [],
+		            "var_index": 5
+		          },
+		          {
+		            "func_name": "get_player_discard",
+		            "parameters": [],
+		            "var_index": 6
+		          },
+		          {
+		            "func_name": "get_activating_eff",
+		            "parameters": [],
+		            "var_index": 7
+		          },
+		          {
+		            "func_name": "get_property",
+		            "parameters": [
+		              {
+		                "self_var": 7
+		              },
+		              "_selected_cards"
+		            ],
+		            "var_index": 8
+		          },
+		          {
+		            "func_name": "foreach_func",
+		            "parameters": [
+		              [
+		                {
+		                  "func_name": "draw_card_by_card",
+		                  "parameters": [
+		                    null,
+		                    {
+		                      "self_var": 5
+		                    },
+		                    {
+		                      "self_var": 6
+		                    }
+		                  ]
+		                }
+		              ],
+		              {
+		                "self_var": 8
+		              }
+		            ]
+		          },
+		          {
+		            "func_name": "array_length",
+		            "parameters": [
+		              {
+		                "self_var": 8
+		              }
+		            ],
+		            "var_index": 9
+		          },
+		          {
+		            "func_name": "for_func",
+		            "parameters": [
+		              [
+		                {
+		                  "func_name": "draw_card_from_pl_deck_to_hand",
+		                  "parameters": [
+		                    0
+		                  ]
+		                }
+		              ],
+		              {
+		                "self_var": 9
+		              }
+		            ]
+		          }
+		        ],
+		        "select_cards": {
+		          "source": "hand_cards",
+		          "min": 1,
+		          "max": 3
+		        }
+		      }
+		    ],
+		    "require_all_time_points": true
 		  },
 		  {
-			"effect_name": "jewel_sorcery_climax",
-			"shown_effect_name": "高潮回合的行动阶段：可以选择相同的选项，每个选项至多3次，共计9次",
-			"time_points": [
-			  "self_action_phase",
-              "self_climax"
-			],
-			"priority": 0,
-			"is_pure_passive": false,
-			"is_residue": false,
-			"effect_numbers": [],
-			"max_choices": 1,
-			"max_total_uses": 9,
-			"reset_counts_each_round": true,
-			"consumes_source_resource": true,
-			"options": [
-			  {
-				"shown_option_name": "获得1点魔力",
-				"max_uses": 3,
-				"funcs": [
-				  {
-					"func_name": "do_nothing",
-					"parameters": [],
-					"var_index": -1
-				  }
-				]
-			  },
-			  {
-				"shown_option_name": "打出一张游戏外的【阴炁弹】",
-				"max_uses": 3,
-				"funcs": [
-				  {
-					"func_name": "do_nothing",
-					"parameters": [],
-					"var_index": -1
-				  }
-				]
-			  },
-			  {
-				"shown_option_name": "弃置1-3张牌，然后抽取相同数量的牌",
-				"max_uses": 3,
-				"quantity_range": [
-				  1,
-				  3
-				],
-				"funcs": [
-				  {
-					"func_name": "do_nothing",
-					"parameters": [],
-					"var_index": -1
-				  }
-				]
-			  }
-			],
-			"require_all_time_points": true
+		    "effect_name": "jewel_sorcery_climax",
+		    "shown_effect_name": "高潮回合的行动阶段：可以选择相同的选项，每个选项至多3次，共计9次",
+		    "time_points": [
+		      "self_action_phase",
+		      "self_climax"
+		    ],
+		    "priority": 0,
+		    "is_pure_passive": false,
+		    "is_residue": false,
+		    "effect_numbers": [],
+		    "max_choices": 1,
+		    "max_total_uses": 9,
+		    "reset_counts_each_round": true,
+		    "consumes_source_resource": true,
+		    "options": [
+		      {
+		        "shown_option_name": "获得1点魔力",
+		        "max_uses": 3,
+		        "funcs": [
+		          {
+		            "func_name": "get_player_master",
+		            "parameters": [],
+		            "var_index": 0
+		          },
+		          {
+		            "func_name": "get_property",
+		            "parameters": [
+		              {
+		                "self_var": 0
+		              },
+		              "_other_things"
+		            ],
+		            "var_index": 1
+		          },
+		          {
+		            "func_name": "get_cards_by_name_fr_arr",
+		            "parameters": [
+		              "jewel_card",
+		              {
+		                "self_var": 1
+		              }
+		            ],
+		            "var_index": 2
+		          },
+		          {
+		            "func_name": "get_card_by_index_fr_arr",
+		            "parameters": [
+		              0,
+		              {
+		                "self_var": 2
+		              }
+		            ],
+		            "var_index": 3
+		          },
+		          {
+		            "func_name": "get_pl_others_out_game",
+		            "parameters": [],
+		            "var_index": 4
+		          },
+		          {
+		            "func_name": "draw_card_by_card",
+		            "parameters": [
+		              {
+		                "self_var": 3
+		              },
+		              {
+		                "self_var": 1
+		              },
+		              {
+		                "self_var": 4
+		              }
+		            ]
+		          },
+		          {
+		            "func_name": "edit_magic",
+		            "parameters": [
+		              null,
+		              {
+		                "number_index": 0
+		              }
+		            ]
+		          }
+		        ]
+		      },
+		      {
+		        "shown_option_name": "打出一张游戏外的【阴炁弹】",
+		        "max_uses": 3,
+		        "funcs": [
+		          {
+		            "func_name": "get_player_master",
+		            "parameters": [],
+		            "var_index": 0
+		          },
+		          {
+		            "func_name": "get_property",
+		            "parameters": [
+		              {
+		                "self_var": 0
+		              },
+		              "_other_things"
+		            ],
+		            "var_index": 1
+		          },
+		          {
+		            "func_name": "get_cards_by_name_fr_arr",
+		            "parameters": [
+		              "jewel_card",
+		              {
+		                "self_var": 1
+		              }
+		            ],
+		            "var_index": 2
+		          },
+		          {
+		            "func_name": "get_card_by_index_fr_arr",
+		            "parameters": [
+		              0,
+		              {
+		                "self_var": 2
+		              }
+		            ],
+		            "var_index": 3
+		          },
+		          {
+		            "func_name": "get_pl_others_out_game",
+		            "parameters": [],
+		            "var_index": 4
+		          },
+		          {
+		            "func_name": "draw_card_by_card",
+		            "parameters": [
+		              {
+		                "self_var": 3
+		              },
+		              {
+		                "self_var": 1
+		              },
+		              {
+		                "self_var": 4
+		              }
+		            ]
+		          },
+		          {
+		            "func_name": "get_pl_attacks_out_game",
+		            "parameters": [],
+		            "var_index": 5
+		          },
+		          {
+		            "func_name": "get_cards_by_name_fr_arr",
+		            "parameters": [
+		              "yin_qi_bullet",
+		              {
+		                "self_var": 5
+		              }
+		            ],
+		            "var_index": 6
+		          },
+		          {
+		            "func_name": "get_card_by_index_fr_arr",
+		            "parameters": [
+		              0,
+		              {
+		                "self_var": 6
+		              }
+		            ],
+		            "var_index": 7
+		          },
+		          {
+		            "func_name": "get_player_hand_cards",
+		            "parameters": [],
+		            "var_index": 8
+		          },
+		          {
+		            "func_name": "draw_card_by_card",
+		            "parameters": [
+		              {
+		                "self_var": 7
+		              },
+		              {
+		                "self_var": 5
+		              },
+		              {
+		                "self_var": 8
+		              }
+		            ]
+		          },
+		          {
+		            "func_name": "play_attack",
+		            "parameters": [
+		              {
+		                "self_var": 7
+		              }
+		            ]
+		          }
+		        ]
+		      },
+		      {
+		        "shown_option_name": "弃置1-3张牌，然后抽取相同数量的牌",
+		        "max_uses": 3,
+		        "funcs": [
+		          {
+		            "func_name": "get_player_master",
+		            "parameters": [],
+		            "var_index": 0
+		          },
+		          {
+		            "func_name": "get_property",
+		            "parameters": [
+		              {
+		                "self_var": 0
+		              },
+		              "_other_things"
+		            ],
+		            "var_index": 1
+		          },
+		          {
+		            "func_name": "get_cards_by_name_fr_arr",
+		            "parameters": [
+		              "jewel_card",
+		              {
+		                "self_var": 1
+		              }
+		            ],
+		            "var_index": 2
+		          },
+		          {
+		            "func_name": "get_card_by_index_fr_arr",
+		            "parameters": [
+		              0,
+		              {
+		                "self_var": 2
+		              }
+		            ],
+		            "var_index": 3
+		          },
+		          {
+		            "func_name": "get_pl_others_out_game",
+		            "parameters": [],
+		            "var_index": 4
+		          },
+		          {
+		            "func_name": "draw_card_by_card",
+		            "parameters": [
+		              {
+		                "self_var": 3
+		              },
+		              {
+		                "self_var": 1
+		              },
+		              {
+		                "self_var": 4
+		              }
+		            ]
+		          },
+		          {
+		            "func_name": "get_player_hand_cards",
+		            "parameters": [],
+		            "var_index": 5
+		          },
+		          {
+		            "func_name": "get_player_discard",
+		            "parameters": [],
+		            "var_index": 6
+		          },
+		          {
+		            "func_name": "get_activating_eff",
+		            "parameters": [],
+		            "var_index": 7
+		          },
+		          {
+		            "func_name": "get_property",
+		            "parameters": [
+		              {
+		                "self_var": 7
+		              },
+		              "_selected_cards"
+		            ],
+		            "var_index": 8
+		          },
+		          {
+		            "func_name": "foreach_func",
+		            "parameters": [
+		              [
+		                {
+		                  "func_name": "draw_card_by_card",
+		                  "parameters": [
+		                    null,
+		                    {
+		                      "self_var": 5
+		                    },
+		                    {
+		                      "self_var": 6
+		                    }
+		                  ]
+		                }
+		              ],
+		              {
+		                "self_var": 8
+		              }
+		            ]
+		          },
+		          {
+		            "func_name": "array_length",
+		            "parameters": [
+		              {
+		                "self_var": 8
+		              }
+		            ],
+		            "var_index": 9
+		          },
+		          {
+		            "func_name": "for_func",
+		            "parameters": [
+		              [
+		                {
+		                  "func_name": "draw_card_from_pl_deck_to_hand",
+		                  "parameters": [
+		                    0
+		                  ]
+		                }
+		              ],
+		              {
+		                "self_var": 9
+		              }
+		            ]
+		          }
+		        ],
+		        "select_cards": {
+		          "source": "hand_cards",
+		          "min": 1,
+		          "max": 3
+		        }
+		      }
+		    ],
+		    "require_all_time_points": true
 		  }
 		]
 	  }
@@ -470,16 +1038,97 @@
 	  "type": "master_tag"
 	}
   ],
-  "other_master_things": [
-	{
-	  "thing_name": "jewel_card",
-	  "shown_thing_name": "宝石",
-	  "card_img": "00002_tohsaka_rin_jewels.png",
-	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
-	  "effects": [],
-	  "zoom_kind": "card",
-	  "relate_buff": "jewels"
-	}
+  "other_master_things":   [
+    {
+      "thing_name": "jewel_card",
+      "shown_thing_name": "宝石",
+      "card_img": "00002_tohsaka_rin_jewels.png",
+      "card_back_img": "00002_tohsaka_rin_jewels_back.png",
+      "effects": [],
+      "zoom_kind": "card",
+      "relate_buff": "jewels"
+    },
+    {
+      "thing_name": "jewel_card",
+      "shown_thing_name": "宝石",
+      "card_img": "00002_tohsaka_rin_jewels.png",
+      "card_back_img": "00002_tohsaka_rin_jewels_back.png",
+      "effects": [],
+      "zoom_kind": "card",
+      "relate_buff": "jewels"
+    },
+    {
+      "thing_name": "jewel_card",
+      "shown_thing_name": "宝石",
+      "card_img": "00002_tohsaka_rin_jewels.png",
+      "card_back_img": "00002_tohsaka_rin_jewels_back.png",
+      "effects": [],
+      "zoom_kind": "card",
+      "relate_buff": "jewels"
+    },
+    {
+      "thing_name": "jewel_card",
+      "shown_thing_name": "宝石",
+      "card_img": "00002_tohsaka_rin_jewels.png",
+      "card_back_img": "00002_tohsaka_rin_jewels_back.png",
+      "effects": [],
+      "zoom_kind": "card",
+      "relate_buff": "jewels"
+    },
+    {
+      "thing_name": "jewel_card",
+      "shown_thing_name": "宝石",
+      "card_img": "00002_tohsaka_rin_jewels.png",
+      "card_back_img": "00002_tohsaka_rin_jewels_back.png",
+      "effects": [],
+      "zoom_kind": "card",
+      "relate_buff": "jewels"
+    },
+    {
+      "thing_name": "jewel_card",
+      "shown_thing_name": "宝石",
+      "card_img": "00002_tohsaka_rin_jewels.png",
+      "card_back_img": "00002_tohsaka_rin_jewels_back.png",
+      "effects": [],
+      "zoom_kind": "card",
+      "relate_buff": "jewels"
+    },
+    {
+      "thing_name": "jewel_card",
+      "shown_thing_name": "宝石",
+      "card_img": "00002_tohsaka_rin_jewels.png",
+      "card_back_img": "00002_tohsaka_rin_jewels_back.png",
+      "effects": [],
+      "zoom_kind": "card",
+      "relate_buff": "jewels"
+    },
+    {
+      "thing_name": "jewel_card",
+      "shown_thing_name": "宝石",
+      "card_img": "00002_tohsaka_rin_jewels.png",
+      "card_back_img": "00002_tohsaka_rin_jewels_back.png",
+      "effects": [],
+      "zoom_kind": "card",
+      "relate_buff": "jewels"
+    },
+    {
+      "thing_name": "jewel_card",
+      "shown_thing_name": "宝石",
+      "card_img": "00002_tohsaka_rin_jewels.png",
+      "card_back_img": "00002_tohsaka_rin_jewels_back.png",
+      "effects": [],
+      "zoom_kind": "card",
+      "relate_buff": "jewels"
+    },
+    {
+      "thing_name": "jewel_card",
+      "shown_thing_name": "宝石",
+      "card_img": "00002_tohsaka_rin_jewels.png",
+      "card_back_img": "00002_tohsaka_rin_jewels_back.png",
+      "effects": [],
+      "zoom_kind": "card",
+      "relate_buff": "jewels"
+    }
   ],
   "header_img_zoom_kind": "avatar",
   "master_card_img_zoom_kind": "card",

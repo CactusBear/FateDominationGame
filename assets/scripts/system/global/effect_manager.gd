@@ -17,6 +17,14 @@ var decision_queue:Array#[BaseEffect]
 var activation_pool:Array#[BaseEffect]
 #正在等待其归属玩家答复的效果，非null时整条流程暂停
 var waiting_effect:BaseEffect
+#正在等待玩家挑具体牌张的效果（被选中的选项声明了 select_cards）。
+#与 waiting_effect 并列的第二种等待：前者等"发动/放弃"，这里等"挑哪几张牌"；
+#两者不会同时非null——选项提交先过 waiting_effect，再进选牌等待
+var waiting_selection:BaseEffect = null
+#正在等待选牌的那个选项下标（声明挂在选项字典里，所以要知道是第几项）
+var _waiting_selection_option:int = -1
+#{BaseEffect : Dictionary}，等选牌期间暂扣的选项提交，挑完牌再一起记用量/扣资源
+var _pending_selection_choice:Dictionary = {}
 #{BaseEffect : Array[String]}，效果是因哪些时点命中的，供关闭时点时判断是否要打断
 var matched_time_points:Dictionary
 #{BaseEffect : int}，本时点已结算过的效果，避免同一时点内重复触发
@@ -64,6 +72,9 @@ func reset_runtime():
 	decision_queue.clear()
 	activation_pool.clear()
 	waiting_effect = null
+	waiting_selection = null
+	_waiting_selection_option = -1
+	_pending_selection_choice.clear()
 	messages.clear()
 	matched_time_points.clear()
 	resolved_effects.clear()
@@ -263,6 +274,10 @@ func unregister_effect(effect:BaseEffect):
 	matched_time_points.erase(effect)
 	if waiting_effect == effect:
 		waiting_effect = null
+	if waiting_selection == effect:
+		waiting_selection = null
+		_waiting_selection_option = -1
+		_pending_selection_choice.erase(effect)
 	var id = effect._trigger_player_id
 	if id != -1:
 		var pl_data = GameDataManager.get_player_data(id) as Dictionary
@@ -321,6 +336,9 @@ func collect_current_effects():
 #_need_activate表示"这个效果需不需要卡牌处于激活状态"。
 #纯被动不受此限制——规则里"被动："满足条件即强制生效，即使印刷此文本的卡牌未被展示
 func card_state_allows(effect:BaseEffect) -> bool:
+	#声明了每局限一次的效果，本局已经触发过就不再进决断队列
+	if effect._once_per_game and is_effect_used_once(effect):
+		return false
 	if effect._is_pure_passive:
 		return true
 	if !effect._need_activate:
@@ -384,8 +402,8 @@ func sort_by_priority(effects:Array):
 func run_pipeline():
 	is_running = true
 	while true:
-		#等玩家答复，由submit_active_choice继续跑
-		if waiting_effect != null:
+		#等玩家答复或被要求挑牌，由 submit_active_choice / submit_card_selection 继续跑
+		if waiting_effect != null or waiting_selection != null:
 			break
 		if !decision_queue.is_empty():
 			drain_decision_queue()
@@ -421,6 +439,166 @@ func get_pending_active_effect() -> BaseEffect:
 	return waiting_effect
 
 
+#把"每局限一次"的效果名记进触发者的 used_once_effects。
+#不按效果各加一个bool字段——新增一次性效果只要在JSON里声明 once_per_game
+func mark_effect_used_once(effect:BaseEffect) -> void:
+	if effect == null or !effect._once_per_game:
+		return
+	var id:int = effect._trigger_player_id
+	if id < 0:
+		return
+	var player_data:Dictionary = GameDataManager.get_player_data(id)
+	if player_data == null or player_data.is_empty():
+		return
+	if !(player_data.get("used_once_effects") is Array):
+		player_data["used_once_effects"] = []
+	var used:Array = player_data["used_once_effects"]
+	if !used.has(effect._name):
+		used.append(effect._name)
+
+
+#本局是否已经触发过这个效果
+func is_effect_used_once(effect:BaseEffect) -> bool:
+	if effect == null:
+		return false
+	var id:int = effect._trigger_player_id
+	if id < 0:
+		return false
+	var player_data:Dictionary = GameDataManager.get_player_data(id)
+	if player_data == null or player_data.is_empty():
+		return false
+	var used = player_data.get("used_once_effects")
+	return used is Array and (used as Array).has(effect._name)
+
+
+#效果自己的魔力消耗(effect._cost)：付得起返回true并扣掉，付不起返回false。
+#与卡牌出牌同一套规则：无限魔力(is_magic_immune)状态下不检查也不扣；
+#扣费复用EditMagic，让魔力变化照常派发MAGIC_DECREASE时点。没声明cost的效果直接放行
+func pay_effect_cost(effect:BaseEffect) -> bool:
+	if effect == null or !(effect._cost is BaseNumber):
+		return true
+	var cost:BaseNumber = effect._cost
+	if cost.number <= 0:
+		return true
+	var id:int = effect._trigger_player_id
+	if id < 0:
+		id = GameData.player_id
+	var player_data:Dictionary = GameDataManager.get_player_data(id)
+	if player_data == null or player_data.is_empty():
+		return false
+	if player_data.get("is_magic_immune", false):
+		return true
+	var magic = player_data["magic"] as BaseNumber
+	if magic == null or magic.number < cost.number:
+		return false
+	EditMagic.new().exec(null, BaseNumber.new(0 - cost.number), id)
+	return true
+
+
+#正在等待玩家挑牌的效果信息，供界面生成选牌面板；没有等待时返回空字典
+func get_pending_card_selection() -> Dictionary:
+	if waiting_selection == null:
+		return {}
+	var spec := card_selection_spec(waiting_selection)
+	return {
+		"effect" : waiting_selection,
+		"shown_name" : waiting_selection.get_shown_name(),
+		"min" : int(spec.get("min", 1)),
+		"max" : int(spec.get("max", 1)),
+		"cards" : card_selection_source(waiting_selection)
+	}
+
+
+func is_waiting_for_card_selection() -> bool:
+	return waiting_selection != null
+
+
+#当前等待挑牌的这次声明的选牌要求（选项级）。没有等待或该项没声明时返回空字典
+func card_selection_spec(effect:BaseEffect) -> Dictionary:
+	if effect == null or _waiting_selection_option < 0 or _waiting_selection_option >= effect._options.size():
+		return {}
+	var spec = effect._options[_waiting_selection_option].get("select_cards", null)
+	if !(spec is Dictionary):
+		return {}
+	return spec
+
+
+#挑牌的来源数组：按声明的 source（player_data 的键名）取。
+#来源由数据声明而不是写死手牌——以后"从弃牌堆挑一张"之类不必改这里
+func card_selection_source(effect:BaseEffect) -> Array:
+	if effect == null:
+		return []
+	var spec := card_selection_spec(effect)
+	var key := str(spec.get("source", ""))
+	if key == "":
+		return []
+	var pl_data = GameDataManager.get_player_data(effect._trigger_player_id) as Dictionary
+	if pl_data == null or !pl_data.has(key):
+		return []
+	var arr = pl_data[key]
+	if arr is Array:
+		return arr
+	return []
+
+
+#本次提交里第一个"还要求玩家挑牌"的选项下标（没有则 -1）。
+#一次提交只处理一个：当前规则一次只选一项，多选场景下"挑完一个再问下一个"不属于本函数职责
+func _option_requiring_card_selection(effect:BaseEffect, selection:Dictionary) -> int:
+	for idx in selection.keys():
+		if !(idx is int) or idx < 0 or idx >= effect._options.size():
+			continue
+		var spec = effect._options[idx].get("select_cards", null)
+		if spec is Dictionary and int(spec.get("max", 1)) != 0:
+			return idx
+	return -1
+
+
+#玩家为选牌提交了具体牌张。张数或来源不合法时整体视为放弃：
+#此刻资源与用量都还没动过，所以放弃等价于"这个效果没发动"，不会白扣宝石层数
+func submit_card_selection(effect:BaseEffect, cards:Array) -> bool:
+	if effect == null or waiting_selection != effect:
+		return false
+	#声明与来源必须在清掉等待状态之前取好：card_selection_spec 依赖 _waiting_selection_option，
+	#先清状态再校验会取到空声明、让合法提交也被判非法
+	var spec := card_selection_spec(effect)
+	var source := card_selection_source(effect)
+	var pending:Dictionary = _pending_selection_choice.get(effect, {})
+	waiting_selection = null
+	_waiting_selection_option = -1
+	_pending_selection_choice.erase(effect)
+	if spec.is_empty() or !_is_card_selection_valid(spec, source, cards):
+		effect._selected_cards = []
+		if !is_running:
+			run_pipeline()
+		return false
+	effect._selected_cards = cards.duplicate()
+	#挑完牌才真正记用量/扣来源资源，然后把效果交给结算
+	record_selection_usage(effect, pending)
+	decision_queue.erase(effect)
+	add_to_activation_pool(effect)
+	if !is_running:
+		run_pipeline()
+	return true
+
+
+#spec 与 source 都由调用方先取好再传进来：这个判断本身不读等待状态，
+#免得"先清状态后校验"的顺序问题又把合法提交判成非法
+func _is_card_selection_valid(spec:Dictionary, source:Array, cards:Array) -> bool:
+	var low:int = int(spec.get("min", 1))
+	var high:int = int(spec.get("max", low))
+	if cards.size() < low:
+		return false
+	if high != -1 and cards.size() > high:
+		return false
+	var picked:Array = []
+	for card in cards:
+		#必须来自声明的来源区，且同一张牌不能重复提交
+		if card == null or !source.has(card) or picked.has(card):
+			return false
+		picked.append(card)
+	return true
+
+
 func is_waiting_for_choice() -> bool:
 	return waiting_effect != null
 
@@ -433,6 +611,11 @@ func submit_active_choice(effect:BaseEffect, should_activate:bool) -> bool:
 	decision_queue.erase(effect)
 	waiting_effect = null
 	if should_activate:
+		#付不起效果自己声明的魔力消耗就当作放弃，避免结算到一半才发现扣不动
+		if !pay_effect_cost(effect):
+			if !is_running:
+				run_pipeline()
+			return false
 		add_to_activation_pool(effect)
 	if !is_running:
 		run_pipeline()
@@ -456,6 +639,16 @@ func submit_option_choice(effect:BaseEffect, selection) -> bool:
 		return submit_active_choice(effect, false)
 	if !validate_selection(effect, selection_dict):
 		return submit_active_choice(effect, false)
+	#选中的选项还要求玩家挑具体牌张时，先停下等挑牌：
+	#此刻刻意不记用量也不扣来源资源，玩家取消挑牌时等于"这个效果没发动"，不会白扣
+	var selection_option := _option_requiring_card_selection(effect, selection_dict)
+	if selection_option != -1:
+		decision_queue.erase(effect)
+		waiting_effect = null
+		waiting_selection = effect
+		_waiting_selection_option = selection_option
+		_pending_selection_choice[effect] = selection_dict
+		return true
 	record_selection_usage(effect, selection_dict)
 	return submit_active_choice(effect, true)
 
@@ -528,9 +721,13 @@ func prune_closed():
 		if matched.is_empty():
 			decision_queue.erase(effect)
 			activation_pool.erase(effect)
-			#正在等待答复的效果也一并打断
+			#正在等待答复或等待挑牌的效果也一并打断
 			if waiting_effect == effect:
 				waiting_effect = null
+			if waiting_selection == effect:
+				waiting_selection = null
+				_waiting_selection_option = -1
+				_pending_selection_choice.erase(effect)
 
 
 func is_pruned(effect:BaseEffect) -> bool:
@@ -549,6 +746,10 @@ func counter_effect(effect:BaseEffect, countered_func:BaseFunc = null):
 		activation_pool.erase(effect)
 		if waiting_effect == effect:
 			waiting_effect = null
+		if waiting_selection == effect:
+			waiting_selection = null
+			_waiting_selection_option = -1
+			_pending_selection_choice.erase(effect)
 		return
 	var funcs = countered_funcs.get(effect, []) as Array
 	if !funcs.has(countered_func):
@@ -576,8 +777,9 @@ func end_effect():
 	TimePointChecker.time_point_check()
 
 
-#把占位符解析成实际值。{"number_index":i}取效果自带的数字，{"self_var":i}取前面func存下的返回值
-#返回[是否解析成功, 值]，越界或下标为-1时视为失败
+#把占位符解析成实际值。{"number_index":i}取效果自带的数字，{"self_var":i}取前面func存下的返回值，
+#{"option_quantity_index":i}取第 i 个选项本次玩家额外选定的数量(选项声明了quantity_range才有)。
+#返回[是否解析成功, 值]，越界或下标为-1、或该项数量没被玩家设定时视为失败
 func resolve_placeholder(para, effect:BaseEffect) -> Array:
 	if !(para is Dictionary):
 		return [true, para]
@@ -587,6 +789,17 @@ func resolve_placeholder(para, effect:BaseEffect) -> Array:
 		if i < 0 or i >= effect._using_numbers.size():
 			return [false, null]
 		return [true, effect._using_numbers[i]]
+
+	if para.has("option_quantity_index"):
+		var oi = para["option_quantity_index"] as int
+		if oi < 0 or oi >= effect._options.size():
+			return [false, null]
+		#玩家没为这项设定过数量(0)时视为失败：调用方通常用 for_func 按数量重复，
+		#数量为0本就该什么都不做，不必让调用方再写一层条件
+		var qty := effect.get_option_quantity(oi)
+		if qty <= 0:
+			return [false, null]
+		return [true, qty]
 
 	if para.has("self_var"):
 		var i = para["self_var"] as int
@@ -697,3 +910,5 @@ func activate_effect(effect:BaseEffect):
 		run_base_func(f, effect)
 
 	end_effect()
+	#结算完才把"每局限一次"的名字记上，结算中途失败不会白占掉这一次
+	mark_effect_used_once(effect)

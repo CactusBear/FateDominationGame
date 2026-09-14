@@ -68,7 +68,7 @@ const TABLE := {
 	"get_player_master_skills" : { "category": QUERY_ZONE, "class": "GetPlayerMasterSkills", "summary": "御主技能区" },
 	"get_player_servant_skills" : { "category": QUERY_ZONE, "class": "GetPlayerServantSkills", "summary": "从者技能列表" },
 	"get_player_buffs" : { "category": QUERY_ZONE, "class": "GetPlayerBuffs", "summary": "玩家buff" },
-	"get_player_commmand_spell" : { "category": QUERY_ZONE, "class": "GetPlayerCommmandSpell", "summary": "令咒数组" },
+	"get_player_command_spell" : { "category": QUERY_ZONE, "class": "GetPlayerCommandSpell", "summary": "令咒数组" },
 	"get_pl_skills_side" : { "category": QUERY_ZONE, "class": "GetPlSkillsSide", "summary": "side.skills" },
 	"get_pl_buffs_side" : { "category": QUERY_ZONE, "class": "GetPlBuffsSide", "summary": "side.buffs" },
 	"get_pl_deck_side" : { "category": QUERY_ZONE, "class": "GetPlDeckSide", "summary": "side.deck" },
@@ -176,7 +176,7 @@ const TABLE := {
 	"edit_map_area_move_cost" : { "category": EDIT_MAP, "class": "EditMapAreaMoveCost", "summary": "改区域移动费用" },
 	"add_map_area_events" : { "category": EDIT_MAP, "class": "AddMapAreaEvents", "summary": "给区域加事件" },
 	"add_map_area_buff" : { "category": EDIT_MAP, "class": "AddMapAreaBuff", "summary": "给区域加buff" },
-	"add_situatiuons" : { "category": EDIT_MAP, "class": "AddSituatiuons", "summary": "加入局势" },
+	"add_situations" : { "category": EDIT_MAP, "class": "AddSituations", "summary": "加入局势" },
 	"set_location" : { "category": EDIT_MAP, "class": "SetLocation", "summary": "设置玩家地点" },
 
 	"draw_card_from_pl_deck_to_hand" : { "category": TRANSFER, "class": "DrawCardFromPlDeckToHand", "summary": "从牌库抽到手数" },

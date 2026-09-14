@@ -32,6 +32,9 @@ var _linked_map_area:BaseMapArea
 var _move_cost:BaseNumber
 var _printed_move_cost:BaseNumber
 var _can_move_to:bool = true
+#该战区在前哨阶段是否接受常规部署。默认 false：缺声明就不给行为——
+#所有战区一视同仁地"看起来能部署"会把侦察区这种只作先锋席的战区也算进去
+var _can_deploy:bool = false
 
 func _init(area_name:String, score:BaseNumber = BaseNumber.new(0), move_cost:BaseNumber = BaseNumber.new(0), linked_map_area:BaseMapArea = null):
 	_area_name = area_name

@@ -1,6 +1,6 @@
 {
   "servant_name": "emiya",
-  "shown_servant_name": "Emiya",
+  "shown_servant_name": "卫宫",
   "servant_class": "archer",
   "header_img": "00002_emiya_header.png",
   "servant_card_img": "00002_emiya_cd.png",
@@ -154,7 +154,8 @@
                   "self_var": 0
                 }
               }
-            ]
+            ],
+            "once_per_game": true
           },
           {
             "effect_name": "battle_win_score_gain",
@@ -233,7 +234,7 @@
           },
           {
             "effect_name": "residue_limited_play_no_draw",
-            "shown_effect_name": "残留：常规出牌上��改��4，且不能抽牌；手牌为0时关闭此牌",
+            "shown_effect_name": "残留：你的常规出牌改为打出0~4张牌，你不能抽牌，当你的手牌数为0时，关闭此牌",
             "time_points": [
               "self_played_card",
               "self_prepare_phase"

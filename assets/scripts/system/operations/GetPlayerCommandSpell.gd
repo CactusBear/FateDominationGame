@@ -1,4 +1,4 @@
-class_name GetPlayerCommmandSpell
+class_name GetPlayerCommandSpell
 extends RefCounted
 
 func exec(player_id:int = -1):

@@ -1,16 +1,19 @@
 class_name MoveLocation
 extends RefCounted
 
+#沿地图链算出移动后的落点并返回总费用，不扣魔力（扣魔力由 Move 负责）。
+#只做"算目标区域 + 算费用"这件事：落地（改变 location、同步落点 _players）交给
+#SetLocation，与部署/效果搬运共用同一份落地逻辑，不在这里重复实现。
 func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false):
 
 	player_id = EffectManager.resolve_player_id(player_id)
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	var location:BaseLocation = player_data["location"]
-	var area:BaseMapArea
-	for a:BaseMapArea in MapData.areas:
-		if a._locations.has(location):
-			area = a
-			break
+	if location == null:
+		#show("玩家所处位置不位于地图上")
+		return BaseNumber.new(0)
+	#所在区域从 location 自己的 from 取，不遍历 MapData.areas 反查
+	var area := location.get_from() as BaseMapArea
 	if area == null:
 		#show("玩家所处位置不位于地图上")
 		return BaseNumber.new(0)
@@ -54,10 +57,7 @@ func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false):
 		#show("目标位置已满")
 		return BaseNumber.new(0)
 
-	if location != null:
-		(location._players as Array).erase(player_id)
-	(target_location._players as Array).append(player_id)
-	player_data["location"] = target_location
+	SetLocation.new().exec(target_location, player_id, true, ignore_limit)
 
 	#从魔术工房离开时应用玩家层折扣(葛木局外人等)，折扣不会让费用变成负数
 	if origin_area == MapData.magic_workshop:

@@ -1,4 +1,4 @@
-class_name AddSituatiuons
+class_name AddSituations
 extends RefCounted
 
 func exec(add_situation:BaseSituation):

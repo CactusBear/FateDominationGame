@@ -1,6 +1,6 @@
 {
   "servant_name": "medea",
-  "shown_servant_name": "Medea",
+  "shown_servant_name": "美狄亚",
   "servant_class": "caster",
   "header_img": "00005_medea_header.png",
   "servant_card_img": "00005_medea_cd.png",
@@ -219,7 +219,8 @@
                 "parameters": [],
                 "var_index": -1
               }
-            ]
+            ],
+            "once_per_game": true
           }
         ],
         "zoom_kind": "card"
@@ -244,7 +245,7 @@
         "ignore_limit": false,
         "effects": [
           {
-            "effect_name": "placeholder_divine_words_retrieve_rule_breaker",
+            "effect_name": "divine_words_retrieve_rule_breaker",
             "shown_effect_name": "【真名解放】战斗阶段：若你在战斗中失败，将一张被移除的【万符必应破戒】加入你的技能区",
             "time_points": [
               "self_battle_lose"
@@ -255,8 +256,49 @@
             "effect_numbers": [],
             "funcs": [
               {
-                "func_name": "do_nothing",
+                "func_name": "get_pl_skills_out_game",
                 "parameters": [],
+                "var_index": 0
+              },
+              {
+                "func_name": "get_objects_by_name_fr_arr",
+                "parameters": [
+                  "rule_breaker",
+                  {
+                    "self_var": 0
+                  }
+                ],
+                "var_index": 1
+              },
+              {
+                "func_name": "get_card_by_index_fr_arr",
+                "parameters": [
+                  0,
+                  {
+                    "self_var": 1
+                  }
+                ],
+                "var_index": 2
+              },
+              {
+                "func_name": "add_skill_to_skill_zone",
+                "parameters": [
+                  {
+                    "self_var": 2
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "remove_from_array",
+                "parameters": [
+                  {
+                    "self_var": 2
+                  },
+                  {
+                    "self_var": 0
+                  }
+                ],
                 "var_index": -1
               }
             ]

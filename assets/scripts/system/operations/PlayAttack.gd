@@ -23,6 +23,9 @@ func exec(attack:BaseAttack, player_id:int = -1, cost:BaseNumber = attack._cost,
 		return false
 	if attack._is_activating:
 		return false
+	#卡面声明的打出条件(如"魔力需达到8点")与"需追加打出"：条件写在卡的数据里，不在入口写死
+	if !PlayRules.can_play(attack, player_data):
+		return false
 
 	var play_limit = player_data["play_limit"] as BaseNumber
 	var played_this_turn = player_data["played_attacks_this_turn"] as Array

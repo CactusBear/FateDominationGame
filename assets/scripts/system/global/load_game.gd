@@ -385,6 +385,10 @@ func load_skills(skills:Array, pic_path:String, from, type_name:String = "skill"
 		skill._zoom_kind = LoadHelper.resolve_zoom_kind(ski, "skill_card_img")
 		#升华技默认未觉醒(要靠特定从者激活)，其它技能牌默认已获得
 		skill._is_awakened = bool(ski.get("is_awakened", type_name != "upgrade_skill"))
+		#打出规则与卡面提示都是卡自己的数据；没声明就什么都不加
+		skill._play_requirements = ski.get("play_requirements", [])
+		skill._shown_notes = ski.get("shown_notes", [])
+		skill._need_extra_play = bool(ski.get("need_extra_play", false))
 		ski_arr.append(skill)
 
 	return ski_arr
@@ -419,6 +423,9 @@ func load_attacks(attacks:Array, pic_path:String, from, owner_effects_data:Array
 			back_type = "attack"
 		attack._card_back_img = LoadHelper.resolve_card_back(att.get("card_back_img", ""), pic_path, back_type)
 		attack._zoom_kind = LoadHelper.resolve_zoom_kind(att, "attack_card_img")
+		attack._play_requirements = att.get("play_requirements", [])
+		attack._shown_notes = att.get("shown_notes", [])
+		attack._need_extra_play = bool(att.get("need_extra_play", false))
 		att_arr.append(attack)
 
 	return att_arr
@@ -476,6 +483,8 @@ func load_map_areas(map_areas:Array, from):
 		var score = load_number(area["score"])
 		var move_cost = load_number(area["move_cost"])
 		var map_area = BaseMapArea.new(area_name, score, move_cost)
+		#是否接受前哨阶段部署由地图数据声明，不在代码里按战区名/下标写死
+		map_area._can_deploy = bool(area.get("can_deploy", false))
 		var locations = load_locations(area["locations"], map_area)
 		var linked_map_area_name = area["linked_map_area_name"]
 		var link_dic:Dictionary = {

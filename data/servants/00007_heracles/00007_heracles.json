@@ -1,6 +1,6 @@
 {
   "servant_name": "heracles",
-  "shown_servant_name": "Heracles",
+  "shown_servant_name": "赫拉克勒斯",
   "servant_class": "berserker",
   "header_img": "00007_heracles_header.png",
   "servant_card_img": "00007_heracles_cd.png",
@@ -27,7 +27,7 @@
         "ignore_limit": false,
         "effects": [
           {
-            "effect_name": "placeholder_twelve_labors_defeat_bonus",
+            "effect_name": "twelve_labors_defeat_bonus",
             "shown_effect_name": "【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束",
             "time_points": [
               "self_battle_lose"
@@ -54,8 +54,137 @@
             ],
             "funcs": [
               {
-                "func_name": "do_nothing",
+                "func_name": "get_eff_source_card",
                 "parameters": [],
+                "var_index": 0
+              },
+              {
+                "func_name": "get_player_servant_skills",
+                "parameters": [],
+                "var_index": 1
+              },
+              {
+                "func_name": "get_objects_by_name_fr_arr",
+                "parameters": [
+                  "twelve_labors",
+                  {
+                    "self_var": 1
+                  }
+                ],
+                "var_index": 2
+              },
+              {
+                "func_name": "get_player_ids_by_data_value",
+                "parameters": [
+                  "is_battle_win",
+                  true
+                ],
+                "var_index": 3
+              },
+              {
+                "func_name": "calculate_number",
+                "parameters": [
+                  0,
+                  "-",
+                  {
+                    "number_index": 1
+                  }
+                ],
+                "var_index": 4
+              },
+              {
+                "func_name": "edit_score",
+                "parameters": [
+                  null,
+                  {
+                    "number_index": 0
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "foreach_func",
+                "parameters": [
+                  [
+                    {
+                      "func_name": "edit_score",
+                      "parameters": [
+                        null,
+                        {
+                          "self_var": 4
+                        },
+                        null
+                      ],
+                      "var_index": -1
+                    }
+                  ],
+                  {
+                    "self_var": 3
+                  },
+                  2
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "remove_from_array",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  {
+                    "self_var": 2
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "foreach_func",
+                "parameters": [
+                  [
+                    {
+                      "func_name": "edit_card_power",
+                      "parameters": [
+                        null,
+                        {
+                          "number_index": 2
+                        }
+                      ],
+                      "var_index": -1
+                    }
+                  ],
+                  {
+                    "self_var": 2
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "find_player_array_containing",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  }
+                ],
+                "var_index": 5
+              },
+              {
+                "func_name": "get_pl_skills_out_game",
+                "parameters": [],
+                "var_index": 6
+              },
+              {
+                "func_name": "draw_card_by_card",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  {
+                    "self_var": 5
+                  },
+                  {
+                    "self_var": 6
+                  }
+                ],
                 "var_index": -1
               }
             ]
@@ -83,7 +212,7 @@
         "ignore_limit": false,
         "effects": [
           {
-            "effect_name": "placeholder_twelve_labors_defeat_bonus",
+            "effect_name": "twelve_labors_defeat_bonus",
             "shown_effect_name": "【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束",
             "time_points": [
               "self_battle_lose"
@@ -110,8 +239,137 @@
             ],
             "funcs": [
               {
-                "func_name": "do_nothing",
+                "func_name": "get_eff_source_card",
                 "parameters": [],
+                "var_index": 0
+              },
+              {
+                "func_name": "get_player_servant_skills",
+                "parameters": [],
+                "var_index": 1
+              },
+              {
+                "func_name": "get_objects_by_name_fr_arr",
+                "parameters": [
+                  "twelve_labors",
+                  {
+                    "self_var": 1
+                  }
+                ],
+                "var_index": 2
+              },
+              {
+                "func_name": "get_player_ids_by_data_value",
+                "parameters": [
+                  "is_battle_win",
+                  true
+                ],
+                "var_index": 3
+              },
+              {
+                "func_name": "calculate_number",
+                "parameters": [
+                  0,
+                  "-",
+                  {
+                    "number_index": 1
+                  }
+                ],
+                "var_index": 4
+              },
+              {
+                "func_name": "edit_score",
+                "parameters": [
+                  null,
+                  {
+                    "number_index": 0
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "foreach_func",
+                "parameters": [
+                  [
+                    {
+                      "func_name": "edit_score",
+                      "parameters": [
+                        null,
+                        {
+                          "self_var": 4
+                        },
+                        null
+                      ],
+                      "var_index": -1
+                    }
+                  ],
+                  {
+                    "self_var": 3
+                  },
+                  2
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "remove_from_array",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  {
+                    "self_var": 2
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "foreach_func",
+                "parameters": [
+                  [
+                    {
+                      "func_name": "edit_card_power",
+                      "parameters": [
+                        null,
+                        {
+                          "number_index": 2
+                        }
+                      ],
+                      "var_index": -1
+                    }
+                  ],
+                  {
+                    "self_var": 2
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "find_player_array_containing",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  }
+                ],
+                "var_index": 5
+              },
+              {
+                "func_name": "get_pl_skills_out_game",
+                "parameters": [],
+                "var_index": 6
+              },
+              {
+                "func_name": "draw_card_by_card",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  {
+                    "self_var": 5
+                  },
+                  {
+                    "self_var": 6
+                  }
+                ],
                 "var_index": -1
               }
             ]
@@ -139,7 +397,7 @@
         "ignore_limit": false,
         "effects": [
           {
-            "effect_name": "placeholder_twelve_labors_defeat_bonus",
+            "effect_name": "twelve_labors_defeat_bonus",
             "shown_effect_name": "【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束",
             "time_points": [
               "self_battle_lose"
@@ -166,8 +424,137 @@
             ],
             "funcs": [
               {
-                "func_name": "do_nothing",
+                "func_name": "get_eff_source_card",
                 "parameters": [],
+                "var_index": 0
+              },
+              {
+                "func_name": "get_player_servant_skills",
+                "parameters": [],
+                "var_index": 1
+              },
+              {
+                "func_name": "get_objects_by_name_fr_arr",
+                "parameters": [
+                  "twelve_labors",
+                  {
+                    "self_var": 1
+                  }
+                ],
+                "var_index": 2
+              },
+              {
+                "func_name": "get_player_ids_by_data_value",
+                "parameters": [
+                  "is_battle_win",
+                  true
+                ],
+                "var_index": 3
+              },
+              {
+                "func_name": "calculate_number",
+                "parameters": [
+                  0,
+                  "-",
+                  {
+                    "number_index": 1
+                  }
+                ],
+                "var_index": 4
+              },
+              {
+                "func_name": "edit_score",
+                "parameters": [
+                  null,
+                  {
+                    "number_index": 0
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "foreach_func",
+                "parameters": [
+                  [
+                    {
+                      "func_name": "edit_score",
+                      "parameters": [
+                        null,
+                        {
+                          "self_var": 4
+                        },
+                        null
+                      ],
+                      "var_index": -1
+                    }
+                  ],
+                  {
+                    "self_var": 3
+                  },
+                  2
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "remove_from_array",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  {
+                    "self_var": 2
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "foreach_func",
+                "parameters": [
+                  [
+                    {
+                      "func_name": "edit_card_power",
+                      "parameters": [
+                        null,
+                        {
+                          "number_index": 2
+                        }
+                      ],
+                      "var_index": -1
+                    }
+                  ],
+                  {
+                    "self_var": 2
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "find_player_array_containing",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  }
+                ],
+                "var_index": 5
+              },
+              {
+                "func_name": "get_pl_skills_out_game",
+                "parameters": [],
+                "var_index": 6
+              },
+              {
+                "func_name": "draw_card_by_card",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  {
+                    "self_var": 5
+                  },
+                  {
+                    "self_var": 6
+                  }
+                ],
                 "var_index": -1
               }
             ]

@@ -21,7 +21,16 @@ var _selected_opponent: Control = null
 var _selected_opponent_id: String = ""
 var _local_player_id: int = 0
 var _ai_acting: bool = false
+## 正在替哪位玩家跑 AI，用于异常兜底复位
+var _ai_acting_for_id: int = -1
+## AI 步进冷却计时，避免一帧把整轮对手跑完
+var _ai_cooldown: float = 0.0
 var _current_waiting_effect: BaseEffect = null
+## 正在等待玩家挑牌的效果与已挑中的牌（与"等发动/放弃"是两条并列的玩家输入）
+var _card_select_effect: BaseEffect = null
+var _card_select_picked: Array = []
+var _card_select_cards: Array = []
+var _card_select_panel: Control = null
 var _hovered_event_card: Control = null
 ## 说明面板当前正在显示哪张卡（区别于会随鼠标悬浮实时变化的 _hovered_event_card），
 ## 用于在 _input 判断"这一击是不是点在面板来源自身上"，避免右键同卡关闭又被误判成切换重开
@@ -39,6 +48,11 @@ var _last_hand_hover_state: bool = false
 @onready var battle_report_modal: Control = get_node_or_null("Modal_BattleReport")
 @onready var tactical_confirm_modal: Control = get_node_or_null("Modal_TacticalConfirm")
 var _pending_tactical_action: Dictionary = {}
+## 当前确认弹窗是不是"纯提示"模式；以及被提示顶掉的待确认文案（关掉提示后放回来）
+var _confirm_alert_mode: bool = false
+var _pending_confirm_desc: String = ""
+## 手牌托盘是否被按钮锁定为展开（锁定时鼠标移出不自动收起）
+var _hand_pinned_open: bool = false
 var _shown_battle_result: Dictionary = {}
 # 排行榜三种底板样式，从场景现有条目借用，供动态排序复用
 var _lb_style_top1: StyleBox = null
@@ -53,6 +67,13 @@ const ZOOM_PREVIEW_MAX_WIDTH := 760.0
 const MODAL_Z_THRESHOLD := 25
 ## 自己的未公开卡蒙的闭眼图标（相对路径，与其余外部资源一致）
 const CONCEAL_ICON := "assets/images/ui/icons/icon_eye_closed.png"
+## 两种遮罩的节点名。遮罩挂在卡图节点下面，递归找卡图时要按这两个名字排除
+const OVERLAY_NODE_NAMES := ["ConcealOverlay", "InactiveOverlay"]
+## 数量角标的节点名：重复的牌合并成一个卡位后，由它显示这份有多少张。
+## 填充卡名/技能名时要跳过它，否则角标会被当成名字标签改写
+const COUNT_BADGE_NAME := "CountBadge"
+## AI 每步之间的间隔（秒）：一帧跑完会让玩家看不到对手行动过程
+const AI_STEP_INTERVAL := 0.7
 #未公开(暗置)遮罩：半透明灰 + 闭眼图标
 const CONCEAL_COLOR := Color(0.32, 0.32, 0.36, 0.55)
 #尚未激活的卡(如未激活buff的御主物品卡)遮罩：半透明深红。
@@ -114,6 +135,9 @@ const HAND_EXPANDED_TOP: float = -272.0
 const HAND_EXPANDED_BOTTOM: float = 0.0
 
 func _ready() -> void:
+	# 本地玩家以引擎侧的 GameData.player_id 为唯一来源：界面不再另立默认值。
+	# 否则界面认 0、引擎默认认 6，两套"我是谁"会让不传 player_id 的 operation 作用到别人身上
+	_local_player_id = GameData.player_id
 	if tactical_confirm_modal:
 		var btn_ok := tactical_confirm_modal.get_node_or_null("Box/VBox/ButtonsRow/BtnConfirmAction") as Button
 		var btn_no := tactical_confirm_modal.get_node_or_null("Box/VBox/ButtonsRow/BtnCancelAction") as Button
@@ -138,6 +162,17 @@ func _ready() -> void:
 		leaderboard_drawer.z_index = max(leaderboard_drawer.z_index, MODAL_Z_THRESHOLD)
 		_block_panel_clicks(leaderboard_drawer)
 		_reorder_child_by_z(leaderboard_drawer)
+	# 底栏两个开关按钮接上已有函数：手牌托盘展开/收起、对手抽屉关闭。
+	# 不留"亮着呼吸光晕、点了没反应"的死按钮
+	var btn_tray := get_node_or_null("Bottom_PlayerDock/MyIdentityRow/BtnToggleHandTray") as Button
+	if btn_tray and not btn_tray.pressed.is_connected(_on_toggle_hand_tray_pressed):
+		btn_tray.pressed.connect(_on_toggle_hand_tray_pressed)
+	if opponent_drawer:
+		var btn_close_opp := opponent_drawer.get_node_or_null("VBox/HeaderBar/BtnCloseOppDrawer") as Button
+		if btn_close_opp:
+			btn_close_opp.visible = true
+			if not btn_close_opp.pressed.is_connected(_on_close_opponent_drawer_pressed):
+				btn_close_opp.pressed.connect(_on_close_opponent_drawer_pressed)
 	_cache_leaderboard_styles()
 	if effect_modal:
 		effect_modal.visible = false
@@ -181,9 +216,12 @@ func _process(delta: float) -> void:
 	_update_hand_hover_from_mouse()
 	_update_event_card_hover_check()
 	_check_waiting_effects()
-	_check_and_step_ai()
+	_check_waiting_card_selection()
+	_check_and_step_ai(delta)
 	# 效果结算产生的提示消息：取走并展示。消息由operation产生，展示形态是界面的事
 	_flush_effect_messages()
+	# 战报：战斗阶段的结果一变就弹一次（此前该函数没有任何调用点，战报永远不显示）
+	_check_battle_report()
 	# 轻量节流刷新：顶栏敌人魔力/总威力/战果与行动者提示实时跟随
 	_ui_refresh_accum += delta
 	if _ui_refresh_accum >= 0.5:
@@ -288,13 +326,80 @@ func _refresh_static_card_infos(pl_data: Dictionary) -> void:
 								lines.append(en)
 				cs_desc_lbl.text = "\n".join(lines)
 				cs_desc_lbl.visible = lines.size() > 0
-	# 自己的头像：只显示头像名
-	_bind_zoom_info(get_node_or_null("Bottom_PlayerDock/MyIdentityRow/Avatar"), master, "_header_img")
+	# 自己的头像：贴图与说明都按真实御主刷新。
+	# 此前只绑了放大说明、从不赋贴图，于是底栏与顶栏"我"的头像永远是场景预置的那张
+	var my_avatar := get_node_or_null("Bottom_PlayerDock/MyIdentityRow/Avatar") as TextureRect
+	if my_avatar:
+		_apply_header_texture(my_avatar, master)
+		_bind_zoom_info(my_avatar, master, "_header_img")
 	var p1 := get_node_or_null("TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P1_Me_AvatarOnly")
 	if p1:
 		for sub in p1.find_children("*", "TextureRect", true, false):
+			if sub is TextureRect:
+				_apply_header_texture(sub as TextureRect, master)
 			_bind_zoom_info(sub, master, "_header_img")
 	_refresh_situation_card()
+
+## 刷新那些原先写死在场景里、但本来就是"按数据算"的文案。
+## 全部在这里按同一口径生成，避免同一个数字在不同节点上各写一种格式
+func _refresh_dynamic_labels(pl_data: Dictionary) -> void:
+	var master = pl_data.get("master")
+	var servant = pl_data.get("servant")
+	var loc = pl_data.get("location") as BaseLocation
+	var area := loc.get_from() as BaseMapArea if loc != null else null
+	var area_name: String = area._area_name if area != null else ""
+
+	# 底栏身份行：御主 · 职阶 · 所在战区（缺哪段就少哪段，不留固定占位）
+	var title := get_node_or_null("Bottom_PlayerDock/MyIdentityRow/VBox/Title") as Label
+	if title:
+		var parts: Array[String] = []
+		var master_name: String = _object_shown_name(master)
+		if master_name != "":
+			parts.append(master_name)
+		var servant_class: String = str(servant.get("_servant_class")) if servant != null else ""
+		if servant_class != "":
+			parts.append(servant_class.capitalize())
+		if area_name != "":
+			parts.append(area_name)
+		title.text = " · ".join(parts)
+
+	# 顶栏"我"的顺位徽章：名次按当前真实顺位生成，不再是恒定的 1st
+	var my_tag := get_node_or_null("TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/P1_Me_AvatarOnly/V/Tag") as Label
+	if my_tag:
+		my_tag.text = "%s [你]" % _ordinal_label(EffectManager.get_player_order_index(_local_player_id) + 1)
+
+	# 牌库 / 弃牌张数
+	var deck_lbl := get_node_or_null("Bottom_PlayerDock/TacticalDeskLayout/Section_Logistics/DeckBox/Lbl") as Label
+	if deck_lbl:
+		deck_lbl.text = "牌库 %d" % (pl_data.get("deck", []) as Array).size()
+	var discard_lbl := get_node_or_null("Bottom_PlayerDock/TacticalDeskLayout/Section_Logistics/DiscardBox/Lbl") as Label
+	if discard_lbl:
+		discard_lbl.text = "弃牌 %d" % (pl_data.get("discard", []) as Array).size()
+
+	# 手牌托盘手柄：张数跟着手牌走
+	var handle := get_node_or_null("HandTray_Collapsible/VBox/TrayHandle/HandleBar") as Label
+	if handle:
+		handle.text = "▲ 手牌 %d" % (pl_data.get("hand_cards", []) as Array).size()
+
+	# 御座上的御主卡 / 从者卡标题
+	var master_lbl := get_node_or_null("Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/UpperRow/MasterCardBox/Label") as Label
+	if master_lbl:
+		master_lbl.text = "御主卡"
+	var servant_lbl := get_node_or_null("Bottom_PlayerDock/TacticalDeskLayout/Section_CommandPodium/VBox/UpperRow/ServantCardBox/Label") as Label
+	if servant_lbl:
+		var cls: String = str(servant.get("_servant_class")).capitalize() if servant != null else ""
+		servant_lbl.text = ("从者卡 · %s" % cls) if cls != "" else "从者卡"
+
+	# 出牌区提示：常规出牌上限与当前席位地利，两段都从数据读，
+	# 不写死"已计入深山町地利+3"
+	var zone_tip := get_node_or_null("Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/ZoneTip") as Label
+	if zone_tip:
+		var limit: int = (pl_data.get("play_limit", BaseNumber.new(0)) as BaseNumber).number
+		var tip := "常规出牌 %d" % limit
+		if area != null:
+			var benefit: int = (loc._benefit as BaseNumber).number
+			tip += " · %s 地利 %d" % [area_name, benefit]
+		zone_tip.text = tip
 
 ## 动态刷新战果天梯榜：按真实战果排序，名次前缀/头像/分值/底板样式全部跟随
 func _refresh_leaderboard() -> void:
@@ -321,12 +426,22 @@ func _refresh_leaderboard() -> void:
 			return a["score"] > b["score"]
 		return a["id"] < b["id"]
 	)
-	for i in range(min(7, players_rank.size())):
+	# 排行行按场景实际提供的行数遍历（不写死行数），玩家不足时把多余的行隐藏——
+	# 否则空行会留着场景预置的演示条目，看起来像真实排名
+	var lb_rows: Array = []
+	var lb_vbox := leaderboard_drawer.get_node_or_null("VBox")
+	if lb_vbox:
+		for child in lb_vbox.get_children():
+			if child is PanelContainer and str(child.name).begins_with("R"):
+				lb_rows.append(child)
+	for i in range(lb_rows.size()):
+		var row := lb_rows[i] as PanelContainer
+		if i >= players_rank.size():
+			row.visible = false
+			continue
+		row.visible = true
 		var item: Dictionary = players_rank[i]
 		var rank: int = i + 1
-		var row := leaderboard_drawer.get_node_or_null("VBox/R%d" % rank) as PanelContainer
-		if row == null:
-			continue
 		var h := row.get_node_or_null("H")
 		if h == null:
 			continue
@@ -337,7 +452,7 @@ func _refresh_leaderboard() -> void:
 		_bind_zoom_info(av, item.get("master"), "_header_img")
 		var name_lbl := h.get_node_or_null("Name") as Label
 		if name_lbl:
-			var suffix: String = " (你)" if item["is_me"] else ""
+			var suffix: String = " · 你" if item["is_me"] else ""
 			name_lbl.text = "%s%s%s" % [_rank_prefix(rank), item["name"], suffix]
 			if rank == 1:
 				name_lbl.add_theme_color_override("font_color", Color(1, 0.85, 0.3))
@@ -381,23 +496,21 @@ func _cache_leaderboard_styles() -> void:
 func refresh_all_ui() -> void:
 	if !GameData.player_data_library.has(_local_player_id):
 		return
+	# 本次刷新会释放并重建手牌/出牌区节点，悬停记录必须同时清空，
+	# 否则下一帧会去访问已释放实例的 rect（刷 error 日志、放大图闪断）
+	_hovered_event_card = null
 	
 	var pl_data: Dictionary = GameDataManager.get_player_data(_local_player_id)
 	
 	# 刷新顶栏阶段与回合信息
 	if round_label and turn_seq_label:
 		var curr_phase := GameProgress.get_current_phase()
-		var phase_name_cn: String = "准备阶段"
-		match curr_phase.get("name", ""):
-			"prepare": phase_name_cn = "准备阶段"
-			"outpost": phase_name_cn = "前哨阶段"
-			"action": phase_name_cn = "行动阶段"
-			"battle": phase_name_cn = "战斗阶段"
-		round_label.text = "第 %d 回合 · %s" % [GameProgress.current_round, phase_name_cn]
+		round_label.text = "第 %d 回合 · %s" % [GameProgress.current_round, _phase_shown_name(str(curr_phase.get("name", "")))]
 		
 		var curr_id := GameProgress.current_player_id
 		if curr_id == _local_player_id:
-			turn_seq_label.text = "轮到你行动中 (1st)"
+			# 顺位文案按当前真实顺位生成，不写死 1st，也不用括号补充
+			turn_seq_label.text = "轮到你行动 · %s" % _ordinal_label(EffectManager.get_player_order_index(_local_player_id) + 1)
 			turn_seq_label.modulate = Color(0.4, 0.9, 1.0)
 		else:
 			# 敌人行动提示：显示当前行动敌人的名字，而不是笼统的"等待对手"
@@ -409,10 +522,12 @@ func refresh_all_ui() -> void:
 
 	# 刷新魔力长条与战果
 	var magic_num: int = (pl_data["magic"] as BaseNumber).number
+	var magic_limit: int = (GameData.magic_limit as BaseNumber).number
 	if magic_bar:
+		magic_bar.max_value = magic_limit
 		magic_bar.value = magic_num
 	if magic_num_label:
-		magic_num_label.text = "%d / 12 (%d%%)" % [magic_num, int((magic_num / 12.0) * 100)]
+		magic_num_label.text = "%d / %d" % [magic_num, magic_limit]
 	
 	var score_num: int = (pl_data["score"] as BaseNumber).number
 	if score_text_label:
@@ -436,6 +551,7 @@ func refresh_all_ui() -> void:
 	_refresh_battlefield_events()
 	_refresh_static_card_infos(pl_data)
 	_refresh_movement_arrows()
+	_refresh_dynamic_labels(pl_data)
 	# 数据刷新后可能有新卡入树，统一重扫一次放大目标与遮挡层
 	_register_all_hover_zoom()
 	_apply_clickable_indicators()
@@ -456,18 +572,17 @@ func _refresh_opponent_resource_icons() -> void:
 		var name_lbl := get_node_or_null("TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/%s/HBox/Info/Name" % node_name) as Label
 		if name_lbl and bot_pl:
 			var shown: String = _object_shown_name(bot_master) if bot_master else "玩家 %d" % bot_id
-			name_lbl.text = "%s %s ▼" % [_ordinal_label(bot_id + 1), shown]
+			# 名次前缀按当前真实顺位生成：order 会被 ChangePlOrder 改动，不再恒等于 id+1
+			name_lbl.text = "%s %s ▼" % [_ordinal_label(EffectManager.get_player_order_index(bot_id) + 1), shown]
 		if av and bot_master:
-			var header_img: String = str(bot_master.get("_header_img"))
-			if header_img != "" and LoadHelper.texture_exists(header_img):
-				av.texture = LoadHelper.load_texture(header_img)
+			_apply_header_texture(av, bot_master)
 		var info_path := "TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox/%s/HBox/Info" % node_name
 		var info := get_node_or_null(info_path)
 		if info == null:
 			continue
 		var old_stats := info.get_node_or_null("Stats")
 		if old_stats:
-			old_stats.queue_free()
+			_free_runtime_child(old_stats)
 		
 		# 读取真实数据
 		var pl_data: Dictionary = GameDataManager.get_player_data(bot_id) if GameDataManager else {}
@@ -484,12 +599,13 @@ func _refresh_opponent_resource_icons() -> void:
 			info.add_child(resources)
 		else:
 			for c in resources.get_children():
-				c.queue_free()
+				_free_runtime_child(c)
 		
 		# 动态添加真实以太魔力、总威力、金色战果图标
 		var power_num: int = (pl_data.get("power", BaseNumber.new(0)) as BaseNumber).number \
 			+ (pl_data.get("total_power_bonus", BaseNumber.new(0)) as BaseNumber).number
-		_add_resource_icon(resources, mana_icon_texture, "%d/12" % magic_num, Color(0.45, 0.9, 1.0))
+		# 魔力按"当前/上限"显示，上限取自数据而非写死 12
+		_add_resource_icon(resources, mana_icon_texture, "%d/%d" % [magic_num, (GameData.magic_limit as BaseNumber).number], Color(0.45, 0.9, 1.0))
 		_add_resource_icon(resources, swords_icon_texture, "%d" % power_num, Color(0.85, 0.92, 1.0))
 		_add_resource_icon(resources, grail_icon_texture, "%d" % score_num, Color(1.0, 0.85, 0.35))
 		var spell_label := Label.new()
@@ -508,6 +624,16 @@ func _refresh_opponent_resource_icons() -> void:
 				av.z_index = 5
 			else:
 				av.z_index = 0
+
+## 给头像节点套上所属御主/从者的头像图：所有"按数据刷头像"的地方共用它，
+## 避免有的地方只贴图、有的地方只绑说明。取不到图时保持原样，不清空
+func _apply_header_texture(node: TextureRect, obj) -> void:
+	if node == null or obj == null:
+		return
+	var img: String = str(obj.get("_header_img"))
+	if img == "" or not LoadHelper.texture_exists(img):
+		return
+	node.texture = LoadHelper.load_texture(img)
 
 ## 顺位序数文案：英文序数后缀按规则生成，不写死表（11th/12th/13th 等特例一并覆盖）
 func _ordinal_label(n: int) -> String:
@@ -562,68 +688,68 @@ func _can_play_attack_now(card: BaseAttack, pl_data: Dictionary) -> bool:
 			return false
 	return true
 
-## 刷新手牌列表：能打出的卡亮金色呼吸描边，不能打的恢复常亮描边
+## 刷新手牌列表：能打出的卡亮金色呼吸描边，不能打的恢复常亮描边。
+## 卡位复用场景预置的模板（不足克隆、多余隐藏），不再每次删除重建：
+## 删除重建会让同一帧内新旧卡位并存，也会把场景里的卡位尺寸模板一起销毁
 func _refresh_hand_cards(pl_data: Dictionary) -> void:
 	if hand_cards_row == null:
 		return
-	
-	for c in hand_cards_row.get_children():
-		c.queue_free()
-	
 	var hand_cards: Array = pl_data.get("hand_cards", [])
-	for card in hand_cards:
-		if card is BaseAttack:
-			var card_rect := TextureRect.new()
-			card_rect.custom_minimum_size = Vector2(175, 238)
-			card_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			card_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			card_rect.mouse_filter = Control.MOUSE_FILTER_STOP
-			var can_play: bool = _can_play_attack_now(card, pl_data)
-			card_rect.set_meta("clickable", can_play)
-			card_rect.set_meta("clickable_color", Color(1.0, 0.85, 0.3, 1.0))
-			card_rect.set_meta("playable_hint", can_play)
-			_bind_zoom_info(card_rect, card)
-			
-			if LoadHelper.texture_exists(card._card_img):
-				card_rect.texture = LoadHelper.load_texture(card._card_img)
-			
-			# 点击卡牌打出
-			card_rect.gui_input.connect(func(ev: InputEvent):
-				if ev is InputEventMouseButton and ev.button_index == MOUSE_BUTTON_LEFT and ev.pressed:
-					_on_hand_card_clicked(card)
-			)
-			hand_cards_row.add_child(card_rect)
+	var slots: Array = _ensure_slot_nodes(hand_cards_row, hand_cards.size())
+	for i in range(slots.size()):
+		var slot := slots[i] as Control
+		var card = hand_cards[i] if i < hand_cards.size() else null
+		if not (card is BaseAttack):
+			slot.visible = false
+			continue
+		slot.visible = true
+		slot.mouse_filter = Control.MOUSE_FILTER_STOP
+		var can_play: bool = _can_play_attack_now(card, pl_data)
+		slot.set_meta("clickable", can_play)
+		slot.set_meta("clickable_color", Color(1.0, 0.85, 0.3, 1.0))
+		slot.set_meta("playable_hint", can_play)
+		# 点击回调只在首次接线一次，之后靠 metadata 现取当前卡：
+		# 每次刷新都 connect(func.bind(card)) 的话，bind 过的 Callable 与原来不是同一个，
+		# is_connected 永远为假、旧连接不断，点一下会同时打出好几张旧卡
+		slot.set_meta("click_hand_card", card)
+		if not slot.has_meta("hand_click_bound"):
+			slot.set_meta("hand_click_bound", true)
+			slot.gui_input.connect(_on_hand_slot_gui_input.bind(slot))
+		# 卡面统一走 _render_card_face：暗置的手牌同样盖灰遮罩+闭眼图标，
+		# 放大说明也由它一起管，不再各处自己赋一次贴图（否则"暗置怎么表现"会分裂成多套）
+		_render_card_face(slot, card, true)
 
-## 刷新打出区卡牌
+## 手牌卡位点击：打出 metadata 里现取的那张卡（卡位会被复用）
+func _on_hand_slot_gui_input(ev: InputEvent, slot: Control) -> void:
+	if not (ev is InputEventMouseButton and ev.button_index == MOUSE_BUTTON_LEFT and ev.pressed):
+		return
+	var card = slot.get_meta("click_hand_card", null)
+	if card is BaseAttack:
+		_on_hand_card_clicked(card)
+
+## 刷新打出区卡牌：卡位复用场景预置模板（卡图 + 威力标签），不足克隆、多余隐藏
 func _refresh_played_cards(pl_data: Dictionary) -> void:
 	if played_cards_row == null:
 		return
-	
-	for c in played_cards_row.get_children():
-		c.queue_free()
-		
 	var played: Array = pl_data.get("played_cards", [])
-	for card in played:
-		if card is BaseAttack:
-			var vbox := VBoxContainer.new()
-			vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-			
-			var card_rect := TextureRect.new()
-			card_rect.custom_minimum_size = Vector2(120, 170)
-			card_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			card_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			_bind_zoom_info(card_rect, card)
-			if LoadHelper.texture_exists(card._card_img):
-				card_rect.texture = LoadHelper.load_texture(card._card_img)
-			vbox.add_child(card_rect)
-			
-			var lbl := Label.new()
-			lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			lbl.add_theme_font_size_override("font_size", 11)
-			lbl.text = "威力: %d" % card._power.number
-			vbox.add_child(lbl)
-			
-			played_cards_row.add_child(vbox)
+	# 场上同名的牌同样合并显示 + 数量角标
+	var groups: Array = _group_repeated_cards(played)
+	var slots: Array = _ensure_slot_nodes(played_cards_row, groups.size())
+	for i in range(slots.size()):
+		var slot := slots[i] as Control
+		var group = groups[i] if i < groups.size() else null
+		if group == null:
+			slot.visible = false
+			_set_slot_count_badge(slot, 0)
+			continue
+		slot.visible = true
+		var card = group["card"]
+		for sub in _card_texture_nodes(slot):
+			_render_card_face(sub, card, true)
+		var power_lbl := slot.get_node_or_null("Lbl") as Label
+		if power_lbl:
+			power_lbl.text = "威力: %d" % card._power.number
+		_set_slot_count_badge(slot, int(group["count"]))
 
 ## 刷新四大战区明确点位 (魔力充能位 / 地利位 / 侦察席)
 func _refresh_battlefield_specific_slots() -> void:
@@ -660,7 +786,7 @@ func _refresh_battlefield_specific_slots() -> void:
 				# 清掉上一次生成的动态头像；场景预置的占位头像(写死的角色图)一并隐藏——
 				# 槽位归属只由真实数据决定，留着占位图会让玩家右键到没有数据的假头像
 				if child.has_meta("tactical_runtime_avatar"):
-					child.queue_free()
+					_free_runtime_child(child)
 				elif child is TextureRect:
 					child.visible = false
 	
@@ -777,7 +903,7 @@ func _rebuild_event_row(cards_row: Control, events: Array) -> void:
 			break
 	for child in olds:
 		cards_row.remove_child(child)
-		child.queue_free()
+		child.free()
 	for ev in events:
 		if not (ev is BaseEvent):
 			continue
@@ -944,7 +1070,7 @@ func _refresh_buff_zone(col: Control, row: Control, buffs: Array) -> void:
 			active_buffs.append(b)
 	col.visible = !active_buffs.is_empty()
 	for c in row.get_children():
-		c.queue_free()
+		_free_runtime_child(c)
 	for buff in active_buffs:
 		var entry := HBoxContainer.new()
 		entry.alignment = BoxContainer.ALIGNMENT_BEGIN
@@ -1016,45 +1142,172 @@ func _refresh_clickable_skills(pl_data: Dictionary) -> void:
 		my_buffs
 	)
 
+## 按需要的数量准备好一行的卡位：复用场景预置卡位，回收上一次克隆出来的运行时卡位，
+## 不够就克隆第一个卡位补位（插在分隔线之前，保持分区语义），返回全部卡位数组。
+## 多余的那部分不在这里隐藏——调用方按自己的数据决定谁可见。
+## 卡位回收一律用 _free_runtime_child(remove_child + free)：queue_free 是帧末延迟释放，
+## 同一帧内 get_children() 仍会返回旧节点，下面的补位逻辑就会重复补出新卡位
+func _ensure_slot_nodes(row: Control, need: int) -> Array:
+	if row == null:
+		return []
+	var slots: Array = []
+	for child in row.get_children():
+		if not (child is Control) or child is Separator:
+			continue
+		if child.has_meta("skill_slot_runtime"):
+			_free_runtime_child(child)
+		else:
+			slots.append(child)
+	if slots.is_empty():
+		return slots
+	while slots.size() < need:
+		var extra_slot: Control = (slots[0] as Control).duplicate()
+		extra_slot.set_meta("skill_slot_runtime", true)
+		_clear_runtime_slot_metas(extra_slot)
+		row.add_child(extra_slot)
+		# 克隆出的卡位要落在分隔线之前：分隔线之后是场景预置的另一个分区，
+		# 直接追加到行尾会让多出来的卡长进别的分区里
+		var sep_idx := _first_separator_index(row)
+		if sep_idx != -1:
+			row.move_child(extra_slot, sep_idx)
+		slots.append(extra_slot)
+	return slots
+
+## 立即回收一个运行时新建的子节点：先摘出场景树再 free。
+## 不用 queue_free——它帧末才释放，同一帧内父节点的 get_children() 仍会返回该节点，
+## 凡"数一数够不够、不够就克隆补位"的刷新逻辑都会因此每次刷新重复补位
+func _free_runtime_child(node: Node) -> void:
+	if node == null or !is_instance_valid(node):
+		return
+	var parent := node.get_parent()
+	if parent != null:
+		parent.remove_child(node)
+	node.free()
+
+## 把重复的牌合并成一项：同名、同卡图、同卡面数值、同"未公开/尚未生效"表现的多张牌
+## 只占一个卡位，数量交给角标表达。手牌区不走这里（每张牌都要能单独点出）。
+## 键只由"显示上真的看不出差别"的字段组成，避免把表现不同的牌合到一起
+func _group_repeated_cards(cards: Array) -> Array:
+	var groups: Array = []
+	var key_to_index: Dictionary = {}
+	for card in cards:
+		if card == null:
+			continue
+		var key: String = "%s|%s|%s|%s|%s" % [
+			str(card.get("_name")),
+			str(card.get("_card_img")),
+			str(_number_text(card.get("_power"))),
+			str(_number_text(card.get("_cost"))),
+			_card_visual_state_key(card),
+		]
+		if key_to_index.has(key):
+			var existed: Dictionary = groups[int(key_to_index[key])]
+			existed["count"] = int(existed["count"]) + 1
+			continue
+		key_to_index[key] = groups.size()
+		groups.append({"card": card, "count": 1})
+	return groups
+
+
+## 一张牌在界面上的"表现状态"：未公开与否、尚未生效与否。
+## 状态不同的同名卡不能合并——合并会让玩家以为那张暗置的牌也能点、也生效
+func _card_visual_state_key(card) -> String:
+	return "%s/%s" % [str(bool(card.get("_is_concealed"))), str(_is_card_inactive(card))]
+
+
+## 取数字的显示值：BaseNumber 用 .number，其余原样
+func _number_text(value) -> String:
+	if value is BaseNumber:
+		return str(value.number)
+	return str(value)
+
+
+## 卡位上的数量角标：数量大于 1 才显示（1 张不写量词）。
+## 角标挂在卡图节点上而不是卡位上——卡位可能是容器（VBox），挂在容器上会被当成又一个列表项排版。
+## 节点按需创建、之后只改文本，避免每次刷新都新建
+func _set_slot_count_badge(slot: Control, count: int) -> void:
+	if slot == null:
+		return
+	var hosts := _card_texture_nodes(slot)
+	var host: Control = hosts[0] if hosts.size() > 0 else slot
+	var badge := host.get_node_or_null(COUNT_BADGE_NAME) as Label
+	if count <= 1:
+		if badge != null:
+			badge.visible = false
+		return
+	if badge == null:
+		badge = Label.new()
+		badge.name = COUNT_BADGE_NAME
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		badge.add_theme_font_size_override("font_size", 14)
+		badge.add_theme_color_override("font_color", Color(1.0, 0.9, 0.45))
+		badge.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+		badge.add_theme_constant_override("outline_size", 5)
+		badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		badge.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+		host.add_child(badge)
+		badge.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+		badge.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		badge.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	badge.text = "×%d" % count
+	badge.visible = true
+
+
 ## 通用卡位行填充：给定一个容器和一组卡对象，按场景预置的卡位模板铺开，
 ## 数量不足时克隆模板补位，多余隐藏。clickable=false 用于对手抽屉等只展示不可发动的场景，
 ## owned=false 表示这是别人的卡（未公开只显示卡背）。
 ## 本地信息栏与对手抽屉共用同一套铺卡逻辑，暗置/明置由 _render_card_face 统一处理
 func _fill_card_row_from_list(row: Control, cards: Array, clickable: bool, owned: bool = true) -> void:
-	var slots: Array = []
-	for child in row.get_children():
-		if child is Control and not (child is Separator):
-			if child.has_meta("skill_slot_runtime"):
-				# 必须先 remove_child 再 queue_free：queue_free 是帧末延迟释放，
-				# 只调它的话本帧 get_children() 仍会返回这些旧克隆卡位，
-				# 下面又按数量补新克隆，每次刷新都会多留一批（表现为"显示了多张卡"）
-				row.remove_child(child)
-				child.queue_free()
-			else:
-				slots.append(child)
+	# 重复的牌合并成一个卡位、用角标显示数量：10 张宝石卡不必铺满整条信息栏
+	var groups: Array = _group_repeated_cards(cards)
+	var slots: Array = _ensure_slot_nodes(row, groups.size())
 	if slots.is_empty():
 		return
-	while slots.size() < cards.size():
-		var extra_slot: Control = (slots[0] as Control).duplicate()
-		extra_slot.set_meta("skill_slot_runtime", true)
-		_clear_runtime_slot_metas(extra_slot)
-		row.add_child(extra_slot)
-		slots.append(extra_slot)
 	for i in range(slots.size()):
 		var slot := slots[i] as Control
-		var card_obj = cards[i] if i < cards.size() else null
-		if card_obj == null:
+		var group = groups[i] if i < groups.size() else null
+		if group == null:
 			slot.visible = false
+			_set_slot_count_badge(slot, 0)
 			continue
 		slot.visible = true
+		var card_obj = group["card"]
 		if card_obj is BaseSkill:
 			_fill_skill_slot(slot, card_obj, clickable, owned)
 		else:
 			_fill_display_slot(slot, card_obj, owned)
+		_set_slot_count_badge(slot, int(group["count"]))
+	# 分隔线本身不承载数据：只有它后面还有可见卡位时才显示，
+	# 否则卡少了会留一条孤零零的分隔线
+	_refresh_row_separators(row)
+
+## 行内第一条分隔线的下标（没有返回 -1）。克隆卡位要插在它前面，保持分区语义
+func _first_separator_index(row: Control) -> int:
+	var children := row.get_children()
+	for i in range(children.size()):
+		if children[i] is Separator:
+			return i
+	return -1
+
+## 行内分隔线按"其后是否还有可见卡位"显隐
+func _refresh_row_separators(row: Control) -> void:
+	var children := row.get_children()
+	for i in range(children.size()):
+		var child := children[i]
+		if !(child is Separator):
+			continue
+		var has_visible_after: bool = false
+		for j in range(i + 1, children.size()):
+			var sib := children[j]
+			if sib is Control and (sib as Control).visible and not (sib is Separator):
+				has_visible_after = true
+				break
+		child.visible = has_visible_after
 
 ## 克隆出的卡位要清掉复制来的绑定痕迹，否则放大/点击系统会误以为已经接过线
+## （继承了 *_bound 标记就不会再接线；继承了 click_* 会在回调里取到上一次的对象）
 func _clear_runtime_slot_metas(node: Node) -> void:
-	for key in ["zoom_bound", "skill_click_bound", "click_skill"]:
+	for key in ["zoom_bound", "skill_click_bound", "hand_click_bound", "click_skill", "click_hand_card", "playable_hint"]:
 		if node.has_meta(key):
 			node.remove_meta(key)
 	for child in node.get_children():
@@ -1066,7 +1319,24 @@ func _clear_runtime_slot_metas(node: Node) -> void:
 func _card_texture_nodes(slot: Control) -> Array:
 	if slot is TextureRect:
 		return [slot]
-	return slot.find_children("*", "TextureRect", true, false)
+	var result: Array = []
+	for node in slot.find_children("*", "TextureRect", true, false):
+		if _is_overlay_art(node):
+			continue
+		result.append(node)
+	return result
+
+## 该节点是否位于某层遮罩之下（遮罩本体与它的装饰图标都算）。
+## 遮罩是挂在卡图节点上的叠加层，不是承载卡图的节点：递归收集卡图时必须排除，
+## 否则下一次刷新会把遮罩里的闭眼图标当成卡图改写贴图，还会在图标里再套一层遮罩，
+## 表现为"图标变成灰底缩略图"且节点每刷新一次成对增长
+func _is_overlay_art(node: Node) -> bool:
+	var p := node.get_parent()
+	while p != null and p != self:
+		if str(p.name) in OVERLAY_NODE_NAMES:
+			return true
+		p = p.get_parent()
+	return false
 
 ## 只展示不发动的卡位（御主攻击牌/附带物等：打出由效果负责，不接点击）。
 ## owned 决定未公开时的表现：自己的卡显示卡面+灰遮罩，别人的卡显示卡背
@@ -1080,6 +1350,8 @@ func _fill_display_slot(slot: Control, obj, owned: bool = true) -> void:
 		sub.set_meta("clickable", false)
 		_render_card_face(sub, obj, owned, _card_back_type_of(obj))
 	for lbl in slot.find_children("*", "Label", true, false):
+		if str(lbl.name) == COUNT_BADGE_NAME:
+			continue
 		lbl.text = shown
 		lbl.visible = shown != ""
 
@@ -1102,6 +1374,8 @@ func _fill_skill_slot(slot: Control, skill: BaseSkill, clickable: bool = true, o
 			sub.set_meta("clickable_color", Color(1.0, 0.85, 0.35, 1.0))
 		_render_card_face(sub, skill, owned, _card_back_type_of(skill))
 	for lbl in slot.find_children("*", "Label", true, false):
+		if str(lbl.name) == COUNT_BADGE_NAME:
+			continue
 		lbl.text = skill_name
 		lbl.visible = skill_name != ""
 
@@ -1148,26 +1422,25 @@ func _on_end_phase_pressed() -> void:
 ## 战区点击交互接线：根据当前阶段统一处理【前哨阶段部署】与【行动阶段移动】
 ## -------------------------------------------------------------
 func _connect_battlefield_movement() -> void:
-	var areas := [
-		{"node": area_workshop, "idx": 0},
-		{"node": area_miyama, "idx": 1},
-		{"node": area_shinto, "idx": 2},
-		{"node": area_scout, "idx": 3}
-	]
-	for a in areas:
-		if a["node"]:
-			a["node"].mouse_filter = Control.MOUSE_FILTER_STOP
-			a["node"].gui_input.connect(func(ev: InputEvent):
-				if ev is InputEventMouseButton and ev.button_index == MOUSE_BUTTON_LEFT and ev.pressed:
-					_on_battlefield_clicked(a["idx"])
-			)
+	for node in [area_workshop, area_miyama, area_shinto, area_scout]:
+		if node == null:
+			continue
+		var area_node := node as Control
+		area_node.mouse_filter = Control.MOUSE_FILTER_STOP
+		# 下标在点击时按实例查（_area_index_of_node），不预先写死
+		area_node.gui_input.connect(func(ev: InputEvent):
+			if ev is InputEventMouseButton and ev.button_index == MOUSE_BUTTON_LEFT and ev.pressed:
+				_on_battlefield_clicked(_area_index_of_node(area_node))
+		)
 
 func _on_battlefield_clicked(target_area_idx: int) -> void:
-	if GameProgress.current_player_id != _local_player_id:
+	# 能不能点由 _area_action_block_reason 一处决定（呼吸光晕用的是同一条判据）。
+	# 不能操作时把原因提示出来，不让玩家面对"点了没反应"
+	var blocked := _area_action_block_reason(target_area_idx)
+	if blocked != "":
+		_show_tactical_confirm(blocked, true)
 		return
-	var curr_phase := GameProgress.get_current_phase()
-	var phase_name: String = curr_phase.get("name", "")
-	
+	var phase_name := str(GameProgress.get_current_phase().get("name", ""))
 	if phase_name == "outpost":
 		_prepare_battlefield_deploy_confirm(target_area_idx)
 	elif phase_name == "action":
@@ -1177,36 +1450,13 @@ func _on_battlefield_clicked(target_area_idx: int) -> void:
 func _prepare_battlefield_deploy_confirm(target_area_idx: int) -> void:
 	if target_area_idx < 0 or target_area_idx >= MapData.areas.size():
 		return
-	if target_area_idx == 3: # 侦察通常不可直接部署
-		return
-	
 	var area: BaseMapArea = MapData.areas[target_area_idx]
-	var target_loc: BaseLocation = null
-	var slot_desc: String = ""
-	
-	for loc: BaseLocation in area._locations:
-		if !loc._will_move_to:
-			continue
-		if loc._pl_num_limit == -1 or loc._players.size() < loc._pl_num_limit:
-			target_loc = loc
-			break
-	
+	# 落点判定与 AI 部署、呼吸光晕共用同一个函数：界面说能部署的席位就是实际会用的席位。
+	# 哪些战区可部署由地图数据声明(_can_deploy)，不在这里写死下标
+	var target_loc: BaseLocation = _pick_open_deploy_location(area)
 	if target_loc == null:
+		_show_tactical_confirm("【%s】没有可用的部署席位" % area._area_name, true)
 		return
-	
-	# 解析席位描述（绝不带任何括号）
-	if target_area_idx == 0:
-		if target_loc == MapData.magic_workshop0:
-			slot_desc = "核心充能席 +2魔力"
-		else:
-			slot_desc = "常规充能席 +1魔力"
-	elif target_area_idx == 1 or target_area_idx == 2:
-		if target_loc._benefit.number == 3:
-			slot_desc = "最高地利高台 +3战力"
-		elif target_loc._benefit.number == 1:
-			slot_desc = "次级地利席位 +1战力"
-		else:
-			slot_desc = "混战区域"
 	
 	_pending_tactical_action = {
 		"type": "deploy",
@@ -1215,43 +1465,44 @@ func _prepare_battlefield_deploy_confirm(target_area_idx: int) -> void:
 	}
 	
 	var deploy_costs: Array[String] = []
-	var deploy_text := _attach_cost_line("部署至【%s】· %s" % [area._area_name, slot_desc], deploy_costs)
+	var deploy_text := _attach_cost_line("部署至【%s】· %s" % [area._area_name, _slot_benefit_desc(target_loc)], deploy_costs)
 	_show_tactical_confirm(deploy_text)
+
+## 席位收益文案：按落点自己声明的印刷数字生成（充能位报魔力、地利位报地利），
+## 不写死"核心充能席/最高地利高台"这类描述，地图数据改了文案自动跟着变
+func _slot_benefit_desc(loc: BaseLocation) -> String:
+	if loc == null:
+		return ""
+	var parts: Array[String] = []
+	var magic_gain: int = (loc._magic as BaseNumber).number
+	var benefit: int = (loc._benefit as BaseNumber).number
+	if magic_gain > 0:
+		parts.append("魔力 +%d" % magic_gain)
+	if benefit > 0:
+		parts.append("地利 %d" % benefit)
+	if parts.is_empty():
+		return "常规席位"
+	return " · ".join(parts)
 
 ## 【行动阶段】准备移动确认
 func _prepare_battlefield_move_confirm(target_area_idx: int) -> void:
 	var pl_data: Dictionary = GameDataManager.get_player_data(_local_player_id)
-	var curr_loc = pl_data.get("location") as BaseLocation
-	if curr_loc == null:
-		return
-	var curr_area = curr_loc.get_from()
+	var curr_area := _local_current_area(pl_data)
 	if curr_area == null:
 		return
 	var current_idx: int = MapData.areas.find(curr_area)
+	if current_idx == -1:
+		return
 	var step_diff: int = target_area_idx - current_idx
 	
 	# 规则：只能向右单向前进
 	if step_diff <= 0:
 		return
 	
-	var target_area: BaseMapArea = MapData.areas[target_area_idx]
-	var target_area_name: String = target_area._area_name
-	
-	# 测算移动费用
-	var total_cost: int = 0
-	var temp_area: BaseMapArea = curr_area
-	for n in range(step_diff):
-		if temp_area._linked_map_area != null:
-			total_cost += temp_area._move_cost.number
-			temp_area = temp_area._linked_map_area
-	
-	# 魔术工房离开折扣
-	if curr_area == MapData.magic_workshop:
-		var discount: int = (pl_data.get("move_cost_discount_from_workshop", BaseNumber.new(0)) as BaseNumber).number
-		total_cost = max(0, total_cost - discount)
-	
-	var curr_magic: int = (pl_data.get("magic", BaseNumber.new(0)) as BaseNumber).number
-	if curr_magic < total_cost:
+	var target_area_name: String = MapData.areas[target_area_idx]._area_name
+	# 费用测算与可操作性判据共用同一个函数，避免两处各算一套
+	var total_cost: int = _estimate_move_cost(pl_data, step_diff)
+	if !_is_magic_enough_for_move(pl_data, total_cost):
 		var alert_text := "移动至【%s】\n所需资源：魔力 %d\n当前魔力不足" % [target_area_name, total_cost]
 		_show_tactical_confirm(alert_text, true)
 		return
@@ -1300,7 +1551,15 @@ func _show_tactical_confirm(desc_str: String, is_alert: bool = false) -> void:
 	if btn_cancel:
 		btn_cancel.text = "知道了" if is_alert else "取消"
 	
+	# 记下这次是纯提示还是待确认操作：纯提示关掉后要把被顶掉的待确认弹窗原样放回来，
+	# 不能顺手把玩家正在准备的部署/移动清掉
+	_confirm_alert_mode = is_alert
+	if !is_alert:
+		_pending_confirm_desc = desc_str
 	tactical_confirm_modal.visible = true
+	# 后显示的弹窗排到子节点末尾：Godot 的点击命中也按子节点倒序，
+	# 排最后才能既画在上层、也真正挡住下面的弹窗
+	move_child(tactical_confirm_modal, get_child_count() - 1)
 
 func _on_tactical_confirm_execute() -> void:
 	if tactical_confirm_modal:
@@ -1323,7 +1582,15 @@ func _on_tactical_confirm_execute() -> void:
 func _on_tactical_confirm_cancel() -> void:
 	if tactical_confirm_modal:
 		tactical_confirm_modal.visible = false
+	if _confirm_alert_mode:
+		# 纯提示只是"知道了"：关掉自己，把之前等待确认的操作放回来
+		_confirm_alert_mode = false
+		if !_pending_tactical_action.is_empty() and _pending_confirm_desc != "":
+			_show_tactical_confirm(_pending_confirm_desc, false)
+		return
 	_pending_tactical_action.clear()
+	# 取消后清空待确认文案：下次"知道了"不该把这次已取消的操作再放回来
+	_pending_confirm_desc = ""
 
 ## -------------------------------------------------------------
 ## 通用卡牌悬浮放大系统
@@ -1427,6 +1694,18 @@ func _build_card_desc(obj) -> String:
 	var cat = obj.get("_category")
 	if cat != null and str(cat) != "":
 		lines.append("类别：" + ATTACK_CATEGORY_LABELS.get(str(cat), str(cat)))
+	#卡面印的打出条件与提示行：文案来自卡自己的数据，这里只负责逐条列出。
+	#注意 Object.get 只接受属性名一个参数，不能带默认值
+	var notes = obj.get("_shown_notes")
+	if notes is Array:
+		for note in notes:
+			if str(note) != "":
+				lines.append(str(note))
+	var play_reqs = obj.get("_play_requirements")
+	if play_reqs is Array:
+		for req in play_reqs:
+			if req is Dictionary and str(req.get("shown_note", "")) != "":
+				lines.append(str(req["shown_note"]))
 	var effs = obj.get("_effects")
 	if effs is Array and effs.size() > 0:
 		var es: Array[String] = []
@@ -1606,12 +1885,16 @@ func _is_mouse_covered_by_modal(mouse_pos: Vector2, source: Control) -> bool:
 ## 声明清楚，都能既显示在上层、也真正挡住下层的点击——不必给每个新面板单独调顺序。
 func _reorder_child_by_z(target: Control) -> void:
 	var target_z: int = target.z_index
+	var target_idx: int = target.get_index()
 	for i in range(get_child_count()):
 		var sib := get_child(i)
 		if sib == target:
 			continue
 		if sib is Control and (sib as Control).z_index > target_z:
-			move_child(target, i)
+			# move_child 的第2个参数是"移动完成后的下标"，不是"插到谁前面"。
+			# 目标原本排在该兄弟之前时，摘除自身会让兄弟前移一位，所以下标要减 1，
+			# 否则会落到兄弟后面，绘制层叠与点击命中两套顺序又会相反
+			move_child(target, i - 1 if target_idx < i else i)
 			return
 	move_child(target, get_child_count() - 1)
 
@@ -1754,30 +2037,128 @@ func _scan_clickable_targets(node: Node) -> void:
 		if want and child is Control:
 			var c := child as Control
 			var col: Color = c.get_meta("clickable_color", Color(1.0, 0.85, 0.3, 1.0))
-			if not c.has_meta("clickable_indicator"):
-				_apply_clickable_indicator(c, col)
+			# 幂等由 _apply_clickable_indicator 内部按 "ClickableGlow" 子节点判断，
+			# 不再读一个没人写入的 metadata 键（配置键与内部标记键混用会让守卫恒为真/恒为假）
+			_apply_clickable_indicator(c, col)
 		_scan_clickable_targets(child)
 
-## 刷新可点击强度：只有轮到自己、且阶段允许时，相关目标才满亮
+## 刷新可点击强度：只有轮到自己、且该目标此刻真的能操作时才满亮。
+## 战区判据与点击入口共用 _can_act_on_area，"看起来能点"与"点得动"永远是同一条件
 func _refresh_clickable_strength() -> void:
-	var my_turn: bool = GameProgress.current_player_id == _local_player_id
-	var phase_name: String = str(GameProgress.get_current_phase().get("name", ""))
-	var area_clickable: bool = my_turn and (phase_name == "outpost" or phase_name == "action")
+	# 剔除已释放的节点：手牌卡位每次刷新都会重建，只 append 不清理会让列表
+	# 与 0.5 秒一次的遍历越跑越大。
+	# 用类型化数组承接：_clickable_nodes 是 Array[Control]，赋未类型化的 Array 会运行时报错
+	var alive: Array[Control] = []
 	for c in _clickable_nodes:
-		if not is_instance_valid(c):
+		if is_instance_valid(c):
+			alive.append(c)
+	_clickable_nodes = alive
+	var my_turn: bool = GameProgress.current_player_id == _local_player_id
+	for c in _clickable_nodes:
+		if !(c is Control):
 			continue
-		if c == area_workshop or c == area_miyama or c == area_shinto or c == area_scout:
-			_set_clickable_active(c, area_clickable)
-		elif bool(c.get_meta("playable_hint", false)):
-			# 可打的手牌：只在真能打时呼吸
-			_set_clickable_active(c, true)
-		elif c.get_meta("actor_avatar", false):
+		var ctrl := c as Control
+		var area_idx: int = _area_index_of_node(ctrl)
+		if area_idx != -1:
+			_set_clickable_active(ctrl, my_turn and _can_act_on_area(area_idx))
+		elif bool(ctrl.get_meta("playable_hint", false)):
+			# 可打的手牌：只在真能打时呼吸（判据由 _can_play_attack_now 给出）
+			_set_clickable_active(ctrl, true)
+		elif ctrl.get_meta("actor_avatar", false):
 			# 当前行动者头像：跟随行动者变化呼吸
-			_set_clickable_active(c, bool(c.get_meta("is_acting", false)))
-		elif c is Button:
-			_set_clickable_active(c, true)
+			_set_clickable_active(ctrl, bool(ctrl.get_meta("is_acting", false)))
+		elif ctrl is Button:
+			_set_clickable_active(ctrl, true)
 		else:
-			_set_clickable_active(c, my_turn)
+			_set_clickable_active(ctrl, my_turn)
+
+## 战区节点对应的 MapData.areas 下标：按 MapData 里的实例查，不写死 0/1/2/3，
+## 区域表顺序变化时也不会出现暗中的错位
+func _area_index_of_node(node: Control) -> int:
+	if node == null:
+		return -1
+	if node == area_workshop:
+		return MapData.areas.find(MapData.magic_workshop)
+	if node == area_miyama:
+		return MapData.areas.find(MapData.miyama)
+	if node == area_shinto:
+		return MapData.areas.find(MapData.shinto)
+	if node == area_scout:
+		return MapData.areas.find(MapData.scout)
+	return -1
+
+## 本地玩家当前所在战区（没有位置时返回 null）
+func _local_current_area(pl_data: Dictionary) -> BaseMapArea:
+	var loc = pl_data.get("location") as BaseLocation
+	if loc == null:
+		return null
+	return loc.get_from() as BaseMapArea
+
+## 从当前战区分几步到目标战区的移动费用（含魔术工房折扣）。判据与确认文案共用，
+## 避免两处各算一套导致"界面显示能走、实际走不动"
+func _estimate_move_cost(pl_data: Dictionary, step_diff: int) -> int:
+	var area := _local_current_area(pl_data)
+	if area == null:
+		return 0
+	var total_cost: int = 0
+	for n in range(step_diff):
+		if area._linked_map_area == null:
+			break
+		total_cost += (area._move_cost as BaseNumber).number
+		area = area._linked_map_area
+	if _local_current_area(pl_data) == MapData.magic_workshop:
+		var discount: int = (pl_data.get("move_cost_discount_from_workshop", BaseNumber.new(0)) as BaseNumber).number
+		total_cost = max(0, total_cost - discount)
+	return total_cost
+
+## 魔力够不够付这笔移动费用（魔力免疫视为够）
+func _is_magic_enough_for_move(pl_data: Dictionary, cost: int) -> bool:
+	if bool(pl_data.get("is_magic_immune", false)):
+		return true
+	return (pl_data.get("magic", BaseNumber.new(0)) as BaseNumber).number >= cost
+
+## 该战区此刻不可操作的原因（空串表示可操作）。呼吸光晕与点击入口共用同一份判据，
+## 保证"看起来能点"与"点得动"永不漂移；不能操作时还能给玩家一个具体说法，
+## 不再出现"战区亮着、点下去什么都不发生"
+func _area_action_block_reason(target_area_idx: int) -> String:
+	if GameProgress.current_player_id != _local_player_id:
+		return "还没轮到你行动"
+	if target_area_idx < 0 or target_area_idx >= MapData.areas.size():
+		return "目标战区不存在"
+	var phase_name := str(GameProgress.get_current_phase().get("name", ""))
+	if phase_name == "outpost":
+		var target_area: BaseMapArea = MapData.areas[target_area_idx]
+		if _open_deploy_locations(target_area).is_empty():
+			return "【%s】没有可用的部署席位" % target_area._area_name
+		return ""
+	if phase_name != "action":
+		return "当前是%s，不能部署或移动" % _phase_shown_name(phase_name)
+	var pl_data: Dictionary = GameDataManager.get_player_data(_local_player_id)
+	var curr_area := _local_current_area(pl_data)
+	if curr_area == null:
+		return "你还没有部署到任何战区"
+	var current_idx: int = MapData.areas.find(curr_area)
+	if current_idx == -1:
+		return "你当前的位置不在任何战区上"
+	var step_diff: int = target_area_idx - current_idx
+	if step_diff <= 0:
+		return "移动只能沿单方向前进"
+	if !_is_magic_enough_for_move(pl_data, _estimate_move_cost(pl_data, step_diff)):
+		return "魔力不足，无法移动至【%s】" % MapData.areas[target_area_idx]._area_name
+	return ""
+
+## 该战区此刻对本地玩家是否可操作
+func _can_act_on_area(target_area_idx: int) -> bool:
+	return _area_action_block_reason(target_area_idx) == ""
+
+## 阶段名的中文口径：界面各处统一由它生成，避免同一阶段在不同位置出现不同写法
+func _phase_shown_name(phase_key: String) -> String:
+	match phase_key:
+		"prepare": return "准备阶段"
+		"outpost": return "前哨阶段"
+		"action": return "行动阶段"
+		"battle": return "战斗阶段"
+	return phase_key
 
 ## 递归设置鼠标过滤：放大预览层需整体忽略鼠标，避免抢走底层卡牌的悬浮判定
 func _set_control_mouse_filter_recursive(node: Node, filter: Control.MouseFilter) -> void:
@@ -1946,6 +2327,237 @@ func _check_waiting_effects() -> void:
 		_current_waiting_effect = pending
 		_show_effect_modal(pending)
 
+## 选牌等待的处理：与"发动/放弃"并列的第二种玩家输入。
+## 效果被发动后，若被选中的选项声明了 select_cards，就在这里停下来让玩家挑具体牌张
+func _check_waiting_card_selection() -> void:
+	var pending: Dictionary = EffectManager.get_pending_card_selection()
+	if pending.is_empty():
+		if _card_select_panel != null and _card_select_panel.visible:
+			_card_select_panel.visible = false
+		_card_select_effect = null
+		_card_select_picked = []
+		return
+	var eff: BaseEffect = pending.get("effect")
+	if eff == null:
+		return
+	var trigger_id: int = eff._trigger_player_id
+	# AI 的挑牌由它自己按规则完成，不弹窗打扰玩家
+	if trigger_id != _local_player_id and trigger_id >= 0:
+		_resolve_bot_card_selection(pending)
+		return
+	if _card_select_effect != eff or _card_select_panel == null or not _card_select_panel.visible:
+		_card_select_effect = eff
+		_card_select_picked = []
+		_show_card_select_panel(pending)
+	else:
+		_refresh_card_select_confirm(pending)
+
+
+## 临时测试用 AI 的挑牌：按来源顺序取够声明的最少张数；来源不够就放弃
+## （提交空 = 放弃。此刻来源资源与用量都还没扣，放弃等于这个效果没发动）
+func _resolve_bot_card_selection(pending: Dictionary) -> void:
+	var eff: BaseEffect = pending.get("effect")
+	if eff == null:
+		return
+	var cards: Array = pending.get("cards", [])
+	var low: int = int(pending.get("min", 1))
+	var picks: Array = []
+	for card in cards:
+		if picks.size() >= low:
+			break
+		picks.append(card)
+	if picks.size() < low:
+		picks = []
+	EffectManager.submit_card_selection(eff, picks)
+	refresh_all_ui()
+
+
+## 选牌面板：结构与"效果决策弹窗"同源（标题 + 卡牌行 + 提示 + 两个按钮），
+## 但它是本界面自己按需创建的——这种只为一个流程服务的浮层没必要写进场景文件
+func _ensure_card_select_panel() -> Control:
+	if _card_select_panel != null and is_instance_valid(_card_select_panel):
+		return _card_select_panel
+	var panel := PanelContainer.new()
+	panel.name = "Modal_CardSelect"
+	panel.z_index = MODAL_Z_THRESHOLD + 20
+	panel.visible = false
+	panel.custom_minimum_size = Vector2(820, 0)
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.06, 0.07, 0.12, 0.96)
+	sb.set_border_width_all(2)
+	sb.border_color = Color(0.45, 0.6, 0.9, 0.9)
+	sb.set_corner_radius_all(10)
+	sb.set_content_margin_all(16)
+	panel.add_theme_stylebox_override("panel", sb)
+	var vbox := VBoxContainer.new()
+	vbox.name = "Box"
+	vbox.add_theme_constant_override("separation", 10)
+	panel.add_child(vbox)
+	var title := Label.new()
+	title.name = "Title"
+	title.add_theme_font_size_override("font_size", 17)
+	title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	vbox.add_child(title)
+	var scroll := ScrollContainer.new()
+	scroll.name = "CardScroll"
+	scroll.custom_minimum_size = Vector2(0, 250)
+	vbox.add_child(scroll)
+	var row := HBoxContainer.new()
+	row.name = "CardRow"
+	row.add_theme_constant_override("separation", 8)
+	scroll.add_child(row)
+	var hint := Label.new()
+	hint.name = "Hint"
+	hint.add_theme_font_size_override("font_size", 13)
+	hint.add_theme_color_override("font_color", Color(0.75, 0.85, 1.0))
+	vbox.add_child(hint)
+	var buttons := HBoxContainer.new()
+	buttons.name = "ButtonsRow"
+	buttons.alignment = BoxContainer.ALIGNMENT_END
+	buttons.add_theme_constant_override("separation", 10)
+	vbox.add_child(buttons)
+	var btn_ok := Button.new()
+	btn_ok.name = "BtnConfirmSelect"
+	btn_ok.text = "确认弃置"
+	buttons.add_child(btn_ok)
+	var btn_cancel := Button.new()
+	btn_cancel.name = "BtnCancelSelect"
+	btn_cancel.text = "取消"
+	buttons.add_child(btn_cancel)
+	add_child(panel)
+	_block_panel_clicks(panel)
+	_enable_modal_drag(panel)
+	btn_ok.pressed.connect(_on_card_select_confirmed)
+	btn_cancel.pressed.connect(_on_card_select_cancelled)
+	_card_select_panel = panel
+	return panel
+
+
+func _show_card_select_panel(pending: Dictionary) -> void:
+	var panel := _ensure_card_select_panel()
+	_card_select_cards = pending.get("cards", [])
+	# 面板摆在上方偏中，留出下面的手牌区（拖动可自行调整）
+	var vp := get_viewport_rect().size
+	panel.position = Vector2(maxf(0.0, (vp.x - 820.0) * 0.5), vp.y * 0.16)
+	var title := panel.get_node_or_null("Box/Title") as Label
+	if title:
+		var shown: String = str(pending.get("shown_name", ""))
+		title.text = shown if shown != "" else "请选择牌"
+	var row := panel.get_node_or_null("Box/CardScroll/CardRow")
+	if row == null:
+		return
+	# 卡位是随本次选牌现生成的，不属于场景模板，整批回收
+	for child in row.get_children():
+		_free_runtime_child(child)
+	for card in _card_select_cards:
+		var rect := TextureRect.new()
+		rect.custom_minimum_size = Vector2(146, 200)
+		rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		rect.mouse_filter = Control.MOUSE_FILTER_STOP
+		rect.set_meta("select_card", card)
+		rect.gui_input.connect(_on_select_card_input.bind(rect))
+		_render_card_face(rect, card, true)
+		row.add_child(rect)
+		_set_card_selected_mark(rect, _card_select_picked.has(card))
+	panel.visible = true
+	# 后显示的浮层排到子节点末尾：命中也按子节点倒序，排最后才能真正挡住下层
+	move_child(panel, get_child_count() - 1)
+	_refresh_card_select_confirm(pending)
+
+
+## 点卡切换选中状态
+func _on_select_card_input(ev: InputEvent, slot: Control) -> void:
+	if not (ev is InputEventMouseButton and ev.button_index == MOUSE_BUTTON_LEFT and ev.pressed):
+		return
+	var card = slot.get_meta("select_card", null)
+	if card == null:
+		return
+	if _card_select_picked.has(card):
+		_card_select_picked.erase(card)
+		_set_card_selected_mark(slot, false)
+	else:
+		# 上限由声明决定：选满了就不再接受新的，避免提交上去被判非法
+		var pending: Dictionary = EffectManager.get_pending_card_selection()
+		var high: int = int(pending.get("max", -1))
+		if high != -1 and _card_select_picked.size() >= high:
+			return
+		_card_select_picked.append(card)
+		_set_card_selected_mark(slot, true)
+	_refresh_card_select_confirm(EffectManager.get_pending_card_selection())
+
+
+## 已挑中的卡加一圈金色描边（只表达"选中"，不是"可点击"提示）
+func _set_card_selected_mark(node: Control, selected: bool) -> void:
+	if node == null:
+		return
+	var mark := node.get_node_or_null("SelectMark") as Panel
+	if !selected:
+		if mark != null:
+			_free_runtime_child(mark)
+		return
+	if mark != null:
+		return
+	mark = Panel.new()
+	mark.name = "SelectMark"
+	mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mark.z_index = 3
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0, 0, 0, 0)
+	sb.draw_center = false
+	sb.set_border_width_all(5)
+	sb.border_color = Color(1.0, 0.85, 0.3)
+	sb.set_corner_radius_all(8)
+	mark.add_theme_stylebox_override("panel", sb)
+	node.add_child(mark)
+	mark.set_anchors_preset(Control.PRESET_FULL_RECT)
+
+
+## 提示与确认按钮的可用性：张数落在声明范围内才能确认
+func _refresh_card_select_confirm(pending: Dictionary) -> void:
+	if _card_select_panel == null:
+		return
+	var hint := _card_select_panel.get_node_or_null("Box/Hint") as Label
+	if hint:
+		var low: int = int(pending.get("min", 1))
+		var high: int = int(pending.get("max", low))
+		var range_text: String = ("%d-%d" % [low, high]) if high != -1 else ("至少 %d" % low)
+		hint.text = "已选 %d · 可弃置 %s" % [_card_select_picked.size(), range_text]
+	var btn_ok := _card_select_panel.get_node_or_null("Box/ButtonsRow/BtnConfirmSelect") as Button
+	if btn_ok:
+		var low2: int = int(pending.get("min", 1))
+		var high2: int = int(pending.get("max", low2))
+		var ok: bool = _card_select_picked.size() >= low2
+		if high2 != -1 and _card_select_picked.size() > high2:
+			ok = false
+		btn_ok.disabled = not ok
+
+
+func _on_card_select_confirmed() -> void:
+	var eff := _card_select_effect
+	if eff == null:
+		return
+	var picks: Array = _card_select_picked.duplicate()
+	_card_select_effect = null
+	_card_select_picked = []
+	if _card_select_panel:
+		_card_select_panel.visible = false
+	EffectManager.submit_card_selection(eff, picks)
+	refresh_all_ui()
+
+
+func _on_card_select_cancelled() -> void:
+	var eff := _card_select_effect
+	_card_select_effect = null
+	_card_select_picked = []
+	if _card_select_panel:
+		_card_select_panel.visible = false
+	if eff != null:
+		# 空提交按"放弃"处理：此刻来源资源与用量都还没扣，等于这个效果没发动
+		EffectManager.submit_card_selection(eff, [])
+	refresh_all_ui()
+
+
 ## AI自动决断主动效果（检查费用后自动提交）
 ## 选项类效果(单选/多选)：AI按确定性策略选(每次呼出：单选选第一个仍可用的选项；
 ## 多选场景选够max_choices个不同的可用选项)，不弹窗
@@ -2051,7 +2663,7 @@ func _show_effect_modal(effect: BaseEffect) -> void:
 		desc_lbl.text = "发动【%s】\n%s" % [eff_name, ("请选择要发动的效果（可多选）" if is_multi else "请选择要发动的效果")]
 		if options_row:
 			for child in options_row.get_children():
-				child.queue_free()
+				_free_runtime_child(child)
 			options_row.visible = true
 			for i in range(effect._options.size()):
 				var opt: Dictionary = effect._options[i]
@@ -2069,6 +2681,9 @@ func _show_effect_modal(effect: BaseEffect) -> void:
 					cb.text = opt_name
 					cb.name = "Opt_%d" % i
 					cb.disabled = !available
+					# 勾选一变就刷新"确认发动"可用性：空勾选提交会被引擎当成放弃，
+					# 玩家以为发动了却什么都没发生
+					cb.toggled.connect(_refresh_effect_confirm_state.bind(options_row, btn_confirm))
 					row.add_child(cb)
 					if has_qty and available:
 						row.add_child(_build_quantity_spinbox(opt["quantity_range"], i))
@@ -2100,16 +2715,34 @@ func _show_effect_modal(effect: BaseEffect) -> void:
 			# 多选靠勾选后点"确认发动"提交；单选靠上面按钮直接提交，确认按钮隐藏
 			btn_confirm.visible = is_multi
 			btn_confirm.text = "确认发动"
+			_refresh_effect_confirm_state(options_row, btn_confirm)
 	else:
 		if options_row:
 			options_row.visible = false
 			for child in options_row.get_children():
-				child.queue_free()
+				_free_runtime_child(child)
 		if btn_confirm:
 			btn_confirm.visible = true
 			btn_confirm.text = "确认发动"
 		desc_lbl.text = _attach_cost_line("发动【%s】" % eff_name, _resolve_effect_cost_items(effect))
 	effect_modal.visible = true
+	# 与确认弹窗同一套：后显示的排最后，才能既画在上层又挡住下层点击
+	move_child(effect_modal, get_child_count() - 1)
+
+## 多选效果的"确认发动"可用性：一个都没勾就不让点，避免空提交被当成放弃
+func _refresh_effect_confirm_state(options_row: Control, btn_confirm: Button) -> void:
+	if btn_confirm == null or options_row == null:
+		return
+	var any_checked: bool = false
+	for i in range(options_row.get_child_count()):
+		var row := options_row.get_child(i)
+		var cb := row.get_node_or_null("Opt_%d" % i) as CheckBox
+		if cb == null:
+			cb = row as CheckBox
+		if cb and cb.button_pressed:
+			any_checked = true
+			break
+	btn_confirm.disabled = not any_checked
 
 ## 通用数量选择器：min~max范围的SpinBox，供带quantity_range的选项复用
 func _build_quantity_spinbox(range_arr: Array, option_index: int) -> SpinBox:
@@ -2181,13 +2814,28 @@ func _on_effect_modal_cancel() -> void:
 ## -------------------------------------------------------------
 ## 5. 对手极简 AI 自动轮转 (Dummy Bot Agent)
 ## -------------------------------------------------------------
-func _check_and_step_ai() -> void:
-	if _ai_acting or GameProgress.is_game_over:
+func _check_and_step_ai(delta: float = 0.0) -> void:
+	if GameProgress.is_game_over:
+		return
+	# 上一轮 AI 步进被脚本异常打断时兜底复位：否则一个错误会把整局 AI 永久冻住
+	if _ai_acting:
+		if GameProgress.current_player_id != _ai_acting_for_id:
+			_ai_acting = false
 		return
 	var curr_id: int = GameProgress.current_player_id
-	if curr_id > 0 and curr_id != _local_player_id:
-		_ai_acting = true
-		_run_dummy_bot_turn(curr_id)
+	# 不是自己的回合就交给 AI。判据只认"当前玩家 != 本地玩家"，
+	# 不再写死 curr_id > 0——那等于假设本地玩家恒为 0，本地玩家一改，0 号玩家就没人推进
+	if curr_id < 0 or curr_id == _local_player_id:
+		return
+	# 节流：不在一帧里把整轮对手跑完，玩家才看得到 AI 的行动过程
+	_ai_cooldown -= delta
+	if _ai_cooldown > 0.0:
+		return
+	_ai_cooldown = AI_STEP_INTERVAL
+	_ai_acting = true
+	_ai_acting_for_id = curr_id
+	_run_dummy_bot_turn(curr_id)
+	_ai_acting = false
 
 func _run_dummy_bot_turn(bot_id: int) -> void:
 	var pl_data: Dictionary = GameDataManager.get_player_data(bot_id)
@@ -2195,20 +2843,19 @@ func _run_dummy_bot_turn(bot_id: int) -> void:
 	var phase_name: String = curr_phase.get("name", "")
 	
 	if phase_name == "outpost":
-		# 前哨阶段 AI 自动部署到有空位的战场（在 工房、深山町、新都 间分配）
-		var preferred_areas := [1, 2, 0] # 优先争夺深山町、新都地利，其次工房
-		var deployed := false
-		for a_idx in preferred_areas:
-			var area: BaseMapArea = MapData.areas[a_idx]
-			for loc: BaseLocation in area._locations:
-				if !loc._will_move_to:
-					continue
-				if loc._pl_num_limit == -1 or loc._players.size() < loc._pl_num_limit:
-					Deploy.new().exec(loc, bot_id)
-					deployed = true
-					break
-			if deployed:
-				break
+		# 临时测试用 AI：在可部署的战区里随机挑战区、随机挑席位，不做战术权衡。
+		# 席位池与本地玩家点击部署共用 _open_deploy_locations，永远只挑真实可用的席位
+		var area_pool: Array = []
+		for area: BaseMapArea in MapData.areas:
+			if !_open_deploy_locations(area).is_empty():
+				area_pool.append(area)
+		if !area_pool.is_empty():
+			area_pool.shuffle()
+			# 战区可以随机挑，席位不行：席位必须按"先占满高收益档"的规则来，
+			# 只是在当前该用的那一档里随机（同档位之间没有先后）
+			var target: BaseLocation = _pick_open_deploy_location(area_pool[0], true)
+			if target != null:
+				Deploy.new().exec(target, bot_id)
 	elif phase_name == "action":
 		var hands: Array = pl_data.get("hand_cards", [])
 		for card in hands:
@@ -2219,6 +2866,45 @@ func _run_dummy_bot_turn(bot_id: int) -> void:
 	GameProgress.end_current_player_action()
 	_ai_acting = false
 	refresh_all_ui()
+
+## 列出某战区当前所有可用的部署席（没满员的点位）。
+## 注意这里**不能**用 _will_move_to 当判据：那个字段的含义是"常规移动会去的落点"，
+## 与"能不能部署"是两回事——地利位/充能位都不是常规移动目的地，却正是部署要抢的席位。
+## 哪个战区可部署由地图数据声明(area._can_deploy)，不在这里写死战区下标
+func _open_deploy_locations(area: BaseMapArea) -> Array:
+	var open: Array = []
+	if area == null or !area._can_deploy:
+		return open
+	for loc: BaseLocation in area._locations:
+		if loc._pl_num_limit != -1 and loc._players.size() >= loc._pl_num_limit:
+			continue
+		open.append(loc)
+	return open
+
+## 从可用席位里挑一个：规则是先把收益最高的那一档席位占满，才能用下一档。
+## random_within_tier=true 时只在"当前该用的这一档"里随机挑一个（临时测试 AI 用），
+## false 时取该档第一位（本地玩家点击部署用）——两者都不会跳到低收益席位去
+func _pick_open_deploy_location(area: BaseMapArea, random_within_tier: bool = false) -> BaseLocation:
+	var open := _open_deploy_locations(area)
+	if open.is_empty():
+		return null
+	var best_score: int = -1
+	for loc in open:
+		var score := _deploy_slot_score(loc)
+		if score > best_score:
+			best_score = score
+	var tier: Array = []
+	for loc in open:
+		if _deploy_slot_score(loc) == best_score:
+			tier.append(loc)
+	if random_within_tier:
+		return tier.pick_random()
+	return tier[0]
+
+## 席位的收益分：充能席给魔力、地利席给地利，两者都按席位自己印刷的数字算，
+## 不写死"哪一类席位更优先"——数字大的就是该先被占的席位
+func _deploy_slot_score(loc: BaseLocation) -> int:
+	return int((loc._magic as BaseNumber).number) + int((loc._benefit as BaseNumber).number)
 
 ## -------------------------------------------------------------
 ## 6. 辅助折叠菜单与悬浮手牌托盘
@@ -2309,6 +2995,15 @@ func _update_drawer_visuals(opponent_card: Control) -> void:
 			_object_shown_name(master_obj),
 			(pl_data.get("score", BaseNumber.new(0)) as BaseNumber).number
 		]
+	# 已打出牌标题：按该对手真实所在战区与合计威力生成，不再是场景预置的固定文案
+	var played_lbl := opponent_drawer.get_node_or_null("VBox/CardsContentRow/Col_PlayedCards_Opponent/Label") as Label
+	if played_lbl:
+		var opp_loc = pl_data.get("location") as BaseLocation
+		var opp_area := opp_loc.get_from() as BaseMapArea if opp_loc != null else null
+		var opp_area_txt: String = opp_area._area_name if opp_area != null else "未部署"
+		var opp_power: int = (pl_data.get("power", BaseNumber.new(0)) as BaseNumber).number \
+			+ (pl_data.get("total_power_bonus", BaseNumber.new(0)) as BaseNumber).number
+		played_lbl.text = "⚔️ %s 已打出牌 · 威力 %d" % [opp_area_txt, opp_power]
 	
 	# 2. 公开御主卡 / 从者卡（从者未公开时显示卡背且不放大）
 	var master_card := opponent_drawer.get_node_or_null("VBox/CardsContentRow/Col_MasterServant/CardsH/MasterCard") as TextureRect
@@ -2331,26 +3026,11 @@ func _update_drawer_visuals(opponent_card: Control) -> void:
 			servant_card.set_meta("zoom_disabled", false)
 			_fill_card_slot(servant_card, servant_obj, "_servant_card_img")
 	
-	# 3. 该对手已打出的牌（暗置显示卡背）
-	var opp_row := opponent_drawer.get_node_or_null("VBox/CardsContentRow/Col_PlayedCards_Opponent/CardsOverlapRow") as HBoxContainer
+	# 3. 该对手已打出的牌：与本地信息栏共用同一套铺卡逻辑（卡位复用场景模板、不足才克隆），
+	# 抽屉里的卡不可发动(clickable=false)、别人的未公开牌按卡背渲染(owned=false)
+	var opp_row := opponent_drawer.get_node_or_null("VBox/CardsContentRow/Col_PlayedCards_Opponent/CardsOverlapRow") as Control
 	if opp_row:
-		for c in opp_row.get_children():
-			c.queue_free()
-		for card in pl_data.get("played_cards", []):
-			if not (card is BaseAttack):
-				continue
-			var rect := TextureRect.new()
-			rect.custom_minimum_size = Vector2(100, 142)
-			rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			if card._is_concealed:
-				rect.texture = LoadHelper.load_texture(LoadHelper.resolve_card_back("", "", "attack"))
-				rect.set_meta("zoom_disabled", true)
-			else:
-				if LoadHelper.texture_exists(card._card_img):
-					rect.texture = LoadHelper.load_texture(card._card_img)
-				_bind_zoom_info(rect, card)
-			opp_row.add_child(rect)
+		_fill_card_row_from_list(opp_row, pl_data.get("played_cards", []), false, false)
 	
 	# 4. 资源文字：魔力/令咒/所在战区按真实数据填，不用场景预置文案
 	var magic_lbl := opponent_drawer.get_node_or_null("VBox/HeaderBar/ResourceVisuals/MagicH/Magic") as Label
@@ -2412,8 +3092,26 @@ func _on_hand_tray_mouse_entered() -> void:
 	_expand_hand_tray()
 
 func _on_hand_tray_mouse_exited() -> void:
+	# 按钮锁定展开时不因鼠标移开而收起
+	if _hand_pinned_open:
+		return
 	if not _last_hand_hover_state:
 		_collapse_hand_tray()
+
+## 底栏"手牌"按钮：已展开就收起，否则展开并锁定，鼠标移开也不自动收
+func _on_toggle_hand_tray_pressed() -> void:
+	_hand_pinned_open = not _hand_is_expanded
+	if _hand_pinned_open:
+		_expand_hand_tray()
+	else:
+		_collapse_hand_tray()
+
+## 对手抽屉的关闭按钮：与"再点头像"共用同一套状态清理
+func _on_close_opponent_drawer_pressed() -> void:
+	_selected_opponent = null
+	_selected_opponent_id = ""
+	if opponent_drawer:
+		opponent_drawer.visible = false
 
 func _expand_hand_tray() -> void:
 	if hand_tray == null or _hand_is_expanded:
@@ -2456,7 +3154,7 @@ func _show_battle_report(res: Dictionary) -> void:
 	if list == null:
 		return
 	for c in list.get_children():
-		c.queue_free()
+		_free_runtime_child(c)
 	
 	var winners: Dictionary = res.get("winners_by_area", {})
 	for area_name in winners.keys():
@@ -2510,6 +3208,8 @@ func _show_battle_report(res: Dictionary) -> void:
 	# 战报行是每次动态新建的，补齐拖动穿透，保证面板空白处仍可拖动
 	_make_children_passive(battle_report_modal)
 	battle_report_modal.visible = true
+	# 与确认/效果弹窗同一套：后显示的排最后，既画在上层也挡住下层点击
+	move_child(battle_report_modal, get_child_count() - 1)
 
 func _on_close_battle_report() -> void:
 	if battle_report_modal:

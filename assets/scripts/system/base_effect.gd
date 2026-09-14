@@ -15,6 +15,8 @@ var _self_vars:Array
 var _priority:int
 var _using_numbers:Array
 var _cost = null
+#每局限一次：声明后该效果本局只触发一次，触发记录写在触发者的 used_once_effects 里
+var _once_per_game:bool = false
 #选项分支：{"shown_option_name":String, "funcs":Array[BaseFunc],
 #  "max_uses":int(单个选项在本次重置周期内最多能用几次，-1不限，默认-1),
 #  "quantity_range":[min,max](可选。声明后玩家选中该项时还需额外选一个范围内的数量)}。
@@ -40,6 +42,10 @@ var _reset_counts_each_round:bool = false
 #是否在选中生效时消耗来源对象(effect.from)的_buff_level层数(duck-typed，不限定BaseBuff)。
 #层数不足时对应选项不可选；多个效果共享同一个from对象时天然共享同一份资源池
 var _consumes_source_resource:bool = false
+#玩家为"需要挑牌"的选项实际选中的牌（运行期状态，由 EffectManager.submit_card_selection 写入）。
+#选项上的声明写在 option 的 select_cards 里；效果链想读这些牌，用现成的
+#get_activating_eff + get_property("_selected_cards") 即可，不必为选牌单开一个 operation
+var _selected_cards:Array = []
 #激活瞬间的触发上下文快照。start_effect会清空各玩家的动态时点，所以要在清空前记下来
 var _trigger_player_id:int = -1
 var _trigger_time_points:Array

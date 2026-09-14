@@ -95,8 +95,13 @@ static func load_effects(effects:Array, from) -> Array:
 		effect.from = from
 		effect.set_numbers(nums)
 		effect._using_numbers = nums
-		if eff.has("cost"):
-			effect._cost = eff["cost"]
+		#效果级魔力消耗：与卡牌的cost一样解析成BaseNumber，方便结算时直接比较/扣除。
+		#结构不是数字声明的(缺number键/写成别的形状)一律视为没声明，不在加载期报错
+		var cost_data = eff.get("cost")
+		if cost_data is Dictionary and cost_data.has("number"):
+			effect._cost = load_number(cost_data)
+		#每局限一次的声明(触发记录由EffectManager写进玩家的used_once_effects)
+		effect._once_per_game = bool(eff.get("once_per_game", false))
 		#from 和 numbers 都已就绪，此时才能把数字登记到所属对象上
 		effect.register_numbers_to_source()
 		#多选效果(如令咒三选一、宝石魔术选项)：options非空时每个选项自带一套funcs，
@@ -114,6 +119,10 @@ static func load_effects(effects:Array, from) -> Array:
 				}
 				if opt.has("quantity_range"):
 					opt_dict["quantity_range"] = opt["quantity_range"]
+				#选项声明"还要玩家挑几张具体的牌"：source 是取牌的玩家区域键名(如 hand_cards)，
+				#min/max 是可挑张数范围。挑哪几张属于玩家输入，不写死在数据里
+				if opt.has("select_cards"):
+					opt_dict["select_cards"] = opt["select_cards"]
 				opts.append(opt_dict)
 			effect._options = opts
 			effect._max_choices = eff.get("max_choices", 1) as int

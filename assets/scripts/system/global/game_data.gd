@@ -8,6 +8,8 @@ var player_data_library:Dictionary
 
 #从技能区打出卡牌所需的魔力。规则数字不写死，特殊效果可以改动
 var skill_zone_magic_limit:BaseNumber = BaseNumber.new(8)
+#魔力上限：界面按它显示"当前/上限"，不把 12 写死在界面里。规则数字不写死，特殊效果可以改动
+var magic_limit:BaseNumber = BaseNumber.new(12)
 
 
 #每个玩家都要一份独立的数据，不能共用同一个字典，否则各玩家的数值会互相串改

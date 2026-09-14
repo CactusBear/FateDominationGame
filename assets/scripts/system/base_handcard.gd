@@ -10,6 +10,13 @@ var _power:BaseNumber
 var _is_closed:bool = false
 #单张卡费用折扣，与玩家层的attack_cost_discount叠加生效
 var _cost_discount:BaseNumber = BaseNumber.new(0)
+#打出条件：由卡自己的数据声明，每项形如{type, value, shown_note}。
+#引擎按 type 判断能否打出(未识别的type不拦)，界面按 shown_note 出说明行
+var _play_requirements:Array = []
+#卡面印的纯提示行(不含规则)，界面原样列出
+var _shown_notes:Array = []
+#此牌须靠"追加打出"(add_attack/add_skill，不计常规出牌上限)进场，常规出牌被拒
+var _need_extra_play:bool = false
 
 
 
