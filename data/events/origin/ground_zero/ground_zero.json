@@ -2,30 +2,22 @@
   "card_name": "ground_zero",
   "shown_name": "归零地",
   "score": {
-    "number": 3,
-    "can_change": true,
-    "is_pure_number": true
+	"number": 3,
+	"can_change": true,
+	"is_pure_number": true
   },
   "card_img": "ground_zero.png",
   "effects": [
-    {
-      "effect_name": "ground_zero_placeholder",
-      "shown_effect_name": "此战场的各个地利位置不提供地利",
-      "time_points": [
-        "battle_resolve"
-      ],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [],
-      "funcs": [
-        {
-          "func_name": "do_nothing",
-          "parameters": [],
-          "var_index": -1
-        }
-      ]
-    }
+	{
+	  "effect_name": "no_location_benefit",
+	  "shown_effect_name": "此战场的各个地利位置不提供地利",
+	  "time_points": [],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [],
+	  "funcs": []
+	}
   ],
   "zoom_kind": "card"
 }

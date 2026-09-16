@@ -1,6 +1,11 @@
 extends BaseCard
 class_name BaseSituation
 
+func clone_data(context):
+	var cloned = BaseSituation.new(_name, _card_img, context.copy(_magic), [])
+	copy_clone_fields(cloned, context)
+	return cloned
+
 
 var _magic:BaseNumber
 

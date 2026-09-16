@@ -2,32 +2,61 @@
   "card_name": "turnaround",
   "shown_name": "转机",
   "magic": {
-    "number": 2,
-    "can_change": true,
-    "is_pure_number": true
+	"number": 2,
+	"can_change": true,
+	"is_pure_number": true
   },
   "is_climax": false,
   "climax_round": 0,
   "card_img": "turnaround.png",
   "effects": [
-    {
-      "effect_name": "turnaround_add_events",
-      "shown_effect_name": "于深山町和新都各增加一张正面事件牌",
-      "time_points": [
-        "battle_resolve"
-      ],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [],
-      "funcs": [
-        {
-          "func_name": "do_nothing",
-          "parameters": [],
-          "var_index": -1
-        }
-      ]
-    }
+	{
+	  "effect_name": "turnaround_add_events",
+	  "shown_effect_name": "于深山町和新都各增加一张正面事件牌",
+	  "time_points": [
+		"battle_resolve"
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [],
+	  "funcs": [
+		{
+		  "func_name": "get_map_area_by_name",
+		  "parameters": [
+			"深山町"
+		  ],
+		  "var_index": 0
+		},
+		{
+		  "func_name": "add_event_from_deck",
+		  "parameters": [
+			{
+			  "self_var": 0
+			},
+			1
+		  ],
+		  "var_index": -1
+		},
+		{
+		  "func_name": "get_map_area_by_name",
+		  "parameters": [
+			"新都"
+		  ],
+		  "var_index": 1
+		},
+		{
+		  "func_name": "add_event_from_deck",
+		  "parameters": [
+			{
+			  "self_var": 1
+			},
+			1
+		  ],
+		  "var_index": -1
+		}
+	  ]
+	}
   ],
   "zoom_kind": "card"
 }

@@ -10,5 +10,9 @@ func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false, ig
 	if !ignore_battle and !ignore_engagement and player_data["is_battle"] == true:
 		#show("处于交战状态，无法移动")
 		return
-	var cost = MoveLocation.new().exec(move_num,player_id,ignore_limit)
-	EditMagic.new().exec(null, 0 - cost, player_id)
+	var cost = MoveLocation.new().exec(move_num, player_id, ignore_limit)
+	#目标落位失败时不扣费；MoveLocation 用 null 表示没有完成移动。
+	if cost == null:
+		return
+	#MoveLocation 返回 BaseNumber，扣费 operation 需要同样的数值对象，不能直接做 int/Object 运算。
+	EditMagic.new().exec(null, BaseNumber.new(0 - cost.number), player_id)

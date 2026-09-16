@@ -25,6 +25,31 @@ static func get_normal() -> BaseCard:
 	return get_command_spell("normal_command_spell")
 
 
+#解析某名玩家的令咒：优先御主 specials.COMMAND_SPELLS 声明的专属令咒(card_name，
+#单个字符串或数组取第一个)，其次从者声明，都没有回退通用常规令咒。
+#界面展示与效果挂载共用这一个口径，避免两处解析各写一份以后出现"界面显示A、结算用B"
+static func resolve_player_command_spell(master, servant) -> BaseCard:
+	for holder in [master, servant]:
+		var declared := _declared_command_spell(holder)
+		if declared != null:
+			return declared
+	return get_normal()
+
+
+static func _declared_command_spell(holder) -> BaseCard:
+	if holder == null:
+		return null
+	var specials = holder.get("_specials")
+	if !(specials is Dictionary):
+		return null
+	var declared = specials.get("COMMAND_SPELLS", null)
+	if declared is String:
+		return get_command_spell(declared)
+	if declared is Array and declared.size() > 0:
+		return get_command_spell(str(declared[0]))
+	return null
+
+
 static func _load_dir(dir_path:String) -> void:
 	var dir := DirAccess.open(dir_path)
 	if dir == null:

@@ -25,6 +25,14 @@ static func can_play(card, player_data:Dictionary) -> bool:
 	return true
 
 
+#本回合已经常规打出了几张某类牌（card_type 传 "attack"/"skill"）。
+#出牌入口与界面提示共用这一个口径——两处各写一份 filter 的话，
+#改条件时漏掉一处就会出现"界面显示能点、引擎却拒绝"这种不一致
+static func played_count(player_id:int, card_type:String) -> int:
+	return GameLog.query({"type": "play", "actor": player_id,
+		"data": {"card_type": card_type, "extra": false}}, 0).size()
+
+
 static func _meets(req:Dictionary, player_data:Dictionary) -> bool:
 	match str(req.get("type", "")):
 		"min_magic":

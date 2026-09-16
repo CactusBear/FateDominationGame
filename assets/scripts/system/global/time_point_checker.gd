@@ -28,6 +28,9 @@ func global_time_point(time_points:Array):
 		for tp in time_points:
 			dtp_arr.append(tp)
 		pl_data["current_time_points"] = phase_time_points + dtp_arr
+	#日志：全局时点（不属于任何玩家，actor 记 -1）
+	GameLog.record("time_point", -1, -1, "", null, ["global"] + time_points.duplicate(),
+		{"time_points": time_points.duplicate()})
 	time_point_check()
 
 
@@ -52,6 +55,9 @@ func dynamic_time_point(time_points:Array, current_player_id:int):
 			other_dtp_arr.append("others_" + tp)
 		other_player_data["current_time_points"] = phase_time_points + other_dtp_arr
 
+	#日志：谁在什么时点被派发（历史查询最基础的一条事实）
+	GameLog.record("time_point", current_player_id, -1, "", null, time_points.duplicate(),
+		{"time_points": time_points.duplicate()})
 	time_point_check()
 
 

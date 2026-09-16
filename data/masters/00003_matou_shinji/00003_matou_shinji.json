@@ -199,9 +199,14 @@
             ],
             "funcs": [
               {
-                "func_name": "get_player_data_value",
+                "func_name": "log_field_values",
                 "parameters": [
-                  "used_once_effects"
+                  {
+                    "type": "effect",
+                    "actor": -1
+                  },
+                  null,
+                  "effect_name"
                 ],
                 "var_index": 0
               },
@@ -489,9 +494,14 @@
             ],
             "funcs": [
               {
-                "func_name": "get_player_data_value",
+                "func_name": "log_field_values",
                 "parameters": [
-                  "used_once_effects"
+                  {
+                    "type": "effect",
+                    "actor": -1
+                  },
+                  null,
+                  "effect_name"
                 ],
                 "var_index": 0
               },

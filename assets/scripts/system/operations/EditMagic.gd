@@ -15,7 +15,11 @@ func exec(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), pl
 		magic.set_num(set_num)
 	magic.add(vary_num)
 
-	if magic.number > before:
+	#先把这次的差值固定下来并记完日志，再派发时点（理由同 EditScore）
+	var delta = magic.number - before
+	GameLog.record_resource_change("magic", id, before, magic.number)
+
+	if delta > 0:
 		TimePointChecker.dynamic_time_point([TimePoints.MAGIC_ADD], id)
-	elif magic.number < before:
+	elif delta < 0:
 		TimePointChecker.dynamic_time_point([TimePoints.MAGIC_DECREASE], id)

@@ -38,9 +38,18 @@
             "effect_numbers": [],
             "funcs": [
               {
-                "func_name": "get_player_data_value",
+                "func_name": "log_field_values",
                 "parameters": [
-                  "played_attacks_this_turn"
+                  {
+                    "type": "play",
+                    "data": {
+                      "card_type": "attack",
+                      "extra": false
+                    },
+                    "actor": -1
+                  },
+                  0,
+                  "object"
                 ],
                 "var_index": 0
               },

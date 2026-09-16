@@ -9,6 +9,7 @@ const QUERY_ZONE := "query_zone"
 const QUERY_CARD := "query_card"
 const QUERY_MAP := "query_map"
 const QUERY_EFFECT := "query_effect"
+const QUERY_LOG := "query_log"
 const QUERY_COLLECTION := "query_collection"
 const QUERY_COMPARE := "query_compare"
 const EDIT_PLAYER := "edit_player"
@@ -29,6 +30,7 @@ const CATEGORY_SHOWN := {
 	QUERY_CARD : "查询/卡牌对象",
 	QUERY_MAP : "查询/地图",
 	QUERY_EFFECT : "查询/效果与时点",
+	QUERY_LOG : "查询/历史日志",
 	QUERY_COLLECTION : "查询/集合",
 	QUERY_COMPARE : "查询/判断",
 	EDIT_PLAYER : "改写/玩家数值",
@@ -111,6 +113,7 @@ const TABLE := {
 	"get_location" : { "category": QUERY_MAP, "class": "GetLocation", "summary": "玩家地点" },
 	"get_location_magic" : { "category": QUERY_MAP, "class": "GetLocationMagic", "summary": "地点魔力" },
 	"get_location_benefit" : { "category": QUERY_MAP, "class": "GetLocationBenefit", "summary": "地点地利" },
+	"get_player_location_benefit" : { "category": QUERY_MAP, "class": "GetPlayerLocationBenefit", "summary": "玩家所在地印刷地利数" },
 	"get_location_map_area" : { "category": QUERY_MAP, "class": "GetLocationMapArea", "summary": "地点所属区域" },
 	"get_map_area_by_name" : { "category": QUERY_MAP, "class": "GetMapAreaByName", "summary": "按名取区域" },
 	"get_map_area_score" : { "category": QUERY_MAP, "class": "GetMapAreaScore", "summary": "区域竞争战果" },
@@ -131,7 +134,16 @@ const TABLE := {
 	"get_effect_using_nums" : { "category": QUERY_EFFECT, "class": "GetEffectUsingNums", "summary": "效果当前使用的数字" },
 	"get_player_time_points" : { "category": QUERY_EFFECT, "class": "GetPlayerTimePoints", "summary": "玩家当前时点" },
 	"player_buffs_have_effect" : { "category": QUERY_EFFECT, "class": "PlayerBuffsHaveEffect", "summary": "玩家激活buff是否含效果名" },
+	"board_has_effect" : { "category": QUERY_EFFECT, "class": "BoardHasEffect", "summary": "全局面(局势+事件+区域buff)是否含效果名" },
+	"map_area_has_effect" : { "category": QUERY_EFFECT, "class": "MapAreaHasEffect", "summary": "某战区是否含指定效果名" },
+	"get_shared_attack_attribute" : { "category": QUERY_EFFECT, "class": "GetSharedAttackAttribute", "summary": "玩家场上攻击的共同属性，无则null" },
 	"can_gain_magic" : { "category": QUERY_EFFECT, "class": "CanGainMagic", "summary": "能否从某来源获得魔力" },
+	"query_log" : { "category": QUERY_LOG, "class": "QueryLog", "summary": "查游戏日志（历史事实）" },
+	"sum_log_data" : { "category": QUERY_LOG, "class": "SumLogData", "summary": "日志里某数值字段求和" },
+	"log_field_values" : { "category": QUERY_LOG, "class": "LogFieldValues", "summary": "日志里某字段的值列成数组" },
+	"log_exists" : { "category": QUERY_LOG, "class": "LogExists", "summary": "历史上有没有发生过符合条件的" },
+	"get_round_battle_wins" : { "category": QUERY_LOG, "class": "GetRoundBattleWins", "summary": "本回合赢得几场战斗" },
+	"get_area_round_winners" : { "category": QUERY_LOG, "class": "GetAreaRoundWinners", "summary": "本回合某战区战斗胜者名单" },
 	"when" : { "category": QUERY_EFFECT, "class": "When", "summary": "当前效果是否由指定时点触发" },
 
 	"array_length" : { "category": QUERY_COLLECTION, "class": "ArrayLength", "summary": "数组或字典长度" },
@@ -175,9 +187,14 @@ const TABLE := {
 	"edit_map_area_score" : { "category": EDIT_MAP, "class": "EditMapAreaScore", "summary": "改区域战果" },
 	"edit_map_area_move_cost" : { "category": EDIT_MAP, "class": "EditMapAreaMoveCost", "summary": "改区域移动费用" },
 	"add_map_area_events" : { "category": EDIT_MAP, "class": "AddMapAreaEvents", "summary": "给区域加事件" },
+	"add_event_from_deck" : { "category": EDIT_MAP, "class": "AddEventFromDeck", "summary": "从事件牌堆取克隆体挂到区域" },
 	"add_map_area_buff" : { "category": EDIT_MAP, "class": "AddMapAreaBuff", "summary": "给区域加buff" },
 	"add_situations" : { "category": EDIT_MAP, "class": "AddSituations", "summary": "加入局势" },
 	"set_location" : { "category": EDIT_MAP, "class": "SetLocation", "summary": "设置玩家地点" },
+	"set_map_area_can_move_to" : { "category": EDIT_MAP, "class": "SetMapAreaCanMoveTo", "summary": "改区域能否常规进入并记基线" },
+	"restore_map_area_move_flags" : { "category": EDIT_MAP, "class": "RestoreMapAreaMoveFlags", "summary": "按基线还原区域进入开关" },
+	"set_location_pl_num_limit" : { "category": EDIT_MAP, "class": "SetLocationPlNumLimit", "summary": "改地点席位上限并记基线" },
+	"restore_location_pl_num_limits" : { "category": EDIT_MAP, "class": "RestoreLocationPlNumLimits", "summary": "按基线还原地点席位上限" },
 
 	"draw_card_from_pl_deck_to_hand" : { "category": TRANSFER, "class": "DrawCardFromPlDeckToHand", "summary": "从牌库抽到手数" },
 	"draw_card_by_card" : { "category": TRANSFER, "class": "DrawCardByCard", "summary": "指定卡在两数组间移动" },

@@ -1,6 +1,12 @@
 extends BaseHandCard
 class_name BaseSkill
 
+func clone_data(context):
+	var cloned = BaseSkill.new(_name, _card_img, _attributes.duplicate(), context.copy(_cost), context.copy(_power), _ignore_limit, [])
+	copy_clone_fields(cloned, context)
+	cloned._is_awakened = _is_awakened
+	return cloned
+
 
 var _ignore_limit:bool = false
 #升华技是否已觉醒。未觉醒的升华技玩家尚未获得，卡面朝下只显示升华技卡背。

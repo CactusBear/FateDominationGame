@@ -1,6 +1,24 @@
 extends BaseCard
 class_name BaseHandCard
 
+func clone_data(context):
+	var cloned = BaseHandCard.new()
+	copy_clone_fields(cloned, context)
+	cloned._cost = context.copy(_cost)
+	cloned._power = context.copy(_power)
+	cloned.numbers = [cloned._cost, cloned._power]
+	cloned.add_object()
+	return cloned
+
+func copy_clone_fields(cloned, context) -> void:
+	super.copy_clone_fields(cloned, context)
+	cloned._is_activating = false
+	cloned._is_closed = false
+	cloned._cost_discount = context.copy(_cost_discount)
+	cloned._play_requirements = context.copy_value(_play_requirements)
+	cloned._shown_notes = context.copy_value(_shown_notes)
+	cloned._need_extra_play = _need_extra_play
+
 
 #_attributes、edit_attribute、_is_concealed、set_concealed已移至BaseCard，事件等非手牌卡也能带属性和明暗状态
 var _cost:BaseNumber

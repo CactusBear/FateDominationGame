@@ -1,6 +1,26 @@
 extends RefCounted
 class_name BaseFunc
 
+func clone_data(context):
+	var cloned:BaseFunc
+	var paras:Array = context.copy_value(_parameters)
+	var condition = context.copy_value(_condition)
+	if _self_var_index != -1:
+		cloned = BaseFunc.new_method_func(_self_var_index, _method_name, paras, _var_index, condition)
+	else:
+		var instance = null
+		if _instance != null and _instance.get_script() != null:
+			instance = _instance.get_script().new()
+		var callable = Callable(instance, "exec") if instance != null else _func
+		cloned = BaseFunc.new(callable, paras, _var_index, condition)
+		cloned._instance = instance
+	cloned._name = _name
+	cloned._if_affect_power = _if_affect_power
+	cloned._priority = _priority
+	cloned._func_target_player = _func_target_player
+	cloned._func_target_property = _func_target_property
+	return cloned
+
 var _func:Callable
 var _parameters:Array
 var _var_index:int = -1
@@ -18,6 +38,8 @@ var _method_name:String = ""
 #持有效果脚本实例的强引用。Callable只存ObjectID不保活，这里不留引用的话
 #RefCounted实例会在加载结束后立刻释放，Callable随之失效
 var _instance
+#func名(下划线形式，如 edit_score)，执行日志用它标识这条操作
+var _name:String = ""
 
 func _init(f:Callable, ps:Array, var_index:int = -1, condition = null):
 	_func = f

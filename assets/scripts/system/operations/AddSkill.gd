@@ -19,4 +19,6 @@ func exec(skill:BaseSkill, player_id:int = -1, ignore_limit:bool = false,  power
 		var pl_power = player_data["power"] as BaseNumber
 		pl_power.add(power)
 
+	GameLog.record("play", id, -1, "", skill, ["play", "extra"],
+		{"card_name": skill._name, "card_type": "skill", "extra": true})
 	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id)

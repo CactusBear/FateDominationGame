@@ -36,6 +36,7 @@ func game_start(player_ids:Array = [0, 1]) -> bool:
 		if i < servants_can_use.size():
 			player_data["servant"] = servants_can_use[i]
 		MasterManager.bind_master_effects(ids[i])
+		MasterManager.bind_command_spell_effects(ids[i])
 		ServantManager.bind_servant_effects(ids[i])
 
 	GameProgress.start_game()

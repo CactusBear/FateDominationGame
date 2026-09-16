@@ -95,11 +95,14 @@ static func load_effects(effects:Array, from) -> Array:
 		effect.from = from
 		effect.set_numbers(nums)
 		effect._using_numbers = nums
-		#效果级魔力消耗：与卡牌的cost一样解析成BaseNumber，方便结算时直接比较/扣除。
-		#结构不是数字声明的(缺number键/写成别的形状)一律视为没声明，不在加载期报错
+		#效果级消耗：数字形状(有number键)解析成BaseNumber；其他资源形状(有type键，如令咒
+		#{"type":"command_spell","amount":1})原样保留字典，由EffectManager.pay_effect_cost
+		#按type解释。两种都不匹配视为没声明，不在加载期报错
 		var cost_data = eff.get("cost")
 		if cost_data is Dictionary and cost_data.has("number"):
 			effect._cost = load_number(cost_data)
+		elif cost_data is Dictionary and cost_data.has("type"):
+			effect._cost = cost_data
 		#每局限一次的声明(触发记录由EffectManager写进玩家的used_once_effects)
 		effect._once_per_game = bool(eff.get("once_per_game", false))
 		#from 和 numbers 都已就绪，此时才能把数字登记到所属对象上
@@ -159,6 +162,7 @@ static func load_funcs(funcs:Array, effect:BaseEffect) -> Array:
 			var eff_func = BaseFunc.new(main_callable, paras, var_index, condition)
 			#Callable 不会保活实例，必须由 func 自己持有引用，否则加载完就被释放
 			eff_func._instance = func_instance
+			eff_func._name = key
 			result.append(eff_func)
 
 		elif _func.has("self_var"):
@@ -169,6 +173,7 @@ static func load_funcs(funcs:Array, effect:BaseEffect) -> Array:
 			var method_name = _func.get("sub_func", "") as String
 			if method_name == "": continue
 			var eff_func = BaseFunc.new_method_func(self_var_index, method_name, paras, var_index, condition)
+			eff_func._name = method_name
 			result.append(eff_func)
 	return result
 
@@ -205,7 +210,8 @@ static var DECK_QUERY_FUNCS := ["get_player_deck"]
 #  ② 再看是否有放入型 operation 的【目标数组参数位】引用了这些 var_index。
 #两者都满足才算入牌库。循环体（for_func）里的放入动作要递归进去看（葛木的蛇就在 for_func 内）。
 #"要加入牌库会在效果中说明"是本项目既有约定，这里只读效果声明，不在数据里另加冗余字段。
-#只能在加载阶段用原始 JSON 调用：BaseFunc 不保留 func_name（只存 Callable），运行时无法反查。
+#只能在加载阶段用原始 JSON 调用：BaseFunc 现在也保留 _name，但数据流追踪仍只看 JSON 声明
+#（运行时 _name 只用于执行日志，不参与「是否会放进牌库」的判断）
 static func is_card_inserted_to_deck(card_name:String, effects_data:Array) -> bool:
 	if card_name == "":
 		return false

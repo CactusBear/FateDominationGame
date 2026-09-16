@@ -16,4 +16,6 @@ func exec(attack:BaseAttack, player_id:int = -1, power:BaseNumber = attack._powe
 		var pl_power = player_data["power"] as BaseNumber
 		pl_power.add(power)
 
+	GameLog.record("play", id, -1, "", attack, ["play", "extra"],
+		{"card_name": attack._name, "card_type": "attack", "extra": true})
 	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id)

@@ -7,4 +7,10 @@ extends RefCounted
 func exec(deploy_location:BaseLocation, player_id:int = -1, ignore_limit:bool = false):
 
 	player_id = EffectManager.resolve_player_id(player_id)
-	SetLocation.new().exec(deploy_location, player_id, false, ignore_limit)
+	var settled:bool = SetLocation.new().exec(deploy_location, player_id, false, ignore_limit)
+	#部署是独立的规则动作，由入口自己记一条；SetLocation 只记中性的位置变化，
+	#它分不清"部署"和"效果搬运"。只在真正落位后才记，落位失败（位置满）不记
+	if settled:
+		var area := deploy_location.get_from() as BaseMapArea
+		GameLog.record("deploy", player_id, -1,
+			str(area._area_name) if area != null else "", null, ["deploy"], {})

@@ -12,6 +12,12 @@ func exec(skill:BaseSkill, player_id:int = -1, ignore_limit:bool = false, cost:B
 	#卡面声明的打出条件与"需追加打出"，与攻击牌共用同一套判断
 	if !PlayRules.can_play(skill, player_data):
 		return
+	#局面级禁令与攻击牌同一套：宝具是技能卡的属性，禁令声明在局势牌/事件牌上，
+	#出牌入口只按效果名查询
+	if skill._attributes.has(Attributes.NOBLE_PHANTASM) and BoardHasEffect.new().exec(ForbidNoblePhantasmEffect.EFFECT_NAME):
+		return
+	if skill._attributes.has(Attributes.SPECIAL) and BoardHasEffect.new().exec(ForbidSpecialAttackEffect.EFFECT_NAME):
+		return
 	var pl_magic = player_data["magic"] as BaseNumber
 	var is_magic_immune = player_data["is_magic_immune"] as bool
 	var ignore_zone_limit = player_data["ignore_skill_zone_magic_limit"] as bool
@@ -21,7 +27,10 @@ func exec(skill:BaseSkill, player_id:int = -1, ignore_limit:bool = false, cost:B
 			#show_lack_of_magic()
 			return
 	if !is_magic_immune:
+		var magic_before = pl_magic.number
 		pl_magic.minus(cost)
+		#扣费与 EditMagic 同一套记录口径（本操作不派 MAGIC_DECREASE 时点，保持原有行为）
+		GameLog.record_resource_change("magic", id, magic_before, pl_magic.number)
 
 	skill._is_activating = true
 
@@ -33,4 +42,6 @@ func exec(skill:BaseSkill, player_id:int = -1, ignore_limit:bool = false, cost:B
 		var pl_power = player_data["power"] as BaseNumber
 		pl_power.add(power)
 
+	GameLog.record("play", id, -1, "", skill, ["play"],
+		{"card_name": skill._name, "card_type": "skill", "extra": false})
 	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id)

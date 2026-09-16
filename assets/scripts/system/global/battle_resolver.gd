@@ -24,8 +24,6 @@ func exec(active_player_ids:Array = [], area_battle_score:BaseNumber = BaseNumbe
 		if player_data["is_out"]:
 			continue
 		player_data["is_battle"] = true
-		player_data["is_battle_win"] = false
-		player_data["is_battle_lose"] = false
 		TimePointChecker.dynamic_time_point([TimePoints.BATTLE], id)
 
 	#按战场区域分组，并缓存 location -> area
@@ -63,6 +61,10 @@ func exec(active_player_ids:Array = [], area_battle_score:BaseNumber = BaseNumbe
 		else:
 			_resolve_non_battle_area(area, player_ids, result)
 
+	#胜者判定之后的时点：派发在全部区域结算完之后。
+	#"此战场胜者可恢复1枚令咒"这类规则要在知道本场胜者之后才能触发，
+	#而 battle_resolve 派发在胜者计算之前，查不到本场结果——所以另设全局时点
+	TimePointChecker.global_time_point([TimePoints.BATTLE_END])
 	return result
 
 
@@ -97,6 +99,8 @@ func _resolve_battle_area(area:BaseMapArea, player_ids:Array, result:Dictionary)
 
 	if effective_ids.is_empty():
 		result["draw_areas"].append(area._area_name)
+		#全员被排除也要留一条事实，否则这场战斗在日志里完全不存在
+		_record_battle(area, player_ids, [])
 		return
 
 	var highest_power = null
@@ -106,11 +110,20 @@ func _resolve_battle_area(area:BaseMapArea, player_ids:Array, result:Dictionary)
 		#合计威力加成(言峰执行者、佐佐木燕返等)只在比较胜负时叠加，不写回power本身，
 		#避免power被重复累加
 		var power = (pl_data["power"] as BaseNumber).number + (pl_data["total_power_bonus"] as BaseNumber).number
+		#基础规则：仍位于地利位置获得等同该位置标注地利数的威力。
+		#"此战场的各个地利位置不提供地利"这类例外由事件牌按效果名(no_location_benefit)
+		#声明在战区上，声明的战场整体排除，数字不写死在这里
+		if !MapAreaHasEffect.new().exec(area, NoLocationBenefitEffect.EFFECT_NAME):
+			power += GetPlayerLocationBenefit.new().exec(id)
 		if highest_power == null or power > highest_power:
 			highest_power = power
 			winners = [id]
 		elif power == highest_power:
 			winners.append(id)
+
+	#先记这场战斗的结果，再发战果、再派生败时点：
+	#胜败时点里的效果要能查到本场战斗，不能等一切都派发完才补记
+	_record_battle(area, player_ids, winners)
 
 	#总战果 = 事件牌战果 + 竞争战果（有至少一名对手时）
 	var total_score:int = 0
@@ -123,7 +136,6 @@ func _resolve_battle_area(area:BaseMapArea, player_ids:Array, result:Dictionary)
 	if winners.size() == 1:
 		var winner_id:int = winners[0]
 		var winner_data = GameDataManager.get_player_data(winner_id) as Dictionary
-		winner_data["is_battle_win"] = true
 		EditScore.new().exec(null, BaseNumber.new(total_score), winner_id)
 		TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], winner_id)
 		result["winners_by_area"][area._area_name] = [winner_id]
@@ -132,7 +144,6 @@ func _resolve_battle_area(area:BaseMapArea, player_ids:Array, result:Dictionary)
 		var split_score:int = ceili(float(total_score) / winners.size())
 		for winner_id in winners:
 			var winner_data = GameDataManager.get_player_data(winner_id) as Dictionary
-			winner_data["is_battle_win"] = true
 			EditScore.new().exec(null, BaseNumber.new(split_score), winner_id)
 			TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], winner_id)
 		result["winners_by_area"][area._area_name] = winners
@@ -145,9 +156,20 @@ func _resolve_battle_area(area:BaseMapArea, player_ids:Array, result:Dictionary)
 			continue
 		var player_data = GameDataManager.get_player_data(id) as Dictionary
 		var already_excluded:bool = buffs_checker.exec(ExcludedFromBattleWinEffect.EFFECT_NAME, id)
-		player_data["is_battle_lose"] = true
 		if !already_excluded:
 			TimePointChecker.dynamic_time_point([TimePoints.BATTLE_LOSE], id)
+
+#把一场战斗的结果写进日志：参与者、胜者，以及开打时就已经出局的玩家（has_out 直接可筛）。
+#按参与者逐个记一条，效果用 actor 查就自动只拿到自己参与过的战斗
+func _record_battle(area:BaseMapArea, player_ids:Array, winners:Array) -> void:
+	var out_players:Array = []
+	for pid in player_ids:
+		if (GameDataManager.get_player_data(pid) as Dictionary)["is_out"]:
+			out_players.append(pid)
+	for pid in player_ids:
+		GameLog.record("battle", int(pid), -1, area._area_name, null, ["battle"],
+			{"players": player_ids.duplicate(), "winners": winners.duplicate(),
+			"out_players": out_players.duplicate(), "has_out": !out_players.is_empty()})
 
 
 #处理不需要战斗胜利即可拿战果的区域（侦察）：所有在场玩家直接获得 _score 点战果

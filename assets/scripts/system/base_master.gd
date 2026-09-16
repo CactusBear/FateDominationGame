@@ -1,6 +1,16 @@
 extends BaseObject
 class_name  BaseMaster
 
+func clone_data(context):
+	var cloned = BaseMaster.new(_name, get_shown_name(), _header_img, _master_card_img, _command_spell_img)
+	copy_clone_fields(cloned, context)
+	cloned._card_back_img = _card_back_img
+	cloned._effects = context.copy_effects(_effects, cloned)
+	cloned._specials = context.copy_specials(_specials, cloned)
+	cloned._upgrade_skill = context.copy(_upgrade_skill)
+	cloned._other_things = context.copy(_other_things)
+	return cloned
+
 var _header_img:String
 var _master_card_img:String
 var _command_spell_img:String

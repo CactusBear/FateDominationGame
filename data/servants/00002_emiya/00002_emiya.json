@@ -106,9 +106,15 @@
             ],
             "funcs": [
               {
-                "func_name": "get_player_data_value",
+                "func_name": "log_exists",
                 "parameters": [
-                  "true_name_released"
+                  -1,
+                  {
+                    "type": "time_point",
+                    "tags": "true_name_release",
+                    "actor": -1
+                  },
+                  null
                 ],
                 "var_index": 0
               },

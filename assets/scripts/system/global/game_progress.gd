@@ -82,6 +82,8 @@ func start_game():
 	is_game_over = false
 	current_round = 0
 	has_battle_resolved = false
+	#新的一局：历史日志清空
+	GameLog.reset()
 	EffectManager.sync_loaded_effect_pool()
 	#规则：将所有事件牌洗混为事件牌堆(B1)，每局重新洗
 	MapData.reset_event_deck()
@@ -138,17 +140,22 @@ func start_round():
 	if current_round > total_rounds.number:
 		end_game()
 		return
+	#回合号立即生效：这一回合记的每条日志都归到新回合下，不能等到 begin_phase 才更新，
+	#否则开局抽局势牌/事件牌、DAY_START 这些日志会记到上一回合
+	#回合边界不属于任何阶段，不能沿用上一回合最后一个阶段的名字；
+	#阶段名由随后第一次 begin_phase 写进来
+	GameLog.set_context(current_round, "")
 	current_phase_index = -1
 	current_phase_player_index = 0
 	current_player_id = -1
 	has_battle_resolved = false
+	#新回合开始：日志裁掉超过保留上限的旧条目
+	GameLog.begin_round()
 	refresh_first_player()
 	#每回合开始时重置本回合类记录字段，并派发ROUND_START_RESET供效果监听
 	EffectManager.reset_round_option_counts()
 	for id in GameDataManager.get_active_player_ids():
 		var player_data = GameDataManager.get_player_data(id) as Dictionary
-		player_data["played_attacks_this_turn"] = []
-		player_data["score_gained_this_turn"] = 0
 		player_data["command_spell_used_this_turn"] = false
 		player_data["command_spell_gained_magic"] = false
 		player_data["temp_locations"] = []
@@ -180,8 +187,6 @@ func end_round():
 		var player_data = GameDataManager.get_player_data(id) as Dictionary
 		player_data["last_turn_location"] = player_data["location"]
 		player_data["is_battle"] = false
-		player_data["is_battle_win"] = false
-		player_data["is_battle_lose"] = false
 		#残留牌留在场上，回合结束不处理（残留牌只在自身效果满足条件时自行关闭）
 		DiscardPlayedCards.new().exec(id)
 		#先清理再重建合计威力基线：规则上残留牌跨回合留场并继续提供威力，
@@ -234,6 +239,8 @@ func begin_phase():
 		return
 	#整个阶段内都成立的时点。高潮回合额外挂CLIMAX、非高潮回合挂NON_CLIMAX，
 	#成对派发让效果两边都能表达（"仅高潮"与"仅非高潮"）
+	#日志上下文：当前回合与阶段名，之后记的每一条事实都带上它
+	GameLog.set_context(current_round, str(phase.get("name", "")))
 	var phase_tps:Array = [TimePoints.DAY, TimePoints.PHASE, phase["mid"]]
 	phase_tps.append(TimePoints.CLIMAX if is_climax_round() else TimePoints.NON_CLIMAX)
 	TimePointChecker.set_phase_time_points(phase_tps)
@@ -281,6 +288,10 @@ func next_player_in_phase():
 #当前玩家完成本阶段行动后使用的唯一推进入口。
 func end_current_player_action() -> bool:
 	if is_game_over or current_player_id == -1 or get_current_phase().is_empty():
+		return false
+	#效果需要玩家发动/放弃或挑牌时，阶段行动不能绕过等待状态继续推进。
+	#统一在进程层拦截，避免UI、AI和其他调用方各自实现不同的保护。
+	if EffectManager.is_waiting_for_choice() or EffectManager.is_waiting_for_card_selection():
 		return false
 	next_player_in_phase()
 	return true

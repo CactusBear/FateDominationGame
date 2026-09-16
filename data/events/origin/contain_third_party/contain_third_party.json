@@ -2,30 +2,154 @@
   "card_name": "contain_third_party",
   "shown_name": "遏制第三方威胁",
   "score": {
-	"number": 2,
-	"can_change": true,
-	"is_pure_number": true
+    "number": 2,
+    "can_change": true,
+    "is_pure_number": true
   },
   "card_img": "contain_third_party.png",
   "effects": [
-	{
-	  "effect_name": "contain_third_party_placeholder",
-	  "shown_effect_name": "基本威力≥4的攻击威力+1；此战场胜者可恢复1枚令咒",
-	  "time_points": [
+    {
+      "effect_name": "contain_third_party_basic_plus_1",
+      "shown_effect_name": "基本威力≥4的攻击威力+1",
+      "time_points": [
         "battle_resolve"
-	  ],
-	  "priority": 0,
-	  "is_pure_passive": true,
-	  "is_residue": false,
-	  "effect_numbers": [],
-	  "funcs": [
-		{
-		  "func_name": "do_nothing",
-		  "parameters": [],
-		  "var_index": -1
-		}
-	  ]
-	}
+      ],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [
+        {
+          "number": 4,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "funcs": [
+        {
+          "func_name": "get_eff_source_card",
+          "parameters": [],
+          "var_index": 0
+        },
+        {
+          "func_name": "get_property",
+          "parameters": [
+            {
+              "self_var": 0
+            },
+            "from"
+          ],
+          "var_index": 1
+        },
+        {
+          "func_name": "get_players_in_map_area",
+          "parameters": [
+            {
+              "self_var": 1
+            }
+          ],
+          "var_index": 2
+        },
+        {
+          "func_name": "foreach_func",
+          "parameters": [
+            [
+              {
+                "func_name": "modify_attack_power_by_attribute",
+                "parameters": [
+                  [],
+                  {
+                    "number_index": 1
+                  },
+                  null,
+                  null,
+                  null,
+                  "basic",
+                  4
+                ],
+                "var_index": -1
+              }
+            ],
+            {
+              "self_var": 2
+            },
+            2
+          ],
+          "var_index": -1
+        }
+      ]
+    },
+    {
+      "effect_name": "contain_third_party_winner_restore_seal",
+      "shown_effect_name": "此战场胜者可恢复1枚令咒",
+      "time_points": [
+        "battle_end"
+      ],
+      "priority": 0,
+      "is_pure_passive": false,
+      "is_residue": false,
+      "effect_numbers": [
+        {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "funcs": [
+        {
+          "func_name": "get_eff_source_card",
+          "parameters": [],
+          "var_index": 0
+        },
+        {
+          "func_name": "get_property",
+          "parameters": [
+            {
+              "self_var": 0
+            },
+            "from"
+          ],
+          "var_index": 1
+        },
+        {
+          "func_name": "get_area_round_winners",
+          "parameters": [
+            {
+              "self_var": 1
+            }
+          ],
+          "var_index": 2
+        },
+        {
+          "func_name": "foreach_func",
+          "parameters": [
+            [
+              {
+                "func_name": "edit_data_number",
+                "parameters": [
+                  "command_spell_count",
+                  null,
+                  {
+                    "number_index": 0
+                  },
+                  null
+                ],
+                "var_index": -1
+              }
+            ],
+            {
+              "self_var": 2
+            },
+            3
+          ],
+          "var_index": -1
+        }
+      ]
+    }
   ],
   "zoom_kind": "card"
 }

@@ -27,7 +27,9 @@ func exec(body, condition, max_iterations:int = MAX_ITERATIONS):
 		if !bool(cond_value):
 			break
 
+		GameLog.push_loop(i)
 		var res = EffectManager.run_func_descriptor(body, effect)
+		GameLog.pop_loop()
 		if res[0]:
 			last_result = res[1]
 		i += 1

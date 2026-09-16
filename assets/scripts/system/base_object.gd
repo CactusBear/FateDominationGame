@@ -1,6 +1,15 @@
 extends RefCounted
 class_name BaseObject
 
+#公共复制规则归字段所属类型维护，派生类复用。
+func copy_clone_fields(cloned, context) -> void:
+	cloned.from = from
+	cloned._name = _name
+	cloned._shown_name = _shown_name
+	cloned.tags = context.copy_value(tags)
+	cloned._zoom_kind = _zoom_kind
+	cloned._zoom_kinds = context.copy_value(_zoom_kinds)
+
 
 #游戏对象是纯数据，不进场景树，所以用RefCounted而不是Node，
 #否则每个对象都会成为无人释放的孤立节点

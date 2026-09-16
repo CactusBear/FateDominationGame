@@ -40,5 +40,7 @@ func eliminate_player(player_id:int) -> bool:
 	if player_data["is_out"]:
 		return false
 	player_data["is_out"] = true
+	#日志：谁被淘汰（供"当时场上有被淘汰的玩家吗"这类历史查询）
+	GameLog.record("eliminated", player_id, -1, "", null, ["eliminated"], {})
 	TimePointChecker.dynamic_time_point([TimePoints.ELIMINATED], player_id)
 	return true

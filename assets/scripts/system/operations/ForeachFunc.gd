@@ -11,7 +11,8 @@ func exec(body, arr:Array, parameter_index:int = 0):
 
 	var bodies:Array = body if body is Array else [body]
 	var last_result = null
-	for item in arr:
+	for idx in range(arr.size()):
+		GameLog.push_loop(idx)
 		for one in bodies:
 			var desc = one
 			if one is Dictionary:
@@ -21,11 +22,12 @@ func exec(body, arr:Array, parameter_index:int = 0):
 				while paras.size() <= parameter_index:
 					paras.append(null)
 				if paras[parameter_index] == null:
-					paras[parameter_index] = item
+					paras[parameter_index] = arr[idx]
 				desc["parameters"] = paras
 
 			var res = EffectManager.run_func_descriptor(desc, effect)
 			if res[0]:
 				last_result = res[1]
+		GameLog.pop_loop()
 
 	return last_result

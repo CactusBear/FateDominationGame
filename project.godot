@@ -83,4 +83,3 @@ pointing/android/enable_long_press_as_right_click=true
 [rendering]
 
 renderer/rendering_method="mobile"
-viewport/hdr_2d=false

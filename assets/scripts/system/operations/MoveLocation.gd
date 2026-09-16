@@ -11,12 +11,12 @@ func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false):
 	var location:BaseLocation = player_data["location"]
 	if location == null:
 		#show("玩家所处位置不位于地图上")
-		return BaseNumber.new(0)
+		return null
 	#所在区域从 location 自己的 from 取，不遍历 MapData.areas 反查
 	var area := location.get_from() as BaseMapArea
 	if area == null:
 		#show("玩家所处位置不位于地图上")
-		return BaseNumber.new(0)
+		return null
 	var origin_area:BaseMapArea = area
 
 	var total_cost:BaseNumber = BaseNumber.new(0)
@@ -38,11 +38,11 @@ func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false):
 			if area_arr.size() == 1:
 				area = area_arr[0]
 	else:
-		return BaseNumber.new(0)
+		return null
 
 	if area._can_move_to == false:
 		#show("无法移动至此区域")
-		return BaseNumber.new(0)
+		return null
 
 	#常规移动只会落在该区域内标记为_will_move_to的Location上(工房区有多个同级点位)，
 	#按顺序取第一个还有空位的；ignore_limit时忽略人数限制，取第一个标记点位
@@ -55,9 +55,10 @@ func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false):
 			break
 	if target_location == null:
 		#show("目标位置已满")
-		return BaseNumber.new(0)
+		return null
 
-	SetLocation.new().exec(target_location, player_id, true, ignore_limit)
+	if !SetLocation.new().exec(target_location, player_id, true, ignore_limit):
+		return null
 
 	#从魔术工房离开时应用玩家层折扣(葛木局外人等)，折扣不会让费用变成负数
 	if origin_area == MapData.magic_workshop:

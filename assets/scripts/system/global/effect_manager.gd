@@ -439,46 +439,62 @@ func get_pending_active_effect() -> BaseEffect:
 	return waiting_effect
 
 
-#把"每局限一次"的效果名记进触发者的 used_once_effects。
-#不按效果各加一个bool字段——新增一次性效果只要在JSON里声明 once_per_game
-func mark_effect_used_once(effect:BaseEffect) -> void:
-	if effect == null or !effect._once_per_game:
-		return
-	var id:int = effect._trigger_player_id
-	if id < 0:
-		return
-	var player_data:Dictionary = GameDataManager.get_player_data(id)
-	if player_data == null or player_data.is_empty():
-		return
-	if !(player_data.get("used_once_effects") is Array):
-		player_data["used_once_effects"] = []
-	var used:Array = player_data["used_once_effects"]
-	if !used.has(effect._name):
-		used.append(effect._name)
-
-
-#本局是否已经触发过这个效果
+#本局是否已经触发过这个效果。直接查效果日志，不再另存一份 used_once_effects——
+#日志本来就是"发生过什么"的唯一出处
 func is_effect_used_once(effect:BaseEffect) -> bool:
 	if effect == null:
 		return false
 	var id:int = effect._trigger_player_id
 	if id < 0:
 		return false
-	var player_data:Dictionary = GameDataManager.get_player_data(id)
-	if player_data == null or player_data.is_empty():
-		return false
-	var used = player_data.get("used_once_effects")
-	return used is Array and (used as Array).has(effect._name)
+	return !GameLog.query({"type": "effect", "actor": id, "data": {"effect_name": effect._name}}, null).is_empty()
 
 
-#效果自己的魔力消耗(effect._cost)：付得起返回true并扣掉，付不起返回false。
-#与卡牌出牌同一套规则：无限魔力(is_magic_immune)状态下不检查也不扣；
-#扣费复用EditMagic，让魔力变化照常派发MAGIC_DECREASE时点。没声明cost的效果直接放行
+#效果自己的消耗(effect._cost)：付得起返回true并扣掉，付不起返回false。
+#消耗形状由数据声明：缺 number 键的是魔力数字消耗；{"type":"command_spell","amount":N}
+#是令咒消耗。没声明cost的效果直接放行。
+#魔力消耗与卡牌出牌同一套规则：无限魔力(is_magic_immune)状态下不检查也不扣；
+#扣费复用EditMagic，让魔力变化照常派发MAGIC_DECREASE时点。
+#令咒消耗扣command_spell_count并派发COMMAND_SPELL_USED时点——
+#令咒不是魔力，is_magic_immune是"魔力免疫"，不豁免令咒消耗
 func pay_effect_cost(effect:BaseEffect) -> bool:
-	if effect == null or !(effect._cost is BaseNumber):
+	if effect == null:
 		return true
-	var cost:BaseNumber = effect._cost
-	if cost.number <= 0:
+	var cost = effect._cost
+	if cost == null:
+		return true
+	#数字形状：与卡牌费用同构的魔力消耗
+	if cost is BaseNumber:
+		if cost.number <= 0:
+			return true
+		var id:int = effect._trigger_player_id
+		if id < 0:
+			id = GameData.player_id
+		var player_data:Dictionary = GameDataManager.get_player_data(id)
+		if player_data == null or player_data.is_empty():
+			return false
+		if player_data.get("is_magic_immune", false):
+			return true
+		var magic = player_data["magic"] as BaseNumber
+		if magic == null or magic.number < cost.number:
+			return false
+		EditMagic.new().exec(null, BaseNumber.new(0 - cost.number), id)
+		return true
+	#其他资源形状：type 声明消耗的是哪种资源，amount 声明数量。
+	#未识别的 type 一律放行——缺声明不给行为，避免新资源形状悄悄拦住老效果
+	if cost is Dictionary and cost.has("type"):
+		match str(cost["type"]):
+			"command_spell":
+				return _pay_command_spell_cost(effect, int(cost.get("amount", 0)))
+			_:
+				return true
+	return true
+
+
+#令咒消耗：扣玩家的command_spell_count，记日志并派发COMMAND_SPELL_USED时点。
+#数量不足时拒绝且不扣。count为0视为没声明，直接放行
+func _pay_command_spell_cost(effect:BaseEffect, count:int) -> bool:
+	if count <= 0:
 		return true
 	var id:int = effect._trigger_player_id
 	if id < 0:
@@ -486,12 +502,13 @@ func pay_effect_cost(effect:BaseEffect) -> bool:
 	var player_data:Dictionary = GameDataManager.get_player_data(id)
 	if player_data == null or player_data.is_empty():
 		return false
-	if player_data.get("is_magic_immune", false):
-		return true
-	var magic = player_data["magic"] as BaseNumber
-	if magic == null or magic.number < cost.number:
+	var spells = player_data["command_spell_count"] as BaseNumber
+	if spells == null or spells.number < count:
 		return false
-	EditMagic.new().exec(null, BaseNumber.new(0 - cost.number), id)
+	spells.minus(BaseNumber.new(count))
+	GameLog.record("command_spell_used", id, -1, "", effect, ["command_spell_used"],
+		{"amount": count})
+	TimePointChecker.dynamic_time_point([TimePoints.COMMAND_SPELL_USED], id)
 	return true
 
 
@@ -828,21 +845,29 @@ func check_condition(_func:BaseFunc, effect:BaseEffect) -> bool:
 #而不是直接调callable绕开self_var/number_index/condition。
 #返回[是否真正调用了callable, 调用结果]；未调用时结果为null
 func run_base_func(f:BaseFunc, effect:BaseEffect) -> Array:
+	var raw_params:Array = f._parameters.duplicate()
+	#没真正调用的失败也留一条记录，否则分不清"JSON 没执行"与"条件没满足"。
+	#先落记录再立刻结束，call_id 才连续、父子关系也不断
 	if is_func_countered(effect, f):
+		GameLog.end_func_call(GameLog.begin_func_call(effect, f._name, raw_params, []), null, "countered")
 		return [false, null]
 	if !check_condition(f, effect):
+		GameLog.end_func_call(GameLog.begin_func_call(effect, f._name, raw_params, []), null, "condition_false")
 		return [false, null]
 
 	var callable = f._func
 	#延迟绑定的方法调用，目标对象此刻才从变量表里取出
 	if f._self_var_index != -1:
 		if f._self_var_index >= effect._self_vars.size():
+			GameLog.end_func_call(GameLog.begin_func_call(effect, f._name, raw_params, []), null, "invalid_target")
 			return [false, null]
 		var target = effect._self_vars[f._self_var_index]
 		if target == null or !target.has_method(f._method_name):
+			GameLog.end_func_call(GameLog.begin_func_call(effect, f._name, raw_params, []), null, "invalid_target")
 			return [false, null]
 		callable = Callable(target, f._method_name)
 	if !callable.is_valid():
+		GameLog.end_func_call(GameLog.begin_func_call(effect, f._name, raw_params, []), null, "invalid_callable")
 		return [false, null]
 
 	var paras = f._parameters.duplicate()
@@ -855,13 +880,17 @@ func run_base_func(f:BaseFunc, effect:BaseEffect) -> Array:
 		paras[i] = resolved[1]
 	#参数解析不出来就跳过这个func，但效果里后续的func照常处理
 	if !paras_ready:
+		GameLog.end_func_call(GameLog.begin_func_call(effect, f._name, raw_params, []), null, "invalid_parameter")
 		return [false, null]
 
+	#先落记录再调用：嵌套进来的 func 才会排在本条之后、parent 指向本条
+	var call_id:int = GameLog.begin_func_call(effect, f._name, raw_params, paras)
 	var result = callable.callv(paras)
 	if f._var_index != -1:
 		while effect._self_vars.size() <= f._var_index:
 			effect._self_vars.append(null)
 		effect._self_vars[f._var_index] = result
+	GameLog.end_func_call(call_id, result, "executed")
 	return [true, result]
 
 
@@ -885,6 +914,7 @@ func run_func_descriptor(desc, effect:BaseEffect) -> Array:
 	var func_path = "res://assets/scripts/system/operations/" + _class_name + ".gd"
 	if !ResourceLoader.exists(func_path):
 		print("没有操作:" + "'" + key + "'")
+		GameLog.end_func_call(GameLog.begin_func_call(effect, key, desc.get("parameters", []), []), null, "missing_operation")
 		return [false, null]
 
 	var func_instance = load(func_path).new()
@@ -895,11 +925,15 @@ func run_func_descriptor(desc, effect:BaseEffect) -> Array:
 	var _func = BaseFunc.new(main_callable, paras, var_index, condition)
 	#Callable不会保活实例，必须由func自己持有引用，否则调用完就被释放
 	_func._instance = func_instance
+	_func._name = key
 
 	return run_base_func(_func, effect)
 
 
 func activate_effect(effect:BaseEffect):
+	#一次结算的执行编号：名下所有 func 日志都带同一个 execution_id。
+	#收栈时按编号定位，中途抛错没走到的执行不会留在栈上
+	var execution_id:int = GameLog.begin_execution()
 	start_effect()
 	#每次激活都从空白的变量表开始，避免读到上一次激活的残留值
 	effect._self_vars = []
@@ -910,5 +944,7 @@ func activate_effect(effect:BaseEffect):
 		run_base_func(f, effect)
 
 	end_effect()
-	#结算完才把"每局限一次"的名字记上，结算中途失败不会白占掉这一次
-	mark_effect_used_once(effect)
+	GameLog.end_execution(execution_id)
+	#日志：这个效果本局触发过了。"每局限一次"的判断也从这里查，
+	#不再另外维护一份 used_once_effects
+	GameLog.record("effect", effect._trigger_player_id, -1, "", effect, ["effect"], {"effect_name": effect._name})

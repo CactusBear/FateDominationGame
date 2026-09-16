@@ -19,7 +19,10 @@ extends Control
 
 var _selected_opponent: Control = null
 var _selected_opponent_id: String = ""
-var _local_player_id: int = 0
+#本地玩家身份哨兵：声明为 -1(未初始化)，_ready() 里从 GameData.player_id 取真实值。
+#不要写死 0——0 是合法玩家 id，若在赋值前被读到会把 0 号玩家静默当成自己，
+#而 -1 是明显无效值，误读会当场暴露而不是静默错位
+var _local_player_id: int = -1
 var _ai_acting: bool = false
 ## 正在替哪位玩家跑 AI，用于异常兜底复位
 var _ai_acting_for_id: int = -1
@@ -212,6 +215,8 @@ func _ready() -> void:
 
 var _ui_refresh_accum: float = 0.0
 
+
+
 func _process(delta: float) -> void:
 	_update_hand_hover_from_mouse()
 	_update_event_card_hover_check()
@@ -253,29 +258,12 @@ func _update_hand_hover_from_mouse() -> void:
 ## 1. 真实数据绑定与 UI 整体刷新
 ## -------------------------------------------------------------
 ## 通用令咒解析：优先御主自带的令咒，其次从者自带，最后回退通用常规令咒。
-## 御主/从者可在自身数据的 specials.COMMAND_SPELLS 里声明专属令咒
-## （写 data/command_spells 下的 card_name，支持单个字符串或按顺序取的数组），
+## 解析逻辑下沉在 LoadCommandSpell.resolve_player_command_spell，与开局效果挂载
+## 共用同一个口径（御主/从者可在自身数据的 specials.COMMAND_SPELLS 里声明专属令咒），
 ## 因此特殊角色不必改动界面逻辑即可使用自己的令咒。
 func _resolve_player_command_spell(pl_data: Dictionary) -> BaseCard:
-	for holder in [pl_data.get("master"), pl_data.get("servant")]:
-		var declared := _declared_command_spell(holder)
-		if declared != null:
-			return declared
-	return LoadCommandSpell.get_normal()
-
-## 从御主/从者声明的令咒名解析出令咒对象，未声明返回 null
-func _declared_command_spell(holder) -> BaseCard:
-	if holder == null:
-		return null
-	var specials = holder.get("_specials")
-	if not (specials is Dictionary):
-		return null
-	var declared = specials.get("COMMAND_SPELLS", null)
-	if declared is String:
-		return LoadCommandSpell.get_command_spell(declared)
-	if declared is Array and declared.size() > 0:
-		return LoadCommandSpell.get_command_spell(str(declared[0]))
-	return null
+	return LoadCommandSpell.resolve_player_command_spell(
+		pl_data.get("master"), pl_data.get("servant"))
 
 ## 绑定底栏静态卡牌、头像与局势牌的悬浮说明（数据取自当前玩家与当前局势）
 func _refresh_static_card_infos(pl_data: Dictionary) -> void:
@@ -675,8 +663,10 @@ func _can_play_attack_now(card: BaseAttack, pl_data: Dictionary) -> bool:
 	if card._is_activating:
 		return false
 	var play_limit = pl_data.get("play_limit", BaseNumber.new(2)) as BaseNumber
-	var played_this_turn: Array = pl_data.get("played_attacks_this_turn", [])
-	if played_this_turn.size() >= play_limit.number:
+	#本回合已打出的攻击数直接数日志（与 PlayAttack 同一份依据）
+	#与 PlayAttack 共用同一个计数口径，避免界面提示与引擎判定不一致
+	var played_count: int = PlayRules.played_count(_local_player_id, "attack")
+	if played_count >= play_limit.number:
 		return false
 	var final_cost: int = card._cost.number \
 		- (pl_data.get("attack_cost_discount", BaseNumber.new(0)) as BaseNumber).number \

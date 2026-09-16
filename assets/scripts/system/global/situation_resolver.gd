@@ -28,6 +28,11 @@ func clear_all():
 	UnregisterObjectEffects.new().exec(situation)
 	situation.del()
 	MapData.active_situation = null
+	#封区类局势牌(如身处地狱之门)只在本回合有效：弃置时把被改动的
+	#战区"能否常规进入"按印刷基线还原，防止一回合的封区永久生效
+	RestoreMapAreaMoveFlags.new().exec()
+	#限员类局势牌(如"魔术工房仅限一人部署")同理：弃置时还原席位人数基线
+	RestoreLocationPlNumLimits.new().exec()
 
 
 #抽当前回合的局势牌：1-8抽A1非高潮，高潮回合抽对应高潮牌。

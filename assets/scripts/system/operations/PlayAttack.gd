@@ -26,10 +26,18 @@ func exec(attack:BaseAttack, player_id:int = -1, cost:BaseNumber = attack._cost,
 	#卡面声明的打出条件(如"魔力需达到8点")与"需追加打出"：条件写在卡的数据里，不在入口写死
 	if !PlayRules.can_play(attack, player_data):
 		return false
+	#局面级禁令（如安哥拉·曼纽系列局势牌的"宝具禁止使用"）按效果名查询全局面，
+	#禁令声明在哪张牌上、禁什么属性由数据决定，出牌入口只认效果名
+	if attack._attributes.has(Attributes.NOBLE_PHANTASM) and BoardHasEffect.new().exec(ForbidNoblePhantasmEffect.EFFECT_NAME):
+		return false
+	if attack._attributes.has(Attributes.SPECIAL) and BoardHasEffect.new().exec(ForbidSpecialAttackEffect.EFFECT_NAME):
+		return false
 
 	var play_limit = player_data["play_limit"] as BaseNumber
-	var played_this_turn = player_data["played_attacks_this_turn"] as Array
-	if !ignore_limit and played_this_turn.size() >= play_limit.number:
+	#本回合已打出的攻击数直接数日志，不再维护一份 played_attacks_this_turn。
+	#口径与界面提示共用 PlayRules.played_count，不在这里另写一份 filter
+	var played_count:int = PlayRules.played_count(id, "attack")
+	if !ignore_limit and played_count >= play_limit.number:
 		return false
 
 	#最终费用 = 印刷费用 - 玩家层折扣 - 卡牌自身折扣，折扣不会让费用变成负数
@@ -46,12 +54,14 @@ func exec(attack:BaseAttack, player_id:int = -1, cost:BaseNumber = attack._cost,
 		return false
 
 	if !is_magic_immune:
+		var magic_before = pl_magic.number
 		pl_magic.minus(BaseNumber.new(final_cost))
+		#扣费与 EditMagic 同一套记录口径（本操作不派 MAGIC_DECREASE 时点，保持原有行为）
+		GameLog.record_resource_change("magic", id, magic_before, pl_magic.number)
 	attack._is_activating = true
 
 	var playered_cards_arr = player_data["played_cards"] as Array
 	playered_cards_arr.append(attack)
-	played_this_turn.append(attack)
 	#出牌即离手：从手牌移进打出区，手牌区不再显示
 	(player_data["hand_cards"] as Array).erase(attack)
 
@@ -61,6 +71,9 @@ func exec(attack:BaseAttack, player_id:int = -1, cost:BaseNumber = attack._cost,
 		var pl_power = player_data["power"] as BaseNumber
 		pl_power.add(power)
 
+	#日志：谁打出了哪张牌（供"本回合我打出了什么"这类历史查询）
+	GameLog.record("play", id, -1, "", attack, ["play"],
+		{"card_name": attack._name, "card_type": "attack", "extra": false})
 	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id)
 	return true
 

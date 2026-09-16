@@ -226,9 +226,14 @@
 	  ],
 	  "funcs": [
 		{
-		  "func_name": "get_data_number",
+		  "func_name": "sum_log_data",
 		  "parameters": [
-            "score_gained_this_turn"
+			{
+			  "type": "score_add",
+			  "actor": -1
+			},
+			0,
+            "delta"
 		  ],
 		  "var_index": 0
 		},
@@ -505,35 +510,35 @@
 		  "effect_name": "passive",
 		  "shown_effect_name": "被动 - 你的迅捷属性基本攻击获得+3威力",
 		  "time_points": [
-		    "self_played_card"
+            "self_played_card"
 		  ],
 		  "priority": 0,
 		  "is_pure_passive": true,
 		  "is_residue": false,
 		  "effect_numbers": [
-		    {
-		      "number": 3,
-		      "can_change": true,
-		      "is_pure_number": true
-		    }
+			{
+			  "number": 3,
+			  "can_change": true,
+			  "is_pure_number": true
+			}
 		  ],
 		  "funcs": [
-		    {
-		      "func_name": "modify_attack_power_by_attribute",
-		      "parameters": [
-		        [
-		          "agility"
-		        ],
-		        {
-		          "number_index": 0
-		        },
-		        -1,
-		        null,
-		        null,
-		        "basic"
-		      ],
-		      "var_index": -1
-		    }
+			{
+			  "func_name": "modify_attack_power_by_attribute",
+			  "parameters": [
+				[
+                  "agility"
+				],
+				{
+				  "number_index": 0
+				},
+				-1,
+				null,
+				null,
+                "basic"
+			  ],
+			  "var_index": -1
+			}
 		  ]
 		},
 		{

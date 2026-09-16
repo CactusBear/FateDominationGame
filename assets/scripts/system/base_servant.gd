@@ -1,6 +1,14 @@
 extends BaseObject
 class_name BaseServant
 
+func clone_data(context):
+	var cloned = BaseServant.new(_name, get_shown_name(), _servant_class, _header_img, _servant_card_img)
+	copy_clone_fields(cloned, context)
+	cloned._card_back_img = _card_back_img
+	cloned._effects = context.copy_effects(_effects, cloned)
+	cloned._specials = context.copy_specials(_specials, cloned)
+	return cloned
+
 
 #职阶(如saber)，只存内部值，显示名交给界面层查表
 var _servant_class:String

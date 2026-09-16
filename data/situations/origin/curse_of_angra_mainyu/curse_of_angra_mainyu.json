@@ -99,22 +99,14 @@
       ]
     },
     {
-      "effect_name": "curse_of_angra_mainyu_forbid_np",
+      "effect_name": "forbid_noble_phantasm",
       "shown_effect_name": "宝具禁止使用",
-      "time_points": [
-        "battle_resolve"
-      ],
+      "time_points": [],
       "priority": 0,
       "is_pure_passive": true,
       "is_residue": false,
       "effect_numbers": [],
-      "funcs": [
-        {
-          "func_name": "do_nothing",
-          "parameters": [],
-          "var_index": -1
-        }
-      ]
+      "funcs": []
     }
   ],
   "zoom_kind": "card"

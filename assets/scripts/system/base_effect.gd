@@ -1,6 +1,28 @@
 extends BaseObject
 class_name BaseEffect
 
+func clone_data(context):
+	var cloned = BaseEffect.new(_name, _time_points.duplicate(), _priority, _is_pure_passive, _is_residue)
+	copy_clone_fields(cloned, context)
+	cloned._need_activate = _need_activate
+	cloned._time_points_require_all = _time_points_require_all
+	cloned._cost = context.copy_value(_cost)
+	cloned.set_numbers(context.copy_value(numbers))
+	cloned._using_numbers = cloned.numbers
+	cloned._funcs = context.copy(_funcs)
+	cloned._max_choices = _max_choices
+	cloned._max_total_uses = _max_total_uses
+	cloned._reset_counts_each_round = _reset_counts_each_round
+	cloned._consumes_source_resource = _consumes_source_resource
+	for opt in _options:
+		if opt is Dictionary:
+			var copied:Dictionary = context.copy_value(opt)
+			copied["funcs"] = context.copy(opt.get("funcs", []))
+			cloned._options.append(copied)
+	cloned._once_per_game = _once_per_game
+	#选择、用量、触发上下文沿用构造默认值；原所属对象的数字索引不变。
+	return cloned
+
 var _time_points:Array#[String]
 #时点匹配模式：false(默认)=命中任一时点即触发；true=必须同时命中_time_points里的全部时点。
 #AND模式用于"两个时点同时成立才算"的规则，例如宝石魔术的高潮版要求
@@ -15,7 +37,7 @@ var _self_vars:Array
 var _priority:int
 var _using_numbers:Array
 var _cost = null
-#每局限一次：声明后该效果本局只触发一次，触发记录写在触发者的 used_once_effects 里
+#每局限一次：声明后该效果本局只触发一次，判断依据是游戏日志里的效果触发记录
 var _once_per_game:bool = false
 #选项分支：{"shown_option_name":String, "funcs":Array[BaseFunc],
 #  "max_uses":int(单个选项在本次重置周期内最多能用几次，-1不限，默认-1),

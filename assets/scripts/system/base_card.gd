@@ -1,6 +1,22 @@
 extends BaseObject
 class_name BaseCard
 
+func clone_data(context):
+	var cloned = BaseCard.new()
+	copy_clone_fields(cloned, context)
+	cloned.add_object()
+	return cloned
+
+
+func copy_clone_fields(cloned, context) -> void:
+	super.copy_clone_fields(cloned, context)
+	cloned._card_img = _card_img
+	cloned._card_back_img = _card_back_img
+	cloned._attributes = context.copy_value(_attributes)
+	cloned._relate_buff = _relate_buff
+	cloned._is_concealed = false
+	cloned._effects = context.copy_effects(_effects, cloned)
+
 
 
 var _card_img:String

@@ -1,6 +1,12 @@
 extends BaseHandCard
 class_name BaseAttack
 
+func clone_data(context):
+	var cloned = BaseAttack.new(_name, _card_img, _attributes.duplicate(), context.copy(_cost), context.copy(_power), [])
+	copy_clone_fields(cloned, context)
+	cloned._category = _category
+	return cloned
+
 #攻击牌类别：用字段区分，不新建子类。
 const CATEGORY_BASIC := "basic"          #基础攻击牌（右下角标 Basic Attack）
 const CATEGORY_NON_BASIC := "non_basic"  #非基础（从者/御主专属攻击牌）

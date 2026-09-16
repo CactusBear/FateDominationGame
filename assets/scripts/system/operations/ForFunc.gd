@@ -14,9 +14,11 @@ func exec(body, count):
 	var bodies:Array = body if body is Array else [body]
 	var last_result = null
 	for i in range(times):
+		GameLog.push_loop(i)
 		for one in bodies:
 			var res = EffectManager.run_func_descriptor(one, effect)
 			if res[0]:
 				last_result = res[1]
+		GameLog.pop_loop()
 
 	return last_result

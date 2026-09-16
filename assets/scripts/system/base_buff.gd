@@ -1,6 +1,14 @@
 extends BaseObject
 class_name BaseBuff
 
+func clone_data(context):
+	var cloned = BaseBuff.new(_name, _buff_img)
+	copy_clone_fields(cloned, context)
+	cloned._is_active = _is_active
+	cloned._buff_level = context.copy(_buff_level)
+	cloned._effects = context.copy_effects(_effects, cloned)
+	return cloned
+
 var _buff_img:String
 var _buff_level:BaseNumber
 var _effects:Array#[BaseEffect]

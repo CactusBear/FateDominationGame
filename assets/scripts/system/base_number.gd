@@ -1,6 +1,15 @@
 extends RefCounted
 class_name BaseNumber
 
+func clone_data(_context):
+	var cloned = BaseNumber.new(number, can_change, is_pure_number)
+	cloned.is_float = is_float
+	return cloned
+
+
+func clone_value(context):
+	return clone_data(context)
+
 
 var number
 var is_float:bool

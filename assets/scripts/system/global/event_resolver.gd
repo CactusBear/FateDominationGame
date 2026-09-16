@@ -13,17 +13,13 @@ extends RefCounted
 func place(plan:Array) -> Array:
 	var placed:Array = []
 	for p in plan:
-		if MapData.event_deck.is_empty():
-			break
 		var area = GetMapAreaByName.new().exec(p["area_name"])
 		if area == null:
 			continue
-		var template = MapData.event_deck.pop_front()
-		MapData.event_deck.append(template)
-		var event = CloneObject.new().exec(template) as BaseEvent
-		AddMapAreaEvents.new().exec(area, event)
-		SetCardConcealed.new().exec(event, p.get("concealed", false))
-		placed.append(event)
+		#取牌堆头模板克隆挂载的完整链路在 AddEventFromDeck 里，这里只按计划传参
+		var count:int = AddEventFromDeck.new().exec(area, 1, p.get("concealed", false))
+		if count > 0:
+			placed.append(true)
 	return placed
 
 

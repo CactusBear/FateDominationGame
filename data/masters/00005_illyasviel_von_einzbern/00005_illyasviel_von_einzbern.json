@@ -262,9 +262,18 @@
 	  ],
 	  "funcs": [
 		{
-		  "func_name": "get_player_data_value",
+		  "func_name": "log_field_values",
 		  "parameters": [
-            "played_attacks_this_turn"
+			{
+			  "type": "play",
+			  "data": {
+				"card_type": "attack",
+				"extra": false
+			  },
+			  "actor": -1
+			},
+			0,
+            "object"
 		  ],
 		  "var_index": 0
 		},
@@ -330,7 +339,7 @@
 		},
 		"effects": [
 		  {
-			"effect_name": "placeholder_return_to_nothingness",
+			"effect_name": "return_to_nothingness",
 			"shown_effect_name": "归于虚无 - 回合开始时，若你上回合在战斗阶段时与至少一名被淘汰的玩家位于同一战场，获得2战果",
 			"time_points": [
               "day_start"
@@ -347,9 +356,61 @@
 			],
 			"funcs": [
 			  {
-				"func_name": "do_nothing",
-				"parameters": [],
-				"var_index": -1
+				"func_name": "query_log",
+				"parameters": [
+				  {
+					"type": "battle",
+					"data": {
+					  "has_out": true
+					},
+					"actor": -1
+				  },
+				  -1,
+				  -1
+				],
+				"var_index": 0
+			  },
+			  {
+				"func_name": "array_length",
+				"parameters": [
+				  {
+					"self_var": 0
+				  }
+				],
+				"var_index": 1
+			  },
+			  {
+				"func_name": "compare_number",
+				"parameters": [
+				  {
+					"self_var": 1
+				  },
+				  0
+				],
+				"var_index": 2
+			  },
+			  {
+				"func_name": "if_func",
+				"parameters": [
+				  {
+					"self_var": 2
+				  },
+				  1
+				],
+				"var_index": 3
+			  },
+			  {
+				"func_name": "edit_score",
+				"parameters": [
+				  null,
+				  {
+					"number_index": 0
+				  }
+				],
+				"var_index": -1,
+				"condition": {
+				  "self_var": 3
+				}
 			  }
 			]
 		  }

@@ -1,6 +1,11 @@
 extends BaseCard
 class_name BaseEvent
 
+func clone_data(context):
+	var cloned = BaseEvent.new(_name, _card_img, context.copy(_score), [])
+	copy_clone_fields(cloned, context)
+	return cloned
+
 
 var _score:BaseNumber
 

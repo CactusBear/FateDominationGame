@@ -66,12 +66,14 @@
                 "var_index": 3
               },
               {
-                "func_name": "get_player_data_value",
+                "func_name": "log_exists",
                 "parameters": [
-                  "true_name_released",
+                  null,
                   {
-                    "self_var": 3
-                  }
+                    "type": "time_point",
+                    "tags": "true_name_release"
+                  },
+                  null
                 ],
                 "var_index": 4
               },
