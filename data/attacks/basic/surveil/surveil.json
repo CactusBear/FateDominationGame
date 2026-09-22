@@ -24,7 +24,8 @@
         "self_action_phase"
       ],
       "priority": 0,
-      "is_pure_passive": false,
+      "is_pure_passive": true,
+      "need_activate": true,
       "is_residue": false,
       "effect_numbers": [
         {
@@ -35,14 +36,13 @@
       ],
       "funcs": [
         {
-          "func_name": "move",
+          "func_name": "move_location",
           "parameters": [
             {
               "number_index": 0
             },
-            null,
-            null,
-            true
+            -1,
+            false
           ],
           "var_index": -1
         }

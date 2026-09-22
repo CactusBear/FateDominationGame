@@ -5,24 +5,42 @@ func clone_data(context):
 	var cloned = BaseEffect.new(_name, _time_points.duplicate(), _priority, _is_pure_passive, _is_residue)
 	copy_clone_fields(cloned, context)
 	cloned._need_activate = _need_activate
+	cloned._source_bound = _source_bound
+	cloned._expire_time_points = _expire_time_points.duplicate()
 	cloned._time_points_require_all = _time_points_require_all
 	cloned._cost = context.copy_value(_cost)
 	cloned.set_numbers(context.copy_value(numbers))
 	cloned._using_numbers = cloned.numbers
 	cloned._funcs = context.copy(_funcs)
+	cloned._power_query = _power_query.duplicate(true)
 	cloned._max_choices = _max_choices
 	cloned._max_total_uses = _max_total_uses
 	cloned._reset_counts_each_round = _reset_counts_each_round
 	cloned._consumes_source_resource = _consumes_source_resource
+	cloned._remove_after_trigger = _remove_after_trigger
+	cloned._selected_location = null
+	cloned._selected_players = []
+	cloned._selected_player = -1
 	for opt in _options:
 		if opt is Dictionary:
 			var copied:Dictionary = context.copy_value(opt)
 			copied["funcs"] = context.copy(opt.get("funcs", []))
+			if opt.has("activation_requirements"):
+				var copied_requirements:Array = []
+				for requirement in opt.get("activation_requirements", []):
+					if requirement is Dictionary:
+						copied_requirements.append({
+							"message": str(requirement.get("message", "")),
+							"funcs": context.copy(requirement.get("funcs", []))
+						})
+				copied["activation_requirements"] = copied_requirements
 			cloned._options.append(copied)
 	cloned._once_per_game = _once_per_game
+	cloned._is_manual = _is_manual
 	#选择、用量、触发上下文沿用构造默认值；原所属对象的数字索引不变。
 	return cloned
 
+var _power_query:Array = []
 var _time_points:Array#[String]
 #时点匹配模式：false(默认)=命中任一时点即触发；true=必须同时命中_time_points里的全部时点。
 #AND模式用于"两个时点同时成立才算"的规则，例如宝石魔术的高潮版要求
@@ -31,6 +49,10 @@ var _time_points:Array#[String]
 var _time_points_require_all:bool = false
 var _funcs:Array#[BaseFunc]
 var _is_pure_passive:bool = false
+# 只响应自身作为时点来源的效果，由卡牌数据声明；独立监听不设置此项。
+var _source_bound:bool = false
+# 未命中目标时点、但命中这里声明的任一时点时注销；空数组表示永久等待。
+var _expire_time_points:Array = []
 var _need_activate:bool = true
 var _is_residue:bool = false
 var _self_vars:Array
@@ -39,6 +61,9 @@ var _using_numbers:Array
 var _cost = null
 #每局限一次：声明后该效果本局只触发一次，判断依据是游戏日志里的效果触发记录
 var _once_per_game:bool = false
+#手动发动：声明后不由时点自动询问，只由玩家在它自己声明的时点里主动发动(如令咒)。
+#time_points 在这类效果上表达的是"允许发动的时机窗口"，而不是自动触发时机
+var _is_manual:bool = false
 #选项分支：{"shown_option_name":String, "funcs":Array[BaseFunc],
 #  "max_uses":int(单个选项在本次重置周期内最多能用几次，-1不限，默认-1),
 #  "quantity_range":[min,max](可选。声明后玩家选中该项时还需额外选一个范围内的数量)}。
@@ -64,10 +89,19 @@ var _reset_counts_each_round:bool = false
 #是否在选中生效时消耗来源对象(effect.from)的_buff_level层数(duck-typed，不限定BaseBuff)。
 #层数不足时对应选项不可选；多个效果共享同一个from对象时天然共享同一份资源池
 var _consumes_source_resource:bool = false
+# 延迟/一次性监听效果在首次实际结算后自动从效果池移除，避免后续同类时点重复执行。
+var _remove_after_trigger:bool = false
 #玩家为"需要挑牌"的选项实际选中的牌（运行期状态，由 EffectManager.submit_card_selection 写入）。
 #选项上的声明写在 option 的 select_cards 里；效果链想读这些牌，用现成的
 #get_activating_eff + get_property("_selected_cards") 即可，不必为选牌单开一个 operation
 var _selected_cards:Array = []
+# 选项级 select_location 的提交结果；效果 funcs 通过 get_property 读取。
+var _selected_location:BaseLocation = null
+# 选项级 select_players 的提交结果（玩家id数组）。只选一名时同时写 _selected_player，
+# 让效果链不必为了"取第0个"再引入一个下标 operation：
+# get_activating_eff + get_property("_selected_player") 就能直接把目标喂给任意 func 的玩家参数位
+var _selected_players:Array = []
+var _selected_player:int = -1
 #激活瞬间的触发上下文快照。start_effect会清空各玩家的动态时点，所以要在清空前记下来
 var _trigger_player_id:int = -1
 var _trigger_time_points:Array

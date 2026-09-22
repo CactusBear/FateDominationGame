@@ -1,0 +1,437 @@
+{
+	"servant_name": "emiya",
+	"shown_servant_name": "卫宫",
+	"servant_class": "archer",
+	"header_img": "00002_emiya_header.png",
+	"servant_card_img": "00002_emiya_cd.png",
+	"effects": [],
+	"specials": {
+		"SKILLS": [
+			{
+				"skill_name": "seven_rings_of_blazing_heaven",
+				"shown_skill_name": "炽天覆七重圆环",
+				"skill_card_img": "00002_emiya_seven_rings_of_blazing_heaven.png",
+				"attributes": [
+					"special"
+				],
+				"cost": {
+					"number": 2,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"power": {
+					"number": 4,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"ignore_limit": false,
+				"effects": [
+					{
+						"effect_name": "zero_opponent_agility_power",
+						"shown_effect_name": "战斗阶段：将同一战场所有对手的迅捷属性攻击威力变为0",
+						"time_points": [
+							"self_battle_phase"
+						],
+						"priority": 0,
+						"is_pure_passive": false,
+						"is_residue": false,
+						"effect_numbers": [],
+						"funcs": [
+							{
+								"func_name": "get_players_in_same_area",
+								"parameters": [],
+								"var_index": 0
+							},
+							{
+								"func_name": "foreach_func",
+								"parameters": [
+									[
+										{
+											"func_name": "zero_attribute_power",
+											"parameters": [
+												null,
+												[
+													"agility"
+												]
+											],
+											"var_index": -1
+										}
+									],
+									{
+										"self_var": 0
+									}
+								],
+								"var_index": -1
+							}
+						],
+						"is_manual": true,
+						"need_activate": true
+					}
+				],
+				"zoom_kind": "card"
+			},
+			{
+				"skill_name": "pseudo_spiral_sword",
+				"shown_skill_name": "伪·螺旋剑",
+				"skill_card_img": "00002_emiya_pseudo_spiral_sword.png",
+				"attributes": [
+					"agility",
+					"noble_phantasm"
+				],
+				"cost": {
+					"number": 2,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"power": {
+					"number": 4,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"keywords": [
+					"true_name_release"
+				],
+				"ignore_limit": false,
+				"effects": [
+					{
+						"effect_name": "terrain_advantage_triple",
+						"shown_effect_name": "【真名解放】行动阶段：将你的地利变为3倍",
+						"time_points": [
+							"self_action_phase"
+						],
+						"priority": 0,
+						"is_pure_passive": false,
+						"is_residue": false,
+						"effect_numbers": [
+							{
+								"number": 3,
+								"can_change": true,
+								"is_pure_number": true
+							}
+						],
+						"funcs": [
+							{
+								"func_name": "log_exists",
+								"parameters": [
+									-1,
+									{
+										"type": "time_point",
+										"tags": "true_name_release",
+										"actor": -1
+									},
+									null
+								],
+								"var_index": 0
+							},
+							{
+								"func_name": "get_location",
+								"parameters": [],
+								"var_index": 1
+							},
+							{
+								"func_name": "get_location_benefit",
+								"parameters": [
+									{
+										"self_var": 1
+									}
+								],
+								"var_index": 2
+							},
+							{
+								"func_name": "calculate_number",
+								"parameters": [
+									{
+										"self_var": 2
+									},
+									"*",
+									{
+										"number_index": 0
+									}
+								],
+								"var_index": 3
+							},
+							{
+								"func_name": "edit_location_benefit",
+								"parameters": [
+									{
+										"self_var": 1
+									},
+									{
+										"self_var": 3
+									}
+								],
+								"var_index": -1,
+								"condition": {
+									"self_var": 0
+								}
+							}
+						],
+						"once_per_game": true
+					},
+					{
+						"effect_name": "battle_win_score_gain",
+						"shown_effect_name": "战斗阶段：若赢得本场战斗，获得4战果",
+						"time_points": [
+							"self_battle_win"
+						],
+						"priority": 0,
+						"is_pure_passive": true,
+						"is_residue": false,
+						"effect_numbers": [
+							{
+								"number": 4,
+								"can_change": true,
+								"is_pure_number": true
+							}
+						],
+						"funcs": [
+							{
+								"func_name": "edit_score",
+								"parameters": [
+									null,
+									{
+										"number_index": 0
+									}
+								],
+								"var_index": -1
+							}
+						]
+					}
+				],
+				"zoom_kind": "card"
+			},
+			{
+				"skill_name": "unlimited_blade_works",
+				"shown_skill_name": "无限剑制",
+				"skill_card_img": "00002_emiya_unlimited_blade_works.png",
+				"attributes": [
+					"special"
+				],
+				"cost": {
+					"number": 8,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"power": {
+					"number": 0,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"keywords": [
+					"true_name_release"
+				],
+				"ignore_limit": false,
+				"effects": [
+					{
+						"effect_name": "placeholder_rebuild_hand_from_all_zones",
+						"source_bound": true,
+						"shown_effect_name": "【真名解放】打出时：以你打出的牌、手牌、牌库和弃牌堆任意组建一组至多12张牌的手牌",
+						"time_points": [
+							"self_played_card"
+						],
+						"priority": 0,
+						"is_pure_passive": false,
+						"is_residue": false,
+						"effect_numbers": [
+							{
+								"number": 12,
+								"can_change": true,
+								"is_pure_number": true
+							}
+						],
+						"funcs": [
+							{
+								"func_name": "do_nothing",
+								"parameters": [],
+								"var_index": -1
+							}
+						]
+					},
+					{
+						"effect_name": "residue_limited_play_no_draw",
+						"source_bound": true,
+						"shown_effect_name": "残留：你的常规出牌改为打出0~4张牌，你不能抽牌，当你的手牌数为0时，关闭此牌",
+						"time_points": [
+							"self_played_card",
+							"self_prepare_phase"
+						],
+						"priority": 0,
+						"is_pure_passive": true,
+						"need_activate": true,
+						"is_residue": true,
+						"effect_numbers": [
+							{
+								"number": 4,
+								"can_change": true,
+								"is_pure_number": true
+							},
+							{
+								"number": 0,
+								"can_change": false,
+								"is_pure_number": true
+							},
+							{
+								"number": 2,
+								"can_change": false,
+								"is_pure_number": true
+							}
+						],
+						"funcs": [
+							{
+								"func_name": "when",
+								"parameters": [
+									[
+										"self_played_card"
+									]
+								],
+								"var_index": 0
+							},
+							{
+								"func_name": "edit_data_number",
+								"parameters": [
+									"play_limit",
+									{
+										"number_index": 0
+									}
+								],
+								"var_index": -1,
+								"condition": {
+									"self_var": 0
+								}
+							},
+							{
+								"func_name": "edit_data_number",
+								"parameters": [
+									"regular_play_min",
+									{
+										"number_index": 1
+									}
+								],
+								"var_index": -1,
+								"condition": {
+									"self_var": 0
+								}
+							},
+							{
+								"func_name": "set_player_data",
+								"parameters": [
+									"can_draw_card",
+									false
+								],
+								"var_index": -1,
+								"condition": {
+									"self_var": 0
+								}
+							},
+							{
+								"func_name": "get_player_hand_cards",
+								"parameters": [],
+								"var_index": 1
+							},
+							{
+								"func_name": "array_length",
+								"parameters": [
+									{
+										"self_var": 1
+									}
+								],
+								"var_index": 2
+							},
+							{
+								"func_name": "if_func",
+								"parameters": [
+									{
+										"self_var": 2
+									},
+									0
+								],
+								"var_index": 3
+							},
+							{
+								"func_name": "edit_data_number",
+								"parameters": [
+									"play_limit",
+									{
+										"number_index": 2
+									}
+								],
+								"var_index": -1,
+								"condition": {
+									"self_var": 3
+								}
+							},
+							{
+								"func_name": "edit_data_number",
+								"parameters": [
+									"regular_play_min",
+									{
+										"number_index": 2
+									}
+								],
+								"var_index": -1,
+								"condition": {
+									"self_var": 3
+								}
+							},
+							{
+								"func_name": "set_player_data",
+								"parameters": [
+									"can_draw_card",
+									true
+								],
+								"var_index": -1,
+								"condition": {
+									"self_var": 3
+								}
+							},
+							{
+								"func_name": "get_eff_source_card",
+								"parameters": [],
+								"var_index": 4
+							},
+							{
+								"func_name": "close_card",
+								"parameters": [
+									{
+										"self_var": 4
+									}
+								],
+								"var_index": -1,
+								"condition": {
+									"self_var": 3
+								}
+							}
+						]
+					}
+				],
+				"zoom_kind": "card"
+			}
+		],
+		"ATTACKS": [
+			"strength:2",
+			"strength:3",
+			"agility:2",
+			"agility:2",
+			"agility:3",
+			"agility:4",
+			"magic:2",
+			"magic:3",
+			"magic:4",
+			"special:surveil",
+			"special:preparation",
+			"special:preparation"
+		],
+		"BUFFS": []
+	},
+	"tags": [
+		{
+			"tag": "emiya",
+			"name_list": [
+				"emiya"
+			],
+			"type": "servant_tag"
+		}
+	],
+	"header_img_zoom_kind": "avatar",
+	"servant_card_img_zoom_kind": "card"
+}

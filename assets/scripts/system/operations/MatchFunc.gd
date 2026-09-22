@@ -2,8 +2,9 @@ class_name MatchFunc
 extends RefCounted
 
 func exec(_var, cases:Array):
-
-	if cases.has(_var):
-		return true
-	else:
-		return false
+	var value = _var.number if _var is BaseNumber else _var
+	for candidate in cases:
+		var normalized = candidate.number if candidate is BaseNumber else candidate
+		if value == normalized:
+			return true
+	return false

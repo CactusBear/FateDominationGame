@@ -19,3 +19,6 @@ func exec(from_index = 0, player_id:int = -1):
 	deck.pop_at(index)
 	var hand = player_data["hand_cards"] as Array
 	hand.append(card)
+	#日志：抽牌事实（谁在第几回合哪个阶段抽了哪张），排查"手牌莫名多出来"时的第一手依据
+	GameLog.record("draw", player_id, -1, "", card, ["draw"],
+		{"card_name": card.get_shown_name() if card.has_method("get_shown_name") else str(card), "from_index": index})

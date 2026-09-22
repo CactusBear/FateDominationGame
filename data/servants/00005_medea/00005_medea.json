@@ -35,6 +35,7 @@
             "priority": 0,
             "is_pure_passive": true,
             "is_residue": false,
+            "source_bound": true,
             "effect_numbers": [
               {
                 "number": 16,
@@ -195,10 +196,13 @@
           "can_change": true,
           "is_pure_number": true
         },
+        "keywords": [
+          "true_name_release"
+        ],
         "ignore_limit": false,
         "effects": [
           {
-            "effect_name": "placeholder_rule_breaker_remove_command_spell",
+            "effect_name": "rule_breaker_remove_command_spell",
             "shown_effect_name": "【真名解放】〈每局游戏限一次〉行动阶段：你所在战场的一名玩家失去一枚令咒，若其原本只有一枚或更少的令咒，令其【败北】。若其原本没有令咒，你总威力+10",
             "time_points": [
               "self_action_phase"
@@ -206,21 +210,170 @@
             "priority": 0,
             "is_pure_passive": false,
             "is_residue": false,
+            "is_manual": true,
+            "need_activate": true,
+            "max_choices": 1,
+            "once_per_game": true,
             "effect_numbers": [
+              {
+                "number": -1,
+                "can_change": true,
+                "is_pure_number": true
+              },
               {
                 "number": 10,
                 "can_change": true,
                 "is_pure_number": true
-              }
-            ],
-            "funcs": [
+              },
               {
-                "func_name": "do_nothing",
-                "parameters": [],
-                "var_index": -1
+                "number": 1,
+                "can_change": true,
+                "is_pure_number": true
               }
             ],
-            "once_per_game": true
+            "funcs": [],
+            "options": [
+              {
+                "shown_option_name": "【真名解放】，令一名同战场玩家失去一枚令咒",
+                "select_players": {
+                  "candidates": [
+                    {
+                      "func_name": "get_players_in_same_area",
+                      "parameters": [
+                        -1,
+                        false
+                      ],
+                      "var_index": -1
+                    }
+                  ],
+                  "min": 1,
+                  "max": 1
+                },
+                "funcs": [
+                  {
+                    "func_name": "release_true_name",
+                    "parameters": [
+                      -1
+                    ],
+                    "var_index": -1
+                  },
+                  {
+                    "func_name": "get_activating_eff",
+                    "parameters": [],
+                    "var_index": 0
+                  },
+                  {
+                    "func_name": "get_property",
+                    "parameters": [
+                      {
+                        "self_var": 0
+                      },
+                      "_selected_player"
+                    ],
+                    "var_index": 1
+                  },
+                  {
+                    "func_name": "get_player_data_value",
+                    "parameters": [
+                      "command_spell_count",
+                      {
+                        "self_var": 1
+                      }
+                    ],
+                    "var_index": 2
+                  },
+                  {
+                    "func_name": "compare_number",
+                    "parameters": [
+                      {
+                        "self_var": 2
+                      },
+                      {
+                        "number_index": 2
+                      }
+                    ],
+                    "var_index": 3
+                  },
+                  {
+                    "func_name": "match_func",
+                    "parameters": [
+                      {
+                        "self_var": 3
+                      },
+                      [
+                        -1,
+                        0
+                      ]
+                    ],
+                    "var_index": 4
+                  },
+                  {
+                    "func_name": "compare_number",
+                    "parameters": [
+                      {
+                        "self_var": 2
+                      },
+                      0
+                    ],
+                    "var_index": 5
+                  },
+                  {
+                    "func_name": "match_func",
+                    "parameters": [
+                      {
+                        "self_var": 5
+                      },
+                      [
+                        0
+                      ]
+                    ],
+                    "var_index": 6
+                  },
+                  {
+                    "func_name": "defeat",
+                    "parameters": [
+                      {
+                        "self_var": 1
+                      }
+                    ],
+                    "var_index": -1,
+                    "condition": {
+                      "self_var": 4
+                    }
+                  },
+                  {
+                    "func_name": "edit_data_number",
+                    "parameters": [
+                      "command_spell_count",
+                      null,
+                      {
+                        "number_index": 0
+                      },
+                      {
+                        "self_var": 1
+                      },
+                      0
+                    ],
+                    "var_index": -1
+                  },
+                  {
+                    "func_name": "edit_data_number",
+                    "parameters": [
+                      "total_power_bonus",
+                      null,
+                      {
+                        "number_index": 1
+                      },
+                      -1
+                    ],
+                    "var_index": -1,
+                    "condition": {
+                      "self_var": 6
+                    }
+                  }
+                ]
+              }
+            ]
           }
         ],
         "zoom_kind": "card"
@@ -242,66 +395,87 @@
           "can_change": true,
           "is_pure_number": true
         },
+        "keywords": [
+          "true_name_release"
+        ],
         "ignore_limit": false,
         "effects": [
           {
             "effect_name": "divine_words_retrieve_rule_breaker",
             "shown_effect_name": "【真名解放】战斗阶段：若你在战斗中失败，将一张被移除的【万符必应破戒】加入你的技能区",
             "time_points": [
-              "self_battle_lose"
+              "self_battle_phase"
             ],
             "priority": 0,
-            "is_pure_passive": true,
+            "is_pure_passive": false,
             "is_residue": false,
             "effect_numbers": [],
             "funcs": [
               {
-                "func_name": "get_pl_skills_out_game",
-                "parameters": [],
-                "var_index": 0
-              },
-              {
-                "func_name": "get_objects_by_name_fr_arr",
+                "func_name": "schedule_effect_on_time_point",
                 "parameters": [
-                  "rule_breaker",
-                  {
-                    "self_var": 0
-                  }
-                ],
-                "var_index": 1
-              },
-              {
-                "func_name": "get_card_by_index_fr_arr",
-                "parameters": [
+                  [
+                    "self_battle_lose"
+                  ],
+                  [
+                    {
+                      "func_name": "get_pl_skills_out_game",
+                      "parameters": [],
+                      "var_index": 0
+                    },
+                    {
+                      "func_name": "get_objects_by_name_fr_arr",
+                      "parameters": [
+                        "rule_breaker",
+                        {
+                          "self_var": 0
+                        }
+                      ],
+                      "var_index": 1
+                    },
+                    {
+                      "func_name": "get_card_by_index_fr_arr",
+                      "parameters": [
+                        0,
+                        {
+                          "self_var": 1
+                        }
+                      ],
+                      "var_index": 2
+                    },
+                    {
+                      "func_name": "add_skill_to_skill_zone",
+                      "parameters": [
+                        {
+                          "self_var": 2
+                        }
+                      ],
+                      "var_index": -1
+                    },
+                    {
+                      "func_name": "remove_from_array",
+                      "parameters": [
+                        {
+                          "self_var": 2
+                        },
+                        {
+                          "self_var": 0
+                        }
+                      ],
+                      "var_index": -1
+                    }
+                  ],
                   0,
-                  {
-                    "self_var": 1
-                  }
-                ],
-                "var_index": 2
-              },
-              {
-                "func_name": "add_skill_to_skill_zone",
-                "parameters": [
-                  {
-                    "self_var": 2
-                  }
-                ],
-                "var_index": -1
-              },
-              {
-                "func_name": "remove_from_array",
-                "parameters": [
-                  {
-                    "self_var": 2
-                  },
-                  {
-                    "self_var": 0
-                  }
+                  false,
+                  [
+                    "day_end"
+                  ]
                 ],
                 "var_index": -1
               }
-            ]
+            ],
+            "is_manual": true,
+            "need_activate": true
           }
         ],
         "zoom_kind": "card"

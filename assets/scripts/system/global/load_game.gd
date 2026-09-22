@@ -389,6 +389,8 @@ func load_skills(skills:Array, pic_path:String, from, type_name:String = "skill"
 		skill._play_requirements = ski.get("play_requirements", [])
 		skill._shown_notes = ski.get("shown_notes", [])
 		skill._need_extra_play = bool(ski.get("need_extra_play", false))
+		#词条(如真名解放)：卡自己显式声明，引擎按词条名执行对应规则。没声明就没有
+		skill._keywords = ski.get("keywords", [])
 		ski_arr.append(skill)
 
 	return ski_arr
@@ -426,6 +428,10 @@ func load_attacks(attacks:Array, pic_path:String, from, owner_effects_data:Array
 		attack._play_requirements = att.get("play_requirements", [])
 		attack._shown_notes = att.get("shown_notes", [])
 		attack._need_extra_play = bool(att.get("need_extra_play", false))
+		attack._initial_zone = str(att.get("initial_zone", ""))
+		attack._initial_count = maxi(0, int(att.get("initial_count", 1)))
+		#词条同技能牌：攻击牌也能带词条(如御主附加牌带真名解放)，声明在卡自己身上
+		attack._keywords = att.get("keywords", [])
 		att_arr.append(attack)
 
 	return att_arr
@@ -443,6 +449,7 @@ func load_buffs(buffs:Array, pic_path:String, from):
 		var buff_level = load_number(buf["buff_level"])
 		var buff = BaseBuff.new(buff_name, buff_img)
 		buff._shown_name = buf.get("shown_buff_name", "")
+		buff._related_effect_names = (buf.get("related_effect_names", []) as Array).duplicate()
 		buff._zoom_kind = LoadHelper.resolve_zoom_kind(buf, "buff_img")
 		var effects = load_effects(buf["effects"], buff)
 		buff._effects = effects
@@ -545,7 +552,7 @@ func load_masters(masters:Array, pic_path:String, from):
 		var master = BaseMaster.new(master_name, shown_master_name, header_img, master_card_img, command_spell_img)
 		var effects = load_effects(mas["effects"], master)
 		var specials = mas["specials"] as Dictionary
-		var upgrade_skill = load_skills(mas.get("upgrade_skill", []), pic_path, master)
+		var upgrade_skill = load_skills(mas.get("upgrade_skill", []), pic_path, master, "upgrade_skill")
 		
 		if specials.has("SKILLS") :
 			specials["SKILLS"] = load_skills(specials["SKILLS"], pic_path, master)

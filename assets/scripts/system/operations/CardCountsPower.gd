@@ -18,9 +18,24 @@ func exec(card:BaseHandCard, player_id:int = -1) -> bool:
 	if !(player_data["played_cards"] as Array).has(card):
 		return false
 
+	return counts_when_played(card, card._is_concealed, id)
+
+
+#同一条规则作用在"尚未入场的牌"上：出牌区在确认出牌前预估合计威力时用它。
+#与 exec 的唯一区别是不检查"是否已在场上"——那是调用方保证的前提（待确认的牌还没进
+#played_cards），不属于规则本身。两张例外效果与明暗状态的判断与 exec 共用同一份实现，
+#否则出牌区会自己再写一套例外，规则一变两边就对不上。
+#concealed 由调用方传入：待确认的牌还没写入 _is_concealed，明暗是出牌区暂存的。
+func counts_when_played(card:BaseHandCard, concealed:bool, player_id:int = -1) -> bool:
+
+	if card == null:
+		return false
+	var id = EffectManager.resolve_player_id(player_id)
+	if !GameData.player_data_library.has(id):
+		return false
 	var has_effect = CardHasEffect.new()
 	if has_effect.exec(NeverCountsPowerEffect.EFFECT_NAME, card):
 		return false
-	if !card._is_concealed:
+	if !concealed:
 		return true
 	return has_effect.exec(CountsPowerWhileConcealedEffect.EFFECT_NAME, card)

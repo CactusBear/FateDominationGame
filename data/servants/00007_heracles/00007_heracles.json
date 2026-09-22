@@ -24,6 +24,7 @@
           "can_change": true,
           "is_pure_number": true
         },
+        "keywords": ["true_name_release"],
         "ignore_limit": false,
         "effects": [
           {
@@ -64,11 +65,36 @@
                 "var_index": 1
               },
               {
+                "func_name": "get_player_played_cards",
+                "parameters": [],
+                "var_index": 7
+              },
+              {
+                "func_name": "get_pl_skills_side",
+                "parameters": [],
+                "var_index": 9
+              },
+              {
+                "func_name": "merge_arrays",
+                "parameters": [
+                  {
+                    "self_var": 1
+                  },
+                  {
+                    "self_var": 7
+                  },
+                  {
+                    "self_var": 9
+                  }
+                ],
+                "var_index": 8
+              },
+              {
                 "func_name": "get_objects_by_name_fr_arr",
                 "parameters": [
                   "twelve_labors",
                   {
-                    "self_var": 1
+                    "self_var": 8
                   }
                 ],
                 "var_index": 2
@@ -153,23 +179,73 @@
                 "var_index": -1
               },
               {
-                "func_name": "foreach_func",
+                "func_name": "card_counts_power",
                 "parameters": [
-                  [
-                    {
-                      "func_name": "edit_card_power",
-                      "parameters": [
-                        null,
-                        {
-                          "number_index": 2
-                        }
-                      ],
-                      "var_index": -1
-                    }
-                  ],
                   {
-                    "self_var": 2
+                    "self_var": 0
+                  },
+                  -1
+                ],
+                "var_index": 10
+              },
+              {
+                "func_name": "get_property",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  "_power"
+                ],
+                "var_index": 11,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "calculate_number",
+                "parameters": [
+                  0,
+                  "-",
+                  {
+                    "self_var": 11
                   }
+                ],
+                "var_index": 12,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "edit_power",
+                "parameters": [
+                  null,
+                  {
+                    "self_var": 12
+                  },
+                  -1
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "unregister_object_effects",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "set_property",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  "_is_activating",
+                  false
                 ],
                 "var_index": -1
               },
@@ -201,8 +277,30 @@
                   }
                 ],
                 "var_index": -1
+              },
+              {
+                "func_name": "foreach_func",
+                "parameters": [
+                  [
+                    {
+                      "func_name": "edit_card_power",
+                      "parameters": [
+                        null,
+                        {
+                          "number_index": 2
+                        }
+                      ],
+                      "var_index": -1
+                    }
+                  ],
+                  {
+                    "self_var": 2
+                  }
+                ],
+                "var_index": -1
               }
-            ]
+            ],
+            "need_activate": true
           }
         ],
         "zoom_kind": "card"
@@ -224,6 +322,7 @@
           "can_change": true,
           "is_pure_number": true
         },
+        "keywords": ["true_name_release"],
         "ignore_limit": false,
         "effects": [
           {
@@ -264,11 +363,36 @@
                 "var_index": 1
               },
               {
+                "func_name": "get_player_played_cards",
+                "parameters": [],
+                "var_index": 7
+              },
+              {
+                "func_name": "get_pl_skills_side",
+                "parameters": [],
+                "var_index": 9
+              },
+              {
+                "func_name": "merge_arrays",
+                "parameters": [
+                  {
+                    "self_var": 1
+                  },
+                  {
+                    "self_var": 7
+                  },
+                  {
+                    "self_var": 9
+                  }
+                ],
+                "var_index": 8
+              },
+              {
                 "func_name": "get_objects_by_name_fr_arr",
                 "parameters": [
                   "twelve_labors",
                   {
-                    "self_var": 1
+                    "self_var": 8
                   }
                 ],
                 "var_index": 2
@@ -353,23 +477,73 @@
                 "var_index": -1
               },
               {
-                "func_name": "foreach_func",
+                "func_name": "card_counts_power",
                 "parameters": [
-                  [
-                    {
-                      "func_name": "edit_card_power",
-                      "parameters": [
-                        null,
-                        {
-                          "number_index": 2
-                        }
-                      ],
-                      "var_index": -1
-                    }
-                  ],
                   {
-                    "self_var": 2
+                    "self_var": 0
+                  },
+                  -1
+                ],
+                "var_index": 10
+              },
+              {
+                "func_name": "get_property",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  "_power"
+                ],
+                "var_index": 11,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "calculate_number",
+                "parameters": [
+                  0,
+                  "-",
+                  {
+                    "self_var": 11
                   }
+                ],
+                "var_index": 12,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "edit_power",
+                "parameters": [
+                  null,
+                  {
+                    "self_var": 12
+                  },
+                  -1
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "unregister_object_effects",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "set_property",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  "_is_activating",
+                  false
                 ],
                 "var_index": -1
               },
@@ -401,8 +575,30 @@
                   }
                 ],
                 "var_index": -1
+              },
+              {
+                "func_name": "foreach_func",
+                "parameters": [
+                  [
+                    {
+                      "func_name": "edit_card_power",
+                      "parameters": [
+                        null,
+                        {
+                          "number_index": 2
+                        }
+                      ],
+                      "var_index": -1
+                    }
+                  ],
+                  {
+                    "self_var": 2
+                  }
+                ],
+                "var_index": -1
               }
-            ]
+            ],
+            "need_activate": true
           }
         ],
         "zoom_kind": "card"
@@ -424,6 +620,7 @@
           "can_change": true,
           "is_pure_number": true
         },
+        "keywords": ["true_name_release"],
         "ignore_limit": false,
         "effects": [
           {
@@ -464,11 +661,36 @@
                 "var_index": 1
               },
               {
+                "func_name": "get_player_played_cards",
+                "parameters": [],
+                "var_index": 7
+              },
+              {
+                "func_name": "get_pl_skills_side",
+                "parameters": [],
+                "var_index": 9
+              },
+              {
+                "func_name": "merge_arrays",
+                "parameters": [
+                  {
+                    "self_var": 1
+                  },
+                  {
+                    "self_var": 7
+                  },
+                  {
+                    "self_var": 9
+                  }
+                ],
+                "var_index": 8
+              },
+              {
                 "func_name": "get_objects_by_name_fr_arr",
                 "parameters": [
                   "twelve_labors",
                   {
-                    "self_var": 1
+                    "self_var": 8
                   }
                 ],
                 "var_index": 2
@@ -553,23 +775,73 @@
                 "var_index": -1
               },
               {
-                "func_name": "foreach_func",
+                "func_name": "card_counts_power",
                 "parameters": [
-                  [
-                    {
-                      "func_name": "edit_card_power",
-                      "parameters": [
-                        null,
-                        {
-                          "number_index": 2
-                        }
-                      ],
-                      "var_index": -1
-                    }
-                  ],
                   {
-                    "self_var": 2
+                    "self_var": 0
+                  },
+                  -1
+                ],
+                "var_index": 10
+              },
+              {
+                "func_name": "get_property",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  "_power"
+                ],
+                "var_index": 11,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "calculate_number",
+                "parameters": [
+                  0,
+                  "-",
+                  {
+                    "self_var": 11
                   }
+                ],
+                "var_index": 12,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "edit_power",
+                "parameters": [
+                  null,
+                  {
+                    "self_var": 12
+                  },
+                  -1
+                ],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 10
+                }
+              },
+              {
+                "func_name": "unregister_object_effects",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  }
+                ],
+                "var_index": -1
+              },
+              {
+                "func_name": "set_property",
+                "parameters": [
+                  {
+                    "self_var": 0
+                  },
+                  "_is_activating",
+                  false
                 ],
                 "var_index": -1
               },
@@ -601,8 +873,30 @@
                   }
                 ],
                 "var_index": -1
+              },
+              {
+                "func_name": "foreach_func",
+                "parameters": [
+                  [
+                    {
+                      "func_name": "edit_card_power",
+                      "parameters": [
+                        null,
+                        {
+                          "number_index": 2
+                        }
+                      ],
+                      "var_index": -1
+                    }
+                  ],
+                  {
+                    "self_var": 2
+                  }
+                ],
+                "var_index": -1
               }
-            ]
+            ],
+            "need_activate": true
           }
         ],
         "zoom_kind": "card"

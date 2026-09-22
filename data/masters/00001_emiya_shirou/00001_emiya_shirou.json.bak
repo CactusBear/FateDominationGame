@@ -1,0 +1,301 @@
+{
+  "master_name": "emiya_shirou",
+  "shown_master_name": "卫宫士郎",
+  "header_img": "00001_emiya_shirou_header.png",
+  "master_card_img": "00001_emiya_shirou_cd.png",
+  "command_spell_img": "00001_emiya_shirou_cs.png",
+  "effects": [
+	{
+	  "effect_name": "inexperienced",
+	  "shown_effect_name": "未熟 - 你的魔力初始值为2",
+	  "time_points": [
+        "game_start"
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [
+		{
+		  "number": 2,
+		  "can_change": true,
+		  "is_pure_number": true
+		}
+	  ],
+	  "funcs": [
+		{
+		  "func_name": "edit_magic",
+		  "parameters": [
+			{
+			  "number_index": 0
+			}
+		  ],
+		  "var_index": -1
+		}
+	  ]
+	},
+	{
+	  "effect_name": "projection_magic",
+	  "shown_effect_name": "投影 - 将【干将·莫邪】加入你的技能区",
+	  "time_points": [
+        "game_start"
+	  ],
+	  "priority": 1,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [],
+	  "funcs": [
+		{
+		  "func_name": "add_skill_to_skill_zone",
+		  "parameters": [
+            "kanshou_and_bakuya"
+		  ],
+		  "var_index": -1
+		}
+	  ]
+	},
+	{
+	  "effect_name": "avalon",
+	  "shown_effect_name": "远离尘世的理想乡 - 当你首次被淘汰时你将失去所有的魔力来继续游戏",
+	  "time_points": [
+		"game_start",
+        "self_lives_decrease"
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [
+		{
+		  "number": 1,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		{
+		  "number": 1,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		{
+		  "number": 0,
+		  "can_change": true,
+		  "is_pure_number": true
+		}
+	  ],
+	  "funcs": [
+		{
+		  "func_name": "when",
+		  "parameters": [
+			[
+              "game_start"
+			]
+		  ],
+		  "var_index": 0
+		},
+		{
+		  "func_name": "edit_lives",
+		  "parameters": [
+			null,
+			{
+			  "number_index": 0
+			}
+		  ],
+		  "var_index": -1,
+		  "condition": {
+			"self_var": 0
+		  }
+		},
+		{
+		  "func_name": "when",
+		  "parameters": [
+			[
+              "self_lives_decrease"
+			]
+		  ],
+		  "var_index": 1
+		},
+		{
+		  "func_name": "get_player_lives",
+		  "parameters": [],
+		  "var_index": 2,
+		  "condition": {
+			"self_var": 1
+		  }
+		},
+		{
+		  "func_name": "if_func",
+		  "parameters": [
+			{
+			  "self_var": 2
+			},
+			{
+			  "number_index": 1
+			}
+		  ],
+		  "var_index": 3,
+		  "condition": {
+			"self_var": 1
+		  }
+		},
+		{
+		  "func_name": "edit_magic",
+		  "parameters": [
+			{
+			  "number_index": 2
+			}
+		  ],
+		  "var_index": -1,
+		  "condition": {
+			"self_var": 3
+		  }
+		}
+	  ]
+	}
+  ],
+  "specials": {
+	"SKILLS": [
+	  {
+		"skill_name": "kanshou_and_bakuya",
+		"shown_skill_name": "干将·莫邪",
+		"skill_card_img": "00001_emiya_shirou_kanshou_and_bakuya.png",
+		"attributes": [
+		  "strength",
+          "noble_phantasm"
+		],
+		"cost": {
+		  "number": 1,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"power": {
+		  "number": 5,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"ignore_limit": false,
+		"effects": [],
+		"zoom_kind": "card",
+		"play_requirements": [
+		  {
+			"type": "min_magic",
+			"value": 8
+		  }
+		],
+		"need_extra_play": true,
+		"shown_notes": [
+		  "你的魔力需要达到8点才能打出此牌",
+          "投影 - 此牌需追加打出"
+		]
+	  }
+	],
+	"ATTACKS": [],
+	"BUFFS": []
+  },
+  "upgrade_skill": [
+	{
+	  "skill_name": "caliburn",
+	  "shown_skill_name": "必胜黄金之剑",
+	  "skill_card_img": "00001_emiya_shirou_caliburn.png",
+	  "attributes": [
+		"strength",
+        "noble_phantasm"
+	  ],
+	  "cost": {
+		"number": 6,
+		"can_change": true,
+		"is_pure_number": true
+	  },
+	  "power": {
+		"number": 8,
+		"can_change": true,
+		"is_pure_number": true
+	  },
+	  "ignore_limit": false,
+	  "effects": [
+		{
+		  "effect_name": "passive",
+		  "shown_effect_name": "被动 - 你的力量属性和敏捷属性的基本牌威力+2",
+		  "time_points": [
+            "self_played_card"
+		  ],
+		  "priority": 0,
+		  "is_pure_passive": true,
+		  "is_residue": false,
+		  "effect_numbers": [
+			{
+			  "number": 2,
+			  "can_change": true,
+			  "is_pure_number": true
+			}
+		  ],
+		  "funcs": [
+			{
+			  "func_name": "modify_attack_power_by_attribute",
+			  "parameters": [
+				[
+				  "strength",
+                  "agility"
+				],
+				{
+				  "number_index": 0
+				}
+			  ],
+			  "var_index": -1
+			}
+		  ]
+		},
+		{
+		  "effect_name": "combat",
+		  "shown_effect_name": "战斗阶段：此攻击在高潮回合威力+4",
+		  "time_points": [
+            "self_climax"
+		  ],
+		  "priority": 0,
+		  "is_pure_passive": true,
+		  "is_residue": false,
+		  "effect_numbers": [
+			{
+			  "number": 4,
+			  "can_change": true,
+			  "is_pure_number": true
+			}
+		  ],
+		  "funcs": [
+			{
+			  "func_name": "get_eff_source_card",
+			  "parameters": [],
+			  "var_index": 0
+			},
+			{
+			  "func_name": "edit_card_power",
+			  "parameters": [
+				{
+				  "self_var": 0
+				},
+				{
+				  "number_index": 0
+				}
+			  ],
+			  "var_index": -1
+			}
+		  ]
+		}
+	  ],
+	  "zoom_kind": "card",
+	  "is_awakened": false,
+	  "shown_notes": [
+        "此牌加入你的技能区"
+	  ]
+	}
+  ],
+  "tags": [
+	{
+	  "tag": "emiya_shirou",
+	  "name_list": [
+        "emiya_shirou"
+	  ],
+	  "type": "master_tag"
+	}
+  ],
+  "header_img_zoom_kind": "avatar",
+  "master_card_img_zoom_kind": "card",
+  "command_spell_img_zoom_kind": "card"
+}

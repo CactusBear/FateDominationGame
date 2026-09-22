@@ -38,6 +38,9 @@ var _printed_can_move_to
 #该战区在前哨阶段是否接受常规部署。默认 false：缺声明就不给行为——
 #所有战区一视同仁地"看起来能部署"会把侦察区这种只作先锋席的战区也算进去
 var _can_deploy:bool = false
+#在该战区部署获得魔力时的"来源名"，供 cannot_gain_magic_from_<来源> 这类限制查询。
+#默认空串＝没有来源限制；数字与限制都由数据声明，规则代码不写死"工房"或"workshop"
+var _magic_source:String = ""
 
 func _init(area_name:String, score:BaseNumber = BaseNumber.new(0), move_cost:BaseNumber = BaseNumber.new(0), linked_map_area:BaseMapArea = null):
 	_area_name = area_name

@@ -1,103 +1,102 @@
 {
-  "card_name": "outrage",
-  "shown_name": "怒不可遏",
-  "magic": {
-    "number": 2,
-    "can_change": true,
-    "is_pure_number": true
-  },
-  "is_climax": false,
-  "climax_round": 0,
-  "card_img": "outrage.png",
-  "effects": [
-    {
-      "effect_name": "outrage_strength_plus_2",
-      "shown_effect_name": "力量攻击于深山町和新都获得威力+2",
-      "time_points": [
-        "battle_resolve"
-      ],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [
-        {
-          "number": 2,
-          "can_change": true,
-          "is_pure_number": true
-        }
-      ],
-      "funcs": [
-        {
-          "func_name": "get_map_area_by_name",
-          "parameters": [
-            "深山町"
-          ],
-          "var_index": 0
-        },
-        {
-          "func_name": "get_players_in_map_area",
-          "parameters": [
-            {
-              "self_var": 0
-            }
-          ],
-          "var_index": 1
-        },
-        {
-          "func_name": "get_map_area_by_name",
-          "parameters": [
-            "新都"
-          ],
-          "var_index": 2
-        },
-        {
-          "func_name": "get_players_in_map_area",
-          "parameters": [
-            {
-              "self_var": 2
-            }
-          ],
-          "var_index": 3
-        },
-        {
-          "func_name": "merge_arrays",
-          "parameters": [
-            {
-              "self_var": 1
-            },
-            {
-              "self_var": 3
-            }
-          ],
-          "var_index": 4
-        },
-        {
-          "func_name": "foreach_func",
-          "parameters": [
-            [
-              {
-                "func_name": "modify_attack_power_by_attribute",
-                "parameters": [
-                  [
-                    "strength"
-                  ],
-                  {
-                    "number_index": 0
-                  },
-                  null
-                ],
-                "var_index": -1
-              }
-            ],
-            {
-              "self_var": 4
-            },
-            2
-          ],
-          "var_index": -1
-        }
-      ]
-    }
-  ],
-  "zoom_kind": "card"
+	"card_name": "outrage",
+	"shown_name": "怒不可遏",
+	"magic": {
+		"number": 2,
+		"can_change": true,
+		"is_pure_number": true
+	},
+	"is_climax": false,
+	"climax_round": 0,
+	"card_img": "outrage.png",
+	"effects": [
+		{
+			"effect_name": "outrage_strength_plus_2",
+			"shown_effect_name": "力量攻击于深山町和新都获得威力+2",
+			"time_points": [],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+				{
+					"number": 2,
+					"can_change": true,
+					"is_pure_number": true
+				}
+			],
+			"funcs": [],
+			"power_query": [
+				{
+					"func_name": "get_map_area_by_name",
+					"parameters": [
+						"深山町"
+					],
+					"var_index": 0
+				},
+				{
+					"func_name": "get_players_in_map_area",
+					"parameters": [
+						{
+							"self_var": 0
+						}
+					],
+					"var_index": 1
+				},
+				{
+					"func_name": "get_map_area_by_name",
+					"parameters": [
+						"新都"
+					],
+					"var_index": 2
+				},
+				{
+					"func_name": "get_players_in_map_area",
+					"parameters": [
+						{
+							"self_var": 2
+						}
+					],
+					"var_index": 3
+				},
+				{
+					"func_name": "merge_arrays",
+					"parameters": [
+						{
+							"self_var": 1
+						},
+						{
+							"self_var": 3
+						}
+					],
+					"var_index": 4
+				},
+				{
+					"func_name": "foreach_func",
+					"parameters": [
+						[
+							{
+								"func_name": "attack_power_contribution",
+								"parameters": [
+									[
+										"strength"
+									],
+									{
+										"number_index": 0
+									},
+									null
+								],
+								"var_index": -1
+							}
+						],
+						{
+							"self_var": 4
+						},
+						2
+					],
+					"var_index": -1
+				}
+			]
+		}
+	],
+	"zoom_kind": "card"
 }

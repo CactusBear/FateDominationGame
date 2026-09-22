@@ -1,176 +1,176 @@
 {
-  "card_name": "heavens_feel",
-  "shown_name": "天之杯",
-  "magic": {
-    "number": 6,
-    "can_change": true,
-    "is_pure_number": true
-  },
-  "is_climax": true,
-  "climax_round": 11,
-  "card_img": "heavens_feel.png",
-  "effects": [
-    {
-      "effect_name": "heavens_feel_limit_areas",
-      "shown_effect_name": "高潮：剩余2+人。无法部署与进入新都和侦察，魔术工房仅限一人部署",
-      "time_points": [
-        "battle_resolve"
-      ],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [
-        {
-          "number": 2,
-          "can_change": true,
-          "is_pure_number": true
-        }
-      ],
-      "funcs": [
-        {
-          "func_name": "array_length",
-          "parameters": [
-            {
-              "func_name": "get_all_players_id",
-              "parameters": []
-            }
-          ],
-          "var_index": 0
-        },
-        {
-          "func_name": "compare_number",
-          "parameters": [
-            {
-              "self_var": 0
-            },
-            {
-              "number_index": 0
-            }
-          ],
-          "var_index": 1
-        },
-        {
-          "func_name": "get_map_area_by_name",
-          "parameters": [
-            "新都"
-          ],
-          "var_index": 2
-        },
-        {
-          "func_name": "set_map_area_can_move_to",
-          "parameters": [
-            {
-              "self_var": 2
-            },
-            false
-          ],
-          "var_index": -1,
-          "condition": {
-            "self_var": 1
-          }
-        },
-        {
-          "func_name": "get_map_area_by_name",
-          "parameters": [
-            "侦察"
-          ],
-          "var_index": 3
-        },
-        {
-          "func_name": "set_map_area_can_move_to",
-          "parameters": [
-            {
-              "self_var": 3
-            },
-            false
-          ],
-          "var_index": -1,
-          "condition": {
-            "self_var": 1
-          }
-        },
-        {
-          "func_name": "get_map_area_by_name",
-          "parameters": [
-            "魔术工房"
-          ],
-          "var_index": 4
-        },
-        {
-          "func_name": "set_property",
-          "parameters": [
-            {
-              "self_var": 4
-            },
-            "_can_deploy",
-            true
-          ],
-          "var_index": -1,
-          "condition": {
-            "self_var": 1
-          }
-        },
-        {
-          "func_name": "foreach_func",
-          "parameters": [
-            [
-              {
-                "func_name": "set_location_pl_num_limit",
-                "parameters": [
-                  null,
-                  1
-                ],
-                "var_index": -1
-              }
-            ],
-            {
-              "func_name": "get_property",
-              "parameters": [
-                {
-                  "self_var": 4
-                },
-                "_locations"
-              ]
-            },
-            0
-          ],
-          "var_index": -1,
-          "condition": {
-            "self_var": 1
-          }
-        }
-      ]
-    },
-    {
-      "effect_name": "heavens_feel_add_events",
-      "shown_effect_name": "于深山町增加两张正面事件牌",
-      "time_points": [
-        "battle_resolve"
-      ],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [],
-      "funcs": [
-        {
-          "func_name": "get_map_area_by_name",
-          "parameters": [
-            "深山町"
-          ],
-          "var_index": 0
-        },
-        {
-          "func_name": "add_event_from_deck",
-          "parameters": [
-            {
-              "self_var": 0
-            },
-            2
-          ],
-          "var_index": -1
-        }
-      ]
-    }
-  ],
-  "zoom_kind": "card"
+	"card_name": "heavens_feel",
+	"shown_name": "天之杯",
+	"magic": {
+		"number": 6,
+		"can_change": true,
+		"is_pure_number": true
+	},
+	"is_climax": true,
+	"climax_round": 11,
+	"card_img": "heavens_feel.png",
+	"effects": [
+		{
+			"effect_name": "heavens_feel_limit_areas",
+			"shown_effect_name": "高潮：剩余2+人。无法部署与进入新都和侦察，魔术工房仅限一人部署",
+			"time_points": [
+				"card_entered"
+			],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+				{
+					"number": 2,
+					"can_change": true,
+					"is_pure_number": true
+				}
+			],
+			"funcs": [
+				{
+					"func_name": "array_length",
+					"parameters": [
+						{
+							"func_name": "get_active_players_id",
+							"parameters": []
+						}
+					],
+					"var_index": 0
+				},
+				{
+					"func_name": "compare_number",
+					"parameters": [
+						{
+							"self_var": 0
+						},
+						{
+							"number_index": 0
+						}
+					],
+					"var_index": 1
+				},
+				{
+					"func_name": "get_map_area_by_name",
+					"parameters": [
+						"新都"
+					],
+					"var_index": 2
+				},
+				{
+					"func_name": "set_map_area_can_move_to",
+					"parameters": [
+						{
+							"self_var": 2
+						},
+						false
+					],
+					"var_index": -1,
+					"condition": {
+						"self_var": 1
+					}
+				},
+				{
+					"func_name": "get_map_area_by_name",
+					"parameters": [
+						"侦察"
+					],
+					"var_index": 3
+				},
+				{
+					"func_name": "set_map_area_can_move_to",
+					"parameters": [
+						{
+							"self_var": 3
+						},
+						false
+					],
+					"var_index": -1,
+					"condition": {
+						"self_var": 1
+					}
+				},
+				{
+					"func_name": "get_map_area_by_name",
+					"parameters": [
+						"魔术工房"
+					],
+					"var_index": 4
+				},
+				{
+					"func_name": "set_property",
+					"parameters": [
+						{
+							"self_var": 4
+						},
+						"_can_deploy",
+						true
+					],
+					"var_index": -1,
+					"condition": {
+						"self_var": 1
+					}
+				},
+				{
+					"func_name": "foreach_func",
+					"parameters": [
+						[
+							{
+								"func_name": "set_location_pl_num_limit",
+								"parameters": [
+									null,
+									1
+								],
+								"var_index": -1
+							}
+						],
+						{
+							"func_name": "get_property",
+							"parameters": [
+								{
+									"self_var": 4
+								},
+								"_locations"
+							]
+						},
+						0
+					],
+					"var_index": -1,
+					"condition": {
+						"self_var": 1
+					}
+				}
+			]
+		},
+		{
+			"effect_name": "heavens_feel_add_events",
+			"shown_effect_name": "于深山町增加两张正面事件牌",
+			"time_points": [
+				"card_entered"
+			],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [],
+			"funcs": [
+				{
+					"func_name": "get_map_area_by_name",
+					"parameters": [
+						"深山町"
+					],
+					"var_index": 0
+				},
+				{
+					"func_name": "add_event_from_deck",
+					"parameters": [
+						{
+							"self_var": 0
+						},
+						2
+					],
+					"var_index": -1
+				}
+			]
+		}
+	],
+	"zoom_kind": "card"
 }

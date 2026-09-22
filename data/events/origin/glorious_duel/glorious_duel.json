@@ -1,81 +1,80 @@
 {
-  "card_name": "glorious_duel",
-  "shown_name": "光荣的决斗",
-  "score": {
-    "number": 2,
-    "can_change": true,
-    "is_pure_number": true
-  },
-  "card_img": "glorious_duel.png",
-  "effects": [
-    {
-      "effect_name": "glorious_duel_attr_plus_2",
-      "shown_effect_name": "力量攻击于此战场获得威力+2",
-      "time_points": [
-        "battle_resolve"
-      ],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [
-        {
-          "number": 2,
-          "can_change": true,
-          "is_pure_number": true
-        }
-      ],
-      "funcs": [
-        {
-          "func_name": "get_eff_source_card",
-          "parameters": [],
-          "var_index": 0
-        },
-        {
-          "func_name": "get_property",
-          "parameters": [
-            {
-              "self_var": 0
-            },
-            "from"
-          ],
-          "var_index": 1
-        },
-        {
-          "func_name": "get_players_in_map_area",
-          "parameters": [
-            {
-              "self_var": 1
-            }
-          ],
-          "var_index": 2
-        },
-        {
-          "func_name": "foreach_func",
-          "parameters": [
-            [
-              {
-                "func_name": "modify_attack_power_by_attribute",
-                "parameters": [
-                  [
-                    "strength"
-                  ],
-                  {
-                    "number_index": 0
-                  },
-                  null
-                ],
-                "var_index": -1
-              }
-            ],
-            {
-              "self_var": 2
-            },
-            2
-          ],
-          "var_index": -1
-        }
-      ]
-    }
-  ],
-  "zoom_kind": "card"
+	"card_name": "glorious_duel",
+	"shown_name": "光荣的决斗",
+	"score": {
+		"number": 2,
+		"can_change": true,
+		"is_pure_number": true
+	},
+	"card_img": "glorious_duel.png",
+	"effects": [
+		{
+			"effect_name": "glorious_duel_attr_plus_2",
+			"shown_effect_name": "力量攻击于此战场获得威力+2",
+			"time_points": [],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+				{
+					"number": 2,
+					"can_change": true,
+					"is_pure_number": true
+				}
+			],
+			"funcs": [],
+			"power_query": [
+				{
+					"func_name": "get_eff_source_card",
+					"parameters": [],
+					"var_index": 0
+				},
+				{
+					"func_name": "get_property",
+					"parameters": [
+						{
+							"self_var": 0
+						},
+						"from"
+					],
+					"var_index": 1
+				},
+				{
+					"func_name": "get_players_in_map_area",
+					"parameters": [
+						{
+							"self_var": 1
+						}
+					],
+					"var_index": 2
+				},
+				{
+					"func_name": "foreach_func",
+					"parameters": [
+						[
+							{
+								"func_name": "attack_power_contribution",
+								"parameters": [
+									[
+										"strength"
+									],
+									{
+										"number_index": 0
+									},
+									null
+								],
+								"var_index": -1
+							}
+						],
+						{
+							"self_var": 2
+						},
+						2
+					],
+					"var_index": -1
+				}
+			]
+		}
+	],
+	"zoom_kind": "card"
 }

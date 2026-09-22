@@ -14,7 +14,7 @@
 	  "effect_name": "battle_of_shinto_add_event",
 	  "shown_effect_name": "于新都增加一张正面事件牌",
 	  "time_points": [
-		"battle_resolve"
+		"card_entered"
 	  ],
 	  "priority": 0,
 	  "is_pure_passive": true,

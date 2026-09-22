@@ -88,7 +88,12 @@ static func load_effects(effects:Array, from) -> Array:
 			nums.append(num)
 		
 		var effect = BaseEffect.new(eff["effect_name"], eff["time_points"], priority, is_pure_passive, is_residue)
+		#强制结算与来源牌激活是独立条件；未声明时保持原有纯被动语义。
+		effect._need_activate = bool(eff.get("need_activate", not is_pure_passive))
+		effect._source_bound = bool(eff.get("source_bound", false))
+		effect._expire_time_points = (eff.get("expire_time_points", []) as Array).duplicate()
 		effect._shown_name = eff.get("shown_effect_name", "")
+		effect._power_query = eff.get("power_query", []).duplicate(true)
 		#time_points默认OR(命中任一即触发)；写 require_all_time_points:true 改为AND，
 		#要求列出的时点全部同时成立（如"高潮回合"且"自己的行动阶段"）
 		effect._time_points_require_all = eff.get("require_all_time_points", false)
@@ -105,6 +110,9 @@ static func load_effects(effects:Array, from) -> Array:
 			effect._cost = cost_data
 		#每局限一次的声明(触发记录由EffectManager写进玩家的used_once_effects)
 		effect._once_per_game = bool(eff.get("once_per_game", false))
+		#手动发动的声明(如令咒)：不自动询问，由玩家主动点击发动；
+		#这类效果的 time_points 是"允许发动的时机窗口"
+		effect._is_manual = bool(eff.get("is_manual", false))
 		#from 和 numbers 都已就绪，此时才能把数字登记到所属对象上
 		effect.register_numbers_to_source()
 		#多选效果(如令咒三选一、宝石魔术选项)：options非空时每个选项自带一套funcs，
@@ -113,21 +121,7 @@ static func load_effects(effects:Array, from) -> Array:
 		#reset_counts_each_round/consumes_source_resource声明这组用量限制的生命周期与资源绑定，
 		#quantity_range让某个选项在选中的同时还要求玩家额外选一个范围内的数量(如"弃1-3张")
 		if eff.has("options"):
-			var opts:Array = []
-			for opt:Dictionary in eff["options"]:
-				var opt_dict := {
-					"shown_option_name": opt.get("shown_option_name", ""),
-					"funcs": load_funcs(opt.get("funcs", []), effect),
-					"max_uses": opt.get("max_uses", -1) as int
-				}
-				if opt.has("quantity_range"):
-					opt_dict["quantity_range"] = opt["quantity_range"]
-				#选项声明"还要玩家挑几张具体的牌"：source 是取牌的玩家区域键名(如 hand_cards)，
-				#min/max 是可挑张数范围。挑哪几张属于玩家输入，不写死在数据里
-				if opt.has("select_cards"):
-					opt_dict["select_cards"] = opt["select_cards"]
-				opts.append(opt_dict)
-			effect._options = opts
+			effect._options = load_effect_options(eff["options"], effect)
 			effect._max_choices = eff.get("max_choices", 1) as int
 			effect._max_total_uses = eff.get("max_total_uses", -1) as int
 			effect._reset_counts_each_round = eff.get("reset_counts_each_round", false) as bool
@@ -135,10 +129,51 @@ static func load_effects(effects:Array, from) -> Array:
 		else:
 			for f in load_funcs(eff["funcs"], effect):
 				effect.add_func(f)
-		
+	
 		eff_arr.append(effect)
 	
 	return eff_arr
+
+
+#解析一组选项声明为运行时选项数组。效果的 options 与"给玩家排队可选效果"共用这一份解析：
+#两份实现会让字段支持范围慢慢分叉（一边认 select_location、另一边不认），所以只留一条路径。
+#option 的每个字段都是数据声明的能力，解析器不解释规则含义、也不给默认行为
+static func load_effect_options(options_data:Array, effect:BaseEffect) -> Array:
+	var opts:Array = []
+	for opt:Dictionary in options_data:
+		var opt_dict := {
+			"shown_option_name": opt.get("shown_option_name", ""),
+			"funcs": load_funcs(opt.get("funcs", []), effect),
+			"max_uses": opt.get("max_uses", -1) as int
+		}
+		if opt.has("quantity_range"):
+			opt_dict["quantity_range"] = opt["quantity_range"]
+		#选项声明"还要玩家挑几张具体的牌"：source 是取牌的玩家区域键名(如 hand_cards)，
+		#min/max 是可挑张数范围。挑哪几张属于玩家输入，不写死在数据里
+		if opt.has("select_cards"):
+			opt_dict["select_cards"] = opt["select_cards"]
+		# 位置选择同样是选项级声明：起点筛选和落点容量由数据/UI提供，不污染常规移动规则。
+		if opt.has("select_location"):
+			opt_dict["select_location"] = opt["select_location"]
+		# 选择玩家目标：candidates 是一段 func 描述（求值得到候选玩家id数组），
+		# min/max 是可选人数。候选集由数据算出来，引擎不写死"同战区/在场"这类范围
+		if opt.has("select_players"):
+			opt_dict["select_players"] = opt["select_players"]
+		# 选项标签：供"某选项被用过"这类事实查询匹配（如令咒的获得魔力选项）。
+		# 用标签而不是选项下标，避免选项顺序/文案变动后规则静默失效
+		if opt.has("tags"):
+			opt_dict["tags"] = opt["tags"]
+		#发动前置条件：每项的 funcs 仍用与效果体完全相同的解析器，message 仅在失败时提示发动者。
+		if opt.has("activation_requirements"):
+			var requirements:Array = []
+			for requirement:Dictionary in opt["activation_requirements"]:
+				requirements.append({
+					"message": str(requirement.get("message", "")),
+					"funcs": load_funcs(requirement.get("funcs", []), effect)
+				})
+			opt_dict["activation_requirements"] = requirements
+		opts.append(opt_dict)
+	return opts
 
 
 #把 JSON 的 funcs 数组解析成 BaseFunc 数组，不挂到任何效果上。

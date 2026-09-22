@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/extra_play_limit_test.gd" id="1"]
+
+[node name="ExtraPlayLimitTest" type="Node"]
+script = ExtResource("1")

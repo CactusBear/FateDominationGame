@@ -13,10 +13,18 @@ func exec(player_id:int = -1):
 	if player_data == null or player_data.is_empty():
 		return null
 	var counts_power := CardCountsPower.new()
-	var shared:Array = []
+	var attacks:Array = []
 	for card in player_data["played_cards"]:
 		if !(card is BaseAttack) or !counts_power.exec(card, id):
 			continue
+		attacks.append(card)
+	return from_cards(attacks)
+
+#Only intersect the supplied attacks; callers decide membership and power eligibility.
+#Both committed and preview queries reuse this pure algorithm.
+static func from_cards(cards:Array):
+	var shared:Array = []
+	for card in cards:
 		var attrs:Array = (card as BaseAttack)._attributes
 		if shared.is_empty():
 			shared = attrs.duplicate()

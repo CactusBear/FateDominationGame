@@ -3,141 +3,106 @@
   "shown_name": "令咒",
   "card_img": "normal_command_spell.png",
   "effects": [
-    {
-      "effect_name": "command_spell_use",
-      "shown_effect_name": "令咒",
-      "time_points": [
+	{
+	  "effect_name": "command_spell_use",
+	  "shown_effect_name": "令咒",
+	  "time_points": [
         "self_action_phase"
-      ],
-      "priority": 0,
-      "is_pure_passive": false,
-      "is_residue": false,
-      "effect_numbers": [
-        {
-          "number": 4,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        {
-          "number": 2,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        {
-          "number": 1,
-          "can_change": true,
-          "is_pure_number": true
-        }
-      ],
-      "cost": {
-        "type": "command_spell",
-        "amount": 1
-      },
-      "max_choices": 1,
-      "options": [
-        {
-          "shown_option_name": "行动阶段：获得4魔力",
-          "max_uses": -1,
-          "funcs": [
-            {
-              "func_name": "edit_magic",
-              "parameters": [
-                null,
-                {
-                  "number_index": 0
-                },
-                -1
-              ],
-              "var_index": -1
-            }
-          ]
-        },
-        {
-          "shown_option_name": "行动阶段：总威力+2。如果你本回合每赢得一场战斗，获得2战果",
-          "max_uses": -1,
-          "funcs": [
-            {
-              "func_name": "edit_data_number",
-              "parameters": [
-                "total_power_bonus",
-                null,
-                {
-                  "number_index": 1
-                },
-                -1
-              ],
-              "var_index": -1
-            },
-            {
-              "func_name": "get_round_battle_wins",
-              "parameters": [
-                -1
-              ],
-              "var_index": 0
-            },
-            {
-              "func_name": "calculate_number",
-              "parameters": [
-                {
-                  "self_var": 0
-                },
-                "*",
-                {
-                  "number_index": 1
-                }
-              ],
-              "var_index": 1
-            },
-            {
-              "func_name": "edit_score",
-              "parameters": [
-                null,
-                {
-                  "self_var": 1
-                },
-                -1
-              ],
-              "var_index": -1
-            }
-          ]
-        },
-        {
-          "shown_option_name": "行动阶段：从新都或深山町移动至任意位置，无视交战状态",
-          "max_uses": -1,
-          "funcs": [
-            {
-              "func_name": "set_player_data",
-              "parameters": [
-                "ignore_engagement_for_move",
-                true,
-                -1
-              ],
-              "var_index": -1
-            },
-            {
-              "func_name": "move",
-              "parameters": [
-                {
-                  "number_index": 2
-                },
-                -1,
-                true
-              ],
-              "var_index": 0
-            },
-            {
-              "func_name": "set_player_data",
-              "parameters": [
-                "ignore_engagement_for_move",
-                false,
-                -1
-              ],
-              "var_index": -1
-            }
-          ]
-        }
-      ]
-    }
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": false,
+	  "is_residue": false,
+	  "is_manual": true,
+	  "effect_numbers": [
+		{
+		  "number": 4,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		{
+		  "number": 2,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		{
+		  "number": 1,
+		  "can_change": true,
+		  "is_pure_number": true
+		}
+	  ],
+	  "cost": {
+		"type": "command_spell",
+		"amount": 1
+	  },
+	  "max_choices": 1,
+	  "options": [
+		{
+		  "shown_option_name": "行动阶段：获得4魔力",
+		  "max_uses": -1,
+		  "tags": ["command_spell_gain_magic"],
+		  "funcs": [
+			{
+			  "func_name": "edit_magic",
+			  "parameters": [
+				null,
+				{
+				  "number_index": 0
+				},
+				-1
+			  ],
+			  "var_index": -1
+			}
+		  ]
+		},
+		{
+		  "shown_option_name": "行动阶段：合计威力+2\n获胜后获得2战果",
+		  "max_uses": -1,
+		  "funcs": [
+			{
+			  "func_name": "edit_data_number",
+			  "parameters": ["total_power_bonus", null, {"number_index": 1}, -1],
+			  "var_index": -1
+			},
+			{
+			  "func_name": "schedule_effect_on_time_point",
+			  "parameters": [
+				["self_battle_win"],
+				[{"func_name":"edit_score","parameters":[null,{"number_index":1},-1],"var_index":-1}],
+				0,
+				false,
+				["day_end"]
+			  ],
+			  "var_index": -1
+			}
+		  ]
+		},
+		{
+		  "shown_option_name": "行动阶段：从新都或深山町移动至任意位置，无视交战状态",
+		  "max_uses": -1,
+		  "select_location": {
+			"allowed_origin_areas": ["新都", "深山町"],
+			"target_slot": "unlimited"
+		  },
+		  "funcs": [
+			{
+			  "func_name": "get_activating_eff",
+			  "parameters": [],
+			  "var_index": 0
+			},
+			{
+			  "func_name": "get_property",
+			  "parameters": [{"self_var": 0}, "_selected_location"],
+			  "var_index": 1
+			},
+			{
+			  "func_name": "set_location",
+			  "parameters": [{"self_var": 1}, -1, false, false],
+			  "var_index": -1
+			}
+		  ]
+		}
+	  ]
+	}
   ],
   "zoom_kind": "card"
 }

@@ -9,5 +9,10 @@ func exec(add_attributes:Array = [], del_attributes:Array = [], set_attributes:A
 		target = GetEffSourceCard.new().exec()
 	if target == null:
 		return
+	var attrs_before: Array = target._attributes.duplicate()
 	target.edit_attribute(add_attributes, del_attributes, set_attributes)
+	if target.has_method("record_modification"):
+		target.record_modification("attribute", "属性 %s → %s" % [
+			"、".join(attrs_before) if not attrs_before.is_empty() else "无",
+			"、".join(target._attributes) if not target._attributes.is_empty() else "无"])
 	return target._attributes

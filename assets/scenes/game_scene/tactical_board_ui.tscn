@@ -28,11 +28,9 @@
 [ext_resource type="Script" uid="uid://c53pthermh42y" path="res://assets/scripts/game_scene/tactical_board_ui.gd" id="27_ui_script"]
 [ext_resource type="Texture2D" uid="uid://deosk88yw3cu6" path="res://assets/images/ui/icons/icon_mana_orb.png" id="28_icon_mana"]
 [ext_resource type="Texture2D" uid="uid://dkfomrxfg323l" path="res://assets/images/ui/icons/icon_holy_grail.png" id="29_icon_grail"]
+[ext_resource type="Texture2D" uid="uid://jqr2rtnfts3i" path="res://assets/images/ui/icons/icon_swords.png" id="30_icon_swords"]
 
-[sub_resource type="StyleBoxFlat" id="sb_topbar"]
-bg_color = Color(0.04, 0.055, 0.09, 0.82)
-border_width_bottom = 1
-border_color = Color(0.24, 0.32, 0.48, 1)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xsxbh"]
 
 [sub_resource type="StyleBoxFlat" id="sb_order_avatar_only_me"]
 content_margin_left = 4.0
@@ -137,7 +135,7 @@ shadow_color = Color(1, 0.75, 0.2, 0.25)
 shadow_size = 12
 
 [sub_resource type="StyleBoxFlat" id="sb_area_card"]
-bg_color = Color(0.05, 0.07, 0.12, 0.94)
+bg_color = Color(0.101960786, 0.07058824, 0.14117648, 0.9607843)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
@@ -224,7 +222,7 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(1, 0.45, 0.35, 1)
+border_color = Color(0.18025622, 0.21161067, 0.3291898, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -341,19 +339,9 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[sub_resource type="StyleBoxFlat" id="sb_noble_frame"]
-bg_color = Color(0.18, 0.13, 0.05, 0.8)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.82, 0.3, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-shadow_color = Color(1, 0.75, 0.1, 0.4)
-shadow_size = 8
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wrc43"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xm75i"]
 
 [sub_resource type="StyleBoxFlat" id="sb_hand_drawer"]
 content_margin_left = 6.0
@@ -369,6 +357,38 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 shadow_color = Color(0.1, 0.4, 0.8, 0.4)
 shadow_size = 16
+
+[sub_resource type="StyleBoxFlat" id="sb_card_browser"]
+bg_color = Color(0.05, 0.07, 0.12, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.55, 0.75, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxFlat" id="sb_card_select"]
+bg_color = Color(0.06, 0.07, 0.12, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45, 0.6, 0.9, 0.9)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
 
 [node name="TacticalBoardUIDraft" type="Control" unique_id=1349512373]
 layout_mode = 3
@@ -397,7 +417,7 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 86.0
 grow_horizontal = 2
-theme_override_styles/panel = SubResource("sb_topbar")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_xsxbh")
 
 [node name="PhaseInfo" type="VBoxContainer" parent="TopPanel_AllPlayers" unique_id=546367440]
 layout_mode = 0
@@ -432,6 +452,8 @@ vertical_scroll_mode = 0
 
 [node name="OrderHBox" type="HBoxContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll" unique_id=315372402]
 layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
 theme_override_constants/separation = 6
 
 [node name="P1_Me_AvatarOnly" type="PanelContainer" parent="TopPanel_AllPlayers/AllPlayersOrderScroll/OrderHBox" unique_id=610324246]
@@ -696,6 +718,27 @@ theme_override_font_sizes/font_size = 14
 text = "战果榜 ▼"
 icon = ExtResource("29_icon_grail")
 expand_icon = true
+
+[node name="BtnBattleReport" type="Button" parent="." unique_id=771020304]
+z_index = 12
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -149.0
+offset_top = -17.0
+offset_right = -16.0
+offset_bottom = 17.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 14
+text = "战报"
+icon = ExtResource("30_icon_swords")
+expand_icon = true
+metadata/no_clickable_hint = true
 
 [node name="Drawer_Leaderboard" type="PanelContainer" parent="." unique_id=459067259]
 visible = false
@@ -1024,6 +1067,16 @@ theme_override_constants/separation = 8
 layout_mode = 2
 theme_override_constants/separation = 10
 
+[node name="BtnOutOfGame" type="Button" parent="OpponentDrawer_Expanded/VBox/HeaderBar"]
+visible = false
+custom_minimum_size = Vector2(92, 30)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.65, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "游戏外"
+metadata/no_clickable_hint = true
+
 [node name="SelectedAvatarFrame" type="PanelContainer" parent="OpponentDrawer_Expanded/VBox/HeaderBar" unique_id=1288151464]
 custom_minimum_size = Vector2(54, 54)
 layout_mode = 2
@@ -1251,6 +1304,15 @@ theme_override_font_sizes/font_size = 13
 text = "完美的流动 · 魔术属性+2
 每位玩家每天开局获得2魔力"
 horizontal_alignment = 1
+
+[node name="SituationDiscardRow" type="CenterContainer" parent="Middle_MainPlayground/LeftSituationSpot/VBox" unique_id=2032946431]
+layout_mode = 2
+
+[node name="BtnSituationDiscard" type="Button" parent="Middle_MainPlayground/LeftSituationSpot/VBox/SituationDiscardRow" unique_id=798378727]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "局势牌弃牌区"
 
 [node name="Battlefields_CenterContainer" type="HBoxContainer" parent="Middle_MainPlayground" unique_id=647753047]
 layout_mode = 2
@@ -1581,6 +1643,16 @@ metadata/event_desc = "深山町明置事件牌
 
 效果：本战场所有英灵进行光荣的正面对决，力量属性攻击的威力 +2。"
 
+[node name="EventDiscardRow" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox" unique_id=933064713]
+layout_mode = 2
+
+[node name="BtnEventDiscard" type="Button" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox/EventDiscardRow" unique_id=686597386]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "事件牌弃牌区"
+metadata/no_clickable_hint = true
+
 [node name="Arrow_Miyama_Shinto" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer" unique_id=1135977866]
 custom_minimum_size = Vector2(80, 24)
 layout_mode = 2
@@ -1717,6 +1789,16 @@ metadata/event_title = "【未知事件】"
 metadata/event_desc = "新都暗置事件牌
 
 该事件尚未公开，将在行动阶段战斗时揭示。"
+
+[node name="EventDiscardRow" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox"]
+layout_mode = 2
+
+[node name="BtnEventDiscard" type="Button" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Shinto/VBox/EventDiscardRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "事件牌弃牌区"
+metadata/no_clickable_hint = true
 
 [node name="Arrow_Shinto_Scout" type="Label" parent="Middle_MainPlayground/Battlefields_CenterContainer" unique_id=522006157]
 custom_minimum_size = Vector2(80, 24)
@@ -2082,6 +2164,14 @@ theme_override_font_sizes/font_size = 14
 text = "当前合计威力: 13"
 horizontal_alignment = 2
 
+[node name="BtnUndoRegularPlay" type="Button" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox/ZoneHeader"]
+visible = false
+custom_minimum_size = Vector2(88, 30)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "撤销选择"
+metadata/no_clickable_hint = true
+
 [node name="CardsScroll" type="ScrollContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_PlayBattleZone/VBox" unique_id=1476153061]
 layout_mode = 2
 size_flags_vertical = 3
@@ -2173,13 +2263,14 @@ theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
 theme_override_font_sizes/font_size = 13
 text = "✨ 技能/额外"
 
-[node name="Tip" type="Label" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/RackHeader" unique_id=1394199035]
+[node name="BtnOutOfGame" type="Button" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/RackHeader"]
+visible = false
+custom_minimum_size = Vector2(132, 36)
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
-theme_override_font_sizes/font_size = 11
-text = "★金色为终极升华技"
-horizontal_alignment = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.32, 1)
+theme_override_font_sizes/font_size = 14
+text = "🗃 游戏外卡牌"
+metadata/no_clickable_hint = true
 
 [node name="CardsScroll" type="ScrollContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox" unique_id=28823222]
 layout_mode = 2
@@ -2229,7 +2320,7 @@ horizontal_alignment = 1
 
 [node name="SkEx" type="PanelContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H" unique_id=1067532910]
 layout_mode = 2
-theme_override_styles/panel = SubResource("sb_noble_frame")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_wrc43")
 
 [node name="V" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/SkEx" unique_id=754944253]
 layout_mode = 2
@@ -2272,7 +2363,7 @@ horizontal_alignment = 1
 
 [node name="Ex2" type="PanelContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H" unique_id=1861531843]
 layout_mode = 2
-theme_override_styles/panel = SubResource("sb_noble_frame")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_xm75i")
 
 [node name="V" type="VBoxContainer" parent="Bottom_PlayerDock/TacticalDeskLayout/Section_SkillsAndPhantasms/VBox/CardsScroll/H/Ex2" unique_id=202342320]
 layout_mode = 2
@@ -2421,7 +2512,7 @@ vertical_alignment = 1
 
 [node name="EventCardZoomPreview" type="PanelContainer" parent="." unique_id=1484463259]
 visible = false
-z_index = 40
+z_index = 200
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -2540,6 +2631,66 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "放弃"
 
+[node name="Modal_EffectResult" type="PanelContainer" parent="."]
+visible = false
+z_index = 60
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -145.0
+offset_right = 250.0
+offset_bottom = 145.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("sb_drawer_panel")
+
+[node name="Box" type="MarginContainer" parent="Modal_EffectResult"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="Modal_EffectResult/Box"]
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="Title" type="Label" parent="Modal_EffectResult/Box/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 20
+text = "发动结果"
+horizontal_alignment = 1
+
+[node name="ResultScroll" type="ScrollContainer" parent="Modal_EffectResult/Box/VBox"]
+custom_minimum_size = Vector2(430, 130)
+layout_mode = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="ResultDesc" type="Label" parent="Modal_EffectResult/Box/VBox/ResultScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "能力发动结果"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="BtnClose" type="Button" parent="Modal_EffectResult/Box/VBox"]
+custom_minimum_size = Vector2(160, 42)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("sb_end_phase_btn")
+text = "知道了"
+metadata/no_clickable_hint = true
+
 [node name="Modal_BattleReport" type="PanelContainer" parent="." unique_id=184920184]
 visible = false
 z_index = 50
@@ -2654,3 +2805,84 @@ custom_minimum_size = Vector2(140, 42)
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "取消"
+
+[node name="Modal_CardBrowser" type="PanelContainer" parent="."]
+visible = false
+z_index = 125
+custom_minimum_size = Vector2(860, 330)
+layout_mode = 0
+offset_right = 860.0
+offset_bottom = 330.0
+theme_override_styles/panel = SubResource("sb_card_browser")
+
+[node name="Box" type="VBoxContainer" parent="Modal_CardBrowser"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Modal_CardBrowser/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+
+[node name="CardScroll" type="ScrollContainer" parent="Modal_CardBrowser/Box"]
+custom_minimum_size = Vector2(0, 216)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CardRow" type="HBoxContainer" parent="Modal_CardBrowser/Box/CardScroll"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Buttons" type="HBoxContainer" parent="Modal_CardBrowser/Box"]
+layout_mode = 2
+alignment = 2
+
+[node name="BtnCloseBrowser" type="Button" parent="Modal_CardBrowser/Box/Buttons"]
+layout_mode = 2
+text = "关闭"
+metadata/no_clickable_hint = true
+
+[node name="Modal_CardSelect" type="PanelContainer" parent="."]
+visible = false
+z_index = 120
+custom_minimum_size = Vector2(820, 0)
+layout_mode = 0
+offset_right = 820.0
+theme_override_styles/panel = SubResource("sb_card_select")
+
+[node name="Box" type="VBoxContainer" parent="Modal_CardSelect"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Modal_CardSelect/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.6, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="CardScroll" type="ScrollContainer" parent="Modal_CardSelect/Box"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+
+[node name="CardRow" type="HBoxContainer" parent="Modal_CardSelect/Box/CardScroll"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Hint" type="Label" parent="Modal_CardSelect/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 13
+
+[node name="ButtonsRow" type="HBoxContainer" parent="Modal_CardSelect/Box"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="BtnConfirmSelect" type="Button" parent="Modal_CardSelect/Box/ButtonsRow"]
+layout_mode = 2
+text = "确认弃置"
+metadata/no_clickable_hint = true
+
+[node name="BtnCancelSelect" type="Button" parent="Modal_CardSelect/Box/ButtonsRow"]
+layout_mode = 2
+text = "取消"
+metadata/no_clickable_hint = true

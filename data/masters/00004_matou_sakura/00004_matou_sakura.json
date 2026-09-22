@@ -141,38 +141,55 @@
 		  "var_index": 12
 		},
 		{
-		  "func_name": "get_player_master",
-		  "parameters": [],
+		  "func_name": "log_field_values",
+		  "parameters": [
+			{
+			  "type": "master_assigned",
+			  "actor": -1
+			},
+			null,
+            "object"
+		  ],
 		  "var_index": 13
+		},
+		{
+		  "func_name": "get_card_by_index_fr_arr",
+		  "parameters": [
+			0,
+			{
+			  "self_var": 13
+			}
+		  ],
+		  "var_index": 14
 		},
 		{
 		  "func_name": "get_property",
 		  "parameters": [
 			{
-			  "self_var": 13
+			  "self_var": 14
 			},
             "_name"
 		  ],
-		  "var_index": 14
+		  "var_index": 15
 		},
 		{
 		  "func_name": "if_func",
 		  "parameters": [
 			{
-			  "self_var": 14
+			  "self_var": 15
 			},
             "matou_shinji"
 		  ],
-		  "var_index": 15
+		  "var_index": 16
 		},
 		{
 		  "func_name": "not_func",
 		  "parameters": [
 			{
-			  "self_var": 15
+			  "self_var": 16
 			}
 		  ],
-		  "var_index": 16
+		  "var_index": 17
 		},
 		{
 		  "func_name": "and_func",
@@ -181,7 +198,7 @@
 			  "self_var": 12
 			},
 			{
-			  "self_var": 16
+			  "self_var": 17
 			}
 		  ],
 		  "var_index": 17
@@ -496,7 +513,7 @@
 			"effect_name": "black_mud_score_gain",
 			"shown_effect_name": "黑泥 - 准备阶段：花费2点魔力，若你未激活【被污染的圣杯】，获得2点战果",
 			"time_points": [
-		      "self_prepare_phase"
+              "self_prepare_phase"
 			],
 			"priority": 0,
 			"is_pure_passive": false,
@@ -545,7 +562,7 @@
 				  {
 					"self_var": 2
 				  },
-		          "_is_active"
+                  "_is_active"
 				],
 				"var_index": 3
 			  },

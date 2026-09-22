@@ -16,22 +16,116 @@
     "is_pure_number": true
   },
   "attack_card_img": "foreigner_class.png",
+  "keywords": ["true_name_release"],
   "effects": [
     {
       "effect_name": "foreigner_true_name_plus_power",
-      "shown_effect_name": "【真名解放】你和降临者各获得合计威力+6。将此牌加入降临者的弃牌堆",
+      "shown_effect_name": "【真名解放】你和降临者各获得合计威力+6。将此牌加入降临者的弃牌堆。",
       "time_points": [
         "self_true_name_release"
       ],
       "priority": 0,
       "is_pure_passive": false,
       "is_residue": false,
-      "effect_numbers": [],
+      "effect_numbers": [
+        {
+          "number": 6,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
       "funcs": [
         {
-          "func_name": "do_nothing",
-          "parameters": [],
+          "func_name": "edit_data_number",
+          "parameters": ["total_power_bonus", null, {"number_index": 0}, -1],
           "var_index": -1
+        },
+        {
+          "func_name": "get_eff_source_card",
+          "parameters": [],
+          "var_index": 0
+        },
+        {
+          "func_name": "get_players_field",
+          "parameters": ["servant", false, true],
+          "var_index": 1
+        },
+        {
+          "func_name": "filter_by_property",
+          "parameters": [{"self_var": 1}, "_servant_class", "foreigner"],
+          "var_index": 2
+        },
+        {
+          "func_name": "array_length",
+          "parameters": [{"self_var": 2}],
+          "var_index": 3
+        },
+        {
+          "func_name": "compare_number",
+          "parameters": [{"self_var": 3}, 1],
+          "var_index": 4
+        },
+        {
+          "func_name": "if_func",
+          "parameters": [{"self_var": 4}, 0],
+          "var_index": 5
+        },
+        {
+          "func_name": "get_card_by_index_fr_arr",
+          "parameters": [0, {"self_var": 2}],
+          "var_index": 6
+        },
+        {
+          "func_name": "get_player_ids_by_data_value",
+          "parameters": ["servant", {"self_var": 6}],
+          "var_index": 7
+        },
+        {
+          "func_name": "array_length",
+          "parameters": [{"self_var": 7}],
+          "var_index": 8
+        },
+        {
+          "func_name": "compare_number",
+          "parameters": [{"self_var": 8}, 1],
+          "var_index": 9
+        },
+        {
+          "func_name": "if_func",
+          "parameters": [{"self_var": 9}, 0],
+          "var_index": 10
+        },
+        {
+          "func_name": "and_func",
+          "parameters": [{"self_var": 5}, {"self_var": 10}],
+          "var_index": 11
+        },
+        {
+          "func_name": "get_card_by_index_fr_arr",
+          "parameters": [0, {"self_var": 7}],
+          "var_index": 12
+        },
+        {
+          "func_name": "edit_data_number",
+          "parameters": ["total_power_bonus", null, {"number_index": 0}, {"self_var": 12}],
+          "var_index": -1,
+          "condition": {"self_var": 11}
+        },
+        {
+          "func_name": "get_player_discard",
+          "parameters": [{"self_var": 12}],
+          "var_index": 13
+        },
+        {
+          "func_name": "find_player_array_containing",
+          "parameters": [{"self_var": 0}],
+          "var_index": 14
+        },
+        {
+          "func_name": "draw_card_by_card",
+          "parameters": [{"self_var": 0}, {"self_var": 14}, {"self_var": 13}],
+          "var_index": -1,
+          "condition": {"self_var": 11}
         }
       ]
     }

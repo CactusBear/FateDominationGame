@@ -40,7 +40,26 @@ func eliminate_player(player_id:int) -> bool:
 	if player_data["is_out"]:
 		return false
 	player_data["is_out"] = true
-	#日志：谁被淘汰（供"当时场上有被淘汰的玩家吗"这类历史查询）
-	GameLog.record("eliminated", player_id, -1, "", null, ["eliminated"], {})
+	#日志：谁被淘汰（供"当时场上有被淘汰的玩家吗"这类历史查询）。
+	#带上当时的战果：事后核对"为什么是他被淘汰"不必再翻别的记录
+	var score:int = (player_data["score"] as BaseNumber).number
+	GameLog.record("eliminated", player_id, -1, "", null, ["eliminated"], {"score": score})
+	#被淘汰的玩家离开版图：只置is_out不摘席位，他仍会占着位置、也仍显示在战区上。
+	#复用回合结束用的同一个原语，不在这里另写一套摘除逻辑
+	RemoveFromBoard.new().exec(player_id)
+	#提示全员：谁被淘汰了。文案由显示名接口生成，不按id编号示人
+	var shown:String = _player_shown_name(player_id)
+	EffectManager.push_message("%s 被淘汰，战果 %d" % [shown, score])
 	TimePointChecker.dynamic_time_point([TimePoints.ELIMINATED], player_id)
 	return true
+
+
+#玩家的示人名字：走御主的显示名接口，取不到才回退玩家编号
+func _player_shown_name(player_id:int) -> String:
+	var player_data = GameDataManager.get_player_data(player_id) as Dictionary
+	var master = player_data.get("master")
+	if master != null:
+		var shown:String = str(master.get_shown_name())
+		if shown != "":
+			return shown
+	return "玩家 %d" % player_id

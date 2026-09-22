@@ -9,6 +9,9 @@ func exec(map_area:BaseMapArea, effect_name:String) -> bool:
 	if map_area == null or effect_name == "":
 		return false
 	for event in map_area._events:
+		# 暗置事件尚未公开，其禁令/地利修正等声明也不能提前生效。
+		if event is BaseCard and event._is_concealed:
+			continue
 		for eff in event._effects:
 			if eff is BaseEffect and eff._name == effect_name:
 				return true

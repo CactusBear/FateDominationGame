@@ -17,6 +17,11 @@ var current_phase_player_index:int = 0
 var current_player_id:int = -1
 var is_game_over:bool = false
 var has_battle_resolved:bool = false
+#阶段收尾可跨玩家选择暂停；续行只走尚未完成的步骤，不重复玩家行动或结束时点。
+var _phase_end_pending:bool = false
+var _phase_end_dispatched:bool = false
+#同步结算调用尚未返回时，禁止效果或其他调用方重入阶段收尾。
+var _phase_end_running:bool = false
 #本回合战斗阶段结算结果，供最终回合判定胜负时查询深山町战斗胜者
 var last_battle_result:Dictionary = {}
 var climax_keep_counts:Dictionary = {
@@ -82,6 +87,9 @@ func start_game():
 	is_game_over = false
 	current_round = 0
 	has_battle_resolved = false
+	_phase_end_pending = false
+	_phase_end_dispatched = false
+	_phase_end_running = false
 	#新的一局：历史日志清空
 	GameLog.reset()
 	EffectManager.sync_loaded_effect_pool()
@@ -116,6 +124,9 @@ func deal_player_cards(player_id: int = -1):
 				for card in cards:
 					card.set_concealed(true)
 			player_data[rule["area"]] = cards
+			#实际发到玩家区域的克隆体才是后续出牌与时点检查的来源。
+			for card in cards:
+				RegisterObjectEffects.new().exec(card, id)
 
 
 #克隆一份卡牌数组，供发放牌堆/技能区使用
@@ -126,10 +137,35 @@ func clone_cards(cards:Array) -> Array:
 	return cloned
 
 
-func end_game():
+#结束本局。winners 由调用方（VictoryResolver 的结果）传入：
+#谁获胜是胜负规则的事，这里只负责把结局作为事实记下来并告知玩家。
+#空数组是规则里真实存在的结局（圣杯溢出，全员判负），不能当作"还没算出来"
+func end_game(winners:Array = []):
 	is_game_over = true
+	var names:Array = []
+	for id in winners:
+		names.append(_player_shown_name(int(id)))
+	GameLog.record("game_end", -1, -1, "", null, ["game_end"],
+		{"winners": winners.duplicate(), "round": current_round})
+	if winners.is_empty():
+		#规则：并列且决胜仍无法分出唯一胜者时，圣杯溢出，所有人都输
+		EffectManager.push_message("圣杯溢出，全员判负")
+	else:
+		EffectManager.push_message("游戏结束，胜者：" + "、".join(names))
 	TimePointChecker.set_phase_time_points([])
 	TimePointChecker.global_time_point([TimePoints.GAME_END])
+
+
+#玩家的示人名字：走御主的显示名接口，取不到才回退玩家编号
+func _player_shown_name(player_id:int) -> String:
+	if !GameData.player_data_library.has(player_id):
+		return "玩家 %d" % player_id
+	var master = (GameDataManager.get_player_data(player_id) as Dictionary).get("master")
+	if master != null:
+		var shown:String = str(master.get_shown_name())
+		if shown != "":
+			return shown
+	return "玩家 %d" % player_id
 
 
 #回合
@@ -138,7 +174,9 @@ func start_round():
 		return
 	current_round += 1
 	if current_round > total_rounds.number:
-		end_game()
+		#兜底路径（正常在 end_round 就结束了）：结束前同样要判定胜负，
+		#否则这条路径会以"没有胜者"收场，看起来像游戏无法正常结束
+		end_game(VictoryResolver.new().exec(last_battle_result))
 		return
 	#回合号立即生效：这一回合记的每条日志都归到新回合下，不能等到 begin_phase 才更新，
 	#否则开局抽局势牌/事件牌、DAY_START 这些日志会记到上一回合
@@ -156,11 +194,13 @@ func start_round():
 	EffectManager.reset_round_option_counts()
 	for id in GameDataManager.get_active_player_ids():
 		var player_data = GameDataManager.get_player_data(id) as Dictionary
-		player_data["command_spell_used_this_turn"] = false
-		player_data["command_spell_gained_magic"] = false
 		player_data["temp_locations"] = []
 		TimePointChecker.dynamic_time_point([TimePoints.ROUND_START_RESET], id)
 	TimePointChecker.set_phase_time_points([TimePoints.DAY])
+	#规则：准备阶段按回合顺位把自己的手牌补充到手牌上限（已有上限张以上则不抽）。
+	#上限数字来自 GameData 的声明，流程里不写死；牌堆抽空时由 operation 负责把弃牌堆洗回
+	for id in get_ordered_player_ids():
+		RefillHand.new().exec(id, GameData.hand_limit)
 	#规则：每一回合开始时抽一张局势牌展示，所有玩家获得其魔力
 	SituationResolver.new().activate()
 	TimePointChecker.global_time_point([TimePoints.DAY_START])
@@ -180,13 +220,17 @@ func end_round():
 		ClimaxResolver.new().exec(climax_keep_counts[current_round])
 		TimePointChecker.global_time_point([TimePoints.CLIMAX_END])
 	if current_round == total_rounds.number or GameDataManager.get_active_player_ids().size() <= 1:
-		VictoryResolver.new().exec(last_battle_result)
-		end_game()
+		#胜者由 VictoryResolver 判定（战果最高 → 并列看深山町胜者 → 仍并列则圣杯溢出），
+		#结果传给 end_game 记进日志并提示玩家；这里不重复判定规则
+		end_game(VictoryResolver.new().exec(last_battle_result))
 		return
 	for id in GameDataManager.get_active_player_ids():
 		var player_data = GameDataManager.get_player_data(id) as Dictionary
 		player_data["last_turn_location"] = player_data["location"]
 		player_data["is_battle"] = false
+		#规则：回合结束时将每名御主的立牌移除版图（下回合前哨阶段重新部署）。
+		#必须在记完 last_turn_location 之后调用，否则查不到本回合结束时的位置
+		RemoveFromBoard.new().exec(id)
 		#残留牌留在场上，回合结束不处理（残留牌只在自身效果满足条件时自行关闭）
 		DiscardPlayedCards.new().exec(id)
 		#先清理再重建合计威力基线：规则上残留牌跨回合留场并继续提供威力，
@@ -199,6 +243,10 @@ func end_round():
 	#规则：回合结束时弃置所有激活的局势牌和事件牌
 	SituationResolver.new().clear_all()
 	EventResolver.new().clear_all()
+	#地利修正类效果（远隔操作地利翻倍、占领高地、卫宫地利变3倍）只在本回合有效：
+	#把各席位的地利按印刷基线还原，否则同一席位的地利会跨回合越乘越大，
+	#而且改的是共享地图数据，会连带影响之后占据该席位的其他玩家
+	RestoreLocationBenefits.new().exec()
 	#规则：每个回合结束时，将回合顺位顺时针后移一位
 	ChangePlOrder.new().exec(null, BaseNumber.new(1))
 	start_round()
@@ -214,7 +262,10 @@ func refresh_first_player():
 
 #阶段
 func advance_phase():
-	if is_game_over:
+	if is_game_over or _phase_end_running:
+		return
+	if _phase_end_pending:
+		end_phase()
 		return
 	current_phase_index += 1
 	current_phase_player_index = 0
@@ -237,6 +288,8 @@ func begin_phase():
 	var phase = get_current_phase()
 	if phase.is_empty():
 		return
+	_phase_end_pending = false
+	_phase_end_dispatched = false
 	#整个阶段内都成立的时点。高潮回合额外挂CLIMAX、非高潮回合挂NON_CLIMAX，
 	#成对派发让效果两边都能表达（"仅高潮"与"仅非高潮"）
 	#日志上下文：当前回合与阶段名，之后记的每一条事实都带上它
@@ -244,18 +297,45 @@ func begin_phase():
 	var phase_tps:Array = [TimePoints.DAY, TimePoints.PHASE, phase["mid"]]
 	phase_tps.append(TimePoints.CLIMAX if is_climax_round() else TimePoints.NON_CLIMAX)
 	TimePointChecker.set_phase_time_points(phase_tps)
+	#规则：行动阶段开始时展示暗置放置的事件牌（基础规则写明是"位于新都"的那张）。
+	#翻在派发阶段时点之前：阶段能力跑的时候应该已经看得到这张明置牌
+	if str(phase.get("name", "")) == "action":
+		EventResolver.new().reveal_planned(event_placements)
 	TimePointChecker.global_time_point([TimePoints.PHASE_START, phase["start"]])
 	next_player_in_phase()
 
 
+#等待接口已涵盖发动、选牌、选位置及选玩家；执行中的管线也不能被阶段推进打断。
+func _effects_block_progress() -> bool:
+	return EffectManager.is_running or EffectManager.is_waiting_for_choice()
+
+
 func end_phase():
+	if is_game_over or _phase_end_running or _effects_block_progress():
+		return
 	var phase = get_current_phase()
 	if phase.is_empty():
 		return
+	_phase_end_pending = true
+	_phase_end_running = true
 	if phase["name"] == "battle" and !has_battle_resolved:
 		has_battle_resolved = true
 		last_battle_result = BattleResolver.new().exec(GameDataManager.get_active_player_ids(), BaseNumber.new(1))
-	TimePointChecker.global_time_point([TimePoints.PHASE_END, phase["end"]])
+	#BATTLE_END 的选择尚未完成时保留阶段、事件和原决策队列，不能开 PHASE_END 新批次。
+	if is_game_over or _effects_block_progress():
+		_phase_end_running = false
+		return
+	if !_phase_end_dispatched:
+		# 战后选择全部结束后封存本次实得，不能把阶段结束收益混入战报。
+		if phase["name"] == "battle":
+			BattleResolver.finalize_result(last_battle_result)
+		#先记已派发，避免结束效果回调重入或稍后续行时重发同一时点。
+		_phase_end_dispatched = true
+		TimePointChecker.global_time_point([TimePoints.PHASE_END, phase["end"]])
+	_phase_end_running = false
+	if is_game_over or _effects_block_progress():
+		return
+	_phase_end_pending = false
 	advance_phase()
 
 
@@ -263,7 +343,10 @@ func end_phase():
 #派发出去的是phase["mid"]，触发者拿到self_xxx_phase，其他人拿到others_xxx_phase，
 #所以"当前玩家先处理完自己的效果，再轮到下一位"是时点表本身带来的，不需要额外的排序逻辑
 func next_player_in_phase():
-	if is_game_over:
+	if is_game_over or _phase_end_running:
+		return
+	if _phase_end_pending:
+		end_phase()
 		return
 	var phase = get_current_phase()
 	if phase.is_empty():
@@ -280,6 +363,9 @@ func next_player_in_phase():
 		#效果因此能表达"高潮回合里我的阶段"（如宝石魔术放宽上限）与"仅非高潮回合"
 		var tps:Array = [phase["mid"]]
 		tps.append(TimePoints.CLIMAX if is_climax_round() else TimePoints.NON_CLIMAX)
+		#先清掉上一轮的玩家级时点再派发：否则"自己的行动阶段"与"他人的行动阶段"
+		#会在同一个人身上同时成立
+		TimePointChecker.clear_player_scope_time_points()
 		TimePointChecker.dynamic_time_point(tps, current_player_id)
 		return
 	end_phase()
@@ -287,12 +373,44 @@ func next_player_in_phase():
 
 #当前玩家完成本阶段行动后使用的唯一推进入口。
 func end_current_player_action() -> bool:
-	if is_game_over or current_player_id == -1 or get_current_phase().is_empty():
+	if is_game_over or get_current_phase().is_empty():
 		return false
-	#效果需要玩家发动/放弃或挑牌时，阶段行动不能绕过等待状态继续推进。
+	#效果等待任意玩家输入或正在执行时，阶段行动不能绕过管线继续推进。
 	#统一在进程层拦截，避免UI、AI和其他调用方各自实现不同的保护。
-	if EffectManager.is_waiting_for_choice() or EffectManager.is_waiting_for_card_selection():
+	if _phase_end_running or _effects_block_progress():
 		return false
+	#最后行动者已经完成行动：答复后由同一个公开入口续行收尾，不重做行动或结算。
+	if _phase_end_pending:
+		end_phase()
+		return true
+	if current_player_id == -1:
+		return false
+	var phase_name:String = str(get_current_phase().get("name", ""))
+	if phase_name == "outpost":
+		#规则：前哨阶段各玩家依次把自己的御主部署到版图上。
+		#这一步不能只由界面负责——不经界面的推进（AI 推演、无界面运行）会全员不部署，
+		#于是没人在版图上、战斗阶段跳过所有人、无人获得战果。
+		#已经在版图上的（界面已替玩家部署过）不重复部署；
+		#没有任何空席位时什么都不做，不阻塞推进
+		var player_data = GameDataManager.get_player_data(current_player_id) as Dictionary
+		if player_data.get("location") == null:
+			#规则：部署是玩家/AI 在自己前哨阶段的动作，引擎不能替他挑席位。
+			#旧实现在这里自动遍历战区替玩家落位——于是还没选地点的玩家一被推进
+			#就"莫名结束前哨"，还白拿了一个没选过的席位收益。
+			EffectManager.push_message("尚未完成前哨部署", current_player_id)
+			return false
+	elif phase_name == "action":
+		#行动结束的声明式前置条件（如"第一回合必须使用一枚令咒"）：
+		#判据在规则层，界面与无界面推进共用同一份，不在这里写死具体规则
+		var requirement_block:String = ActionRules.block_reason(current_player_id)
+		if requirement_block != "":
+			EffectManager.push_message(requirement_block, current_player_id)
+			return false
+		if not RegularPlay.can_end(current_player_id):
+			EffectManager.push_message("尚未满足常规出牌最低要求", current_player_id)
+			return false
+		if not RegularPlay.completed(current_player_id):
+			RegularPlay.finalize(current_player_id, true)
 	next_player_in_phase()
 	return true
 

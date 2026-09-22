@@ -94,6 +94,14 @@
                 "var_index": 4
               },
               {
+                "func_name": "reshuffle_discard",
+                "parameters": [],
+                "var_index": -1,
+                "condition": {
+                  "self_var": 4
+                }
+              },
+              {
                 "func_name": "draw_card_from_pl_deck_to_hand",
                 "parameters": [
                   0
@@ -106,7 +114,7 @@
             ]
           },
           {
-            "effect_name": "placeholder_riding_mount_summon_play_low_power_cards",
+            "effect_name": "riding_mount_summon_play_low_power_cards",
             "shown_effect_name": "坐骑召唤 - 行动阶段：打出至多3张基本威力为3或更低的手牌",
             "time_points": [
               "self_action_phase"
@@ -114,23 +122,60 @@
             "priority": 0,
             "is_pure_passive": false,
             "is_residue": false,
-            "effect_numbers": [
+            "is_manual": true,
+            "need_activate": true,
+            "max_choices": 1,
+            "effect_numbers": [],
+            "funcs": [],
+            "options": [
               {
-                "number": 3,
-                "can_change": true,
-                "is_pure_number": true
-              },
-              {
-                "number": 3,
-                "can_change": true,
-                "is_pure_number": true
-              }
-            ],
-            "funcs": [
-              {
-                "func_name": "do_nothing",
-                "parameters": [],
-                "var_index": -1
+                "shown_option_name": "打出至多3张基本威力为3或更低的手牌",
+                "select_cards": {
+                  "source": "hand_cards",
+                  "max_power": 3,
+                  "min": 0,
+                  "max": 3
+                },
+                "funcs": [
+                  {
+                    "func_name": "get_activating_eff",
+                    "parameters": [],
+                    "var_index": 0
+                  },
+                  {
+                    "func_name": "get_property",
+                    "parameters": [
+                      {
+                        "self_var": 0
+                      },
+                      "_selected_cards"
+                    ],
+                    "var_index": 1
+                  },
+                  {
+                    "func_name": "foreach_func",
+                    "parameters": [
+                      [
+                        {
+                          "func_name": "play_attack",
+                          "parameters": [
+                            null,
+                            -1,
+                            null,
+                            null,
+                            true
+                          ],
+                          "var_index": -1
+                        }
+                      ],
+                      {
+                        "self_var": 1
+                      },
+                      0
+                    ],
+                    "var_index": -1
+                  }
+                ]
               }
             ]
           }
@@ -154,6 +199,9 @@
           "can_change": true,
           "is_pure_number": true
         },
+        "keywords": [
+          "true_name_release"
+        ],
         "ignore_limit": false,
         "effects": [
           {
@@ -200,6 +248,9 @@
           "can_change": true,
           "is_pure_number": true
         },
+        "keywords": [
+          "true_name_release"
+        ],
         "ignore_limit": false,
         "effects": [
           {

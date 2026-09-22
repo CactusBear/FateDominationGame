@@ -18,6 +18,7 @@ func copy_clone_fields(cloned, context) -> void:
 	cloned._play_requirements = context.copy_value(_play_requirements)
 	cloned._shown_notes = context.copy_value(_shown_notes)
 	cloned._need_extra_play = _need_extra_play
+	cloned._modification_history = context.copy_value(_modification_history)
 
 
 #_attributes、edit_attribute、_is_concealed、set_concealed已移至BaseCard，事件等非手牌卡也能带属性和明暗状态
@@ -35,18 +36,35 @@ var _play_requirements:Array = []
 var _shown_notes:Array = []
 #此牌须靠"追加打出"(add_attack/add_skill，不计常规出牌上限)进场，常规出牌被拒
 var _need_extra_play:bool = false
+#卡牌被效果修改的历史记录（威力/魔力消耗/属性）：供界面展示【改】字提示与点击查看明细
+var _modification_history:Array = []
+
+func record_modification(mod_type: String, detail: String) -> void:
+	_modification_history.append({"type": mod_type, "detail": detail})
+
+func has_modifications() -> bool:
+	return not _modification_history.is_empty()
+
+func get_modification_details() -> Array:
+	return _modification_history.duplicate()
 
 
 
 
 func edit_cost(add_cost:BaseNumber = BaseNumber.new(0), set_cost:BaseNumber = null):
 	if set_cost != null:
-		_cost = set_cost
+		_cost.set_num(set_cost)
+	# 数据效果允许用 null 表示“不做增量”，只设值时不能把 null 传给 BaseNumber.add。
+	if add_cost == null:
+		add_cost = BaseNumber.new(0)
 	_cost.add(add_cost)
 
 func edit_power(add_power:BaseNumber = BaseNumber.new(0), set_power:BaseNumber = null):
 	if set_power != null:
-		_power = set_power
+		_power.set_num(set_power)
+	# 与费用编辑保持同一套语义：null 增量等价于零增量。
+	if add_power == null:
+		add_power = BaseNumber.new(0)
 	_power.add(add_power)
 
 func set_if_activating(T_or_F:bool):

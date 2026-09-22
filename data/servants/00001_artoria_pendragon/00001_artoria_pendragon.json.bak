@@ -1,0 +1,359 @@
+{
+	"servant_name": "artoria_pendragon",
+	"shown_servant_name": "阿尔托莉雅·潘德拉贡",
+	"servant_class": "saber",
+	"header_img": "00001_artoria_pendragon_header.png",
+	"servant_card_img": "00001_artoria_pendragon_cd.png",
+	"effects": [],
+	"specials": {
+		"SKILLS": [
+			{
+				"skill_name": "mana_resistance",
+				"shown_skill_name": "对魔力",
+				"skill_card_img": "00001_artoria_pendragon_mana_resistance.png",
+				"attributes": [
+					"special"
+				],
+				"cost": {
+					"number": 3,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"power": {
+					"number": 3,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"ignore_limit": false,
+				"effects": [
+					{
+						"effect_name": "placeholder_np_bloom_score",
+						"shown_effect_name": "宝具绽放 - 被动/战斗阶段：若你于本回合打出了你战斗中魔力消耗最高的宝具攻击，获得1点战果。若其消耗≥4，你额外获得1点战果",
+						"time_points": [
+							"self_battle_phase"
+						],
+						"priority": 0,
+						"is_pure_passive": false,
+						"is_residue": false,
+						"effect_numbers": [
+							{
+								"number": 1,
+								"can_change": true,
+								"is_pure_number": true
+							},
+							{
+								"number": 1,
+								"can_change": true,
+								"is_pure_number": true
+							}
+						],
+						"funcs": [
+							{
+								"func_name": "do_nothing",
+								"parameters": [],
+								"var_index": -1
+							}
+						],
+						"is_manual": true,
+						"need_activate": false
+					},
+					{
+						"effect_name": "zero_opponent_magic_power",
+						"shown_effect_name": "魔术抗性 - 战斗阶段：将与你位于同一战场的交战对手控制的魔术属性攻击威力设置为0",
+						"time_points": [
+							"self_battle_phase"
+						],
+						"priority": 0,
+						"is_pure_passive": false,
+						"is_residue": false,
+						"effect_numbers": [],
+						"funcs": [
+							{
+								"func_name": "get_players_in_same_area",
+								"parameters": [],
+								"var_index": 0
+							},
+							{
+								"func_name": "foreach_func",
+								"parameters": [
+									[
+										{
+											"func_name": "zero_attribute_power",
+											"parameters": [
+												null,
+												[
+													"magic"
+												]
+											],
+											"var_index": -1
+										}
+									],
+									{
+										"self_var": 0
+									}
+								],
+								"var_index": -1
+							}
+						],
+						"is_manual": true,
+						"need_activate": true
+					}
+				],
+				"zoom_kind": "card"
+			},
+			{
+				"skill_name": "wind_barrier",
+				"shown_skill_name": "风王结界",
+				"skill_card_img": "00001_artoria_pendragon_wind_barrier.png",
+				"attributes": [
+					"magic",
+					"noble_phantasm"
+				],
+				"cost": {
+					"number": 4,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"power": {
+					"number": 4,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"ignore_limit": false,
+				"effects": [
+					{
+						"effect_name": "true_name_hidden_discount",
+						"shown_effect_name": "若你的真名隐藏，此牌的魔力消耗-2",
+						"time_points": [
+							"self_card_cost_calculated"
+						],
+						"priority": 0,
+						"is_pure_passive": true,
+						"is_residue": false,
+						"effect_numbers": [
+							{
+								"number": -2,
+								"can_change": true,
+								"is_pure_number": true
+							}
+						],
+						"funcs": [
+							{
+								"func_name": "log_exists",
+								"parameters": [
+									-1,
+									{
+										"type": "time_point",
+										"tags": "true_name_release",
+										"actor": -1
+									},
+									null
+								],
+								"var_index": 0
+							},
+							{
+								"func_name": "not_func",
+								"parameters": [
+									{
+										"self_var": 0
+									}
+								],
+								"var_index": 1
+							},
+							{
+								"func_name": "edit_card_cost",
+								"parameters": [
+									{
+										"number_index": 0
+									},
+									null
+								],
+								"var_index": -1,
+								"condition": {
+									"self_var": 1
+								}
+							}
+						]
+					},
+					{
+						"effect_name": "zero_opponent_strength_power",
+						"shown_effect_name": "战斗阶段：将与你进行战斗对手的力量攻击威力变为0",
+						"time_points": [
+							"self_battle_phase"
+						],
+						"priority": 0,
+						"is_pure_passive": false,
+						"is_residue": false,
+						"effect_numbers": [],
+						"funcs": [
+							{
+								"func_name": "get_players_in_same_area",
+								"parameters": [],
+								"var_index": 0
+							},
+							{
+								"func_name": "foreach_func",
+								"parameters": [
+									[
+										{
+											"func_name": "zero_attribute_power",
+											"parameters": [
+												null,
+												[
+													"strength"
+												]
+											],
+											"var_index": -1
+										}
+									],
+									{
+										"self_var": 0
+									}
+								],
+								"var_index": -1
+							}
+						],
+						"is_manual": true,
+						"need_activate": true
+					}
+				],
+				"zoom_kind": "card"
+			},
+			{
+				"skill_name": "excalibur",
+				"shown_skill_name": "誓约胜利之剑",
+				"skill_card_img": "00001_artoria_pendragon_excalibur.png",
+				"attributes": [
+					"strength",
+					"noble_phantasm"
+				],
+				"cost": {
+					"number": 8,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"power": {
+					"number": 12,
+					"can_change": true,
+					"is_pure_number": true
+				},
+				"ignore_limit": false,
+				"effects": [
+					{
+						"effect_name": "combat",
+						"shown_effect_name": "【真名解放】战斗阶段：高潮回合时，合计威力+4",
+						"time_points": [
+							"self_climax"
+						],
+						"priority": 0,
+						"is_pure_passive": true,
+						"is_residue": false,
+						"effect_numbers": [
+							{
+								"number": 4,
+								"can_change": true,
+								"is_pure_number": true
+							}
+						],
+						"funcs": [
+							{
+								"func_name": "get_eff_source_card",
+								"parameters": [],
+								"var_index": 0
+							},
+							{
+								"func_name": "edit_card_power",
+								"parameters": [
+									{
+										"self_var": 0
+									},
+									{
+										"number_index": 0
+									}
+								],
+								"var_index": -1
+							}
+						]
+					},
+					{
+						"effect_name": "round11_win_victory",
+						"shown_effect_name": "若你赢得第11回合的战斗，获得游戏胜利",
+						"time_points": [
+							"self_battle_win"
+						],
+						"priority": 0,
+						"is_pure_passive": true,
+						"is_residue": false,
+						"effect_numbers": [
+							{
+								"number": 11,
+								"can_change": true,
+								"is_pure_number": true
+							}
+						],
+						"funcs": [
+							{
+								"func_name": "get_current_round",
+								"parameters": [],
+								"var_index": 0
+							},
+							{
+								"func_name": "if_func",
+								"parameters": [
+									{
+										"self_var": 0
+									},
+									{
+										"number_index": 0
+									}
+								],
+								"var_index": 1
+							},
+							{
+								"func_name": "set_player_data",
+								"parameters": [
+									"victory_override",
+									true
+								],
+								"var_index": -1,
+								"condition": {
+									"self_var": 1
+								}
+							}
+						]
+					}
+				],
+				"zoom_kind": "card",
+				"keywords": [
+					"true_name_release"
+				]
+			}
+		],
+		"ATTACKS": [
+			"strength:2",
+			"strength:3",
+			"strength:4",
+			"strength:4",
+			"strength:4",
+			"strength:5",
+			"agility:3",
+			"magic:2",
+			"magic:3",
+			"special:surveil",
+			"special:luck",
+			"special:luck"
+		],
+		"BUFFS": []
+	},
+	"tags": [
+		{
+			"tag": "artoria_pendragon",
+			"name_list": [
+				"artoria_pendragon"
+			],
+			"type": "servant_tag"
+		}
+	],
+	"header_img_zoom_kind": "avatar",
+	"servant_card_img_zoom_kind": "card"
+}

@@ -23,6 +23,37 @@ func place(plan:Array) -> Array:
 	return placed
 
 
+#规则：行动阶段开始时展示暗置放置的事件牌（基础规则是"展示位于新都的暗置事件牌"）。
+#"该翻哪个战区"沿用本回合的放置计划里 concealed=true 的那几项：
+#不写死战区名，也不会误翻别处碰巧暗置的牌。返回翻开的张数
+func reveal_planned(plan:Array) -> int:
+	var concealed_areas:Array = []
+	for p in plan:
+		if p.get("concealed", false):
+			concealed_areas.append(str(p.get("area_name", "")))
+	var count:int = 0
+	for area:BaseMapArea in MapData.areas:
+		if !concealed_areas.has(area._area_name):
+			continue
+		for event in area._events:
+			if event is BaseEvent and bool(event.get("_is_concealed")):
+				SetCardConcealed.new().exec(event, false)
+				register_entered(event)
+				count += 1
+	#翻开即进场：派发进场时点，让布置类效果立刻执行（同局势牌，理由见 TimePoints.CARD_ENTERED）。
+	#没翻开任何牌就不派，避免空时点白跑一轮效果检查
+	#Each revealed card dispatches its own source-scoped entry above.
+	return count
+
+
+func register_entered(event:BaseEvent):
+	var ids:Array = GameDataManager.get_active_player_ids()
+	if ids.is_empty(): return
+	for effect in event._effects:
+		if effect._trigger_player_id == -1: EffectManager.register_effect(effect, int(ids[0]))
+	TimePointChecker.global_time_point([TimePoints.CARD_ENTERED], event)
+
+
 #清掉场上所有事件牌：注销效果、从区域摘下、从对象表删除。
 #事件牌每回合重新抽，用完直接丢弃，不回牌库
 func clear_all():
@@ -30,7 +61,11 @@ func clear_all():
 		var events:Array = area._events
 		for i in range(events.size() - 1, -1, -1):
 			var event = events[i]
+			#先注销效果：离场的牌不能继续生效
 			UnregisterObjectEffects.new().exec(event)
 			events.remove_at(i)
 			if event is BaseEvent:
-				event.del()
+				#移入事件牌弃牌区而不是销毁：玩家要能回看本局出过哪些事件牌。
+				#弃牌区在每局开始时统一销毁并清空，不会跨局累积
+				event.set_concealed(false)
+				MapData.event_discard.append(event)

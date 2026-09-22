@@ -54,7 +54,9 @@
             null,
             {
               "number_index": 0
-            }
+            },
+            -1,
+            0
           ],
           "var_index": -1,
           "condition": {
@@ -154,7 +156,9 @@
             null,
             {
               "number_index": 0
-            }
+            },
+            -1,
+            0
           ],
           "var_index": -1
         }
@@ -199,14 +203,10 @@
             ],
             "funcs": [
               {
-                "func_name": "log_field_values",
+                "func_name": "get_player_data_value",
                 "parameters": [
-                  {
-                    "type": "effect",
-                    "actor": -1
-                  },
-                  null,
-                  "effect_name"
+                  "used_once_effects",
+                  -1
                 ],
                 "var_index": 0
               },
@@ -406,7 +406,9 @@
                   null,
                   {
                     "number_index": 0
-                  }
+                  },
+                  -1,
+                  0
                 ],
                 "var_index": -1,
                 "condition": {
@@ -494,14 +496,10 @@
             ],
             "funcs": [
               {
-                "func_name": "log_field_values",
+                "func_name": "get_player_data_value",
                 "parameters": [
-                  {
-                    "type": "effect",
-                    "actor": -1
-                  },
-                  null,
-                  "effect_name"
+                  "used_once_effects",
+                  -1
                 ],
                 "var_index": 0
               },
@@ -786,7 +784,9 @@
                   null,
                   {
                     "number_index": 0
-                  }
+                  },
+                  -1,
+                  0
                 ],
                 "var_index": -1,
                 "condition": {

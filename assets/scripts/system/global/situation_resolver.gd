@@ -14,10 +14,19 @@ func activate():
 	if situation == null:
 		return
 	#规则：所有玩家获得局势牌上印刷的魔力
+	var magic_gain:int = (situation._magic as BaseNumber).number
 	for id in GameDataManager.get_active_player_ids():
 		EditMagic.new().exec(null, situation._magic, id)
+	#告诉玩家这次魔力是哪来的：资源变化不说明来源，玩家无法核对自己为什么多了魔力。
+	#文案用局势牌自己的显示名，不写死牌名
+	if magic_gain != 0:
+		EffectManager.push_message("局势牌【%s】：全员魔力 %+d" % [situation.get_shown_name(), magic_gain])
 	#把局势牌效果登记进效果池(挂battle_resolve的属性加成等)
 	_register_situation_effects()
+	#牌已进场：派发进场时点，让布置类效果（增加事件牌、封锁战区、改席位上限）立刻执行。
+	#不派的话这些效果要等到战斗结算才跑，整个行动阶段玩家都看不到牌面宣告的场地变化，
+	#表现就是"局势牌效果没结算"。威力加成类仍挂 battle_resolve，不受影响
+	TimePointChecker.global_time_point([TimePoints.CARD_ENTERED], situation)
 
 
 #回合结束：弃置激活的局势牌
@@ -26,7 +35,9 @@ func clear_all():
 	if situation == null:
 		return
 	UnregisterObjectEffects.new().exec(situation)
-	situation.del()
+	#移入局势牌弃牌区而不是销毁：玩家要能回看本局展示过哪些局势牌。
+	#弃牌区在每局开始时统一销毁并清空
+	MapData.situation_discard.append(situation)
 	MapData.active_situation = null
 	#封区类局势牌(如身处地狱之门)只在本回合有效：弃置时把被改动的
 	#战区"能否常规进入"按印刷基线还原，防止一回合的封区永久生效

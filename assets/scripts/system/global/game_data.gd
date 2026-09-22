@@ -10,6 +10,12 @@ var player_data_library:Dictionary
 var skill_zone_magic_limit:BaseNumber = BaseNumber.new(8)
 #魔力上限：界面按它显示"当前/上限"，不把 12 写死在界面里。规则数字不写死，特殊效果可以改动
 var magic_limit:BaseNumber = BaseNumber.new(12)
+#手牌上限：准备阶段把每名玩家的手牌补充到这个张数。规则数字不写死，特殊效果可以改动
+var hand_limit:BaseNumber = BaseNumber.new(3)
+#新对局里本地玩家的默认登场组合，填模板名（空串＝按加载顺序分配）。
+#这是数据声明，不写在分配代码里：换开局配置只改这里。
+var default_master:String = "tohsaka_rin"
+var default_servant:String = "artoria_pendragon"
 
 
 #每个玩家都要一份独立的数据，不能共用同一个字典，否则各玩家的数值会互相串改
@@ -31,7 +37,6 @@ func new_player_data() -> Dictionary:
 	"location" : null,
 	"temp_locations" : [],
 	"power" : BaseNumber.new(0),
-	"is_deployed" : false,
 	"is_victory" : false,
 	"is_out" : true,
 	"is_shown" : false,
@@ -64,11 +69,16 @@ func new_player_data() -> Dictionary:
 		"others" : []
 		},
 	"command_spell_count" : BaseNumber.new(3),
-	"command_spell_used_this_game" : 0,
-	"command_spell_used_this_turn" : false,
-	"command_spell_gained_magic" : false,
+	# 令咒上限是玩家级可修改数据；通常为3，效果可以提高或降低。
+	"command_spell_limit" : BaseNumber.new(3),
+	#每局限一次效果的共享使用记录；只在效果实际完成后追加其英文效果名。
+	"used_once_effects" : [],
 	"play_limit" : BaseNumber.new(2),
+	"regular_play_min" : BaseNumber.new(2),
 	"can_draw_card" : true,
+	#行动结束的声明式前置条件（Array[String]）：由效果增减、ActionRules 按名字判定。
+	#空数组表示没有额外要求，与"规则数字不写死"同一原则：条件本身由数据声明
+	"action_requirements" : [],
 	"last_turn_location" : null,
 	"is_magic_immune" : false,
 	"ignore_skill_zone_magic_limit" : false,
@@ -163,6 +173,9 @@ func release_game_objects() -> void:
 	MapData.event_deck.clear()
 	MapData.active_situation = null
 	MapData.situations.clear()
+	#事件牌/局势牌弃牌区同样持有对象引用，漏清会在退出时报对象泄漏
+	MapData.event_discard.clear()
+	MapData.situation_discard.clear()
 	for area in MapData.areas:
 		if area is BaseMapArea:
 			area._events.clear()

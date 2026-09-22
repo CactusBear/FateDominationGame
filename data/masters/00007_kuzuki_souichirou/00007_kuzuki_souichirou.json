@@ -371,6 +371,7 @@
 	"BUFFS": [
 	  {
 		"buff_name": "outsider_workshop_block",
+		"related_effect_names": ["outsider_leave_workshop_discount", "outsider_battle_phase_score_gain"],
 		"shown_buff_name": "局外人",
 		"buff_img": "",
 		"is_active": true,

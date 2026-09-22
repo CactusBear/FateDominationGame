@@ -10,12 +10,12 @@ func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false):
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	var location:BaseLocation = player_data["location"]
 	if location == null:
-		#show("玩家所处位置不位于地图上")
+		EffectManager.push_message("当前位置不在任何战区上，无法移动", player_id)
 		return null
 	#所在区域从 location 自己的 from 取，不遍历 MapData.areas 反查
 	var area := location.get_from() as BaseMapArea
 	if area == null:
-		#show("玩家所处位置不位于地图上")
+		EffectManager.push_message("当前位置不在任何战区上，无法移动", player_id)
 		return null
 	var origin_area:BaseMapArea = area
 
@@ -41,23 +41,18 @@ func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false):
 		return null
 
 	if area._can_move_to == false:
-		#show("无法移动至此区域")
+		EffectManager.push_message("无法移动至【%s】" % area._area_name, player_id)
 		return null
 
-	#常规移动只会落在该区域内标记为_will_move_to的Location上(工房区有多个同级点位)，
-	#按顺序取第一个还有空位的；ignore_limit时忽略人数限制，取第一个标记点位
-	var target_location:BaseLocation = null
-	for loc:BaseLocation in area._locations:
-		if !loc._will_move_to:
-			continue
-		if ignore_limit or loc._pl_num_limit == -1 or loc._players.size() < loc._pl_num_limit:
-			target_location = loc
-			break
+	#常规移动只会落在该区域内标记为_will_move_to的Location上(工房区有多个同级点位)。
+	#"挑哪个点位"与界面提示共用 GetMoveTargetLocation：落点规则只实现一处
+	var target_location:BaseLocation = GetMoveTargetLocation.new().exec(area, ignore_limit)
 	if target_location == null:
-		#show("目标位置已满")
+		EffectManager.push_message("【%s】的常规落点已满" % area._area_name, player_id)
 		return null
 
 	if !SetLocation.new().exec(target_location, player_id, true, ignore_limit):
+		EffectManager.push_message("无法在【%s】落位" % area._area_name, player_id)
 		return null
 
 	#从魔术工房离开时应用玩家层折扣(葛木局外人等)，折扣不会让费用变成负数

@@ -19,5 +19,6 @@ func exec(map_area:BaseMapArea, add_count:int = 1, concealed:bool = false) -> in
 		var event = CloneObject.new().exec(template) as BaseEvent
 		AddMapAreaEvents.new().exec(map_area, event)
 		SetCardConcealed.new().exec(event, concealed)
+		if not concealed: EventResolver.new().register_entered(event)
 		placed += 1
 	return placed

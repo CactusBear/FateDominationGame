@@ -6,185 +6,451 @@
   "servant_card_img": "00003_cu_chulainn_cd.png",
   "effects": [],
   "specials": {
-    "SKILLS": [
-      {
-        "skill_name": "battle_continuation",
-        "shown_skill_name": "战斗续行",
-        "skill_card_img": "00003_cu_chulainn_battle_continuation.png",
-        "attributes": [
-          "agility",
+	"SKILLS": [
+	  {
+		"skill_name": "battle_continuation",
+		"shown_skill_name": "战斗续行",
+		"skill_card_img": "00003_cu_chulainn_battle_continuation.png",
+		"attributes": [
+		  "agility",
           "special"
-        ],
-        "cost": {
-          "number": 3,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        "power": {
-          "number": 5,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        "ignore_limit": false,
-        "effects": [
-          {
-            "effect_name": "placeholder_move_anywhere_except_workshop",
-            "shown_effect_name": "行动阶段：移动至除魔术工房外的任意地点",
-            "time_points": [
+		],
+		"cost": {
+		  "number": 3,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"power": {
+		  "number": 5,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"ignore_limit": false,
+		"effects": [
+		  {
+			"effect_name": "move_anywhere_except_workshop",
+			"shown_effect_name": "行动阶段：移动至除魔术工房外的任意地点",
+			"time_points": [
               "self_action_phase"
-            ],
-            "priority": 0,
-            "is_pure_passive": false,
-            "is_residue": false,
-            "effect_numbers": [],
-            "funcs": [
-              {
-                "func_name": "do_nothing",
-                "parameters": [],
-                "var_index": -1
-              }
-            ]
-          }
-        ],
-        "zoom_kind": "card"
-      },
-      {
-        "skill_name": "gae_bolg_piercing",
-        "shown_skill_name": "突穿死翔之枪",
-        "skill_card_img": "00003_cu_chulainn_gae_bolg_piercing.png",
-        "attributes": [
-          "agility",
+			],
+			"priority": 0,
+			"is_pure_passive": false,
+			"is_residue": false,
+			"is_manual": true,
+			"need_activate": true,
+			"max_choices": 1,
+			"effect_numbers": [],
+			"funcs": [],
+			"options": [
+			  {
+				"shown_option_name": "移动至任意地点（魔术工房除外）",
+				"select_location": {
+				  "forbidden_target_areas": [
+                    "魔术工房"
+				  ]
+				},
+				"funcs": [
+				  {
+					"func_name": "get_activating_eff",
+					"parameters": [],
+					"var_index": 0
+				  },
+				  {
+					"func_name": "get_property",
+					"parameters": [
+					  {
+						"self_var": 0
+					  },
+                      "_selected_location"
+					],
+					"var_index": 1
+				  },
+				  {
+					"func_name": "set_location",
+					"parameters": [
+					  {
+						"self_var": 1
+					  },
+					  -1,
+					  false
+					],
+					"var_index": -1
+				  }
+				]
+			  }
+			]
+		  }
+		],
+		"zoom_kind": "card"
+	  },
+	  {
+		"skill_name": "gae_bolg_piercing",
+		"shown_skill_name": "突穿死翔之枪",
+		"skill_card_img": "00003_cu_chulainn_gae_bolg_piercing.png",
+		"attributes": [
+		  "agility",
           "noble_phantasm"
-        ],
-        "cost": {
-          "number": 7,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        "power": {
-          "number": 10,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        "ignore_limit": false,
-        "effects": [
-          {
-            "effect_name": "placeholder_battle_end_score_per_opponent",
-            "shown_effect_name": "【真名解放】战斗阶段：战斗阶段结束后，每与一名对手进行了战斗便获得1点战果。若你获得胜利，每名交战对手失去该数量的战果",
-            "time_points": [
+		],
+		"cost": {
+		  "number": 7,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"power": {
+		  "number": 10,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"keywords": [
+          "true_name_release"
+		],
+		"ignore_limit": false,
+		"effects": [
+		  {
+			"effect_name": "battle_end_score_per_opponent",
+			"shown_effect_name": "【真名解放】战斗阶段：战斗阶段结束后，每与一名对手进行了战斗便获得1点战果。若你获得胜利，每名交战对手失去该数量的战果",
+			"time_points": [
               "self_battle_phase"
-            ],
-            "priority": 0,
-            "is_pure_passive": true,
-            "is_residue": false,
-            "effect_numbers": [
-              {
-                "number": 1,
-                "can_change": true,
-                "is_pure_number": true
-              }
-            ],
-            "funcs": [
-              {
-                "func_name": "do_nothing",
-                "parameters": [],
-                "var_index": -1
-              }
-            ]
-          }
-        ],
-        "zoom_kind": "card"
-      },
-      {
-        "skill_name": "gae_bolg_piercing_heart",
-        "shown_skill_name": "穿刺死棘之枪",
-        "skill_card_img": "00003_cu_chulainn_gae_bolg_piercing_heart.png",
-        "attributes": [
-          "agility",
+			],
+			"priority": 0,
+			"is_pure_passive": false,
+			"is_residue": false,
+			"is_manual": true,
+			"need_activate": true,
+			"max_choices": 1,
+			"effect_numbers": [
+			  {
+				"number": 1,
+				"can_change": true,
+				"is_pure_number": true
+			  }
+			],
+			"funcs": [],
+			"options": [
+			  {
+				"shown_option_name": "战斗结束后按交战对手数量结算战果",
+				"funcs": [
+				  {
+					"func_name": "schedule_effect_on_time_point",
+					"parameters": [
+					  [
+                        "battle_end"
+					  ],
+					  [
+						{
+						  "func_name": "get_location_map_area",
+						  "parameters": [
+							null,
+							-1
+						  ],
+						  "var_index": 0
+						},
+						{
+						  "func_name": "get_area_round_participants",
+						  "parameters": [
+							{
+							  "self_var": 0
+							}
+						  ],
+						  "var_index": 1
+						},
+						{
+						  "func_name": "get_activating_eff",
+						  "parameters": [],
+						  "var_index": 7
+						},
+						{
+						  "func_name": "get_property",
+						  "parameters": [
+							{
+							  "self_var": 7
+							},
+                            "_trigger_player_id"
+						  ],
+						  "var_index": 8
+						},
+						{
+						  "func_name": "remove_from_array",
+						  "parameters": [
+							{
+							  "self_var": 8
+							},
+							{
+							  "self_var": 1
+							}
+						  ],
+						  "var_index": -1
+						},
+						{
+						  "func_name": "array_length",
+						  "parameters": [
+							{
+							  "self_var": 1
+							}
+						  ],
+						  "var_index": 2
+						},
+						{
+						  "func_name": "calculate_number",
+						  "parameters": [
+							{
+							  "self_var": 2
+							},
+							"*",
+							{
+							  "number_index": 0
+							}
+						  ],
+						  "var_index": 3
+						},
+						{
+						  "func_name": "edit_score",
+						  "parameters": [
+							null,
+							{
+							  "self_var": 3
+							},
+							-1
+						  ],
+						  "var_index": -1
+						},
+						{
+						  "func_name": "get_area_round_winners",
+						  "parameters": [
+							{
+							  "self_var": 0
+							}
+						  ],
+						  "var_index": 4
+						},
+						{
+						  "func_name": "is_in_array",
+						  "parameters": [
+							{
+							  "self_var": 8
+							},
+							{
+							  "self_var": 4
+							}
+						  ],
+						  "var_index": 5
+						},
+						{
+						  "func_name": "calculate_number",
+						  "parameters": [
+							{
+							  "self_var": 3
+							},
+							"*",
+							-1
+						  ],
+						  "var_index": 6
+						},
+						{
+						  "func_name": "foreach_func",
+						  "parameters": [
+							[
+							  {
+								"func_name": "edit_score",
+								"parameters": [
+								  null,
+								  {
+									"self_var": 6
+								  },
+								  null
+								],
+								"var_index": -1
+							  }
+							],
+							{
+							  "self_var": 1
+							},
+							2
+						  ],
+						  "var_index": -1,
+						  "condition": {
+							"self_var": 5
+						  }
+						}
+					  ],
+					  0,
+					  false,
+					  [
+                        "day_end"
+					  ]
+					],
+					"var_index": -1
+				  }
+				]
+			  }
+			],
+			"max_total_uses": 1,
+			"reset_counts_each_round": true
+		  }
+		],
+		"zoom_kind": "card"
+	  },
+	  {
+		"skill_name": "gae_bolg_piercing_heart",
+		"shown_skill_name": "穿刺死棘之枪",
+		"skill_card_img": "00003_cu_chulainn_gae_bolg_piercing_heart.png",
+		"attributes": [
+		  "agility",
           "noble_phantasm"
-        ],
-        "cost": {
-          "number": 6,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        "power": {
-          "number": 6,
-          "can_change": true,
-          "is_pure_number": true
-        },
-        "ignore_limit": false,
-        "effects": [
-          {
-            "effect_name": "placeholder_permanent_cost_increase_on_play",
-            "shown_effect_name": "【真名解放】打出时：此牌+2魔力消耗（可叠加）直至游戏结束",
-            "time_points": [
+		],
+		"cost": {
+		  "number": 3,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"power": {
+		  "number": 6,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"keywords": [
+          "true_name_release"
+		],
+		"ignore_limit": false,
+		"effects": [
+		  {
+			"effect_name": "placeholder_permanent_cost_increase_on_play",
+			"source_bound": true,
+			"shown_effect_name": "【真名解放】打出时：此牌+2魔力消耗（可叠加）直至游戏结束",
+			"time_points": [
               "self_played_card"
-            ],
-            "priority": 0,
-            "is_pure_passive": true,
-            "is_residue": false,
-            "effect_numbers": [
-              {
-                "number": 2,
-                "can_change": true,
-                "is_pure_number": true
-              }
-            ],
-            "funcs": [
-              {
-                "func_name": "do_nothing",
-                "parameters": [],
-                "var_index": -1
-              }
-            ]
-          },
-          {
-            "effect_name": "placeholder_pierce_heart_single_opponent_defeat",
-            "shown_effect_name": "贯穿心脏 - 战斗阶段：若仅有一名对手与你位于同一战场，令其【败北】",
-            "time_points": [
+			],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+			  {
+				"number": 2,
+				"can_change": true,
+				"is_pure_number": true
+			  }
+			],
+			"funcs": [
+			  {
+				"func_name": "get_eff_source_card",
+				"parameters": [],
+				"var_index": 0
+			  },
+			  {
+				"func_name": "edit_card_cost",
+				"parameters": [
+				  {
+					"number_index": 0
+				  },
+				  null,
+				  {
+					"self_var": 0
+				  }
+				],
+				"var_index": -1
+			  }
+			]
+		  },
+		  {
+			"effect_name": "placeholder_pierce_heart_single_opponent_defeat",
+			"shown_effect_name": "贯穿心脏-战斗阶段：若仅有一名对手与你位于同一战场，令其【败北】",
+			"time_points": [
               "self_battle_phase"
-            ],
-            "priority": 0,
-            "is_pure_passive": true,
-            "is_residue": false,
-            "effect_numbers": [],
-            "funcs": [
-              {
-                "func_name": "do_nothing",
-                "parameters": [],
-                "var_index": -1
-              }
-            ]
-          }
-        ],
-        "zoom_kind": "card"
-      }
-    ],
-    "ATTACKS": [
-      "strength:2",
-      "strength:3",
-      "agility:2",
-      "agility:4",
-      "agility:4",
-      "agility:4",
-      "agility:5",
-      "magic:2",
-      "magic:4",
-      "magic:5",
-      "special:surveil",
+			],
+			"priority": 0,
+			"is_pure_passive": false,
+			"is_residue": false,
+			"effect_numbers": [],
+			"funcs": [
+			  {
+				"func_name": "get_players_in_same_area",
+				"parameters": [
+				  -1,
+				  false
+				],
+				"var_index": 0
+			  },
+			  {
+				"func_name": "array_length",
+				"parameters": [
+				  {
+					"self_var": 0
+				  }
+				],
+				"var_index": 1
+			  },
+			  {
+				"func_name": "compare_number",
+				"parameters": [
+				  {
+					"self_var": 1
+				  },
+				  1
+				],
+				"var_index": 2
+			  },
+			  {
+				"func_name": "if_func",
+				"parameters": [
+				  {
+					"self_var": 2
+				  },
+				  0
+				],
+				"var_index": 3
+			  },
+			  {
+				"func_name": "foreach_func",
+				"parameters": [
+				  {
+					"func_name": "defeat",
+					"parameters": [
+					  null
+					],
+					"var_index": -1
+				  },
+				  {
+					"self_var": 0
+				  },
+				  0
+				],
+				"var_index": -1,
+				"condition": {
+				  "self_var": 3
+				}
+			  }
+			],
+			"is_manual": true,
+			"need_activate": true
+		  }
+		],
+		"zoom_kind": "card"
+	  }
+	],
+	"ATTACKS": [
+	  "strength:2",
+	  "strength:3",
+	  "agility:2",
+	  "agility:4",
+	  "agility:4",
+	  "agility:4",
+	  "agility:5",
+	  "magic:2",
+	  "magic:4",
+	  "magic:5",
+	  "special:surveil",
       "special:surveil"
-    ],
-    "BUFFS": []
+	],
+	"BUFFS": []
   },
   "tags": [
-    {
-      "tag": "cu_chulainn",
-      "name_list": [
+	{
+	  "tag": "cu_chulainn",
+	  "name_list": [
         "cu_chulainn"
-      ],
-      "type": "servant_tag"
-    }
+	  ],
+	  "type": "servant_tag"
+	}
   ],
   "header_img_zoom_kind": "avatar",
   "servant_card_img_zoom_kind": "card"

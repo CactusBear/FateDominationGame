@@ -1,0 +1,160 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://assets/scripts/debug/debug_console_ui.gd" id="1_console"]
+[ext_resource type="Script" path="res://assets/scripts/debug/debug_action_panel.gd" id="2_actions"]
+
+[sub_resource type="StyleBoxFlat" id="StylePanel"]
+bg_color = Color(0.055, 0.067, 0.09, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.28, 0.36, 0.48, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleHeader"]
+bg_color = Color(0.09, 0.12, 0.17, 1)
+border_width_bottom = 1
+border_color = Color(0.25, 0.34, 0.46, 1)
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 8.0
+content_margin_bottom = 7.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBody"]
+bg_color = Color(0.035, 0.043, 0.06, 1)
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+
+[node name="DebugConsole" type="CanvasLayer"]
+layer = 30
+script = ExtResource("1_console")
+
+[node name="InputBlocker" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.015, 0.02, 0.03, 0.62)
+
+[node name="ConsolePanel" type="PanelContainer" parent="."]
+visible = false
+offset_left = 90.0
+offset_top = 55.0
+offset_right = 1110.0
+offset_bottom = 705.0
+mouse_filter = 0
+theme_override_styles/panel = SubResource("StylePanel")
+
+[node name="Layout" type="VBoxContainer" parent="ConsolePanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="PanelContainer" parent="ConsolePanel/Layout"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+mouse_default_cursor_shape = 13
+theme_override_styles/panel = SubResource("StyleHeader")
+
+[node name="Row" type="HBoxContainer" parent="ConsolePanel/Layout/Header"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="ConsolePanel/Layout/Header/Row"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.73, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "调试控制台"
+vertical_alignment = 1
+
+[node name="PauseState" type="Label" parent="ConsolePanel/Layout/Header/Row"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.73, 0.32, 1)
+text = "已暂停自动推进"
+vertical_alignment = 1
+
+[node name="Spacer" type="Control" parent="ConsolePanel/Layout/Header/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="RefreshButton" type="Button" parent="ConsolePanel/Layout/Header/Row"]
+layout_mode = 2
+focus_mode = 0
+text = "刷新"
+metadata/no_clickable_hint = true
+
+[node name="CloseButton" type="Button" parent="ConsolePanel/Layout/Header/Row"]
+layout_mode = 2
+focus_mode = 0
+text = "关闭"
+metadata/no_clickable_hint = true
+
+[node name="Body" type="PanelContainer" parent="ConsolePanel/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBody")
+
+[node name="Tabs" type="TabContainer" parent="ConsolePanel/Layout/Body"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="全体玩家" type="TextEdit" parent="ConsolePanel/Layout/Body/Tabs"]
+layout_mode = 2
+editable = false
+wrap_mode = 1
+scroll_fit_content_height = false
+
+[node name="牌区" type="TextEdit" parent="ConsolePanel/Layout/Body/Tabs"]
+layout_mode = 2
+editable = false
+wrap_mode = 1
+scroll_fit_content_height = false
+
+[node name="地图" type="TextEdit" parent="ConsolePanel/Layout/Body/Tabs"]
+layout_mode = 2
+editable = false
+wrap_mode = 1
+scroll_fit_content_height = false
+
+[node name="事件与局势" type="TextEdit" parent="ConsolePanel/Layout/Body/Tabs"]
+layout_mode = 2
+editable = false
+wrap_mode = 1
+scroll_fit_content_height = false
+
+[node name="效果等待" type="TextEdit" parent="ConsolePanel/Layout/Body/Tabs"]
+layout_mode = 2
+editable = false
+wrap_mode = 1
+scroll_fit_content_height = false
+
+[node name="日志" type="TextEdit" parent="ConsolePanel/Layout/Body/Tabs"]
+layout_mode = 2
+editable = false
+wrap_mode = 1
+scroll_fit_content_height = false
+
+[node name="操作" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs"]
+layout_mode = 2
+script = ExtResource("2_actions")
+
+[node name="OutputLabel" type="Label" parent="ConsolePanel/Layout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.57, 0.68, 0.8, 1)
+text = "操作结果"
+
+[node name="CommandOutput" type="TextEdit" parent="ConsolePanel/Layout"]
+custom_minimum_size = Vector2(0, 104)
+layout_mode = 2
+editable = false
+wrap_mode = 1
+scroll_fit_content_height = false

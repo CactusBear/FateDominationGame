@@ -13,6 +13,8 @@ func exec(card:BaseHandCard, vary_num:BaseNumber = BaseNumber.new(0), set_num:Ba
 	var counted:bool = counts_power.exec(card, id)
 	var old_power:int = (card._power as BaseNumber).number
 	card.edit_power(vary_num, set_num)
+	if card.has_method("record_modification"):
+		card.record_modification("power", "威力 %d → %d" % [old_power, (card._power as BaseNumber).number])
 	if !counted:
 		return
 	var player_data:Dictionary = GameDataManager.get_player_data(id)

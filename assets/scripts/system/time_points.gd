@@ -2,6 +2,11 @@ extends Node
 class_name TimePoints
 
 
+#玩家级时点的前缀：动态派发时触发者拿到 self_xx、其他玩家拿到 others_xx。
+#前缀集中在这里，派发与清理共用同一份，避免两处各写一遍字符串而慢慢不一致
+const SELF_PREFIX = "self_"
+const OTHERS_PREFIX = "others_"
+
 const GAME_START = "game_start"
 const GAME = "game"
 const GAME_END = "game_end"
@@ -103,6 +108,13 @@ const OTHERS_BATTLE_WIN = "others_battle_win"
 const OTHERS_BATTLE = "others_battle"
 const OTHERS_BATTLE_LOSE = "others_battle_lose"
 const BATTLE_RESOLVE = "battle_resolve"
+
+#牌进场：局势牌翻开、事件牌翻开时派发。
+#布置类效果（增加事件牌、封锁战区、改席位上限）要在牌一进场就执行完，
+#不能等到战斗结算——否则整个行动阶段玩家都看不到牌面已经宣告的场地变化。
+#威力加成类效果仍然挂 battle_resolve（那类要在比较威力前按最新出牌重算），
+#两者不冲突：同一张牌可以同时有进场生效和结算时生效的效果
+const CARD_ENTERED = "card_entered"
 const BATTLE_END = "battle_end"
 
 const CLIMAX_START = "climax_start"

@@ -1,7 +1,11 @@
 class_name AddAttack
 extends RefCounted
 
-func exec(attack:BaseAttack, player_id:int = -1, power:BaseNumber = attack._power):
+func exec(attack:BaseAttack, player_id:int = -1, power:BaseNumber = null):
+	if attack == null:
+		return false
+	if power == null:
+		power = attack._power
 
 	var id = EffectManager.resolve_player_id(player_id)
 	var player_data = GameDataManager.get_player_data(id)
@@ -18,4 +22,8 @@ func exec(attack:BaseAttack, player_id:int = -1, power:BaseNumber = attack._powe
 
 	GameLog.record("play", id, -1, "", attack, ["play", "extra"],
 		{"card_name": attack._name, "card_type": "attack", "extra": true})
-	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id)
+	#词条规则在打出时点之前结算，理由同 PlayAttack。
+	#追加打出也算"使用了这张牌"，所以同样适用
+	ApplyCardKeywords.new().exec(attack, id)
+	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, attack)
+	return true

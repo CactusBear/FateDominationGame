@@ -5,7 +5,7 @@ extends RefCounted
 #total_power_bonus、attack_cost_discount、move_cost_discount_from_workshop、
 #command_spell_count等)都可以用同一个operation改写，不需要为每个字段各写一个
 #Set/EditXxx.gd。用法与EditMagic/EditScore/EditLives一致：set_num覆盖，vary_num叠加
-func exec(key:String, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), player_id:int = -1):
+func exec(key:String, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), player_id:int = -1, min_value = null, max_value = null):
 
 	player_id = EffectManager.resolve_player_id(player_id)
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
@@ -15,3 +15,11 @@ func exec(key:String, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumbe
 	if set_num != null:
 		num.set_num(set_num)
 	num.add(vary_num)
+	if min_value != null:
+		var low = min_value.number if min_value is BaseNumber else min_value
+		if num.number < low:
+			num.set_num(BaseNumber.new(low))
+	if max_value != null:
+		var high = max_value.number if max_value is BaseNumber else max_value
+		if num.number > high:
+			num.set_num(BaseNumber.new(high))

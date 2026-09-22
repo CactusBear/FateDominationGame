@@ -15,7 +15,7 @@ func exec(player_id:int = -1):
 				break
 		#残留牌回合结束不自动关闭，留在场上继续提供威力；
 		#但已被自身或其他效果关闭的残留牌此时已是暗置，仍要走"弃置暗置攻击"这一步
-		if card_is_residue and !card._is_closed: continue
+		if card_is_residue and !card._is_closed and !card._is_concealed: continue
 		card._is_activating = false
 		if card is BaseSkill:
 			#技能牌回合结束保持明置并放回技能区，不进入弃牌堆

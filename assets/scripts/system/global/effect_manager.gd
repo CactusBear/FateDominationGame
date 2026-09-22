@@ -8,6 +8,9 @@ extends Node
 
 #全局效果池。池中效果的_trigger_player_id即其归属玩家，-1表示还没进入游戏
 var effect_pool:Array#[BaseEffect]
+#选项级 select_cards 的 owner 取值：声明成它表示"挑先由 select_players 选定的那名玩家的牌"。
+#不声明时挑的是触发者自己的牌，既有卡不受影响
+const CARD_SELECTION_OWNER_TARGET := "target_player"
 #当前正在结算的效果，供各effect脚本取上下文
 var activating_eff:BaseEffect
 
@@ -23,9 +26,15 @@ var waiting_effect:BaseEffect
 var waiting_selection:BaseEffect = null
 #正在等待选牌的那个选项下标（声明挂在选项字典里，所以要知道是第几项）
 var _waiting_selection_option:int = -1
-#{BaseEffect : Dictionary}，等选牌期间暂扣的选项提交，挑完牌再一起记用量/扣资源
+# {BaseEffect : Dictionary}，等选牌期间暂扣的选项提交，挑完牌再一起记用量/扣资源
 var _pending_selection_choice:Dictionary = {}
-#{BaseEffect : Array[String]}，效果是因哪些时点命中的，供关闭时点时判断是否要打断
+#正在等待选择位置的效果。位置不是卡牌，独立于 select_cards，但同样在支付前等待。
+var waiting_location:BaseEffect = null
+var _pending_location_choice:Dictionary = {}
+#正在等待选择玩家目标的效果（选项级 select_players）。与选牌/选位置并列的第三种玩家输入，
+#同样在支付前等待：玩家取消或提交不在候选集里的目标时，效果等于没发动
+var waiting_players:BaseEffect = null
+var _pending_player_choice:Dictionary = {}
 var matched_time_points:Dictionary
 #{BaseEffect : int}，本时点已结算过的效果，避免同一时点内重复触发
 var resolved_effects:Dictionary
@@ -40,6 +49,38 @@ var is_running:bool = false
 #待展示的提示消息队列：[{"text":String, "player_id":int}]，player_id=-1表示全员可见。
 #operation只负责产生消息，界面取走并展示(取走即移除)，显示形态由界面决定
 var messages:Array = []
+#玩家资源字段的显示名。发动结果要写清"谁受到什么影响"，这些名字是玩家能核对的口径
+const PLAYER_NUMERIC_FIELDS:Dictionary = {
+	"magic": "魔力", "score": "战果", "command_spell_count": "令咒",
+	"power": "合计威力", "total_power_bonus": "合计威力加成",
+}
+#对象上可被效果改动的数值字段的显示名（卡牌数值、状态层数、席位地利）
+const OBJECT_NUMERIC_FIELDS:Dictionary = {
+	"_power": "威力", "_cost": "魔力消耗", "_buff_level": "层数", "_benefit": "地利",
+}
+#牌区归属在规则状态快照里的字段名。它不是"对象的数值"，而是"这张牌此刻在谁手上、落在哪个区"，
+#由 capture_rule_state 单独记一份，diff_rule_state 把它的前后差聚合成"手牌 → 弃牌堆 ×3"这类明细。
+#没这一维时，弃牌/抽牌这类只改归属、不改数值的效果全都会显示"未产生即时变化"
+const ZONE_FIELD:String = "zone"
+#牌区路径各段的显示名：明细要写"手牌 → 弃牌堆"而不是内部键名 hand_cards/discard。
+#路径由容器键拼成（side/skills 这类嵌套也表达得出来），这里只负责显示，不参与任何规则判定；
+#没有登记中文名的段按原键名显示，不猜含义
+const ZONE_SEGMENT_SHOWN:Dictionary = {
+	"hand_cards": "手牌", "discard": "弃牌堆", "deck": "牌库", "played_cards": "打出区",
+	"servant_skills": "从者技能区", "master_skills": "御主技能区", "command_spell": "令咒",
+	"buffs": "状态", "out_of_game": "游戏外", "others": "附带物",
+	"attacks": "攻击牌", "skills": "技能牌",
+}
+#手动发动成功后的独立结果队列。它与普通规则提示分开，界面用专门的“发动结果”弹窗展示，
+#避免结果提示复用战术确认框并与下一条能力询问重叠。
+var effect_results:Array = []
+
+#本时点内累积的效果提示，按可见范围分桶 {player_id: [文案]}。
+#战斗结算这类时点会连续触发一批效果，逐条推会把提示刷成一长串、还互相覆盖，
+#所以先攒起来，等本时点整条管线跑完再合并成一条推送
+var _pending_announcements:Dictionary = {}
+# 玩家选择尚未完成时到达的后续时点批次；保存各玩家时点快照，答复后按顺序恢复处理。
+var _queued_time_point_batches:Array = []
 
 
 #产生一条提示消息。消息先入队，由界面在刷新时取走展示——
@@ -65,6 +106,202 @@ func pop_messages(player_id:int) -> Array:
 	return taken
 
 
+func push_effect_result(text:String, player_id:int = -1) -> void:
+	if text == "":
+		return
+	effect_results.append({"text":text, "player_id":player_id})
+
+
+func pop_effect_results(player_id:int) -> Array:
+	var taken:Array = []
+	var left:Array = []
+	for result in effect_results:
+		var pid:int = int(result.get("player_id", -1))
+		if pid == -1 or pid == player_id:
+			taken.append(str(result.get("text", "")))
+		else:
+			left.append(result)
+	effect_results = left
+	return taken
+
+
+#发动结果的依据：结算前后各取一次"规则状态"快照，用差值说明谁/哪个对象被改了什么。
+#快照只覆盖规则上会被效果改动的数值（玩家资源、卡牌数值、状态层数、席位地利），
+#键里带对象实例编号，因此同名多张牌也能各自对应；存的是当时的数值，之后对象再变不影响。
+func capture_rule_state() -> Dictionary:
+	var snapshot:Dictionary = {}
+	var indexes:Array = _card_zone_indexes()
+	var owners:Dictionary = indexes[0] as Dictionary
+	for id in GameData.player_data_library.keys():
+		var data:Dictionary = GameData.player_data_library[id] as Dictionary
+		for field in PLAYER_NUMERIC_FIELDS.keys():
+			var value = data.get(field)
+			if value is BaseNumber:
+				snapshot["p%d|%s" % [int(id), field]] = {
+					"player_id": int(id), "object_name": "", "field": field, "value": value.number}
+	for obj in GameData.objects:
+		if obj == null:
+			continue
+		var object_name:String = str(obj.get_shown_name()) if obj is BaseObject else ""
+		var owner_id:int = int(owners.get(obj.get_instance_id(), -1))
+		for field in OBJECT_NUMERIC_FIELDS.keys():
+			var value = obj.get(field)
+			if value is BaseNumber:
+				snapshot["o%d|%s" % [obj.get_instance_id(), field]] = {
+					"player_id": owner_id, "object_name": object_name, "field": field, "value": value.number}
+	#牌区归属：同一张牌在这两次快照里"属于谁、落在哪个区"。只在前后都存在的同一张牌上比较
+	#（与数值字段同一口径），所以结算中新建的克隆牌不会冒充一次搬运
+	var zones:Dictionary = indexes[1] as Dictionary
+	for instance_id in zones.keys():
+		var info:Dictionary = zones[instance_id] as Dictionary
+		snapshot["z%d" % int(instance_id)] = {
+			"player_id": int(info["player_id"]), "object_name": "", "field": ZONE_FIELD,
+			"zone_path": str(info["zone"]),
+			"value": "%d|%s" % [int(info["player_id"]), str(info["zone"])]}
+	return snapshot
+
+
+#玩家的牌区遍历：一次遍历同时产出两份索引——
+#① 对象实例 → 所属玩家（给数值快照标注"这张牌/这个状态是谁的"）；
+#② 卡牌实例 → {所属玩家, 所在牌区路径}（给牌区归属快照用）。
+#递归遍历每个玩家的所有容器（含 side/out_of_game 这类嵌套），区路径由容器键拼成，
+#不写死任何区名；状态/御主/从者这类不是卡的对象只进第 ① 份索引
+func _card_zone_indexes() -> Array:
+	var owners:Dictionary = {}
+	var zones:Dictionary = {}
+	for id in GameData.player_data_library.keys():
+		var data:Dictionary = GameData.player_data_library[id] as Dictionary
+		for key in data.keys():
+			_collect_zone_cards(data[key], owners, int(id), zones, str(key))
+	return [owners, zones]
+
+
+func _collect_zone_cards(value, owners:Dictionary, player_id:int, zones:Dictionary, zone_path:String) -> void:
+	if value is Array:
+		for item in value:
+			if item is BaseObject:
+				owners[item.get_instance_id()] = player_id
+				if item is BaseCard:
+					zones[item.get_instance_id()] = {"player_id": player_id, "zone": zone_path}
+			elif item is Array or item is Dictionary:
+				_collect_zone_cards(item, owners, player_id, zones, zone_path)
+	elif value is Dictionary:
+		for key in value.keys():
+			_collect_zone_cards(value[key], owners, player_id, zones, "%s/%s" % [zone_path, str(key)])
+
+
+#两次快照的差值。只在同一把键前后都存在时比较（结算中新建/销毁的对象不参与），
+#返回按"玩家 → 对象 → 字段"排序的明细，供结果弹窗逐条展示。
+#牌区归属的变化单独聚合成"手牌 → 弃牌堆 ×3"这类搬运明细，排在数值变化之前——
+#玩家先要知道"这次发动的牌去了哪"，再看数值被改了多少
+func diff_rule_state(before:Dictionary, after:Dictionary) -> Array:
+	var changes:Array = []
+	var transfers:Dictionary = {}
+	for key in before.keys():
+		if !after.has(key):
+			continue
+		var old:Dictionary = before[key]
+		var now:Dictionary = after[key]
+		if str(now.get("field", "")) == ZONE_FIELD:
+			#同一张牌换了牌区：按 (来源|去向) 聚合成一条，不逐张刷屏。
+			#分组键只是两张快照里的归属描述；跨玩家的搬运照样表达得出来（目标玩家写进明细）
+			if str(old.get("value")) == str(now.get("value")):
+				continue
+			var group_key:String = "%s>%s" % [str(old.get("value")), str(now.get("value"))]
+			if !transfers.has(group_key):
+				transfers[group_key] = {
+					"player_id": int(old.get("player_id", -1)), "from_zone": str(old.get("zone_path", "")),
+					"to_player": int(now.get("player_id", -1)), "to_zone": str(now.get("zone_path", "")),
+					"count": 0}
+			transfers[group_key]["count"] = int(transfers[group_key]["count"]) + 1
+			continue
+		if old.get("value") == now.get("value"):
+			continue
+		changes.append({
+			"player_id": int(now.get("player_id", -1)),
+			"object_name": str(now.get("object_name", "")),
+			"field": str(now.get("field", "")),
+			"before": old.get("value"),
+			"after": now.get("value"),
+		})
+	changes.sort_custom(func(a, b):
+		if int(a["player_id"]) != int(b["player_id"]):
+			return int(a["player_id"]) < int(b["player_id"])
+		if str(a["object_name"]) != str(b["object_name"]):
+			return str(a["object_name"]) < str(b["object_name"])
+		return str(a["field"]) < str(b["field"]))
+	var lines:Array = []
+	for group_key in transfers.keys():
+		var transfer:Dictionary = transfers[group_key]
+		lines.append({
+			"kind": "zone_move", "player_id": int(transfer["player_id"]), "object_name": "",
+			"field": ZONE_FIELD, "from_zone": str(transfer["from_zone"]),
+			"to_player": int(transfer["to_player"]), "to_zone": str(transfer["to_zone"]),
+			"count": int(transfer["count"])})
+	lines.sort_custom(func(a, b):
+		if str(a["from_zone"]) != str(b["from_zone"]):
+			return str(a["from_zone"]) < str(b["from_zone"])
+		return str(a["to_zone"]) < str(b["to_zone"]))
+	lines.append_array(changes)
+	return lines
+
+
+#一条变化的中文行：谁／哪个对象／哪个字段／前值 → 后值。字段名取显式声明，不猜
+func format_rule_change(change:Dictionary) -> String:
+	if str(change.get("kind", "")) == "zone_move":
+		return _format_zone_move(change)
+	var field:String = str(change.get("field", ""))
+	var shown_field:String = str(OBJECT_NUMERIC_FIELDS.get(field, PLAYER_NUMERIC_FIELDS.get(field, field)))
+	var owner:String = ""
+	var id:int = int(change.get("player_id", -1))
+	if id >= 0:
+		owner = player_shown_name(id)
+	var object_name:String = str(change.get("object_name", ""))
+	if object_name != "":
+		owner += "【%s】" % object_name
+	var prefix:String = (owner + " ") if owner != "" else ""
+	return "%s%s %s → %s" % [prefix, shown_field, change.get("before"), change.get("after")]
+
+
+#一条牌区搬运的中文行：谁手上的哪个区 → 谁手上的哪个区 ×张数。
+#目标玩家与来源玩家相同时不重复写名字（"远坂凛 手牌 → 弃牌堆 ×3"），
+#与数值明细"玩家 字段 前 → 后"同一写法：名字和它描述的东西之间留一个空格
+func _format_zone_move(change:Dictionary) -> String:
+	var from_player:int = int(change.get("player_id", -1))
+	var to_player:int = int(change.get("to_player", -1))
+	var from_zone:String = _zone_shown_name(str(change.get("from_zone", "")))
+	var to_zone:String = _zone_shown_name(str(change.get("to_zone", "")))
+	var from_part:String = from_zone
+	if from_player >= 0:
+		from_part = "%s %s" % [player_shown_name(from_player), from_zone]
+	var to_part:String = to_zone
+	if to_player >= 0 and to_player != from_player:
+		to_part = "%s %s" % [player_shown_name(to_player), to_zone]
+	return "%s → %s ×%d" % [from_part, to_part, int(change.get("count", 0))]
+
+
+#牌区路径 → 显示名：按"段"登记（side/skills 这类嵌套每段各自翻译），
+#没有登记中文名的段按原键名显示——不猜含义，缺登记只是显示得不好看，不会显示错
+func _zone_shown_name(zone_path:String) -> String:
+	if zone_path == "":
+		return ""
+	var shown:Array = []
+	for part in zone_path.split("/"):
+		shown.append(str(ZONE_SEGMENT_SHOWN.get(str(part), str(part))))
+	return "".join(shown)
+
+
+func player_shown_name(player_id:int) -> String:
+	if !GameData.player_data_library.has(player_id):
+		return "玩家 %d" % player_id
+	var master = (GameDataManager.get_player_data(player_id) as Dictionary).get("master")
+	if master != null:
+		var shown:String = str(master.get_shown_name())
+		if shown != "":
+			return shown
+	return "玩家 %d" % player_id
+
+
 #清理本局运行时状态，保留已经加载的游戏资源和效果对象
 func reset_runtime():
 	effect_pool.clear()
@@ -73,13 +310,21 @@ func reset_runtime():
 	activation_pool.clear()
 	waiting_effect = null
 	waiting_selection = null
+	waiting_location = null
+	waiting_players = null
 	_waiting_selection_option = -1
 	_pending_selection_choice.clear()
+	_pending_location_choice.clear()
+	_pending_player_choice.clear()
 	messages.clear()
+	effect_results.clear()
+	_pending_announcements.clear()
+	_queued_time_point_batches.clear()
 	matched_time_points.clear()
 	resolved_effects.clear()
 	closed_time_points.clear()
 	countered_funcs.clear()
+	settled_phase_windows.clear()
 	time_point_id = 0
 	is_running = false
 	for id in GameData.player_data_library.keys():
@@ -137,10 +382,33 @@ func is_option_available(effect:BaseEffect, option_index:int, extra_count:int = 
 		return false
 	if effect._max_choices != -1 and extra_count > effect._max_choices:
 		return false
+	if effect._options[option_index].get("select_location", null) is Dictionary and !_location_option_origin_allowed(effect, effect._options[option_index].get("select_location", {})):
+		return false
+	#声明了玩家目标但候选集为空（如所在战场没有别的玩家）时该选项不可选：
+	#与"起点不在声明战区"同一条口径，避免玩家点下去才发现没有可点的目标
+	if effect._options[option_index].get("select_players", null) is Dictionary:
+		var pl_spec:Dictionary = effect._options[option_index].get("select_players", {})
+		if int(pl_spec.get("min", 1)) > 0 and get_player_selection_candidates(pl_spec, effect).is_empty():
+			return false
 	var res_level := get_source_resource_level(effect)
 	if res_level != -1 and extra_count > res_level:
 		return false
+	# 选项可声明发动前置查询（如「本回合必须打出了某种牌」）。这里必须在"能不能选"这一层预判，
+	# 否则玩家会看到一条点下去才被拒的选项；预判阶段不推消息，避免每帧刷提示
+	if !_option_activation_requirements_met(effect, {option_index: extra_count}, true):
+		return false
 	return true
+
+
+func _location_option_origin_allowed(effect:BaseEffect, spec:Dictionary) -> bool:
+	var origin:BaseLocation = GetLocation.new().exec(effect._trigger_player_id)
+	var area:BaseMapArea = origin.get_from() as BaseMapArea if origin != null else null
+	if area == null:
+		return false
+	#未声明起点限制时不限制：卡面「移动至任意地点」这类没有起点条件，
+	#与"未声明 owner 就挑自己的牌"同一口径（缺声明=不限，而不是恒假）
+	var allowed:Array = spec.get("allowed_origin_areas", []) as Array
+	return allowed.is_empty() or allowed.has(str(area._area_name))
 
 
 #是否还有任何一个选项可选；全部耗尽(次数上限用完或来源资源为0)时UI/AI都不应再弹出这个效果
@@ -179,6 +447,47 @@ func validate_selection(effect:BaseEffect, selection:Dictionary) -> bool:
 	return true
 
 
+#选项可声明发动前置查询；查询在记用量/扣来源资源之前执行。
+#每项 requirement 的 funcs 共用一张临时变量表，最后一个返回值为真才通过；
+#失败消息完全由数据声明，引擎不认识具体卡名或资源名。
+func _option_activation_requirements_met(effect:BaseEffect, selection:Dictionary, silent:bool = false) -> bool:
+	var previous_effect = activating_eff
+	var previous_vars:Array = effect._self_vars.duplicate()
+	activating_eff = effect
+	for idx in selection.keys():
+		if !(idx is int) or idx < 0 or idx >= effect._options.size():
+			continue
+		var requirements = effect._options[idx].get("activation_requirements", [])
+		if !(requirements is Array):
+			continue
+		for requirement in requirements:
+			if !(requirement is Dictionary):
+				continue
+			effect._self_vars = []
+			var final_result = null
+			var called:bool = false
+			for desc in (requirement.get("funcs", []) as Array):
+				var outcome:Array = run_func_descriptor(desc, effect)
+				if bool(outcome[0]):
+					called = true
+					final_result = outcome[1]
+			var passed:bool = called
+			if final_result is BaseNumber:
+				passed = passed and final_result.number != 0
+			else:
+				passed = passed and bool(final_result)
+			if !passed:
+				var message:String = str(requirement.get("message", "无法发动该选项"))
+				if !silent:
+					push_message(message, effect._trigger_player_id)
+				effect._self_vars = previous_vars
+				activating_eff = previous_effect
+				return false
+	effect._self_vars = previous_vars
+	activating_eff = previous_effect
+	return true
+
+
 #把一份已校验通过的选择计入用量，并按声明消耗来源资源层数。
 #在validate_selection通过、确定要发动之后调用一次
 func record_selection_usage(effect:BaseEffect, selection:Dictionary):
@@ -192,6 +501,17 @@ func record_selection_usage(effect:BaseEffect, selection:Dictionary):
 		if lvl is BaseNumber:
 			lvl.minus(BaseNumber.new(total))
 	effect._chosen_selection = selection.duplicate()
+	#选项使用事实：记下"谁用了哪个效果的哪一项"，供后续规则查询（如"本回合是否以令咒获得过魔力"）。
+	#带选项标签，让查询按语义匹配而不是按下标——选项顺序或文案变化不会让规则静默失效
+	for idx in selection.keys():
+		if !(idx is int) or idx < 0 or idx >= effect._options.size():
+			continue
+		var opt:Dictionary = effect._options[idx]
+		var tags:Array = (opt.get("tags", []) as Array).duplicate()
+		tags.append("option_used")
+		GameLog.record("option_used", effect._trigger_player_id, -1, "", effect, tags,
+			{"effect_name": effect._name, "option_index": int(idx),
+				"option_name": str(opt.get("shown_option_name", ""))})
 
 
 #按选中的选择字典取要结算的funcs：次数>1的选项，其funcs重复追加相应次数
@@ -278,6 +598,12 @@ func unregister_effect(effect:BaseEffect):
 		waiting_selection = null
 		_waiting_selection_option = -1
 		_pending_selection_choice.erase(effect)
+	if waiting_location == effect:
+		waiting_location = null
+		_pending_location_choice.erase(effect)
+	if waiting_players == effect:
+		waiting_players = null
+		_pending_player_choice.erase(effect)
 	var id = effect._trigger_player_id
 	if id != -1:
 		var pl_data = GameDataManager.get_player_data(id) as Dictionary
@@ -293,10 +619,15 @@ func sync_loaded_effect_pool():
 
 #时点流程
 #进入一个新时点。调用方(TimePointChecker)负责先把各玩家的current_time_points更新好
-func run_time_point():
+func run_time_point(source = null):
 	if is_running:
 		#结算过程中派发的时点只追加效果，交由外层流程继续处理
-		collect_current_effects()
+		collect_current_effects(source)
+		TimePointChecker.consume_transient_time_points()
+		return
+	if is_waiting_for_choice():
+		_queue_time_point_batch(source)
+		TimePointChecker.consume_transient_time_points()
 		return
 	time_point_id += 1
 	decision_queue.clear()
@@ -306,23 +637,82 @@ func run_time_point():
 	closed_time_points.clear()
 	countered_funcs.clear()
 	waiting_effect = null
-	collect_current_effects()
+	collect_current_effects(source)
+	# 匹配结果已经保存于效果快照；没有效果响应的瞬时事件也必须消费，
+	# 否则下一次无来源的费用计算会重新触发上一张牌的出牌事件。
+	TimePointChecker.consume_transient_time_points()
 	run_pipeline()
 
 
+func _queue_time_point_batch(source) -> void:
+	var players: Dictionary = {}
+	for id in get_all_players_id():
+		var data: Dictionary = GameDataManager.get_player_data(id)
+		players[id] = {
+			"current": (data["current_time_points"] as Array).duplicate(),
+			"dynamic": (data["dynamic_time_points"] as Array).duplicate()
+		}
+	_queued_time_point_batches.append({"source": source, "players": players})
+
+
+func _run_next_queued_time_point() -> void:
+	if is_waiting_for_choice() or _queued_time_point_batches.is_empty():
+		return
+	var batch: Dictionary = _queued_time_point_batches.pop_front()
+	var players: Dictionary = batch.get("players", {})
+	for id in players.keys():
+		if not GameData.player_data_library.has(id):
+			continue
+		var data: Dictionary = GameDataManager.get_player_data(id)
+		var snapshot: Dictionary = players[id]
+		data["current_time_points"] = (snapshot.get("current", []) as Array).duplicate()
+		data["dynamic_time_points"] = (snapshot.get("dynamic", []) as Array).duplicate()
+	run_time_point(batch.get("source"))
+
+
 #检查全局效果池，把本时点命中的效果按顺位排进待决定队列
-func collect_current_effects():
+func collect_current_effects(source = null):
 	var newly_matched:Array = []
-	for effect:BaseEffect in effect_pool:
+	# 到期注销会修改效果池，遍历快照避免跳过相邻效果。
+	for effect:BaseEffect in effect_pool.duplicate():
 		if effect._trigger_player_id == -1:
+			continue
+		#手动发动类效果(如令咒)不进自动询问队列：它只在玩家主动点击发动时才被询问，
+		#否则会在每个命中时点自动弹窗问玩家用不用
+		if effect._is_manual:
 			continue
 		if resolved_effects.has(effect):
 			continue
 		if decision_queue.has(effect) or activation_pool.has(effect):
 			continue
+		var matched = get_matched_time_points(effect)
+		var expired: bool = false
+		if not effect._expire_time_points.is_empty():
+			var current_points = (GameDataManager.get_player_data(effect._trigger_player_id) as Dictionary)["current_time_points"] as Array
+			for expire_point in effect._expire_time_points:
+				if current_points.has(expire_point):
+					expired = true
+					break
+		# 目标与到期同帧时目标优先；只有目标未命中才注销。
+		if matched.is_empty() and expired:
+			unregister_effect(effect)
+			continue
 		if !card_state_allows(effect):
 			continue
-		var matched = get_matched_time_points(effect)
+		if source != null:
+			var owner = effect.from.get_ref() if effect.from is WeakRef else effect.from
+			if owner != source:
+				matched.erase(TimePoints.CARD_ENTERED)
+				if effect._source_bound:
+					continue
+		if matched.is_empty():
+			continue
+		#持续阶段窗口（self_action_phase / self_battle_phase / self_climax …）派发后会一直留在
+		#玩家的时点表里，直到阶段轮转才被 clear_player_scope_time_points 清掉。同一阶段内
+		#后续每个批次（战力结算、事件进场、战后选择…）都会再命中它，纯被动效果因此被反复执行
+		#——实测言峰"战斗阶段：总威力+2"在同一个战斗阶段里叠到 8 点。这里按"窗口内只结算一次"过滤，
+		#瞬时时点（PLAYED_CARD、MAGIC_ADD…）不受影响，仍然每次命中都算
+		matched = _first_settlement_of_phase_windows(effect, matched)
 		if matched.is_empty():
 			continue
 		matched_time_points[effect] = matched
@@ -333,18 +723,47 @@ func collect_current_effects():
 	sort_by_turn_order(decision_queue)
 
 
+#持续阶段窗口的结算记录：效果 → 本窗口内已结算过的窗口时点。
+#窗口靠换行动者/换阶段轮转（由 TimePointChecker 调 reset_phase_window_settlements 清空），
+#不随每个时点批次清，否则等于没去重
+var settled_phase_windows:Dictionary = {}
+
+
+## 只保留本窗口内"还没结算过"的持续窗口时点，瞬时时点原样通过。
+## 缺了这一步，持续窗口会被同一阶段内的每个后续批次重复结算（威力类效果表现为暴涨）
+func _first_settlement_of_phase_windows(effect:BaseEffect, matched:Array) -> Array:
+	var result:Array = []
+	var settled:Array = settled_phase_windows.get(effect, [])
+	for tp in matched:
+		var point := str(tp)
+		if !TimePointChecker.is_persistent_player_window(point):
+			result.append(tp)
+			continue
+		if settled.has(point):
+			continue
+		settled.append(point)
+		result.append(tp)
+	if !settled.is_empty():
+		settled_phase_windows[effect] = settled
+	return result
+
+
+## 阶段窗口整体轮转（换行动者、换阶段、重开一局）时清空
+func reset_phase_window_settlements() -> void:
+	settled_phase_windows.clear()
+
+
 #_need_activate表示"这个效果需不需要卡牌处于激活状态"。
-#纯被动不受此限制——规则里"被动："满足条件即强制生效，即使印刷此文本的卡牌未被展示
+#是否强制结算由_is_pure_passive控制，不绕过数据声明的激活要求。
 func card_state_allows(effect:BaseEffect) -> bool:
 	#声明了每局限一次的效果，本局已经触发过就不再进决断队列
 	if effect._once_per_game and is_effect_used_once(effect):
 		return false
-	if effect._is_pure_passive:
-		return true
 	if !effect._need_activate:
 		return true
-	if effect.from is BaseHandCard:
-		return (effect.from as BaseHandCard)._is_activating
+	var owner = effect.from.get_ref() if effect.from is WeakRef else effect.from
+	if owner is BaseHandCard:
+		return (owner as BaseHandCard)._is_activating
 	return true
 
 
@@ -355,6 +774,22 @@ func card_state_allows(effect:BaseEffect) -> bool:
 func get_matched_time_points(effect:BaseEffect) -> Array:
 	var pl_data = GameDataManager.get_player_data(effect._trigger_player_id) as Dictionary
 	var current_tps = pl_data["current_time_points"] as Array
+	if effect._is_manual:
+		#事件时点会被 start_effect 消耗；持续窗口按当前阶段/行动者重建，
+		#只用于手动查询，不重派自动效果，也不恢复已消耗的事件时点。
+		current_tps = current_tps.duplicate()
+		var phase = GameProgress.get_current_phase()
+		for phase_data in GameProgress.phases:
+			for prefix in [TimePoints.SELF_PREFIX, TimePoints.OTHERS_PREFIX]:
+				erase_all(current_tps, prefix + str(phase_data["mid"]))
+		for tp in [TimePoints.CLIMAX, TimePoints.NON_CLIMAX]:
+			for prefix in [TimePoints.SELF_PREFIX, TimePoints.OTHERS_PREFIX]:
+				erase_all(current_tps, prefix + str(tp))
+		if not phase.is_empty() and GameProgress.current_player_id >= 0:
+			var prefix = TimePoints.SELF_PREFIX if effect._trigger_player_id == GameProgress.current_player_id else TimePoints.OTHERS_PREFIX
+			for tp in [phase["mid"], TimePoints.CLIMAX if GameProgress.is_climax_round() else TimePoints.NON_CLIMAX]:
+				if TimePointChecker.phase_time_points.has(tp):
+					current_tps.append(prefix + str(tp))
 	var closed = closed_time_points.get(effect._trigger_player_id, []) as Array
 	var matched:Array = []
 	for tp in effect._time_points:
@@ -403,7 +838,7 @@ func run_pipeline():
 	is_running = true
 	while true:
 		#等玩家答复或被要求挑牌，由 submit_active_choice / submit_card_selection 继续跑
-		if waiting_effect != null or waiting_selection != null:
+		if waiting_effect != null or waiting_selection != null or waiting_location != null or waiting_players != null:
 			break
 		if !decision_queue.is_empty():
 			drain_decision_queue()
@@ -413,6 +848,11 @@ func run_pipeline():
 			continue
 		break
 	is_running = false
+	#本时点的效果都结算完了：把攒下的效果提示合并成一条推给玩家。
+	#放在这里而不是每个效果各推一条——同一时点连续触发的一批效果只弹一次
+	_flush_announcements()
+	if not is_waiting_for_choice():
+		_run_next_queued_time_point()
 
 
 #被动直接按顺位加入效果池，不询问；遇到需要玩家决定的效果就停下等答复
@@ -450,44 +890,75 @@ func is_effect_used_once(effect:BaseEffect) -> bool:
 	return !GameLog.query({"type": "effect", "actor": id, "data": {"effect_name": effect._name}}, null).is_empty()
 
 
-#效果自己的消耗(effect._cost)：付得起返回true并扣掉，付不起返回false。
-#消耗形状由数据声明：缺 number 键的是魔力数字消耗；{"type":"command_spell","amount":N}
-#是令咒消耗。没声明cost的效果直接放行。
-#魔力消耗与卡牌出牌同一套规则：无限魔力(is_magic_immune)状态下不检查也不扣；
-#扣费复用EditMagic，让魔力变化照常派发MAGIC_DECREASE时点。
-#令咒消耗扣command_spell_count并派发COMMAND_SPELL_USED时点——
-#令咒不是魔力，is_magic_immune是"魔力免疫"，不豁免令咒消耗
-func pay_effect_cost(effect:BaseEffect) -> bool:
+#效果自己的消耗(effect._cost)付不付得起——纯查询，不改任何状态。
+#与 pay_effect_cost 共用同一份判断：界面按它决定"能不能发动"，结算按它决定扣不扣，
+#两边不会出现"提示能发动、真发动时却付不起"的分裂。
+#消耗形状由数据声明：{"number":N}是魔力数字消耗；{"type":"command_spell","amount":N}是令咒消耗；
+#未识别的 type 一律放行——缺声明不给行为，避免新资源形状悄悄拦住老效果
+func can_pay_effect_cost(effect:BaseEffect) -> bool:
 	if effect == null:
 		return true
 	var cost = effect._cost
 	if cost == null:
 		return true
-	#数字形状：与卡牌费用同构的魔力消耗
+	var id:int = effect._trigger_player_id
+	if id < 0:
+		id = GameData.player_id
+	#数字形状：与卡牌费用同构的魔力消耗。无限魔力(is_magic_immune)视为付得起
 	if cost is BaseNumber:
 		if cost.number <= 0:
 			return true
-		var id:int = effect._trigger_player_id
-		if id < 0:
-			id = GameData.player_id
 		var player_data:Dictionary = GameDataManager.get_player_data(id)
 		if player_data == null or player_data.is_empty():
 			return false
 		if player_data.get("is_magic_immune", false):
 			return true
 		var magic = player_data["magic"] as BaseNumber
-		if magic == null or magic.number < cost.number:
+		return magic != null and magic.number >= cost.number
+	#其他资源形状：type 声明消耗哪种资源，amount 声明数量
+	if cost is Dictionary and cost.has("type"):
+		#令咒不是魔力，is_magic_immune 是"魔力免疫"，不豁免令咒消耗
+		if str(cost["type"]) != "command_spell":
+			return true
+		var count:int = int(cost.get("amount", 0))
+		if count <= 0:
+			return true
+		var pl_data:Dictionary = GameDataManager.get_player_data(id)
+		if pl_data == null or pl_data.is_empty():
 			return false
+		var spells = pl_data["command_spell_count"] as BaseNumber
+		return spells != null and spells.number >= count
+	return true
+
+
+#效果自己的消耗(effect._cost)：付得起返回true并扣掉，付不起返回false。
+#能不能付由 can_pay_effect_cost 判断，这里只负责扣减。
+#魔力消耗与卡牌出牌同一套规则：无限魔力(is_magic_immune)状态下不检查也不扣；
+#扣费复用EditMagic，让魔力变化照常派发MAGIC_DECREASE时点。
+#令咒消耗扣command_spell_count并派发COMMAND_SPELL_USED时点
+func pay_effect_cost(effect:BaseEffect) -> bool:
+	if !can_pay_effect_cost(effect):
+		return false
+	if effect == null or effect._cost == null:
+		return true
+	var cost = effect._cost
+	var id:int = effect._trigger_player_id
+	if id < 0:
+		id = GameData.player_id
+	if cost is BaseNumber:
+		if cost.number <= 0:
+			return true
+		var player_data:Dictionary = GameDataManager.get_player_data(id)
+		if player_data == null or player_data.is_empty():
+			return false
+		if player_data.get("is_magic_immune", false):
+			return true
 		EditMagic.new().exec(null, BaseNumber.new(0 - cost.number), id)
 		return true
-	#其他资源形状：type 声明消耗的是哪种资源，amount 声明数量。
-	#未识别的 type 一律放行——缺声明不给行为，避免新资源形状悄悄拦住老效果
 	if cost is Dictionary and cost.has("type"):
-		match str(cost["type"]):
-			"command_spell":
-				return _pay_command_spell_cost(effect, int(cost.get("amount", 0)))
-			_:
-				return true
+		if str(cost["type"]) != "command_spell":
+			return true
+		return _pay_command_spell_cost(effect, int(cost.get("amount", 0)))
 	return true
 
 
@@ -542,6 +1013,8 @@ func card_selection_spec(effect:BaseEffect) -> Dictionary:
 
 #挑牌的来源数组：按声明的 source（player_data 的键名）取。
 #来源由数据声明而不是写死手牌——以后"从弃牌堆挑一张"之类不必改这里
+# "挑谁的牌"同样由声明决定：owner 写 target_player 时取先由 select_players 选定的那名玩家；
+# 未声明时保持原语义（触发者自己），既有卡不受影响
 func card_selection_source(effect:BaseEffect) -> Array:
 	if effect == null:
 		return []
@@ -549,13 +1022,33 @@ func card_selection_source(effect:BaseEffect) -> Array:
 	var key := str(spec.get("source", ""))
 	if key == "":
 		return []
-	var pl_data = GameDataManager.get_player_data(effect._trigger_player_id) as Dictionary
+	var owner_id:int = effect._trigger_player_id
+	if str(spec.get("owner", "")) == CARD_SELECTION_OWNER_TARGET:
+		owner_id = effect._selected_player
+	if owner_id < 0:
+		return []
+	var pl_data = GameDataManager.get_player_data(owner_id) as Dictionary
 	if pl_data == null or !pl_data.has(key):
 		return []
 	var arr = pl_data[key]
-	if arr is Array:
-		return arr
-	return []
+	if !(arr is Array):
+		return []
+	#可选的属性筛选：卡面「从手牌打出一张力量基础攻击」这类限定由数据声明，
+	#候选里就不会出现选不了的目标（与 select_players 的候选集同一口径：
+	#范围由数据算，引擎不认识任何具体牌型）
+	var wanted = spec.get("attributes", null)
+	if wanted is Array and !wanted.is_empty():
+		arr = GetCardsByAttributesFrArr.new().exec(wanted, arr)
+	#可选的印刷威力上限：卡面「打出至多3张基本威力为3或更低的手牌」这类限定，
+	#与 attributes 同属"候选范围由数据算"（引擎不认识具体牌型，也不写死数字）
+	var max_power = spec.get("max_power", null)
+	if max_power != null:
+		var kept:Array = []
+		for card in arr:
+			if card is BaseAttack and (card._power as BaseNumber).number <= int(max_power):
+				kept.append(card)
+		arr = kept
+	return arr
 
 
 #本次提交里第一个"还要求玩家挑牌"的选项下标（没有则 -1）。
@@ -568,6 +1061,167 @@ func _option_requiring_card_selection(effect:BaseEffect, selection:Dictionary) -
 		if spec is Dictionary and int(spec.get("max", 1)) != 0:
 			return idx
 	return -1
+
+
+# 位置选择与 select_cards 同为选项级的延迟输入；只有选项显式声明才会等待。
+func _option_requiring_location_selection(effect:BaseEffect, selection:Dictionary) -> int:
+	for idx in selection.keys():
+		if !(idx is int) or idx < 0 or idx >= effect._options.size():
+			continue
+		if effect._options[idx].get("select_location", null) is Dictionary:
+			return idx
+	return -1
+
+
+#玩家目标选择同样是选项级延迟输入：只有选项声明了 select_players 才会等待
+func _option_requiring_player_selection(effect:BaseEffect, selection:Dictionary) -> int:
+	for idx in selection.keys():
+		if !(idx is int) or idx < 0 or idx >= effect._options.size():
+			continue
+		if effect._options[idx].get("select_players", null) is Dictionary:
+			return idx
+	return -1
+
+
+#候选玩家集由选项声明的 candidates 求值得到：那段声明是普通 func 描述（可写多条），
+#用与效果链完全相同的求值入口跑，把每条返回的数组并起来即候选id。
+#候选范围（同战区、在场、某职阶拥有者…）全部由数据决定，引擎不认识任何具体范围
+func get_player_selection_candidates(spec:Dictionary, effect:BaseEffect) -> Array:
+	var ids:Array = []
+	var descs = spec.get("candidates", [])
+	if descs is Dictionary or descs is String:
+		descs = [descs]
+	if !(descs is Array):
+		return ids
+	#求值要在"本效果为当前效果"的上下文里进行：候选声明里的 -1 表示"效果的触发者"，
+	#而查询可能发生在还没激活时（如选项可选性判断）。临时置上下文并在结束后还原，
+	#这样候选声明与效果链用同一套 player_id 约定，数据不必为"查询时点"换写法
+	var prev_eff = activating_eff
+	activating_eff = effect
+	for desc in descs:
+		if !(desc is Dictionary) and !(desc is BaseFunc):
+			continue
+		var res:Array = run_func_descriptor(desc, effect)
+		if !res[0] or !(res[1] is Array):
+			continue
+		for raw_id in res[1]:
+			var id:int = int(raw_id)
+			if GameData.player_data_library.has(id) and !ids.has(id):
+				ids.append(id)
+	activating_eff = prev_eff
+	return ids
+
+
+func get_pending_player_selection() -> Dictionary:
+	if waiting_players == null:
+		return {}
+	var pending:Dictionary = _pending_player_choice.get(waiting_players, {})
+	var option_index:int = int(pending.get("option", -1))
+	if option_index < 0 or option_index >= waiting_players._options.size():
+		return {}
+	var spec:Dictionary = waiting_players._options[option_index].get("select_players", {})
+	return {"effect": waiting_players, "spec": spec,
+		"candidates": get_player_selection_candidates(spec, waiting_players)}
+
+
+#提交玩家目标选择，仍在支付前。校验两条：人数落在声明范围内、每个目标都在候选集里。
+#不合法时整体按"放弃"处理（与选牌一致），避免 UI 传坏数据时结算到不该结算的目标
+func submit_player_selection(effect:BaseEffect, players:Array) -> bool:
+	if effect == null or waiting_players != effect:
+		return false
+	var pending:Dictionary = _pending_player_choice.get(effect, {})
+	var option_index:int = int(pending.get("option", -1))
+	var selection:Dictionary = pending.get("selection", {})
+	waiting_players = null
+	_pending_player_choice.erase(effect)
+	if option_index < 0 or option_index >= effect._options.size() or selection.is_empty():
+		if !is_running: run_pipeline()
+		return false
+	var spec:Dictionary = effect._options[option_index].get("select_players", {})
+	var candidates:Array = get_player_selection_candidates(spec, effect)
+	var min_count:int = int(spec.get("min", 1))
+	var max_count:int = int(spec.get("max", min_count))
+	var picked:Array = []
+	for raw_id in players:
+		var id:int = int(raw_id)
+		if !candidates.has(id) or picked.has(id):
+			if !is_running: run_pipeline()
+			return false
+		picked.append(id)
+	if picked.size() < min_count or (max_count != -1 and picked.size() > max_count):
+		if !is_running: run_pipeline()
+		return false
+	effect._selected_players = picked
+	effect._selected_player = int(picked[0]) if picked.size() == 1 else -1
+	#同一个选项可以同时要求"选玩家"和"选这名玩家的牌"（如"关闭一名交战玩家至多一张基础攻击"）：
+	#先记下目标，再转成等待选牌；支付与用量留到挑完牌，语义与只声明 select_cards 时一致
+	#（挑完才扣资源、取消或提交不合法等于这个效果没发动）
+	if effect._options[option_index].get("select_cards", null) is Dictionary:
+		waiting_selection = effect
+		_waiting_selection_option = option_index
+		_pending_selection_choice[effect] = selection
+		return true
+	if !pay_effect_cost(effect):
+		if !is_running: run_pipeline()
+		return false
+	record_selection_usage(effect, selection)
+	add_to_activation_pool(effect)
+	if !is_running: run_pipeline()
+	return true
+
+
+func get_pending_location_selection() -> Dictionary:
+	if waiting_location == null:
+		return {}
+	var pending:Dictionary = _pending_location_choice.get(waiting_location, {})
+	var option_index:int = int(pending.get("option", -1))
+	if option_index < 0 or option_index >= waiting_location._options.size():
+		return {}
+	return {"effect": waiting_location, "spec": waiting_location._options[option_index].get("select_location", {})}
+
+
+# 位置选择提交仍在支付前；起点由选项声明的 allowed_origin_areas 校验，目标只要求是地图上的位置。
+func submit_location_selection(effect:BaseEffect, location:BaseLocation) -> bool:
+	if effect == null or waiting_location != effect:
+		return false
+	var pending:Dictionary = _pending_location_choice.get(effect, {})
+	var option_index:int = int(pending.get("option", -1))
+	var selection:Dictionary = pending.get("selection", {})
+	waiting_location = null
+	_pending_location_choice.erase(effect)
+	#null 是显式取消位置选择：等待必须清掉，否则 AI/无界面推进会永久卡在这里。
+	#与选牌/选玩家的非法或放弃提交同一口径，不支付费用、不记录用量。
+	if location == null:
+		if !is_running: run_pipeline()
+		return false
+	if option_index < 0 or option_index >= effect._options.size() or selection.is_empty():
+		if !is_running: run_pipeline()
+		return false
+	var spec:Dictionary = effect._options[option_index].get("select_location", {})
+	var origin:BaseLocation = GetLocation.new().exec(effect._trigger_player_id)
+	var origin_area:BaseMapArea = origin.get_from() as BaseMapArea if origin != null else null
+	var allowed:Array = spec.get("allowed_origin_areas", []) as Array
+	if origin_area == null or !(location.get_from() is BaseMapArea):
+		if !is_running: run_pipeline()
+		return false
+	if !allowed.is_empty() and !allowed.has(str(origin_area._area_name)):
+		if !is_running: run_pipeline()
+		return false
+	#目标区域的排除同样由数据声明（卡面「移动至除魔术工房外的任意地点」这类限定），
+	#与 allowed_origin_areas 对称：范围由数据算，引擎不认识具体区域名
+	var target_area:BaseMapArea = location.get_from() as BaseMapArea
+	var forbidden:Array = spec.get("forbidden_target_areas", []) as Array
+	if target_area != null and forbidden.has(str(target_area._area_name)):
+		if !is_running: run_pipeline()
+		return false
+	effect._selected_location = location
+	if !pay_effect_cost(effect):
+		if !is_running: run_pipeline()
+		return false
+	record_selection_usage(effect, selection)
+	add_to_activation_pool(effect)
+	if !is_running: run_pipeline()
+	return true
 
 
 #玩家为选牌提交了具体牌张。张数或来源不合法时整体视为放弃：
@@ -590,6 +1244,11 @@ func submit_card_selection(effect:BaseEffect, cards:Array) -> bool:
 		return false
 	effect._selected_cards = cards.duplicate()
 	#挑完牌才真正记用量/扣来源资源，然后把效果交给结算
+	if !pay_effect_cost(effect):
+		effect._selected_cards = []
+		if !is_running:
+			run_pipeline()
+		return false
 	record_selection_usage(effect, pending)
 	decision_queue.erase(effect)
 	add_to_activation_pool(effect)
@@ -617,7 +1276,71 @@ func _is_card_selection_valid(spec:Dictionary, source:Array, cards:Array) -> boo
 
 
 func is_waiting_for_choice() -> bool:
-	return waiting_effect != null
+	return waiting_effect != null or waiting_selection != null or waiting_location != null or waiting_players != null
+
+
+#玩家此刻能不能主动发动这个手动效果。判据全部复用既有规则：
+#效果自己声明了 is_manual、属于该玩家、没有别的答复/挑牌在等、
+#卡状态允许(每局限一次、每回合一次等)、付得起自己的消耗、
+#且当前时点命中它自己声明的发动窗口(time_points 在这类效果上是"允许发动的时机窗口")。
+#界面提示与点击入口共用这一个判据，避免出现"看起来能发动、点下去没反应"
+func can_manual_activate(effect:BaseEffect, player_id:int) -> bool:
+	if effect == null or !effect._is_manual:
+		return false
+	if player_id < 0 or effect._trigger_player_id != player_id:
+		return false
+	if waiting_effect != null or waiting_selection != null or waiting_location != null or waiting_players != null:
+		return false
+	if !card_state_allows(effect):
+		return false
+	# 选项全都不可用（前置条件不满足/次数耗尽）时不询问：这条能力此刻没有可做的事，
+	# 进入询问只会让玩家点开一个什么都选不了的窗口
+	if effect.has_options() and !has_available_options(effect):
+		return false
+	if !can_pay_effect_cost(effect):
+		return false
+	return !get_matched_time_points(effect).is_empty()
+
+
+#这个玩家此刻有没有"能点着发动"的手动效果。
+#战斗阶段与准备好阶段没有点击类操作，界面靠它决定"跳过这个玩家"还是"停下来等他点"——
+#只看有没有正在等待的答复会漏掉"还没点、但点得动"的情况：宝石这类手动效果
+#不会自己进等待队列，必须等玩家点击才产生等待。
+#判据与点击入口、金框提示共用 can_manual_activate，不另写一套
+func has_manual_activation(player_id:int) -> bool:
+	return not manual_activations(player_id).is_empty()
+
+
+#列出这个玩家此刻能点着发动的所有手动效果。
+#AI 决策与界面停驻判断共用它；判据与点击入口完全同源，不另写一套
+func manual_activations(player_id:int) -> Array:
+	var result:Array = []
+	if player_id < 0:
+		return result
+	for effect in effect_pool:
+		if not (effect is BaseEffect) or not effect._is_manual:
+			continue
+		if can_manual_activate(effect, player_id):
+			result.append(effect)
+	return result
+
+
+#玩家主动发动一个手动效果(如令咒)：把它排进待答复队列，之后的询问、选项弹窗、
+#费用支付、放弃语义、用量计数全部走与自动触发效果相同的那条链路。
+#返回是否真的开始询问
+func request_manual_activation(effect:BaseEffect, player_id:int) -> bool:
+	if !can_manual_activate(effect, player_id):
+		return false
+	matched_time_points[effect] = get_matched_time_points(effect)
+	effect._trigger_time_points = matched_time_points[effect].duplicate()
+	#新的一次主动请求不是同一批次里的自动重触发。
+	resolved_effects.erase(effect)
+	if !decision_queue.has(effect):
+		decision_queue.append(effect)
+		sort_by_turn_order(decision_queue)
+	if !is_running:
+		run_pipeline()
+	return true
 
 
 #玩家答复。should_activate为false也算走完流程
@@ -627,6 +1350,13 @@ func submit_active_choice(effect:BaseEffect, should_activate:bool) -> bool:
 		return false
 	decision_queue.erase(effect)
 	waiting_effect = null
+	if !should_activate:
+		#拒绝在本窗口内即放弃：这里必须记一笔，否则 run_pipeline 会立刻把同一个自动效果
+		#重新收进决策队列，"拒绝→重问"无限循环，整局卡死（实测：一个没有效果体的空壳效果
+		#在战斗阶段能把对局永久卡在第2回合）。窗口轮转由 reset_phase_window_settlements 统一清理，
+		#与纯被动效果"窗口内只结算一次"同一口径；玩家之后主动请求会 erase 掉这笔记录（见
+		#request_manual_activation），所以拒绝不封死再次发动的机会
+		resolved_effects[effect] = "declined"
 	if should_activate:
 		#付不起效果自己声明的魔力消耗就当作放弃，避免结算到一半才发现扣不动
 		if !pay_effect_cost(effect):
@@ -656,6 +1386,19 @@ func submit_option_choice(effect:BaseEffect, selection) -> bool:
 		return submit_active_choice(effect, false)
 	if !validate_selection(effect, selection_dict):
 		return submit_active_choice(effect, false)
+	#发动条件先于任何延迟选择、用量记录和资源支付；失败按放弃处理，提示由数据声明。
+	if !_option_activation_requirements_met(effect, selection_dict):
+		return submit_active_choice(effect, false)
+	#选玩家必须排在选牌之前：同一个选项可以声明"选玩家 + 选那名玩家的牌"，
+	#选牌要拿 _selected_player 去定位来源区，顺序反了会先停下等选牌却没有目标。
+	#只声明其中一项时另一项判为 -1，顺序调整对既有卡没有影响
+	var player_option := _option_requiring_player_selection(effect, selection_dict)
+	if player_option != -1:
+		decision_queue.erase(effect)
+		waiting_effect = null
+		waiting_players = effect
+		_pending_player_choice[effect] = {"selection": selection_dict, "option": player_option}
+		return true
 	#选中的选项还要求玩家挑具体牌张时，先停下等挑牌：
 	#此刻刻意不记用量也不扣来源资源，玩家取消挑牌时等于"这个效果没发动"，不会白扣
 	var selection_option := _option_requiring_card_selection(effect, selection_dict)
@@ -665,6 +1408,13 @@ func submit_option_choice(effect:BaseEffect, selection) -> bool:
 		waiting_selection = effect
 		_waiting_selection_option = selection_option
 		_pending_selection_choice[effect] = selection_dict
+		return true
+	var location_option := _option_requiring_location_selection(effect, selection_dict)
+	if location_option != -1:
+		decision_queue.erase(effect)
+		waiting_effect = null
+		waiting_location = effect
+		_pending_location_choice[effect] = {"selection": selection_dict, "option": location_option}
 		return true
 	record_selection_usage(effect, selection_dict)
 	return submit_active_choice(effect, true)
@@ -783,11 +1533,7 @@ func is_func_countered(effect:BaseEffect, _func:BaseFunc) -> bool:
 #效果执行
 #只管理时点上下文，不推进回合，也不再维护效果批次索引
 func start_effect():
-	for id in get_all_players_id():
-		var pl_data = GameDataManager.get_player_data(id) as Dictionary
-		#清空而不是赋新数组，否则别处持有的旧引用会失效
-		(pl_data["dynamic_time_points"] as Array).clear()
-	TimePointChecker.time_point_update()
+	TimePointChecker.consume_transient_time_points()
 
 
 func end_effect():
@@ -937,14 +1683,144 @@ func activate_effect(effect:BaseEffect):
 	start_effect()
 	#每次激活都从空白的变量表开始，避免读到上一次激活的残留值
 	effect._self_vars = []
+	#手动发动的结果要写清"谁/哪个对象被改了什么"：结算前后各取一次规则状态快照，
+	#差值就是这次发动的实际影响（与卡面文案无关，条件不满足时差值为空）
+	var state_before:Dictionary = capture_rule_state() if effect._is_manual else {}
 
 	#多选一效果结算选中分支的funcs，不结算effect自身的_funcs(那里本就是空的)
 	var funcs_to_run:Array = get_chosen_funcs(effect) if effect.has_options() else effect._funcs
+	var applied: bool = false
 	for f:BaseFunc in funcs_to_run:
-		run_base_func(f, effect)
+		var outcome: Array = run_base_func(f, effect)
+		if bool(outcome[0]) and f._var_index == -1 and f._name != "do_nothing":
+			applied = true
 
 	end_effect()
 	GameLog.end_execution(execution_id)
 	#日志：这个效果本局触发过了。"每局限一次"的判断也从这里查，
 	#不再另外维护一份 used_once_effects
-	GameLog.record("effect", effect._trigger_player_id, -1, "", effect, ["effect"], {"effect_name": effect._name})
+	GameLog.record("effect", _effect_fact_actor_id(effect), -1, "", effect, ["effect"],
+		{"effect_name": effect._name, "shown_effect": str(effect._shown_name),
+		 "source_name": _effect_source_name(effect), "applied": applied,
+		 "trigger_time_points": effect._trigger_time_points.duplicate()})
+	# 手动发动即使没有产生即时数值变化，也要给玩家交代结算结果。
+	# applied 只表示执行了写入型函数，不表示玩家没有确认发动。
+	if applied or effect._is_manual:
+		var changes:Array = diff_rule_state(state_before, capture_rule_state()) if effect._is_manual else []
+		_announce_effect(effect, changes)
+	if effect._remove_after_trigger:
+		unregister_effect(effect)
+
+
+#效果结算完后统一告知玩家"谁因为什么受到了什么效果"。
+#放在这一处而不是各效果自己推：所有效果（自己的、他人的、事件牌、局势牌、buff）
+#都经由 activate_effect 结算，一处接线即全量覆盖。
+#只推有卡面文案的效果：没有 shown_name 的是系统内部效果（禁令声明、
+#排除胜负判定这类持续型被动），推内部英文名对玩家没有意义。
+#来源对象名（哪张牌/哪个状态发动的）从效果的 from 取，取不到就只报效果文案
+func _announce_effect(effect:BaseEffect, changes:Array = []) -> void:
+	if effect == null:
+		return
+	var text:String = str(effect.get_shown_name())
+	#选项类效果（如令咒的三选一）要报出本次实际选中的选项名：效果级文案只是"令咒"这种统称，
+	#不报选项玩家无法核对刚才选的哪一项。选项名由数据声明，不按牌名/角色名分支
+	var chosen_lines:Array = []
+	for idx in effect._chosen_selection.keys():
+		if !(idx is int) or idx < 0 or idx >= effect._options.size():
+			continue
+		var opt_name:String = str(effect._options[idx].get("shown_option_name", ""))
+		if opt_name != "":
+			chosen_lines.append(opt_name)
+	if !chosen_lines.is_empty():
+		text = "\n".join(chosen_lines)
+	if text == "":
+		return
+	var actor:String = _effect_actor_name(effect)
+	var source:String = _effect_source_name(effect)
+	var parts:Array = []
+	if actor != "":
+		parts.append(actor)
+	#御主自身能力中“触发玩家”和“来源对象”可能是同一个名字；此时只显示一次。
+	#来源为卡牌、状态或其他对象时仍保留【来源】，玩家才能知道是哪张牌发动。
+	var actor_name:String = actor.trim_suffix("：")
+	if source != "" and source != actor_name:
+		parts.append("【%s】" % source)
+	var line:String = text if parts.is_empty() else ("%s%s" % ["".join(parts), text])
+	#玩家主动发动的能力使用独立结果队列：确认完成后由专门的“发动结果”弹窗展示，
+	#不与下一条能力询问共用或重叠。自动/被动效果仍按时点折叠成普通公告。
+	if effect._is_manual:
+		var lines:Array = [line]
+		# 明细逐条写明"谁／哪个对象／哪个字段／前值 → 后值"：
+		# 玩家要能核对这次发动到底影响了谁，而不是只看到一句卡面文案。
+		if changes.is_empty():
+			lines.append("未产生即时变化")
+		else:
+			for change in changes:
+				lines.append(format_rule_change(change))
+		push_effect_result("\n".join(lines), -1)
+		return
+	#同一时点内触发的多条效果折叠成一条推送：战斗结算这类时点会连续触发一批效果，
+	#逐条推会把提示刷成一长串、还会互相覆盖。按玩家可见范围分桶累积，
+	#等本时点整条管线跑完（run_pipeline 收尾）再合并成一条
+	var scope:int = effect._trigger_player_id
+	var bucket:Array = _pending_announcements.get(scope, [])
+	#同一时点里同名效果只报一次（多张同名牌各触发一次时不必重复刷同一行）
+	if !bucket.has(line):
+		bucket.append(line)
+	_pending_announcements[scope] = bucket
+
+
+#把本时点累积的效果提示合并推送。由 run_pipeline 在整条管线跑完时调用——
+#那里才是"这个时点的效果都结算完了"的边界
+func _flush_announcements() -> void:
+	if _pending_announcements.is_empty():
+		return
+	var pending:Dictionary = _pending_announcements.duplicate()
+	#先清空再推送：push_message 不会再回头触发效果，但清空在前可避免任何重入重复推
+	_pending_announcements.clear()
+	#效果公布是公开事件：要让人知道"谁因为什么做了什么"，只推给触发者本人等于没公布。
+	#同一时点内触发的多条效果合并成一条，避免战斗结算时刷屏
+	var all_lines:Array = []
+	for scope in pending.keys():
+		for line in pending[scope]:
+			if not all_lines.has(line):
+				all_lines.append(line)
+	if not all_lines.is_empty():
+		push_message("\n".join(all_lines), -1)
+
+
+#效果触发者的示人名字（"谁"）。未归属玩家的效果（事件牌/局势牌挂在场上）返回空串
+func _effect_actor_name(effect:BaseEffect) -> String:
+	var id:int = _effect_fact_actor_id(effect)
+	if id < 0 or !GameData.player_data_library.has(id):
+		return ""
+	var master = (GameDataManager.get_player_data(id) as Dictionary).get("master")
+	if master == null:
+		return "玩家 %d：" % id
+	var shown:String = str(master.get_shown_name())
+	return ("%s：" % shown) if shown != "" else ("玩家 %d：" % id)
+
+
+func _effect_fact_actor_id(effect:BaseEffect) -> int:
+	var owner = effect.from
+	if owner is WeakRef:
+		owner = owner.get_ref()
+	# 场上牌效果借玩家 id 作为结算顺序锚点，该玩家不是发动者；提示只显示真实来源牌。
+	if owner is BaseSituation or owner is BaseEvent:
+		return -1
+	return effect._trigger_player_id
+
+
+#效果来源对象的示人名字（"因为什么"）：哪张牌、哪个状态发动的
+func _effect_source_name(effect:BaseEffect) -> String:
+	var owner = effect.from
+	if owner == null:
+		return ""
+	#from 有两种形态：WeakRef（打断所有权强引用环用）与直接持有对象本身。
+	#两种都要兼容——只按 WeakRef 处理会在直接持有对象时报
+	#"Nonexistent function 'get_ref' in base 'RefCounted (BaseMaster)'"
+	if owner is WeakRef:
+		owner = owner.get_ref()
+	if owner == null or !owner.has_method("get_shown_name"):
+		return ""
+	return str(owner.get_shown_name())

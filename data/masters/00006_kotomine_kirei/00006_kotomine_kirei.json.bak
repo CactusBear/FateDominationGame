@@ -1,0 +1,543 @@
+{
+  "master_name": "kotomine_kirei",
+  "shown_master_name": "言峰绮礼",
+  "header_img": "00006_kotomine_kirei_header.png",
+  "master_card_img": "00006_kotomine_kirei_cd.png",
+  "command_spell_img": "00006_kotomine_kirei_cs.png",
+  "effects": [
+	{
+	  "effect_name": "two_faces_identity_switch",
+	  "shown_effect_name": "两幅面孔 - 当从者真名隐藏时，你是【监督者】；其他情况下，你是【执行者】（包括且不限于你没有从者）",
+	  "time_points": [
+		"game_start",
+		"self_true_name_release",
+        "self_true_name_hidden"
+	  ],
+	  "priority": 0,
+	  "is_pure_passive": true,
+	  "is_residue": false,
+	  "effect_numbers": [],
+	  "funcs": [
+		{
+		  "func_name": "get_player_master",
+		  "parameters": [],
+		  "var_index": 0
+		},
+		{
+		  "func_name": "get_property",
+		  "parameters": [
+			{
+			  "self_var": 0
+			},
+            "_specials"
+		  ],
+		  "var_index": 1
+		},
+		{
+		  "func_name": "get_dictionary_value",
+		  "parameters": [
+			{
+			  "self_var": 1
+			},
+            "BUFFS"
+		  ],
+		  "var_index": 2
+		},
+		{
+		  "func_name": "get_objects_by_name_fr_arr",
+		  "parameters": [
+			"overseer",
+			{
+			  "self_var": 2
+			}
+		  ],
+		  "var_index": 3
+		},
+		{
+		  "func_name": "get_card_by_index_fr_arr",
+		  "parameters": [
+			0,
+			{
+			  "self_var": 3
+			}
+		  ],
+		  "var_index": 4
+		},
+		{
+		  "func_name": "manage_buff",
+		  "parameters": [
+			{
+			  "self_var": 4
+			}
+		  ],
+		  "var_index": -1
+		},
+		{
+		  "func_name": "get_objects_by_name_fr_arr",
+		  "parameters": [
+			"executor",
+			{
+			  "self_var": 2
+			}
+		  ],
+		  "var_index": 5
+		},
+		{
+		  "func_name": "get_card_by_index_fr_arr",
+		  "parameters": [
+			0,
+			{
+			  "self_var": 5
+			}
+		  ],
+		  "var_index": 6
+		},
+		{
+		  "func_name": "manage_buff",
+		  "parameters": [
+			{
+			  "self_var": 6
+			}
+		  ],
+		  "var_index": -1
+		},
+		{
+		  "func_name": "get_player_buffs",
+		  "parameters": [],
+		  "var_index": 7
+		},
+		{
+		  "func_name": "get_objects_by_name_fr_arr",
+		  "parameters": [
+			"overseer",
+			{
+			  "self_var": 7
+			}
+		  ],
+		  "var_index": 8
+		},
+		{
+		  "func_name": "get_card_by_index_fr_arr",
+		  "parameters": [
+			0,
+			{
+			  "self_var": 8
+			}
+		  ],
+		  "var_index": 9
+		},
+		{
+		  "func_name": "get_objects_by_name_fr_arr",
+		  "parameters": [
+			"executor",
+			{
+			  "self_var": 7
+			}
+		  ],
+		  "var_index": 10
+		},
+		{
+		  "func_name": "get_card_by_index_fr_arr",
+		  "parameters": [
+			0,
+			{
+			  "self_var": 10
+			}
+		  ],
+		  "var_index": 11
+		},
+		{
+		  "func_name": "log_exists",
+		  "parameters": [
+			-1,
+			{
+			  "type": "time_point",
+			  "tags": "true_name_release",
+			  "actor": -1
+			},
+			null
+		  ],
+		  "var_index": 12
+		},
+		{
+		  "func_name": "not_func",
+		  "parameters": [
+			{
+			  "self_var": 12
+			}
+		  ],
+		  "var_index": 13
+		},
+		{
+		  "func_name": "set_property",
+		  "parameters": [
+			{
+			  "self_var": 9
+			},
+			"_is_active",
+			true
+		  ],
+		  "var_index": -1,
+		  "condition": {
+			"self_var": 13
+		  }
+		},
+		{
+		  "func_name": "set_property",
+		  "parameters": [
+			{
+			  "self_var": 11
+			},
+			"_is_active",
+			false
+		  ],
+		  "var_index": -1,
+		  "condition": {
+			"self_var": 13
+		  }
+		},
+		{
+		  "func_name": "set_property",
+		  "parameters": [
+			{
+			  "self_var": 9
+			},
+			"_is_active",
+			false
+		  ],
+		  "var_index": -1,
+		  "condition": {
+			"self_var": 12
+		  }
+		},
+		{
+		  "func_name": "set_property",
+		  "parameters": [
+			{
+			  "self_var": 11
+			},
+			"_is_active",
+			true
+		  ],
+		  "var_index": -1,
+		  "condition": {
+			"self_var": 12
+		  }
+		}
+	  ]
+	}
+  ],
+  "specials": {
+	"SKILLS": [],
+	"ATTACKS": [],
+	"BUFFS": [
+	  {
+		"buff_name": "overseer",
+		"shown_buff_name": "监督者",
+		"buff_img": "",
+		"is_active": true,
+		"buff_level": {
+		  "number": 1,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"effects": [
+		  {
+			"effect_name": "placeholder_overseer_reveal_class",
+			"shown_effect_name": "管理者 - 所有玩家秘密告诉你从者职阶",
+			"time_points": [
+              "game_start"
+			],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [],
+			"funcs": [
+			  {
+				"func_name": "do_nothing",
+				"parameters": [],
+				"var_index": -1
+			  }
+			]
+		  },
+		  {
+			"effect_name": "overseer_neutral_move",
+			"shown_effect_name": "中立 - 行动阶段：你可以忽视交战状态，花费2魔力移动至侦察",
+			"time_points": [
+              "self_action_phase"
+			],
+			"priority": 0,
+			"is_pure_passive": false,
+			"is_residue": false,
+			"effect_numbers": [
+			  {
+				"number": 2,
+				"can_change": true,
+				"is_pure_number": true
+			  }
+			],
+			"funcs": [
+			  {
+				"func_name": "get_map_area_by_name",
+				"parameters": [
+                  "侦察"
+				],
+				"var_index": 0
+			  },
+			  {
+				"func_name": "get_property",
+				"parameters": [
+				  {
+					"self_var": 0
+				  },
+                  "_locations"
+				],
+				"var_index": 1
+			  },
+			  {
+				"func_name": "get_card_by_index_fr_arr",
+				"parameters": [
+				  0,
+				  {
+					"self_var": 1
+				  }
+				],
+				"var_index": 2
+			  },
+			  {
+				"func_name": "get_pls_in_location",
+				"parameters": [
+				  {
+					"self_var": 2
+				  }
+				],
+				"var_index": 3
+			  },
+			  {
+				"func_name": "array_length",
+				"parameters": [
+				  {
+					"self_var": 3
+				  }
+				],
+				"var_index": 4
+			  },
+			  {
+				"func_name": "if_func",
+				"parameters": [
+				  {
+					"self_var": 4
+				  },
+				  0
+				],
+				"var_index": 5
+			  },
+			  {
+				"func_name": "not_func",
+				"parameters": [
+				  {
+					"self_var": 5
+				  }
+				],
+				"var_index": 6
+			  },
+			  {
+				"func_name": "set_location",
+				"parameters": [
+				  {
+					"self_var": 2
+				  }
+				],
+				"var_index": -1,
+				"condition": {
+				  "self_var": 5
+				}
+			  },
+			  {
+				"func_name": "calculate_number",
+				"parameters": [
+				  0,
+				  "-",
+				  {
+					"number_index": 0
+				  }
+				],
+				"var_index": 7
+			  },
+			  {
+				"func_name": "edit_magic",
+				"parameters": [
+				  null,
+				  {
+					"self_var": 7
+				  }
+				],
+				"var_index": -1,
+				"condition": {
+				  "self_var": 5
+				}
+			  },
+			  {
+				"func_name": "show_message",
+				"parameters": [
+                  "侦察位置已被占用，无法移动"
+				],
+				"var_index": -1,
+				"condition": {
+				  "self_var": 6
+				}
+			  }
+			]
+		  }
+		],
+		"zoom_kind": "token"
+	  },
+	  {
+		"buff_name": "executor",
+		"shown_buff_name": "执行者",
+		"buff_img": "",
+		"is_active": false,
+		"buff_level": {
+		  "number": 1,
+		  "can_change": true,
+		  "is_pure_number": true
+		},
+		"effects": [
+		  {
+			"effect_name": "executor_total_power_boost",
+			"shown_effect_name": "执行者 - 战斗阶段：你的总威力+2",
+			"time_points": [
+              "self_battle_phase"
+			],
+			"priority": 0,
+			"is_pure_passive": true,
+			"is_residue": false,
+			"effect_numbers": [
+			  {
+				"number": 2,
+				"can_change": true,
+				"is_pure_number": true
+			  }
+			],
+			"funcs": [
+			  {
+				"func_name": "edit_data_number",
+				"parameters": [
+				  "total_power_bonus",
+				  null,
+				  {
+					"number_index": 0
+				  }
+				],
+				"var_index": -1
+			  }
+			]
+		  }
+		],
+		"zoom_kind": "token"
+	  }
+	]
+  },
+  "upgrade_skill": [
+	{
+	  "skill_name": "evil_protector",
+	  "shown_skill_name": "恶的庇护者",
+	  "skill_card_img": "00006_kotomine_kirei_evil_protector.png",
+	  "attributes": [],
+	  "cost": {
+		"number": 0,
+		"can_change": true,
+		"is_pure_number": true
+	  },
+	  "power": {
+		"number": 0,
+		"can_change": true,
+		"is_pure_number": true
+	  },
+	  "ignore_limit": false,
+	  "effects": [
+		{
+		  "effect_name": "placeholder_evil_protector_true_name_defeat",
+		  "shown_effect_name": "当你为【监督者】时，战斗阶段：可【真名解放】使与你位于同一战场的一名玩家【败北】",
+		  "time_points": [
+            "self_battle_phase"
+		  ],
+		  "priority": 0,
+		  "is_pure_passive": false,
+		  "is_residue": false,
+		  "effect_numbers": [],
+		  "funcs": [
+			{
+			  "func_name": "do_nothing",
+			  "parameters": [],
+			  "var_index": -1
+			}
+		  ]
+		},
+		{
+		  "effect_name": "placeholder_evil_protector_basic_attack_boost",
+		  "shown_effect_name": "当你为【执行者】时，你的所有基本攻击牌威力+2且无视【败北】",
+		  "time_points": [
+            "self_played_card"
+		  ],
+		  "priority": 0,
+		  "is_pure_passive": true,
+		  "is_residue": false,
+		  "effect_numbers": [
+			{
+			  "number": 2,
+			  "can_change": true,
+			  "is_pure_number": true
+			}
+		  ],
+		  "funcs": [
+			{
+			  "func_name": "do_nothing",
+			  "parameters": [],
+			  "var_index": -1
+			}
+		  ]
+		}
+	  ],
+	  "zoom_kind": "card",
+	  "is_awakened": false
+	}
+  ],
+  "tags": [
+	{
+	  "tag": "kotomine",
+	  "name_list": [
+        "言峰"
+	  ],
+	  "type": "master_tag"
+	},
+	{
+	  "tag": "two_faces",
+	  "name_list": [
+        "两幅面孔"
+	  ],
+	  "type": "master_tag"
+	}
+  ],
+  "header_img_zoom_kind": "avatar",
+  "master_card_img_zoom_kind": "card",
+  "command_spell_img_zoom_kind": "card",
+  "other_master_things": [
+	{
+	  "thing_name": "overseer_card",
+	  "shown_thing_name": "监督者",
+	  "card_img": "00006_kotomine_kirei_overseer.png",
+	  "zoom_kind": "card",
+	  "effects": [],
+	  "relate_buff": "overseer"
+	},
+	{
+	  "thing_name": "executor_card",
+	  "shown_thing_name": "执行者",
+	  "card_img": "00006_kotomine_kirei_executor.png",
+	  "zoom_kind": "card",
+	  "effects": [],
+	  "relate_buff": "executor"
+	}
+  ]
+}

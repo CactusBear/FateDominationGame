@@ -1,40 +1,42 @@
 {
-  "attack_name": "luck",
-  "shown_attack_name": "幸运",
-  "category": "basic",
-  "attributes": [
-    "special"
-  ],
-  "cost": {
-    "number": 0,
-    "can_change": true,
-    "is_pure_number": true
-  },
-  "power": {
-    "number": 4,
-    "can_change": true,
-    "is_pure_number": true
-  },
-  "attack_card_img": "luck.png",
-  "effects": [
-    {
-      "effect_name": "luck_ignore_defeat",
-      "shown_effect_name": "战斗阶段：你本回合无视【直接败北】效果",
-      "time_points": [
-        "self_battle_phase"
-      ],
-      "priority": 0,
-      "is_pure_passive": true,
-      "is_residue": false,
-      "effect_numbers": [],
-      "funcs": [
-        {
-          "func_name": "remove_defeat",
-          "parameters": [],
-          "var_index": -1
-        }
-      ]
-    }
-  ],
-  "zoom_kind": "card"
+	"attack_name": "luck",
+	"shown_attack_name": "幸运",
+	"category": "basic",
+	"attributes": [
+		"special"
+	],
+	"cost": {
+		"number": 0,
+		"can_change": true,
+		"is_pure_number": true
+	},
+	"power": {
+		"number": 4,
+		"can_change": true,
+		"is_pure_number": true
+	},
+	"attack_card_img": "luck.png",
+	"effects": [
+		{
+			"effect_name": "luck_ignore_defeat",
+			"shown_effect_name": "战斗阶段：你本回合无视【直接败北】效果",
+			"time_points": [
+				"self_battle_phase"
+			],
+			"priority": 0,
+			"is_pure_passive": false,
+			"is_residue": false,
+			"effect_numbers": [],
+			"funcs": [
+				{
+					"func_name": "remove_defeat",
+					"parameters": [],
+					"var_index": -1
+				}
+			],
+			"is_manual": true,
+			"need_activate": true
+		}
+	],
+	"zoom_kind": "card"
 }

@@ -43,6 +43,7 @@ _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/stretch/mode="viewport"
+window/stretch/aspect="keep_width"
 
 [dotnet]
 

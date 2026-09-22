@@ -13,4 +13,7 @@ func exec(deploy_location:BaseLocation, player_id:int = -1, ignore_limit:bool = 
 	if settled:
 		var area := deploy_location.get_from() as BaseMapArea
 		GameLog.record("deploy", player_id, -1,
-			str(area._area_name) if area != null else "", null, ["deploy"], {})
+			str(area._area_name) if area != null else "", deploy_location, ["deploy"], {})
+	#把"有没有真的落位"交回调用方：席位满/不可落位时实际没动，
+	#调用方（如 DeployRules.deploy_to_area）要据此决定是否结算部署收益
+	return settled
