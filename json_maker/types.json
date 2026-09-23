@@ -1,0 +1,2300 @@
+{
+  "note": "字段只记录加载器真正读取的键。required 为直接取键，缺了加载会报错；其余是 get 可选。不在此表的键保存时原样保留。 blocks 是积木句式与说明，{形参名} 处放空位；param_kinds 按形参原名声明空位用什么控件，blocks[x].kinds 可逐个操作覆盖，缺声明就是普通输入框。",
+  "kinds": {
+    "master": {
+      "shown": "御主",
+      "folder_name": "{serial}_{identity}",
+      "serial_digits": 5,
+      "sub_image_prefix": "{folder}_",
+      "root": "data/masters",
+      "file": "folder",
+      "identity": "master_name",
+      "shown_key": "shown_master_name",
+      "fields": [
+        {
+          "key": "master_name",
+          "shown": "内部名",
+          "control": "text",
+          "required": true,
+          "advanced": true,
+          "help": "英文名，同时是文件夹名。"
+        },
+        {
+          "key": "shown_master_name",
+          "shown": "牌名",
+          "control": "text",
+          "required": true
+        },
+        {
+          "key": "header_img",
+          "shown": "头像",
+          "file_name": "{folder}_header",
+          "control": "image",
+          "required": true,
+          "zoom": "header_img_zoom_kind"
+        },
+        {
+          "key": "master_card_img",
+          "shown": "御主卡图",
+          "file_name": "{folder}_cd",
+          "control": "image",
+          "required": true,
+          "zoom": "master_card_img_zoom_kind"
+        },
+        {
+          "key": "command_spell_img",
+          "shown": "令咒图",
+          "file_name": "{folder}_cs",
+          "control": "image",
+          "required": true,
+          "zoom": "command_spell_img_zoom_kind"
+        },
+        {
+          "key": "card_back_img",
+          "shown": "特殊卡背",
+          "file_name": "{folder}_back",
+          "control": "image",
+          "help": "不选就用同类牌的通用卡背。"
+        }
+      ],
+      "lists": [
+        {
+          "key": "effects",
+          "shown": "御主效果",
+          "item": "effect",
+          "required": true
+        },
+        {
+          "key": "upgrade_skill",
+          "shown": "升华技",
+          "item": "upgrade_skill"
+        },
+        {
+          "key": "other_master_things",
+          "shown": "附带物",
+          "item": "thing"
+        },
+        {
+          "key": "tags",
+          "shown": "标签",
+          "item": "tag",
+          "required": true
+        }
+      ],
+      "groups": [
+        {
+          "key": "specials",
+          "shown": "附带内容",
+          "required": true,
+          "lists": [
+            {
+              "key": "SKILLS",
+              "shown": "御主技能",
+              "item": "skill"
+            },
+            {
+              "key": "ATTACKS",
+              "shown": "御主攻击",
+              "item": "attack"
+            },
+            {
+              "key": "BUFFS",
+              "shown": "状态",
+              "item": "buff"
+            },
+            {
+              "key": "COMMAND_SPELLS",
+              "shown": "专属令咒名",
+              "item": "text"
+            },
+            {
+              "key": "MAP_AREAS",
+              "shown": "地图区域",
+              "item": "map_area"
+            },
+            {
+              "key": "LOCATIONS",
+              "shown": "地点",
+              "item": "location"
+            },
+            {
+              "key": "EVENTS",
+              "shown": "内嵌事件",
+              "item": "event"
+            }
+          ]
+        }
+      ]
+    },
+    "servant": {
+      "shown": "从者",
+      "folder_name": "{serial}_{identity}",
+      "serial_digits": 5,
+      "sub_image_prefix": "{folder}_",
+      "root": "data/servants",
+      "file": "folder",
+      "identity": "servant_name",
+      "shown_key": "shown_servant_name",
+      "fields": [
+        {
+          "key": "servant_name",
+          "shown": "内部名",
+          "control": "text",
+          "required": true,
+          "advanced": true,
+          "help": "英文名，同时是文件夹名。"
+        },
+        {
+          "key": "shown_servant_name",
+          "shown": "牌名",
+          "control": "text",
+          "required": true
+        },
+        {
+          "key": "servant_class",
+          "shown": "职阶",
+          "control": "text",
+          "required": true,
+          "help": "职阶英文名，如 saber、archer。"
+        },
+        {
+          "key": "header_img",
+          "shown": "头像",
+          "file_name": "{folder}_header",
+          "control": "image",
+          "required": true,
+          "zoom": "header_img_zoom_kind"
+        },
+        {
+          "key": "servant_card_img",
+          "shown": "从者卡图",
+          "file_name": "{folder}_cd",
+          "control": "image",
+          "required": true,
+          "zoom": "servant_card_img_zoom_kind"
+        },
+        {
+          "key": "card_back_img",
+          "shown": "特殊卡背",
+          "file_name": "{folder}_back",
+          "control": "image",
+          "help": "不选就用同类牌的通用卡背。"
+        }
+      ],
+      "lists": [
+        {
+          "key": "effects",
+          "shown": "从者效果",
+          "item": "effect",
+          "required": true
+        },
+        {
+          "key": "tags",
+          "shown": "标签",
+          "item": "tag",
+          "required": true
+        }
+      ],
+      "groups": [
+        {
+          "key": "specials",
+          "shown": "附带内容",
+          "required": true,
+          "lists": [
+            {
+              "key": "SKILLS",
+              "shown": "技能",
+              "item": "skill"
+            },
+            {
+              "key": "ATTACKS",
+              "shown": "牌库引用",
+              "item": "deck_ref"
+            },
+            {
+              "key": "BUFFS",
+              "shown": "状态",
+              "item": "buff"
+            }
+          ]
+        }
+      ]
+    },
+    "attack": {
+      "shown": "攻击牌",
+      "folder_name": "{category}/{identity}",
+      "root": "data/attacks",
+      "file": "folder",
+      "identity": "attack_name",
+      "shown_key": "shown_attack_name",
+      "also_nested": true,
+      "fields": [
+        {
+          "key": "attack_name",
+          "shown": "内部名",
+          "control": "text",
+          "required": true,
+          "advanced": true,
+          "help": "英文名，同时是文件夹名。"
+        },
+        {
+          "key": "shown_attack_name",
+          "shown": "牌名",
+          "control": "text"
+        },
+        {
+          "key": "category",
+          "shown": "类别",
+          "control": "choice",
+          "choices": [
+            "basic",
+            "class",
+            "non_basic"
+          ],
+          "help": "基础 basic / 职阶 class / 非基础 non_basic。"
+        },
+        {
+          "key": "attributes",
+          "shown": "属性",
+          "control": "attributes"
+        },
+        {
+          "key": "cost",
+          "shown": "发动要花",
+          "control": "number",
+          "required": true,
+          "help": "发动时扣掉的魔力或令咒；付不起就不发动。"
+        },
+        {
+          "key": "power",
+          "shown": "威力",
+          "control": "number",
+          "required": true
+        },
+        {
+          "key": "attack_card_img",
+          "shown": "卡图",
+          "file_name": "{identity}",
+          "control": "image",
+          "required": true,
+          "zoom": "zoom_kind"
+        },
+        {
+          "key": "card_back_img",
+          "shown": "特殊卡背",
+          "file_name": "{identity}_back",
+          "control": "image",
+          "help": "不选就用同类牌的通用卡背。"
+        },
+        {
+          "key": "play_requirements",
+          "shown": "打出条件",
+          "control": "requirements",
+          "help": "打出这张牌之前要满足的条件。"
+        },
+        {
+          "key": "shown_notes",
+          "shown": "卡面提示",
+          "control": "lines",
+          "help": "卡面上的提示行，一行一条，只用于展示。"
+        },
+        {
+          "key": "need_extra_play",
+          "shown": "只能追加打出",
+          "control": "bool",
+          "help": "勾上：只能被效果追加打出，不能常规打出。"
+        },
+        {
+          "key": "initial_zone",
+          "shown": "开局所在区",
+          "control": "text",
+          "help": "开局时放在哪一区。"
+        },
+        {
+          "key": "initial_count",
+          "shown": "开局数量",
+          "control": "int",
+          "help": "开局放几张。"
+        },
+        {
+          "key": "keywords",
+          "shown": "词条",
+          "control": "lines",
+          "help": "卡面带的词条，一行一个，例如 true_name_release（真名解放）。"
+        }
+      ],
+      "lists": [
+        {
+          "key": "effects",
+          "shown": "效果",
+          "item": "effect"
+        }
+      ]
+    },
+    "skill": {
+      "shown": "技能牌",
+      "nested_only": true,
+      "identity": "skill_name",
+      "shown_key": "shown_skill_name",
+      "fields": [
+        {
+          "key": "skill_name",
+          "shown": "内部名",
+          "control": "text",
+          "required": true,
+          "advanced": true,
+          "help": "英文名，程序靠它找这张技能牌。"
+        },
+        {
+          "key": "shown_skill_name",
+          "shown": "牌名",
+          "control": "text"
+        },
+        {
+          "key": "skill_card_img",
+          "shown": "卡图",
+          "file_name": "{identity}",
+          "control": "image",
+          "required": true,
+          "zoom": "zoom_kind"
+        },
+        {
+          "key": "attributes",
+          "shown": "属性",
+          "control": "attributes",
+          "required": true
+        },
+        {
+          "key": "cost",
+          "shown": "发动要花",
+          "control": "number",
+          "required": true,
+          "help": "发动时扣掉的魔力或令咒；付不起就不发动。"
+        },
+        {
+          "key": "power",
+          "shown": "威力",
+          "control": "number",
+          "required": true
+        },
+        {
+          "key": "ignore_limit",
+          "shown": "忽略出牌限制",
+          "control": "bool",
+          "required": true,
+          "help": "勾上：不占常规出牌数。"
+        },
+        {
+          "key": "card_back_img",
+          "shown": "特殊卡背",
+          "file_name": "{identity}_back",
+          "control": "image",
+          "help": "不选就用同类牌的通用卡背。"
+        },
+        {
+          "key": "play_requirements",
+          "shown": "打出条件",
+          "control": "requirements",
+          "help": "打出这张牌之前要满足的条件。"
+        },
+        {
+          "key": "shown_notes",
+          "shown": "卡面提示",
+          "control": "lines",
+          "help": "卡面上的提示行，一行一条，只用于展示。"
+        },
+        {
+          "key": "need_extra_play",
+          "shown": "只能追加打出",
+          "control": "bool",
+          "help": "勾上：只能被效果追加打出，不能常规打出。"
+        },
+        {
+          "key": "keywords",
+          "shown": "词条",
+          "control": "lines",
+          "help": "卡面带的词条，一行一个，例如 true_name_release（真名解放）。"
+        }
+      ],
+      "lists": [
+        {
+          "key": "effects",
+          "shown": "效果",
+          "item": "effect",
+          "required": true
+        }
+      ]
+    },
+    "upgrade_skill": {
+      "shown": "升华技",
+      "extends": "skill",
+      "fields_extra": [
+        {
+          "key": "is_awakened",
+          "shown": "已觉醒",
+          "control": "bool",
+          "help": "升华技是否已觉醒。未觉醒时，玩家尚未获得这张升华技，卡面朝下只显示升华技卡背。"
+        }
+      ]
+    },
+    "event": {
+      "shown": "事件牌",
+      "folder_name": "{pack}/{identity}",
+      "pattern_defaults": {"pack": "origin"},
+      "root": "data/events",
+      "file": "folder",
+      "identity": "card_name",
+      "shown_key": "shown_name",
+      "also_nested": true,
+      "fields": [
+        {
+          "key": "card_name",
+          "shown": "内部名",
+          "control": "text",
+          "required": true,
+          "advanced": true,
+          "help": "英文名，同时是文件夹名。"
+        },
+        {
+          "key": "shown_name",
+          "shown": "牌名",
+          "control": "text"
+        },
+        {
+          "key": "score",
+          "shown": "战果",
+          "control": "number",
+          "required": true
+        },
+        {
+          "key": "card_img",
+          "shown": "卡图",
+          "file_name": "{identity}",
+          "control": "image",
+          "required": true,
+          "zoom": "zoom_kind"
+        },
+        {
+          "key": "card_back_img",
+          "shown": "特殊卡背",
+          "file_name": "{identity}_back",
+          "control": "image",
+          "help": "不选就用同类牌的通用卡背。"
+        }
+      ],
+      "lists": [
+        {
+          "key": "effects",
+          "shown": "效果",
+          "item": "effect"
+        }
+      ]
+    },
+    "situation": {
+      "shown": "局势牌",
+      "folder_name": "{pack}/{identity}",
+      "pattern_defaults": {"pack": "origin"},
+      "root": "data/situations",
+      "file": "folder",
+      "identity": "card_name",
+      "shown_key": "shown_name",
+      "fields": [
+        {
+          "key": "card_name",
+          "shown": "内部名",
+          "control": "text",
+          "required": true,
+          "advanced": true,
+          "help": "英文名，同时是文件夹名。"
+        },
+        {
+          "key": "shown_name",
+          "shown": "牌名",
+          "control": "text"
+        },
+        {
+          "key": "magic",
+          "shown": "印刷魔力",
+          "control": "number",
+          "required": true
+        },
+        {
+          "key": "is_climax",
+          "shown": "高潮局势",
+          "control": "bool",
+          "help": "勾上：这是高潮局势牌。"
+        },
+        {
+          "key": "climax_round",
+          "shown": "高潮回合",
+          "control": "int",
+          "help": "高潮局势牌在第几回合登场。"
+        },
+        {
+          "key": "card_img",
+          "shown": "卡图",
+          "file_name": "{identity}",
+          "control": "image",
+          "required": true,
+          "zoom": "zoom_kind"
+        },
+        {
+          "key": "card_back_img",
+          "shown": "特殊卡背",
+          "file_name": "{identity}_back",
+          "control": "image",
+          "help": "不选就用同类牌的通用卡背。"
+        }
+      ],
+      "lists": [
+        {
+          "key": "effects",
+          "shown": "效果",
+          "item": "effect"
+        }
+      ]
+    },
+    "command_spell": {
+      "shown": "令咒",
+      "root": "data/command_spells",
+      "file": "file",
+      "identity": "card_name",
+      "shown_key": "shown_name",
+      "fields": [
+        {
+          "key": "card_name",
+          "shown": "内部名",
+          "control": "text",
+          "required": true,
+          "advanced": true,
+          "help": "英文名，同时是文件夹名。"
+        },
+        {
+          "key": "shown_name",
+          "shown": "牌名",
+          "control": "text"
+        },
+        {
+          "key": "card_img",
+          "shown": "卡图",
+          "file_name": "{identity}",
+          "control": "image",
+          "zoom": "zoom_kind"
+        },
+        {
+          "key": "card_back_img",
+          "shown": "特殊卡背",
+          "file_name": "{identity}_back",
+          "control": "image",
+          "help": "不选就用同类牌的通用卡背。"
+        }
+      ],
+      "lists": [
+        {
+          "key": "effects",
+          "shown": "效果",
+          "item": "effect"
+        }
+      ]
+    },
+    "buff": {
+      "shown": "状态",
+      "nested_only": true,
+      "identity": "buff_name",
+      "shown_key": "shown_buff_name",
+      "fields": [
+        {
+          "key": "buff_name",
+          "shown": "内部名",
+          "control": "text",
+          "required": true,
+          "advanced": true,
+          "help": "英文名，程序靠它找这个状态。"
+        },
+        {
+          "key": "shown_buff_name",
+          "shown": "显示名",
+          "control": "text"
+        },
+        {
+          "key": "buff_img",
+          "shown": "图标",
+          "file_name": "{identity}",
+          "control": "image",
+          "zoom": "zoom_kind"
+        },
+        {
+          "key": "is_active",
+          "shown": "已激活",
+          "control": "bool",
+          "required": true,
+          "help": "开局时这个状态是否已生效。"
+        },
+        {
+          "key": "buff_level",
+          "shown": "层数",
+          "control": "number",
+          "required": true,
+          "help": "层数，也可以当作剩余次数。"
+        },
+        {
+          "key": "related_effect_names",
+          "shown": "关联效果名",
+          "control": "lines"
+        }
+      ],
+      "lists": [
+        {
+          "key": "effects",
+          "shown": "效果",
+          "item": "effect",
+          "required": true
+        }
+      ]
+    },
+    "thing": {
+      "shown": "附带物",
+      "nested_only": true,
+      "identity": "thing_name",
+      "shown_key": "shown_thing_name",
+      "fields": [
+        {
+          "key": "thing_name",
+          "shown": "内部名",
+          "control": "text",
+          "required": true,
+          "advanced": true,
+          "help": "英文名。"
+        },
+        {
+          "key": "shown_thing_name",
+          "shown": "牌名",
+          "control": "text"
+        },
+        {
+          "key": "card_img",
+          "shown": "卡图",
+          "file_name": "{identity}",
+          "control": "image",
+          "required": true,
+          "zoom": "zoom_kind"
+        },
+        {
+          "key": "card_back_img",
+          "shown": "特殊卡背",
+          "file_name": "{identity}_back",
+          "control": "image",
+          "help": "不选就用同类牌的通用卡背。"
+        },
+        {
+          "key": "relate_buff",
+          "shown": "对应状态",
+          "control": "text",
+          "help": "这张卡展示的是哪个状态（填状态的内部名）。卡面会按那个状态是否激活来显示。"
+        }
+      ],
+      "lists": [
+        {
+          "key": "effects",
+          "shown": "效果",
+          "item": "effect"
+        }
+      ]
+    },
+    "tag_list": {
+      "shown": "标签表",
+      "root": "data",
+      "file": "named",
+      "file_name": "tag_list.json",
+      "shape": "array",
+      "item": "tag"
+    }
+  },
+  "items": {
+    "tag": {
+      "shown": "标签",
+      "fields": [
+        {
+          "key": "tag",
+          "shown": "标签",
+          "control": "text",
+          "required": true
+        },
+        {
+          "key": "type",
+          "shown": "类型",
+          "control": "text",
+          "required": true
+        },
+        {
+          "key": "name_list",
+          "shown": "名字列表",
+          "control": "lines",
+          "required": true
+        }
+      ]
+    },
+    "map_area": {
+      "shown": "地图区域",
+      "fields": [
+        {
+          "key": "area_name",
+          "shown": "区域名",
+          "control": "text",
+          "required": true
+        },
+        {
+          "key": "score",
+          "shown": "战果",
+          "control": "number",
+          "required": true
+        },
+        {
+          "key": "move_cost",
+          "shown": "移动消耗",
+          "control": "number",
+          "required": true
+        },
+        {
+          "key": "linked_map_area_name",
+          "shown": "相连区域",
+          "control": "text",
+          "required": true
+        },
+        {
+          "key": "can_deploy",
+          "shown": "可部署",
+          "control": "bool"
+        }
+      ],
+      "lists": [
+        {
+          "key": "locations",
+          "shown": "地点",
+          "item": "location",
+          "required": true
+        }
+      ]
+    },
+    "location": {
+      "shown": "地点",
+      "fields": [
+        {
+          "key": "magic",
+          "shown": "魔力",
+          "control": "number",
+          "required": true
+        },
+        {
+          "key": "benefit",
+          "shown": "地利",
+          "control": "number",
+          "required": true
+        },
+        {
+          "key": "player_num_limit",
+          "shown": "人数上限",
+          "control": "int",
+          "required": true
+        },
+        {
+          "key": "will_move_to",
+          "shown": "常规移动落点",
+          "control": "bool",
+          "required": true
+        }
+      ]
+    },
+    "effect": {
+      "shown": "效果",
+      "fields": [
+        {
+          "key": "effect_name",
+          "shown": "效果标识",
+          "control": "text",
+          "required": true,
+          "advanced": true,
+          "help": "英文名，程序靠它找这条效果。同一张牌里别重复。"
+        },
+        {
+          "key": "shown_effect_name",
+          "shown": "卡面文字",
+          "control": "text",
+          "help": "照抄卡面上这条效果的原文，发动时会显示给玩家。"
+        },
+        {
+          "key": "time_points",
+          "shown": "什么时候触发",
+          "control": "time_points",
+          "required": true,
+          "help": "可以选多个；默认满足其中任意一个就触发。"
+        },
+        {
+          "key": "priority",
+          "shown": "先后顺序",
+          "control": "int",
+          "required": true,
+          "help": "同一时机有多条效果时，数字小的先结算。填 -1 表示还没写完，不会结算。"
+        },
+        {
+          "key": "is_pure_passive",
+          "shown": "自动发动",
+          "control": "bool",
+          "required": true,
+          "help": "勾上：时机一到就自动结算，不问玩家。不勾：会问玩家要不要发动。"
+        },
+        {
+          "key": "is_residue",
+          "shown": "回合结束后留在场上",
+          "control": "bool",
+          "required": true,
+          "help": "勾上：这张牌回合结束不会被弃掉，继续提供威力。"
+        },
+        {
+          "key": "need_activate",
+          "shown": "要先激活这张牌",
+          "control": "bool",
+          "help": "不勾时即使牌没激活也能用（卡面「被动/」开头的能力）。",
+          "default": "!is_pure_passive"
+        },
+        {
+          "key": "is_manual",
+          "shown": "玩家点牌才发动",
+          "control": "bool",
+          "help": "勾上：不会自动询问，玩家在对应阶段点这张牌发动。",
+          "default": false
+        },
+        {
+          "key": "source_bound",
+          "shown": "只在这张牌自己打出时",
+          "control": "bool",
+          "help": "勾上：只响应这张牌本身，别的牌打出时不触发。",
+          "default": false
+        },
+        {
+          "key": "require_all_time_points",
+          "shown": "时机要全部同时成立",
+          "control": "bool",
+          "help": "勾上：选的几个时机都成立才触发，例如「高潮回合」且「自己战斗阶段」。",
+          "default": false
+        },
+        {
+          "key": "once_per_game",
+          "shown": "每局只能一次",
+          "control": "bool",
+          "default": false
+        },
+        {
+          "key": "expire_time_points",
+          "shown": "到这些时机作废",
+          "control": "time_points"
+        },
+        {
+          "key": "cost",
+          "shown": "发动要花",
+          "control": "cost",
+          "help": "发动时扣掉的魔力或令咒；付不起就不发动。"
+        },
+        {
+          "key": "max_choices",
+          "shown": "一次最多选几项",
+          "control": "int",
+          "default": 1
+        },
+        {
+          "key": "max_total_uses",
+          "shown": "最多用几次",
+          "control": "int",
+          "help": "-1 表示不限。",
+          "default": -1
+        },
+        {
+          "key": "reset_counts_each_round",
+          "shown": "每回合重新计次",
+          "control": "bool",
+          "default": false
+        },
+        {
+          "key": "consumes_source_resource",
+          "shown": "每次消耗一层",
+          "control": "bool",
+          "help": "从这条效果所在的状态上扣层数，层数就是可用次数。",
+          "default": false
+        }
+      ],
+      "lists": [
+        {
+          "key": "effect_numbers",
+          "shown": "效果数字",
+          "item": "number",
+          "required": true
+        },
+        {
+          "key": "options",
+          "shown": "选项",
+          "item": "option"
+        }
+      ],
+      "blocks": [
+        {
+          "key": "funcs",
+          "shown": "要做的事",
+          "unless": "options"
+        },
+        {
+          "key": "power_query",
+          "shown": "威力计算"
+        }
+      ]
+    },
+    "option": {
+      "shown": "选项",
+      "fields": [
+        {
+          "key": "shown_option_name",
+          "shown": "选项文字",
+          "control": "text",
+          "help": "玩家选的时候看到的字。"
+        },
+        {
+          "key": "max_uses",
+          "shown": "这一项最多几次",
+          "control": "int",
+          "help": "-1 表示不限。",
+          "default": -1
+        },
+        {
+          "key": "quantity_range",
+          "shown": "数量范围",
+          "control": "range"
+        },
+        {
+          "key": "tags",
+          "shown": "选项标签",
+          "control": "lines"
+        },
+        {
+          "key": "select_cards",
+          "shown": "挑牌",
+          "control": "select_cards"
+        },
+        {
+          "key": "select_location",
+          "shown": "挑地点",
+          "control": "select_location"
+        },
+        {
+          "key": "select_players",
+          "shown": "挑玩家",
+          "control": "select_players"
+        }
+      ],
+      "lists": [
+        {
+          "key": "activation_requirements",
+          "shown": "发动前必须满足",
+          "item": "requirement"
+        }
+      ],
+      "blocks": [
+        {
+          "key": "funcs",
+          "shown": "选中后做的事"
+        }
+      ]
+    },
+    "requirement": {
+      "shown": "前置条件",
+      "fields": [
+        {
+          "key": "message",
+          "shown": "做不到时的提示",
+          "control": "text"
+        }
+      ],
+      "blocks": [
+        {
+          "key": "funcs",
+          "shown": "条件查询"
+        }
+      ]
+    },
+    "number": {
+      "shown": "数字",
+      "fields": [
+        {
+          "key": "number",
+          "shown": "数值",
+          "control": "float",
+          "required": true
+        },
+        {
+          "key": "can_change",
+          "shown": "效果能改它",
+          "control": "bool",
+          "required": true
+        },
+        {
+          "key": "is_pure_number",
+          "shown": "只是个数",
+          "control": "bool",
+          "required": true
+        },
+        {
+          "key": "is_float",
+          "shown": "保留小数",
+          "control": "bool"
+        }
+      ]
+    }
+  },
+  "zoom_kinds": [
+    "card",
+    "avatar",
+    "token"
+  ],
+  "param_names": {
+    "player_id": "玩家",
+    "amount": "数量",
+    "card": "牌",
+    "cards": "这些牌",
+    "area": "区域",
+    "location": "位置",
+    "set_num": "设为",
+    "vary_num": "加上",
+    "min_value": "下限",
+    "max_value": "上限",
+    "attributes": "属性",
+    "category": "类别",
+    "message": "文字",
+    "text": "文字",
+    "key": "项目",
+    "index": "第几个",
+    "count": "次数",
+    "limit": "上限",
+    "power": "威力",
+    "cost": "魔力消耗",
+    "score": "战果",
+    "magic": "魔力",
+    "name": "名字",
+    "target": "目标",
+    "source": "来源",
+    "value": "值",
+    "condition": "条件",
+    "unused": "不用填",
+    "body": "要做的事",
+    "then_value": "是",
+    "else_value": "否",
+    "max_iterations": "最多重复",
+    "_var1": "值",
+    "_var2": "值",
+    "key_name": "项目",
+    "arr": "这一批",
+    "objects": "这些",
+    "object": "对象",
+    "item": "这个",
+    "card_index": "第几张",
+    "from_index": "第几张",
+    "to_index": "放到第几",
+    "parameter_index": "填入位置",
+    "funcs": "要做的事",
+    "require_all": "全部都要有",
+    "include_out": "算上出局的",
+    "include_self": "包含自己",
+    "ignore_limit": "无视上限",
+    "is_move": "算作移动",
+    "descending": "大的在前",
+    "take_max": "取最大",
+    "concealed": "暗置",
+    "add_or_del": "加上",
+    "filter": "条件",
+    "round_offset": "哪个回合",
+    "field": "哪一项",
+    "priority": "先后",
+    "card_name": "名字",
+    "object_name": "名字",
+    "buff_name": "名字",
+    "tag_name": "标签",
+    "effect_name": "效果名",
+    "property": "属性名",
+    "dict": "字典",
+    "a": "甲",
+    "b": "乙",
+    "c": "丙",
+    "d": "丁",
+    "_var": "值",
+    "_bool": "条件",
+    "cases": "列表",
+    "setted_location": "位置",
+    "deploy_location": "位置",
+    "map_area": "战区",
+    "target_area": "战区",
+    "move_num": "格数",
+    "vary": "加上",
+    "set_to": "设为",
+    "only_card": "只算这张",
+    "except_card": "不算这张",
+    "min_power": "最低威力",
+    "add_count": "张数",
+    "shown_name": "显示文字",
+    "players": "这些玩家",
+    "options": "选项",
+    "power_delta": "加上",
+    "attack": "攻击牌",
+    "exclude_attack": "不算这张",
+    "skill": "技能",
+    "effect": "效果",
+    "subtract": "去掉的",
+    "range_start": "从",
+    "range_end": "到",
+    "num": "数字",
+    "add": "加",
+    "times": "乘",
+    "is_round_up": "向上取整",
+    "from": "从",
+    "to": "到",
+    "parent_var": "这里",
+    "children_var": "找的东西",
+    "set_order": "设为",
+    "vary_order": "挪动"
+  },
+  "cost_types": [
+    {
+      "type": "command_spell",
+      "shown": "令咒",
+      "amount": true
+    }
+  ],
+  "blocks": {
+    "get_all_players_id": {
+      "say": "所有玩家",
+      "help": "列出本局全部玩家（包括已出局的）。"
+    },
+    "get_active_players_id": {
+      "say": "还在场的玩家",
+      "help": "按当前顺位列出没出局的玩家。"
+    },
+    "get_pl_id_using_eff": {
+      "say": "发动这个效果的玩家",
+      "help": "就是当前这条效果的发动者。"
+    },
+    "get_player_name": {
+      "say": "{player_id} 的名字",
+      "help": "玩家名。"
+    },
+    "get_player_master": {
+      "say": "{player_id} 的御主",
+      "help": "取玩家当前的御主对象。"
+    },
+    "get_player_servant": {
+      "say": "{player_id} 的从者",
+      "help": "取玩家当前的从者对象。"
+    },
+    "get_player_lives": {
+      "say": "{player_id} 的生命",
+      "help": "玩家的生命数字。"
+    },
+    "get_data_number": {
+      "say": "{player_id} 的 {key} 是多少",
+      "help": "读玩家的一个数值；如果那一项是一批牌/一串东西，就给出它有几个。",
+      "kinds": {
+        "key": "player_key"
+      }
+    },
+    "get_player_data_value": {
+      "say": "{player_id} 的 {key}",
+      "help": "原样读出玩家的某一项（数字、开关、列表都行）。",
+      "kinds": {
+        "key": "player_key"
+      }
+    },
+    "get_player_ids_by_data_value": {
+      "say": "{key} 等于 {value} 的玩家",
+      "help": "找出某一项正好等于给定值的所有玩家。",
+      "kinds": {
+        "key": "player_key"
+      }
+    },
+    "get_players_field": {
+      "say": "每个玩家的 {key}",
+      "help": "把每个玩家的同一项收集成一批。",
+      "kinds": {
+        "key": "player_key"
+      }
+    },
+    "get_rank_by_data_number": {
+      "say": "{player_id} 的 {key} 排第几",
+      "help": "按数值排名，1 是第一。并列时名次相同。",
+      "kinds": {
+        "key": "player_key"
+      }
+    },
+    "get_phase_order": {
+      "say": "{player_id} 的顺位",
+      "help": "玩家在阶段里的行动顺位。"
+    },
+    "get_current_round": {
+      "say": "现在是第几回合",
+      "help": "当前回合数。"
+    },
+    "get_game_data_value": {
+      "say": "游戏数据里的 {key}",
+      "help": "读全局游戏数据的一个字段（高级）。",
+      "advanced": true
+    },
+    "get_player_total_power": {
+      "say": "{player_id} 的合计威力",
+      "help": "按与界面、结算相同的口径算出合计威力。"
+    },
+    "get_player_deck": {
+      "say": "{player_id} 的牌库",
+      "help": "取这名玩家的牌库（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_player_discard": {
+      "say": "{player_id} 的弃牌堆",
+      "help": "取这名玩家的弃牌堆（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_player_hand_cards": {
+      "say": "{player_id} 的手牌",
+      "help": "取这名玩家的手牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_player_played_cards": {
+      "say": "{player_id} 的已打出的牌",
+      "help": "取这名玩家的已打出的牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_player_master_skills": {
+      "say": "{player_id} 的御主技能区",
+      "help": "取这名玩家的御主技能区（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_player_servant_skills": {
+      "say": "{player_id} 的从者技能区",
+      "help": "取这名玩家的从者技能区（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_player_buffs": {
+      "say": "{player_id} 的状态",
+      "help": "取这名玩家的状态（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_player_command_spell": {
+      "say": "{player_id} 的令咒",
+      "help": "取这名玩家的令咒（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_skills_side": {
+      "say": "{player_id} 的场边技能区",
+      "help": "取这名玩家的场边技能区（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_buffs_side": {
+      "say": "{player_id} 的场边状态",
+      "help": "取这名玩家的场边状态（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_deck_side": {
+      "say": "{player_id} 的场边牌库",
+      "help": "取这名玩家的场边牌库（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_discard_side": {
+      "say": "{player_id} 的场边弃牌堆",
+      "help": "取这名玩家的场边弃牌堆（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_command_spell_side": {
+      "say": "{player_id} 的场边令咒",
+      "help": "取这名玩家的场边令咒（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_master_side": {
+      "say": "{player_id} 的场边御主",
+      "help": "取这名玩家的场边御主（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_servant_side": {
+      "say": "{player_id} 的场边从者",
+      "help": "取这名玩家的场边从者（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_others_side": {
+      "say": "{player_id} 的场边其他牌",
+      "help": "取这名玩家的场边其他牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_attacks_out_game": {
+      "say": "{player_id} 的游戏外的攻击牌",
+      "help": "取这名玩家的游戏外的攻击牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_skills_out_game": {
+      "say": "{player_id} 的游戏外的技能牌",
+      "help": "取这名玩家的游戏外的技能牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_buffs_out_game": {
+      "say": "{player_id} 的游戏外的状态",
+      "help": "取这名玩家的游戏外的状态（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_command_spell_out_game": {
+      "say": "{player_id} 的游戏外的令咒",
+      "help": "取这名玩家的游戏外的令咒（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_master_out_game": {
+      "say": "{player_id} 的游戏外的御主",
+      "help": "取这名玩家的游戏外的御主（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_servant_out_game": {
+      "say": "{player_id} 的游戏外的从者",
+      "help": "取这名玩家的游戏外的从者（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "get_pl_others_out_game": {
+      "say": "{player_id} 的游戏外的其他牌",
+      "help": "取这名玩家的游戏外的其他牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。"
+    },
+    "find_player_array_containing": {
+      "say": "{player_id} 放着 {item} 的那一区",
+      "help": "找出这张牌/这个东西在玩家的哪一区里。"
+    },
+    "get_card_attributes": {
+      "say": "{card} 的属性",
+      "help": "卡牌的属性列表。"
+    },
+    "get_attack_printed_cost": {
+      "say": "{attack} 印着的魔力消耗",
+      "help": "卡面原本印的魔力消耗，不受效果修改影响。"
+    },
+    "get_attack_printed_power": {
+      "say": "{attack} 印着的威力",
+      "help": "卡面原本印的威力。"
+    },
+    "get_skill_printed_cost": {
+      "say": "{skill} 印着的魔力消耗",
+      "help": "卡面原本印的魔力消耗。"
+    },
+    "get_skill_printed_power": {
+      "say": "{skill} 印着的威力",
+      "help": "卡面原本印的威力。"
+    },
+    "get_printed_num": {
+      "say": "{object} 的第 {index} 个印刷数字",
+      "help": "读对象自带的数字列表里的一个。",
+      "advanced": true
+    },
+    "get_printed_nums": {
+      "say": "{object} 的全部印刷数字",
+      "help": "对象自带的数字列表。",
+      "advanced": true
+    },
+    "get_eff_source_card": {
+      "say": "这个效果所在的牌",
+      "help": "「此牌」：沿着来源找到这条效果挂在哪张牌上。"
+    },
+    "card_counts_power": {
+      "say": "{card} 算进合计威力吗",
+      "help": "这张牌此刻是否计入合计威力（暗置、关闭的牌不算）。"
+    },
+    "card_has_effect": {
+      "say": "{card} 有效果 {effect_name} 吗",
+      "help": "按效果内部名检查。"
+    },
+    "has_attribute": {
+      "say": "{card} 带有属性 {attributes} 吗",
+      "help": "注意：这块的第一个空位是属性、第二个是牌。"
+    },
+    "get_cards_by_name_fr_arr": {
+      "say": "从 {cards} 里找名叫 {card_name} 的牌",
+      "help": "按内部名找，得到一批。"
+    },
+    "get_cards_by_attributes_fr_arr": {
+      "say": "从 {cards} 里挑出带 {attributes} 的牌",
+      "help": "勾「全部都要有」时每个属性都要带，否则带一个就行。"
+    },
+    "get_cards_by_tag_fr_arr": {
+      "say": "从 {objects} 里挑出标签为 {tag_name} 的",
+      "help": "按标签筛。"
+    },
+    "get_card_by_index_fr_arr": {
+      "say": "{cards} 里的第 {card_index} 张",
+      "help": "从 0 开始数：0 是第一张。没有那一张就什么都拿不到。"
+    },
+    "get_objects_by_name_fr_arr": {
+      "say": "从 {objects} 里找名叫 {object_name} 的",
+      "help": "按内部名找任意对象（状态、附带物、牌），得到一批。"
+    },
+    "get_buff_by_name_fr_arr": {
+      "say": "从 {buffs} 里找名叫 {buff_name} 的状态",
+      "help": "按内部名找状态。"
+    },
+    "get_by_tag": {
+      "say": "全局找标签为 {tag} 的对象",
+      "help": "高级：按整份标签字典匹配。",
+      "advanced": true
+    },
+    "get_extreme_by_property": {
+      "say": "{objects} 里 {property} 最大的",
+      "help": "取消「取最大」时改为找最小的。"
+    },
+    "filter_by_property": {
+      "say": "{objects} 里 {property} 等于 {value} 的",
+      "help": "按某个属性筛出一批。"
+    },
+    "get_property": {
+      "say": "{object} 的 {property}",
+      "help": "读任意对象的一个属性（高级）。常见：_cost 魔力消耗、_power 威力、from 来源。",
+      "advanced": true
+    },
+    "get_location": {
+      "say": "{player_id} 所在的位置",
+      "help": "玩家当前所在的席位。"
+    },
+    "get_location_magic": {
+      "say": "{location} 的魔力",
+      "help": "席位印的魔力收益。"
+    },
+    "get_location_benefit": {
+      "say": "{location} 的地利",
+      "help": "席位当前的地利。"
+    },
+    "get_effective_location_benefit": {
+      "say": "{player_id} 实际享有的地利",
+      "help": "只有部署到该位置才算，与结算同口径。"
+    },
+    "get_player_location_benefit": {
+      "say": "{player_id} 所在位置印着的地利",
+      "help": "只看印刷值。"
+    },
+    "is_engaged": {
+      "say": "{player_id} 在交战吗",
+      "help": "与对手同处一个会发生战斗的战场。"
+    },
+    "get_location_map_area": {
+      "say": "{location} 所在的战区",
+      "help": "没给位置时取 {player_id} 所在的战区。"
+    },
+    "get_map_area_by_name": {
+      "say": "战区 {area_name}",
+      "help": "按名字取一个战区。"
+    },
+    "get_map_area_score": {
+      "say": "{map_area} 的战果",
+      "help": "战区的竞争战果。"
+    },
+    "get_map_area_score_need_win": {
+      "say": "{map_area} 需要打赢才拿战果吗",
+      "help": "工房、侦察这类不比威力的战区为否。"
+    },
+    "get_map_area_buffs": {
+      "say": "{map_area} 上的状态",
+      "help": "战区挂着的状态。"
+    },
+    "get_move_cost": {
+      "say": "{map_area} 的移动消耗",
+      "help": "离开/经过这个战区要花的魔力。"
+    },
+    "get_move_target_location": {
+      "say": "移动到 {target_area} 会落在哪",
+      "help": "满了就什么都拿不到。"
+    },
+    "get_events": {
+      "say": "{map_area} 上的事件牌",
+      "help": "战区里的事件牌。"
+    },
+    "get_event_printed_score": {
+      "say": "{event} 印着的战果",
+      "help": "事件牌印的战果。"
+    },
+    "get_situations": {
+      "say": "当前的局势牌",
+      "help": "场上激活的局势牌。"
+    },
+    "get_situation_printed_magic": {
+      "say": "{situation} 印着的魔力",
+      "help": "局势牌印的魔力。"
+    },
+    "get_pls_in_location": {
+      "say": "{location} 上的玩家",
+      "help": "席位上的玩家。"
+    },
+    "get_num_of_pl_in_map_area": {
+      "say": "{map_area} 里有几个人",
+      "help": "战区人数。"
+    },
+    "get_players_in_same_area": {
+      "say": "和 {player_id} 在同一战区的玩家",
+      "help": "勾「包含自己」时连自己也算上。"
+    },
+    "get_players_in_map_area": {
+      "say": "{map_area} 里的玩家",
+      "help": "战区里的在场玩家。"
+    },
+    "get_activating_eff": {
+      "say": "正在结算的这个效果",
+      "help": "当前效果本身（高级）。",
+      "advanced": true
+    },
+    "get_effect_number": {
+      "say": "{object} 上效果 {effect_name} 的第 {index} 个数字",
+      "help": "读别的效果里的数字。"
+    },
+    "get_effect_using_nums": {
+      "say": "{effect} 正在用的数字",
+      "help": "高级。",
+      "advanced": true
+    },
+    "get_player_time_points": {
+      "say": "{player_id} 当前的时机",
+      "help": "高级。",
+      "advanced": true
+    },
+    "player_buffs_have_effect": {
+      "say": "{player_id} 的状态里有 {effect_name} 吗",
+      "help": "只看激活的状态。"
+    },
+    "board_has_effect": {
+      "say": "场上有 {effect_name} 吗",
+      "help": "局势牌、事件牌、战区状态里只要有就算。常用于禁令。"
+    },
+    "map_area_has_effect": {
+      "say": "{map_area} 有 {effect_name} 吗",
+      "help": "只看这个战区。"
+    },
+    "get_shared_attack_attribute": {
+      "say": "{player_id} 场上攻击共同的属性",
+      "help": "没有共同属性时什么都拿不到。"
+    },
+    "can_gain_magic": {
+      "say": "{player_id} 能从 {source} 获得魔力吗",
+      "help": "查限制，如工房被封。"
+    },
+    "when": {
+      "say": "这次是因为 {time_points} 触发的吗",
+      "help": "同一条效果写了多个时机时，用它区分这次是哪一个。"
+    },
+    "query_log": {
+      "say": "查记录 {filter}",
+      "help": "从本局的历史记录里查。回合：0 本回合，-1 上回合，空着表示不限。"
+    },
+    "sum_log_data": {
+      "say": "把记录 {filter} 的 {key} 加起来",
+      "help": "例如本回合一共得了多少战果。"
+    },
+    "log_field_values": {
+      "say": "记录 {filter} 里的 {field}",
+      "help": "把每条记录的某一项列成一批。"
+    },
+    "is_true_name_released": {
+      "say": "{player_id} 的真名解放了吗",
+      "help": "按最后一次解放/隐藏判断。"
+    },
+    "log_exists": {
+      "say": "{player_id} 发生过 {filter} 吗",
+      "help": "历史上有没有过。回合：0 本回合，-1 上回合，空着不限。"
+    },
+    "get_round_battle_wins": {
+      "say": "{player_id} 本回合赢了几场",
+      "help": ""
+    },
+    "get_area_round_winners": {
+      "say": "{map_area} 本回合的胜者",
+      "help": ""
+    },
+    "get_area_round_participants": {
+      "say": "{map_area} 本回合的参战者",
+      "help": ""
+    },
+    "array_length": {
+      "say": "{arr} 有几个",
+      "help": "一批东西的数量。"
+    },
+    "is_in_array": {
+      "say": "{arr} 里有 {item} 吗",
+      "help": ""
+    },
+    "has": {
+      "say": "{parent_var} 里有 {children_var} 吗",
+      "help": "写了「键」时看那一项里有没有（高级）。",
+      "advanced": true
+    },
+    "get_dictionary_value": {
+      "say": "{dict} 里的 {key}",
+      "help": "按键取字典里的一项（高级）。",
+      "advanced": true
+    },
+    "array_difference": {
+      "say": "{arr} 去掉 {subtract}",
+      "help": "差集。"
+    },
+    "merge_arrays": {
+      "say": "把 {a} {b} {c} {d} 合成一批",
+      "help": "最多一次合四批，更多就再套一块。"
+    },
+    "add_to_array": {
+      "say": "把 {item} 放进 {arr}",
+      "help": "位置空着或 -1 表示放到最后。会直接改那一批。"
+    },
+    "remove_from_array": {
+      "say": "把 {item} 从 {arr} 里拿掉",
+      "help": "只拿掉一个。"
+    },
+    "shuffle_array": {
+      "say": "洗乱 {arr}",
+      "help": "直接打乱原来那一批的顺序。"
+    },
+    "if_func": {
+      "say": "{_var1} 等于 {_var2} 吗",
+      "help": "第二个空着时默认和「是」比。",
+      "shape": "boolean"
+    },
+    "if_else_func": {
+      "say": "如果 {condition} 就是 {then_value} 否则 {else_value}",
+      "help": "在两个已经算好的值里二选一，不是「如果…那么」流程。要按条件做事请用控制里的「如果」。"
+    },
+    "compare_number": {
+      "say": "{a} 和 {b} 比大小",
+      "help": "小于得 -1，相等得 0，大于得 1。要判断「≥」可再接「落在…里吗」，填 [0, 1]。"
+    },
+    "and_func": {
+      "say": "{a} 并且 {b}",
+      "help": "两个都成立才成立。",
+      "shape": "boolean"
+    },
+    "or_func": {
+      "say": "{a} 或者 {b}",
+      "help": "有一个成立就成立。",
+      "shape": "boolean"
+    },
+    "not_func": {
+      "say": "不是 {_bool}",
+      "help": "反过来。",
+      "shape": "boolean"
+    },
+    "match_func": {
+      "say": "{_var} 落在 {cases} 里吗",
+      "help": "值等于列表里任意一个就成立。",
+      "shape": "boolean"
+    },
+    "is_null": {
+      "say": "{value} 是空的吗",
+      "help": "什么都没拿到时成立。",
+      "shape": "boolean"
+    },
+    "edit_magic": {
+      "say": "把 {player_id} 的魔力设为 {set_num} 再加 {vary_num}",
+      "help": "「设为」空着就只做加减；减少填负数。魔力不会超过上限、不会低于 0。"
+    },
+    "edit_score": {
+      "say": "把 {player_id} 的战果设为 {set_num} 再加 {vary_num}",
+      "help": "「设为」空着就只做加减；减少填负数。"
+    },
+    "edit_lives": {
+      "say": "把 {player_id} 的生命设为 {set_num} 再加 {vary_num}",
+      "help": ""
+    },
+    "edit_power": {
+      "say": "把 {player_id} 的合计威力设为 {set_num} 再加 {vary_num}",
+      "help": "本回合临时的，回合结束会按场上牌重算。"
+    },
+    "edit_data_number": {
+      "say": "把 {player_id} 的 {key} 设为 {set_num} 再加 {vary_num}",
+      "help": "改玩家的任意数字项，比如令咒数、出牌上限。下限/上限不填就不限制。",
+      "kinds": {
+        "key": "player_key"
+      }
+    },
+    "set_player_data": {
+      "say": "把 {player_id} 的 {key_name} 改成 {value}",
+      "help": "直接覆盖玩家的某一项（高级）。",
+      "kinds": {
+        "key_name": "player_key"
+      }
+    },
+    "change_pl_order": {
+      "say": "把 {player_id} 的顺位设为 {set_order} 再挪 {vary_order}",
+      "help": ""
+    },
+    "sync_power": {
+      "say": "按场上的牌重算 {player_id} 的合计威力",
+      "help": "",
+      "advanced": true
+    },
+    "modify_attack_power_by_attribute": {
+      "say": "{player_id} 每张带 {required_attributes} 的攻击 威力加 {power_delta}",
+      "help": "可以再限定只算某张/排除某张、类别、最低威力。"
+    },
+    "zero_attribute_power": {
+      "say": "{player_id} 带 {attributes} 的攻击 本回合威力按 0 算",
+      "help": "只影响本回合结算，不改牌。"
+    },
+    "edit_card_power": {
+      "say": "{card} 的威力加 {vary_num}",
+      "help": "「设为」填了就先设成那个数。会同步合计威力。"
+    },
+    "edit_card_cost": {
+      "say": "{card} 的魔力消耗加 {vary_num}",
+      "help": "「设为」填了就先设成那个数。"
+    },
+    "edit_card_attributes": {
+      "say": "{card} 加上属性 {add_attributes} 去掉 {del_attributes}",
+      "help": "「设为」一栏填了就整个替换。"
+    },
+    "set_card_concealed": {
+      "say": "把 {card} 设为暗置 {concealed}",
+      "help": "勾上是暗置，不勾是明置。会同步威力。"
+    },
+    "close_card": {
+      "say": "关闭 {card}",
+      "help": "关闭打出的牌。"
+    },
+    "set_property": {
+      "say": "把 {object} 的 {property} 改成 {value}",
+      "help": "写任意对象的属性（高级）。",
+      "advanced": true
+    },
+    "edit_location_magic": {
+      "say": "{location} 的魔力设为 {set_num} 再加 {vary_num}",
+      "help": ""
+    },
+    "edit_location_benefit": {
+      "say": "{location} 的地利设为 {set_num} 再加 {vary_num}",
+      "help": "回合结束会恢复。"
+    },
+    "edit_map_area_score": {
+      "say": "{map_area} 的战果设为 {set_num} 再加 {vary_num}",
+      "help": ""
+    },
+    "edit_map_area_move_cost": {
+      "say": "{map_area} 的移动消耗设为 {set_num} 再加 {vary_num}",
+      "help": ""
+    },
+    "add_map_area_events": {
+      "say": "把 {add_event} 放到 {map_area}",
+      "help": ""
+    },
+    "add_event_from_deck": {
+      "say": "从事件牌堆翻 {add_count} 张放到 {map_area}",
+      "help": "勾「暗置」则背面朝上放。"
+    },
+    "add_map_area_buff": {
+      "say": "给 {map_area} 加状态 {add_buff}",
+      "help": ""
+    },
+    "add_situations": {
+      "say": "加入局势牌 {add_situation}",
+      "help": ""
+    },
+    "set_location": {
+      "say": "把 {player_id} 放到 {setted_location}",
+      "help": "「算作移动」勾上时要遵守不能进入的限制；效果搬运一般不勾。"
+    },
+    "remove_from_board": {
+      "say": "把 {player_id} 移出版图",
+      "help": ""
+    },
+    "set_map_area_can_move_to": {
+      "say": "{map_area} 能常规进入：{value}",
+      "help": "局势牌弃置时会恢复原样。"
+    },
+    "restore_map_area_move_flags": {
+      "say": "恢复所有战区能否进入",
+      "help": "",
+      "advanced": true
+    },
+    "set_location_pl_num_limit": {
+      "say": "{location} 最多容纳 {limit} 人",
+      "help": "-1 表示不限。"
+    },
+    "restore_location_pl_num_limits": {
+      "say": "恢复所有席位人数上限",
+      "help": "",
+      "advanced": true
+    },
+    "restore_location_benefits": {
+      "say": "恢复所有席位的地利",
+      "help": "",
+      "advanced": true
+    },
+    "draw_card_from_pl_deck_to_hand": {
+      "say": "{player_id} 从牌库抽一张",
+      "help": "抽第几张默认是 0（最上面）。牌库空了就抽不到，需要时先放一块「洗回弃牌堆」。"
+    },
+    "reshuffle_discard": {
+      "say": "{player_id} 牌库空了就把弃牌堆洗回来",
+      "help": "牌库不空时什么都不做。"
+    },
+    "draw_card_by_card": {
+      "say": "把 {card} 从 {from} 移到 {to}",
+      "help": "目标位置空着或 -1 表示放到最后。"
+    },
+    "draw_card_by_index": {
+      "say": "把 {from} 的第 {from_index} 张移到 {to}",
+      "help": ""
+    },
+    "add_skill_to_skill_zone": {
+      "say": "把技能 {skill} 放进 {player_id} 的技能区",
+      "help": "不会从原来那一区拿走，需要时再放一块「拿掉」。"
+    },
+    "discard_played_cards": {
+      "say": "清理 {player_id} 场上的牌",
+      "help": "回合结束用。",
+      "advanced": true
+    },
+    "play_attack": {
+      "say": "{player_id} 打出攻击 {attack}",
+      "help": "魔力消耗/威力空着就用牌上的。"
+    },
+    "play_skill": {
+      "say": "{player_id} 打出技能 {skill}",
+      "help": ""
+    },
+    "add_attack": {
+      "say": "{player_id} 追加打出攻击 {attack}",
+      "help": "不占常规出牌数。"
+    },
+    "add_skill": {
+      "say": "{player_id} 追加打出技能 {skill}",
+      "help": "不占常规出牌数。"
+    },
+    "deploy": {
+      "say": "{player_id} 部署到 {deploy_location}",
+      "help": ""
+    },
+    "move": {
+      "say": "{player_id} 常规移动 {move_num} 格",
+      "help": "会扣移动魔力。"
+    },
+    "move_location": {
+      "say": "{player_id} 移动 {move_num} 格（不扣魔力）",
+      "help": "只改位置，给出本该花多少。"
+    },
+    "deal_player_cards": {
+      "say": "给 {player_id} 重新发从者牌",
+      "help": "",
+      "advanced": true
+    },
+    "refill_hand": {
+      "say": "{player_id} 把手牌补到 {limit} 张",
+      "help": ""
+    },
+    "played_cards": {
+      "say": "让 {player_id} 触发「打出卡牌时」",
+      "help": "",
+      "advanced": true
+    },
+    "release_true_name": {
+      "say": "{player_id} 真名解放",
+      "help": "翻开从者概览与技能牌。"
+    },
+    "hide_true_name": {
+      "say": "{player_id} 隐藏真名",
+      "help": ""
+    },
+    "apply_card_keywords": {
+      "say": "结算 {card} 的词条",
+      "help": "",
+      "advanced": true
+    },
+    "manage_buff": {
+      "say": "给 {player_id} 加上状态 {buff}",
+      "help": "「加上」不勾就是去掉。"
+    },
+    "defeat": {
+      "say": "给 {player_id} 败北",
+      "help": ""
+    },
+    "remove_defeat": {
+      "say": "去掉 {player_id} 的所有败北",
+      "help": ""
+    },
+    "register_object_effects": {
+      "say": "让 {object} 上的效果对 {player_id} 生效",
+      "help": "",
+      "advanced": true
+    },
+    "unregister_object_effects": {
+      "say": "让 {object} 上的效果失效",
+      "help": ""
+    },
+    "counter": {
+      "say": "反制 {effect}",
+      "help": "",
+      "advanced": true
+    },
+    "close_time_point": {
+      "say": "关闭时机 {time_point}",
+      "help": "",
+      "advanced": true
+    },
+    "schedule_effect_on_time_point": {
+      "say": "等到 {time_points} 时再做",
+      "help": "嘴里的事不会马上做，而是登记起来，等到时机到了做一次。到期时机一到就作废。"
+    },
+    "emit_time_point": {
+      "say": "触发时机 {time_point}",
+      "help": "",
+      "advanced": true
+    },
+    "queue_optional_effect_for_players": {
+      "say": "让 {players} 各自选择要不要：{shown_name}",
+      "help": "每人单独问一次。"
+    },
+    "create_buff": {
+      "say": "新建状态 {buff_name}",
+      "help": "",
+      "advanced": true
+    },
+    "create_base_number": {
+      "say": "新建数字 {number}",
+      "help": "",
+      "advanced": true
+    },
+    "create_func": {
+      "say": "新建操作",
+      "help": "高级。",
+      "advanced": true
+    },
+    "clone_object": {
+      "say": "复制一份 {object}",
+      "help": "复制出的东西不在任何一区里。",
+      "advanced": true
+    },
+    "location": {
+      "say": "新建席位",
+      "help": "",
+      "advanced": true
+    },
+    "tag": {
+      "say": "新建标签 {tag_name}",
+      "help": "",
+      "advanced": true
+    },
+    "for_func": {
+      "say": "重复 {count} 次",
+      "help": "嘴里的事按次数做。",
+      "script": [
+        "body"
+      ]
+    },
+    "foreach_func": {
+      "say": "对 {arr} 里的每一个",
+      "help": "每轮把当前这一个填进嘴里每一步的第「填入位置」个空位（只填空着的）。",
+      "script": [
+        "body"
+      ],
+      "fill": "parameter_index"
+    },
+    "while_func": {
+      "say": "当 {condition} 时重复",
+      "help": "最多重复次数是防止写错卡死的保险。",
+      "script": [
+        "body"
+      ]
+    },
+    "store_value": {
+      "say": "记下 {value}",
+      "help": "原样给出放进来的东西。常在「对每一个」里先记下当前这一个。",
+      "shape": "reporter"
+    },
+    "do_nothing": {
+      "say": "什么都不做",
+      "help": "占位用。"
+    },
+    "edit_num_and_return": {
+      "say": "把数字 {num} 加 {add} 再乘 {times}",
+      "help": "直接改那个数字本身。"
+    },
+    "calculate_number": {
+      "say": "{a} {op} {b}",
+      "help": "算出一个新数字，不改原来的。"
+    },
+    "random_int": {
+      "say": "{range_start} 到 {range_end} 的随机整数",
+      "help": ""
+    },
+    "random_float": {
+      "say": "{range_start} 到 {range_end} 的随机小数",
+      "help": ""
+    },
+    "show_message": {
+      "say": "提示 {message} 给 {player_id}",
+      "help": "发动者自己填「所有人」则所有人都能看到。",
+      "kinds": {
+        "player_id": "message_target"
+      }
+    },
+    "power_contribution": {
+      "say": "给 {player_id} 的合计威力加 {amount}",
+      "help": "只在「威力计算」里用：随时按当前场面算，不改任何东西。",
+      "hide": [
+        "unused"
+      ]
+    },
+    "attack_power_contribution": {
+      "say": "{player_id} 每张带 {attributes} 的攻击 威力加 {amount}",
+      "help": "只在「威力计算」里用。"
+    },
+    "card_power_contribution": {
+      "say": "把 {card} 的威力加 {vary}",
+      "help": "只在「威力计算」里用。"
+    }
+  },
+  "categories": [
+    {
+      "id": "控制流",
+      "shown": "控制",
+      "color": "#FFAB19"
+    },
+    {
+      "id": "变量",
+      "shown": "变量",
+      "color": "#FF8C1A"
+    },
+    {
+      "id": "查询/判断",
+      "shown": "判断",
+      "color": "#59C059",
+      "reporter": true
+    },
+    {
+      "id": "数值运算",
+      "shown": "算数",
+      "color": "#40BF4A",
+      "reporter": true
+    },
+    {
+      "id": "改写/玩家数值",
+      "shown": "改玩家数值",
+      "color": "#E6A020"
+    },
+    {
+      "id": "行动/出牌部署移动",
+      "shown": "出牌与移动",
+      "color": "#E64D4D"
+    },
+    {
+      "id": "转移/区域",
+      "shown": "搬牌",
+      "color": "#3373CC"
+    },
+    {
+      "id": "改写/卡牌",
+      "shown": "改牌",
+      "color": "#B35CE0"
+    },
+    {
+      "id": "改写/地图",
+      "shown": "改地图",
+      "color": "#0DA57A"
+    },
+    {
+      "id": "状态/Buff败北",
+      "shown": "状态",
+      "color": "#CF63CF"
+    },
+    {
+      "id": "效果/登记反制时点",
+      "shown": "效果与时机",
+      "color": "#D9A400"
+    },
+    {
+      "id": "提示/消息",
+      "shown": "提示",
+      "color": "#9E7AE6"
+    },
+    {
+      "id": "查询/玩家字段",
+      "shown": "玩家信息",
+      "color": "#5CB1D6",
+      "reporter": true
+    },
+    {
+      "id": "查询/玩家区域",
+      "shown": "玩家的牌区",
+      "color": "#4C97FF",
+      "reporter": true
+    },
+    {
+      "id": "查询/卡牌对象",
+      "shown": "找牌",
+      "color": "#9966FF",
+      "reporter": true
+    },
+    {
+      "id": "查询/地图",
+      "shown": "地图",
+      "color": "#0FBD8C",
+      "reporter": true
+    },
+    {
+      "id": "查询/效果与时点",
+      "shown": "效果情况",
+      "color": "#C94FA8",
+      "reporter": true
+    },
+    {
+      "id": "查询/历史日志",
+      "shown": "历史记录",
+      "color": "#3F8FA8",
+      "reporter": true
+    },
+    {
+      "id": "查询/集合",
+      "shown": "一批东西",
+      "color": "#FF661A",
+      "reporter": true
+    },
+    {
+      "id": "威力计算",
+      "shown": "威力计算",
+      "color": "#0FBDA0"
+    },
+    {
+      "id": "构造",
+      "shown": "新建",
+      "color": "#8C8C8C",
+      "reporter": true
+    }
+  ],
+  "param_kinds": {
+    "player_id": "player",
+    "anchor_player_id": "player",
+    "from_pl_id": "player",
+    "time_points": "time_points",
+    "expire_time_points": "time_points",
+    "time_point": "time_point",
+    "attributes": "attributes",
+    "required_attributes": "attributes",
+    "add_attributes": "attributes",
+    "del_attributes": "attributes",
+    "set_attributes": "attributes",
+    "area_name": "area_name",
+    "op": "op",
+    "category": "card_category",
+    "required_category": "card_category"
+  },
+  "kind_choices": {
+    "player": [
+      {
+        "v": -1,
+        "shown": "发动效果的玩家"
+      },
+      {
+        "v": null,
+        "shown": "空着"
+      }
+    ],
+    "message_target": [
+      {
+        "v": -1,
+        "shown": "所有人"
+      },
+      {
+        "v": null,
+        "shown": "空着"
+      }
+    ],
+    "op": [
+      {
+        "v": "+",
+        "shown": "加"
+      },
+      {
+        "v": "-",
+        "shown": "减"
+      },
+      {
+        "v": "*",
+        "shown": "乘"
+      },
+      {
+        "v": "/",
+        "shown": "除"
+      },
+      {
+        "v": "%",
+        "shown": "取余"
+      },
+      {
+        "v": "min",
+        "shown": "取小"
+      },
+      {
+        "v": "max",
+        "shown": "取大"
+      }
+    ],
+    "card_category": [
+      {
+        "v": "",
+        "shown": "不限"
+      },
+      {
+        "v": "basic",
+        "shown": "基础"
+      },
+      {
+        "v": "class",
+        "shown": "职阶"
+      },
+      {
+        "v": "non_basic",
+        "shown": "非基础"
+      }
+    ]
+  },
+  "type_names": {
+    "BaseNumber": "数字",
+    "int": "整数",
+    "float": "小数",
+    "String": "文字",
+    "bool": "是/否",
+    "Array": "一批",
+    "Dictionary": "字典",
+    "BaseMapArea": "战区",
+    "BaseLocation": "席位",
+    "BaseCard": "牌",
+    "BaseHandCard": "牌",
+    "BaseAttack": "攻击牌",
+    "BaseSkill": "技能牌",
+    "BaseBuff": "状态",
+    "BaseEffect": "效果",
+    "BaseEvent": "事件牌",
+    "BaseSituation": "局势牌",
+    "BaseObject": "对象",
+    "BaseFunc": "操作",
+    "Callable": "操作",
+    "Nil": "任意",
+    "Variant": "任意"
+  },
+  "player_key_names": {
+    "player_name": "名字",
+    "master": "御主",
+    "servant": "从者",
+    "command_spell": "令咒牌",
+    "magic": "魔力",
+    "score": "战果",
+    "lives": "生命",
+    "deck": "牌库",
+    "discard": "弃牌堆",
+    "hand_cards": "手牌",
+    "played_cards": "已打出的牌",
+    "master_skills": "御主技能区",
+    "servant_skills": "从者技能区",
+    "location": "所在位置",
+    "temp_locations": "临时位置",
+    "power": "合计威力",
+    "is_victory": "已获胜",
+    "is_out": "已出局",
+    "is_shown": "已公开",
+    "is_battle": "本回合参加过战斗",
+    "is_first": "先手",
+    "order": "顺位",
+    "buffs": "状态",
+    "out_of_game": "游戏外",
+    "side": "场边",
+    "command_spell_count": "令咒数",
+    "command_spell_limit": "令咒上限",
+    "used_once_effects": "用过的每局一次效果",
+    "play_limit": "出牌上限",
+    "regular_play_min": "最少出牌数",
+    "can_draw_card": "能抽牌",
+    "action_requirements": "结束行动前要做的事",
+    "last_turn_location": "上回合位置",
+    "is_magic_immune": "魔力免疫",
+    "ignore_skill_zone_magic_limit": "无视技能区魔力门槛",
+    "ignore_engagement_for_move": "交战时也能移动",
+    "total_power_bonus": "本回合合计威力加成",
+    "attack_cost_discount": "攻击魔力消耗减免",
+    "move_cost_discount_from_workshop": "离开工房移动减免",
+    "victory_override": "胜利判定覆盖",
+    "current_time_points": "当前时机",
+    "dynamic_time_points": "动态时机",
+    "self_effects": "自己的效果"
+  }
+}

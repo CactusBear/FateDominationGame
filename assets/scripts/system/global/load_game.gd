@@ -1,9 +1,9 @@
 extends Node
 
 
-var masters_path = LoadHelper.DATA_DIR + "/masters"
-var servants_path = LoadHelper.DATA_DIR + "/servants"
-var tag_list_path = LoadHelper.DATA_DIR
+var masters_path := ""
+var servants_path := ""
+var tag_list_path := ""
 var tag_list:Array
 var temp_stored_jsons_arr:Array#[String]
 var _loaded_path = []
@@ -16,6 +16,10 @@ func _ready():
 	pass
 
 func load_game():
+	var data_dir := LoadHelper.get_data_dir()
+	masters_path = data_dir.path_join("masters")
+	servants_path = data_dir.path_join("servants")
+	tag_list_path = data_dir
 	LoadAttack.load_all()
 	LoadEvent.load_all()
 	LoadSituation.load_all()

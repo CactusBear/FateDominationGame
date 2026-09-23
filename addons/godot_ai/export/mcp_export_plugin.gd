@@ -40,7 +40,12 @@ func _get_name() -> String:
 	return "GodotAIStripAutoload"
 
 
-func _export_begin(_features: PackedStringArray, _is_debug: bool, _path: String, _flags: int) -> void:
+func _export_begin(_features: PackedStringArray, _is_debug: bool, path: String, _flags: int) -> void:
+	_copy_external_data(path)
+	_strip_mcp_autoload()
+
+
+func _strip_mcp_autoload() -> void:
 	## `_stripped` guard: if a previous export died before _export_end,
 	## don't overwrite the genuinely-saved value with the already-cleared
 	## state — restore semantics stay anchored to the original value.
@@ -53,6 +58,51 @@ func _export_begin(_features: PackedStringArray, _is_debug: bool, _path: String,
 	ProjectSettings.set_setting(AUTOLOAD_KEY, null)
 	_stripped = true
 	print("MCP | export: stripping %s from the exported pack (restored in the editor after export)" % AUTOLOAD_KEY)
+
+
+func _copy_external_data(export_path: String) -> void:
+	if not export_path.is_absolute_path():
+		export_path = ProjectSettings.globalize_path(export_path)
+	var source_dir := ProjectSettings.globalize_path("res://data")
+	var target_dir := export_path.get_base_dir().path_join("data")
+	if not DirAccess.dir_exists_absolute(source_dir):
+		push_error("Fate export: data directory does not exist: " + source_dir)
+		return
+	var error := _copy_directory(source_dir, target_dir)
+	if error != OK:
+		push_error("Fate export: failed to copy data directory, error=" + str(error))
+	else:
+		print("Fate export: copied external data directory to " + target_dir)
+
+
+func _copy_directory(source_dir: String, target_dir: String) -> Error:
+	var make_dir_error := DirAccess.make_dir_recursive_absolute(target_dir)
+	if make_dir_error != OK and make_dir_error != ERR_ALREADY_EXISTS:
+		return make_dir_error
+	var source := DirAccess.open(source_dir)
+	if source == null:
+		return ERR_CANT_OPEN
+	source.list_dir_begin()
+	var entry := source.get_next()
+	while entry != "":
+		var source_path := source_dir.path_join(entry)
+		var target_path := target_dir.path_join(entry)
+		var error: Error
+		if source.current_is_dir():
+			error = _copy_directory(source_path, target_path)
+		else:
+			if FileAccess.file_exists(target_path):
+				var remove_error := DirAccess.remove_absolute(target_path)
+				if remove_error != OK:
+					source.list_dir_end()
+					return remove_error
+			error = DirAccess.copy_absolute(source_path, target_path)
+		if error != OK:
+			source.list_dir_end()
+			return error
+		entry = source.get_next()
+	source.list_dir_end()
+	return OK
 
 
 func _export_end() -> void:

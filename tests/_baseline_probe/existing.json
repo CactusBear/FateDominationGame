@@ -1,0 +1,13 @@
+{
+  "skill_name": "parent",
+  "effects": [],
+  "children": [
+    {
+      "uid": "changed",
+      "_editor_future": {
+        "x": 2
+      },
+      "effects": []
+    }
+  ]
+}

@@ -14,7 +14,7 @@
 	  "effect_name": "turnaround_add_events",
 	  "shown_effect_name": "于深山町和新都各增加一张正面事件牌",
 	  "time_points": [
-		"card_entered"
+		"self_card_revealed"
 	  ],
 	  "priority": 0,
 	  "is_pure_passive": true,

@@ -109,12 +109,16 @@ const OTHERS_BATTLE = "others_battle"
 const OTHERS_BATTLE_LOSE = "others_battle_lose"
 const BATTLE_RESOLVE = "battle_resolve"
 
-#牌进场：局势牌翻开、事件牌翻开时派发。
-#布置类效果（增加事件牌、封锁战区、改席位上限）要在牌一进场就执行完，
-#不能等到战斗结算——否则整个行动阶段玩家都看不到牌面已经宣告的场地变化。
-#威力加成类效果仍然挂 battle_resolve（那类要在比较威力前按最新出牌重算），
-#两者不冲突：同一张牌可以同时有进场生效和结算时生效的效果
-const CARD_ENTERED = "card_entered"
+#卡牌亮出时的三种语义：
+#CARD_REVEALED：任意卡牌亮出时，不区分亮出者。
+#SELF_CARD_REVEALED：效果所属的这张卡牌自身亮出时。
+#OTHERS_CARD_REVEALED：其他卡牌亮出时。
+#真实派发路径目前是局势牌抽出展示、事件牌明置落场、暗置事件牌翻面。
+#暗置放置不派发：牌还没亮出，提前执行等于泄露暗置信息。
+#source 只用于区分 SELF/OTHERS，不限制 CARD_REVEALED 的任意卡牌语义。
+const CARD_REVEALED = "card_revealed"
+const SELF_CARD_REVEALED = "self_card_revealed"
+const OTHERS_CARD_REVEALED = "others_card_revealed"
 const BATTLE_END = "battle_end"
 
 const CLIMAX_START = "climax_start"
@@ -288,6 +292,9 @@ const shown_time_points:Dictionary = {
 	OTHERS_BATTLE_LOSE : "他人败北时",
 	BATTLE_RESOLVE : "战斗结算时",
 	BATTLE_END : "战斗结算后",
+	CARD_REVEALED : "任意卡牌亮出时",
+	SELF_CARD_REVEALED : "卡牌自身亮出时",
+	OTHERS_CARD_REVEALED : "其他卡牌亮出时",
 	CLIMAX_START : "高潮开始时",
 	CLIMAX : "高潮时",
 	CLIMAX_END : "高潮结束时",
@@ -297,6 +304,9 @@ const shown_time_points:Dictionary = {
 	OTHERS_CLIMAX_START : "他人高潮开始时",
 	OTHERS_CLIMAX : "他人高潮时",
 	OTHERS_CLIMAX_END : "他人高潮结束时",
+	NON_CLIMAX : "非高潮时",
+	SELF_NON_CLIMAX : "自己非高潮时",
+	OTHERS_NON_CLIMAX : "他人非高潮时",
 	DEPLOY_START : "开始部署时",
 	DEPLOY : "部署时",
 	DEPLOY_END : "结束部署时",

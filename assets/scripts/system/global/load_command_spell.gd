@@ -5,15 +5,13 @@ extends RefCounted
 #令咒加载：从 data/command_spells 递归加载令咒 JSON，生成 BaseCard 实例。
 #令咒不占手牌/牌堆，是各御主共用的通用卡；界面说明与规则都从这里取，避免写死在 UI 里。
 
-const COMMAND_SPELLS_PATH := LoadHelper.DATA_DIR + "/command_spells"
-
 #已加载的令咒池，{card_name : BaseCard}
 static var command_spells:Dictionary = {}
 
 
 static func load_all() -> void:
 	command_spells.clear()
-	_load_dir(COMMAND_SPELLS_PATH)
+	_load_dir(LoadHelper.get_data_dir().path_join("command_spells"))
 
 
 static func get_command_spell(card_name:String) -> BaseCard:

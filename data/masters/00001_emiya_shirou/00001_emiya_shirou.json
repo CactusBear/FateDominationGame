@@ -214,7 +214,7 @@
 					"effect_name": "passive",
 					"shown_effect_name": "被动 - 你的力量属性和敏捷属性的基本牌威力+2",
 					"time_points": [
-						"self_played_card"
+						"self_card_revealed"
 					],
 					"priority": 0,
 					"is_pure_passive": true,

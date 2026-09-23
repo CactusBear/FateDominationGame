@@ -701,10 +701,14 @@ func collect_current_effects(source = null):
 			continue
 		if source != null:
 			var owner = effect.from.get_ref() if effect.from is WeakRef else effect.from
-			if owner != source:
-				matched.erase(TimePoints.CARD_ENTERED)
-				if effect._source_bound:
-					continue
+			#卡牌亮出时的三个来源语义：任意不筛选，自身只保留同一张卡，
+			#其他只保留不同卡。非卡牌来源的效果仍可使用任意时点监听。
+			if owner == source:
+				matched.erase(TimePoints.OTHERS_CARD_REVEALED)
+			else:
+				matched.erase(TimePoints.SELF_CARD_REVEALED)
+			if effect._source_bound and owner != source:
+				continue
 		if matched.is_empty():
 			continue
 		#持续阶段窗口（self_action_phase / self_battle_phase / self_climax …）派发后会一直留在

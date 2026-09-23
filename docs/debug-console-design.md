@@ -272,10 +272,10 @@ assets/scripts/debug/debug_adapters/
 |---|---|---|
 | `buff.add` / `buff.remove` | `ManageBuff` | 登记/注销随原语 |
 | `buff.defeat` / `buff.undead` | `Defeat` / `RemoveDefeat` | |
-| `event.place area= [concealed=]` | `AddEventFromDeck` | 克隆挂场；明置才 `register_entered` |
+| `event.place area= [concealed=]` | `AddEventFromDeck` | 克隆挂场；明置才 `register_entered`（派三种卡牌亮出时点） |
 | `event.clear` | `EventResolver.clear_all` | 注销后入 `event_discard` |
 | `event.reveal_planned` | `EventResolver.reveal_planned(GameProgress.event_placements)` | 不翻计划外暗置 |
-| `situation.activate` | `SituationResolver.activate` | 会发印刷魔力并派 `CARD_ENTERED` |
+| `situation.activate` | `SituationResolver.activate` | 会发印刷魔力并派三种 `CARD_REVEALED` 时点 |
 | `situation.clear` | `SituationResolver.clear_all` | 还原移动与席位基线 |
 | `situation.replace` | 先 `clear_all` 再按调用方选择模板 `CloneObject` 后写入 `active_situation` 并登记效果 | 是否发印刷魔力由参数 `grant_printed_magic` 显式决定，默认 false。不能把 `AddSituations` 当设置当前局势 |
 

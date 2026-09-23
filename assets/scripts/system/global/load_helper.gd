@@ -8,11 +8,39 @@ extends RefCounted
 #本类只依赖 class_name（BaseEffect / BaseFunc / BaseNumber），不引用任何 autoload。
 
 
-#卡数据根目录。故意用不带前缀的相对路径：这样它在编辑器里指向项目根的 data/，
-#导出后指向可执行文件同级的 data/，玩家能直接看到并增改卡牌 JSON 与图片。
-#不要改成 res://——那会把 data 打进 pck，外部就看不见也加不了卡了。
-const DATA_DIR := "data"
-const CARD_BACKS_DIR := DATA_DIR + "/card_backs"
+#卡数据根目录。编辑器使用项目内的 data/；导出后使用可执行文件同级的外部 data/。
+#data 不进入 pck，由导出插件复制到 exe 旁，玩家可以直接替换 JSON 与图片。
+const DATA_DIR_NAME := "data"
+
+
+#外部文件的根目录：编辑器里是项目根 res://，导出后是可执行文件所在目录
+static func get_base_dir() -> String:
+	if OS.has_feature("editor"):
+		return "res://"
+	return OS.get_executable_path().get_base_dir()
+
+
+#把相对路径(如 data/masters)解析到外部根目录下；res:// user:// 与绝对路径原样返回
+static func resolve_path(p:String) -> String:
+	if p.begins_with("res://") or p.begins_with("user://") or p.is_absolute_path():
+		return p
+	return get_base_dir().path_join(p)
+
+
+#resolve_path 的反向：把完整路径还原成相对外部根目录的路径(如 data/masters/...)
+static func relative_path(p:String) -> String:
+	var base := get_base_dir()
+	if p.begins_with(base):
+		return p.substr(base.length()).trim_prefix("/")
+	return ProjectSettings.localize_path(p).trim_prefix("res://")
+
+
+static func get_data_dir() -> String:
+	return resolve_path(DATA_DIR_NAME)
+
+
+static func get_card_backs_dir() -> String:
+	return get_data_dir().path_join("card_backs")
 
 #图片缓存，避免同一张图反复读盘解码。{路径 : Texture2D}
 static var _texture_cache:Dictionary = {}
@@ -363,7 +391,7 @@ static func resolve_card_back(card_back_img:String, dir_path:String, type_name:S
 	if !CARD_BACK_FILES.has(type_name):
 		return ""
 	#与其余卡数据一致，走外部 data 目录：导出后玩家能看到并替换卡背
-	return CARD_BACKS_DIR + "/" + CARD_BACK_FILES[type_name]
+	return get_card_backs_dir().path_join(CARD_BACK_FILES[type_name])
 
 
 #把御主物品卡(黑泥、宝石、天之衣等)接上它展示的那个buff。对应关系写在数据里

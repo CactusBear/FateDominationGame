@@ -14,7 +14,7 @@
 	  "effect_name": "killer_in_miyama_add_event",
 	  "shown_effect_name": "于深山町增加一张正面事件牌",
 	  "time_points": [
-		"card_entered"
+		"self_card_revealed"
 	  ],
 	  "priority": 0,
 	  "is_pure_passive": true,

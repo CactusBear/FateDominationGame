@@ -14,7 +14,7 @@
 			"effect_name": "heavens_feel_limit_areas",
 			"shown_effect_name": "高潮：剩余2+人。无法部署与进入新都和侦察，魔术工房仅限一人部署",
 			"time_points": [
-				"card_entered"
+				"self_card_revealed"
 			],
 			"priority": 0,
 			"is_pure_passive": true,
@@ -145,7 +145,7 @@
 			"effect_name": "heavens_feel_add_events",
 			"shown_effect_name": "于深山町增加两张正面事件牌",
 			"time_points": [
-				"card_entered"
+				"self_card_revealed"
 			],
 			"priority": 0,
 			"is_pure_passive": true,

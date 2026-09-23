@@ -42,6 +42,19 @@ func global_time_point(time_points:Array, source = null):
 		time_point_update()
 
 
+#派发卡牌亮出事件，同时提供三种可声明的时点：任意、自身、其他。
+#source 是实际亮出的卡牌；EffectManager 根据 effect.from 与 source 的关系
+#筛选 SELF_CARD_REVEALED / OTHERS_CARD_REVEALED，CARD_REVEALED 不做来源筛选。
+func card_revealed(source):
+	if source == null:
+		return
+	global_time_point([
+		TimePoints.CARD_REVEALED,
+		TimePoints.SELF_CARD_REVEALED,
+		TimePoints.OTHERS_CARD_REVEALED
+	], source)
+
+
 #清掉所有玩家身上"玩家级"(self_/others_)的旧动态时点。
 #这类时点表达的是"现在是谁的阶段"，含义随轮次整体改变，所以要按轮次重算：
 #不清的话，上一个玩家的 self_action_phase / others_action_phase 会留到下一个玩家身上，

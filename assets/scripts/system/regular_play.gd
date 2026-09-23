@@ -271,6 +271,8 @@ static func submit_group(id:int, cards:Array, hidden_flags:Array) -> bool:
 		GameLog.record("play", id, -1, "", card, ["play"], {"card_name":card._name, "card_type":"attack" if card is BaseAttack else "skill", "extra":false, "concealed":hidden})
 		if not hidden:
 			ApplyCardKeywords.new().exec(card, id)
+			#明置卡牌在进入打出区后亮出；暗置卡牌等之后真正翻开时再派发
+			TimePointChecker.card_revealed(card)
 		TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, card)
 	GameLog.record("regular_play", id, -1, "", null, [], {"count":played_count(id), "forced":false})
 	return true
@@ -314,6 +316,8 @@ static func add(id: int, card, hidden: bool) -> bool:
 	GameLog.record("play", id, -1, "", card, ["play"], {"card_name":card._name, "card_type":"attack" if card is BaseAttack else "skill", "extra":false, "concealed":hidden})
 	if not hidden:
 		ApplyCardKeywords.new().exec(card, id)
+		#明置卡牌进入打出区后亮出；暗置卡牌不在这里泄露牌面
+		TimePointChecker.card_revealed(card)
 	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, card)
 	if played_count(id) >= limit(id): finalize(id)
 	elif not has_legal_add(id): finalize(id, true)

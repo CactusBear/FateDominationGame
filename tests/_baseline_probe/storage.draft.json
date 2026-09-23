@@ -1,0 +1,34 @@
+{
+  "format": "sentence-workbench-draft",
+  "version": 1,
+  "document": {
+    "raw": {
+      "uid": "game-id",
+      "_editor_future": {
+        "x": 2
+      },
+      "effects": [
+        {
+          "effect_name": "incomplete",
+          "time_points": []
+        }
+      ]
+    },
+    "editor": {
+      "collapsed": [],
+      "notes": {},
+      "macro_instances": []
+    },
+    "object_type": "storage_fixture",
+    "source_path": "E:/Projects/Godot/FateDominationGame-master/reports/sentence-editor/fixtures/existing.json",
+    "source_bytes": "ewogICJ1aWQiOiAiZ2FtZS1pZCIsCiAgIl9lZGl0b3JfZnV0dXJlIjogewogICAgIngiOiAyCiAgfSwKICAiZWZmZWN0cyI6IFtdCn0K",
+    "nested_path": ""
+  },
+  "editor_state": {
+    "sentence": {
+      "missing": [
+        "when"
+      ]
+    }
+  }
+}

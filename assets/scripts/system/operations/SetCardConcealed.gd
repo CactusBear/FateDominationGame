@@ -29,3 +29,6 @@ func exec(card:BaseCard, concealed:bool, player_id:int = -1):
 		pl_power.add(handcard._power)
 	else:
 		pl_power.minus(handcard._power)
+	#其他手牌翻明时也属于卡牌亮出；事件牌由 EventResolver 在登记效果后统一派发，避免漏触发
+	if not concealed and not (card is BaseEvent):
+		TimePointChecker.card_revealed(card)

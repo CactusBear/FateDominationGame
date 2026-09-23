@@ -8,8 +8,6 @@ extends RefCounted
 #2. 牌库构成引用（"attribute:power" / "special:name"）在 resolve 时按数据新建独立实例，
 #   与原 attack_pool 每次 new 的语义一致：每个从者的牌库各自持有独立卡实例。
 
-const ATTACKS_PATH := LoadHelper.DATA_DIR + "/attacks"
-
 #已加载的攻击牌原始数据。每项是 JSON 解析出的 Dictionary，额外带 _dir_path 用于拼图片路径。
 static var _attack_datas:Array = []
 
@@ -17,7 +15,7 @@ static var _attack_datas:Array = []
 #加载 data/attacks 下所有攻击牌 JSON。必须在加载从者牌库之前调用。
 static func load_all() -> void:
 	_attack_datas.clear()
-	_load_dir(ATTACKS_PATH)
+	_load_dir(LoadHelper.get_data_dir().path_join("attacks"))
 
 
 static func _load_dir(dir_path:String) -> void:

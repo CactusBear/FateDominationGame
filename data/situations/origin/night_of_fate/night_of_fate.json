@@ -14,7 +14,7 @@
 			"effect_name": "night_of_fate_add_events",
 			"shown_effect_name": "高潮：剩余4+人。于深山町和新都增加一张正面事件牌",
 			"time_points": [
-				"card_entered"
+				"self_card_revealed"
 			],
 			"priority": 0,
 			"is_pure_passive": true,

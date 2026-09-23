@@ -40,18 +40,19 @@ func reveal_planned(plan:Array) -> int:
 				SetCardConcealed.new().exec(event, false)
 				register_entered(event)
 				count += 1
-	#翻开即进场：派发进场时点，让布置类效果立刻执行（同局势牌，理由见 TimePoints.CARD_ENTERED）。
-	#没翻开任何牌就不派，避免空时点白跑一轮效果检查
-	#Each revealed card dispatches its own source-scoped entry above.
+	#翻开即亮出：循环里每张翻开的牌各自派发三种卡牌亮出时点（见 TimePoints.CARD_REVEALED），
+	#让布置类效果立刻执行；一张都没翻开就不派发，避免空时点白跑一轮效果检查
 	return count
 
 
+#明置放置（AddEventFromDeck）与暗置翻开（reveal_planned）共用这一条：
+#登记本牌效果，再带 source 派发"本牌亮出时"——只唤醒本牌的效果，不广播给别处监听
 func register_entered(event:BaseEvent):
 	var ids:Array = GameDataManager.get_active_player_ids()
 	if ids.is_empty(): return
 	for effect in event._effects:
 		if effect._trigger_player_id == -1: EffectManager.register_effect(effect, int(ids[0]))
-	TimePointChecker.global_time_point([TimePoints.CARD_ENTERED], event)
+	TimePointChecker.card_revealed(event)
 
 
 #清掉场上所有事件牌：注销效果、从区域摘下、从对象表删除。

@@ -92,5 +92,6 @@ func exec(attack:BaseAttack, player_id:int = -1, cost:BaseNumber = null, power:B
 	#规则是"使用带此词条的牌后立即解放"，而有些牌监听 self_true_name_release，
 	#顺序反了它们就接不上这次解放
 	ApplyCardKeywords.new().exec(attack, id)
+	TimePointChecker.card_revealed(attack)
 	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, attack)
 	return true

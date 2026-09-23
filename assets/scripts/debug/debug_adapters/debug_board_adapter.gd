@@ -63,7 +63,8 @@ func replace_situation(template_name:String, grant_printed_magic:bool = false) -
 	var ids:Array = GameDataManager.get_active_player_ids()
 	if !ids.is_empty():
 		RegisterObjectEffects.new().exec(situation, int(ids[0]))
-	TimePointChecker.global_time_point([TimePoints.CARD_ENTERED], situation)
+	#与真实对局同一条路径：亮出这张局势牌并派发三种亮出时点
+	TimePointChecker.card_revealed(situation)
 	return {"ok":true, "changed":true, "object_id":situation.get_instance_id(), "value":_summary(situation)}
 
 

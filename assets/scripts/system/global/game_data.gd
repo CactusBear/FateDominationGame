@@ -14,8 +14,8 @@ var magic_limit:BaseNumber = BaseNumber.new(12)
 var hand_limit:BaseNumber = BaseNumber.new(3)
 #新对局里本地玩家的默认登场组合，填模板名（空串＝按加载顺序分配）。
 #这是数据声明，不写在分配代码里：换开局配置只改这里。
-var default_master:String = "tohsaka_rin"
-var default_servant:String = "artoria_pendragon"
+var default_master:String = "emiya_shirou"
+var default_servant:String = "emiya"
 
 
 #每个玩家都要一份独立的数据，不能共用同一个字典，否则各玩家的数值会互相串改

@@ -23,10 +23,11 @@ func activate():
 		EffectManager.push_message("局势牌【%s】：全员魔力 %+d" % [situation.get_shown_name(), magic_gain])
 	#把局势牌效果登记进效果池(挂battle_resolve的属性加成等)
 	_register_situation_effects()
-	#牌已进场：派发进场时点，让布置类效果（增加事件牌、封锁战区、改席位上限）立刻执行。
+	#局势牌已亮出：派发本牌亮出时点，让布置类效果（增加事件牌、封锁战区、改席位上限）立刻执行。
 	#不派的话这些效果要等到战斗结算才跑，整个行动阶段玩家都看不到牌面宣告的场地变化，
 	#表现就是"局势牌效果没结算"。威力加成类仍挂 battle_resolve，不受影响
-	TimePointChecker.global_time_point([TimePoints.CARD_ENTERED], situation)
+	#带 source 派发三种卡牌亮出时点：自身、其他、任意。
+	TimePointChecker.card_revealed(situation)
 
 
 #回合结束：弃置激活的局势牌

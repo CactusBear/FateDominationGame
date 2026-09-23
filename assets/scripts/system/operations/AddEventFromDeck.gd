@@ -19,6 +19,7 @@ func exec(map_area:BaseMapArea, add_count:int = 1, concealed:bool = false) -> in
 		var event = CloneObject.new().exec(template) as BaseEvent
 		AddMapAreaEvents.new().exec(map_area, event)
 		SetCardConcealed.new().exec(event, concealed)
+		#暗置牌放置时不派发"本牌亮出时"：牌没亮出，提前执行等于泄露暗置信息（ActionPhase 翻开时才派）
 		if not concealed: EventResolver.new().register_entered(event)
 		placed += 1
 	return placed

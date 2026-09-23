@@ -58,5 +58,6 @@ func exec(skill:BaseSkill, player_id:int = -1, ignore_limit:bool = false, cost:B
 		{"card_name": skill._name, "card_type": "skill", "extra": true})
 	#词条规则在打出时点之前结算，理由同 PlayAttack
 	ApplyCardKeywords.new().exec(skill, id)
+	TimePointChecker.card_revealed(skill)
 	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, skill)
 	return true

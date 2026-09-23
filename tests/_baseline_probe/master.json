@@ -1,0 +1,140 @@
+{
+  "master_name": "emiya_shirou",
+  "shown_master_name": "卫宫士郎",
+  "header_img": "00001_emiya_shirou_header.png",
+  "master_card_img": "00001_emiya_shirou_cd.png",
+  "command_spell_img": "00001_emiya_shirou_cs.png",
+  "effects": [],
+  "specials": {
+    "SKILLS": [
+      {
+        "skill_name": "nested_skill",
+        "shown_skill_name": "嵌套编辑验收",
+        "attributes": [],
+        "cost": {
+          "number": 0.0,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "power": {
+          "number": 0.0,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        "skill_card_img": "00001_artoria_pendragon_mana_resistance.png",
+        "zoom_kind": "",
+        "ignore_limit": false,
+        "play_requirements": [],
+        "need_extra_play": false,
+        "shown_notes": [],
+        "keywords": [],
+        "effects": [
+          {
+            "effect_name": "nested_effect_skill",
+            "shown_effect_name": "你的魔力增加2",
+            "time_points": [
+              "self_action_phase"
+            ],
+            "priority": 0,
+            "is_pure_passive": true,
+            "is_residue": false,
+            "effect_numbers": [
+              {
+                "number": 2,
+                "can_change": true,
+                "is_pure_number": false
+              }
+            ],
+            "funcs": [
+              {
+                "func_name": "edit_magic",
+                "parameters": [
+                  null,
+                  {
+                    "number_index": 0
+                  },
+                  -1.0
+                ],
+                "var_index": -1
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "ATTACKS": [],
+    "BUFFS": []
+  },
+  "upgrade_skill": [
+    {
+      "skill_name": "nested_upgrade_skill",
+      "shown_skill_name": "嵌套编辑验收",
+      "attributes": [],
+      "cost": {
+        "number": 0.0,
+        "can_change": true,
+        "is_pure_number": true
+      },
+      "power": {
+        "number": 0.0,
+        "can_change": true,
+        "is_pure_number": true
+      },
+      "skill_card_img": "00001_artoria_pendragon_mana_resistance.png",
+      "zoom_kind": "",
+      "ignore_limit": false,
+      "play_requirements": [],
+      "need_extra_play": false,
+      "shown_notes": [],
+      "keywords": [],
+      "effects": [
+        {
+          "effect_name": "nested_effect_upgrade_skill",
+          "shown_effect_name": "你的魔力增加2",
+          "time_points": [
+            "self_action_phase"
+          ],
+          "priority": 0,
+          "is_pure_passive": true,
+          "is_residue": false,
+          "effect_numbers": [
+            {
+              "number": 2,
+              "can_change": true,
+              "is_pure_number": false
+            }
+          ],
+          "funcs": [
+            {
+              "func_name": "edit_magic",
+              "parameters": [
+                null,
+                {
+                  "number_index": 0
+                },
+                -1.0
+              ],
+              "var_index": -1
+            }
+          ]
+        }
+      ],
+      "is_awakened": false
+    }
+  ],
+  "tags": [
+    {
+      "tag": "emiya_shirou",
+      "name_list": [
+        "emiya_shirou"
+      ],
+      "type": "master_tag"
+    }
+  ],
+  "header_img_zoom_kind": "avatar",
+  "master_card_img_zoom_kind": "card",
+  "command_spell_img_zoom_kind": "card",
+  "future_unknown": {
+    "uid": "preserve"
+  }
+}

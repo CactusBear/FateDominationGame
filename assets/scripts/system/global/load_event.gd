@@ -5,15 +5,13 @@ extends RefCounted
 #事件牌加载：从 data/events 递归加载所有事件牌 JSON，生成 BaseEvent 实例。
 #事件牌不像攻击牌有牌库引用，直接生成实例池即可；进场逻辑从池里取牌挂到战场。
 
-const EVENTS_PATH := LoadHelper.DATA_DIR + "/events"
-
 #已加载的事件牌实例池
 static var events:Array = []
 
 
 static func load_all() -> void:
 	events.clear()
-	_load_dir(EVENTS_PATH)
+	_load_dir(LoadHelper.get_data_dir().path_join("events"))
 
 
 static func _load_dir(dir_path:String) -> void:

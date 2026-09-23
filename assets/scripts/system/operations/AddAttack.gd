@@ -25,5 +25,6 @@ func exec(attack:BaseAttack, player_id:int = -1, power:BaseNumber = null):
 	#词条规则在打出时点之前结算，理由同 PlayAttack。
 	#追加打出也算"使用了这张牌"，所以同样适用
 	ApplyCardKeywords.new().exec(attack, id)
+	TimePointChecker.card_revealed(attack)
 	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, attack)
 	return true

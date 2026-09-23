@@ -1,0 +1,52 @@
+{
+  "attack_name": "workbench_window_fixture",
+  "shown_attack_name": "窗口保存验收",
+  "category": "basic",
+  "attributes": [
+    "special"
+  ],
+  "cost": {
+    "number": 0.0,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "power": {
+    "number": 4.0,
+    "can_change": true,
+    "is_pure_number": true
+  },
+  "attack_card_img": "luck.png",
+  "effects": [
+    {
+      "effect_name": "window_magic",
+      "shown_effect_name": "你的魔力增加2",
+      "time_points": [
+        "self_action_phase"
+      ],
+      "priority": 0,
+      "is_pure_passive": true,
+      "is_residue": false,
+      "effect_numbers": [
+        {
+          "number": 2,
+          "can_change": true,
+          "is_pure_number": false
+        }
+      ],
+      "funcs": [
+        {
+          "func_name": "edit_magic",
+          "parameters": [
+            null,
+            {
+              "number_index": 0
+            },
+            -1
+          ],
+          "var_index": -1
+        }
+      ]
+    }
+  ],
+  "zoom_kind": "card"
+}
