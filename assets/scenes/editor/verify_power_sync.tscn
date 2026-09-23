@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://dey0tbvuaqu1n"]
-
-[ext_resource type="Script" path="res://assets/scripts/editor/verify_power_sync.gd" id="1_test"]
-
-[node name="verify_power_sync" type="Node"]
-script = ExtResource("1_test")
