@@ -10,9 +10,15 @@ extends RefCounted
 #每回合开始：抽牌展示 + 所有玩家获得印刷魔力 + 登记效果
 func activate():
 	var situation = _draw_current()
-	MapData.active_situation = situation
 	if situation == null:
+		MapData.active_situation = null
 		return
+	#局势牌即将生效：效果可以取消（直接进弃牌区，本回合没有局势牌），不属于任何玩家
+	if EffectManager.begin_pending_action(TimePoints.BEFORE_SITUATION_ACTIVATE, -1, {"situation": situation}, situation).get("cancelled", false):
+		MapData.situation_discard.append(situation)
+		MapData.active_situation = null
+		return
+	MapData.active_situation = situation
 	#规则：所有玩家获得局势牌上印刷的魔力
 	var magic_gain:int = (situation._magic as BaseNumber).number
 	for id in GameDataManager.get_active_player_ids():
@@ -28,6 +34,7 @@ func activate():
 	#表现就是"局势牌效果没结算"。威力加成类仍挂 battle_resolve，不受影响
 	#带 source 派发三种卡牌亮出时点：自身、其他、任意。
 	TimePointChecker.card_revealed(situation)
+	TimePointChecker.global_time_point([TimePoints.SITUATION_ACTIVATED], situation)
 
 
 #回合结束：弃置激活的局势牌

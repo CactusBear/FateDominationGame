@@ -8,6 +8,6 @@ func exec(object_name:String, objects:Array) -> Array:
 	if objects == null:
 		return got
 	for object in objects:
-		if object is BaseObject and object._name == object_name:
+		if object is BaseObject and object.has_name(object_name):
 			got.append(object)
 	return got

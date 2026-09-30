@@ -22,7 +22,7 @@ func _ready() -> void:
 func run() -> void:
 	var maker := JsonMaker.new()
 	maker.load_catalog()
-	var codec = Codec.new(maker.container_params())
+	var codec = Codec.new(maker.container_params(), maker.option_params())
 	var lists := 0
 	var folded := 0
 	var bad:Array = []
@@ -57,6 +57,22 @@ func run() -> void:
 	var loop := {"t": "op", "func": "for_func", "params": [{"s": "script", "body": [edit]}, {"s": "num", "i": 0}], "var": -1, "cond": null, "keys": [], "extra": {}}
 	var looped:Array = codec.encode_effect_list([loop], effect)
 	check(looped[0].parameters[0] is Array and looped[0].parameters[0][0].func_name == "edit_magic", "loop body encodes as op list")
+
+	# 变量小标签：预分了 tag_var 但没人读，不写 var_index；有空位读它才写
+	var probe := {"t": "op", "func": "get_current_round", "params": [], "var": -1, "tag_var": 4, "cond": null, "keys": [], "extra": {}}
+	var unused:Array = codec.encode_effect_list([probe], effect)
+	check(unused.size() == 1 and int(unused[0].get("var_index", -1)) == -1, "unread tag var is not written " + JSON.stringify(unused))
+	var user := {"t": "op", "func": "edit_magic", "params": [{"s": "lit", "v": null}, {"s": "var", "n": 4}], "var": -1, "cond": null, "keys": [], "extra": {}}
+	var used:Array = codec.encode_effect_list([probe, user], effect)
+	check(int(used[0].var_index) == 4 and used[1].parameters[1].self_var == 4, "read tag var becomes var_index " + JSON.stringify(used))
+
+	# 选项列表：执行到这一步让玩家选，每项下面是一串积木，编回去键序不变
+	var ask := {"func_name": "ask_player_option", "parameters": [[{"shown_option_name": "一", "funcs": [{"func_name": "get_current_round", "parameters": [], "var_index": 0}, {"func_name": "edit_magic", "parameters": [null, {"self_var": 0}]}], "max_uses": 1}], "选"]}
+	var opened:Array = codec.decode_list([ask])
+	check(str(opened[0].params[0].get("s", "")) == "options" and opened[0].params[0].items[0].body.size() == 1, "options slot decodes with folded body " + JSON.stringify(opened[0].params[0]))
+	check(Codec.same(codec.encode_effect_list(opened), [ask]), "options slot round trips")
+	var keys_back:Array = codec.encode_effect_list(opened)[0].parameters[0][0].keys()
+	check(keys_back == ["shown_option_name", "funcs", "max_uses"], "option key order kept " + str(keys_back))
 
 	print("RESULT ", JSON.stringify({"checks": checks, "failures": failures}))
 	get_tree().quit(0 if failures.is_empty() else 1)

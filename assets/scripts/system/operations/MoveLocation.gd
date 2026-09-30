@@ -20,10 +20,12 @@ func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false):
 	var origin_area:BaseMapArea = area
 
 	var total_cost:BaseNumber = BaseNumber.new(0)
+	#每经过一段的费用减免（玩家级，默认 0），每段单独减、不减成负数
+	var step_discount:int = step_cost_discount(player_data)
 	if move_num.number > 0:
 		for n in move_num.number:
 			if area._linked_map_area != null:
-				total_cost.add(area._move_cost)
+				total_cost.add(BaseNumber.new(maxi(0, int(area._move_cost.number) - step_discount)))
 				area = area._linked_map_area
 	elif move_num.number < 0:
 		var steps:int = 0 - move_num.number
@@ -61,3 +63,9 @@ func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false):
 		total_cost.number = max(0, total_cost.number - discount)
 
 	return total_cost
+
+
+#玩家每段移动费用的减免数。界面估算与真实移动共用这一处读法
+static func step_cost_discount(player_data:Dictionary) -> int:
+	var d = player_data.get("move_cost_discount_per_step")
+	return int(d.number) if d is BaseNumber else 0

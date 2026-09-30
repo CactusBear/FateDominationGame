@@ -1,0 +1,5110 @@
+[
+  {
+    "id": 1741,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1742,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1743,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1744,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1745,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "number_rounding_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1746,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1747,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1748,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "number_rounding_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1749,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1750,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1751,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1752,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1753,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1754,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1755,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1756,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1757,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1758,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1759,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1760,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1761,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1762,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1763,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1764,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1765,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1766,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1767,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1768,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1769,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1770,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1771,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1772,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1773,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1774,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1775,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1776,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1777,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1778,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1779,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1780,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1781,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1782,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1783,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "map_graph_query_gap",
+      "per_player_movement_rule_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1784,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1785,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1786,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "map_graph_query_gap",
+      "per_player_movement_rule_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1787,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1788,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1789,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1790,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1791,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1792,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1793,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_lifecycle_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1794,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1795,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1796,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1797,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1798,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1799,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "scoped_effect_invocation_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1800,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1801,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1802,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "distinct_value_count_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1803,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1804,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1805,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1806,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1807,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1808,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1809,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1810,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1811,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1812,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1813,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1814,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1815,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1816,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1817,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1818,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "number_rounding_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1819,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1820,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1821,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1822,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1823,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1824,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1825,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1826,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1827,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1828,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1829,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1830,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1831,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1832,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1833,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1834,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1835,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1836,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1837,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1838,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1839,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1840,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1841,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1842,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1843,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1844,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1845,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1846,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1847,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1848,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1849,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1850,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1851,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1852,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1853,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1854,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1855,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1856,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1857,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1858,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1859,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1860,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1861,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "aggregate_property_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1862,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1863,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1864,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1865,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1866,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1867,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1868,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1869,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1870,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1871,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "aggregate_property_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1872,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1873,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1874,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1875,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1876,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1877,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1878,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1879,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1880,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1881,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1882,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1883,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1884,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "number_rounding_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1885,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1886,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1887,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1888,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1889,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1890,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1891,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1892,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "effect_targeting_immunity_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1893,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1894,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1895,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1896,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "effect_targeting_immunity_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1897,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1898,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1899,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1900,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1901,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1902,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1903,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1904,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1905,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1906,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1907,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1908,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1909,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1910,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1911,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1912,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1913,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1914,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1915,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1916,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1917,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1918,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1919,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1920,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1921,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1922,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1923,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1924,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1925,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1926,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1927,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1928,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1929,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1930,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1931,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1932,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1933,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1934,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1935,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1936,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1937,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1938,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1939,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1940,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1941,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1942,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1943,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1944,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1945,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "aggregate_property_gap",
+      "distinct_value_count_gap",
+      "runtime_card_merge_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1946,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "per_player_movement_rule_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1947,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1948,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1949,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1950,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1951,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1952,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1953,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1954,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1955,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1956,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1957,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1958,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1959,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1960,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1961,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1962,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1963,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1964,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1965,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1966,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1967,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1968,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "map_graph_query_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1969,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "map_graph_query_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1970,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1971,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1972,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1973,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1974,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1975,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1976,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1977,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1978,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1979,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1980,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1981,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1982,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1983,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1984,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1985,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1986,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1987,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1988,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1989,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1990,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1991,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1992,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1993,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1994,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1995,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1996,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1997,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1998,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1999,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2000,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2001,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2002,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2003,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2004,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2005,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2006,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2007,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2008,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2009,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2010,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2011,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2012,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2013,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2014,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2015,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2016,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2017,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2018,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2019,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2020,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "map_graph_query_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2021,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2022,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2023,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2024,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "per_player_movement_rule_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2025,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2026,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2027,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "per_player_movement_rule_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2028,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2029,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2030,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2031,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2032,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2033,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2034,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2035,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2036,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "per_player_movement_rule_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2037,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2038,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "per_player_movement_rule_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2039,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2040,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "per_player_movement_rule_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2041,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2042,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2043,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2044,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2045,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2046,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2047,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2048,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2049,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2050,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2051,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2052,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2053,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2054,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2055,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2056,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2057,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2058,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2059,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "number_rounding_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2060,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2061,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2062,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "number_rounding_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2063,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2064,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2065,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2066,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2067,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2068,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2069,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2070,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2071,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2072,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2073,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2074,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2075,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2076,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2077,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2078,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2079,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_controller_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2080,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2081,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2082,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2083,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2084,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2085,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2086,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2087,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2088,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2089,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2090,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2091,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2092,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2093,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "map_graph_query_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2094,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2095,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2096,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2097,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2098,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2099,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2100,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2101,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2102,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2103,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2104,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2105,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2106,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2107,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2108,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2109,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2110,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2111,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2112,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2113,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2114,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2115,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2116,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2117,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2118,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2119,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2120,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2121,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "aggregate_property_gap",
+      "owner_controller_split_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2122,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2123,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2124,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2125,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2126,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2127,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2128,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2129,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2130,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2131,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2132,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2133,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2134,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2135,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2136,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2137,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2138,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2139,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2140,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2141,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2142,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2143,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2144,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2145,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "scoped_effect_invocation_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2146,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2147,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "scoped_effect_invocation_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2148,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "scoped_effect_invocation_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2149,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2150,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2151,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2152,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2153,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2154,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2155,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2156,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2157,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2158,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2159,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2160,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2161,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2162,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2163,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2164,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2165,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2166,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_controller_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2167,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2168,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2169,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2170,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2171,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2172,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2173,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2174,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_controller_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2175,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2176,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2177,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2178,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2179,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2180,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2181,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2182,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2183,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2184,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2185,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2186,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2187,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2188,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2189,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2190,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2191,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2192,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2193,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2194,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2195,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "effect_targeting_immunity_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2196,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2197,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2198,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_controller_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2199,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2200,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2201,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2202,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2203,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "servant_replacement_safe_composition",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2204,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2205,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2206,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "servant_replacement_safe_composition",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2207,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2208,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2209,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "scoped_effect_invocation_gap",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2210,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2211,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2212,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "player_lifecycle_framework_gap",
+      "servant_replacement_safe_composition",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2213,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "scoped_effect_invocation_gap",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2214,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "scoped_effect_invocation_gap",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2215,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2216,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2217,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2218,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2219,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2220,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2221,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2222,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2223,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2224,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2225,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2226,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2227,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2228,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "task_progress_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2229,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2230,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2231,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2232,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2233,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2234,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2235,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2236,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2237,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2238,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2239,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2240,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2241,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2242,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2243,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2244,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 2245,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2246,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2247,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "per_player_movement_rule_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2248,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2249,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2250,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "servant_replacement_safe_composition",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2251,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2252,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "servant_replacement_safe_composition",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2253,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2254,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2255,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2256,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2257,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_lifecycle_framework_gap",
+      "owner_controller_split_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2258,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "distinct_value_count_gap",
+      "owner_controller_split_framework_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2259,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2260,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2261,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2262,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2263,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2264,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2265,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2266,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2267,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2268,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2269,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2270,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2271,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2272,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2273,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "number_rounding_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2274,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2275,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2276,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2277,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2278,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2279,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2280,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2281,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2282,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2283,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2284,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2285,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2286,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2287,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2288,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2289,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2290,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2291,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2292,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2293,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2294,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2295,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2296,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2297,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2298,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2299,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2300,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2301,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2302,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2303,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2304,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2305,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2306,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2307,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2308,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2309,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2310,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2311,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2312,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2313,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 2314,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2315,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "map_graph_query_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2316,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2317,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2318,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "map_graph_query_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2319,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 2320,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  }
+]

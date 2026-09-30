@@ -38,7 +38,11 @@ static func load_event_file(dir_path:String, file_name:String) -> BaseEvent:
 	file.close()
 	if !(parsed is Dictionary):
 		return null
-	var data:Dictionary = parsed
+	return build_event(parsed, dir_path)
+
+
+#按一份事件牌数据建牌，图片相对 dir_path。读文件与效果里自定义生成的牌共用这一份
+static func build_event(data:Dictionary, dir_path:String) -> BaseEvent:
 	var event := BaseEvent.new(
 		data["card_name"],
 		dir_path + "/" + data["card_img"],
@@ -48,4 +52,5 @@ static func load_event_file(dir_path:String, file_name:String) -> BaseEvent:
 	event._zoom_kind = LoadHelper.resolve_zoom_kind(data, "card_img")
 	event._effects = LoadHelper.load_effects(data.get("effects", []), event)
 	event._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), dir_path, "event")
+	LoadHelper.load_object_extras(event, data)
 	return event

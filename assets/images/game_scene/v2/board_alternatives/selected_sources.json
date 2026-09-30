@@ -1,0 +1,10 @@
+{
+  "status": "风格近似替代图，非已证实的版图精确原图。已使用 load_image_native 原生核对。",
+  "license_note": "Fate原作相关图像；公开下载不等于取得发行许可，正式发布前需确认授权。",
+  "images": [
+    {"area":"魔术工房", "file":"summoning.webp", "width":1280, "height":720, "description":"蓝色召唤阵与切嗣、爱丽丝菲尔", "url":"https://static.wikia.nocookie.net/typemoon/images/c/cc/Kiritsugu_summoning_Saber.jpg/revision/latest?cb=20120626042032"},
+    {"area":"深山町", "file":"bridge.webp", "width":1024, "height":626, "description":"红色冬木大桥夜景；与参考版图不同，背景有火光", "url":"https://static.wikia.nocookie.net/typemoon/images/0/00/Burning_Fuyuki_Bridge.png/revision/latest"},
+    {"area":"新都", "file":"shinto.webp", "width":1024, "height":626, "description":"灯光照亮的狭窄暗巷", "url":"https://static.wikia.nocookie.net/typemoon/images/e/e3/FGO_Fuyuki_Alleyway.png/revision/latest"},
+    {"area":"侦察", "file":"castle.webp", "width":1024, "height":626, "description":"冷蓝夜色的爱因兹贝伦城堡与庭院", "url":"https://static.wikia.nocookie.net/typemoon/images/7/78/FGO_Einzbern_Castle.png/revision/latest"}
+  ]
+}

@@ -9,6 +9,8 @@ func copy_clone_fields(cloned, context) -> void:
 	cloned.tags = context.copy_value(tags)
 	cloned._zoom_kind = _zoom_kind
 	cloned._zoom_kinds = context.copy_value(_zoom_kinds)
+	cloned._values = context.copy_value(_values)
+	cloned._alias_names = _alias_names.duplicate()
 
 
 #游戏对象是纯数据，不进场景树，所以用RefCounted而不是Node，
@@ -63,6 +65,13 @@ var tag:Dictionary = {
 }
 
 var numbers:Array#[BaseNumber]
+#对象上的命名数据：计数（灵力、经验、羽、宝具使用次数……存 BaseNumber）与声明值（御主性别等）。
+#名字由卡牌数据自己起（JSON 的 values），引擎不认识任何一个名字；
+#读写用 get_property(对象, "_values") + get_dictionary_value / set_dictionary_value 组合
+var _values:Dictionary = {}
+#"同时名为/视为"的别名。按名字查找的查询在比对 _name 之外也比对这里，
+#别名由数据或效果写入，不从显示名推断
+var _alias_names:Array = []
 #本对象上各效果自带的数字，{效果名 : [BaseNumber]}。
 #下标只在单个效果内部有意义，所以增删效果不会让已有的引用错位
 var effect_numbers:Dictionary#{String : Array}
@@ -79,6 +88,10 @@ func add_object():
 
 func set_numbers(nums:Array):
 	numbers = nums
+
+#按名字比对时统一走这里：本名或任一别名相同都算同名
+func has_name(object_name:String) -> bool:
+	return _name == object_name or _alias_names.has(object_name)
 
 func get_shown_name() -> String:
 	if _shown_name == "":

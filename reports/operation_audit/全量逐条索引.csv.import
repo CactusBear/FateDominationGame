@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://bighp6u20jouu"
+
+[deps]
+
+files=["res://reports/operation_audit/全量逐条索引.原图相对路径.translation", "res://reports/operation_audit/全量逐条索引.初筛状态.translation", "res://reports/operation_audit/全量逐条索引.批次.translation", "res://reports/operation_audit/全量逐条索引.机制记录.translation"]
+
+source_file="res://reports/operation_audit/全量逐条索引.csv"
+dest_files=["res://reports/operation_audit/全量逐条索引.原图相对路径.translation", "res://reports/operation_audit/全量逐条索引.初筛状态.translation", "res://reports/operation_audit/全量逐条索引.批次.translation", "res://reports/operation_audit/全量逐条索引.机制记录.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

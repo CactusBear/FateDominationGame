@@ -10,6 +10,9 @@ func exec(card:BaseHandCard, player_id:int = -1):
 	var id = EffectManager.resolve_player_id(player_id)
 	var player_data:Dictionary = GameDataManager.get_player_data(id)
 	var played_cards = player_data["played_cards"] as Array
+	#即将关闭：效果可以取消这次关闭（改为别的处理由取消它的效果自己写）
+	if EffectManager.begin_pending_action(TimePoints.BEFORE_CARD_CLOSE, id, {"card": card}, card).get("cancelled", false):
+		return
 
 	card.set_closed(true)
 	if card is BaseSkill:

@@ -7,15 +7,27 @@ extends Control
 const Codec = preload("res://json_maker/json_codec.gd")
 const Shape = preload("res://json_maker/json_style.gd")
 
-const VAR_COLOR := Color("#FF8C1A")
-const LOOP_ITEM_COLOR := Color("#FFAB19")
-const BG := Color("#F9F9F9")
-const PANEL := Color("#FFFFFF")
-const LINE := Color("#D9D9D9")
-const INK := Color("#1F2330")
-const HINT := Color("#353A4E")   # 说明文字：中间栏是白底，不用浅灰
-const ACCENT := Color("#855CD6")
-const DROP_LINE := Color("#1E88E5")
+const VAR_COLOR := Color("#77522C")
+const LOOP_ITEM_COLOR := Color("#77602C")
+
+## 配色与主菜单（main_menu.gd）、对局界面（battle_board_v2.gd）同名同值：墨蓝底、金线、米色字
+const C_INK := Color("0e131d")
+const C_INK2 := Color("161d2b")
+const C_INK3 := Color("222b3d")
+const C_GOLD := Color("c9a45c")
+const C_GOLD2 := Color("e8cd86")
+const C_GOLD3 := Color("8a6a32")
+const C_TEXT := Color("efe6d2")
+const C_DIM := Color("a79e8b")
+const C_DIM2 := Color("6d665a")
+const C_BUTTON_INK := Color("1a1206")
+const C_BLOOD2 := Color("ff4d57")
+const C_OK := Color("#2E9E4F")                 # 检查通过 / 教程已完成
+const C_WARN := Color("#FFB86B")               # 需要注意但不阻止保存
+const HINT := C_DIM                            # 说明文字
+## 空位（积木上可填的格子）底色：深底金边，里面的按钮、输入框沿用同一套深色主题
+const SLOT_FILL := Color(C_INK, 0.95)
+const SLOT_FILL_SOFT := Color(C_INK, 0.75)
 
 var maker := JsonMaker.new()
 var codec
@@ -28,47 +40,94 @@ var original = null   # 打开时的原文，用来判断有没有改动
 var effects_view:Array = []   # [{effect, where, lists:{funcs:[积木], power_query:[积木]}, options:[{option, nodes, reqs:[[积木]]}]}]
 var selected_effect := -1
 var dirty := false
-var help_title:Label
-var help_body:RichTextLabel
-var issue_list:VBoxContainer
-var json_view:TextEdit
-var status:Label
-var kind_button:OptionButton
-var file_list:ItemList
-var palette_box:VBoxContainer
-var palette_scroll:ScrollContainer
-var category_bar:VBoxContainer
-var search:LineEdit
-var card_box:VBoxContainer
-var script_box:VBoxContainer
-var script_scroll:ScrollContainer
-var image_dialog:FileDialog
-var save_dialog:FileDialog
-var zip_dialog:FileDialog
-var export_window:AcceptDialog
-var export_kind_menu:OptionButton
-var export_form:VBoxContainer
-var export_preview:Label
+var tutorial_practice := false
+var tutorial_previous:Dictionary = {}
+var deck_catalog:Array = []
+@onready var help_title:Label = %HelpTitle
+@onready var help_body:RichTextLabel = %HelpBody
+@onready var issue_list:VBoxContainer = %IssueList
+@onready var json_view:TextEdit = %JsonView
+@onready var status:Label = %Status
+@onready var kind_button:OptionButton = %KindButton
+@onready var file_list:ItemList = %FileList
+@onready var palette_box:VBoxContainer = %PaletteBox
+@onready var palette_scroll:ScrollContainer = %PaletteScroll
+@onready var category_bar:VBoxContainer = %CategoryBar
+@onready var search:LineEdit = %Search
+@onready var action_tab:Button = %ActionTab
+@onready var value_tab:Button = %ValueTab
+@onready var palette_hint:Label = %PaletteHint
+var palette_section := "action"
+@onready var card_box:VBoxContainer = %CardBox
+@onready var script_box:VBoxContainer = %ScriptBox
+@onready var script_scroll:ScrollContainer = %ScriptScroll
+@onready var save_dialog:FileDialog = %SaveDialog
+@onready var zip_dialog:FileDialog = %ZipDialog
+@onready var export_window:AcceptDialog = %ExportWindow
+@onready var export_kind_menu:OptionButton = %ExportKindMenu
+@onready var export_form:VBoxContainer = %ExportForm
+@onready var export_preview:Label = %ExportPreview
 var export_kind := ""
-var dir_dialog:FileDialog
+@onready var dir_dialog:FileDialog = %DirDialog
 var dir_target:LineEdit
-const PENDING_IMAGES := "res://json_maker/pending_images"   # 选图先放这里，保存时按命名规则搬进卡的文件夹
+const PENDING_IMAGES := "res://json_maker/pending_images"   # 选图先放这里，保存时按命名规则复制进卡的文件夹
+const IMAGE_TILE_SIZE := 176                               # 选图面板里一个图标格子的边长
+const IMAGE_PICKER_COLUMNS := 4                            # 选图面板一行放几个图标
+const IMAGE_PICKER_SIZE := Vector2i(900, 760)              # 选图面板的固定尺寸（内容不许把它撑大）
 var image_target := {}
+var image_picker:AcceptDialog = null   # 选图面板；打开时重建，关掉就丢
+var image_dir := ""                    # 选图面板现在在哪个文件夹
 var drag_source := {}
-var context_menu:PopupMenu
+@onready var context_menu:PopupMenu = %ContextMenu
 var context_target := {}
 var clipboard = null
-var show_advanced := false
 var _render_effect = null   # 正在画的那条效果：效果数字存在它的 effect_numbers 里
 var focus_path:Array = []     # 正在编辑的子牌在 data 里的路径；空表示本体
 var focus_item := ""          # 子牌的类型（types.json 的 item 名）
-var sub_list:ItemList
+@onready var sub_list:ItemList = %SubList
+@onready var tutorial_panel:PanelContainer = %TutorialPanel
+@onready var tutorial_title:Label = %TutorialTitle
+@onready var tutorial_step_label:Label = %TutorialStep
+@onready var tutorial_image:TextureRect = %TutorialImage
+@onready var tutorial_body:RichTextLabel = %TutorialBody
+@onready var tutorial_checks:VBoxContainer = %TutorialChecks
+@onready var tutorial_prev_button:Button = %TutorialPrev
+@onready var tutorial_next_button:Button = %TutorialNext
+@onready var tutorial_menu:PopupMenu = %TutorialMenu
+var tutorials:Array = []        # list_tutorials 的结果，入口菜单按下标取
+var tutorial := {}              # 正在跟的那套教程；空表示没开
+var tutorial_index := 0         # 当前第几步
+var tutorial_drag := false
+var tutorial_blink:Tween
+var tutorial_blink_targets:Array = []
 var sub_entries:Array = []
 var catalog_sig := ""
-var rescan_timer:Timer
-var splits:Array = []
-var drop_marker:ColorRect      # 拖动时显示「会插在这里」的横线
+@onready var splits:Array = get_tree().get_nodes_in_group("layout_split").filter(func(n): return is_ancestor_of(n))   # 场景里标在 layout_split 组的分隔容器
+@onready var drop_marker:ColorRect = %DropMarker      # 拖动时显示「会插在这里」的横线
 var hover_target:Control = null
+@onready var tp_popup:PopupPanel = %TimePointPopup        # 选时机：搜索 + 分组，所有选时机的地方共用这一个
+@onready var tp_search:LineEdit = %TimePointSearch
+@onready var tp_tree:Tree = %TimePointTree
+var tp_pick := Callable()
+var tp_typed := Callable()     # 打的字交给它（空着就交给 tp_pick）：调用方可以按空位类型转换
+var tp_groups:Array = []       # 面板当前列出的分组 [{shown, items:[{id, shown, value?}]}]；value 缺省时用 id
+var tp_allow_text := false     # 允许把打的字直接当值
+var tp_more := Callable()      # 兜底：点「显示其他所有字段」时取更多分组；空着就不显示这一行
+var tp_extra:Array = []        # 已经取到的兜底分组；取到就留着，方便反复折叠展开
+var tp_more_open := false      # 列表末尾那一项现在是展开还是收起
+@onready var gen_window:AcceptDialog = %GenerateWindow     # 生成牌向导
+var gen_view:Dictionary = {}
+@onready var gen_type:OptionButton = %GenType
+@onready var gen_search:LineEdit = %GenSearch
+@onready var gen_list:ItemList = %GenerateList
+@onready var gen_name:LineEdit = %GenerateName
+@onready var gen_zone:OptionButton = %GenZone
+@onready var gen_count:SpinBox = %GenCount
+@onready var gen_mode:OptionButton = %GenerateMode       # 现成的牌 / 自定义新牌
+@onready var gen_library:VBoxContainer = %GenLibrary   # 现成的牌才用的那几行
+@onready var gen_custom:VBoxContainer = %GenCustom    # 自定义新牌才用的那几行
+@onready var gen_custom_type:OptionButton = %GenerateCustomType
+@onready var gen_register:CheckBox = %GenerateRegister
 const LAYOUT_PATH := "user://json_maker_layout.cfg"
 # 修改记录：每个节点是整张卡的快照，撤回 / 重做 / 回到任一节点都是换回快照
 const HISTORY_LIMIT := 200
@@ -76,27 +135,22 @@ const HISTORY_MERGE_MSEC := 1000   # 同一处在这段时间内连续改动（�
 var history:Array = []
 var history_index := -1
 var history_restoring := false
-var history_view:ItemList
-var undo_button:Button
-var redo_button:Button
+@onready var history_view:ItemList = %HistoryList
+@onready var undo_button:Button = %UndoButton
+@onready var redo_button:Button = %RedoButton
 var _key_names := {}
 
 
 func _ready() -> void:
 	maker.load_catalog()
 	maker.load_export_settings()
-	codec = Codec.new(maker.container_params())
+	codec = Codec.new(maker.container_params(), maker.option_params())
 	catalog_sig = maker.catalog_signature()
-	_build()
+	_setup_scene()
 	_load_layout()
 	_select_kind(0)
 	_show_welcome()
 	_use_drag_cursor(true)
-	rescan_timer = Timer.new()
-	rescan_timer.wait_time = 2.0
-	rescan_timer.timeout.connect(_check_catalog)
-	add_child(rescan_timer)
-	rescan_timer.start()
 
 
 func _exit_tree() -> void:
@@ -133,6 +187,7 @@ func rescan_catalog() -> void:
 		_commit()
 	maker.reload_catalog()
 	codec.container_params = maker.container_params()
+	codec.option_params = maker.option_params()
 	catalog_sig = maker.catalog_signature()
 	_rebuild_categories()
 	_fill_palette()
@@ -143,69 +198,74 @@ func rescan_catalog() -> void:
 
 
 # =============== 界面骨架 ===============
+# 布局、样式、固定文字和信号连接都在 json_maker.tscn（主题在 json_theme.tres）里改；
+# 这里只接场景里做不了的：拖放转发、分隔条比例记忆、以及按数据填的下拉选项。
 
-func _build() -> void:
-	theme = _light_theme()
-	var bg := ColorRect.new()
-	bg.color = BG
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(bg)
-	var root := VBoxContainer.new()
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	root.add_theme_constant_override("separation", 0)
-	add_child(root)
-	_build_top(root)
-	# 每两块之间都是可以拖的分隔条
-	var outer := _split(true, "Outer", 0.20)
-	outer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	root.add_child(outer)
-	_build_palette(outer)
-	var rest := _split(true, "Rest", 0.78)
-	outer.add_child(rest)
-	_build_center(rest)
-	_build_right(rest)
+func _setup_scene() -> void:
+	# 弹窗关掉就丢开上一个空位的回调，免得它们捕获的格子和编辑器一直被引用（重开时会重新给）
+	tp_popup.popup_hide.connect(func():
+		tp_pick = Callable()
+		tp_typed = Callable()
+		tp_more = Callable()
+		tp_extra = []
+		tp_more_open = false)
 	# 整片背景接住拖放：放在空白处就是取消，不显示禁止光标
 	set_drag_forwarding(Callable(), func(_at, d):
 		_clear_drop_hint()
 		return d is Dictionary and (d.has("new") or d.has("node")), func(_at, _d): pass)
-	image_dialog = FileDialog.new()
-	image_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-	image_dialog.access = FileDialog.ACCESS_FILESYSTEM
-	image_dialog.filters = PackedStringArray(["*.png, *.jpg, *.jpeg, *.webp ; 图片"])
-	image_dialog.file_selected.connect(_image_chosen)
-	add_child(image_dialog)
-	save_dialog = FileDialog.new()
-	save_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
-	save_dialog.access = FileDialog.ACCESS_FILESYSTEM
-	save_dialog.filters = PackedStringArray(["*.json ; JSON"])
-	save_dialog.file_selected.connect(_save_to)
-	add_child(save_dialog)
-	zip_dialog = FileDialog.new()
-	zip_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
-	zip_dialog.access = FileDialog.ACCESS_FILESYSTEM
-	zip_dialog.filters = PackedStringArray(["*.zip ; ZIP"])
-	zip_dialog.file_selected.connect(_zip_to)
-	add_child(zip_dialog)
-	dir_dialog = FileDialog.new()
-	dir_dialog.file_mode = FileDialog.FILE_MODE_OPEN_DIR
-	dir_dialog.access = FileDialog.ACCESS_FILESYSTEM
-	dir_dialog.dir_selected.connect(func(d:String):
-		if dir_target != null:
-			dir_target.text = LoadHelper.relative_path(d)
-			dir_target.text_submitted.emit(dir_target.text))
-	add_child(dir_dialog)
-	_build_export_window()
-	context_menu = PopupMenu.new()
-	context_menu.id_pressed.connect(_context_pressed)
-	add_child(context_menu)
-	drop_marker = ColorRect.new()
-	drop_marker.name = "DropMarker"
-	drop_marker.color = DROP_LINE
-	drop_marker.top_level = true
-	drop_marker.z_index = 100
-	drop_marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	drop_marker.visible = false
-	add_child(drop_marker)
+	# 把积木拖回积木区 = 删除
+	%PalettePanel.set_drag_forwarding(Callable(), _palette_can_drop, _palette_drop)
+	for split in splits:
+		split.dragged.connect(func(_o): _remember_ratio(split))
+		split.resized.connect(func(): _on_split_resized(split))
+	for item in maker.file_kinds():
+		kind_button.add_item(item.shown)
+		kind_button.set_item_metadata(kind_button.item_count - 1, item.id)
+	for item in maker.export_kinds():
+		export_kind_menu.add_item(item.shown)
+		export_kind_menu.set_item_metadata(export_kind_menu.item_count - 1, item.id)
+	%ZipDirEdit.text = str(maker.global_export("zip_dir", ""))
+	_fill_generate_menus()
+	_set_palette_section(palette_section)
+
+
+func _on_search_changed(_text:String) -> void:
+	_fill_palette()
+
+
+func _on_action_tab_pressed() -> void:
+	_set_palette_section("action")
+
+
+func _on_value_tab_pressed() -> void:
+	_set_palette_section("value")
+
+
+func _set_palette_section(section_id:String) -> void:
+	palette_section = section_id
+	palette_hint.text = "执行：放进效果顺序，完成一项操作。" if section_id == "action" else "取值：算出一个值，供其他积木引用。"
+	for tab in [action_tab, value_tab]:
+		var selected:bool = (tab == action_tab) == (section_id == "action")
+		var bg := C_GOLD if selected else C_INK3
+		var fg := C_BUTTON_INK if selected else C_TEXT
+		tab.add_theme_stylebox_override("normal", _flat(bg, 3, 8, Color.TRANSPARENT if selected else Color(C_GOLD3, 0.85)))
+		tab.add_theme_stylebox_override("hover", _flat(C_GOLD2 if selected else Color(C_GOLD, 0.22), 3, 8, Color.TRANSPARENT if selected else C_GOLD2))
+		tab.add_theme_stylebox_override("pressed", _flat(bg, 3, 8))
+		for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+			tab.add_theme_color_override(state, fg)
+	_rebuild_categories()
+	_fill_palette()
+	palette_scroll.scroll_vertical = 0
+
+
+func _on_sub_selected(index:int) -> void:
+	call_deferred("_focus_entry", index)
+
+
+func _on_dir_selected(dir:String) -> void:
+	if dir_target != null:
+		dir_target.text = LoadHelper.relative_path(dir)
+		dir_target.text_submitted.emit(dir_target.text)
 
 
 func _notification(what:int) -> void:
@@ -213,283 +273,23 @@ func _notification(what:int) -> void:
 		_clear_drop_hint()
 
 
-# Godot 默认是深色主题：输入框、列表、按钮、下拉都是白字或浅灰字，放在白底上看不清。
-# 这里给整个编辑器换成浅底深字；积木上的白字由 _block_label 单独指定，不受影响。
-func _light_theme() -> Theme:
-	var t := Theme.new()
-	var field := _theme_box(Color.WHITE, Color("#8A90A6"))
-	var field_focus := _theme_box(Color.WHITE, ACCENT)
-	for type in ["Label", "CheckBox", "CheckButton", "Button", "OptionButton", "MenuButton", "LinkButton", "LineEdit", "TextEdit", "ItemList", "Tree", "PopupMenu", "TooltipLabel", "RichTextLabel"]:
-		for c in ["font_color", "font_hover_color", "font_focus_color", "font_pressed_color", "font_hover_pressed_color", "default_color", "font_uneditable_color"]:
-			t.set_color(c, type, INK)
-		t.set_color("font_disabled_color", type, HINT)
-		t.set_color("font_placeholder_color", type, Color("#5E6480"))
-		t.set_color("font_outline_color", type, Color(0, 0, 0, 0))
-	for type in ["Button", "OptionButton", "MenuButton"]:
-		t.set_stylebox("normal", type, _theme_box(Color("#EEF0F6"), Color("#9BA1B8")))
-		t.set_stylebox("hover", type, _theme_box(Color("#E1E5F3"), ACCENT))
-		t.set_stylebox("pressed", type, _theme_box(Color("#D3D9EE"), ACCENT))
-		t.set_stylebox("hover_pressed", type, _theme_box(Color("#D3D9EE"), ACCENT))
-		t.set_stylebox("disabled", type, _theme_box(Color("#F4F5F8"), Color("#C3C7D4")))
-		t.set_stylebox("focus", type, StyleBoxEmpty.new())
-	for type in ["LineEdit", "TextEdit"]:
-		t.set_stylebox("normal", type, field)
-		t.set_stylebox("focus", type, field_focus)
-		t.set_stylebox("read_only", type, _theme_box(Color("#F6F7FA"), Color("#9BA1B8")))
-		t.set_color("caret_color", type, INK)
-		t.set_color("selection_color", type, Color(0.52, 0.36, 0.84, 0.3))
-	t.set_color("font_readonly_color", "LineEdit", INK)
-	t.set_color("font_readonly_color", "TextEdit", INK)
-	for type in ["ItemList", "Tree"]:
-		t.set_stylebox("panel", type, _theme_box(Color.WHITE, Color("#8A90A6")))
-		t.set_stylebox("focus", type, StyleBoxEmpty.new())
-		t.set_stylebox("selected", type, _flat(Color("#DCD2F5"), 3, 2))
-		t.set_stylebox("selected_focus", type, _flat(Color("#CFC2F2"), 3, 2))
-		t.set_stylebox("hovered", type, _flat(Color("#EFEAFB"), 3, 2))
-		t.set_color("font_selected_color", type, INK)
-		t.set_color("font_hovered_color", type, INK)
-		t.set_color("font_hovered_selected_color", type, INK)
-		t.set_color("guide_color", type, Color(0, 0, 0, 0.08))
-	for c in ["up_icon_modulate", "up_hover_icon_modulate", "up_pressed_icon_modulate", "down_icon_modulate", "down_hover_icon_modulate", "down_pressed_icon_modulate"]:
-		t.set_color(c, "SpinBox", INK)
-	t.set_stylebox("panel", "PopupMenu", _theme_box(Color.WHITE, Color("#8A90A6")))
-	t.set_stylebox("hover", "PopupMenu", _flat(Color("#E7E0FA"), 3, 2))
-	t.set_stylebox("panel", "TooltipPanel", _theme_box(Color("#FFFDF2"), Color("#8A90A6")))
-	for type in ["AcceptDialog", "FileDialog", "ConfirmationDialog"]:
-		t.set_stylebox("panel", type, _flat(Color("#F9F9FB"), 0, 8))
-	return t
-
-
-func _theme_box(bg:Color, border:Color) -> StyleBoxFlat:
-	var sb := _flat(bg, 4, 4, border)
-	sb.content_margin_left = 6
-	sb.content_margin_right = 6
-	return sb
-
-
-func _build_top(parent:Node) -> void:
-	var bar := PanelContainer.new()
-	bar.add_theme_stylebox_override("panel", _flat(Color("#855CD6"), 0, 8))
-	parent.add_child(bar)
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
-	bar.add_child(row)
-	var title := _label("卡牌效果积木", 20, Color.WHITE)
-	row.add_child(title)
-	row.add_child(_spacer(16))
-	row.add_child(_label("卡牌种类", 14, Color.WHITE))
-	kind_button = OptionButton.new()
-	kind_button.name = "KindButton"
-	for item in maker.file_kinds():
-		kind_button.add_item(item.shown)
-		kind_button.set_item_metadata(kind_button.item_count - 1, item.id)
-	kind_button.item_selected.connect(_select_kind)
-	row.add_child(kind_button)
-	_top_button(row, "新建一张", _new_card, "按当前种类新建一张空白卡。")
-	_top_button(row, "保存", _save, "检查通过才会写文件。Ctrl+S")
-	_top_button(row, "另存为", _save_as, "")
-	_top_button(row, "导出设置", open_export_settings, "每种卡保存到哪个目录、文件夹和图片怎么命名、zip 里的目录层级。只存在你自己的设置里，不改源码。")
-	_top_button(row, "打包 zip", _zip_card, "把这张卡的 json 和它用到的图片打成一个 zip，里面按 data/… 的目录放好，解压到项目根目录就能用。")
-	undo_button = _top_button(row, "撤回", undo, "撤回上一步。Ctrl+Z")
-	redo_button = _top_button(row, "重做", redo, "重做撤回的一步。Ctrl+Y")
-	undo_button.disabled = true
-	redo_button.disabled = true
-	_top_button(row, "重新扫描积木", rescan_catalog, "新加了 operation 会自动出现；想马上刷新就点这里。")
-	var adv := CheckButton.new()
-	adv.text = "显示高级积木"
-	adv.tooltip_text = "打开后积木区会出现直接读写对象内部字段的积木。一般用不到。"
-	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
-		adv.add_theme_color_override(c, Color.WHITE)
-	adv.toggled.connect(func(on): show_advanced = on; _fill_palette())
-	row.add_child(adv)
-	status = _label("", 14, Color.WHITE)
-	status.add_theme_font_size_override("font_size", 15)
-	status.custom_minimum_size = Vector2(190, 28)
-	status.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	status.clip_text = false
-	row.add_child(status)
-
-
-func _build_palette(parent:Node) -> void:
-	var side := _split(true, "Palette", 0.19)
-	parent.add_child(side)
-	# 最左一列：分类色点，点一下跳到那一类
-	var cat_panel := PanelContainer.new()
-	cat_panel.add_theme_stylebox_override("panel", _flat(PANEL, 0, 4, LINE))
-	side.add_child(cat_panel)
-	var cat_scroll := ScrollContainer.new()
-	cat_scroll.custom_minimum_size = Vector2(40, 0)
-	cat_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	cat_panel.add_child(cat_scroll)
-	category_bar = VBoxContainer.new()
-	category_bar.add_theme_constant_override("separation", 2)
-	cat_scroll.add_child(category_bar)
-	# 积木列表
-	var pal := PanelContainer.new()
-	pal.add_theme_stylebox_override("panel", _flat(Color("#F5F5FA"), 0, 6, LINE))
-	pal.custom_minimum_size = Vector2(160, 0)
-	side.add_child(pal)
-	var col := VBoxContainer.new()
-	pal.add_child(col)
-	search = LineEdit.new()
-	search.placeholder_text = "搜积木：魔力、抽牌、战果、如果……"
-	search.clear_button_enabled = true
-	search.text_changed.connect(func(_t): _fill_palette())
-	col.add_child(search)
-	palette_scroll = ScrollContainer.new()
-	palette_scroll.name = "PaletteScroll"
-	palette_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	palette_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	col.add_child(palette_scroll)
-	palette_box = VBoxContainer.new()
-	palette_box.add_theme_constant_override("separation", 6)
-	palette_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	palette_scroll.add_child(palette_box)
-	# 把积木拖回积木区 = 删除
-	pal.set_drag_forwarding(Callable(), _palette_can_drop, _palette_drop)
-	_rebuild_categories()
-	_fill_palette()
-
-
 func _rebuild_categories() -> void:
 	_clear(category_bar)
-	for cat in maker.categories():
-		var b := Button.new()
-		b.flat = true
-		b.custom_minimum_size = Vector2(36, 46)
-		b.text = "●\n" + str(cat.shown)
-		b.add_theme_color_override("font_color", Color(str(cat.color)))
-		b.add_theme_font_size_override("font_size", 11)
-		b.tooltip_text = str(cat.shown)
-		b.pressed.connect(_jump_category.bind(str(cat.id)))
-		category_bar.add_child(b)
-
-
-func _build_center(parent:Node) -> void:
-	var center := VBoxContainer.new()
-	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	center.add_theme_constant_override("separation", 0)
-	parent.add_child(center)
-	var split := _split(true, "Center", 0.32)
-	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	center.add_child(split)
-	# 左半：文件列表 / 子牌列表 / 卡牌信息，上下都能拖
-	var left := _split(false, "Left", 0.42)
-	left.custom_minimum_size = Vector2(160, 0)
-	split.add_child(left)
-	var lists := _split(false, "Lists", 0.5)
-	left.add_child(lists)
-	var files_box := VBoxContainer.new()
-	lists.add_child(files_box)
-	files_box.add_child(_section_title("① 选一张卡", "双击打开。也可以点上面的「新建一张」。"))
-	file_list = ItemList.new()
-	file_list.name = "FileList"
-	file_list.custom_minimum_size = Vector2(0, 40)
-	file_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	file_list.item_activated.connect(_open_index)
-	files_box.add_child(file_list)
-	var subs_box := VBoxContainer.new()
-	lists.add_child(subs_box)
-	subs_box.add_child(_section_title("子牌", "御主、从者带的技能牌、攻击牌、状态、附带物。点一张就编辑它。"))
-	sub_list = ItemList.new()
-	sub_list.name = "SubList"
-	sub_list.custom_minimum_size = Vector2(0, 40)
-	sub_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	sub_list.item_selected.connect(func(i): call_deferred("_focus_entry", i))
-	subs_box.add_child(sub_list)
-	var card_col := VBoxContainer.new()
-	left.add_child(card_col)
-	card_col.add_child(_section_title("② 卡面信息", "卡面上印的东西。带 * 的必须填。"))
-	var card_scroll := ScrollContainer.new()
-	card_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	card_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	card_col.add_child(card_scroll)
-	card_box = VBoxContainer.new()
-	card_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	card_scroll.add_child(card_box)
-	# 右半：效果脚本区
-	var right := VBoxContainer.new()
-	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	split.add_child(right)
-	right.add_child(_section_title("③ 效果积木", "每条效果以一块「当……时」开头，下面接要做的事。从左边把积木拖进来：拖到一块积木的上半截就插在它前面，下半截就插在它后面，拖到空位里就填进去。点积木右边的 ✕ 删除。右键积木可以复制、存为变量。"))
-	script_scroll = ScrollContainer.new()
-	script_scroll.name = "ScriptScroll"
-	script_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	var sbg := StyleBoxFlat.new()
-	sbg.bg_color = Color("#FFFFFF")
-	sbg.border_color = LINE
-	sbg.set_border_width_all(1)
-	script_scroll.add_theme_stylebox_override("panel", sbg)
-	right.add_child(script_scroll)
-	script_box = VBoxContainer.new()
-	script_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	script_box.add_theme_constant_override("separation", 18)
-	var pad := MarginContainer.new()
-	pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	for side in ["left", "right", "top", "bottom"]:
-		pad.add_theme_constant_override("margin_" + side, 14)
-	pad.add_child(script_box)
-	script_scroll.add_child(pad)
-
-
-func _build_right(parent:Node) -> void:
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(180, 0)
-	panel.add_theme_stylebox_override("panel", _flat(PANEL, 0, 8, LINE))
-	parent.add_child(panel)
-	# 说明 / 待修问题 / JSON 三格，上下都能拖
-	var vsplit := _split(false, "Right", 0.38)
-	panel.add_child(vsplit)
-	var col := VBoxContainer.new()
-	vsplit.add_child(col)
-	var lower := _split(false, "RightLower", 0.45)
-	vsplit.add_child(lower)
-	help_title = _label("说明", 16, INK)
-	col.add_child(help_title)
-	help_body = RichTextLabel.new()
-	help_body.name = "HelpBody"
-	help_body.bbcode_enabled = true
-	help_body.fit_content = false
-	help_body.scroll_active = true
-	help_body.custom_minimum_size = Vector2(0, 40)
-	help_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	help_body.add_theme_color_override("default_color", INK)
-	col.add_child(help_body)
-	var issue_col := VBoxContainer.new()
-	lower.add_child(issue_col)
-	issue_col.add_child(_label("还要修的地方", 16, INK))
-	var issue_scroll := ScrollContainer.new()
-	issue_scroll.custom_minimum_size = Vector2(0, 30)
-	issue_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	issue_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	issue_col.add_child(issue_scroll)
-	issue_list = VBoxContainer.new()
-	issue_list.name = "IssueList"
-	issue_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	issue_scroll.add_child(issue_list)
-	var bottom := _split(false, "RightBottom", 0.4)
-	lower.add_child(bottom)
-	var history_col := VBoxContainer.new()
-	bottom.add_child(history_col)
-	history_col.add_child(_label("修改记录（点一条就回到那一步）", 14, INK))
-	history_view = ItemList.new()
-	history_view.name = "HistoryList"
-	history_view.custom_minimum_size = Vector2(0, 30)
-	history_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	history_view.item_selected.connect(_restore_history)
-	history_col.add_child(history_view)
-	var json_col := VBoxContainer.new()
-	bottom.add_child(json_col)
-	json_col.add_child(_label("生成的 JSON（把分隔条拖下去就收起）", 14, INK))
-	json_view = TextEdit.new()
-	json_view.name = "JsonView"
-	json_view.editable = false
-	json_view.custom_minimum_size = Vector2(0, 20)
-	json_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	json_view.add_theme_font_size_override("font_size", 12)
-	json_col.add_child(json_view)
+	for section in _palette_sections(""):
+		if str(section.id) != palette_section:
+			continue
+		for entry in section.categories:
+			var cat:Dictionary = entry.category
+			var b := Button.new()
+			b.flat = true
+			b.custom_minimum_size = Vector2(36, 46)
+			b.text = "●\n" + str(cat.shown)
+			# 深底上有些分类色（深蓝、紫）太暗：往米色靠一半，既保留分类色又能看清
+			b.add_theme_color_override("font_color", Color(str(cat.color)).lightened(0.55))
+			b.add_theme_font_size_override("font_size", 11)
+			b.tooltip_text = str(section.shown) + " · " + str(cat.shown)
+			b.pressed.connect(_jump_category.bind(str(section.id), str(cat.id)))
+			category_bar.add_child(b)
 
 
 # =============== 积木区 ===============
@@ -497,19 +297,85 @@ func _build_right(parent:Node) -> void:
 func _fill_palette() -> void:
 	_clear(palette_box)
 	var needle := search.text.strip_edges().to_lower() if search else ""
-	for cat in maker.categories():
-		var cat_id := str(cat.id)
-		var items:Array = _palette_items(cat_id, needle)
-		if items.is_empty():
+	for section in _palette_sections(needle):
+		if str(section.id) != palette_section or section.categories.is_empty():
 			continue
-		var head := _label(str(cat.shown), 15, Color(str(cat.color)).darkened(0.2))
-		head.name = "Cat_" + cat_id.replace("/", "_")
-		palette_box.add_child(head)
-		for item in items:
-			var holder := HBoxContainer.new()
-			palette_box.add_child(holder)
-			var view := _palette_block(item)
-			holder.add_child(view)
+		for entry in section.categories:
+			var cat:Dictionary = entry.category
+			var head := _label(str(cat.shown), 15, Color(str(cat.color)).lightened(0.55))
+			head.name = _category_anchor(str(section.id), str(cat.id))
+			palette_box.add_child(head)
+			for item in entry.items:
+				var holder := HBoxContainer.new()
+				palette_box.add_child(holder)
+				holder.add_child(_palette_block(item))
+
+
+# 积木区里的空位：点开就是这一格能填什么的候选菜单，选中只在积木上显示出来。
+# 选择区没有正在编辑的卡可写，所以它只做预览；要真正填值，把积木拖进效果里再点那一格。
+func _palette_slot_widget(label:String, type_name:String, kind_key:String) -> Control:
+	var button := Button.new()
+	button.name = "PaletteSlot"
+	button.set_meta("clickable", true)
+	button.text = label + " ▾"
+	button.tooltip_text = "点开看这一格能填什么；要真正填，把积木拖到效果里再选。"
+	button.custom_minimum_size = Vector2(96, 32)
+	button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	button.add_theme_stylebox_override("normal", Shape.new("slot", SLOT_FILL))
+	button.add_theme_stylebox_override("hover", Shape.new("slot", Color(C_GOLD, 0.35)))
+	button.add_theme_stylebox_override("pressed", Shape.new("slot", Color(C_GOLD, 0.5)))
+	button.add_theme_color_override("font_color", C_TEXT)
+	button.pressed.connect(_open_palette_slot_menu.bind(button, label, type_name, kind_key))
+	return button
+
+
+# 选择区的空位菜单：候选和效果里那一格完全同一套（含列表末尾的「显示其他所有字段」），只是选中不写卡。
+func _open_palette_slot_menu(anchor:Button, label:String, type_name:String, kind_key:String) -> void:
+	var kind := _slot_kind(kind_key)
+	var groups:Array = _slot_groups(type_name, kind, kind_key, null)
+	var on_pick := func(v):
+		anchor.text = label + "：" + _short(_palette_preview_text(v, groups), 20) + " ▾"
+		_set_status("选择区只是看候选；要真正填这一格，把积木拖进效果里再选。")
+	_open_search_popup(anchor, groups, on_pick, true, on_pick, func(): return _slot_more_groups(type_name, kind_key, null))
+
+
+# 选择区里选中之后显示什么字：特殊值给中文名，其余按候选的中文名或原值显示。
+func _palette_preview_text(value, groups:Array) -> String:
+	if value is Dictionary and value.has("_pick"):
+		match str(value._pick):
+			"op":
+				return _say_text(str(value.func))
+			"clear":
+				return "清空这一格"
+			"number":
+				return "效果数字"
+			"loop":
+				return "↻ 当前这一项"
+	return _picked_text(value, groups, false, "")
+
+
+# 同一小分类可同时有取值和执行积木；沿用积木自身的形状判断，不按名称猜。
+func _palette_sections(needle:String) -> Array:
+	var sections:Array = [
+		{"id": "value", "shown": "取值积木", "categories": []},
+		{"id": "action", "shown": "执行积木", "categories": []},
+	]
+	for cat in maker.categories():
+		var groups := [[], []]
+		for item in _palette_items(str(cat.id), needle):
+			var is_value := str(item.kind) in ["var", "loop_item", "option_qty"]
+			if str(item.kind) == "op":
+				is_value = _shape_of(_node_from_palette(item), {"palette": true}) != "stack"
+			groups[0 if is_value else 1].append(item)
+		for index in groups.size():
+			if not groups[index].is_empty():
+				sections[index].categories.append({"category": cat, "items": groups[index]})
+	return sections
+
+
+func _category_anchor(section_id:String, cat_id:String) -> String:
+	return "Cat_" + section_id + "_" + cat_id.replace("/", "_")
 
 
 func _palette_items(cat_id:String, needle:String) -> Array:
@@ -522,9 +388,6 @@ func _palette_items(cat_id:String, needle:String) -> Array:
 		out.append({"kind": "option_qty"})
 	for op in maker.operations:
 		if str(op.category) != cat_id:
-			continue
-		var spec := maker.block_spec(op.func_name)
-		if bool(spec.get("advanced", false)) and not show_advanced:
 			continue
 		out.append({"kind": "op", "func": op.func_name})
 	if needle == "":
@@ -542,7 +405,7 @@ func _palette_text(item:Dictionary) -> String:
 		"if":
 			return "如果 那么 条件 判断"
 		"var":
-			return "变量 前面算出的结果 存下"
+			return "结果 变量 前面算出的结果 存下"
 		"loop_item":
 			return "当前这一项 循环 每一个"
 		"option_qty":
@@ -560,6 +423,9 @@ func _palette_block(item:Dictionary) -> Control:
 	view.gui_input.connect(func(ev):
 		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
 			_show_help_for(node))
+	# 空位要留着能点（点开候选菜单）；在这些空位上按住拖动仍然拖出整块积木
+	for slot_button in view.find_children("PaletteSlot", "Button", true, false):
+		(slot_button as Button).set_drag_forwarding(func(_p): return _begin_drag({"new": item}, view), Callable(), Callable())
 	return view
 
 
@@ -569,8 +435,8 @@ func _palette_help(item:Dictionary) -> String:
 	return ""
 
 
-func _jump_category(cat_id:String) -> void:
-	var node := palette_box.get_node_or_null("Cat_" + cat_id.replace("/", "_"))
+func _jump_category(section_id:String, cat_id:String) -> void:
+	var node := palette_box.get_node_or_null(_category_anchor(section_id, cat_id))
 	if node:
 		palette_scroll.scroll_vertical = int(node.position.y)
 
@@ -585,7 +451,19 @@ func _node_from_palette(item:Dictionary) -> Dictionary:
 			return {"t": "slot_only", "slot": {"s": "lit", "v": null, "loop": true}}
 		"option_qty":
 			return {"t": "slot_only", "slot": {"s": "qty", "i": 0}}
+		"var_ref":
+			return {"t": "slot_only", "slot": (item.slot as Dictionary).duplicate()}
+		"array_item":
+			return {"t": "slot_only", "slot": _array_item_slot(int(item.variable), int(item.index))}
 	return _new_op(str(item.func))
+
+# 复用现有操作按索引读数组；嵌进目标参数时仍走普通空位的编解码流程。
+func _array_item_slot(variable:int, index:int) -> Dictionary:
+	var op := _new_op("get_card_by_index_fr_arr")
+	var spec := maker.operation_of("get_card_by_index_fr_arr")
+	op.params[_param_index(spec, "card_index")] = {"s": "lit", "v": index}
+	op.params[_param_index(spec, "cards")] = {"s": "var", "n": variable}
+	return {"s": "block", "b": op}
 
 
 func _new_op(func_name:String) -> Dictionary:
@@ -596,6 +474,8 @@ func _new_op(func_name:String) -> Dictionary:
 		var p:Dictionary = op.params[i]
 		if containers.has(i):
 			params.append({"s": "script", "body": []})
+		elif codec.option_params.get(func_name, []).has(i):
+			params.append({"s": "options", "items": [{"opt": {"shown_option_name": "选项1"}, "keys": ["shown_option_name", "funcs"], "body": []}]})
 		elif bool(p.required):
 			match str(p.type):
 				"int", "float":
@@ -631,12 +511,16 @@ func _fresh_copy(node:Dictionary) -> Dictionary:
 	var copy:Dictionary = node.duplicate(true)
 	if copy.has("var"):
 		copy.var = -1
+	copy.erase("tag_var")
 	return copy
 
 
 func _make_passive(node:Node) -> void:
 	for child in node.get_children():
 		if child is Control:
+			# 挂了 clickable 的（选择区里能点开候选的空位）保留鼠标响应
+			if child.has_meta("clickable"):
+				continue
 			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_make_passive(child)
 
@@ -660,10 +544,15 @@ func _open_index(index:int) -> void:
 
 
 func open_path(target:String) -> void:
+	if tutorial_practice and bool(tutorial_previous.get("dirty", false)):
+		restore_tutorial_previous()
+		_set_status("已先恢复未保存的原稿，避免丢失。若仍要打开文件，请再选一次。")
+		return
 	var loaded = maker.read_json(target)
 	if loaded == null:
 		_set_status("这份文件读不了：" + target)
 		return
+	_leave_practice()
 	card_kind = _kind_of_path(target)
 	path = target
 	style = maker.text_style(target)
@@ -697,19 +586,30 @@ func _kind_of_path(target:String) -> String:
 
 
 func _new_card() -> void:
-	card_kind = kind_id
+	if tutorial_practice:
+		# 练习里的「新建一张」由使用者自己点：不结束练习、也不动暂存的原稿，建的还是练习副本
+		_build_card(kind_id, "练习副本里的新卡")
+		_set_status("练习副本里的新" + str(maker.kind_spec(kind_id).get("shown", "卡")) + "：不会写入 JSON，也不能保存或打包。")
+		return
+	_leave_practice()
+	_build_card(kind_id, "新建一张")
+	_set_status("新建了一张，还没保存")
+
+
+# 按种类铺一张空白卡。练习副本与普通新建都走这里，练习与否由调用方处理。
+func _build_card(target_kind:String, label:String) -> void:
+	card_kind = target_kind
 	path = ""
 	style = {}
 	original = null
-	data = maker.blank(kind_id)
+	data = maker.blank(target_kind)
 	focus_path = []
 	focus_item = ""
 	history.clear()
 	_load_effects()
 	_refresh_all()
 	dirty = true
-	_reset_history("新建一张", false)
-	_set_status("新建了一张，还没保存")
+	_reset_history(label, false)
 
 
 # 只把正在编辑的那张牌（本体或某张子牌）自己的效果解码成积木。
@@ -774,6 +674,11 @@ func _sub_entries() -> Array:
 	for item in spec.get("lists", []):
 		if str(item.key) != "effects":
 			_sub_entries_of(data, item, [], out)
+	for hit in maker.custom_cards(data):
+		var at = _path_to(data, hit.card, [])
+		if at != null:
+			var kind_shown := str(maker.kind_spec(str(hit.kind)).get("shown", "牌"))
+			out.append({"path": at, "item": str(hit.kind), "shown": "　自定义" + kind_shown + " · " + _owner_name(hit.card, "还没起名"), "depth": 1})
 	return out
 
 
@@ -874,6 +779,7 @@ func _fill_middle_numbers(view:Dictionary, effect:Dictionary) -> void:
 	var lists:Array = view.lists.values()
 	for ov in view.options:
 		lists.append(ov.nodes)
+		lists.append_array(ov.reqs)
 	for list in lists:
 		_walk_fill(list, effect)
 
@@ -889,7 +795,7 @@ func _walk_fill(value, effect:Dictionary) -> void:
 			while last >= 0 and params[last] is Dictionary and str(params[last].get("s", "")) == "omit":
 				last -= 1
 			for i in last:
-				if params[i] is Dictionary and str(params[i].get("s", "")) == "omit" and params[i].has("number_default"):
+				if params[i] is Dictionary and str(params[i].get("s", "")) == "omit" and params[i].has("number_default") and not params[i].get("loop", false):
 					params[i] = _new_number_slot(params[i].number_default, effect)
 		for key in value:
 			if key != "extra" and key != "keys":
@@ -927,6 +833,7 @@ func _update_json() -> void:
 		return
 	_commit()
 	_record_history()
+	_refresh_tutorial()
 	if json_view.is_visible_in_tree() and json_view.size.y > 24:
 		json_view.text = maker.export_text(data, style)
 	_paint_issues(_collect_issues())
@@ -936,6 +843,12 @@ func _update_json() -> void:
 
 func _paint_card() -> void:
 	_clear(card_box)
+	if tutorial_practice:
+		card_box.add_child(_hint("教程练习副本 · 只在内存中，不能保存 JSON 或打包。"))
+		var restore := Button.new()
+		restore.text = "恢复教程前原稿（包括未保存修改）"
+		restore.pressed.connect(restore_tutorial_previous)
+		card_box.add_child(restore)
 	if not data is Dictionary:
 		card_box.add_child(_hint("先在上面选一张卡，或者点「新建一张」。"))
 		return
@@ -949,7 +862,7 @@ func _paint_card() -> void:
 		back.text = "← 回到本体"
 		back.pressed.connect(func(): call_deferred("focus_to", [], ""))
 		card_box.add_child(back)
-		card_box.add_child(_label(str(spec.get("shown", "子牌")) + "：" + _owner_name(obj, ""), 15, Color("#4C3D8F")))
+		card_box.add_child(_label(str(spec.get("shown", "子牌")) + "：" + _owner_name(obj, ""), 15, C_GOLD))
 	_paint_fields(card_box, obj, spec)
 	for group in spec.get("groups", []):
 		if not obj.get(group.key) is Dictionary:
@@ -968,23 +881,26 @@ func _paint_fields(parent:Node, obj:Dictionary, spec:Dictionary) -> void:
 		if bool(field.get("advanced", false)):
 			inner.append(field)
 			continue
-		_field_row(parent, obj, field)
+		_field_row(parent, obj, field, str(spec.get("identity", "")) == str(field.key))
 	if inner.is_empty():
 		return
 	var fold := _fold_box(parent, "程序用的名字", false)
+	var guide:Array = maker.types.get("naming_guide", [])
+	if not guide.is_empty():
+		fold.add_child(_hint(str(guide[0]) + " 完整的命名规范见右边「怎么用」。"))
 	for field in inner:
-		_field_row(fold, obj, field)
+		_field_row(fold, obj, field, str(spec.get("identity", "")) == str(field.key))
 
 
-func _field_row(parent:Node, obj:Dictionary, field:Dictionary) -> void:
+func _field_row(parent:Node, obj:Dictionary, field:Dictionary, is_identity := false) -> void:
 	var key := str(field.key)
-	var known := ["text", "int", "float", "bool", "number", "choice", "image", "attributes", "lines", "time_points", "cost"]
+	var known := ["text", "int", "float", "bool", "number", "choice", "search_choice", "image", "attributes", "lines", "time_points", "cost"]
 	if not known.has(str(field.get("control", "text"))) and not obj.has(key):
 		return
 	var row := HBoxContainer.new()
 	parent.add_child(row)
 	var name_text := str(field.get("shown", key)) + (" *" if bool(field.get("required", false)) else "")
-	var name := _label(name_text, 14, INK)
+	var name := _label(name_text, 14, C_TEXT)
 	name.custom_minimum_size = Vector2(118, 0)
 	name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	row.add_child(name)
@@ -994,6 +910,9 @@ func _field_row(parent:Node, obj:Dictionary, field:Dictionary) -> void:
 		name.mouse_filter = Control.MOUSE_FILTER_STOP
 		name.text += " ⓘ"
 	var control := str(field.get("control", "text"))
+	if control == "search_choice":
+		name.custom_minimum_size = Vector2(76, 0)
+		row.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	var present:bool = obj.has(key)
 	match control:
 		"text":
@@ -1002,6 +921,21 @@ func _field_row(parent:Node, obj:Dictionary, field:Dictionary) -> void:
 			edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			edit.text_changed.connect(func(v): obj[key] = v; _changed())
 			row.add_child(edit)
+			if is_identity:
+				var warning := _hint("")
+				warning.name = "IdentityWarning"
+				warning.add_theme_color_override("font_color", C_WARN)
+				parent.add_child(warning)
+				var refresh := func(_text:String):
+					var at = _path_to(data, obj, [])
+					var found:Array = maker.identity_conflicts(key, str(obj.get(key, "")), path, at if at is Array else [])
+					var sources:PackedStringArray = []
+					for hit in found:
+						sources.append(str(hit.file) + " → " + JSON.stringify(hit.path))
+					warning.text = "内部名与 data 中已有对象重复：\n" + "\n".join(sources)
+					warning.visible = not found.is_empty()
+				edit.text_changed.connect(refresh)
+				refresh.call(edit.text)
 		"int", "float":
 			var spin := _spin(float(obj.get(key, field.get("default", 0))) if present or field.has("default") else 0.0, control == "float")
 			spin.value_changed.connect(func(v): obj[key] = int(v) if control == "int" else v; _changed())
@@ -1021,18 +955,35 @@ func _field_row(parent:Node, obj:Dictionary, field:Dictionary) -> void:
 			var spin := _spin(float(obj[key].get("number", 0)), false)
 			spin.value_changed.connect(func(v): obj[key]["number"] = v; _changed())
 			row.add_child(spin)
-		"choice":
-			var menu := OptionButton.new()
+		"choice", "search_choice":
 			var choices:Array = field.get("choices", [])
-			var shown_map:Dictionary = maker.types.get("kind_choices", {})
-			for choice in choices:
-				menu.add_item(_choice_shown(str(choice)))
-			menu.selected = maxi(0, choices.find(obj.get(key, "")))
-			menu.item_selected.connect(func(i): obj[key] = choices[i]; _changed())
-			row.add_child(menu)
+			if control == "search_choice":
+				var edit := LineEdit.new()
+				edit.name = "FieldChoiceEdit"
+				edit.custom_minimum_size = Vector2(72, 0)
+				edit.text = str(obj.get(key, ""))
+				edit.size_flags_horizontal = Control.SIZE_FILL
+				edit.text_changed.connect(func(v): obj[key] = v; _changed())
+				row.add_child(edit)
+				var choice_kind := str(field.get("choice_kind", ""))
+				var choose := _search_button("▾", func(): return maker.kind_choice_groups(choice_kind),
+					func(v): edit.text = str(v); obj[key] = str(v); _changed(), true, "选择常用值，也可以直接输入")
+				choose.name = "FieldChoiceButton"
+				choose.custom_minimum_size = Vector2(36, 0)
+				row.add_child(choose)
+			else:
+				var menu := OptionButton.new()
+				for choice in choices:
+					menu.add_item(_choice_shown(str(choice)))
+				menu.selected = maxi(0, choices.find(obj.get(key, "")))
+				menu.item_selected.connect(func(i): obj[key] = choices[i]; _changed())
+				row.add_child(menu)
 		"image":
 			var shown := str(obj.get(key, ""))
-			var lab := _label(shown if shown != "" else "还没选图", 13, INK if shown != "" else HINT)
+			var preview := _card_thumbnail(shown, path.get_base_dir())
+			if preview.texture != null:
+				row.add_child(preview)
+			var lab := _label(shown if shown != "" else "还没选图", 13, C_TEXT if shown != "" else HINT)
 			lab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			lab.clip_text = true
 			row.add_child(lab)
@@ -1040,6 +991,17 @@ func _field_row(parent:Node, obj:Dictionary, field:Dictionary) -> void:
 			pick.text = "选图"
 			pick.pressed.connect(_pick_image.bind(obj, key, str(field.get("zoom", ""))))
 			row.add_child(pick)
+			if shown != "" and not bool(field.get("required", false)):
+				var clear := Button.new()
+				clear.text = "清除"
+				clear.pressed.connect(func():
+					obj.erase(key)
+					var zoom_key := str(field.get("zoom", ""))
+					if zoom_key != "":
+						obj.erase(zoom_key)
+					_changed()
+					call_deferred("_paint_card"))
+				row.add_child(clear)
 		"attributes":
 			var flow := HFlowContainer.new()
 			flow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1079,6 +1041,19 @@ func _choice_shown(value:String) -> String:
 			return str(item.shown) + "  " + value
 	return value
 
+func _card_thumbnail(image:String, folder:String) -> TextureRect:
+	var preview := TextureRect.new()
+	preview.name = "CardThumbnail"
+	preview.custom_minimum_size = Vector2(48, 64)
+	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	if image != "":
+		var source := image if image.begins_with("res://") or image.is_absolute_path() else folder.path_join(image)
+		if LoadHelper.texture_exists(source):
+			preview.texture = LoadHelper.load_texture(source)
+		preview.tooltip_text = source
+	return preview
+
 
 func _time_points_editor(parent:Node, obj:Dictionary, key:String) -> void:
 	var flow := HFlowContainer.new()
@@ -1095,24 +1070,195 @@ func _time_points_editor(parent:Node, obj:Dictionary, key:String) -> void:
 			_changed()
 			call_deferred("_paint_card"))
 		flow.add_child(chip)
-	var menu := _time_point_menu("＋ 加一个时机")
-	menu.item_selected.connect(func(idx):
-		if idx == 0:
-			return
-		list.append(menu.get_item_metadata(idx))
+	flow.add_child(_time_point_button("＋ 加一个时机", func(point_id):
+		list.append(point_id)
 		obj[key] = list
 		_changed()
-		call_deferred("_paint_card"))
-	flow.add_child(menu)
+		call_deferred("_paint_card")))
 
 
-func _time_point_menu(first:String) -> OptionButton:
-	var menu := OptionButton.new()
-	menu.add_item(first)
-	for point in maker.time_points:
-		menu.add_item(point.shown)
-		menu.set_item_metadata(menu.item_count - 1, point.id)
-	return menu
+# 选时机的按钮：点开共用的搜索面板，选中后调用 on_pick(时机 id)。
+func _time_point_button(text:String, on_pick:Callable) -> Button:
+	return _search_button(text, _time_point_groups, on_pick, true, "点开后可以搜索，时机按分组列出；找不到就直接打字回车。")
+
+
+func _time_point_groups() -> Array:
+	var out:Array = []
+	for group in maker.time_point_groups():
+		out.append({"shown": group.shown, "items": group.points})
+	return out
+
+
+# 通用的搜索下拉按钮：groups_fn 返回 [{shown, items:[{id, shown}]}]，点开时才取，候选总是最新的。
+# allow_text：允许把搜索框里打的字直接当值（候选里没有时的兜底）。more：给了就在列表里显示「显示其他所有字段」。
+func _search_button(text:String, groups_fn:Callable, on_pick:Callable, allow_text:bool, tip:String, more := Callable()) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.tooltip_text = tip
+	button.pressed.connect(func(): _open_search_popup(button, groups_fn.call(), on_pick, allow_text, Callable(), more))
+	return button
+
+
+func _on_tp_search_changed(_text:String) -> void:
+	_fill_time_point_tree()
+
+
+func _on_tp_search_submitted(_text:String) -> void:
+	_pick_first_time_point()
+
+
+func _on_tp_item_selected() -> void:
+	var item := tp_tree.get_selected()
+	if item != null and item.has_meta("more"):
+		# Tree 正在处理鼠标选中时禁止 clear/create_item；等本次输入结束再重建。
+		call_deferred("_toggle_more_groups")
+	elif item != null and item.is_selectable(0):
+		_pick_entry(item.get_metadata(0), item.has_meta("typed"))
+
+
+# 列表末尾那一项：点一下把全部其他字段列在它下面，再点一下收起。
+func _toggle_more_groups() -> void:
+	# 点击后若弹窗已关闭或更早的一次展开已完成，不重建已切换的列表。
+	if not tp_more.is_valid():
+		return
+	if not tp_more_open and tp_extra.is_empty():
+		tp_extra = _merge_more_groups(tp_more.call())
+		if tp_extra.is_empty():
+			_set_status("没有其他字段了")
+			return
+	tp_more_open = not tp_more_open
+	_fill_time_point_tree()
+	if tp_more_open:
+		_scroll_to_more()
+
+
+# 兜底分组：和已经列出的值去重后统一加「其他 · 」前缀；一个都没剩就不返回这组。
+func _merge_more_groups(extra:Array) -> Array:
+	var out:Array = []
+	for group in extra:
+		var items:Array = []
+		for it in group.items:
+			var value = it.get("value", str(it.id))
+			if not _find_item(tp_groups, value).is_empty() or not _find_item(out, value).is_empty():
+				continue
+			items.append(it)
+		if not items.is_empty():
+			out.append({"shown": "其他 · " + str(group.shown), "items": items})
+	return out
+
+
+# 展开后滚到末尾那一项的第一组，不用自己往下找。
+func _scroll_to_more() -> void:
+	var head := tp_tree.get_root().get_first_child() if tp_tree.get_root() else null
+	while head != null:
+		if head.has_meta("more"):
+			var first := head.get_first_child()
+			if first != null:
+				tp_tree.scroll_to_item(first, true)
+			return
+		head = head.get_next()
+
+
+func _open_time_point_popup(anchor:Control, on_pick:Callable) -> void:
+	_open_search_popup(anchor, _time_point_groups(), on_pick, false)
+
+
+# on_typed：打的字交给谁；不给就和选中的候选一样交给 on_pick。
+# more：兜底取「其他所有字段」的分组；给了才在列表末尾显示那一行。
+func _open_search_popup(anchor:Control, groups:Array, on_pick:Callable, allow_text:bool, on_typed := Callable(), more := Callable()) -> void:
+	tp_pick = on_pick
+	tp_typed = on_typed
+	tp_groups = groups.duplicate()
+	tp_allow_text = allow_text
+	tp_more = more
+	tp_extra = []
+	tp_more_open = false
+	tp_search.text = ""
+	tp_search.placeholder_text = "搜索，中文英文都行" + ("；找不到就直接打字回车" if allow_text else "")
+	_fill_time_point_tree()
+	var r := anchor.get_global_rect()
+	tp_popup.popup(Rect2i(Vector2i(r.position + Vector2(0, r.size.y)), Vector2i(380, 460)))
+	tp_search.grab_focus()
+
+
+# 按分组填；有搜索词时只留匹配的项并展开分组，分组名匹配时整组保留。
+# 允许打字兜底时，第一行是「用输入的文字」。
+func _fill_time_point_tree() -> void:
+	tp_tree.clear()
+	var root := tp_tree.create_item()
+	var raw := tp_search.text.strip_edges()
+	var needle := raw.to_lower()
+	if tp_allow_text and raw != "":
+		var typed := tp_tree.create_item(root)
+		typed.set_text(0, "用输入的文字：" + raw)
+		typed.set_metadata(0, raw)
+		typed.set_meta("typed", true)
+		typed.set_custom_color(0, C_GOLD2)
+	var fold_idle:bool = needle == "" and tp_groups.size() > 1
+	for group in tp_groups:
+		_add_candidate_group(root, group, needle, fold_idle and not bool(group.get("open", false)))
+	# 兜底入口放在列表最后：点它就在它下面展开全部其他字段，再点一下收起
+	if tp_more.is_valid():
+		var more := tp_tree.create_item(root)
+		more.set_meta("more", true)
+		more.set_custom_color(0, C_GOLD2)
+		more.set_text(0, "▾ 收起其他所有字段" if tp_more_open else ("▸ 在其他所有字段里搜索" if needle != "" else "▸ 显示其他所有字段"))
+		more.set_tooltip_text(0, "点开列出所有已知字段兜底；再点一下收起")
+		if tp_more_open:
+			for group in tp_extra:
+				_add_candidate_group(more, group, needle, false)
+
+
+# 往树上挂一组候选：组头不可选，折叠与否由调用方决定；整组没有命中的项就不显示。
+func _add_candidate_group(parent_item:TreeItem, group:Dictionary, needle:String, folded:bool) -> void:
+	var group_hit := needle != "" and str(group.shown).to_lower().find(needle) != -1
+	var points:Array = group.items.filter(func(p): return needle == "" or group_hit or str(p.shown).to_lower().find(needle) != -1 or str(p.id).to_lower().find(needle) != -1)
+	if points.is_empty():
+		return
+	var head := tp_tree.create_item(parent_item)
+	head.set_text(0, str(group.shown) + "（" + str(points.size()) + "）")
+	head.set_selectable(0, false)
+	head.set_custom_color(0, C_GOLD)
+	head.collapsed = folded
+	for p in points:
+		var item := tp_tree.create_item(head)
+		var shown := str(p.shown)
+		item.set_text(0, (shown + "  " + str(p.id)) if shown != "" and shown != str(p.id) and str(p.id) != "" and tp_allow_text else (shown if shown != "" else str(p.id)))
+		item.set_tooltip_text(0, str(p.get("tip", p.id)))
+		item.set_metadata(0, p.get("value", str(p.id)))
+
+
+# 回车：选第一个名字本身匹配的项；只有分组名匹配时退回第一个列出的；允许打字时什么都没匹配到就用打的字。
+func _pick_first_time_point() -> void:
+	var needle := tp_search.text.strip_edges().to_lower()
+	var fallback:TreeItem = null
+	var head := tp_tree.get_root().get_first_child() if tp_tree.get_root() else null
+	while head != null:
+		var item := head.get_first_child()
+		while item != null:
+			if not item.is_selectable(0):
+				item = item.get_next()
+				continue
+			if fallback == null:
+				fallback = item
+			if item.get_text(0).to_lower().find(needle) != -1 or str(item.get_tooltip_text(0)).to_lower().find(needle) != -1:
+				_pick_entry(item.get_metadata(0), false)
+				return
+			item = item.get_next()
+		head = head.get_next()
+	if tp_allow_text and needle != "":
+		_pick_entry(tp_search.text.strip_edges(), true)
+	elif fallback != null:
+		_pick_entry(fallback.get_metadata(0), false)
+
+
+# 选中一项：候选的值原样交出去；打的字交给 tp_typed（没有就交给 tp_pick）。
+func _pick_entry(value, typed:bool) -> void:
+	# 先取回调再关：关弹窗会清空回调
+	var target := tp_typed if typed and tp_typed.is_valid() else tp_pick
+	tp_popup.hide()
+	if target.is_valid():
+		target.call(value)
 
 
 func _cost_editor(parent:Node, obj:Dictionary, key:String) -> void:
@@ -1159,7 +1305,19 @@ func _paint_sub_list(parent:Node, owner:Dictionary, item:Dictionary, base:Array 
 	var item_id := str(item.get("item", ""))
 	# 原文没有这一项就先不写，等真的加了东西才写进去，打开再保存不会平白多出空列表
 	var list:Array = owner[key] if owner.get(key) is Array else []
-	if item_id in ["text", "deck_ref"]:
+	if item_id == "deck_ref":
+		var fold := _fold_box(parent, str(item.shown) + "（" + str(list.size()) + "）", false)
+		var counts := {}
+		for ref in list:
+			counts[str(ref)] = int(counts.get(str(ref), 0)) + 1
+		for ref in counts:
+			fold.add_child(_label(_deck_name(str(ref)) + " × " + str(counts[ref]) + "  [" + str(ref) + "]", 13, C_TEXT))
+		var pick := Button.new()
+		pick.text = "打开攻击牌选牌面板"
+		pick.pressed.connect(_open_deck_picker.bind(owner, key))
+		fold.add_child(pick)
+		return
+	if item_id == "text":
 		var fold := _fold_box(parent, str(item.shown) + "（" + str(list.size()) + "）", false)
 		var edit := TextEdit.new()
 		edit.custom_minimum_size = Vector2(0, 72)
@@ -1183,7 +1341,7 @@ func _paint_sub_list(parent:Node, owner:Dictionary, item:Dictionary, base:Array 
 			# 带效果的子牌单独开一页编辑：卡面字段和它的效果积木一起换过去
 			var row := HBoxContainer.new()
 			fold.add_child(row)
-			var name := _label(_owner_name(list[i], "第 " + str(i + 1) + " 个"), 14, INK)
+			var name := _label(_owner_name(list[i], "第 " + str(i + 1) + " 个"), 14, C_TEXT)
 			name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			name.clip_text = true
 			row.add_child(name)
@@ -1233,6 +1391,103 @@ func _paint_sub_list(parent:Node, owner:Dictionary, item:Dictionary, base:Array 
 			call_deferred("_refresh_all"))
 	fold.add_child(add)
 
+func _deck_entries() -> Array:
+	var entries:Array = []
+	for file in maker.list_files("attack"):
+		var card = maker.read_json(str(file.path))
+		if not card is Dictionary:
+			continue
+		var ref := "special:" + str(card.get("attack_name", ""))
+		if ref == "special:":
+			continue
+		entries.append({"ref": ref, "card": card, "folder": str(file.path).get_base_dir()})
+	return entries
+
+func _deck_name(ref:String) -> String:
+	for entry in deck_catalog:
+		if str(entry.ref) == ref:
+			return str(entry.card.get("shown_attack_name", entry.card.get("attack_name", ref)))
+	var parts := ref.split(":")
+	if parts.size() == 2 and parts[0] != "special" and parts[1].is_valid_int():
+		# 旧牌库的属性:威力引用仍按运行时基础牌优先的顺序解析，只用于展示，不改原始字符串。
+		for category in ["basic", "other"]:
+			for entry in deck_catalog:
+				var card:Dictionary = entry.card
+				if (str(card.get("category", "")) == "basic") != (category == "basic"):
+					continue
+				if parts[0] in card.get("attributes", []) and int(card.get("power", {}).get("number", -1)) == int(parts[1]):
+					return str(card.get("shown_attack_name", card.get("attack_name", ref)))
+	return "未识别的旧引用"
+
+func _open_deck_picker(owner:Dictionary, key:String) -> void:
+	deck_catalog = _deck_entries()
+	var dialog := AcceptDialog.new()
+	dialog.title = "从现有 data 攻击牌选择牌库"
+	dialog.ok_button_text = "关闭"
+	dialog.size = Vector2i(720, 650)
+	add_child(dialog)
+	dialog.confirmed.connect(dialog.queue_free)
+	dialog.close_requested.connect(dialog.queue_free)
+	var body := VBoxContainer.new()
+	body.name = "DeckPickerBody"
+	dialog.add_child(body)
+	var search_box := LineEdit.new()
+	search_box.placeholder_text = "搜索牌名、属性或内部名"
+	body.add_child(search_box)
+	var summary := _label("", 13, C_TEXT)
+	body.add_child(summary)
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(680, 490)
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.add_child(scroll)
+	var rows := VBoxContainer.new()
+	rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(rows)
+	var redraw := _redraw_deck_picker.bind(owner, key, rows, summary, search_box)
+	search_box.text_changed.connect(func(_text): redraw.call())
+	dialog.confirmed.connect(func(): _paint_card())
+	redraw.call()
+	dialog.popup_centered(Vector2i(720, 650))
+
+func _redraw_deck_picker(owner:Dictionary, key:String, rows:VBoxContainer, summary:Label, search_box:LineEdit) -> void:
+	var redraw := _redraw_deck_picker.bind(owner, key, rows, summary, search_box)
+	if is_instance_valid(rows):
+		_clear(rows)
+		var list:Array = owner.get(key, []) if owner.get(key) is Array else []
+		var counts := {}
+		for ref in list:
+			counts[str(ref)] = int(counts.get(str(ref), 0)) + 1
+		summary.text = "已选 " + str(list.size()) + " 张（可重复）。旧引用保持原样；新选牌按内部名精确引用。"
+		for ref in counts:
+			var selected := HBoxContainer.new()
+			rows.add_child(selected)
+			var title := _label("已选 · " + _deck_name(str(ref)) + " [" + str(ref) + "] × " + str(counts[ref]), 13, C_TEXT)
+			title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			selected.add_child(title)
+			var remove := Button.new()
+			remove.text = "－ 移除一张"
+			remove.pressed.connect(func(): list.erase(ref); owner[key] = list; _changed(); redraw.call_deferred())
+			selected.add_child(remove)
+		rows.add_child(HSeparator.new())
+		for entry in deck_catalog:
+			var card:Dictionary = entry.card
+			var attrs := ", ".join(PackedStringArray(card.get("attributes", [])))
+			var name := str(card.get("shown_attack_name", card.get("attack_name", "")))
+			if search_box.text != "" and not (name + " " + attrs + " " + str(card.get("attack_name", ""))).to_lower().contains(search_box.text.to_lower()):
+				continue
+			var row := HBoxContainer.new()
+			rows.add_child(row)
+			row.add_child(_card_thumbnail(str(card.get("attack_card_img", "")), str(entry.folder)))
+			var cost = card.get("cost", {})
+			var power = card.get("power", {})
+			var details := _label(name + "  · " + attrs + "  威力 " + str(power.get("number", "?")) + "  魔力 " + str(cost.get("number", "?")), 13, C_TEXT)
+			details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			row.add_child(details)
+			var add := Button.new()
+			add.text = "＋ 添加（" + str(counts.get(entry.ref, 0)) + "）"
+			add.pressed.connect(func(): list.append(entry.ref); owner[key] = list; _changed(); redraw.call_deferred())
+			row.add_child(add)
+
 
 # =============== 效果脚本区 ===============
 
@@ -1247,7 +1502,7 @@ func _paint_scripts() -> void:
 		if str(item.key) == "effects":
 			has_effects = true
 	var obj = _focus_obj()
-	script_box.add_child(_label("正在编辑：" + str(spec.get("shown", "卡")) + " " + _owner_name(obj, ""), 15, Color("#4C3D8F")))
+	script_box.add_child(_label("正在编辑：" + str(spec.get("shown", "卡")) + " " + _owner_name(obj, ""), 15, C_GOLD))
 	for i in effects_view.size():
 		script_box.add_child(_effect_script(i))
 	var add := Button.new()
@@ -1283,14 +1538,14 @@ func _effect_script(index:int) -> Control:
 	col.add_theme_constant_override("separation", 0)
 	# 效果头：说明文字 + 设置
 	var info := PanelContainer.new()
-	info.add_theme_stylebox_override("panel", _flat(Color("#F2EEFB"), 6, 8, Color("#D8CCF5")))
+	info.add_theme_stylebox_override("panel", _flat(Color(C_GOLD, 0.08), 3, 8, Color(C_GOLD, 0.35)))
 	col.add_child(info)
 	var info_col := VBoxContainer.new()
 	info.add_child(info_col)
 	var title_row := HBoxContainer.new()
 	info_col.add_child(title_row)
 	var owner := str(view.owner).trim_prefix("/")
-	var badge := _label(("【" + owner + "】 ") if owner != "" else "", 13, Color("#855CD6"))
+	var badge := _label(("【" + owner + "】 ") if owner != "" else "", 13, C_GOLD2)
 	title_row.add_child(badge)
 	var text := LineEdit.new()
 	text.placeholder_text = "照抄卡面上这条效果的原文"
@@ -1316,19 +1571,29 @@ func _effect_script(index:int) -> Control:
 				view.lists["funcs"] = []
 			col.add_child(_stack_view(view.lists.funcs, "funcs"))
 	if view.lists.has("power_query"):
-		col.add_child(_power_hat())
+		col.add_child(_power_hat(view))
 		col.add_child(_stack_view(view.lists.power_query, "power_query"))
 	var tools := HBoxContainer.new()
 	col.add_child(tools)
+	var gen := Button.new()
+	gen.name = "GenerateCard"
+	gen.text = "生成牌"
+	gen.tooltip_text = "按内部名新建一张牌放进某一区。会搭好「新建一张牌」和「把……放进……」这几块，之后可以照常改。"
+	gen.pressed.connect(open_generate.bind(view))
+	tools.add_child(gen)
 	if not (effect.get("options") is Array and not effect.options.is_empty()):
 		var to_opt := Button.new()
-		to_opt.text = "改成让玩家选一项"
-		to_opt.tooltip_text = "效果变成「多选一」：每个选项下面各接一串积木，玩家发动时选其中一项。"
+		to_opt.text = "在下面加选项" if not view.lists.get("funcs", []).is_empty() else "改成让玩家选一项"
+		to_opt.tooltip_text = "在已有积木末尾添加空选项，前面的积木保持原位。"
 		to_opt.pressed.connect(func():
-			effect["options"] = [{"shown_option_name": "选项一", "funcs": codec.encode_effect_list(view.lists.get("funcs", []))}]
-			effect["funcs"] = []
-			view.lists["funcs"] = []
-			view.options = [{"option": effect.options[0], "nodes": codec.decode_list(effect.options[0].funcs), "reqs": []}]
+			if not view.lists.get("funcs", []).is_empty():
+				# 效果级 options 会替代 funcs；顺序执行中的选择使用已有的询问积木。
+				view.lists.funcs.append(_new_op("ask_player_option"))
+			else:
+				effect["options"] = [{"shown_option_name": "选项一", "funcs": []}]
+				effect["funcs"] = []
+				view.lists["funcs"] = []
+				view.options = [{"option": effect.options[0], "nodes": [], "reqs": []}]
 			_refresh_scripts())
 		tools.add_child(to_opt)
 	if not view.lists.has("power_query"):
@@ -1373,7 +1638,7 @@ func _remove_effect_from(node, effect:Dictionary) -> bool:
 
 func _hat_block(effect:Dictionary) -> Control:
 	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", Shape.new("hat", Color("#FFBF00")))
+	panel.add_theme_stylebox_override("panel", Shape.new("hat", Color("#77602C")))
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 6)
 	panel.add_child(row)
@@ -1383,8 +1648,8 @@ func _hat_block(effect:Dictionary) -> Control:
 		var chip := Button.new()
 		chip.text = maker.time_point_shown(str(points[i])) + " ✕"
 		chip.tooltip_text = "点一下去掉这个时机"
-		chip.add_theme_stylebox_override("normal", Shape.new("reporter", Color("#FFFFFF")))
-		chip.add_theme_color_override("font_color", INK)
+		chip.add_theme_stylebox_override("normal", Shape.new("reporter", SLOT_FILL))
+		chip.add_theme_color_override("font_color", C_GOLD2)
 		chip.pressed.connect(func():
 			points.remove_at(i)
 			effect["time_points"] = points
@@ -1392,14 +1657,10 @@ func _hat_block(effect:Dictionary) -> Control:
 		row.add_child(chip)
 		if i < points.size() - 1:
 			row.add_child(_block_label("并且" if bool(effect.get("require_all_time_points", false)) else "或"))
-	var menu := _time_point_menu("＋ 时机")
-	menu.item_selected.connect(func(idx):
-		if idx == 0:
-			return
-		points.append(menu.get_item_metadata(idx))
+	row.add_child(_time_point_button("＋ 时机", func(point_id):
+		points.append(point_id)
 		effect["time_points"] = points
-		_refresh_scripts())
-	row.add_child(menu)
+		_refresh_scripts()))
 	row.add_child(_block_label("时"))
 	if points.is_empty():
 		row.add_child(_block_label("（还没选时机）"))
@@ -1409,14 +1670,217 @@ func _hat_block(effect:Dictionary) -> Control:
 	return panel
 
 
-func _power_hat() -> Control:
+func _power_hat(view:Dictionary) -> Control:
 	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", Shape.new("hat", Color("#0FBDA0")))
+	panel.add_theme_stylebox_override("panel", Shape.new("hat", Color("#2C7752")))
 	var row := HBoxContainer.new()
 	panel.add_child(row)
 	row.add_child(_block_label("计算合计威力时"))
+	var del := Button.new()
+	del.name = "DeletePowerQuery"
+	del.text = "✕"
+	del.flat = true
+	del.tooltip_text = "删掉这一段威力计算，连同里面的积木"
+	del.add_theme_color_override("font_color", C_DIM)
+	del.pressed.connect(_delete_power_query.bind(view))
+	row.add_child(del)
 	panel.tooltip_text = "这段积木随时被用来算威力，只能放「威力计算」和查询类积木，不能改动游戏。"
 	return panel
+
+
+# 威力计算整段删掉：模型和 JSON 两边都去掉，避免下次提交又写回空列表。
+func _delete_power_query(view:Dictionary) -> void:
+	view.lists.erase("power_query")
+	view.effect.erase("power_query")
+	_refresh_scripts()
+
+
+# =============== 生成牌 ===============
+
+# 生成牌向导里按声明填的下拉：自定义牌种类、卡库种类、放进哪一区。
+func _fill_generate_menus() -> void:
+	for item in maker.types.get("custom_card_types", []):
+		gen_custom_type.add_item(str(item.shown))
+		gen_custom_type.set_item_metadata(gen_custom_type.item_count - 1, item)
+	for src in maker.types.get("card_sources", []):
+		gen_type.add_item(str(src.shown))
+		gen_type.set_item_metadata(gen_type.item_count - 1, src)
+	var names:Dictionary = maker.types.get("player_key_names", {})
+	for zone in maker.types.get("card_zones", []):
+		gen_zone.add_item(str(names.get(zone, zone)))
+		gen_zone.set_item_metadata(gen_zone.item_count - 1, str(zone))
+
+
+func _on_gen_mode_selected(_index:int) -> void:
+	_show_generate_mode()
+
+
+func _on_gen_type_selected(_index:int) -> void:
+	_fill_generate_list()
+
+
+func _on_gen_search_changed(_text:String) -> void:
+	_fill_generate_list()
+
+
+func _on_gen_list_selected(index:int) -> void:
+	gen_name.text = str(gen_list.get_item_metadata(index))
+
+
+func _show_generate_mode() -> void:
+	var custom := gen_mode.selected == 0
+	gen_custom.visible = custom
+	gen_library.visible = not custom
+
+
+# 卡库列表：按种类声明的 kind 扫 data 里的卡，显示「牌名  内部名」。
+func _fill_generate_list() -> void:
+	gen_list.clear()
+	if gen_type.selected < 0:
+		return
+	var src:Dictionary = gen_type.get_item_metadata(gen_type.selected)
+	var spec := maker.kind_spec(str(src.kind))
+	var needle := gen_search.text.strip_edges().to_lower()
+	for file in maker.list_files(str(src.kind)):
+		var card = maker.read_json(str(file.path))
+		if not card is Dictionary:
+			continue
+		var identity := str(card.get(spec.get("identity", ""), ""))
+		var shown := str(card.get(spec.get("shown_key", ""), ""))
+		var text := (shown + "  " if shown != "" else "") + identity
+		if identity == "" or (needle != "" and text.to_lower().find(needle) == -1):
+			continue
+		gen_list.add_item(text)
+		gen_list.set_item_metadata(gen_list.item_count - 1, identity)
+
+
+func open_generate(view:Dictionary) -> void:
+	gen_view = view
+	gen_search.text = ""
+	gen_name.text = ""
+	gen_count.value = 1
+	gen_register.button_pressed = true
+	gen_mode.select(0)
+	_show_generate_mode()
+	_fill_generate_list()
+	gen_window.popup_centered()
+
+
+# 搭积木：把「新建一张牌」放进「玩家的某一区」；张数大于 1 时包进「重复 N 次」。都是已有操作的组合。
+func _apply_generate() -> void:
+	if gen_view.is_empty() or gen_zone.selected < 0:
+		return
+	var zone := str(gen_zone.get_item_metadata(gen_zone.selected))
+	if gen_mode.selected == 0:
+		if gen_custom_type.selected < 0:
+			return
+		var item:Dictionary = gen_custom_type.get_item_metadata(gen_custom_type.selected)
+		var card := blank_custom_card(str(item.kind))
+		_append_generated(generate_custom_blocks(card, item, zone, int(gen_count.value), gen_register.button_pressed, gen_view.effect))
+		_set_status("已加入一张自定义" + str(item.shown) + "，在这一页写它的卡面和效果")
+		# 立刻打开这张新牌：先把积木写回 JSON，才能在卡里找到它的位置
+		_commit()
+		call_deferred("focus_custom_card", card, str(item.kind))
+		return
+	var name := gen_name.text.strip_edges()
+	if name == "" or gen_type.selected < 0:
+		_set_status("先选一张牌再加")
+		return
+	var src:Dictionary = gen_type.get_item_metadata(gen_type.selected)
+	_append_generated(generate_blocks(name, str(src.type), zone, int(gen_count.value), gen_view.effect, gen_register.button_pressed))
+	_set_status("已加入生成牌：" + name)
+
+
+func _append_generated(nodes:Array) -> void:
+	if gen_view.options.is_empty():
+		if not gen_view.lists.has("funcs"):
+			gen_view.lists["funcs"] = []
+		gen_view.lists.funcs.append_array(nodes)
+	else:
+		gen_view.options.back().nodes.append_array(nodes)
+	_refresh_scripts()
+
+
+# 自定义牌的空白数据：加载器直接取的键先写上默认值（types.json 标了 required 的，加上效果列表与属性）。
+func blank_custom_card(kind:String) -> Dictionary:
+	var card := maker.blank_required(kind)
+	var spec := maker.kind_spec(kind)
+	for field in spec.get("fields", []):
+		if str(field.get("control", "")) == "attributes" and not card.has(field.key):
+			card[field.key] = []
+	for item in spec.get("lists", []):
+		if str(item.key) == "effects" and not card.has("effects"):
+			card["effects"] = []
+	return card
+
+
+# 自定义牌：新建一张 → 放进某一区 →（可选）让它的效果生效。新牌记在变量里给后面两步用，
+# 张数大于 1 时整串包进「重复 N 次」，每一轮都是新的一张。都是已有操作的组合。
+func generate_custom_blocks(card:Dictionary, item:Dictionary, zone:String, count:int, register:bool, effect) -> Array:
+	var build := _new_op("build_card")
+	build.params[0] = {"s": "lit", "v": card}
+	build.params[1] = {"s": "lit", "v": str(item.type)}
+	if str(item.get("back_type", "")) != "":
+		build.params[4] = {"s": "lit", "v": str(item.back_type)}
+	return _place_blocks(build, zone, count, register, effect)
+
+
+func generate_blocks(card_name:String, card_type:String, zone:String, count:int, effect, register := false) -> Array:
+	var create := _new_op("create_card")
+	create.params[0] = {"s": "lit", "v": card_name}
+	create.params[1] = {"s": "lit", "v": card_type}
+	return _place_blocks(create, zone, count, register, effect)
+
+
+# 返回一串积木：一张时直接平铺，多张时包进一块「重复 N 次」。
+func _place_blocks(maker_node:Dictionary, zone:String, count:int, register:bool, effect) -> Array:
+	var area := _new_op("get_player_data_value")
+	area.params[0] = {"s": "lit", "v": zone}
+	var put := _new_op("add_to_array")
+	put.params[1] = {"s": "block", "b": area}
+	var steps:Array = []
+	if register:
+		maker_node.var = codec.max_var(_all_nodes_of_current()) + 1
+		put.params[0] = {"s": "var", "n": maker_node.var}
+		var reg := _new_op("register_object_effects")
+		reg.params[0] = {"s": "var", "n": maker_node.var}
+		steps = [maker_node, put, reg]
+	else:
+		put.params[0] = {"s": "block", "b": maker_node}
+		steps = [put]
+	if count <= 1:
+		return steps
+	var loop := _new_op("for_func")
+	loop.params[0] = {"s": "script", "body": steps}
+	loop.params[1] = _new_number_slot(count, effect)
+	return [loop]
+
+
+# 打开一张写在积木里的自定义牌：按对象在卡里找到路径，像子牌一样单独开一页。
+func focus_custom_card(card:Dictionary, kind:String) -> void:
+	var at = _path_to(data, card, [])
+	if at == null:
+		_set_status("没找到这张自定义牌")
+		return
+	focus_to(at, kind)
+
+
+func _path_to(node, target, base:Array):
+	if is_same(node, target):
+		return base
+	if node is Dictionary:
+		for key in node:
+			if node[key] is Dictionary or node[key] is Array:
+				var found = _path_to(node[key], target, base + [key])
+				if found != null:
+					return found
+	elif node is Array:
+		for i in node.size():
+			if node[i] is Dictionary or node[i] is Array:
+				var found = _path_to(node[i], target, base + [i])
+				if found != null:
+					return found
+	return null
 
 
 func _options_view(view:Dictionary) -> Control:
@@ -1426,7 +1890,7 @@ func _options_view(view:Dictionary) -> Control:
 		var ov:Dictionary = view.options[oi]
 		var option:Dictionary = ov.option
 		var head := PanelContainer.new()
-		head.add_theme_stylebox_override("panel", Shape.new("stack", Color("#FF8C1A")))
+		head.add_theme_stylebox_override("panel", Shape.new("stack", Color("#77522C")))
 		var row := HBoxContainer.new()
 		head.add_child(row)
 		row.add_child(_block_label("选项 " + str(oi + 1)))
@@ -1443,13 +1907,18 @@ func _options_view(view:Dictionary) -> Control:
 			view.options.remove_at(oi)
 			_refresh_scripts())
 		row.add_child(del)
-		col.add_child(head)
+		# 选项头与执行串共用左边缘，凹口覆盖头部凸起；设置不插在接缝中。
+		var connected := VBoxContainer.new()
+		connected.add_theme_constant_override("separation", -int(Shape.NOTCH_D))
+		connected.add_child(head)
+		var body := _stack_view(ov.nodes, "option")
+		if not ov.nodes.is_empty():
+			body.get_child(0).custom_minimum_size.y = 0
+		connected.add_child(body)
+		col.add_child(connected)
 		var settings := _fold_box(col, "选项的限制", false)
 		_paint_fields(settings, option, _spec_without(maker.item_spec("option"), ["shown_option_name"]))
-		var body := HBoxContainer.new()
-		body.add_child(_spacer(18))
-		body.add_child(_stack_view(ov.nodes, "option"))
-		col.add_child(body)
+		_requirements_view(col, ov)
 	var add := Button.new()
 	add.text = "＋ 再加一个选项"
 	add.pressed.connect(func():
@@ -1461,6 +1930,47 @@ func _options_view(view:Dictionary) -> Control:
 	return col
 
 
+# 选项的「发动前必须满足」：每条是一句做不到时的提示加一串查询积木，最后一块算出真才能选这一项。
+# 条件积木存在 ov.reqs 里与 activation_requirements 一一对应，_commit 按下标写回。
+func _requirements_view(parent:Node, ov:Dictionary) -> void:
+	var option:Dictionary = ov.option
+	var reqs:Array = option.get("activation_requirements", []) if option.get("activation_requirements") is Array else []
+	var fold := _fold_box(parent, "发动前必须满足（" + str(reqs.size()) + "）", not reqs.is_empty())
+	fold.name = "Requirements"
+	fold.add_child(_hint("最后一块积木算出「是」才能选这一项；做不到时玩家看到下面填的提示。"))
+	var spec := maker.item_spec("requirement")
+	for ri in reqs.size():
+		if not reqs[ri] is Dictionary:
+			continue
+		while ov.reqs.size() <= ri:
+			ov.reqs.append([])
+		var head := HBoxContainer.new()
+		head.add_child(_label("条件 " + str(ri + 1), 14, C_TEXT))
+		var del := Button.new()
+		del.text = "删掉这条"
+		del.pressed.connect(func():
+			reqs.remove_at(ri)
+			ov.reqs.remove_at(ri)
+			if reqs.is_empty():
+				option.erase("activation_requirements")
+			_refresh_scripts())
+		head.add_child(del)
+		fold.add_child(head)
+		_paint_fields(fold, reqs[ri], spec)
+		fold.add_child(_stack_view(ov.reqs[ri], "requirement"))
+	var add := Button.new()
+	add.name = "AddRequirement"
+	add.text = "＋ 加一条前置条件"
+	add.pressed.connect(func():
+		var req := maker.blank_required("requirement")
+		req["funcs"] = []
+		reqs.append(req)
+		option["activation_requirements"] = reqs
+		ov.reqs.append([])
+		_refresh_scripts())
+	fold.add_child(add)
+
+
 # 一串竖直堆叠的积木，积木之间与末尾都能接住拖来的积木。
 func _stack_view(list:Array, context:String) -> Control:
 	var col := VBoxContainer.new()
@@ -1468,7 +1978,7 @@ func _stack_view(list:Array, context:String) -> Control:
 	for i in list.size():
 		col.add_child(_gap(list, i, context))
 		col.add_child(_render_node(list[i], {"list": list, "index": i, "context": context}))
-	col.add_child(_gap(list, list.size(), context, list.is_empty()))
+	col.add_child(_gap(list, list.size(), context, true))
 	return col
 
 
@@ -1477,16 +1987,26 @@ func _gap(list:Array, index:int, context:String, is_empty := false) -> Control:
 	zone.custom_minimum_size = Vector2(160 if is_empty else 200, 30 if is_empty else 8)
 	zone.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	var s := StyleBoxFlat.new()
-	s.bg_color = Color(0, 0, 0, 0.04) if is_empty else Color(0, 0, 0, 0)
+	s.bg_color = Color(1, 1, 1, 0.04) if is_empty else Color(0, 0, 0, 0)
 	s.set_corner_radius_all(4)
 	if is_empty:
-		s.border_color = Color("#8A90A6")
+		s.border_color = C_GOLD3
 		s.set_border_width_all(1)
 	zone.add_theme_stylebox_override("panel", s)
 	if is_empty:
 		var lab := _label("把积木拖到这里", 13, HINT)
 		lab.position = Vector2(10, 6)
+		lab.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		zone.add_child(lab)
+		zone.tooltip_text = "右键可粘贴剪贴板中的积木"
+		zone.gui_input.connect(func(event:InputEvent):
+			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+				context_target = {"paste_zone": zone}
+				context_menu.clear()
+				context_menu.add_item("粘贴", 2)
+				context_menu.set_item_disabled(0, clipboard == null or not _accepts(zone.get_meta("drop"), clipboard, {}))
+				context_menu.position = Vector2i(zone.get_global_mouse_position())
+				context_menu.popup())
 	zone.set_meta("drop", {"kind": "stack", "list": list, "index": index, "context": context})
 	if not is_empty:
 		zone.set_meta("drop_fn", func(_at:Vector2) -> Dictionary:
@@ -1531,7 +2051,7 @@ func _render_op(node:Dictionary, where:Dictionary) -> Control:
 	var used:Dictionary = {}
 	if node.t == "method":
 		row.add_child(_block_label("让"))
-		row.add_child(_slot_widget(node, "target", "对象", "", "", true))
+		row.add_child(_slot_widget(node, "target", "对象", "", "", true, where))
 		row.add_child(_block_label("执行 " + str(node.method)))
 	var say := maker.say_of(op_name) if node.t == "op" else ""
 	var parts := _split_say(say)
@@ -1544,7 +2064,7 @@ func _render_op(node:Dictionary, where:Dictionary) -> Control:
 			while params.size() <= pi:
 				params.append(_omit_for(op, params.size()))
 			used[pi] = true
-			row.add_child(_slot_widget(params, pi, maker.param_shown(pname), str(op.params[pi].type), op_name + ":" + pname, bool(op.params[pi].required)))
+			row.add_child(_slot_widget(params, pi, maker.param_shown(pname), str(op.params[pi].type), op_name + ":" + pname, bool(op.params[pi].required), where))
 		elif part.strip_edges() != "":
 			row.add_child(_block_label(part.strip_edges()))
 	# 句式里没写到、但操作有的空位（可选参数、数据里多写的参数）收进「更多」
@@ -1559,7 +2079,7 @@ func _render_op(node:Dictionary, where:Dictionary) -> Control:
 		extra.append(i)
 	var op_params:Array = op.get("params", [])
 	for i in range(params.size(), op_params.size()):
-		if not containers.has(i):
+		if not containers.has(i) and not hidden.has(str(op_params[i].name)):
 			extra.append(i)
 	if not extra.is_empty() and not where.get("palette", false):
 		var more_on:bool = node.get("_more", false)
@@ -1571,7 +2091,7 @@ func _render_op(node:Dictionary, where:Dictionary) -> Control:
 		more.text = "▾" if more_on else "…"
 		more.tooltip_text = "更多可选设置"
 		more.flat = true
-		more.add_theme_color_override("font_color", Color.WHITE)
+		more.add_theme_color_override("font_color", C_GOLD2)
 		more.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		more.pressed.connect(func(): node["_more"] = not more_on; _refresh_scripts())
 		row.add_child(more)
@@ -1583,15 +2103,14 @@ func _render_op(node:Dictionary, where:Dictionary) -> Control:
 				var ptype := str(op_params[i].type) if i < op_params.size() else ""
 				var req:bool = i < op_params.size() and bool(op_params[i].required)
 				row.add_child(_block_label(maker.param_shown(pname)))
-				row.add_child(_slot_widget(params, i, maker.param_shown(pname), ptype, op_name + ":" + pname, req))
+				row.add_child(_slot_widget(params, i, maker.param_shown(pname), ptype, op_name + ":" + pname, req, where))
 	if node.get("cond") is Dictionary and not where.get("palette", false):
 		row.add_child(_block_label("仅当"))
-		row.add_child(_slot_widget(node, "cond", "条件", "bool", "", true))
-	if int(node.get("var", -1)) >= 0 and not where.has("slot_parent"):
-		var tag := _label(" → 存为变量 " + str(node.var), 12, Color.WHITE)
-		tag.tooltip_text = "后面的积木可以用橙色的「变量 " + str(node.var) + "」读到这一步的结果。"
-		tag.mouse_filter = Control.MOUSE_FILTER_STOP
-		row.add_child(tag)
+		row.add_child(_slot_widget(node, "cond", "条件", "bool", "", true, where))
+	if not where.has("slot_parent") and not where.get("palette", false):
+		var tag := _result_tag(node)
+		if tag != null:
+			row.add_child(tag)
 	_add_delete_button(row, node, where)
 	# C 形积木的嘴
 	for ci in containers:
@@ -1621,13 +2140,83 @@ func _render_op(node:Dictionary, where:Dictionary) -> Control:
 		foot.add_theme_stylebox_override("panel", Shape.new("c_bottom", color))
 		wrap.add_child(foot)
 		_wire_insert(foot, wrap, where, null, true)
+	if not where.get("palette", false):
+		for oi in codec.option_params.get(op_name, []) if node.t == "op" else []:
+			while params.size() <= oi:
+				params.append({"s": "options", "items": []})
+			if params[oi] is Dictionary and str(params[oi].get("s", "")) == "lit" and params[oi].get("v") == null:
+				params[oi] = {"s": "options", "items": []}
+			if params[oi] is Dictionary and str(params[oi].get("s", "")) == "options":
+				_option_mouths(wrap, params[oi], color)
+		if not codec.option_params.get(op_name, []).is_empty():
+			var foot := PanelContainer.new()
+			foot.custom_minimum_size = Vector2(120, 18)
+			foot.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+			foot.add_theme_stylebox_override("panel", Shape.new("c_bottom", color))
+			wrap.add_child(foot)
+			_wire_insert(foot, wrap, where, null, true)
+	_add_block_help_icon(row, node)
 	_wire_block(panel, node, where, wrap, _first_mouth(node, containers))
 	wrap.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	return wrap
 
 
+# 选项列表画成一个个嘴：每项一行「选项 n [文字] 限制… ✕」，下面接这一项的一串积木，最后是「＋ 再加一个选项」。
+# 选项的其余字段（次数、挑牌……）用 types.json 的 option 表单画，与效果自带选项同一套。
+func _option_mouths(wrap:VBoxContainer, slot:Dictionary, color:Color) -> void:
+	for oi in slot.items.size():
+		var item:Dictionary = slot.items[oi]
+		var head := PanelContainer.new()
+		head.add_theme_stylebox_override("panel", _flat(color, 0, 4))
+		head.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		var row := HBoxContainer.new()
+		head.add_child(row)
+		row.add_child(_block_label("  选项 " + str(oi + 1)))
+		var name := LineEdit.new()
+		name.text = str(item.opt.get("shown_option_name", ""))
+		name.placeholder_text = "玩家看到的选项文字"
+		name.custom_minimum_size = Vector2(200, 0)
+		name.text_changed.connect(func(v): item.opt["shown_option_name"] = v; _changed())
+		row.add_child(name)
+		var del := Button.new()
+		del.text = "✕"
+		del.flat = true
+		del.tooltip_text = "删掉这一项"
+		del.add_theme_color_override("font_color", C_DIM)
+		del.pressed.connect(func(): slot.items.remove_at(oi); _refresh_scripts())
+		row.add_child(del)
+		wrap.add_child(head)
+		var mouth := HBoxContainer.new()
+		mouth.add_theme_constant_override("separation", 0)
+		var arm := Panel.new()
+		arm.custom_minimum_size = Vector2(16, 0)
+		arm.add_theme_stylebox_override("panel", _flat(color, 0, 0))
+		mouth.add_child(arm)
+		mouth.add_child(_stack_view(item.body, "option"))
+		wrap.add_child(mouth)
+		var settings := _fold_box(wrap, "这一项的限制", false)
+		_paint_fields(settings, item.opt, _spec_without(maker.item_spec("option"), ["shown_option_name"]))
+		if not item.has("reqs"):
+			item["reqs"] = []
+		_requirements_view(wrap, {"option": item.opt, "reqs": item.reqs})
+	var add_row := HBoxContainer.new()
+	var arm2 := Panel.new()
+	arm2.custom_minimum_size = Vector2(16, 0)
+	arm2.add_theme_stylebox_override("panel", _flat(color, 0, 0))
+	add_row.add_child(arm2)
+	var add := Button.new()
+	add.name = "AddOption"
+	add.text = "＋ 再加一个选项"
+	add.pressed.connect(func():
+		slot.items.append({"opt": {"shown_option_name": "选项" + str(slot.items.size() + 1)}, "keys": ["shown_option_name", "funcs"], "body": []})
+		_refresh_scripts())
+	add_row.add_child(add)
+	wrap.add_child(add_row)
+
+
 # 「对每一个」会把当前这一项填进嘴里每一步的「填入位置」那一格（只填空着的）。
 # 把这些空格标成「↻ 当前这一项」，只是显示用的记号，保存时仍写成空。
+# 没填的可选空位也算空着：否则保存时写成默认值，循环就填不进去了。
 func _mark_loop_items(node:Dictionary, op:Dictionary, body:Array) -> void:
 	var fill_name := str(maker.block_spec(str(node.get("func", ""))).get("fill", ""))
 	if fill_name == "":
@@ -1643,15 +2232,17 @@ func _mark_loop_items(node:Dictionary, op:Dictionary, body:Array) -> void:
 			continue
 		for i in child.params.size():
 			var slot = child.params[i]
-			if slot is Dictionary and str(slot.get("s", "")) == "lit":
-				if i == fill and slot.get("v") == null:
-					slot["loop"] = true
-				elif i != fill:
-					slot.erase("loop")
+			if not slot is Dictionary:
+				continue
+			var s := str(slot.get("s", ""))
+			if i == fill and ((s == "lit" and slot.get("v") == null) or s == "omit"):
+				slot["loop"] = true
+			elif i != fill and (s == "lit" or s == "omit"):
+				slot.erase("loop")
 
 
 func _render_if(node:Dictionary, where:Dictionary) -> Control:
-	var color := Color("#FFAB19")
+	var color := Color("#77602C")
 	var wrap := VBoxContainer.new()
 	wrap.add_theme_constant_override("separation", 0)
 	var top := PanelContainer.new()
@@ -1661,8 +2252,9 @@ func _render_if(node:Dictionary, where:Dictionary) -> Control:
 	row.add_theme_constant_override("separation", 5)
 	top.add_child(row)
 	row.add_child(_block_label("如果"))
-	row.add_child(_slot_widget(node, "cond", "条件", "bool", "", true))
+	row.add_child(_slot_widget(node, "cond", "条件", "bool", "", true, where))
 	row.add_child(_block_label("那么"))
+	_add_block_help_icon(row, node)
 	_add_delete_button(row, node, where)
 	if not where.get("palette", false):
 		var mouth := HBoxContainer.new()
@@ -1686,10 +2278,11 @@ func _render_if(node:Dictionary, where:Dictionary) -> Control:
 
 func _render_raw(node:Dictionary, where:Dictionary) -> Control:
 	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", Shape.new("stack", Color("#8C8C8C")))
+	panel.add_theme_stylebox_override("panel", Shape.new("stack", Color("#454A55")))
 	var row := HBoxContainer.new()
 	panel.add_child(row)
 	row.add_child(_block_label("看不懂的一步（原样保留）"))
+	_add_block_help_icon(row, node)
 	_add_delete_button(row, node, where)
 	panel.tooltip_text = JSON.stringify(node.v)
 	_wire_block(panel, node, where)
@@ -1697,7 +2290,7 @@ func _render_raw(node:Dictionary, where:Dictionary) -> Control:
 	return panel
 
 
-# 积木区里的「变量」「当前这一项」这类只有一个值的小积木。
+# 积木区里的「结果」「当前这一项」这类只有一个值的小积木。
 func _render_slot_value(slot:Dictionary, where:Dictionary) -> Control:
 	var panel := PanelContainer.new()
 	var color := LOOP_ITEM_COLOR if slot.get("loop", false) else VAR_COLOR
@@ -1705,12 +2298,16 @@ func _render_slot_value(slot:Dictionary, where:Dictionary) -> Control:
 	var text := ""
 	match str(slot.s):
 		"var":
-			text = "变量 " + str(slot.n)
+			text = "结果 " + str(slot.n)
 		"qty":
 			text = "选项 " + str(int(slot.i) + 1) + " 选的数量"
 		_:
 			text = "↻ 当前这一项"
-	panel.add_child(_block_label(text))
+	var node := {"t": "slot_only", "slot": slot}
+	var row := HBoxContainer.new()
+	row.add_child(_block_label(text))
+	_add_block_help_icon(row, node)
+	panel.add_child(row)
 	panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	return panel
 
@@ -1731,6 +2328,60 @@ func _wire_block(panel:Control, node:Dictionary, where:Dictionary, block:Control
 				_open_context(node, where, panel.get_global_mouse_position()))
 
 
+# 积木末尾的「结果 n」小标签：有结果的积木都有，拖到别的积木的空位里就读这一步的结果。
+# 编号第一次画出来时从这张卡没用过的号里分，记在 tag_var；保存时只有真被读到才写成 var_index。
+# 右键「存为变量」写的是 var，不管有没有人读都写出去。
+func _result_tag(node:Dictionary) -> Control:
+	var n := int(node.get("var", -1))
+	if n < 0:
+		if node.t == "op" and not maker.has_result(str(node.get("func", ""))):
+			return null
+		if int(node.get("tag_var", -1)) < 0:
+			node["tag_var"] = codec.max_var(_all_nodes_of_current()) + 1
+		n = int(node.tag_var)
+	var tag := PanelContainer.new()
+	tag.name = "ResultTag"
+	tag.add_theme_stylebox_override("panel", Shape.new("reporter", VAR_COLOR))
+	var tag_label := _block_label("结果 " + str(n))
+	tag_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tag.add_child(tag_label)
+	tag.mouse_filter = Control.MOUSE_FILTER_STOP
+	tag.mouse_default_cursor_shape = Control.CURSOR_DRAG
+	tag.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	tag.tooltip_text = "「结果」相当于变量：记住这一步算出的值，供后面的步骤引用。" + ("" if int(node.get("var", -1)) >= 0 else "\n没有地方用它时不会写进 JSON。")
+	var slot := {"s": "var", "n": n}
+	tag.set_drag_forwarding(func(_p): return _begin_drag({"new": {"kind": "var_ref", "slot": slot}}, tag), Callable(), Callable())
+	if node.t != "op" or str(maker.operation_of(str(node.get("func", ""))).get("returns", "")) != "Array":
+		return tag
+	var expanded := VBoxContainer.new()
+	var heading := HBoxContainer.new()
+	expanded.add_child(heading)
+	heading.add_child(tag)
+	var toggle := Button.new()
+	var count := int(node.get("array_items", 0))
+	toggle.text = "收起" if count > 0 else "展开数组"
+	toggle.tooltip_text = "结果数量要到运行时才知道；可按需增加索引。拖结果标签可传整组。"
+	toggle.pressed.connect(func(): node["array_items"] = 0 if count > 0 else 1; _refresh_scripts())
+	heading.add_child(toggle)
+	for index in count:
+		var item := PanelContainer.new()
+		item.name = "ArrayItemTag_" + str(index)
+		item.add_theme_stylebox_override("panel", Shape.new("reporter", VAR_COLOR))
+		var item_label := _block_label("第 " + str(index + 1) + " 项")
+		item_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		item.add_child(item_label)
+		item.mouse_default_cursor_shape = Control.CURSOR_DRAG
+		item.tooltip_text = "拖到参数里，运行时按索引读取第 " + str(index + 1) + " 项。超出结果长度时返回空。"
+		item.set_drag_forwarding(func(_p): return _begin_drag({"new": {"kind": "array_item", "variable": n, "index": index}}, item), Callable(), Callable())
+		expanded.add_child(item)
+	if count > 0:
+		var add := Button.new()
+		add.text = "＋ 下一项"
+		add.pressed.connect(func(): node["array_items"] = count + 1; _refresh_scripts())
+		expanded.add_child(add)
+	return expanded
+
+
 func _add_delete_button(row:Container, node:Dictionary, where:Dictionary) -> void:
 	if where.get("palette", false) or not (where.has("list") or where.has("slot_parent")):
 		return
@@ -1742,7 +2393,7 @@ func _add_delete_button(row:Container, node:Dictionary, where:Dictionary) -> voi
 	del.focus_mode = Control.FOCUS_NONE
 	del.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
-		del.add_theme_color_override(c, Color.WHITE)
+		del.add_theme_color_override(c, C_DIM)
 	del.add_theme_stylebox_override("hover", _flat(Color(0, 0, 0, 0.25), 8, 2))
 	del.add_theme_stylebox_override("pressed", _flat(Color(0, 0, 0, 0.35), 8, 2))
 	del.pressed.connect(func(): _delete_block(node, where))
@@ -1796,45 +2447,65 @@ func _line_below(c:Control, indent := 0.0) -> Rect2:
 # =============== 空位 ===============
 
 # holder[key] 是一个空位；空位里可能是字面值、变量、效果数字、嵌套积木。
-func _slot_widget(holder, key, label:String, type_name:String, kind_key:String, required:bool) -> Control:
+# where 带 palette 时这一格在积木区里：那里没有正在编辑的卡可写，只画成能点开候选的预览入口。
+func _slot_widget(holder, key, label:String, type_name:String, kind_key:String, required:bool, where:Dictionary = {}) -> Control:
+	if where.get("palette", false):
+		return _palette_slot_widget(label, type_name, kind_key)
 	var slot = holder[key]
 	if not slot is Dictionary or not slot.has("s"):
 		slot = {"s": "lit", "v": slot}
 		holder[key] = slot
 	var box := PanelContainer.new()
 	var s := str(slot.s)
+	# 空参数不能只剩下窄窄的按钮；整个圆角区域都是拖放目标，避免手指或鼠标难以命中。
+	if s == "lit" or s == "omit":
+		box.custom_minimum_size = Vector2(96, 36)
 	var is_bool := type_name == "bool"
 	var kind := _slot_kind(kind_key)
 	var content:Control
+	if kind == "card_data" and (s == "lit" or s == "omit"):
+		s = "card_data"
 	match s:
+		"card_data":
+			box.add_theme_stylebox_override("panel", Shape.new("slot", SLOT_FILL))
+			content = _card_data_editor(holder, key, kind_key)
 		"block", "desc":
 			content = _render_op(slot.b, {"slot_parent": holder, "slot_key": key})
 			box.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 		"var":
 			box.add_theme_stylebox_override("panel", Shape.new("reporter", VAR_COLOR))
-			content = _var_picker(slot)
+			var var_button := _slot_picker(holder, key, type_name, kind, kind_key, "结果 " + str(slot.n) + " ▾")
+			var_button.flat = true
+			var_button.add_theme_color_override("font_color", C_GOLD2)
+			var_button.tooltip_text = "「结果」相当于变量：这里引用前面步骤算出的值。"
+			content = var_button
 		"qty":
 			box.add_theme_stylebox_override("panel", Shape.new("reporter", VAR_COLOR))
-			content = _block_label("选项 " + str(int(slot.i) + 1) + " 选的数量")
+			content = _with_picker(_block_label("选项 " + str(int(slot.i) + 1) + " 选的数量"), holder, key, type_name, kind, kind_key)
 		"num":
-			box.add_theme_stylebox_override("panel", Shape.new("slot", Color.WHITE))
-			content = _number_editor(slot)
+			box.add_theme_stylebox_override("panel", Shape.new("slot", SLOT_FILL))
+			content = _number_editor(slot, holder, key, type_name)
+			if content is HBoxContainer:
+				content.add_child(_slot_picker(holder, key, type_name, kind, kind_key, "▾"))
 		"script":
 			content = _block_label("（一串积木）")
-			box.add_theme_stylebox_override("panel", Shape.new("slot", Color.WHITE))
+			box.add_theme_stylebox_override("panel", Shape.new("slot", SLOT_FILL))
+		"options":
+			content = _block_label("（" + str(slot.items.size()) + " 个选项，在下面）")
+			box.add_theme_stylebox_override("panel", Shape.new("slot", SLOT_FILL_SOFT))
 		"list":
 			content = _list_editor(slot)
-			box.add_theme_stylebox_override("panel", Shape.new("slot", Color("#FFFFFFCC")))
+			box.add_theme_stylebox_override("panel", Shape.new("slot", SLOT_FILL_SOFT))
 		"omit":
-			var shape := Shape.new("boolean" if is_bool else "empty", Color(1, 1, 1, 0.55))
+			var shape := Shape.new("boolean" if is_bool else "empty", LOOP_ITEM_COLOR if slot.get("loop", false) else SLOT_FILL_SOFT)
 			box.add_theme_stylebox_override("panel", shape)
-			content = _literal_editor(holder, key, slot, type_name, kind, label, true)
+			content = _literal_editor(holder, key, slot, type_name, kind, kind_key, label, true)
 		_:
 			var empty:bool = slot.get("v") == null and not slot.get("loop", false)
-			var shape := Shape.new("boolean" if is_bool and empty else "slot", Color.WHITE if not slot.get("loop", false) else LOOP_ITEM_COLOR)
+			var shape := Shape.new("boolean" if is_bool and empty else "slot", SLOT_FILL if not slot.get("loop", false) else LOOP_ITEM_COLOR)
 			shape.highlight = empty and required
 			box.add_theme_stylebox_override("panel", shape)
-			content = _literal_editor(holder, key, slot, type_name, kind, label, false)
+			content = _literal_editor(holder, key, slot, type_name, kind, kind_key, label, false)
 	box.add_child(content)
 	box.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	box.tooltip_text = label + (("（" + _type_shown(type_name) + "）") if type_name != "" else "") + "\n可以直接填，也可以把积木拖进来。"
@@ -1847,6 +2518,49 @@ func _slot_widget(holder, key, label:String, type_name:String, kind_key:String, 
 	return box
 
 
+# 写在积木里的整张牌：点一下像子牌一样打开编辑；还空着就按同一块里「种类」那一格新建一张空白牌。
+func _card_data_editor(holder, key, kind_key:String) -> Control:
+	var slot:Dictionary = holder[key]
+	var card = slot.get("v")
+	var type_id := _sibling_value(holder, kind_key, "custom_card_type")
+	var kind := maker.custom_card_kind(type_id)
+	var button := Button.new()
+	button.flat = true
+	button.add_theme_color_override("font_color", C_TEXT)
+	if card is Dictionary:
+		var spec := maker.kind_spec(kind)
+		var shown := str(card.get(spec.get("shown_key", ""), ""))
+		button.text = "✎ " + (shown if shown != "" else str(card.get(spec.get("identity", ""), "")))
+		if button.text == "✎ ":
+			button.text = "✎ 还没起名的牌"
+	else:
+		button.text = "＋ 写一张牌"
+	button.tooltip_text = "打开这张牌：卡面、数值、卡图和效果都在那一页写。"
+	button.disabled = kind == ""
+	button.pressed.connect(func():
+		if not holder[key].get("v") is Dictionary:
+			holder[key] = {"s": "lit", "v": blank_custom_card(kind)}
+		var target:Dictionary = holder[key].v
+		_commit()
+		call_deferred("focus_custom_card", target, kind))
+	return button
+
+
+# 同一块积木里声明为某种控件的那一格现在的值（例如自定义牌的「种类」）。
+func _sibling_value(holder, kind_key:String, want:String) -> String:
+	var op_name := kind_key.split(":")[0]
+	var op := maker.operation_of(op_name)
+	if not holder is Array:
+		return ""
+	for i in op.get("params", []).size():
+		if maker.param_kind(op_name, str(op.params[i].name)) == want and i < holder.size():
+			var v = holder[i]
+			if v is Dictionary and v.has("s"):
+				v = v.get("v", v.get("d"))
+			return str(v) if v != null else ""
+	return ""
+
+
 func _slot_kind(kind_key:String) -> String:
 	if kind_key == "":
 		return ""
@@ -1854,51 +2568,41 @@ func _slot_kind(kind_key:String) -> String:
 	return maker.param_kind(parts[0], parts[1]) if parts.size() == 2 else ""
 
 
-# 字面值：按空位声明的控件画（玩家下拉、时机、属性、项目名……），缺声明就是普通输入框。
-func _literal_editor(holder, key, slot:Dictionary, type_name:String, kind:String, label:String, omitted:bool) -> Control:
+# 字面值空位：一律是「分类 + 搜索」下拉（共用的搜索面板），找不到就直接打字回车。
+# 开关、数字仍可在勾选框 / 数字框里直接改，后面跟一个 ▾ 打开同一套下拉。时机列表、属性列表是一排小标签。
+func _literal_editor(holder, key, slot:Dictionary, type_name:String, kind:String, kind_key:String, label:String, omitted:bool) -> Control:
 	if slot.get("loop", false):
-		return _block_label("↻ 当前这一项")
+		return _with_picker(_block_label("↻ 当前这一项"), holder, key, type_name, kind, kind_key)
 	var value = slot.get("d") if omitted else slot.get("v")
-	var set_value := func(v):
-		holder[key] = {"s": "lit", "v": v}
-		_changed()
-	match kind:
-		"player", "message_target":
-			return _choice_menu(maker.kind_choices(kind), value, omitted, set_value, "发动效果的玩家" if kind == "player" else "所有人")
-		"op", "card_category":
-			return _choice_menu(maker.kind_choices(kind), value, omitted, set_value, "")
-		"player_key":
-			return _player_key_menu(value, omitted, set_value)
-		"area_name":
-			return _area_menu(value, omitted, set_value)
-		"time_points", "attributes":
-			return _multi_menu(kind, value, omitted, holder, key)
-		"time_point":
-			var menu := _time_point_menu("选时机" if value == null else maker.time_point_shown(str(value)))
-			menu.item_selected.connect(func(i):
-				if i > 0:
-					set_value.call(menu.get_item_metadata(i))
-					_refresh_scripts())
-			return menu
-	if type_name == "bool" or value is bool:
+	if kind == "time_points" or kind == "attributes":
+		return _multi_menu(kind, value, omitted, holder, key)
+	var eff = _render_effect
+	var declared := _kind_groups(kind, kind_key)
+	# 列表格声明了候选（区域路径、威力来源、共用的键……）：同样是一排小标签多选
+	if not declared.is_empty() and type_name == "Array" and (value == null or value is Array):
+		return _with_picker(_multi_menu(kind, value, omitted, holder, key, kind_key), holder, key, type_name, kind, kind_key)
+	if declared.is_empty() and (type_name == "bool" or value is bool):
 		var box := CheckBox.new()
 		box.button_pressed = value if value is bool else false
 		box.text = "是" if box.button_pressed else ("默认" if omitted else "否")
-		box.add_theme_color_override("font_color", INK)
-		box.toggled.connect(func(on): box.text = "是" if on else "否"; set_value.call(on))
-		return box
-	var eff = _render_effect
-	if type_name == "BaseNumber" and not omitted and value == null:
-		var add := Button.new()
-		add.text = "填数字"
-		add.flat = true
-		add.add_theme_color_override("font_color", INK)
-		add.tooltip_text = "这里要的是一个效果数字。点一下填一个，或者把算数字的积木拖进来。"
-		add.pressed.connect(func():
-			holder[key] = _new_number_slot(0, eff)
+		box.add_theme_color_override("font_color", C_TEXT)
+		box.toggled.connect(func(on):
+			box.text = "是" if on else "否"
+			holder[key] = {"s": "lit", "v": on}
+			_changed())
+		return _with_picker(box, holder, key, type_name, kind, kind_key)
+	if declared.is_empty() and type_name == "BaseNumber" and not omitted and value == null:
+		# 直接给一个数字框：填了就记成这条效果的一个效果数字（可被更改）
+		var spin := _spin(0.0, false)
+		spin.name = "NewNumber"
+		spin.custom_minimum_size = Vector2(76, 0)
+		spin.modulate = Color(1, 1, 1, 0.6)
+		spin.tooltip_text = "填一个数字。它会记成这条效果的数字，别的效果可以改它；也可以把算数字的积木拖进来，或点 ▾ 选。"
+		spin.value_changed.connect(func(v):
+			holder[key] = _new_number_slot(v if spin.step < 1.0 else int(v), eff)
 			_refresh_scripts())
-		return add
-	if type_name == "BaseNumber" and omitted:
+		return _with_picker(spin, holder, key, type_name, kind, kind_key)
+	if declared.is_empty() and type_name == "BaseNumber" and omitted:
 		var add := Button.new()
 		add.text = "默认"
 		add.flat = true
@@ -1907,144 +2611,364 @@ func _literal_editor(holder, key, slot:Dictionary, type_name:String, kind:String
 		add.pressed.connect(func():
 			holder[key] = _new_number_slot(0, eff)
 			_refresh_scripts())
-		return add
-	if type_name in ["int", "float"] or value is int or value is float:
+		return _with_picker(add, holder, key, type_name, kind, kind_key)
+	if declared.is_empty() and (type_name in ["int", "float"] or value is int or value is float):
 		var is_float:bool = type_name == "float" or (type_name != "int" and value is float and value != floor(value))
 		var spin := _spin(float(value) if (value is int or value is float) else 0.0, is_float)
 		spin.custom_minimum_size = Vector2(76, 0)
 		if omitted:
 			spin.modulate = Color(1, 1, 1, 0.6)
-		spin.value_changed.connect(func(v): set_value.call(v if is_float else int(v)))
-		return spin
-	if value is Array or value is Dictionary or type_name in ["Array", "Dictionary"]:
-		var edit := LineEdit.new()
-		edit.text = JSON.stringify(value) if value != null else ""
-		edit.placeholder_text = label
-		edit.custom_minimum_size = Vector2(120, 0)
-		edit.tooltip_text = "按 JSON 写，例如 [\"magic\"] 或 {\"type\": \"battle\"}"
-		edit.text_submitted.connect(func(t): _set_json_text(holder, key, t))
-		edit.focus_exited.connect(func(): _set_json_text(holder, key, edit.text))
-		return edit
-	var edit := LineEdit.new()
-	edit.text = str(value) if value != null else ""
-	edit.placeholder_text = ("默认 " + str(value) if omitted and value != null else label)
-	edit.expand_to_text_length = true
-	edit.custom_minimum_size = Vector2(60, 0)
-	edit.add_theme_color_override("font_color", INK)
-	edit.text_changed.connect(func(t): set_value.call(t))
-	return edit
+		spin.value_changed.connect(func(v):
+			holder[key] = {"s": "lit", "v": v if is_float else int(v)}
+			_changed())
+		var row := _with_picker(spin, holder, key, type_name, kind, kind_key)
+		# 形参不限类型时，写死的数字可以改回效果数字（能被别的效果更改）
+		if not omitted and not type_name in ["int", "float", "bool", "String"]:
+			row.add_child(_number_mode_button([["改成可被更改的效果数字", func(): holder[key] = _new_number_slot(value, eff); _refresh_scripts(), false]]))
+		return row
+	var full := _picked_text(value, declared + _used_groups(kind_key), omitted, label)
+	var button := _slot_picker(holder, key, type_name, kind, kind_key, _short(full, 36) + " ▾")
+	if full.length() > 36:
+		button.tooltip_text = full + "\n\n" + button.tooltip_text
+	button.add_theme_color_override("font_color", C_TEXT)
+	return button
 
 
-func _set_json_text(holder, key, text:String) -> void:
-	if text.strip_edges() == "":
-		holder[key] = {"s": "lit", "v": null}
-		_changed()
-		return
+# 按钮上最多显示这么多字，多的用 … 代替；完整的值放在提示里。
+func _short(text:String, limit:int) -> String:
+	return text if text.length() <= limit else text.left(limit - 1) + "…"
+
+
+# 控件后面接一个 ▾：点开是这个空位的下拉。
+func _with_picker(control:Control, holder, key, type_name:String, kind:String, kind_key:String) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 2)
+	row.add_child(control)
+	var more := _slot_picker(holder, key, type_name, kind, kind_key, "▾")
+	more.flat = true
+	row.add_child(more)
+	return row
+
+
+# 空位的下拉按钮：候选点开时才取，总是最新的；选中或打字都直接写回空位。
+func _slot_picker(holder, key, type_name:String, kind:String, kind_key:String, text:String) -> Button:
+	var eff = _render_effect
+	var button := Button.new()
+	button.name = "SlotPicker"
+	button.text = text
+	button.tooltip_text = "点开可以按分类选，也可以搜索；找不到就直接打字回车。"
+	# 按钮常是空位里最深的控件；直接接拖放再由 _resolve_drop 找到所属空位。
+	button.set_drag_forwarding(Callable(), _can_drop_on.bind(button), _drop_on.bind(button))
+	button.pressed.connect(func():
+		_open_search_popup(button, _slot_groups(type_name, kind, kind_key, eff),
+			func(v): _apply_pick(holder, key, v, type_name, eff), true,
+			func(t): _apply_typed(holder, key, str(t), type_name, eff),
+			func(): return _slot_more_groups(type_name, kind_key, eff)))
+	return button
+
+
+# 兜底用的「其他所有字段」：所有已知来源各成一组，不按形参筛。
+func _all_field_groups() -> Array:
+	var out:Array = []
+	for kind in maker.types.get("kind_choices", {}):
+		for g in maker.kind_choice_groups(str(kind)):
+			out.append({"shown": "可选值 · " + str(kind), "items": g.items})
+	out.append_array(maker.player_key_groups())
+	out.append_array(maker.object_property_groups())
+	for kind in maker.types.get("property_sources", {}):
+		out.append_array(maker.property_source_groups(str(kind)))
+	for kind in maker.types.get("value_sources", {}):
+		for g in maker.value_source_groups(str(kind)):
+			out.append({"shown": str(g.shown) + " · " + str(kind), "items": g.items})
+	out.append_array(maker.internal_name_groups(data))
+	out.append_array(maker.card_back_groups())
+	out.append_array(_time_point_groups())
+	out.append_array(_area_groups())
+	return out
+
+
+# 每个空位的兜底：主列表因类型不符没列的结果和积木，再加上全部字段来源。
+func _slot_more_groups(type_name:String, kind_key:String, eff) -> Array:
+	var accept := _slot_accept(type_name, kind_key)
+	var out:Array = _var_groups(eff, accept, false)
+	out.append_array(_block_groups(accept, false))
+	out.append_array(_all_field_groups())
+	return out
+
+
+# 这一格接受哪种结果：types.json 的 blocks[x].accepts / param_accepts 声明，没有就按形参类型。
+func _slot_accept(type_name:String, kind_key:String) -> String:
+	var parts := kind_key.split(":")
+	return maker.param_accept(parts[0], parts[1], type_name) if parts.size() == 2 else type_name
+
+
+# 这一格的下拉分组，按和这一格的契合程度排：
+# 声明的可选值 → 卡库里这个形参用过的同类型值 → 这条效果前面的结果 → 特殊值 → 结果类型相符的积木。
+# 结果类型不符的结果和积木不在这里列，收进「显示其他所有字段」。默认只展开第一组。
+func _slot_groups(type_name:String, kind:String, kind_key:String, eff) -> Array:
+	var accept := _slot_accept(type_name, kind_key)
+	var out:Array = []
+	var declared := _kind_groups(kind, kind_key)
+	if declared.is_empty() and type_name == "bool":
+		declared = [{"shown": "可选值", "items": [{"id": "true", "shown": "是", "value": true}, {"id": "false", "shown": "否", "value": false}]}]
+	out.append_array(declared)
+	# 卡库用值：已在声明里的不重复列
+	for group in _used_groups(kind_key):
+		var items:Array = group.items.filter(func(it): return _slot_accepts(type_name, it.value) and _find_item(declared, it.value).is_empty())
+		if not items.is_empty():
+			out.append({"shown": group.shown, "items": items})
+	if not out.is_empty():
+		out[0] = (out[0] as Dictionary).duplicate()
+		out[0]["open"] = true
+	out.append_array(_var_groups(eff, accept, true))
+	var special:Array = [{"id": "", "shown": "清空这一格", "value": {"_pick": "clear"}}]
+	if maker.type_fits(accept, "BaseNumber"):
+		special.append({"id": "", "shown": "效果数字", "value": {"_pick": "number"}, "tip": "记成这条效果的一个数字，别的效果可以改它"})
+	if not type_name in ["bool", "int", "float"]:
+		special.append({"id": "", "shown": "↻ 当前这一项", "value": {"_pick": "loop"}, "tip": "在循环积木里代表正在处理的对象"})
+	out.append({"shown": "特殊", "items": special})
+	out.append_array(_block_groups(accept, true))
+	return out
+
+
+# 类型已知时只推荐相同值形态；未知类型不臆测返回值类型。
+func _slot_accepts(type_name:String, value) -> bool:
+	match type_name:
+		"String": return value is String
+		"bool": return value is bool
+		"int": return value is int
+		"float", "BaseNumber": return value is int or value is float
+		"Array": return value is Array
+		"Dictionary": return value is Dictionary
+	return true
+
+
+# 空位声明的控件对应的候选：kind_choices 里声明了的直接用，其余按控件取真实来源。
+func _kind_groups(kind:String, kind_key:String = "") -> Array:
+	if kind == "":
+		return []
+	var declared := maker.kind_choice_groups(kind)
+	if not declared.is_empty():
+		return declared
+	# 按用途筛的玩家数据键、对象属性，以及从卡库收集的文字值：都由 types.json 声明控件名
+	if maker.types.get("player_key_filters", {}).has(kind):
+		return maker.player_key_groups(kind)
+	if maker.types.get("object_property_filters", {}).has(kind):
+		return maker.object_property_groups(kind)
+	if maker.types.get("value_sources", {}).has(kind):
+		return maker.value_source_groups(kind)
+	match kind:
+		"player_key":
+			return maker.player_key_groups()
+		"area_name":
+			return _area_groups()
+		"object_property":
+			return maker.object_property_groups()
+		"internal_name":
+			var parts := kind_key.split(":")
+			return maker.internal_name_groups(data, parts[1] if parts.size() == 2 else "")
+		"time_point":
+			return _time_point_groups()
+		"card_back_type":
+			return maker.card_back_groups()
+	return maker.property_source_groups(kind)
+
+
+func _used_groups(kind_key:String) -> Array:
+	var parts := kind_key.split(":")
+	return maker.used_value_groups(parts[0], parts[1]) if parts.size() == 2 else []
+
+
+# 这条效果里有结果的积木（右键存成的变量、末尾的变量小标签），选了就读那一步的结果。
+# fit 为 true 只列结果类型能放进 accept 的，为 false 只列放不进的（给兜底用）；不知道类型的算能放。
+func _var_groups(eff, accept := "", fit := true) -> Array:
+	var found := {}
+	for view in effects_view:
+		if is_same(view.effect, eff):
+			_collect_vars(view.lists, found)
+			for ov in view.options:
+				_collect_vars(ov.nodes, found)
+				_collect_vars(ov.reqs, found)
+	var keys := found.keys()
+	keys.sort()
+	var items:Array = []
+	for n in keys:
+		var result := maker.result_of(str(found[n].func)) if str(found[n].func) != "" else ""
+		var ok := result != "none" and maker.type_fits(accept, result)
+		if ok != fit:
+			continue
+		items.append({"id": "结果 " + str(n), "shown": "结果 " + str(n) + " · " + str(found[n].text), "value": {"_pick": "var", "n": n}})
+	return [] if items.is_empty() else [{"shown": "前面的结果" if fit else "类型不符的结果", "items": items}]
+
+
+func _collect_vars(value, found:Dictionary) -> void:
+	if value is Dictionary:
+		if str(value.get("t", "")) in ["op", "method"]:
+			var n := int(value.get("var", -1))
+			if n < 0:
+				n = int(value.get("tag_var", -1))
+			if n >= 0 and not found.has(n):
+				# 方法调用的结果类型不知道，func 记空
+				found[n] = {"text": _say_text(str(value.get("func", value.get("method", "")))), "func": str(value.get("func", "")) if value.t == "op" else ""}
+		for k in value:
+			_collect_vars(value[k], found)
+	elif value is Array:
+		for item in value:
+			_collect_vars(item, found)
+
+
+# 有结果的积木按分类列出：选了就把它嵌进这一格。
+# fit 为 true 只列结果类型能放进 accept 的（没声明结果类型的也列，不猜），为 false 列其余有结果的积木（给兜底用）。
+func _block_groups(accept := "", fit := true) -> Array:
+	var out:Array = []
+	for cat in maker.categories():
+		var items:Array = []
+		for op in maker.operations:
+			var fname := str(op.func_name)
+			if str(op.category) != str(cat.id) or not maker.has_result(fname) or maker.result_of(fname) == "none":
+				continue
+			if maker.type_fits(accept, maker.result_of(fname)) != fit:
+				continue
+			items.append({"id": fname, "shown": _say_text(fname), "value": {"_pick": "op", "func": fname}, "tip": maker.help_of(fname)})
+		if not items.is_empty():
+			out.append({"shown": ("积木 · " if fit else "类型不符的积木 · ") + str(cat.shown), "items": items})
+	return out
+
+
+# 句式里的 {形参} 换成中文空位名。
+func _say_text(func_name:String) -> String:
+	var parts:Array = []
+	for part in _split_say(maker.say_of(func_name)):
+		parts.append(maker.param_shown(part.substr(1, part.length() - 2)) if part.begins_with("{") else part.strip_edges())
+	return " ".join(PackedStringArray(parts.filter(func(x): return x != ""))).strip_edges()
+
+
+func _find_item(groups:Array, value) -> Dictionary:
+	for group in groups:
+		for item in group.items:
+			if _same_value(item.get("value", str(item.id)), value):
+				return item
+	return {}
+
+
+func _same_value(a, b) -> bool:
+	if (a is int or a is float) and (b is int or b is float):
+		return float(a) == float(b)
+	return typeof(a) == typeof(b) and a == b
+
+
+# 按钮上显示的当前值：候选里有就显示它的中文名，没有就显示原值。
+func _picked_text(value, groups:Array, omitted:bool, empty_text:String) -> String:
+	if value == null:
+		return "默认" if omitted else empty_text
+	var text := str(value) if value is String else JSON.stringify(maker._whole_numbers(value))
+	var item := _find_item(groups, value)
+	var shown := str(item.get("shown", ""))
+	if shown != "":
+		text = shown if item.has("value") or shown == text else shown + "  " + text
+	return ("默认 " if omitted else "") + text
+
+
+# 选中候选：变量、积木、特殊值换成相应的空位形态；形参是数字对象时，选中的数字记成效果数字。
+func _apply_pick(holder, key, value, type_name:String, eff) -> void:
+	if value is Dictionary and value.has("_pick"):
+		match str(value._pick):
+			"var":
+				holder[key] = {"s": "var", "n": int(value.n)}
+			"op":
+				holder[key] = {"s": "block", "b": _new_op(str(value.func))}
+			"clear":
+				holder[key] = _empty_slot()
+			"number":
+				holder[key] = _new_number_slot(0, eff)
+			"loop":
+				holder[key] = {"s": "lit", "v": null, "loop": true}
+	elif type_name == "BaseNumber" and (value is int or value is float):
+		holder[key] = _new_number_slot(value, eff)
+	else:
+		holder[key] = {"s": "lit", "v": maker._whole_numbers(value) if value is float else value}
+	_refresh_scripts()
+
+
+# 打的字按形参类型转换：文字原样；数字、开关、列表、字典按 JSON 读；不限类型时能读成 JSON 就用读出的值，否则当文字。
+func _apply_typed(holder, key, text:String, type_name:String, eff) -> void:
+	var parsed = null
+	var ok := false
 	var parser := JSON.new()
-	if parser.parse(text) != OK:
-		_set_status("这一格要按 JSON 写：" + parser.get_error_message())
-		return
-	holder[key] = {"s": "lit", "v": parser.data}
-	_changed()
+	if parser.parse(text) == OK:
+		parsed = maker._whole_numbers(parser.data)
+		ok = true
+	match type_name:
+		"String":
+			_apply_pick(holder, key, text, type_name, eff)
+			return
+		"int", "float", "BaseNumber":
+			if not (ok and (parsed is int or parsed is float)):
+				_set_status("这一格要填数字")
+				return
+		"bool":
+			if text in ["是", "否"]:
+				parsed = text == "是"
+			elif not (ok and parsed is bool):
+				_set_status("这一格要填 是 或 否")
+				return
+		"Array", "Dictionary":
+			if not ok or (type_name == "Array" and not parsed is Array) or (type_name == "Dictionary" and not parsed is Dictionary):
+				_set_status("这一格要按 JSON 写，例如 [\"magic\"] 或 {\"type\": \"battle\"}")
+				return
+		_:
+			if not ok:
+				parsed = text
+	_apply_pick(holder, key, parsed, type_name, eff)
 
 
-func _choice_menu(choices:Array, value, omitted:bool, set_value:Callable, default_text:String) -> OptionButton:
-	var menu := OptionButton.new()
-	var selected := -1
-	for c in choices:
-		menu.add_item(str(c.shown))
-		if typeof(c.v) == typeof(value) and c.v == value or (c.v is float and value is int and int(c.v) == value) or ((c.v is int or c.v is float) and (value is int or value is float) and float(c.v) == float(value)):
-			selected = menu.item_count - 1
-	if selected < 0 and value != null:
-		menu.add_item(str(value))
-		selected = menu.item_count - 1
-	if selected < 0 and omitted and default_text != "":
-		menu.add_item("默认：" + default_text)
-		selected = menu.item_count - 1
-	menu.selected = selected
-	menu.item_selected.connect(func(i):
-		if i < choices.size():
-			set_value.call(choices[i].v))
-	return menu
-
-
-func _player_key_menu(value, omitted:bool, set_value:Callable) -> OptionButton:
-	var names:Dictionary = maker.types.get("player_key_names", {})
-	var menu := OptionButton.new()
-	var selected := -1
-	for key in maker.player_keys:
-		var base := str(key).split(".")[0]
-		var shown := str(names.get(key, "")) if names.has(key) else (str(names.get(base, base)) + " · " + str(key).get_slice(".", 1) if str(key).find(".") != -1 else str(key))
-		menu.add_item(shown)
-		menu.set_item_metadata(menu.item_count - 1, key)
-		if str(value) == str(key):
-			selected = menu.item_count - 1
-	if selected < 0:
-		menu.add_item(str(value) if value != null else "选一项")
-		menu.set_item_metadata(menu.item_count - 1, value)
-		selected = menu.item_count - 1
-	menu.selected = selected
-	menu.item_selected.connect(func(i): set_value.call(menu.get_item_metadata(i)))
-	return menu
-
-
-func _area_menu(value, omitted:bool, set_value:Callable) -> OptionButton:
-	var menu := OptionButton.new()
-	var selected := -1
+func _area_groups() -> Array:
+	var items:Array = []
 	for area in MapData.areas:
-		menu.add_item(str(area._area_name))
-		if str(value) == str(area._area_name):
-			selected = menu.item_count - 1
-	if selected < 0:
-		menu.add_item(str(value) if value != null else "选战区")
-		selected = menu.item_count - 1
-	menu.selected = selected
-	menu.item_selected.connect(func(i):
-		if i < MapData.areas.size():
-			set_value.call(str(MapData.areas[i]._area_name)))
-	return menu
+		items.append({"id": str(area._area_name), "shown": ""})
+	return [{"shown": "战区", "items": items}]
 
 
-# 时机列表、属性列表：一排小标签，点 ✕ 去掉，下拉加一个。
-func _multi_menu(kind:String, value, omitted:bool, holder, key) -> Control:
+# 时机列表、属性列表以及声明了候选的其他列表格：一排小标签，点 ✕ 去掉，＋ 是可搜索的下拉，也可以打字加一个。
+func _multi_menu(kind:String, value, omitted:bool, holder, key, kind_key := "") -> Control:
 	var list:Array = value.duplicate() if value is Array else []
 	var row := HBoxContainer.new()
+	var groups:Array = [] if kind in ["time_points", "attributes"] else _kind_groups(kind, kind_key)
 	for i in list.size():
 		var chip := Button.new()
-		chip.text = (maker.time_point_shown(str(list[i])) if kind == "time_points" else Attributes.get_shown_attribute(str(list[i]))) + " ✕"
+		match kind:
+			"time_points": chip.text = maker.time_point_shown(str(list[i]))
+			"attributes": chip.text = Attributes.get_shown_attribute(str(list[i]))
+			_: chip.text = _picked_text(list[i], groups, false, "")
+		chip.text += " ✕"
 		chip.pressed.connect(func():
 			list.remove_at(i)
 			holder[key] = {"s": "lit", "v": list}
 			_refresh_scripts())
 		row.add_child(chip)
-	var menu := OptionButton.new()
-	menu.add_item("＋")
-	var source:Array = maker.time_points if kind == "time_points" else maker.attributes
-	for item in source:
-		menu.add_item(str(item.shown))
-		menu.set_item_metadata(menu.item_count - 1, item.id)
-	menu.item_selected.connect(func(i):
-		if i == 0:
-			return
-		list.append(menu.get_item_metadata(i))
+	var add_one := func(v):
+		list.append(v)
 		holder[key] = {"s": "lit", "v": list}
-		_refresh_scripts())
-	row.add_child(menu)
+		_refresh_scripts()
+	match kind:
+		"time_points":
+			row.add_child(_time_point_button("＋", add_one))
+		"attributes":
+			row.add_child(_search_button("＋", func(): return [{"shown": "属性", "items": maker.attributes, "open": true}], add_one, true, "点开可以搜索；找不到就直接打字回车，写自定义属性。"))
+		_:
+			row.add_child(_search_button("＋", _opened_first.bind(kind, kind_key), add_one, true, "点开可以搜索；找不到就直接打字回车。", _all_field_groups))
 	if list.is_empty() and omitted:
 		row.add_child(_block_label("默认"))
 	return row
 
 
-func _var_picker(slot:Dictionary) -> Control:
-	var row := HBoxContainer.new()
-	row.add_child(_block_label("变量"))
-	var spin := _spin(float(slot.n), false)
-	spin.min_value = 0
-	spin.custom_minimum_size = Vector2(56, 0)
-	spin.tooltip_text = "读前面「存为变量 N」那一步的结果。"
-	spin.value_changed.connect(func(v): slot.n = int(v); _changed())
-	row.add_child(spin)
-	return row
+# 声明的候选，第一组默认展开。
+func _opened_first(kind:String, kind_key:String) -> Array:
+	var gs:Array = _kind_groups(kind, kind_key).duplicate()
+	if not gs.is_empty():
+		gs[0] = (gs[0] as Dictionary).duplicate()
+		gs[0]["open"] = true
+	return gs
 
 
 func _list_editor(slot:Dictionary) -> Control:
@@ -2062,19 +2986,71 @@ func _list_editor(slot:Dictionary) -> Control:
 
 
 # 效果数字：直接在积木上改数值；它存放在效果的数字表里，多处引用同一个时会一起变。
-func _number_editor(slot:Dictionary) -> Control:
+# 旁边的 ▾ 能把它改成不可被更改的固定数字（会先弹警告）：形参要的是数字对象时仍是效果数字、只关掉可更改；
+# 形参不限类型时写成纯数字。
+func _number_editor(slot:Dictionary, holder = null, key = null, type_name := "") -> Control:
 	var effect = _effect_of_slot(slot)
 	var numbers:Array = effect.get("effect_numbers", []) if effect is Dictionary else []
 	var i := int(slot.i)
 	if i < 0 or i >= numbers.size() or not numbers[i] is Dictionary:
 		return _block_label("数字 #" + str(i) + " 不存在")
 	var num:Dictionary = numbers[i]
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 2)
 	var spin := _spin(float(num.get("number", 0)), bool(num.get("is_float", false)))
 	spin.custom_minimum_size = Vector2(76, 0)
 	var shared := _number_ref_count(effect, i) > 1
-	spin.tooltip_text = "效果数字" + ("（这个数字有多处在用，改一处会一起变）" if shared else "")
+	var fixed := not bool(num.get("can_change", true))
+	spin.tooltip_text = ("固定数字，不可被更改" if fixed else "效果数字，可以被别的效果更改") + ("\n这个数字有多处在用，改一处会一起变" if shared else "")
 	spin.value_changed.connect(func(v): num["number"] = v; _changed())
-	return spin
+	row.add_child(spin)
+	if fixed:
+		row.add_child(_label("🔒", 12, C_TEXT))
+	if holder == null:
+		return row
+	var to_fixed := func():
+		if type_name == "BaseNumber":
+			num["can_change"] = false
+		else:
+			holder[key] = {"s": "lit", "v": num.get("number", 0)}
+		_refresh_scripts()
+	var to_free := func():
+		num["can_change"] = true
+		_refresh_scripts()
+	row.add_child(_number_mode_button([["改回可被更改的效果数字", to_free, false]] if fixed else [["改成固定数字，不可被更改", to_fixed, true]]))
+	return row
+
+
+# 数字旁的 ▾ 折叠菜单：entries 是 [[文字, 要做的事, 是否先弹警告]]。
+func _number_mode_button(entries:Array) -> MenuButton:
+	var menu := MenuButton.new()
+	menu.name = "NumberMode"
+	menu.text = "⚙"
+	menu.flat = true
+	menu.tooltip_text = "数字的写法"
+	menu.add_theme_color_override("font_color", C_TEXT)
+	var popup := menu.get_popup()
+	for i in entries.size():
+		popup.add_item(str(entries[i][0]), i)
+	popup.id_pressed.connect(func(id):
+		var entry:Array = entries[id]
+		if bool(entry[2]):
+			_confirm_fixed_number(entry[1])
+		else:
+			(entry[1] as Callable).call())
+	return menu
+
+
+func _confirm_fixed_number(apply:Callable) -> void:
+	var dialog := ConfirmationDialog.new()
+	dialog.name = "FixNumberConfirm"
+	dialog.title = "改成固定数字"
+	dialog.dialog_text = "固定数字不能再被任何效果更改（例如「费用减一」「威力加倍」都会对它无效）。\n卡面上的数字一般都应当能被更改，除非这张牌写明了这个数字不变。\n\n确定要改成固定数字吗？"
+	dialog.ok_button_text = "改成固定数字"
+	dialog.confirmed.connect(func(): apply.call(); dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free)
+	add_child(dialog)
+	dialog.popup_centered()
 
 
 func _new_number_slot(value, effect = null) -> Dictionary:
@@ -2150,6 +3126,14 @@ func _resolve_drop(target:Control, at:Vector2, payload) -> Dictionary:
 			if _accepts(drop, node, payload):
 				return {"target": c, "drop": drop}
 		c = c.get_parent()
+	if target.name == "SlotPicker":
+		var parent := target.get_parent()
+		while parent is Control and parent != script_box:
+			if parent.has_meta("drop") and str(parent.get_meta("drop").get("kind", "")) == "slot":
+				if (parent as Control).get_global_rect().grow(6).has_point(global) and _accepts(parent.get_meta("drop"), node, payload):
+					return {"target": parent, "drop": parent.get_meta("drop")}
+				break
+			parent = parent.get_parent()
 	return {}
 
 
@@ -2261,16 +3245,14 @@ func _contains_holder(node, holder) -> bool:
 func _open_context(node:Dictionary, where:Dictionary, at:Vector2) -> void:
 	context_target = {"node": node, "where": where}
 	context_menu.clear()
-	context_menu.add_item("复制一块", 1)
-	if clipboard != null and where.has("list"):
-		context_menu.add_item("在下面粘贴", 2)
+	context_menu.add_item("复制", 1)
 	context_menu.add_item("删除", 3)
 	if (node.t == "op" or node.t == "method") and where.has("list"):
 		context_menu.add_separator()
 		if int(node.get("var", -1)) >= 0:
-			context_menu.add_item("不再存为变量", 4)
+			context_menu.add_item("不再保存结果", 4)
 		else:
-			context_menu.add_item("把结果存为变量……", 5)
+			context_menu.add_item("保存这一步的结果……", 5)
 		if node.get("cond") == null:
 			context_menu.add_item("加一个「仅当」条件", 6)
 		else:
@@ -2283,6 +3265,15 @@ func _context_pressed(id:int) -> void:
 	if id >= 11:
 		_slot_menu_pressed(id)
 		return
+	if id == 2:
+		var zone = context_target.get("paste_zone")
+		if clipboard == null or not is_instance_valid(zone):
+			return
+		var drop:Dictionary = zone.get_meta("drop")
+		if _accepts(drop, clipboard, {}):
+			drop.list.insert(mini(int(drop.index), drop.list.size()), _fresh_copy(clipboard))
+			_refresh_scripts()
+		return
 	if not context_target.has("node"):
 		return
 	var node:Dictionary = context_target.node
@@ -2290,17 +3281,15 @@ func _context_pressed(id:int) -> void:
 	match id:
 		1:
 			clipboard = _fresh_copy(node)
-			if where.has("list"):
-				where.list.insert(int(where.index) + 1, _fresh_copy(clipboard))
-		2:
-			where.list.insert(int(where.index) + 1, _fresh_copy(clipboard))
+			_set_status("已复制积木。右键「把积木拖到这里」可粘贴。")
+			return
 		3:
 			_detach(node, where, {})
 		4:
 			node.var = -1
 		5:
-			node.var = codec.max_var(_all_nodes_of_current()) + 1
-			_set_status("这一步的结果存为变量 " + str(node.var) + "。去左边「变量」拖一块出来放到要用的地方。")
+			node.var = int(node.tag_var) if int(node.get("tag_var", -1)) >= 0 else codec.max_var(_all_nodes_of_current()) + 1
+			_set_status("已保存为结果 " + str(node.var) + "。从左边「结果」拖出对应积木，放到要用的地方。")
 		6:
 			node.cond = _empty_slot()
 		7:
@@ -2314,6 +3303,7 @@ func _all_nodes_of_current() -> Array:
 		out.append(view.lists)
 		for ov in view.options:
 			out.append(ov.nodes)
+			out.append(ov.reqs)
 	return out
 
 
@@ -2322,7 +3312,7 @@ func _open_slot_menu(holder, key, effect, at:Vector2) -> void:
 	context_target = {"slot_holder": holder, "slot_key": key, "effect": effect}
 	context_menu.add_item("清空这一格", 11)
 	context_menu.add_item("改成效果数字", 12)
-	context_menu.add_item("改成读变量", 13)
+	context_menu.add_item("改成引用结果", 13)
 	context_menu.add_item("改成「↻ 当前这一项」（循环里用）", 14)
 	context_menu.position = Vector2i(at)
 	context_menu.popup()
@@ -2348,7 +3338,45 @@ func _slot_menu_pressed(id:int) -> void:
 # =============== 说明 / 问题 ===============
 
 func _show_welcome() -> void:
-	_show_help("怎么用", "[b]像搭积木一样写卡牌效果[/b]\n\n1. 上面选卡牌种类，在左中「选一张卡」里双击打开，或点「新建一张」。\n2. 在「卡面信息」里填牌名、选图。\n3. 在「效果积木」里，每条效果先选[color=#c08000]当……时[/color]，再从最左边的积木区把积木拖到下面。\n4. 白色的圆角格子是[b]空位[/b]：可以直接填，也可以把圆角积木（算出一个值的积木）拖进去。\n5. 橙色「如果……那么」把要做的事包起来，就只在条件成立时做。\n6. 点任意积木，这里会告诉你它是干什么的。点积木右边的 ✕ 删除它，右键可以复制。\n7. 想插在两块积木中间，就拖到下面那块的上半截或上面那块的下半截，会出现一条蓝线标出位置。\n8. 右下「还要修的地方」清空后就能保存。")
+	_show_help("怎么用", "[color=#c9a45c]像搭积木一样写卡牌效果[/color]\n\n1. 上面选卡牌种类，在左中「选一张卡」里双击打开，或点「新建一张」。\n2. 在「卡面信息」里填牌名、选图。\n3. 在「效果积木」里，每条效果先选[color=#c9a45c]当……时[/color]，再从最左边的积木区把积木拖到下面。\n4. 深色的圆角格子是[color=#c9a45c]空位[/color]：可以直接填，也可以把圆角积木（算出一个值的积木）拖进去。\n5. 橙色「如果……那么」把要做的事包起来，就只在条件成立时做。\n6. 点任意积木，这里会告诉你它是干什么的。点积木右边的 ✕ 删除它，右键可以复制。\n7. 想插在两块积木中间，就拖到下面那块的上半截或上面那块的下半截，会出现一条蓝线标出位置。\n8. 右下「还要修的地方」清空后就能保存。\n9. 效果下面的「生成牌」按内部名新建一张牌放进某一区。\n\n" + _naming_help())
+
+
+# 命名规范：通用规则来自 types.json 的 naming_guide，各种卡的文件夹与图片命名来自各自的导出声明（含用户导出设置）。
+func _naming_help() -> String:
+	var lines:Array = ["[color=#c9a45c]命名规范[/color]"]
+	for line in maker.types.get("naming_guide", []):
+		lines.append("• " + str(line))
+	lines.append("")
+	lines.append("[color=#c9a45c]各种卡的内部名、文件夹与图片[/color]")
+	lines.append("{identity} 是内部名，{serial} 是编号，{folder} 是卡文件夹名，其他花括号是卡里同名字段。")
+	for kind_id in maker.types.get("kinds", {}):
+		var spec := maker.export_spec(str(kind_id))
+		var parts:Array = []
+		var identity := str(spec.get("identity", ""))
+		if identity != "":
+			parts.append("内部名字段 " + identity)
+		if str(spec.get("root", "")) != "":
+			var where := str(spec.root) + "/"
+			match str(spec.get("file", "")):
+				"named":
+					where += str(spec.get("file_name", ""))
+				"file":
+					where += "{identity}.json"
+				_:
+					var folder := str(spec.get("folder_name", "{identity}"))
+					where += folder + "/" + folder.get_file() + ".json"
+			parts.append("存到 " + where)
+		var images:Array = []
+		for field in spec.get("fields", []):
+			if str(field.get("control", "")) == "image":
+				images.append(str(field.get("shown", field.key)) + " " + str(field.get("file_name", "{identity}")))
+		if not images.is_empty():
+			parts.append("图片 " + "、".join(PackedStringArray(images)))
+		if str(spec.get("sub_image_prefix", "")) != "":
+			parts.append("子牌图片前面加 " + str(spec.sub_image_prefix))
+		if not parts.is_empty():
+			lines.append("• " + str(spec.get("shown", kind_id)) + "：" + "；".join(PackedStringArray(parts)))
+	return "\n".join(PackedStringArray(lines))
 
 
 func _show_help_for(node:Dictionary) -> void:
@@ -2359,7 +3387,7 @@ func _show_help_for(node:Dictionary) -> void:
 		"slot_only":
 			var s:Dictionary = node.slot
 			if s.s == "var":
-				_show_help("变量", "读前面某一步存下的结果。\n\n先右键那一步 →「把结果存为变量」，它会显示「→ 存为变量 N」；再把这块拖进要用的空位，把编号改成 N。\n\n大多数时候不用变量：直接把圆角积木拖进空位里就行，保存时会自动处理。")
+				_show_help("结果", "「结果」相当于变量：记住前面步骤算出的值，供后面的步骤引用。\n\n可以直接拖动前面步骤末尾的「结果 N」标签，放进要用的空位；也可以右键那一步选择「保存这一步的结果……」，再从左边「结果」拖出积木。\n\n多数时候直接把圆角积木拖进空位就行，保存时会自动处理。")
 			elif s.s == "qty":
 				_show_help("选项选的数量", "效果做成多选一、并且选项设了数量范围时，玩家选的那个数量。")
 			else:
@@ -2375,7 +3403,7 @@ func _show_help_for(node:Dictionary) -> void:
 	var lines:Array = []
 	var help := maker.help_of(name)
 	if not op.is_empty() and not bool(op.get("registered", true)):
-		lines.append("[color=#8c8c8c]这是新加的操作，还没登记到 all_operations.gd；登记后会归到对应分类。[/color]")
+		lines.append("[color=#a79e8b]这是新加的操作，还没登记到 all_operations.gd；登记后会归到对应分类。[/color]")
 	if help != "":
 		lines.append(help)
 	if not op.is_empty():
@@ -2383,10 +3411,10 @@ func _show_help_for(node:Dictionary) -> void:
 		for p in op.params:
 			ps.append("• " + maker.param_shown(str(p.name)) + "：" + _type_shown(str(p.type)) + ("" if p.required else "，可以不填"))
 		if not ps.is_empty():
-			lines.append("[b]空位[/b]\n" + "\n".join(PackedStringArray(ps)))
+			lines.append("[color=#c9a45c]空位[/color]\n" + "\n".join(PackedStringArray(ps)))
 	if op.is_empty() and node.t == "op":
-		lines.append("[color=#c03030]找不到这个积木对应的程序：" + name + "[/color]")
-	lines.append("[color=#a0a0a0]程序名：" + name + "[/color]")
+		lines.append("[color=#ff4d57]找不到这个积木对应的程序：" + name + "[/color]")
+	lines.append("[color=#6d665a]程序名：" + name + "[/color]")
 	_show_help(say, "\n\n".join(PackedStringArray(lines)))
 
 
@@ -2428,6 +3456,8 @@ func _collect_issues() -> Array:
 			_empty_issues(view.lists[key], label, out)
 		for ov in view.options:
 			_empty_issues(ov.nodes, label, out)
+			for req_nodes in ov.reqs:
+				_empty_issues(req_nodes, label, out)
 	return out
 
 
@@ -2453,6 +3483,9 @@ func _empty_issues(nodes:Array, label:String, out:Array) -> void:
 				_empty_issues([slot.b], label, out)
 			elif slot.s == "script":
 				_empty_issues(slot.body, label, out)
+			elif slot.s == "options":
+				for item in slot.items:
+					_empty_issues(item.body, label, out)
 			elif slot.s == "lit" and slot.get("v") == null and not slot.get("loop", false) and pi < op.get("params", []).size() and bool(op.params[pi].required):
 				out.append(label + "：「" + maker.say_of(str(node.func)).replace("{", "").replace("}", "") + "」的「" + maker.param_shown(str(op.params[pi].name)) + "」还空着")
 
@@ -2462,10 +3495,10 @@ func _paint_issues(issues:Array) -> void:
 	if data == null:
 		return
 	if issues.is_empty():
-		issue_list.add_child(_label("✔ 没有问题，可以保存", 14, Color("#2E9E4F")))
+		issue_list.add_child(_label("✔ 没有问题，可以保存", 14, C_OK))
 		return
 	for issue in issues.slice(0, 40):
-		var lab := _label("• " + str(issue), 13, Color("#C0392B"))
+		var lab := _label("• " + str(issue), 13, C_BLOOD2)
 		lab.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		lab.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		issue_list.add_child(lab)
@@ -2474,6 +3507,8 @@ func _paint_issues(issues:Array) -> void:
 # =============== 保存 / 选图 ===============
 
 func _save() -> void:
+	if _practice_save_blocked():
+		return
 	if data == null:
 		return
 	if path != "":
@@ -2492,6 +3527,8 @@ func _save() -> void:
 
 
 func _save_as() -> void:
+	if _practice_save_blocked():
+		return
 	if data == null:
 		return
 	_commit()
@@ -2501,6 +3538,8 @@ func _save_as() -> void:
 
 
 func _save_to(target:String) -> void:
+	if _practice_save_blocked():
+		return
 	_commit()
 	var issues := _collect_issues()
 	if not issues.is_empty():
@@ -2513,7 +3552,7 @@ func _save_to(target:String) -> void:
 		_set_status("✓ 没有改动，不用保存")
 		return
 	var dest := local if local.begins_with("res://") else target
-	# 图片与 json 放在同一个文件夹：暂存区的图按命名规则搬过去，另存到别处时把原文件夹的图一起带过去
+	# 图片与 json 放在同一个文件夹：暂存区的图按命名规则复制过去，另存到别处时把原文件夹的图一起带过去
 	var from_folder := path.get_base_dir() if path != "" and path.get_base_dir() != dest.get_base_dir() else ""
 	var placed := maker.place_images(data, card_kind, dest.get_base_dir(), from_folder)
 	if not placed.missing.is_empty() or not placed.errors.is_empty():
@@ -2534,10 +3573,13 @@ func _save_to(target:String) -> void:
 		_update_json()
 	_set_status("✓ 已保存 " + path.get_file() + ("，放入图片 " + str(placed.placed.size()) if not placed.placed.is_empty() else ""))
 	_select_kind(kind_button.selected)
+	_refresh_tutorial()
 
 
 # 打包 zip：先保存（有改动时），再选 zip 放哪
 func _zip_card() -> void:
+	if _practice_save_blocked():
+		return
 	if data == null:
 		return
 	if dirty or path == "":
@@ -2551,6 +3593,8 @@ func _zip_card() -> void:
 
 
 func _zip_to(target:String) -> void:
+	if _practice_save_blocked():
+		return
 	var files := maker.card_files(data, card_kind, path)
 	# zip 里从哪一层开始放，按导出设置（默认相对项目根：data/masters/…，解压到项目根就回到原位）
 	var zipped := maker.zip_files(files, target, maker.zip_base(card_kind, path))
@@ -2560,9 +3604,229 @@ func _zip_to(target:String) -> void:
 	_set_status("✓ 已打包 " + target.get_file() + "：" + str(zipped.count) + " 个文件")
 
 
+# =============== 选图 ===============
+
+# 选图面板：能浏览电脑上任意位置，图片都直接显示缩略图，看得见卡图长什么样。
 func _pick_image(obj:Dictionary, key:String, zoom_key:String) -> void:
 	image_target = {"obj": obj, "key": key, "zoom": zoom_key}
-	image_dialog.popup_centered_ratio(0.7)
+	image_dir = _image_start_dir()
+	if is_instance_valid(image_picker):
+		image_picker.hide()   # 先让出独占窗口，queue_free 是延后的，不然新面板弹出时会和旧的抢独占
+		image_picker.queue_free()
+	var dialog := AcceptDialog.new()
+	dialog.name = "ImagePicker"
+	dialog.title = "选卡图"
+	dialog.ok_button_text = "关闭"
+	dialog.wrap_controls = false   # 尺寸自己定，别让内容把窗口撑到屏幕外
+	add_child(dialog)
+	image_picker = dialog
+	dialog.confirmed.connect(func(): image_picker = null; dialog.queue_free())
+	dialog.close_requested.connect(func(): image_picker = null; dialog.queue_free())
+	var body := VBoxContainer.new()
+	body.name = "ImagePickerBody"
+	dialog.add_child(body)
+	var where_row := HBoxContainer.new()
+	body.add_child(where_row)
+	var drives := OptionButton.new()
+	drives.name = "ImageDriveMenu"
+	for root in _image_roots():
+		drives.add_item(str(root).trim_suffix("/"))
+		drives.set_item_metadata(drives.item_count - 1, str(root))
+	where_row.add_child(drives)
+	drives.item_selected.connect(func(i): _show_image_dir(str(drives.get_item_metadata(i))))
+	var up := Button.new()
+	up.name = "ImageUpButton"
+	up.text = "↑ 上一级"
+	up.pressed.connect(_image_dir_up)
+	where_row.add_child(up)
+	var where := LineEdit.new()
+	where.name = "ImagePathEdit"
+	where.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	where.tooltip_text = "这里写文件夹路径，回车跳过去"
+	where_row.add_child(where)
+	where.text_submitted.connect(func(text): _show_image_dir(text.strip_edges()))
+	var search_box := LineEdit.new()
+	search_box.name = "ImageSearch"
+	search_box.placeholder_text = "在现在这一层里按名字筛"
+	body.add_child(search_box)
+	search_box.text_changed.connect(func(_text): _fill_image_picker())
+	body.add_child(_hint("文件夹双击进入；图片以图标列出，单击图标选中。保存时按命名规则复制进卡的文件夹。"))
+	var scroll := ScrollContainer.new()
+	scroll.name = "ImageScroll"
+	# 尺寸按面板定死：嵌入式窗口不会帮我们算剩余高度，写死反而稳
+	scroll.custom_minimum_size = Vector2(IMAGE_PICKER_SIZE.x - 48, IMAGE_PICKER_SIZE.y - 200)
+	body.add_child(scroll)
+	var grid := GridContainer.new()
+	grid.name = "ImageGrid"
+	grid.columns = IMAGE_PICKER_COLUMNS
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(grid)
+	dialog.popup_centered(IMAGE_PICKER_SIZE)
+	dialog.size = IMAGE_PICKER_SIZE
+	_fill_image_picker()
+
+
+# 打开面板时的起点，按顺序取第一个能用的位置：
+# ① 这张卡上次选图去过的位置（同一张卡才认，不会把别的卡的位置带过来）
+# ② 这张卡自己保存过的文件夹（图片就在 json 旁边）
+# ③ 上次选图去过的位置（总比每次退回系统图片目录强）
+# ④ 系统图片目录，再不然第一个能浏览的根
+func _image_start_dir() -> String:
+	var remembered := _remembered_image_dir()
+	var remembered_dir := str(remembered.get("dir", ""))
+	var remembered_ok := remembered_dir != "" and DirAccess.dir_exists_absolute(remembered_dir)
+	if remembered_ok and str(remembered.get("card", "")) == str(path):
+		return remembered_dir
+	var folder := str(path).get_base_dir()
+	if folder != "" and DirAccess.dir_exists_absolute(folder):
+		return folder
+	if remembered_ok:
+		return remembered_dir
+	var pictures := OS.get_system_dir(OS.SYSTEM_DIR_PICTURES)
+	if pictures != "":
+		return pictures
+	var roots := _image_roots()
+	return str(roots[0]) if not roots.is_empty() else ""
+
+
+# 选图面板记住的位置：存在导出设置的 _global 里（和 zip 目录同一处），关掉编辑器也还在。
+# 记成 {dir, card}：dir 是文件夹，card 是当时在编辑哪张卡，用来判断该不该沿用它。
+func _remembered_image_dir() -> Dictionary:
+	var saved = maker.global_export("last_image_dir", {})
+	return saved if saved is Dictionary else {}
+
+
+# 记住这次去的位置。只写值变了的情况，免得来回浏览时反复写文件。
+func _remember_image_dir(folder:String) -> void:
+	if folder == "" or not DirAccess.dir_exists_absolute(folder):
+		return
+	var saved := _remembered_image_dir()
+	if str(saved.get("dir", "")) == folder and str(saved.get("card", "")) == str(path):
+		return
+	maker.set_export("_global", "last_image_dir", {"dir": folder, "card": str(path)})
+	maker.save_export_settings()
+
+
+# 能浏览的位置：有盘符的系统按字母列出所有存在的根，其它系统用 /。
+func _image_roots() -> Array:
+	var out:Array = []
+	for i in 26:
+		var root := char(65 + i) + ":/"
+		if DirAccess.dir_exists_absolute(root):
+			out.append(root)
+	if out.is_empty() and DirAccess.dir_exists_absolute("/"):
+		out.append("/")
+	return out
+
+
+# 列当前文件夹：文件夹和图片都用一样大的图标格子，双击进入文件夹，单击选中图片。
+func _fill_image_picker() -> void:
+	if not is_instance_valid(image_picker):
+		return
+	var grid:GridContainer = image_picker.find_child("ImageGrid", true, false)
+	if grid == null:
+		return
+	_clear(grid)
+	var where:LineEdit = image_picker.find_child("ImagePathEdit", true, false)
+	if where != null:
+		where.text = image_dir
+	var search_box:LineEdit = image_picker.find_child("ImageSearch", true, false)
+	var needle := search_box.text.strip_edges().to_lower() if search_box != null else ""
+	var dir := DirAccess.open(image_dir)
+	if dir == null:
+		grid.add_child(_hint("这个位置打不开：" + image_dir + "。换个盘或点「↑ 上一级」。"))
+		return
+	var folders:Array = []
+	var pictures:Array = []
+	dir.list_dir_begin()
+	var name := dir.get_next()
+	while name != "":
+		if not name.begins_with("."):
+			if dir.current_is_dir():
+				folders.append(name)
+			elif maker.IMAGE_EXTS.has(name.get_extension().to_lower()):
+				pictures.append(name)
+		name = dir.get_next()
+	folders.sort()
+	pictures.sort()
+	for folder_name in folders:
+		if needle != "" and needle not in folder_name.to_lower():
+			continue
+		grid.add_child(_image_tile(image_dir.path_join(folder_name), folder_name, true))
+	for file_name in pictures:
+		if needle != "" and needle not in file_name.to_lower():
+			continue
+		grid.add_child(_image_tile(image_dir.path_join(file_name), file_name, false))
+	if grid.get_child_count() == 0:
+		grid.add_child(_hint("这一层没有图片也没有文件夹。"))
+
+
+# 一个图标格子：上面是可点的缩略图，下面是名字。
+func _image_tile(full:String, shown_name:String, is_folder:bool) -> Control:
+	var tile := VBoxContainer.new()
+	tile.name = "ImageTile"
+	tile.custom_minimum_size = Vector2(IMAGE_TILE_SIZE, 0)
+	var button := Button.new()
+	button.name = "ImageFolderButton" if is_folder else "ImageTileButton"
+	button.custom_minimum_size = Vector2(IMAGE_TILE_SIZE, IMAGE_TILE_SIZE)
+	button.expand_icon = true
+	button.tooltip_text = full + ("\n双击进入这个文件夹" if is_folder else "\n点一下就用这张图")
+	if is_folder:
+		button.text = "📁"
+		button.add_theme_font_size_override("font_size", 48)
+		button.gui_input.connect(func(event:InputEvent):
+			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and event.double_click:
+				_show_image_dir.call_deferred(full))
+	else:
+		button.icon = _thumb_texture(full, Vector2i(IMAGE_TILE_SIZE, IMAGE_TILE_SIZE))
+		# 刷新会释放当前按钮，必须等 pressed 信号派发结束再选图。
+		button.pressed.connect(_use_picked_image.bind(full), CONNECT_DEFERRED)
+	tile.add_child(button)
+	var label := _label(shown_name, 14, C_TEXT)
+	label.name = "ImageTileName"
+	label.custom_minimum_size = Vector2(IMAGE_TILE_SIZE, 0)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
+	label.max_lines_visible = 2   # 名字最多两行，再长就在第二行收尾
+	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	tile.add_child(label)
+	return tile
+
+
+func _show_image_dir(target:String) -> void:
+	var folder := target.strip_edges()
+	if folder == "" or not DirAccess.dir_exists_absolute(folder):
+		_set_status("没有这个位置：" + target)
+		return
+	image_dir = folder
+	_remember_image_dir(folder)
+	_fill_image_picker()
+
+
+func _image_dir_up() -> void:
+	var folder := image_dir.trim_suffix("/")
+	var parent := folder.get_base_dir()
+	if parent == "" or parent == folder:
+		return
+	_show_image_dir(parent)
+
+
+func _use_picked_image(source:String) -> void:
+	_image_chosen(source)
+	_fill_image_picker()
+
+
+# 图标的缩略图：先缩到显示尺寸再做纹理，免得把整张大卡图都留在内存里。
+func _thumb_texture(image:String, size:Vector2i) -> Texture2D:
+	var img := Image.new()
+	if img.load(image) != OK:
+		return null
+	if img.get_width() > size.x or img.get_height() > size.y:
+		var scale := minf(float(size.x) / float(img.get_width()), float(size.y) / float(img.get_height()))
+		img.resize(maxi(1, int(img.get_width() * scale)), maxi(1, int(img.get_height() * scale)), Image.INTERPOLATE_BILINEAR)
+	return ImageTexture.create_from_image(img)
 
 
 func _image_chosen(source:String) -> void:
@@ -2570,7 +3834,8 @@ func _image_chosen(source:String) -> void:
 	if not copied.get("ok", false):
 		_set_status(str(copied.get("error", "选图失败")))
 		return
-	# 记完整路径：保存时据此认出是新选的图，按命名规则搬进卡的文件夹
+	_remember_image_dir(source.get_base_dir())
+	# 记完整路径：保存时据此认出是新选的图，按命名规则复制进卡的文件夹
 	image_target.obj[image_target.key] = str(copied.path)
 	var zoom := str(image_target.get("zoom", ""))
 	if zoom != "" and str(image_target.obj.get(zoom, "")) == "":
@@ -2584,10 +3849,10 @@ func _image_chosen(source:String) -> void:
 
 func _color_of(node:Dictionary) -> Color:
 	if node.t == "method":
-		return Color("#8C8C8C")
+		return Color("#454A55")
 	var op := maker.operation_of(str(node.get("func", "")))
 	var cat := maker.category_of(str(op.get("category", "")))
-	return Color(str(cat.get("color", "#8C8C8C")))
+	return Color(str(cat.get("color", "#454A55")))
 
 
 func _shape_of(node:Dictionary, where:Dictionary) -> String:
@@ -2636,17 +3901,61 @@ func _param_index(op:Dictionary, pname:String) -> int:
 	return -1
 
 
+func _block_help_text(node:Dictionary) -> String:
+	match str(node.get("t", "")):
+		"if":
+			return "如果……那么：只有条件成立时，才执行嘴里的积木。"
+		"raw":
+			return "编辑器暂时无法识别这一步，但会原样保留并保存。\n原文：" + JSON.stringify(node.get("v", {}))
+		"slot_only":
+			var slot:Dictionary = node.get("slot", {})
+			match str(slot.get("s", "")):
+				"var":
+					return "结果：相当于变量，可引用前面步骤算出的值。"
+				"qty":
+					return "选项选的数量：读取玩家为当前选项填写的数量。"
+				_:
+					return "当前这一项：在循环积木里代表正在处理的对象。"
+	var name := str(node.get("func", node.get("method", "")))
+	var say := maker.say_of(name)
+	var help := maker.help_of(name)
+	if say == "":
+		return help
+	return say + ("\n" + help if help != "" else "")
+
+
+func _add_block_help_icon(row:Container, node:Dictionary) -> void:
+	var tip := _block_help_text(node)
+	if tip == "":
+		tip = "点击查看这块积木的说明。"
+	var icon := Button.new()
+	icon.name = "BlockHelp"
+	icon.text = "ⓘ"
+	icon.tooltip_text = tip
+	icon.flat = true
+	icon.focus_mode = Control.FOCUS_NONE
+	icon.mouse_default_cursor_shape = Control.CURSOR_HELP
+	icon.custom_minimum_size = Vector2(22, 22)
+	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	icon.add_theme_color_override("font_color", C_GOLD)
+	icon.add_theme_color_override("font_hover_color", C_GOLD2)
+	icon.add_theme_color_override("font_pressed_color", C_GOLD2)
+	icon.add_theme_stylebox_override("hover", _flat(Color(0, 0, 0, 0.2), 8, 1))
+	icon.pressed.connect(_show_help_for.bind(node))
+	row.add_child(icon)
+
+
 func _block_label(text:String) -> Label:
 	var lab := Label.new()
 	lab.text = text
-	lab.add_theme_color_override("font_color", Color.WHITE)
+	lab.add_theme_color_override("font_color", C_TEXT)
 	lab.add_theme_font_size_override("font_size", 14)
 	lab.mouse_filter = Control.MOUSE_FILTER_PASS
 	lab.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	return lab
 
 
-func _label(text:String, size := 14, color := INK) -> Label:
+func _label(text:String, size := 14, color := C_TEXT) -> Label:
 	var lab := Label.new()
 	lab.text = text
 	lab.add_theme_font_size_override("font_size", size)
@@ -2661,19 +3970,6 @@ func _hint(text:String) -> Label:
 	return lab
 
 
-func _section_title(text:String, help:String) -> Control:
-	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 0)
-	var pad := MarginContainer.new()
-	pad.add_theme_constant_override("margin_left", 8)
-	pad.add_theme_constant_override("margin_top", 6)
-	pad.add_theme_constant_override("margin_right", 8)
-	pad.add_child(col)
-	col.add_child(_label(text, 16, Color("#4C3D8F")))
-	col.add_child(_hint(help))
-	return pad
-
-
 func _welcome_card() -> Control:
 	var lab := _hint("还没打开卡。左边选一张，或者点上面的「新建一张」。")
 	return lab
@@ -2684,7 +3980,7 @@ func _fold_box(parent:Node, title:String, open:bool) -> VBoxContainer:
 	button.text = ("▾ " if open else "▸ ") + title
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.flat = true
-	button.add_theme_color_override("font_color", Color("#4C3D8F"))
+	button.add_theme_color_override("font_color", C_GOLD)
 	parent.add_child(button)
 	var pad := MarginContainer.new()
 	pad.add_theme_constant_override("margin_left", 14)
@@ -2710,15 +4006,6 @@ func _spin(value:float, allow_float:bool) -> SpinBox:
 	return spin
 
 
-func _top_button(parent:Node, text:String, pressed:Callable, tip:String) -> Button:
-	var button := Button.new()
-	button.text = text
-	button.tooltip_text = tip
-	button.pressed.connect(pressed)
-	parent.add_child(button)
-	return button
-
-
 func _spacer(width:int) -> Control:
 	var c := Control.new()
 	c.custom_minimum_size = Vector2(width, 0)
@@ -2736,22 +4023,24 @@ func _flat(color:Color, radius:int, margin:int, border := Color(0, 0, 0, 0)) -> 
 	return s
 
 
-# ratio：第一块占这一整块的比例。拖动后按比例记下，窗口大小变了也照比例摆。
-func _split(horizontal:bool, name:String, ratio:float) -> SplitContainer:
-	var split:SplitContainer = HSplitContainer.new() if horizontal else VSplitContainer.new()
-	split.name = "Split" + name
-	split.set_meta("ratio", ratio)
-	split.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	split.add_theme_constant_override("separation", 8)
-	split.dragged.connect(func(_o): _remember_ratio(split))
-	split.resized.connect(func(): _apply_ratio(split))
-	splits.append(split)
-	return split
-
-
 func _split_length(split:SplitContainer) -> float:
 	return split.size.x if split is HSplitContainer else split.size.y
+
+
+func _on_split_resized(split:SplitContainer) -> void:
+	var total := _split_length(split)
+	var previous_total := float(split.get_meta("layout_length", -1.0))
+	var ratio := float(split.get_meta("ratio", 0.5))
+	# 拖动分隔条时，子控件可能先发 resized，再发 dragged。此时总尺寸没变，
+	# 但 split_offset 已经是鼠标拖到的位置；不要用旧比例把它覆盖回去。
+	if total > 8 and is_equal_approx(previous_total, total):
+		var expected := int(ratio * (total - 8.0))
+		if abs(split.split_offset - expected) > 1:
+			_remember_ratio(split)
+			split.set_meta("layout_length", total)
+			return
+	_apply_ratio(split)
+	split.set_meta("layout_length", total)
 
 
 func _first_length(split:SplitContainer) -> float:
@@ -2798,7 +4087,13 @@ func _load_layout() -> void:
 	if cfg.load(LAYOUT_PATH) == OK:
 		for split in splits:
 			if cfg.has_section_key("ratio", split.name):
-				split.set_meta("ratio", float(cfg.get_value("ratio", split.name)))
+				var saved_ratio := float(cfg.get_value("ratio", split.name))
+				# 旧默认值才跟着新的紧凑布局走；用户手动拖过的宽度仍按原值恢复。
+				if split.name == "SplitOuter" and is_equal_approx(saved_ratio, 0.2):
+					continue
+				if split.name == "SplitPalette" and is_equal_approx(saved_ratio, 0.19):
+					continue
+				split.set_meta("ratio", saved_ratio)
 	call_deferred("_apply_all_ratios")
 
 
@@ -2832,7 +4127,7 @@ func _set_status(text:String) -> void:
 		status.add_theme_color_override("font_color", Color("#B8F5C8"))
 	else:
 		status.text = text
-		status.add_theme_color_override("font_color", Color.WHITE)
+		status.add_theme_color_override("font_color", C_TEXT)
 
 
 # =============== 快捷键 ===============
@@ -2840,7 +4135,7 @@ func _set_status(text:String) -> void:
 func _input(event:InputEvent) -> void:
 	if not is_visible_in_tree() or not event is InputEventKey or not event.pressed or event.echo:
 		return
-	if not (event.ctrl_pressed or event.meta_pressed) or save_dialog.visible or image_dialog.visible or zip_dialog.visible:
+	if not (event.ctrl_pressed or event.meta_pressed) or save_dialog.visible or is_instance_valid(image_picker) or zip_dialog.visible:
 		return
 	match event.keycode:
 		KEY_S:
@@ -2869,7 +4164,7 @@ func _reset_history(label:String, saved:bool) -> void:
 
 func _push_history(label:String, where:String, saved:bool) -> void:
 	history.resize(history_index + 1)   # 撤回后又改动：丢掉原来的「以后」
-	history.append({"data": data.duplicate(true), "label": label, "where": where, "time": Time.get_ticks_msec(), "clock": Time.get_time_string_from_system(), "saved": saved})
+	history.append({"data": data.duplicate(true) if data is Dictionary else null, "label": label, "where": where, "time": Time.get_ticks_msec(), "clock": Time.get_time_string_from_system(), "saved": saved})
 	if history.size() > HISTORY_LIMIT:
 		history.remove_at(0)
 	history_index = history.size() - 1
@@ -2915,7 +4210,8 @@ func _restore_history(index:int) -> void:
 		return
 	history_restoring = true
 	history_index = index
-	data = history[index].data.duplicate(true)
+	var snapshot = history[index].data
+	data = snapshot.duplicate(true) if snapshot is Dictionary else null
 	if not _focus_obj() is Dictionary:
 		focus_path = []
 		focus_item = ""
@@ -2946,7 +4242,7 @@ func _paint_history() -> void:
 		history_view.add_item(text)
 		history_view.set_item_tooltip(i, str(node.label) + ("\n" + str(node.where) if str(node.where) != "" else ""))
 		if i > history_index:
-			history_view.set_item_custom_fg_color(i, Color("#9AA0B4"))   # 撤回掉的节点灰显，仍可点回去
+			history_view.set_item_custom_fg_color(i, C_DIM2)   # 撤回掉的节点灰显，仍可点回去
 	if history_index >= 0:
 		history_view.select(history_index)
 		history_view.ensure_current_is_visible()
@@ -3018,51 +4314,29 @@ func _collect_key_names(node) -> void:
 const ZIP_LAYOUT_SHOWN := {"project": "相对项目根目录（data/masters/00002_x/…）", "root": "相对这种卡的根目录（00002_x/…）", "folder": "只放卡文件夹（00002_x/…，不含上层）", "flat": "所有文件直接放在 zip 根"}
 
 
-func _build_export_window() -> void:
-	export_window = AcceptDialog.new()
-	export_window.title = "导出设置"
-	export_window.ok_button_text = "关闭"
-	export_window.min_size = Vector2i(900, 520)
-	add_child(export_window)
-	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 8)
-	col.custom_minimum_size = Vector2(880, 0)   # 说明文字自动换行，给定宽度才算得出正确高度
-	export_window.add_child(col)
-	var intro := _hint("这里的设置只存在你自己电脑上（" + JsonMaker.EXPORT_CFG + "），不改源码和 types.json。留空就用默认值（灰字）。\n命名里可以写 {identity}（内部名）、{serial}（编号）、{folder}（卡文件夹名），以及卡里任何文字字段，如 {category}。")
-	intro.custom_minimum_size = Vector2(880, 0)
-	col.add_child(intro)
-	var top := HBoxContainer.new()
-	col.add_child(top)
-	top.add_child(_label("卡牌种类", 14, INK))
-	export_kind_menu = OptionButton.new()
-	for item in maker.export_kinds():
-		export_kind_menu.add_item(item.shown)
-		export_kind_menu.set_item_metadata(export_kind_menu.item_count - 1, item.id)
-	export_kind_menu.item_selected.connect(func(i): _paint_export_form(str(export_kind_menu.get_item_metadata(i))))
-	top.add_child(export_kind_menu)
-	var reset := Button.new()
-	reset.text = "这种恢复默认"
-	reset.pressed.connect(func():
-		maker.reset_export(export_kind)
-		_export_changed()
-		_paint_export_form(export_kind))
-	top.add_child(reset)
-	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(0, 430)
-	col.add_child(scroll)
-	export_form = VBoxContainer.new()
-	export_form.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(export_form)
-	export_preview = _label("", 13, Color("#4C3D8F"))
-	export_preview.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	export_preview.custom_minimum_size = Vector2(880, 0)
-	col.add_child(export_preview)
-	var zip_row := HBoxContainer.new()
-	col.add_child(zip_row)
-	zip_row.add_child(_label("zip 默认放在", 14, INK))
-	var zip_dir := _export_line(str(maker.global_export("zip_dir", "")), "exports", func(t): maker.set_export("_global", "zip_dir", t if t != "" else null))
-	zip_row.add_child(zip_dir)
-	zip_row.add_child(_dir_button(zip_dir))
+func _on_export_kind_selected(index:int) -> void:
+	_paint_export_form(str(export_kind_menu.get_item_metadata(index)))
+
+
+func _on_export_reset() -> void:
+	maker.reset_export(export_kind)
+	_export_changed()
+	_paint_export_form(export_kind)
+
+
+# zip 默认目录：回车或离开时写进设置并存盘（与表单里的输入框同一套）。
+func _on_zip_dir_submitted(text:String) -> void:
+	var t := text.strip_edges()
+	maker.set_export("_global", "zip_dir", t if t != "" else null)
+	_export_changed()
+
+
+func _on_zip_dir_focus_exited() -> void:
+	_on_zip_dir_submitted(%ZipDirEdit.text)
+
+
+func _on_zip_dir_pick() -> void:
+	_pick_dir(%ZipDirEdit)
 
 
 func open_export_settings() -> void:
@@ -3112,7 +4386,7 @@ func _paint_export_form(item_id:String) -> void:
 		_export_row("zip 里的目录").add_child(zip_menu)
 		_export_row("子牌图片前缀").add_child(_export_line(str(own.get("sub_image_prefix", "")), str(base.get("sub_image_prefix", "")), func(t): maker.set_export(item_id, "sub_image_prefix", t if t != "" else null)))
 	if not fields.images.is_empty():
-		export_form.add_child(_label("图片命名（不含扩展名）", 15, Color("#4C3D8F")))
+		export_form.add_child(_label("图片命名（不含扩展名）", 15, C_GOLD))
 		var images:Dictionary = own.get("images", {})
 		for img in fields.images:
 			var key := str(img.key)
@@ -3121,11 +4395,17 @@ func _paint_export_form(item_id:String) -> void:
 
 
 func _export_row(title:String) -> HBoxContainer:
+	var row := _titled_row(title)
+	export_form.add_child(row)
+	return row
+
+
+# 左边一个定宽标题的一行，由调用方决定放在哪。
+func _titled_row(title:String) -> HBoxContainer:
 	var row := HBoxContainer.new()
-	var name := _label(title, 14, INK)
+	var name := _label(title, 14, C_TEXT)
 	name.custom_minimum_size = Vector2(130, 0)
 	row.add_child(name)
-	export_form.add_child(row)
 	return row
 
 
@@ -3146,12 +4426,15 @@ func _export_line(value:String, fallback:String, apply:Callable) -> LineEdit:
 func _dir_button(target:LineEdit) -> Button:
 	var b := Button.new()
 	b.text = "选目录"
-	b.pressed.connect(func():
-		dir_target = target
-		var cur := target.text if target.text != "" else target.placeholder_text
-		dir_dialog.current_dir = ProjectSettings.globalize_path(maker._res(cur))
-		dir_dialog.popup_centered_ratio(0.6))
+	b.pressed.connect(_pick_dir.bind(target))
 	return b
+
+
+func _pick_dir(target:LineEdit) -> void:
+	dir_target = target
+	var cur := target.text if target.text != "" else target.placeholder_text
+	dir_dialog.current_dir = ProjectSettings.globalize_path(maker._res(cur))
+	dir_dialog.popup_centered_ratio(0.6)
 
 
 func _export_changed() -> void:
@@ -3181,3 +4464,220 @@ func _paint_export_preview() -> void:
 			var base := maker.fill_pattern(str(field.get("file_name", "{identity}")), {"folder": folder, "identity": str(sample.get(spec.get("identity", ""), ""))})
 			lines.append("　" + str(field.get("shown", field.key)) + " → " + (base if base != "" else "（原名）") + ".png")
 	export_preview.text = "\n".join(PackedStringArray(lines))
+
+
+# =============== 新手教程 ===============
+func _practice_save_blocked() -> bool:
+	if tutorial_practice:
+		_set_status("练习副本绝不保存 JSON 或打包。关闭教程后仍不可保存；可先恢复原稿，或普通打开/新建。")
+		return true
+	return false
+
+func _leave_practice() -> void:
+	if tutorial_practice:
+		close_tutorial()
+		tutorial_practice = false
+		tutorial_previous.clear()
+
+func restore_tutorial_previous() -> void:
+	if tutorial_previous.is_empty():
+		return
+	var previous := tutorial_previous.duplicate(true)
+	_leave_practice()
+	data = previous.data
+	path = str(previous.path)
+	style = previous.style
+	original = previous.original
+	card_kind = str(previous.kind)
+	dirty = bool(previous.dirty)
+	focus_path = []
+	focus_item = ""
+	_load_effects()
+	_refresh_all()
+	_reset_history("恢复教程前原稿", not dirty)
+	_set_status("已恢复教程前原稿" + ("（仍未保存）" if dirty else ""))
+
+# 教程内容全在 json_maker/tutorials 里：这里只负责入口、显示、判定打勾和高亮控件。
+
+# 入口：只有一套时直接打开，多套时弹菜单选。
+func open_tutorial_menu() -> void:
+	tutorials = maker.list_tutorials()
+	if tutorials.is_empty():
+		_set_status("没有找到教程：json_maker/tutorials 里放教程 json")
+		return
+	if tutorials.size() == 1:
+		start_tutorial(0)
+		return
+	tutorial_menu.clear()
+	for i in tutorials.size():
+		tutorial_menu.add_item(str(tutorials[i].title), i)
+	var button:Control = %TutorialButton
+	tutorial_menu.popup(Rect2i(Vector2i(button.get_screen_position() + Vector2(0, button.size.y)), Vector2i.ZERO))
+
+
+func _on_tutorial_menu_pressed(id:int) -> void:
+	start_tutorial(id)
+
+
+func start_tutorial(index:int) -> void:
+	if index < 0 or index >= tutorials.size():
+		return
+	if not tutorial_practice:
+		_commit()
+		tutorial_previous = {"data": data.duplicate(true) if data != null else null, "path": path, "style": style.duplicate(true), "original": original.duplicate(true) if original != null else null, "kind": card_kind, "dirty": dirty}
+		tutorial_practice = true
+		path = ""
+		style = {}
+		original = null
+		# 练习里的第一张卡留给你自己建：在种类里选好，再点「新建一张」，教程不代劳
+		card_kind = kind_id
+		data = null
+		focus_path = []
+		focus_item = ""
+		history.clear()
+		_load_effects()
+		_refresh_all()
+		dirty = false
+		_reset_history("教程练习副本：还没新建", false)
+	tutorial = tutorials[index].data
+	tutorial_index = 0
+	tutorial_panel.visible = true
+	_show_help(str(tutorial.get("title", "新手教程")), str(tutorial.get("intro", "")))
+	_paint_tutorial()
+	_set_status("练习副本：不会写入 JSON，保存和打包均已禁用；教程前原稿已暂存。")
+
+
+func close_tutorial() -> void:
+	tutorial = {}
+	tutorial_panel.visible = false
+	_stop_tutorial_blink()
+	if tutorial_practice:
+		_set_status("练习副本仍不可保存。可恢复原稿，或普通打开/新建结束练习。")
+
+
+func tutorial_prev() -> void:
+	_go_tutorial_step(tutorial_index - 1)
+
+
+func tutorial_next() -> void:
+	var steps:Array = tutorial.get("steps", [])
+	if tutorial_index >= steps.size() - 1:
+		close_tutorial()
+		_set_status("✓ 教程结束；练习副本不会写入 JSON，可恢复原稿或普通打开/新建。")
+		return
+	_go_tutorial_step(tutorial_index + 1)
+
+
+func _go_tutorial_step(index:int) -> void:
+	var steps:Array = tutorial.get("steps", [])
+	if index < 0 or index >= steps.size():
+		return
+	tutorial_index = index
+	_paint_tutorial()
+
+
+# 界面状态：教程条件里 from: state 读这里。
+func tutorial_state() -> Dictionary:
+	return {
+		"kind": card_kind if data != null else "",
+		"focus": focus_item,
+		"saved": data != null and not tutorial_practice and path != "" and not dirty and _collect_issues().is_empty(),
+		"ready": data != null and _collect_issues().is_empty(),
+		"path": path,
+	}
+
+
+# 当前这一步每条条件是否达成，按 checks 的顺序。
+func tutorial_results() -> Array:
+	var steps:Array = tutorial.get("steps", [])
+	if tutorial_index < 0 or tutorial_index >= steps.size():
+		return []
+	var state := tutorial_state()
+	var out:Array = []
+	for check in steps[tutorial_index].get("checks", []):
+		out.append(check is Dictionary and maker.tutorial_check(check, data, state))
+	return out
+
+
+func _paint_tutorial() -> void:
+	var steps:Array = tutorial.get("steps", [])
+	if steps.is_empty():
+		return
+	var step:Dictionary = steps[tutorial_index]
+	tutorial_title.text = str(tutorial.get("title", "新手教程"))
+	tutorial_step_label.text = "第 " + str(tutorial_index + 1) + " / " + str(steps.size()) + " 步：" + str(step.get("title", ""))
+	var image := str(step.get("image", ""))
+	var texture:Texture2D = LoadHelper.load_texture(image) if image != "" else null
+	tutorial_image.texture = texture
+	tutorial_image.visible = texture != null
+	tutorial_body.text = str(step.get("body", ""))
+	tutorial_prev_button.disabled = tutorial_index == 0
+	tutorial_next_button.text = "完成" if tutorial_index == steps.size() - 1 else "下一步 ▶"
+	_refresh_tutorial()
+	_blink_tutorial_targets(step.get("highlight", []))
+
+
+# 卡片改动或保存后重新打勾；全部达成时下一步按钮高亮。
+func _refresh_tutorial() -> void:
+	if tutorial.is_empty() or tutorial_checks == null:
+		return
+	var steps:Array = tutorial.get("steps", [])
+	if tutorial_index >= steps.size():
+		return
+	var checks:Array = steps[tutorial_index].get("checks", [])
+	var results := tutorial_results()
+	_clear(tutorial_checks)
+	for i in checks.size():
+		var done:bool = results[i]
+		var line := Label.new()
+		line.text = ("✔ " if done else "○ ") + str(checks[i].get("text", ""))
+		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		line.add_theme_color_override("font_color", C_OK if done else HINT)
+		tutorial_checks.add_child(line)
+	var all_done := results.all(func(r): return r)
+	tutorial_next_button.modulate = Color(0.75, 1.0, 0.75) if all_done and not checks.is_empty() else Color(1, 1, 1)
+
+
+# 让这一步涉及的控件闪几下；控件用场景里的唯一名（%名字）指定，找不到就跳过。
+func _blink_tutorial_targets(names:Array) -> void:
+	_stop_tutorial_blink()
+	var targets:Array = []
+	for name in names:
+		var node := get_node_or_null("%" + str(name))
+		if node is CanvasItem:
+			targets.append(node)
+	if targets.is_empty():
+		return
+	tutorial_blink_targets = targets
+	tutorial_blink = create_tween().set_loops(3)
+	for target in targets:
+		tutorial_blink.parallel().tween_property(target, "modulate", Color(1.0, 0.9, 0.45), 0.35)
+	tutorial_blink.chain()
+	for target in targets:
+		tutorial_blink.parallel().tween_property(target, "modulate", Color(1, 1, 1), 0.35)
+	tutorial_blink.finished.connect(_stop_tutorial_blink)
+
+
+func _stop_tutorial_blink() -> void:
+	if tutorial_blink != null and tutorial_blink.is_valid():
+		tutorial_blink.kill()
+	tutorial_blink = null
+	for target in tutorial_blink_targets:
+		if is_instance_valid(target):
+			target.modulate = Color(1, 1, 1)
+	tutorial_blink_targets = []
+
+
+# 拖标题栏移动教程面板，限制在窗口内。
+func _on_tutorial_header_input(event:InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		tutorial_drag = event.pressed
+	elif event is InputEventMouseMotion and tutorial_drag:
+		# 默认贴在右侧；拖过之后改成固定位置，免得窗口缩放时被锚点拉回去
+		if tutorial_panel.anchor_left != 0.0:
+			var rect := Rect2(tutorial_panel.position, tutorial_panel.size)
+			tutorial_panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+			tutorial_panel.position = rect.position
+			tutorial_panel.size = rect.size
+		var limit := size - tutorial_panel.size
+		tutorial_panel.position = (tutorial_panel.position + event.relative).clamp(Vector2.ZERO, limit.max(Vector2.ZERO))

@@ -63,6 +63,7 @@ const TABLE := {
 	"get_phase_order" : { "category": QUERY_PLAYER, "class": "GetPhaseOrder", "summary": "阶段顺位字段" },
 	"get_current_round" : { "category": QUERY_PLAYER, "class": "GetCurrentRound", "summary": "当前回合" },
 	"get_game_data_value" : { "category": QUERY_PLAYER, "class": "GetGameDataValue", "summary": "GameData任意字段" },
+	"get_player_power_breakdown" : { "category": QUERY_PLAYER, "class": "GetPlayerPowerBreakdown", "summary": "按来源筛选后的合计威力" },
 
 	"get_player_deck" : { "category": QUERY_ZONE, "class": "GetPlayerDeck", "summary": "牌库" },
 	"get_player_discard" : { "category": QUERY_ZONE, "class": "GetPlayerDiscard", "summary": "弃牌堆" },
@@ -132,6 +133,7 @@ const TABLE := {
 	"get_num_of_pl_in_map_area" : { "category": QUERY_MAP, "class": "GetNumOfPlInMapArea", "summary": "区域人数(读location._players)" },
 	"get_players_in_same_area" : { "category": QUERY_MAP, "class": "GetPlayersInSameArea", "summary": "与某玩家同区域的玩家" },
 	"get_players_in_map_area" : { "category": QUERY_MAP, "class": "GetPlayersInMapArea", "summary": "指定区域内的玩家" },
+	"get_map_data_value" : { "category": QUERY_MAP, "class": "GetMapDataValue", "summary": "MapData任意字段(事件牌堆、局势牌堆等)" },
 
 	"get_activating_eff" : { "category": QUERY_EFFECT, "class": "GetActivatingEff", "summary": "当前结算效果" },
 	"get_effect_number" : { "category": QUERY_EFFECT, "class": "GetEffectNumber", "summary": "对象上某效果的数字" },
@@ -160,6 +162,7 @@ const TABLE := {
 	"merge_arrays" : { "category": QUERY_COLLECTION, "class": "MergeArrays", "summary": "合并最多四个数组" },
 	"add_to_array" : { "category": QUERY_COLLECTION, "class": "AddToArray", "summary": "插入或追加元素" },
 	"remove_from_array" : { "category": QUERY_COLLECTION, "class": "RemoveFromArray", "summary": "删除一个匹配元素" },
+	"set_dictionary_value" : { "category": QUERY_COLLECTION, "class": "SetDictionaryValue", "summary": "字典按键写值" },
 
 	"if_func" : { "category": QUERY_COMPARE, "class": "IfFunc", "summary": "两值是否相等" },
 	"if_else_func" : { "category": QUERY_COMPARE, "class": "IfElseFunc", "summary": "按条件二选一返回值" },
@@ -187,6 +190,7 @@ const TABLE := {
 	"set_card_concealed" : { "category": EDIT_CARD, "class": "SetCardConcealed", "summary": "明暗置并同步威力" },
 	"close_card" : { "category": EDIT_CARD, "class": "CloseCard", "summary": "关闭已打出的牌" },
 	"set_property" : { "category": EDIT_CARD, "class": "SetProperty", "summary": "写任意对象属性" },
+	"flip_card_face" : { "category": EDIT_CARD, "class": "FlipCardFace", "summary": "双面卡切换到另一面" },
 
 	"edit_location_magic" : { "category": EDIT_MAP, "class": "EditLocationMagic", "summary": "改地点魔力" },
 	"edit_location_benefit" : { "category": EDIT_MAP, "class": "EditLocationBenefit", "summary": "改地点地利" },
@@ -203,6 +207,8 @@ const TABLE := {
 	"set_location_pl_num_limit" : { "category": EDIT_MAP, "class": "SetLocationPlNumLimit", "summary": "改地点席位上限并记基线" },
 	"restore_location_pl_num_limits" : { "category": EDIT_MAP, "class": "RestoreLocationPlNumLimits", "summary": "按基线还原地点席位上限" },
 	"restore_location_benefits" : { "category": EDIT_MAP, "class": "RestoreLocationBenefits", "summary": "按基线还原地点地利" },
+	"add_map_area" : { "category": EDIT_MAP, "class": "AddMapArea", "summary": "按数据新增战区并接入地图" },
+	"set_battle_result" : { "category": EDIT_MAP, "class": "SetBattleResult", "summary": "改写本回合某战场的胜负" },
 
 	"draw_card_from_pl_deck_to_hand" : { "category": TRANSFER, "class": "DrawCardFromPlDeckToHand", "summary": "从牌库抽到手数" },
 	"reshuffle_discard" : { "category": TRANSFER, "class": "ReshuffleDiscard", "summary": "牌堆耗尽时把弃牌堆洗成新牌堆" },
@@ -221,6 +227,8 @@ const TABLE := {
 	"deal_player_cards" : { "category": ACTION, "class": "DealPlayerCards", "summary": "给某玩家(重)发从者牌" },
 	"refill_hand" : { "category": ACTION, "class": "RefillHand", "summary": "把玩家手牌补充到上限" },
 	"played_cards" : { "category": ACTION, "class": "PlayedCards", "summary": "派发出牌时点" },
+	"end_game" : { "category": ACTION, "class": "EndGame", "summary": "立刻结束对局并指定胜者" },
+	"add_player" : { "category": ACTION, "class": "AddPlayer", "summary": "新建分身棋子/NPC等玩家条目" },
 
 	"manage_buff" : { "category": BUFF, "class": "ManageBuff", "summary": "给玩家加或删buff" },
 	"defeat" : { "category": BUFF, "class": "Defeat", "summary": "赋予败北" },
@@ -233,6 +241,14 @@ const TABLE := {
 	"schedule_effect_on_time_point" : { "category": EFFECT, "class": "ScheduleEffectOnTimePoint", "summary": "登记一次性延迟效果" },
 	"emit_time_point" : { "category": EFFECT, "class": "EmitTimePoint", "summary": "派发时点" },
 	"queue_optional_effect_for_players" : { "category": EFFECT, "class": "QueueOptionalEffectForPlayers", "summary": "为多名玩家分别排入可选效果" },
+	"build_effect" : { "category": EFFECT, "class": "BuildEffect", "summary": "按效果数据新建效果，不挂载不登记" },
+	"activate_effect" : { "category": EFFECT, "class": "ActivateEffect", "summary": "让已有效果作为某玩家的一次使用进入结算" },
+	"cancel_pending_action" : { "category": EFFECT, "class": "CancelPendingAction", "summary": "取消即将发生的动作" },
+	"edit_pending_action" : { "category": EFFECT, "class": "EditPendingAction", "summary": "改写即将发生动作的数值" },
+	"get_pending_action_value" : { "category": EFFECT, "class": "GetPendingActionValue", "summary": "读取即将发生动作携带的值" },
+	"ask_player_option" : { "category": CONTROL, "class": "AskPlayerOption", "summary": "执行到这一步时让玩家选一项" },
+	"ask_player_number" : { "category": CONTROL, "class": "AskPlayerNumber", "summary": "执行到这一步时让玩家在区间内选一个数" },
+	"ask_players_secret_option" : { "category": CONTROL, "class": "AskPlayersSecretOption", "summary": "多名玩家各自秘密选一项" },
 	"release_true_name" : { "category": ACTION, "class": "ReleaseTrueName", "summary": "真名解放并展示技能牌" },
 	"apply_card_keywords" : { "category": ACTION, "class": "ApplyCardKeywords", "summary": "结算一张牌的词条规则" },
 	"get_player_total_power" : { "category": QUERY_PLAYER, "class": "GetPlayerTotalPower", "summary": "查玩家合计威力及构成" },
@@ -242,6 +258,8 @@ const TABLE := {
 	"create_base_number" : { "category": CONSTRUCT, "class": "CreateBaseNumber", "summary": "新建数字" },
 	"create_func" : { "category": CONSTRUCT, "class": "CreateFunc", "summary": "新建BaseFunc" },
 	"clone_object" : { "category": CONSTRUCT, "class": "CloneObject", "summary": "复制对象，不放进区域" },
+	"create_card" : { "category": CONSTRUCT, "class": "CreateCard", "summary": "按内部名从卡库新建一张牌，不放进区域" },
+	"build_card" : { "category": CONSTRUCT, "class": "BuildCard", "summary": "按完整卡牌数据新建一张自定义牌，不放进区域" },
 	"location" : { "category": CONSTRUCT, "class": "Location", "summary": "新建地点" },
 	"tag" : { "category": CONSTRUCT, "class": "Tag", "summary": "新建tag字典" },
 	"shuffle_array" : { "category": QUERY_COLLECTION, "class": "ShuffleArray", "summary": "就地洗乱数组" },
@@ -256,7 +274,8 @@ const TABLE := {
 	"calculate_number" : { "category": MATH, "class": "CalculateNumber", "summary": "运算后返回新数字，不改原值" },
 	"random_int" : { "category": MATH, "class": "RandomInt", "summary": "随机整数" },
 	"random_float" : { "category": MATH, "class": "RandomFloat", "summary": "随机浮点" },
-	"show_message" : { "category": MESSAGE, "class": "ShowMessage", "summary": "产生一条提示消息" }
+	"show_message" : { "category": MESSAGE, "class": "ShowMessage", "summary": "产生一条提示消息" },
+	"show_cards" : { "category": MESSAGE, "class": "ShowCards", "summary": "把一组牌展示给指定玩家看" }
 }
 
 

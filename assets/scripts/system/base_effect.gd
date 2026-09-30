@@ -37,6 +37,7 @@ func clone_data(context):
 			cloned._options.append(copied)
 	cloned._once_per_game = _once_per_game
 	cloned._is_manual = _is_manual
+	cloned._disabled = _disabled
 	#选择、用量、触发上下文沿用构造默认值；原所属对象的数字索引不变。
 	return cloned
 
@@ -64,6 +65,8 @@ var _once_per_game:bool = false
 #手动发动：声明后不由时点自动询问，只由玩家在它自己声明的时点里主动发动(如令咒)。
 #time_points 在这类效果上表达的是"允许发动的时机窗口"，而不是自动触发时机
 var _is_manual:bool = false
+#被禁用的效果不结算（"不能再发动"、选项被封锁）。用 set_property 打开/关闭，不删效果
+var _disabled:bool = false
 #选项分支：{"shown_option_name":String, "funcs":Array[BaseFunc],
 #  "max_uses":int(单个选项在本次重置周期内最多能用几次，-1不限，默认-1),
 #  "quantity_range":[min,max](可选。声明后玩家选中该项时还需额外选一个范围内的数量)}。

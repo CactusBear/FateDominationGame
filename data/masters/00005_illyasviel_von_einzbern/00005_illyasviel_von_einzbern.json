@@ -246,7 +246,7 @@
 	},
 	{
 	  "effect_name": "all_conceal_magic_gain",
-	  "shown_effect_name": "回合结束时，若你本回合打出的攻击均为暗置，获得1点魔力",
+	  "shown_effect_name": "小圣杯 - 回合结束时，若你本回合打出的攻击均为暗置，获得1点魔力",
 	  "time_points": [
         "day_end"
 	  ],
@@ -340,7 +340,7 @@
 		"effects": [
 		  {
 			"effect_name": "return_to_nothingness",
-			"shown_effect_name": "归于虚无 - 回合开始时，若你上回合在战斗阶段时与至少一名被淘汰的玩家位于同一战场，获得2战果",
+			"shown_effect_name": "归于虚无 - 回合开始时，若你上回合在战斗阶段时与至少一名被淘汰的玩家位于同一战场，获得2点战果",
 			"time_points": [
               "day_start"
 			],
@@ -442,7 +442,7 @@
 	  "effects": [
 		{
 		  "effect_name": "third_magic_remove_strength_cards",
-		  "shown_effect_name": "解锁此技能后，立即从手牌、牌库及弃牌堆中移除所有力量牌",
+		  "shown_effect_name": "解锁此技能后立刻从牌库，弃牌堆及手牌中移除所有力量牌",
 		  "time_points": [
             "game_start"
 		  ],
@@ -533,7 +533,7 @@
 		},
 		{
 		  "effect_name": "passive",
-		  "shown_effect_name": "被动 - 你的魔术和特殊属性基本攻击获得+2威力",
+		  "shown_effect_name": "被动 - 魔术和特殊属性牌的基本威力+2",
 		  "time_points": [
             "self_played_card"
 		  ],

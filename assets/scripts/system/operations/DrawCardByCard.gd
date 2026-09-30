@@ -15,11 +15,18 @@ func exec(card:BaseCard, from:Array, to:Array, to_index = -1):
 		if index < 0 or index > to.size():
 			#show("超出数组范围")
 			return
+	#进入游戏外等区之前先问一次"即将发生"：效果可以取消这次搬运（守护、量子甲胄这类替代）
+	if !CardZones.allow_move(card, from, to):
+		return
+	#先记下两端各是谁的哪个区，搬完再派发牌区变化时点（搬完之后来源数组里已经没有这张牌）
+	var from_info:Dictionary = CardZones.locate(from)
+	var to_info:Dictionary = CardZones.locate(to)
 	from.pop_at(i)
 	if index == -1:
 		to.append(card)
-		return
-	to.insert(index, card)
+	else:
+		to.insert(index, card)
+	CardZones.notify_moved(card, from_info, to_info)
 
 
 func _index_of(value) -> int:

@@ -1,0 +1,1706 @@
+{
+	"title": "新手教程：做完从者阿尔托莉雅",
+	"order": 1,
+	"intro": "跟着卡面一步步做出完整的阿尔托莉雅：从者本体、牌库和三张技能牌风王结界、对魔力、誓约胜利之剑。这是独立练习副本，只在内存中：保存、另存、打包均被禁止，不会向 data 写入练习 JSON。教程前的原稿，包括未保存修改，可在卡面顶部恢复。每一步目标完成后会自动打勾。",
+	"steps": [
+		{
+			"title": "自己新建一个从者",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_cd.png",
+			"body": "这一步由你自己动手：先在左边顶上的「卡牌种类」里选「从者」，再点「新建一张」。\n\n教程不会替你建卡。建出来的从者只在内存里，练习期间「保存」「另存」「打包」都不可用；卡面顶部随时能把教程前的原稿，包括未保存的修改，恢复回来。\n\n卡面信息里带 * 的必须填。",
+			"highlight": [
+				"KindButton",
+				"NewButton"
+			],
+			"checks": [
+				{
+					"text": "自己新建了一张从者",
+					"from": "state",
+					"path": [
+						"kind"
+					],
+					"has": "servant"
+				}
+			]
+		},
+		{
+			"title": "牌名与职阶",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_cd.png",
+			"body": "照着从者卡填：\n• 牌名：阿尔托莉雅·潘德拉贡\n• 职阶：saber，可点 ▾ 搜索常见职阶，也可直接输入新职阶。\n\n牌名是给玩家看的中文；职阶用英文小写。",
+			"highlight": [
+				"CardBox"
+			],
+			"checks": [
+				{
+					"text": "填好牌名",
+					"path": [
+						"shown_servant_name"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "填好职阶",
+					"path": [
+						"servant_class"
+					],
+					"not_empty": true
+				}
+			]
+		},
+		{
+			"title": "内部名",
+			"body": "展开卡面信息里的「程序用的名字」，填内部名。\n\n内部名只用小写英文字母、数字和下划线，例如 artoria_practice。练习不会保存为 JSON，不会覆盖已有从者。",
+			"highlight": [
+				"CardBox"
+			],
+			"checks": [
+				{
+					"text": "填好内部名",
+					"path": [
+						"servant_name"
+					],
+					"not_empty": true
+				}
+			]
+		},
+		{
+			"title": "从者卡图",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_cd.png",
+			"body": "在「从者卡图」那一行点「选图」，选这个从者的概览卡图片；选择后旁边会显示缩略图。\n\n头像可以不选；练习 JSON 绝不会保存。",
+			"highlight": [
+				"CardBox"
+			],
+			"checks": [
+				{
+					"text": "选好从者卡图",
+					"path": [
+						"servant_card_img"
+					],
+					"not_empty": true
+				}
+			]
+		},
+		{
+			"title": "标签",
+			"body": "往下找到「标签」，点「＋ 加一个标签」，填：\n• 标签：和内部名相同\n• 类型：servant_tag\n• 名字列表：一行写内部名\n\n别的卡用「按标签找」时靠它认出这个从者，每个从者都要有这一条。",
+			"highlight": [
+				"CardBox"
+			],
+			"checks": [
+				{
+					"text": "有一条类型为 servant_tag 的标签",
+					"path": [
+						"tags"
+					],
+					"has": [
+						{
+							"type": "servant_tag"
+						}
+					]
+				},
+				{
+					"text": "这条标签的名字列表不是空的",
+					"path": [
+						"tags",
+						{
+							"type": "servant_tag"
+						},
+						"name_list"
+					],
+					"not_empty": true
+				}
+			]
+		},
+		{
+			"title": "牌库",
+			"body": "从者概览卡上就印着这名从者的牌库：卡面左下角是属性牌，从上到下三行分别是力量、迅捷、魔术，每行后面跟着各张的威力；右下角是特殊牌。牌库照着卡面填就行。\n\n展开「附带内容」下的「牌库引用」，点「打开攻击牌选牌面板」。面板里每张牌都带卡图、属性、威力和魔力消耗，点「＋ 添加」把它放进牌库，同一张可以重复加；上面「已选」那一栏能逐张移除。\n\n阿尔托莉雅的卡面这样对上，数字的颜色跟卡面那一行一样：\n• [color=#E03407]2、3、4、4、4、5[/color] → 力量 2「迫击」[color=#c9a45c]1[/color] 张、力量 3「强打」[color=#c9a45c]1[/color] 张、力量 4「浑身的一击」[color=#c9a45c]3[/color] 张、力量 5「会心的一击」[color=#c9a45c]1[/color] 张\n• [color=#22A322]3[/color] → 迅捷 3「高速移动」[color=#c9a45c]1[/color] 张\n• [color=#3A8FE0]2、3[/color] → 魔术 2「低位魔术」[color=#c9a45c]1[/color] 张、魔术 3「中位魔术」[color=#c9a45c]1[/color] 张\n• 右下角三条 Surveil、Luck、Luck → 特殊「急行」[color=#c9a45c]1[/color] 张、特殊「幸运」[color=#c9a45c]2[/color] 张\n\n卡面上一共 12 个数，牌库里就是 12 张。练习不会保存 JSON。",
+			"highlight": [
+				"CardBox"
+			],
+			"checks": [
+				{
+					"text": "牌库里写了牌",
+					"path": [
+						"specials",
+						"ATTACKS"
+					],
+					"not_empty": true
+				}
+			]
+		},
+		{
+			"title": "加一张技能牌",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_wind_barrier.png",
+			"body": "展开「附带内容」下的「技能」，点「＋ 加一个技能牌」。\n\n编辑器会切到这张技能牌自己的一页：左边「子牌」里能看到它，卡面信息和效果积木都换成这张牌的。要回到从者本体，点「← 回到本体」或在「子牌」里点「本体」。\n\n阿尔托莉雅一共三张技能牌：风王结界、对魔力、誓约胜利之剑。先做风王结界，另外两张在后面的步骤里照同样的方法加。",
+			"highlight": [
+				"CardBox",
+				"SubList"
+			],
+			"checks": [
+				{
+					"text": "从者有一张技能牌",
+					"path": [
+						"specials",
+						"SKILLS"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "正在编辑技能牌",
+					"from": "state",
+					"path": [
+						"focus"
+					],
+					"has": "skill"
+				}
+			]
+		},
+		{
+			"title": "风王结界的卡面",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_wind_barrier.png",
+			"body": "照卡面填：\n• 牌名：风王结界\n• 卡图：选这张技能牌的图\n• 属性：点 ＋ 加上魔术和宝具\n• 发动要花：4，也就是卡面上的魔力消耗\n• 威力：4\n• 程序用的名字里的内部名：wind_barrier",
+			"highlight": [
+				"CardBox"
+			],
+			"checks": [
+				{
+					"text": "牌名是风王结界",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						}
+					],
+					"not_empty": true
+				},
+				{
+					"text": "填好内部名",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"skill_name"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "选好卡图",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"skill_card_img"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "属性有魔术和宝具",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"attributes"
+					],
+					"has": [
+						"magic",
+						"noble_phantasm"
+					]
+				},
+				{
+					"text": "发动要花 4",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"cost"
+					],
+					"has": {
+						"number": 4
+					}
+				},
+				{
+					"text": "威力 4",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"power"
+					],
+					"has": {
+						"number": 4
+					}
+				}
+			]
+		},
+		{
+			"title": "第一条效果：什么时候算费用",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_wind_barrier.png",
+			"body": "卡面第一行「若你的真名隐藏，此牌的魔力消耗-2」可以换个说法：[color=#c9a45c]真名解放了就是 4，没解放就是 2[/color]。只要在费用可能变化的时候重新定一次就行。\n\n在中间「效果积木」点「＋ 给「风王结界」加一条效果」：\n1. 卡面文字照抄第一行。\n2. 在黄色的「当……时」上点「＋ 时机」，依次加：自己卡牌费用计算完成时、自己真名解放时、自己真名隐藏时。三个时机满足任意一个就会触发。\n3. 展开「发动方式与限制」：勾上「自动发动」，再勾上「只在这张牌自己打出时」，这样别的牌算费用时不会改到它。",
+			"highlight": [
+				"ScriptBox"
+			],
+			"checks": [
+				{
+					"text": "三个时机都选上了",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects"
+					],
+					"has": [
+						{
+							"time_points": [
+								"self_card_cost_calculated",
+								"self_true_name_release",
+								"self_true_name_hidden"
+							]
+						}
+					]
+				},
+				{
+					"text": "勾上自动发动",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_card_cost_calculated"
+							]
+						},
+						"is_pure_passive"
+					],
+					"has": true
+				},
+				{
+					"text": "勾上只在这张牌自己打出时",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_card_cost_calculated"
+							]
+						},
+						"source_bound"
+					],
+					"has": true
+				}
+			]
+		},
+		{
+			"title": "第一条效果：把费用设成 4 或 2",
+			"body": "积木都在左边积木区：上面「取值积木」「执行积木」两页，左侧竖排是分类，也可以直接在搜索框里搜名字。\n1. 「牌的魔力消耗加……」（执行积木 · 改牌）拖到「当……时」下面。点它右边的 … 展开更多空位，会出现「设为」。\n2. 「如果……就是……否则……」（取值积木 · 判断）拖进「设为」那一格。\n3. 「玩家的真名解放了吗」（取值积木 · 历史记录）拖进「如果」后面的条件格；玩家那一格空着，就是发动效果的玩家。\n4. 「就是」那一格点 ▾ 选「效果数字」，填 4；「否则」那一格同样选「效果数字」，填 2。\n\n数字写成效果数字，别的卡改费用时才能改到它。牌那一格空着，就是这张牌自己。",
+			"highlight": [
+				"PalettePanel",
+				"ScriptBox"
+			],
+			"checks": [
+				{
+					"text": "用了「牌的魔力消耗加……」",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_card_cost_calculated"
+							]
+						},
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "edit_card_cost"
+						}
+					]
+				},
+				{
+					"text": "设为的值用「如果……就是……否则……」来选",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_card_cost_calculated"
+							]
+						},
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "if_else_func"
+						}
+					]
+				},
+				{
+					"text": "条件是「真名解放了吗」",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_card_cost_calculated"
+							]
+						},
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "is_true_name_released"
+						}
+					]
+				},
+				{
+					"text": "效果数字里有 4 和 2",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_card_cost_calculated"
+							]
+						},
+						"effect_numbers"
+					],
+					"has": [
+						{
+							"number": 4
+						},
+						{
+							"number": 2
+						}
+					]
+				}
+			]
+		},
+		{
+			"title": "第二条效果：每回合只能发动一次",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_wind_barrier.png",
+			"body": "卡面没写次数，但基础规则写着：[color=#c9a45c]同一张牌上带阶段的能力，每回合只能用一次[/color]。所以这条「战斗阶段：」能力要限次数。\n\n在中间「效果积木」点「＋ 给「风王结界」加一条效果」，卡面文字照抄第二行。然后：\n1. 时机选「自己战斗阶段中」。\n2. 「发动方式与限制」里不勾「自动发动」，勾上「玩家点牌才发动」。「要先激活这张牌」保持打勾，默认跟随自动发动显示为勾上：牌打出后，到了战斗阶段才能点它发动。\n3. 点效果下面的「改成让玩家选一项」。选项文字也照抄卡面第二行，发动时玩家看到的就是这句。\n4. 回到「发动方式与限制」：「最多用几次」填 1，勾上「每回合重新计次」。\n\n以后凡是牌上的阶段能力，都照这四步先搭好架子。",
+			"highlight": [
+				"ScriptBox"
+			],
+			"checks": [
+				{
+					"text": "有一条在自己战斗阶段中触发的效果",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects"
+					],
+					"has": [
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						}
+					]
+				},
+				{
+					"text": "勾上玩家点牌才发动",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						},
+						"is_manual"
+					],
+					"has": true
+				},
+				{
+					"text": "改成了让玩家选一项",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						},
+						"options"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "最多用 1 次",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						},
+						"max_total_uses"
+					],
+					"has": 1
+				},
+				{
+					"text": "每回合重新计次",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						},
+						"reset_counts_each_round"
+					],
+					"has": true
+				}
+			]
+		},
+		{
+			"title": "第二条效果：对手的力量攻击按 0 算",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_wind_barrier.png",
+			"body": "积木放进「选项 1」下面那一串：\n1. 「对……里的每一个」（执行积木 · 控制）拖进选项 1 下面。\n2. 「和玩家在同一战区的玩家」（取值积木 · 地图）拖进「对」后面那一格；玩家那一格空着。\n3. 「玩家带属性的攻击本回合威力按 0 算」（执行积木 · 改玩家数值）拖进「对每一个」的嘴里。它的玩家那一格会自动变成橙色的「↻ 当前这一项」，每一轮代表正在处理的那个对手。\n4. 属性那一格点 ＋ 选力量。\n\n「按 0 算」只影响本回合结算，不会改牌。",
+			"highlight": [
+				"PalettePanel",
+				"ScriptBox"
+			],
+			"checks": [
+				{
+					"text": "对同一战区的每个玩家做一遍",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						},
+						"options",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "get_players_in_same_area"
+						},
+						{
+							"func_name": "foreach_func"
+						}
+					]
+				},
+				{
+					"text": "把力量攻击的威力按 0 算",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "风王结界"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						},
+						"options",
+						0,
+						"funcs",
+						{
+							"func_name": "foreach_func"
+						},
+						"parameters",
+						0
+					],
+					"has": [
+						{
+							"func_name": "zero_attribute_power",
+							"parameters": [
+								[
+									"strength"
+								]
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"title": "加第二张技能牌：对魔力",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_mana_resistance.png",
+			"body": "点「← 回到本体」，在「技能」里再点「＋ 加一个技能牌」，照卡面填：\n• 牌名：对魔力\n• 卡图：选这张技能牌的图\n• 属性：点 ＋ 加上特殊\n• 发动要花：3\n• 威力：3\n• 程序用的名字里的内部名：mana_resistance",
+			"highlight": [
+				"CardBox",
+				"SubList"
+			],
+			"checks": [
+				{
+					"text": "牌名是对魔力",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						}
+					],
+					"not_empty": true
+				},
+				{
+					"text": "填好内部名",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"skill_name"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "选好卡图",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"skill_card_img"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "属性有特殊",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"attributes"
+					],
+					"has": [
+						"special"
+					]
+				},
+				{
+					"text": "发动要花 3",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"cost"
+					],
+					"has": {
+						"number": 3
+					}
+				},
+				{
+					"text": "威力 3",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"power"
+					],
+					"has": {
+						"number": 3
+					}
+				}
+			]
+		},
+		{
+			"title": "魔术抗性：换一个属性",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_mana_resistance.png",
+			"body": "卡面第二段「魔术抗性-战斗阶段：将与你位于同一战场的交战对手控制的魔术属性攻击威力设置为0」，和风王结界的第二条效果几乎一样，只是属性换成魔术。\n\n先照「每回合只能发动一次」那一步搭架子：\n1. 加一条效果，卡面文字照抄，时机选「自己战斗阶段中」。\n2. 「发动方式与限制」里勾「玩家点牌才发动」，「最多用几次」填 1，勾上「每回合重新计次」。\n3. 点「改成让玩家选一项」，选项文字照抄卡面。\n\n再照上一步搭选项 1：「对……里的每一个」（执行积木 · 控制），「对」那格放「和玩家在同一战区的玩家」（取值积木 · 地图），嘴里放「玩家带属性的攻击本回合威力按 0 算」（执行积木 · 改玩家数值），属性选魔术。\n\n小窍门：切回风王结界那一页，在「对……里的每一个」上右键「复制」；回到对魔力，在选项 1 下面的「把积木拖到这里」上右键「粘贴」。里面的「同一战区的玩家」会一起带过来，只要把属性里的力量点 ✕ 去掉，再点 ＋ 选魔术。",
+			"highlight": [
+				"ScriptBox"
+			],
+			"checks": [
+				{
+					"text": "时机是自己战斗阶段中",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects"
+					],
+					"has": [
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						}
+					]
+				},
+				{
+					"text": "卡面文字照抄了魔术抗性",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						},
+						"shown_effect_name"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "勾上玩家点牌才发动",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						},
+						"is_manual"
+					],
+					"has": true
+				},
+				{
+					"text": "最多用 1 次",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						},
+						"max_total_uses"
+					],
+					"has": 1
+				},
+				{
+					"text": "每回合重新计次",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						},
+						"reset_counts_each_round"
+					],
+					"has": true
+				},
+				{
+					"text": "改成了让玩家选一项",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase"
+							]
+						},
+						"options"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "选项里放了「对……里的每一个」",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects"
+					],
+					"has": [
+						{
+							"options": [
+								{
+									"funcs": [
+										{
+											"func_name": "foreach_func"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"text": "把魔术攻击的威力按 0 算",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects"
+					],
+					"has": [
+						{
+							"options": [
+								{
+									"funcs": [
+										{
+											"func_name": "foreach_func",
+											"parameters": [
+												[
+													{
+														"func_name": "zero_attribute_power",
+														"parameters": [
+															[
+																"magic"
+															]
+														]
+													}
+												]
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"title": "宝具绽放：被动能力与发动条件",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_mana_resistance.png",
+			"body": "卡面第一段「宝具绽放-被动/战斗阶段：若你于本回合打出了你战斗中魔力消耗最高的宝具攻击，获得1点战果。若其消耗≥4，你额外获得1点战果。」\n\n「被动/战斗阶段：」也是要玩家点的能力，区别是[color=#c9a45c]牌不用先激活[/color]，放在技能区里就能用。\n\n1. 再加一条效果，卡面文字照抄，时机选「自己战斗阶段中」。\n2. 勾「玩家点牌才发动」，[color=#c9a45c]取消「要先激活这张牌」[/color]。\n3. 「最多用几次」填 1，勾上「每回合重新计次」。\n4. 点「改成让玩家选一项」，选项文字照抄卡面。\n5. 在选项 1 下面展开「发动前必须满足」，点「＋ 加一条前置条件」，「做不到时的提示」填：本回合未打出魔力消耗最高的宝具攻击。\n\n卡面上的 1 和 4 先不用管，后面搭积木时直接填进空位，会自动记成效果数字。条件不满足时，这一项在弹窗里是灰的，玩家点不下去。",
+			"highlight": [
+				"ScriptBox"
+			],
+			"checks": [
+				{
+					"text": "取消了要先激活这张牌",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects"
+					],
+					"has": [
+						{
+							"time_points": [
+								"self_battle_phase"
+							],
+							"is_manual": true,
+							"need_activate": false
+						}
+					]
+				},
+				{
+					"text": "卡面文字照抄了宝具绽放",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"shown_effect_name"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "最多用 1 次",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"max_total_uses"
+					],
+					"has": 1
+				},
+				{
+					"text": "每回合重新计次",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"reset_counts_each_round"
+					],
+					"has": true
+				},
+				{
+					"text": "改成了让玩家选一项",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "选项里有一条前置条件并写了提示",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options",
+						0,
+						"activation_requirements",
+						0,
+						"message"
+					],
+					"not_empty": true
+				}
+			]
+		},
+		{
+			"title": "宝具绽放：找出最贵的宝具",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_mana_resistance.png",
+			"body": "前置条件的积木搭在「条件 1」下面，思路是：[color=#c9a45c]把自己所有的牌合成一批 → 挑出宝具 → 取魔力消耗最大的那张 → 看它在不在已打出的牌里[/color]。\n\n下面每一块都直接拖进上一块的空位，嵌在一起，不用保存结果。建议从最外面那块开始搭：\n1. 「这一批里有这个吗」（取值积木 · 一批东西）拖进条件 1。「这一批」拖入「玩家的已打出的牌」（取值积木 · 玩家的牌区）。\n2. 「这个」那格拖入「这些里属性名最大的」（取值积木 · 找牌），属性名选魔力消耗。「取最大」默认开着，不用动。\n3. 它的「这些」拖入「从这些牌里挑出带属性的牌」（取值积木 · 找牌），属性点 ＋ 选宝具。\n4. 「这些牌」拖入「把甲乙丙丁合成一批」（取值积木 · 一批东西），甲、乙拖入同在「玩家的牌区」的「玩家的从者技能区」「玩家的御主技能区」，丁空着不用。\n5. 丙那格再拖一块「把甲乙丙丁合成一批」（取值积木 · 一批东西），四格分别拖入「玩家的牌库」「玩家的手牌」「玩家的已打出的牌」「玩家的弃牌堆」。一块最多合四批，所以套两层。\n\n所有玩家格都空着，就是发动效果的玩家。最外面那块算出「是」，这一项才能选。",
+			"highlight": [
+				"PalettePanel",
+				"ScriptBox"
+			],
+			"checks": [
+				{
+					"text": "把自己各区的牌合成一批",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options",
+						0,
+						"activation_requirements",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "merge_arrays"
+						},
+						{
+							"func_name": "get_player_deck"
+						},
+						{
+							"func_name": "get_player_hand_cards"
+						},
+						{
+							"func_name": "get_player_played_cards"
+						},
+						{
+							"func_name": "get_player_discard"
+						}
+					]
+				},
+				{
+					"text": "再加上从者技能区和御主技能区",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options",
+						0,
+						"activation_requirements",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "get_player_servant_skills"
+						},
+						{
+							"func_name": "get_player_master_skills"
+						}
+					]
+				},
+				{
+					"text": "挑出宝具",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options",
+						0,
+						"activation_requirements",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "get_cards_by_attributes_fr_arr",
+							"parameters": [
+								[
+									"noble_phantasm"
+								]
+							]
+						}
+					]
+				},
+				{
+					"text": "取魔力消耗最大的",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options",
+						0,
+						"activation_requirements",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "get_extreme_by_property",
+							"parameters": [
+								"_cost"
+							]
+						}
+					]
+				},
+				{
+					"text": "最后看它在不在已打出的牌里",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options",
+						0,
+						"activation_requirements",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "is_in_array"
+						}
+					]
+				}
+			]
+		},
+		{
+			"title": "宝具绽放：获得战果",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_mana_resistance.png",
+			"body": "条件满足才会走到这里，所以选项 1 下面直接给战果：\n1. 「把玩家的战果设为……再加……」（执行积木 · 改玩家数值）拖进选项 1，点「加上」那格的「默认」，填 1。\n2. 在这块上右键「复制」，在它下面的「把积木拖到这里」右键「粘贴」。副本和原来那块共用同一个效果数字 1。\n3. 在副本上右键「加一个「仅当」条件」。下面的积木都直接嵌进空位，不用保存结果：\n4. 「仅当」那格拖入「值落在列表里吗」（取值积木 · 判断），列表填 [0, 1]。\n5. 「值」那格拖入「甲和乙比大小」（取值积木 · 判断），乙点 ▾ 选「效果数字」，填 4。比出来 0 是等于、1 是大于，合起来就是「≥ 4」。\n6. 「甲」那格拖入「对象的属性名」（取值积木 · 找牌），属性名选魔力消耗。\n7. 「对象」那格照上一步的做法取最贵的宝具：放「这些里属性名最大的」选魔力消耗，它的「这些」放「从这些牌里挑出带属性的牌」选宝具，那块的「这些牌」放「玩家的已打出的牌」。条件已保证最贵的宝具打出过，只在已打出的牌里找就够了。",
+			"highlight": [
+				"PalettePanel",
+				"ScriptBox"
+			],
+			"checks": [
+				{
+					"text": "给了战果",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "edit_score"
+						}
+					]
+				},
+				{
+					"text": "取到最贵宝具的魔力消耗",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "get_property",
+							"parameters": [
+								"_cost"
+							]
+						},
+						{
+							"func_name": "get_extreme_by_property"
+						}
+					]
+				},
+				{
+					"text": "和效果数字 4 比大小",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "compare_number"
+						}
+					]
+				},
+				{
+					"text": "比出来 ≥ 0",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "match_func",
+							"parameters": [
+								[
+									0,
+									1
+								]
+							]
+						}
+					]
+				},
+				{
+					"text": "额外战果只在≥4 时给",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"options",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "edit_score",
+							"condition": {}
+						}
+					]
+				},
+				{
+					"text": "效果数字里有 1 和 4",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "对魔力"
+						},
+						"effects",
+						{
+							"need_activate": false
+						},
+						"effect_numbers"
+					],
+					"has": [
+						{
+							"number": 1
+						},
+						{
+							"number": 4
+						}
+					]
+				}
+			]
+		},
+		{
+			"title": "加第三张技能牌：誓约胜利之剑",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_excalibur.png",
+			"body": "回到本体再加一张技能牌，照卡面填：\n• 牌名：誓约胜利之剑\n• 卡图：选这张技能牌的图\n• 属性：力量、宝具\n• 发动要花：8\n• 威力：12\n• 程序用的名字里的内部名：excalibur\n• 词条：一行写 true_name_release\n\n卡面顶上的【真名解放】是词条：这张牌明置打出后，你的真名就解放了。风王结界第一条效果里「真名解放了吗」判断的正是这个状态。",
+			"highlight": [
+				"CardBox",
+				"SubList"
+			],
+			"checks": [
+				{
+					"text": "牌名是誓约胜利之剑",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						}
+					],
+					"not_empty": true
+				},
+				{
+					"text": "填好内部名",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"skill_name"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "选好卡图",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"skill_card_img"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "属性有力量和宝具",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"attributes"
+					],
+					"has": [
+						"strength",
+						"noble_phantasm"
+					]
+				},
+				{
+					"text": "发动要花 8",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"cost"
+					],
+					"has": {
+						"number": 8
+					}
+				},
+				{
+					"text": "威力 12",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"power"
+					],
+					"has": {
+						"number": 12
+					}
+				},
+				{
+					"text": "词条写了 true_name_release",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"keywords"
+					],
+					"has": [
+						"true_name_release"
+					]
+				}
+			]
+		},
+		{
+			"title": "高潮回合时，合计威力+4",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_excalibur.png",
+			"body": "卡面「战斗阶段：高潮回合时，合计威力+4」要[color=#c9a45c]两个时机同时成立[/color]：\n1. 加一条效果，卡面文字照抄。时机加「自己战斗阶段中」和「自己高潮时」。\n2. 「发动方式与限制」勾「时机要全部同时成立」，不然任意一个成立就能发动。\n3. 照前面的做法：勾「玩家点牌才发动」，「最多用几次」填 1，勾「每回合重新计次」，再点「改成让玩家选一项」。\n4. 选项 1 下面放「把玩家的合计威力设为……再加……」（执行积木 · 改玩家数值），点「加上」那格的「默认」，填 4。\n\n卡面加的是[color=#c9a45c]合计威力[/color]，不是这张牌的威力：别用「牌的威力加……」，那会把牌面的 12 永久改大。合计威力的加成回合结束会自动清掉。",
+			"highlight": [
+				"ScriptBox"
+			],
+			"checks": [
+				{
+					"text": "两个时机都选上了",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects"
+					],
+					"has": [
+						{
+							"time_points": [
+								"self_battle_phase",
+								"self_climax"
+							]
+						}
+					]
+				},
+				{
+					"text": "勾上时机要全部同时成立",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase",
+								"self_climax"
+							]
+						},
+						"require_all_time_points"
+					],
+					"has": true
+				},
+				{
+					"text": "勾上玩家点牌才发动",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase",
+								"self_climax"
+							]
+						},
+						"is_manual"
+					],
+					"has": true
+				},
+				{
+					"text": "最多用 1 次",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase",
+								"self_climax"
+							]
+						},
+						"max_total_uses"
+					],
+					"has": 1
+				},
+				{
+					"text": "每回合重新计次",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase",
+								"self_climax"
+							]
+						},
+						"reset_counts_each_round"
+					],
+					"has": true
+				},
+				{
+					"text": "改成了让玩家选一项",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase",
+								"self_climax"
+							]
+						},
+						"options"
+					],
+					"not_empty": true
+				},
+				{
+					"text": "效果数字里有 4",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase",
+								"self_climax"
+							]
+						},
+						"effect_numbers"
+					],
+					"has": [
+						{
+							"number": 4
+						}
+					]
+				},
+				{
+					"text": "选项里放了「把玩家的合计威力设为……再加……」",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_phase",
+								"self_climax"
+							]
+						},
+						"options",
+						0,
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "edit_power"
+						}
+					]
+				}
+			]
+		},
+		{
+			"title": "赢得第 11 回合的战斗就获胜",
+			"image": "res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_excalibur.png",
+			"body": "卡面最后一句「若你赢得第11回合的战斗，获得游戏胜利」：\n1. 加一条效果，卡面文字照抄，时机选「自己赢得战斗时」。\n2. 勾「自动发动」，同时[color=#c9a45c]手动勾上「要先激活这张牌」[/color]：自动发动默认不要求激活，不勾的话这张牌没打出也会判你获胜。\n3. 「把玩家的项目改成值」（执行积木 · 改玩家数值）拖到「当……时」下面，项目选胜利判定覆盖，值选是。\n4. 在它上面右键「加一个「仅当」条件」，「仅当」那格拖入「值等于值吗」（取值积木 · 判断）。\n5. 左边那格拖入「现在是第几回合」（取值积木 · 玩家信息），右边点 ▾ 选「效果数字」，填 11。",
+			"highlight": [
+				"PalettePanel",
+				"ScriptBox"
+			],
+			"checks": [
+				{
+					"text": "时机是自己赢得战斗时",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects"
+					],
+					"has": [
+						{
+							"time_points": [
+								"self_battle_win"
+							]
+						}
+					]
+				},
+				{
+					"text": "勾上自动发动",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_win"
+							]
+						},
+						"is_pure_passive"
+					],
+					"has": true
+				},
+				{
+					"text": "勾上要先激活这张牌",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_win"
+							]
+						},
+						"need_activate"
+					],
+					"has": true
+				},
+				{
+					"text": "效果数字里有 11",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_win"
+							]
+						},
+						"effect_numbers"
+					],
+					"has": [
+						{
+							"number": 11
+						}
+					]
+				},
+				{
+					"text": "判断是不是第 11 回合",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_win"
+							]
+						},
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "get_current_round"
+						},
+						{
+							"func_name": "if_func"
+						}
+					]
+				},
+				{
+					"text": "改写胜利判定",
+					"path": [
+						"specials",
+						"SKILLS",
+						{
+							"shown_skill_name": "誓约胜利之剑"
+						},
+						"effects",
+						{
+							"time_points": [
+								"self_battle_win"
+							]
+						},
+						"funcs"
+					],
+					"has": [
+						{
+							"func_name": "set_player_data",
+							"parameters": [
+								"victory_override",
+								true
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"title": "在内存中检查练习",
+			"body": "看右边「还要修的地方」：清空即完成内存中的练习，阿尔托莉雅的三张技能牌就都做好了。不必保存，也不能保存或打包；即使关闭教程面板，练习副本仍禁止写入 JSON。卡面顶部可恢复教程前的原稿。",
+			"highlight": [
+				"IssueList"
+			],
+			"checks": [
+				{
+					"text": "内存中的卡已通过问题检查（不保存）",
+					"from": "state",
+					"path": [
+						"ready"
+					],
+					"has": true
+				}
+			]
+		}
+	]
+}

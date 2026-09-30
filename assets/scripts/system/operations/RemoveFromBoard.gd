@@ -19,4 +19,5 @@ func exec(player_id:int = -1) -> bool:
 	#日志：谁离开了哪个战区。供"上回合在哪""本回合是否上过版图"这类历史查询
 	GameLog.record("leave_board", player_id, -1,
 		str(area._area_name) if area != null else "", loc, ["leave_board"], {})
+	TimePointChecker.dynamic_time_point([TimePoints.LEAVE_LOCATION], player_id, loc)
 	return true

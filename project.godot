@@ -17,7 +17,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="Fate"
 config/description="Fate Domination the Board Game"
 config/version="0.0.1"
-run/main_scene="res://assets/scenes/main_menu/temp_launcher.tscn"
+run/main_scene="res://assets/scenes/main_menu/main_menu.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="FateDomination"
 config/features=PackedStringArray("4.7", "Mobile")
@@ -42,8 +42,8 @@ _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/stretch/mode="viewport"
-window/stretch/aspect="keep_width"
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [dotnet]
 

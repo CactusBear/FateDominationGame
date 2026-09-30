@@ -199,6 +199,91 @@ const OTHERS_CARD_COST_CALCULATED = "others_card_cost_calculated"
 
 const ROUND_START_RESET = "round_start_reset"
 
+#FD3.9 卡牌扩展时点。牌区变化由搬运入口在"来源区/目标区是某名玩家的哪个区"确定后派发；
+#before_* 是"即将发生"的时点：派发时同步结算强制效果，效果可用 cancel_pending_action /
+#edit_pending_action 取消或改写这次动作，发起方读取结果后再决定是否真的执行
+const CARD_TO_HAND = "card_to_hand"
+const SELF_CARD_TO_HAND = "self_card_to_hand"
+const OTHERS_CARD_TO_HAND = "others_card_to_hand"
+
+const CARD_TO_DISCARD = "card_to_discard"
+const SELF_CARD_TO_DISCARD = "self_card_to_discard"
+const OTHERS_CARD_TO_DISCARD = "others_card_to_discard"
+
+const CARD_TO_DECK = "card_to_deck"
+const SELF_CARD_TO_DECK = "self_card_to_deck"
+const OTHERS_CARD_TO_DECK = "others_card_to_deck"
+
+const CARD_LEAVE_DECK = "card_leave_deck"
+const SELF_CARD_LEAVE_DECK = "self_card_leave_deck"
+const OTHERS_CARD_LEAVE_DECK = "others_card_leave_deck"
+
+const CARD_TO_SKILL_ZONE = "card_to_skill_zone"
+const SELF_CARD_TO_SKILL_ZONE = "self_card_to_skill_zone"
+const OTHERS_CARD_TO_SKILL_ZONE = "others_card_to_skill_zone"
+
+const CARD_REMOVED = "card_removed"
+const SELF_CARD_REMOVED = "self_card_removed"
+const OTHERS_CARD_REMOVED = "others_card_removed"
+
+const CARD_DRAWN = "card_drawn"
+const SELF_CARD_DRAWN = "self_card_drawn"
+const OTHERS_CARD_DRAWN = "others_card_drawn"
+
+const DECK_RESHUFFLED = "deck_reshuffled"
+const SELF_DECK_RESHUFFLED = "self_deck_reshuffled"
+const OTHERS_DECK_RESHUFFLED = "others_deck_reshuffled"
+
+const ENTER_LOCATION = "enter_location"
+const SELF_ENTER_LOCATION = "self_enter_location"
+const OTHERS_ENTER_LOCATION = "others_enter_location"
+
+const LEAVE_LOCATION = "leave_location"
+const SELF_LEAVE_LOCATION = "self_leave_location"
+const OTHERS_LEAVE_LOCATION = "others_leave_location"
+
+const CARD_FACE_FLIPPED = "card_face_flipped"
+const SELF_CARD_FACE_FLIPPED = "self_card_face_flipped"
+const OTHERS_CARD_FACE_FLIPPED = "others_card_face_flipped"
+
+const BEFORE_ELIMINATE = "before_eliminate"
+const SELF_BEFORE_ELIMINATE = "self_before_eliminate"
+const OTHERS_BEFORE_ELIMINATE = "others_before_eliminate"
+
+const BEFORE_DEFEAT = "before_defeat"
+const SELF_BEFORE_DEFEAT = "self_before_defeat"
+const OTHERS_BEFORE_DEFEAT = "others_before_defeat"
+
+const BEFORE_CARD_CLOSE = "before_card_close"
+const SELF_BEFORE_CARD_CLOSE = "self_before_card_close"
+const OTHERS_BEFORE_CARD_CLOSE = "others_before_card_close"
+
+const BEFORE_CARD_REMOVE = "before_card_remove"
+const SELF_BEFORE_CARD_REMOVE = "self_before_card_remove"
+const OTHERS_BEFORE_CARD_REMOVE = "others_before_card_remove"
+
+const BEFORE_SCORE_ADD = "before_score_add"
+const SELF_BEFORE_SCORE_ADD = "self_before_score_add"
+const OTHERS_BEFORE_SCORE_ADD = "others_before_score_add"
+
+const BEFORE_MAGIC_ADD = "before_magic_add"
+const SELF_BEFORE_MAGIC_ADD = "self_before_magic_add"
+const OTHERS_BEFORE_MAGIC_ADD = "others_before_magic_add"
+
+
+const BEFORE_COMMAND_SPELL_SPEND = "before_command_spell_spend"
+const SELF_BEFORE_COMMAND_SPELL_SPEND = "self_before_command_spell_spend"
+const OTHERS_BEFORE_COMMAND_SPELL_SPEND = "others_before_command_spell_spend"
+
+const SURVIVE_ELIMINATION = "survive_elimination"
+const SELF_SURVIVE_ELIMINATION = "self_survive_elimination"
+const OTHERS_SURVIVE_ELIMINATION = "others_survive_elimination"
+
+const SITUATION_ACTIVATED = "situation_activated"
+
+const BEFORE_SITUATION_ACTIVATE = "before_situation_activate"
+
+
 
 
 #dic
@@ -358,5 +443,64 @@ const shown_time_points:Dictionary = {
 	CARD_COST_CALCULATED : "卡牌费用计算完成时",
 	SELF_CARD_COST_CALCULATED : "自己卡牌费用计算完成时",
 	OTHERS_CARD_COST_CALCULATED : "他人卡牌费用计算完成时",
-	ROUND_START_RESET : "回合开始重置时"
+	ROUND_START_RESET : "回合开始重置时",
+	CARD_TO_HAND : "牌进入手牌时",
+	SELF_CARD_TO_HAND : "自己的牌进入手牌时",
+	OTHERS_CARD_TO_HAND : "他人的牌进入手牌时",
+	CARD_TO_DISCARD : "牌进入弃牌堆时",
+	SELF_CARD_TO_DISCARD : "自己的牌进入弃牌堆时",
+	OTHERS_CARD_TO_DISCARD : "他人的牌进入弃牌堆时",
+	CARD_TO_DECK : "牌进入牌库时",
+	SELF_CARD_TO_DECK : "自己的牌进入牌库时",
+	OTHERS_CARD_TO_DECK : "他人的牌进入牌库时",
+	CARD_LEAVE_DECK : "牌离开牌库时",
+	SELF_CARD_LEAVE_DECK : "自己的牌离开牌库时",
+	OTHERS_CARD_LEAVE_DECK : "他人的牌离开牌库时",
+	CARD_TO_SKILL_ZONE : "牌进入技能区时",
+	SELF_CARD_TO_SKILL_ZONE : "自己的牌进入技能区时",
+	OTHERS_CARD_TO_SKILL_ZONE : "他人的牌进入技能区时",
+	CARD_REMOVED : "牌被移出游戏时",
+	SELF_CARD_REMOVED : "自己的牌被移出游戏时",
+	OTHERS_CARD_REMOVED : "他人的牌被移出游戏时",
+	CARD_DRAWN : "抽牌时",
+	SELF_CARD_DRAWN : "自己的抽牌时",
+	OTHERS_CARD_DRAWN : "他人的抽牌时",
+	DECK_RESHUFFLED : "弃牌堆洗回牌库时",
+	SELF_DECK_RESHUFFLED : "自己的弃牌堆洗回牌库时",
+	OTHERS_DECK_RESHUFFLED : "他人的弃牌堆洗回牌库时",
+	ENTER_LOCATION : "进入席位时",
+	SELF_ENTER_LOCATION : "自己的进入席位时",
+	OTHERS_ENTER_LOCATION : "他人的进入席位时",
+	LEAVE_LOCATION : "离开席位时",
+	SELF_LEAVE_LOCATION : "自己的离开席位时",
+	OTHERS_LEAVE_LOCATION : "他人的离开席位时",
+	CARD_FACE_FLIPPED : "卡牌翻面时",
+	SELF_CARD_FACE_FLIPPED : "自己的卡牌翻面时",
+	OTHERS_CARD_FACE_FLIPPED : "他人的卡牌翻面时",
+	BEFORE_ELIMINATE : "即将被淘汰时",
+	SELF_BEFORE_ELIMINATE : "自己的即将被淘汰时",
+	OTHERS_BEFORE_ELIMINATE : "他人的即将被淘汰时",
+	BEFORE_DEFEAT : "即将败北时",
+	SELF_BEFORE_DEFEAT : "自己的即将败北时",
+	OTHERS_BEFORE_DEFEAT : "他人的即将败北时",
+	BEFORE_CARD_CLOSE : "卡牌即将关闭时",
+	SELF_BEFORE_CARD_CLOSE : "自己的卡牌即将关闭时",
+	OTHERS_BEFORE_CARD_CLOSE : "他人的卡牌即将关闭时",
+	BEFORE_CARD_REMOVE : "牌即将被移出游戏时",
+	SELF_BEFORE_CARD_REMOVE : "自己的牌即将被移出游戏时",
+	OTHERS_BEFORE_CARD_REMOVE : "他人的牌即将被移出游戏时",
+	BEFORE_SCORE_ADD : "即将获得战果时",
+	SELF_BEFORE_SCORE_ADD : "自己的即将获得战果时",
+	OTHERS_BEFORE_SCORE_ADD : "他人的即将获得战果时",
+	BEFORE_MAGIC_ADD : "即将获得魔力时",
+	SELF_BEFORE_MAGIC_ADD : "自己的即将获得魔力时",
+	OTHERS_BEFORE_MAGIC_ADD : "他人的即将获得魔力时",
+	BEFORE_COMMAND_SPELL_SPEND : "即将使用令咒时",
+	SELF_BEFORE_COMMAND_SPELL_SPEND : "自己的即将使用令咒时",
+	OTHERS_BEFORE_COMMAND_SPELL_SPEND : "他人的即将使用令咒时",
+	SURVIVE_ELIMINATION : "免于淘汰时",
+	SELF_SURVIVE_ELIMINATION : "自己的免于淘汰时",
+	OTHERS_SURVIVE_ELIMINATION : "他人的免于淘汰时",
+	SITUATION_ACTIVATED : "局势牌生效时",
+	BEFORE_SITUATION_ACTIVATE : "局势牌即将生效时",
 }

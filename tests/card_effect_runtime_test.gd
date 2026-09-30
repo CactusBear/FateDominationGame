@@ -76,6 +76,10 @@ func activate_effect(effects:Array, effect_key:String, player_id:int) -> bool:
 		return false
 	if not EffectManager.request_manual_activation(eff, player_id):
 		return false
+	#声明了 options 的效果（含"每回合一次"用的单选项包装）真实入口是提交选项，
+	#不是直接答"发动"：走 submit_active_choice 会跳过选项 funcs，等于什么都没结算
+	if eff.has_options():
+		return EffectManager.submit_option_choice(eff, [0])
 	return EffectManager.submit_active_choice(eff, true)
 
 ## 贯穿心脏（穿刺死棘之枪）：若仅有一名对手与你位于同一战场，令其【败北】。

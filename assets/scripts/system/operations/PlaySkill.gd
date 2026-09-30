@@ -36,11 +36,16 @@ func exec(skill:BaseSkill, player_id:int = -1, ignore_limit:bool = false, cost:B
 			return false
 	# 费用计算时点必须先于最终费用与可支付性判断；卡面减费才影响本次出牌。
 	TimePointChecker.dynamic_time_point([TimePoints.CARD_COST_CALCULATED], id, skill)
-	if !is_magic_immune and pl_magic.number < cost.number:
+	#费用下限为 0：动态费用公式（如阵地建造的"16 - 回合数×2"）在后期会算成负数，
+	#不取下限会让扣费反向加魔力。口径与 PlayAttack、RegularPlay.cost 完全一致
+	var final_cost = cost.number
+	if final_cost < 0:
+		final_cost = 0
+	if !is_magic_immune and pl_magic.number < final_cost:
 		return false
 	if !is_magic_immune:
 		var magic_before = pl_magic.number
-		pl_magic.minus(cost)
+		pl_magic.minus(BaseNumber.new(final_cost))
 		#扣费与 EditMagic 同一套记录口径（本操作不派 MAGIC_DECREASE 时点，保持原有行为）
 		GameLog.record_resource_change("magic", id, magic_before, pl_magic.number)
 

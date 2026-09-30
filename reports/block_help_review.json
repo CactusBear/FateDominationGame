@@ -1,0 +1,2342 @@
+{
+  "total": 215,
+  "source_operations": 212,
+  "board_power_descriptors": 3,
+  "review_scope": "全部逐项比对操作签名、源码注释与现有说明；补充的空白说明逐项读取操作函数体；其余尚未逐句审计完整函数体，不将此文件当作语义全审计。",
+  "items": [
+    {
+      "operation": "get_all_players_id",
+      "source": "assets/scripts/system/operations/GetAllPlayersId.gd",
+      "signature": "func exec()",
+      "help": "列出本局全部玩家（包括已出局的）。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_active_players_id",
+      "source": "assets/scripts/system/operations/GetActivePlayersId.gd",
+      "signature": "func exec()",
+      "help": "按当前顺位列出没出局的玩家。",
+      "source_comments": [
+        "按当前行动顺位返回仍未出局的玩家；顺位来源而非字典键保证结果可用于规则比较。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_id_using_eff",
+      "source": "assets/scripts/system/operations/GetPlIdUsingEff.gd",
+      "signature": "func exec()",
+      "help": "就是当前这条效果的发动者。",
+      "source_comments": [
+        "取当前激活效果的归属玩家。效果入池时就记下了归属，所以直接读；",
+        "归属缺失时退回到反查各玩家的self_effects"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_name",
+      "source": "assets/scripts/system/operations/GetPlayerName.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "按玩家编号读取显示名称，未指定编号时使用当前效果所属玩家。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_master",
+      "source": "assets/scripts/system/operations/GetPlayerMaster.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取玩家当前的御主对象。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_servant",
+      "source": "assets/scripts/system/operations/GetPlayerServant.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取玩家当前的从者对象。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_lives",
+      "source": "assets/scripts/system/operations/GetPlayerLives.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "玩家的生命数字。",
+      "source_comments": [
+        "默认取当前效果的触发者，而不是本地玩家"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_data_number",
+      "source": "assets/scripts/system/operations/GetDataNumber.gd",
+      "signature": "func exec(key:String, player_id:int = -1)",
+      "help": "读玩家的一个数值；如果那一项是一批牌/一串东西，就给出它有几个。",
+      "source_comments": [
+        "show(\"所提供的键不存在于player_data中\")"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_data_value",
+      "source": "assets/scripts/system/operations/GetPlayerDataValue.gd",
+      "signature": "func exec(key:String, player_id:int = -1)",
+      "help": "原样读出玩家的某一项（数字、开关、列表都行）。",
+      "source_comments": [
+        "取出player_data里任意键的原始值(对象、数组、bool、BaseNumber本身)。",
+        "GetDataNumber只返回数字或容器长度，不能用来读true_name_released、location这类非数值字段。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_ids_by_data_value",
+      "source": "assets/scripts/system/operations/GetPlayerIdsByDataValue.gd",
+      "signature": "func exec(key:String, value, include_out:bool = false)",
+      "help": "找出某一项正好等于给定值的所有玩家。",
+      "source_comments": [
+        "找出player_data某键等于给定值的玩家id。用于\"场上是否已有某御主\"这类查询。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_players_field",
+      "source": "assets/scripts/system/operations/GetPlayersField.gd",
+      "signature": "func exec(key:String, include_out:bool = false, skip_null:bool = true)",
+      "help": "把每个玩家的同一项收集成一批。",
+      "source_comments": [
+        "收集每名玩家player_data里同一个键的值。可用来列出在场从者、御主、位置。",
+        "skip_null为true时丢掉空值，不把\"没有从者\"算进列表。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_rank_by_data_number",
+      "source": "assets/scripts/system/operations/GetRankByDataNumber.gd",
+      "signature": "func exec(key:String, player_id:int = -1, descending:bool = true, include_out:bool = false)",
+      "help": "按数值排名，1 是第一。并列时名次相同。",
+      "source_comments": [
+        "按player_data里某个BaseNumber字段计算名次。默认高分在前。",
+        "并列：有多少人严格更优，名次就是这个数+1(两个人并列第一，下一名是第3)。",
+        "include_out为false时不把已淘汰玩家算进比较，但不写死必须淘汰。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_phase_order",
+      "source": "assets/scripts/system/operations/GetPhaseOrder.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "玩家在阶段里的行动顺位。",
+      "source_comments": [
+        "玩家在阶段里的行动顺位（0 是第一个行动）。按当前顺位现算，不读任何快照字段：",
+        "原实现读 player_data[\"phase_order\"]，而玩家数据里从来没有这个键，调用即报错。",
+        "不在顺位里的条目（已被移除、分身棋子、NPC）返回 null"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_current_round",
+      "source": "assets/scripts/system/operations/GetCurrentRound.gd",
+      "signature": "func exec()",
+      "help": "返回游戏目前的回合数，不推进回合。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_game_data_value",
+      "source": "assets/scripts/system/operations/GetGameDataValue.gd",
+      "signature": "func exec(key:String)",
+      "help": "读全局游戏数据的一个字段（高级）。",
+      "source_comments": [
+        "读取GameData上的字段。loaded_masters、loaded_servants、skill_zone_magic_limit等都走这里，",
+        "不为每个库各写一个Get。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_total_power",
+      "source": "assets/scripts/system/operations/GetPlayerTotalPower.gd",
+      "signature": "func exec(player_id:int = -1, preview_power:int = 0, preview_cards:Array = [], preview_hidden:Array = [])",
+      "help": "按与界面、结算相同的口径算出合计威力。",
+      "source_comments": [
+        "查一名玩家此刻的合计威力（比较胜负用的那个值）及其构成。",
+        "公式：出牌威力 power + 合计威力加成 total_power_bonus + 场上牌加成 + 当前实际享有的地利。",
+        "",
+        "为什么要独立成一个查询：这个公式原先在战斗结算里写一份、界面里另写五份，",
+        "任何一处口径变了就会出现\"界面显示 12、结算却按 10 判\"这类对不上的问题"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_deck",
+      "source": "assets/scripts/system/operations/GetPlayerDeck.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的牌库（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_discard",
+      "source": "assets/scripts/system/operations/GetPlayerDiscard.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的弃牌堆（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_hand_cards",
+      "source": "assets/scripts/system/operations/GetPlayerHandCards.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的手牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [
+        "取出玩家手牌数组。牌库/弃牌/场上已有对应Get，手牌入口对齐它们，不另做筛选。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_played_cards",
+      "source": "assets/scripts/system/operations/GetPlayerPlayedCards.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的已打出的牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_master_skills",
+      "source": "assets/scripts/system/operations/GetPlayerMasterSkills.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的御主技能区（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_servant_skills",
+      "source": "assets/scripts/system/operations/GetPlayerServantSkills.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的从者技能区（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_buffs",
+      "source": "assets/scripts/system/operations/GetPlayerBuffs.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的状态（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_command_spell",
+      "source": "assets/scripts/system/operations/GetPlayerCommandSpell.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的令咒（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_skills_side",
+      "source": "assets/scripts/system/operations/GetPlSkillsSide.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的场边技能区（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_buffs_side",
+      "source": "assets/scripts/system/operations/GetPlBuffsSide.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的场边状态（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_deck_side",
+      "source": "assets/scripts/system/operations/GetPlDeckSide.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的场边牌库（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_discard_side",
+      "source": "assets/scripts/system/operations/GetPlDiscardSide.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的场边弃牌堆（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_command_spell_side",
+      "source": "assets/scripts/system/operations/GetPlCommandSpellSide.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的场边令咒（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_master_side",
+      "source": "assets/scripts/system/operations/GetPlMasterSide.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的场边御主（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_servant_side",
+      "source": "assets/scripts/system/operations/GetPlServantSide.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的场边从者（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_others_side",
+      "source": "assets/scripts/system/operations/GetPlOthersSide.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的场边其他牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_attacks_out_game",
+      "source": "assets/scripts/system/operations/GetPlAttacksOutGame.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的游戏外的攻击牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_skills_out_game",
+      "source": "assets/scripts/system/operations/GetPlSkillsOutGame.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的游戏外的技能牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_buffs_out_game",
+      "source": "assets/scripts/system/operations/GetPlBuffsOutGame.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的游戏外的状态（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_command_spell_out_game",
+      "source": "assets/scripts/system/operations/GetPlCommandSpellOutGame.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的游戏外的令咒（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_master_out_game",
+      "source": "assets/scripts/system/operations/GetPlMasterOutGame.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的游戏外的御主（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_servant_out_game",
+      "source": "assets/scripts/system/operations/GetPlServantOutGame.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的游戏外的从者（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pl_others_out_game",
+      "source": "assets/scripts/system/operations/GetPlOthersOutGame.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "取这名玩家的游戏外的其他牌（一批）。拿到的是那一区本身，往里放、从里拿都会直接改到它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "find_player_array_containing",
+      "source": "assets/scripts/system/operations/FindPlayerArrayContaining.gd",
+      "signature": "func exec(item, player_id:int = -1)",
+      "help": "找出这张牌/这个东西在玩家的哪一区里。",
+      "source_comments": [
+        "在玩家各区域里找出包含该对象的那一个数组。只查询，不移动。",
+        "找到后由DrawCardByCard/RemoveFromArray处理去向，这样移除游戏和换区可以共用。",
+        "按名字的独立牌区（extra_zones）由卡牌数据建立，数量与名字都不固定，逐个追加进来查"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_card_attributes",
+      "source": "assets/scripts/system/operations/GetCardAttributes.gd",
+      "signature": "func exec(card:BaseCard = null)",
+      "help": "卡牌的属性列表。",
+      "source_comments": [
+        "取出卡牌的属性数组。攻击、技能、事件等各类卡牌都适用。",
+        "card留空时取当前激活效果所属的卡牌"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_attack_printed_cost",
+      "source": "assets/scripts/system/operations/GetAttackPrintedCost.gd",
+      "signature": "func exec(attack:BaseAttack)",
+      "help": "卡面原本印的魔力消耗，不受效果修改影响。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_attack_printed_power",
+      "source": "assets/scripts/system/operations/GetAttackPrintedPower.gd",
+      "signature": "func exec(attack:BaseAttack)",
+      "help": "卡面原本印的威力。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_skill_printed_cost",
+      "source": "assets/scripts/system/operations/GetSkillPrintedCost.gd",
+      "signature": "func exec(skill:BaseSkill)",
+      "help": "卡面原本印的魔力消耗。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_skill_printed_power",
+      "source": "assets/scripts/system/operations/GetSkillPrintedPower.gd",
+      "signature": "func exec(skill:BaseSkill)",
+      "help": "卡面原本印的威力。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_printed_num",
+      "source": "assets/scripts/system/operations/GetPrintedNum.gd",
+      "signature": "func exec(index:BaseNumber, object:BaseObject)",
+      "help": "读对象自带的数字列表里的一个。",
+      "source_comments": [
+        "show(\"超出数组范围\")"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_printed_nums",
+      "source": "assets/scripts/system/operations/GetPrintedNums.gd",
+      "signature": "func exec(object:BaseObject)",
+      "help": "对象自带的数字列表。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_eff_source_card",
+      "source": "assets/scripts/system/operations/GetEffSourceCard.gd",
+      "signature": "func exec(effect:BaseEffect = null)",
+      "help": "「此牌」：沿着来源找到这条效果挂在哪张牌上。",
+      "source_comments": [
+        "取当前激活效果所属的卡牌。顺着from链往上找，用于\"此卡\"这类自指效果。",
+        "攻击、技能、事件等各类卡牌都适用"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "card_counts_power",
+      "source": "assets/scripts/system/operations/CardCountsPower.gd",
+      "signature": "func exec(card:BaseHandCard, player_id:int = -1)",
+      "help": "按这张牌此刻的场上状态及特殊效果判断是否计入合计威力；暗置或关闭通常不计，但效果可声明例外。",
+      "source_comments": [
+        "判定一张牌当前是否计入玩家的合计威力。所有增减power的位置都应查询本函数，",
+        "不要各自判断_is_concealed，否则每加一条例外规则都要改多处。",
+        "默认规则：在场上且明置的牌计入合计威力。两个方向的例外都按效果名查询：",
+        "NeverCountsPowerEffect            明置也不计入(优先级最高)",
+        "CountsPowerWhileConcealedEffect   暗置也照常计入"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "card_has_effect",
+      "source": "assets/scripts/system/operations/CardHasEffect.gd",
+      "signature": "func exec(effect_name:String, card:BaseCard)",
+      "help": "按效果内部名检查。",
+      "source_comments": [
+        "通用查询：卡牌的_effects里是否带有指定名称的效果。",
+        "与PlayerBuffsHaveEffect对应，后者查玩家身上的buff，本函数查卡牌自身。",
+        "规则判定位置统一按效果名查询，不关心是哪张卡赋予的"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "has_attribute",
+      "source": "assets/scripts/system/operations/HasAttribute.gd",
+      "signature": "func exec(attributes:Array, card:BaseCard = null)",
+      "help": "注意：这块的第一个空位是属性、第二个是牌。",
+      "source_comments": [
+        "判断卡牌是否具有所给属性中的任意一个，返回bool供后续func的condition使用。",
+        "attributes留空时视为符合；card留空时取当前激活效果所属的卡牌"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_cards_by_name_fr_arr",
+      "source": "assets/scripts/system/operations/GetCardsByNameFrArr.gd",
+      "signature": "func exec(card_name:String, cards:Array)",
+      "help": "按内部名找，得到一批。",
+      "source_comments": [
+        "别名（\"同时名为/视为\"）与本名同等看待，比对口径统一在 BaseObject.has_name"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_cards_by_attributes_fr_arr",
+      "source": "assets/scripts/system/operations/GetCardsByAttributesFrArr.gd",
+      "signature": "func exec(attributes:Array, cards:Array, require_all:bool = false)",
+      "help": "勾「全部都要有」时每个属性都要带，否则带一个就行。",
+      "source_comments": [
+        "从给定数组里筛出带有指定属性的卡。默认命中任意一个属性，require_all为true时必须全部具备。",
+        "不扫描全局对象，只处理调用方传入的数组，和GetCardsByNameFrArr同一用法。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_cards_by_tag_fr_arr",
+      "source": "assets/scripts/system/operations/GetCardsByTagFrArr.gd",
+      "signature": "func exec(tag_name:String, objects:Array)",
+      "help": "只在传入数组中按标签名筛对象，兼容 tag_name 和 tag 两种标签键，不扫描全局对象。",
+      "source_comments": [
+        "从给定数组里按tag_name筛对象。GetByTag扫的是全局objects且整份字典相等，",
+        "这里只比tag_name，并且只看传入数组，供\"基础攻击\"等标记复用。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_card_by_index_fr_arr",
+      "source": "assets/scripts/system/operations/GetCardByIndexFrArr.gd",
+      "signature": "func exec(card_index, cards:Array)",
+      "help": "从 0 开始数：0 是第一张。没有那一张就什么都拿不到。",
+      "source_comments": [
+        "show(\"超出数组范围\")"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_objects_by_name_fr_arr",
+      "source": "assets/scripts/system/operations/GetObjectsByNameFrArr.gd",
+      "signature": "func exec(object_name:String, objects:Array)",
+      "help": "按内部名找任意对象（状态、附带物、牌），得到一批。",
+      "source_comments": [
+        "按_name从任意对象数组取值。GetCardsByNameFrArr只接受BaseCard，御主/从者/buff要用这个。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_buff_by_name_fr_arr",
+      "source": "assets/scripts/system/operations/GetBuffByNameFrArr.gd",
+      "signature": "func exec(buff_name:String, buffs:Array)",
+      "help": "按内部名找状态。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_by_tag",
+      "source": "assets/scripts/system/operations/GetByTag.gd",
+      "signature": "func exec(tag:Dictionary)",
+      "help": "高级：按整份标签字典匹配。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_extreme_by_property",
+      "source": "assets/scripts/system/operations/GetExtremeByProperty.gd",
+      "signature": "func exec(objects:Array, property:String, take_max:bool = true)",
+      "help": "取消「取最大」时改为找最小的。",
+      "source_comments": [
+        "从数组里取出某属性最大或最小的对象。属性值可以是BaseNumber或裸数字。",
+        "只返回对象，不改数值；并列时返回先遇到的那个。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "filter_by_property",
+      "source": "assets/scripts/system/operations/FilterByProperty.gd",
+      "signature": "func exec(objects:Array, property:String, value)",
+      "help": "按某个属性筛出一批。",
+      "source_comments": [
+        "从数组里筛出属性等于给定值的对象。暗置牌、激活中的牌、按_name取值都可以走这里。",
+        "ForeachFunc不能收集过滤结果，所以需要这个查询。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_property",
+      "source": "assets/scripts/system/operations/GetProperty.gd",
+      "signature": "func exec(object, property:String)",
+      "help": "读任意对象的一个属性（高级）。常见：_cost 魔力消耗、_power 威力、from 来源。",
+      "source_comments": [
+        "读取任意对象上的属性。JSON无法直接写obj._servant_class，统一走这个入口。",
+        "属性名由调用方传入，不写死任何字段；对象没有该属性时返回null。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_location",
+      "source": "assets/scripts/system/operations/GetLocation.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "玩家当前所在的席位。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_location_magic",
+      "source": "assets/scripts/system/operations/GetLocationMagic.gd",
+      "signature": "func exec(location:BaseLocation)",
+      "help": "席位印的魔力收益。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_location_benefit",
+      "source": "assets/scripts/system/operations/GetLocationBenefit.gd",
+      "signature": "func exec(location:BaseLocation)",
+      "help": "席位当前的地利。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_effective_location_benefit",
+      "source": "assets/scripts/system/operations/GetEffectiveLocationBenefit.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "只有部署到该位置才算，与结算同口径。",
+      "source_comments": [
+        "查玩家此刻真正享有的地利。基础规则：部署到地利位置、且在结算时仍位于该位置，",
+        "获得等同该位置标注地利数的合计威力。所有例外与修正都由这里统一处理：",
+        "① 战区级例外（\"此战场的各地利位置不提供地利\"）按战区上的 no_location_benefit 效果名查询；",
+        "② 只有\"部署\"到该位置的玩家才算，部署之后移动（或经效果搬运）到同一位置的不算；",
+        "③ 效果对该位置地利的临时修正（远隔操作\"地利效果翻倍\"、占领高地、卫宫\"地利变为3倍\"）："
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_location_benefit",
+      "source": "assets/scripts/system/operations/GetPlayerLocationBenefit.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "只取当前位置印刷地利值；尚未部署或位置无印刷地利时返回 0，不负责判定地利例外。",
+      "source_comments": [
+        "查玩家当前所在位置的印刷地利数。战力结算\"位于地利位置获得等同地利数的合计威力\"是",
+        "基础规则，数值来自位置自己声明的 _printed_benefit（印刷值），排除例外（如\"不提供地利\"",
+        "的战场）由调用方先判断再决定要不要用这个结果，本操作只负责取数。",
+        "不取 _benefit 而取印刷值：结算里的地利应遵循地形本身，效果对单个位置地利的临时增减",
+        "由 EditLocationBenefit 改 _benefit，两者语义不同。位置为 null 时返回 0"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "is_engaged",
+      "source": "assets/scripts/system/operations/IsEngaged.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "与对手同处一个会发生战斗的战场。",
+      "source_comments": [
+        "交战状态（基础规则）：\"若你与至少一名对手（包括玩家和NPC）一起位于一处会发生战斗的战场，",
+        "则你处于交战状态，此时你无法进行常规移动。\"",
+        "判据分两层，都不写死战区名：",
+        "① 战场要\"会发生战斗\"——取战区自己声明的 _score_need_win（魔术工房与侦察声明为 false）；",
+        "② 与至少一名对手同处同一个战区即可。同一战场里的不同席位同样算\"一起\""
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_location_map_area",
+      "source": "assets/scripts/system/operations/GetLocationMapArea.gd",
+      "signature": "func exec(location:BaseLocation = null, player_id:int = -1)",
+      "help": "没给位置时取 {player_id} 所在的战区。",
+      "source_comments": [
+        "由地点反查所属地图区域。多处规则都要做location->area，抽成查询以免各写一遍循环。",
+        "location留空时取当前玩家所在地点。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_map_area_by_name",
+      "source": "assets/scripts/system/operations/GetMapAreaByName.gd",
+      "signature": "func exec(area_name:String)",
+      "help": "按名字取一个战区。",
+      "source_comments": [
+        "按区域名取地图区域。名字由调用方传入，不写死深山町/新都。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_map_area_score",
+      "source": "assets/scripts/system/operations/GetMapAreaScore.gd",
+      "signature": "func exec(map_area:BaseMapArea)",
+      "help": "战区的竞争战果。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_map_area_score_need_win",
+      "source": "assets/scripts/system/operations/GetMapAreaScoreNeedWin.gd",
+      "signature": "func exec(map_area:BaseMapArea)",
+      "help": "工房、侦察这类不比威力的战区为否。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_map_area_buffs",
+      "source": "assets/scripts/system/operations/GetMapAreaBuffs.gd",
+      "signature": "func exec(map_area:BaseMapArea)",
+      "help": "战区挂着的状态。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_move_cost",
+      "source": "assets/scripts/system/operations/GetMoveCost.gd",
+      "signature": "func exec(map_area:BaseMapArea)",
+      "help": "离开/经过这个战区要花的魔力。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_move_target_location",
+      "source": "assets/scripts/system/operations/GetMoveTargetLocation.gd",
+      "signature": "func exec(target_area:BaseMapArea, ignore_limit:bool = false)",
+      "help": "满了就什么都拿不到。",
+      "source_comments": [
+        "取某战区\"常规移动\"的落点：区域内第一个标了 _will_move_to、且还有空位的点位。",
+        "没有这样的点位（落点已满、或该战区不提供常规移动落点）时返回 null。",
+        "常规移动的落点规则只在这一处实现：真正落位(MoveLocation)与界面\"能不能移过去\"的提示",
+        "共用它，避免两处各写一套出现\"看起来能点、点下去不动\"。",
+        "ignore_limit=true 表示忽略落点人数上限，与 SetLocation 的同名开关同义"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_events",
+      "source": "assets/scripts/system/operations/GetEvents.gd",
+      "signature": "func exec(map_area:BaseMapArea)",
+      "help": "战区里的事件牌。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_event_printed_score",
+      "source": "assets/scripts/system/operations/GetEventPrintedScore.gd",
+      "signature": "func exec(event:BaseEvent)",
+      "help": "事件牌印的战果。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_situations",
+      "source": "assets/scripts/system/operations/GetSituations.gd",
+      "signature": "func exec()",
+      "help": "取地图持有的局势牌列表；并非只取当前激活的那一张。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_situation_printed_magic",
+      "source": "assets/scripts/system/operations/GetSituationPrintedMagic.gd",
+      "signature": "func exec(situation:BaseSituation)",
+      "help": "局势牌印的魔力。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pls_in_location",
+      "source": "assets/scripts/system/operations/GetPlsInLocation.gd",
+      "signature": "func exec(location:BaseLocation)",
+      "help": "读取指定席位上的玩家编号列表，不跨席位查找。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_num_of_pl_in_map_area",
+      "source": "assets/scripts/system/operations/GetNumOfPlInMapArea.gd",
+      "signature": "func exec(map_area:BaseMapArea)",
+      "help": "把战区内所有席位的在场玩家数量相加，不按玩家编号去重。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_players_in_same_area",
+      "source": "assets/scripts/system/operations/GetPlayersInSameArea.gd",
+      "signature": "func exec(player_id:int = -1, include_self:bool = false)",
+      "help": "勾「包含自己」时连自己也算上。",
+      "source_comments": [
+        "通用查询：与指定玩家处于同一地图区域(如深山町/新都/魔术工房/侦察)的其他在场玩家id。",
+        "不依赖任何额外存储字段，实时按location现算，随时可查，不局限于战斗结算那一刻。",
+        "include_self为true时结果包含自己，供\"同区域所有玩家\"类效果复用"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_players_in_map_area",
+      "source": "assets/scripts/system/operations/GetPlayersInMapArea.gd",
+      "signature": "func exec(map_area:BaseMapArea, include_out:bool = false, anchor_player_id:int = -2, include_self:bool = true)",
+      "help": "战区里的在场玩家。",
+      "source_comments": [
+        "列出位于指定地图区域的玩家id。GetPlayersInSameArea以玩家为锚点，这里以区域为锚点。",
+        "include_self仅在传入anchor_player_id时有意义；不传则返回该区域全部在场玩家。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_activating_eff",
+      "source": "assets/scripts/system/operations/GetActivatingEff.gd",
+      "signature": "func exec()",
+      "help": "当前效果本身（高级）。",
+      "source_comments": [
+        "交互",
+        "效果处理"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_effect_number",
+      "source": "assets/scripts/system/operations/GetEffectNumber.gd",
+      "signature": "func exec(effect_name:String, index:int = 0, object:BaseObject = null)",
+      "help": "读别的效果里的数字。",
+      "source_comments": [
+        "按\"效果名+下标\"取出某个对象上某个效果自带的数字，用于修改别人卡面上的效果数值。",
+        "下标只在单个效果内部有意义，所以给对象增删效果不会让这里的引用错位。",
+        "object留空时取当前激活效果所属的卡牌"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_effect_using_nums",
+      "source": "assets/scripts/system/operations/GetEffectUsingNums.gd",
+      "signature": "func exec(effect:BaseEffect)",
+      "help": "读取指定效果对象内部的使用次数数字列表；只读取，不改变剩余次数。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_time_points",
+      "source": "assets/scripts/system/operations/GetPlayerTimePoints.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "读取指定玩家当前记录的时机列表，不查询历史日志。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "player_buffs_have_effect",
+      "source": "assets/scripts/system/operations/PlayerBuffsHaveEffect.gd",
+      "signature": "func exec(effect_name:String, player_id:int = -1)",
+      "help": "只看激活的状态。",
+      "source_comments": [
+        "通用查询：玩家身上是否有任意激活的buff，其_effects里带有指定名称的效果。",
+        "规则判定位置(出牌、战力结算等)统一调用本函数，不关心具体是哪种buff类型；",
+        "效果本身(如CannotPlayCardsEffect)的含义由声明它的buff和查询它的规则位置共同约定"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "board_has_effect",
+      "source": "assets/scripts/system/operations/BoardHasEffect.gd",
+      "signature": "func exec(effect_name:String)",
+      "help": "局势牌、事件牌、战区状态里只要有就算。常用于禁令。",
+      "source_comments": [
+        "全局面查询：激活的局势牌 + 各战区挂的事件牌与 buff 里，是否有指定名称的效果。",
+        "「宝具禁止使用」这类禁令写在局势牌/事件牌效果上，规则位置（出牌入口）按效果名查询存在性，",
+        "不关心也不需要知道是哪张牌声明的——新增一张禁令牌不必改出牌代码。",
+        "效果名由调用方传入，本操作不写死任何具体规则名"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "map_area_has_effect",
+      "source": "assets/scripts/system/operations/MapAreaHasEffect.gd",
+      "signature": "func exec(map_area:BaseMapArea, effect_name:String)",
+      "help": "只查指定战区明置事件和已激活战区状态的效果；暗置事件不会提前生效。",
+      "source_comments": [
+        "单战区查询：该战区挂的事件牌与 buff 里，是否有指定名称的效果。",
+        "「固有结界：所有玩家不能移动至此地点」「此战场的位置不提供地利」这类按战场生效的规则，",
+        "用「目标/所在战区有没有声明该效果」判定，规则数字与例外都由数据声明，不写死战区名",
+        "暗置事件尚未公开，其禁令/地利修正等声明也不能提前生效。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_shared_attack_attribute",
+      "source": "assets/scripts/system/operations/GetSharedAttackAttribute.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "没有共同属性时什么都拿不到。",
+      "source_comments": [
+        "查「玩家场上所有攻击是否至少有一种共同属性」，有则返回该属性名，没有则返回 null。",
+        "「若至少一种属性相同则…」这类条件（协同、对未来的憧憬）都用它做门槛；",
+        "哪几张牌参与、参与判定的玩家是谁由调用方（通常是事件牌效果遍历战场玩家）决定。",
+        "不计入合计威力的牌（暗置等）不参与——与威力加成的口径一致。",
+        "返回 null 而不是空串：配合 is_null 原语判断，与「查询失败返回 null」的项目约定一致"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "can_gain_magic",
+      "source": "assets/scripts/system/operations/CanGainMagic.gd",
+      "signature": "func exec(source:String = \"\", player_id:int = -1)",
+      "help": "查限制，如工房被封。",
+      "source_comments": [
+        "通用查询：玩家能否从指定来源获得魔力。source由JSON调用方自定义(如\"workshop\"、",
+        "\"skill_zone\"、\"event\"等)，不写死任何具体来源，效果名按约定拼成",
+        "\"cannot_gain_magic_from_<source>\"；同时存在总闸\"cannot_gain_magic\"可一次性",
+        "屏蔽所有来源。任何buff把对应名字的效果挂进_effects即可获得限制，",
+        "新增限制来源不需要改动引擎代码，只需要JSON侧填写对应effect_name"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "when",
+      "source": "assets/scripts/system/operations/When.gd",
+      "signature": "func exec(time_points:Array)",
+      "help": "同一条效果写了多个时机时，用它区分这次是哪一个。",
+      "source_comments": [
+        "判断当前激活的效果是否由所给时点中的任意一个触发，返回bool供后续func的condition使用",
+        "用于让同一个效果在不同时点走不同的分支"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "query_log",
+      "source": "assets/scripts/system/operations/QueryLog.gd",
+      "signature": "func exec(filter:Dictionary = {}, round_offset = 0, limit:int = -1)",
+      "help": "从本局的历史记录里查。回合：0 本回合，-1 上回合，空着表示不限。",
+      "source_comments": [
+        "查游戏日志：筛出过去发生过的条目，供效果取历史信息——",
+        "如\"上回合我在战斗阶段是否与被淘汰的玩家同场\"\"本回合我打出了几张迅捷攻击\"。",
+        "历史事实统一存在 GameLog 里，各种效果就不必各自维护快照字段。",
+        "filter: 匹配 type / actor / target / place / tags / data 里的键值。",
+        "actor 传 -1 时按当前效果的触发者查（与其它 operation 的玩家参数一致）"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "sum_log_data",
+      "source": "assets/scripts/system/operations/SumLogData.gd",
+      "signature": "func exec(filter:Dictionary = {}, round_offset = 0, key:String = \"delta\")",
+      "help": "例如本回合一共得了多少战果。",
+      "source_comments": [
+        "把日志里某个数值字段求和，例如\"本回合我获得过多少战果\"= score_add 的 delta 之和。",
+        "查询条件与 actor=-1 的解析一并沿用 QueryLog，本操作只负责把命中的值加起来",
+        "不标注类型：:= 0 会被推断成 int，小数在累加时就被截断了",
+        "不取整：字段本身是小数时求和结果也要是小数"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "log_field_values",
+      "source": "assets/scripts/system/operations/LogFieldValues.gd",
+      "signature": "func exec(filter:Dictionary = {}, round_offset = 0, field:String = \"object\", limit:int = -1)",
+      "help": "把每条记录的某一项列成一批。",
+      "source_comments": [
+        "把日志条目里某个字段的值收集成数组。field 先按条目顶层键取(object/actor/place…),",
+        "顶层没有就取 data 里的同名键(effect_name/delta/winners…)。",
+        "用于\"本回合我打出的攻击牌有哪些\"（field=\"object\"）、",
+        "\"本局触发过哪些效果\"（field=\"effect_name\"）、\"本场战斗的胜者\"（field=\"winners\"）"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "is_true_name_released",
+      "source": "assets/scripts/system/operations/IsTrueNameReleased.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "按最后一次解放/隐藏判断。",
+      "source_comments": [
+        "查询玩家当前真名状态；状态由真名解放/隐藏事实的最后一条日志决定。",
+        "不在此处写入状态，也不按历史上是否曾解放过来判断。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "log_exists",
+      "source": "assets/scripts/system/operations/LogExists.gd",
+      "signature": "func exec(player_id:int = -1, filter:Dictionary = {}, round_offset = 0)",
+      "help": "历史上有没有过。回合：0 本回合，-1 上回合，空着不限。",
+      "source_comments": [
+        "历史上有没有发生过满足条件的事，例如\"本局那个玩家解放过真名吗\"\"有过被淘汰的人吗\"。",
+        "player_id 放在第 0 位：循环体里写 null 就能让当前元素(玩家id)被填进来；",
+        "传 -1 表示\"当前效果的触发者\"，此时 filter 里若写了 actor 会被它覆盖。",
+        "查询条件本身沿用 QueryLog，本操作只回答\"有没有\"",
+        "player_id 优先；传 -1 表示\"当前效果的触发者\"，与其它 operation 一致。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_round_battle_wins",
+      "source": "assets/scripts/system/operations/GetRoundBattleWins.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "查询本回合该玩家参与且获胜的战斗日志，返回获胜次数；不计算历史回合。",
+      "source_comments": [
+        "查「某玩家本回合已经赢得几场战斗」。战斗事实统一记在日志里（battle 条目的 winners 含自己），",
+        "这里只是把这一种查询包成 operation，供「每赢得一场战斗…」这类效果按次结算用。",
+        "player_id 传 -1 表示当前效果的触发者，与其它 operation 一致"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "get_area_round_winners",
+      "source": "assets/scripts/system/operations/GetAreaRoundWinners.gd",
+      "signature": "func exec(map_area:BaseMapArea)",
+      "help": "汇总本回合该战区已结算战斗的胜者，去重返回玩家列表；未发生战斗时为空。",
+      "source_comments": [
+        "查「本回合某战区战斗的胜者名单」。战斗结果在 _record_battle 按参与者逐条记录，",
+        "place 记的是区域名，所以同一场战斗每个参与者名下都有一条——按 place 筛 + winners 去重",
+        "就能拿到完整的胜者名单。供「此战场胜者可…」这类效果在胜者判定之后（battle_end）查询用。",
+        "map_area 为 null 或本回合该区域还没打过战斗时返回空数组"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "get_area_round_participants",
+      "source": "assets/scripts/system/operations/GetAreaRoundParticipants.gd",
+      "signature": "func exec(map_area:BaseMapArea)",
+      "help": "汇总本回合该战区实际参加过战斗的玩家并去重；未发生战斗时为空。",
+      "source_comments": [
+        "本回合某战区实际进入过 BattleResolver 的玩家。日志由每名参与者各记一条，故去重。"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "array_length",
+      "source": "assets/scripts/system/operations/ArrayLength.gd",
+      "signature": "func exec(arr)",
+      "help": "返回数组或字典的长度；传入空值返回 0。",
+      "source_comments": [
+        "通用数组/字典长度查询，供条件判断类func组合使用(如判断某数组是否为空)"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "is_in_array",
+      "source": "assets/scripts/system/operations/IsInArray.gd",
+      "signature": "func exec(item, arr:Array)",
+      "help": "逐项判断列表是否包含指定值；两个数字对象按数值比较，其他值按相等比较。",
+      "source_comments": [
+        "通用\"是否包含\"判断，兼容BaseNumber按数值比较"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "has",
+      "source": "assets/scripts/system/operations/Has.gd",
+      "signature": "func exec(parent_var, children_var, key = null)",
+      "help": "写了「键」时看那一项里有没有（高级）。",
+      "source_comments": [
+        "循环"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_dictionary_value",
+      "source": "assets/scripts/system/operations/GetDictionaryValue.gd",
+      "signature": "func exec(dict, key)",
+      "help": "按键取字典里的一项（高级）。",
+      "source_comments": [
+        "从字典里按键取值。specials[\"ATTACKS\"]、side[\"skills\"]这类嵌套字典用这个，",
+        "不要为每个键再写一个Get。键不存在返回null。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "array_difference",
+      "source": "assets/scripts/system/operations/ArrayDifference.gd",
+      "signature": "func exec(arr:Array, subtract:Array)",
+      "help": "新建一份列表，只保留左边有而右边没有的元素；不修改输入列表。",
+      "source_comments": [
+        "返回在arr里但不在subtract里的元素，不修改原数组。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "merge_arrays",
+      "source": "assets/scripts/system/operations/MergeArrays.gd",
+      "signature": "func exec(a:Array = [], b:Array = [], c:Array = [], d:Array = [])",
+      "help": "最多一次合四批，更多就再套一块。",
+      "source_comments": [
+        "把多个数组合并成新数组，不改原数组。手牌+牌库+弃牌一起筛选时用，避免为\"三区合并\"写专用操作。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "add_to_array",
+      "source": "assets/scripts/system/operations/AddToArray.gd",
+      "signature": "func exec(item, arr:Array, index = -1)",
+      "help": "位置空着或 -1 表示放到最后。会直接改那一批。",
+      "source_comments": [
+        "把元素放进数组。index为-1时追加。不做去重、不登记效果，那些由调用方组合。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "remove_from_array",
+      "source": "assets/scripts/system/operations/RemoveFromArray.gd",
+      "signature": "func exec(item, arr:Array)",
+      "help": "在原列表中删除第一个匹配元素并返回是否找到；不负责关闭卡或同步威力。",
+      "source_comments": [
+        "从数组里删掉一个元素。只删第一次匹配，不负责改威力或关牌。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "shuffle_array",
+      "source": "assets/scripts/system/operations/ShuffleArray.gd",
+      "signature": "func exec(arr:Array)",
+      "help": "直接打乱原来那一批的顺序。",
+      "source_comments": [
+        "就地洗乱传入的数组，不另建新数组。算法不绑定牌库或弃牌堆，任何数组都能用。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "if_func",
+      "source": "assets/scripts/system/operations/IfFunc.gd",
+      "signature": "func exec(_var1, _var2 = true)",
+      "help": "第二个空着时默认和「是」比。",
+      "source_comments": [
+        "比较两个值是否相等，返回bool，供后续func的condition使用",
+        "BaseNumber按数值比较而非按对象引用比较"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "if_else_func",
+      "source": "assets/scripts/system/operations/IfElseFunc.gd",
+      "signature": "func exec(condition, then_value, else_value = null)",
+      "help": "在两个已经算好的值里二选一，不是「如果…那么」流程。要按条件做事请用控制里的「如果」。",
+      "source_comments": [
+        "按条件在两个已求值的结果里二选一。IfFunc只返回bool，不能把后续func接到某一分支的返回值上。",
+        "条件规则与效果condition一致：null/0/false为假，BaseNumber按数值是否非0判断。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "compare_number",
+      "source": "assets/scripts/system/operations/CompareNumber.gd",
+      "signature": "func exec(a, b)",
+      "help": "小于得 -1，相等得 0，大于得 1。要判断「≥」可再接「落在…里吗」，填 [0, 1]。",
+      "source_comments": [
+        "通用数值比较，兼容BaseNumber和裸数字。返回-1(a<b)/0(a==b)/1(a>b)，",
+        "供条件判断类func组合使用(如判断\"数量是否达到上限\")"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "and_func",
+      "source": "assets/scripts/system/operations/AndFunc.gd",
+      "signature": "func exec(a:bool, b:bool)",
+      "help": "两个都成立才成立。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "or_func",
+      "source": "assets/scripts/system/operations/OrFunc.gd",
+      "signature": "func exec(a:bool, b:bool)",
+      "help": "有一个成立就成立。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "not_func",
+      "source": "assets/scripts/system/operations/NotFunc.gd",
+      "signature": "func exec(_bool:bool)",
+      "help": "把传入的真假值取反，真变假、假变真。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "match_func",
+      "source": "assets/scripts/system/operations/MatchFunc.gd",
+      "signature": "func exec(_var, cases:Array)",
+      "help": "值等于列表里任意一个就成立。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "is_null",
+      "source": "assets/scripts/system/operations/IsNull.gd",
+      "signature": "func exec(value)",
+      "help": "什么都没拿到时成立。",
+      "source_comments": [
+        "判断值是否为null。IfFunc只能比相等，缺值分支需要这个查询。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "edit_magic",
+      "source": "assets/scripts/system/operations/EditMagic.gd",
+      "signature": "func exec(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), player_id:int = -1)",
+      "help": "「设为」空着就只做加减；减少填负数。魔力不会超过上限、不会低于 0。",
+      "source_comments": [
+        "is_magic_immune是规则例外开关，由效果打开；本操作只负责尊重它，不解释谁赋予的",
+        "就地改写玩家自己的数字，不能把效果自带的数字对象直接挂到玩家身上，否则后续变化会污染卡面数值。",
+        "与 set_num 对称：缺省/显式传 null 表示这次只设值或不加不减，不能因此报错",
+        "即将获得魔力：效果可以取消，或改写获得的数量（来源倍率、每回合获得上限）",
+        "规则：魔力是 0 到上限之间的资源（上限本身是数据、效果可以改）。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "edit_score",
+      "source": "assets/scripts/system/operations/EditScore.gd",
+      "signature": "func exec(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), player_id:int = -1)",
+      "help": "「设为」空着就只做加减；减少填负数。",
+      "source_comments": [
+        "即将获得战果：效果可以取消，或改写这次获得的数量（减半、翻倍、设上限）",
+        "战果下限由玩家数据声明（score_min），没声明就不夹取",
+        "先把这次的差值固定下来并记完日志，再派发时点：",
+        "时点里的效果还会再改战果，本条的 delta 必须仍是这一次自己的"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "edit_lives",
+      "source": "assets/scripts/system/operations/EditLives.gd",
+      "signature": "func exec(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), player_id:int = -1)",
+      "help": "先设为指定值再增减；数值变化派发生命变化时机，归零会先进入可取消的即将淘汰处理。",
+      "source_comments": [
+        "就地改写玩家自己的数字，避免把效果自带的数字对象挂到玩家身上",
+        "与高潮淘汰同一个\"即将淘汰\"询问：被取消时不出局，并派发\"免于淘汰\"。已经出局的不再询问"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "edit_power",
+      "source": "assets/scripts/system/operations/EditPower.gd",
+      "signature": "func exec(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), player_id:int = -1)",
+      "help": "本回合临时的，回合结束会按场上牌重算。",
+      "source_comments": [
+        "就地改写玩家自己的数字，避免把效果自带的数字对象挂到玩家身上",
+        "记下这次合计威力变化来自哪类对象（局势/事件/御主/令咒/他人的牌……），",
+        "供\"排除局势与事件影响后的合计威力\"这类查询按来源统计，不给玩家加字段"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "edit_data_number",
+      "source": "assets/scripts/system/operations/EditDataNumber.gd",
+      "signature": "func exec(key:String, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), player_id:int = -1, min_value = null, max_value = null)",
+      "help": "改玩家的任意数字项，比如令咒数、出牌上限。下限/上限不填就不限制。",
+      "source_comments": [
+        "通用BaseNumber字段编辑器：player_data里所有BaseNumber类型的字段(play_limit、",
+        "total_power_bonus、attack_cost_discount、move_cost_discount_from_workshop、",
+        "command_spell_count等)都可以用同一个operation改写，不需要为每个字段各写一个",
+        "Set/EditXxx.gd。用法与EditMagic/EditScore/EditLives一致：set_num覆盖，vary_num叠加",
+        "合计威力加成与出牌威力一样按来源记账（其它字段不属于合计威力，不记）"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "set_player_data",
+      "source": "assets/scripts/system/operations/SetPlayerData.gd",
+      "signature": "func exec(key_name:String, value, player_id:int = -1)",
+      "help": "直接覆盖玩家的某一项（高级）。",
+      "source_comments": [
+        "所属御主的初始/替换历史只作为事实写日志；不为单卡新增快照字段。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "change_pl_order",
+      "source": "assets/scripts/system/operations/ChangePlOrder.gd",
+      "signature": "func exec(set_order:BaseNumber = null, vary_order:BaseNumber = BaseNumber.new(0), player_id = -1)",
+      "help": "指定顺位时会挪动其他玩家腾出位置；后面的增减量会作用于全部玩家的顺位，不只目标玩家。",
+      "source_comments": [],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "sync_power",
+      "source": "assets/scripts/system/operations/SyncPower.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "以已打出且仍提供威力的牌重建合计威力；会丢弃先前累积的非卡牌来源加成。",
+      "source_comments": [
+        "把玩家的合计威力重算为场上明置牌的威力之和，丢弃回合内累积的非卡牌来源加成。",
+        "power平时由出牌/改威力/翻面等操作实时增减，这个操作用于回合结束等需要重建基线的时点：",
+        "规则上残留牌跨回合留在场上并继续提供威力，所以基线不是0而是留场牌的威力之和"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "modify_attack_power_by_attribute",
+      "source": "assets/scripts/system/operations/ModifyAttackPowerByAttribute.gd",
+      "signature": "func exec(required_attributes:Array, power_delta:BaseNumber = BaseNumber.new(0), player_id:int = -1, attack:BaseAttack = null, exclude_attack:BaseAttack = null, required_category:String = \"\", min_power:int = -1)",
+      "help": "可以再限定只算某张/排除某张、类别、最低威力。",
+      "source_comments": [
+        "按属性增减玩家的合计威力：场上每有一张匹配指定属性的攻击牌，合计威力就增减一份power_delta。",
+        "不改动卡牌自身的_power，牌的印刷威力保持不变，改牌威力请用EditCardPower。",
+        "required_attributes留空表示匹配所有攻击牌；",
+        "传入attack时只判定这一张，不传则扫描该玩家场上所有攻击牌；",
+        "exclude_attack在扫描时排除指定的一张牌，用于\"其余攻击\"这类自指效果；"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "zero_attribute_power",
+      "source": "assets/scripts/system/operations/ZeroAttributePower.gd",
+      "signature": "func exec(player_id:int = -1, attributes:Array = [])",
+      "help": "只影响本回合结算，不改牌。",
+      "source_comments": [
+        "将目标玩家指定属性的攻击威力按0计：扫描其场上这些属性的攻击牌，",
+        "把它们的威力贡献从合计威力里一次性扣掉。",
+        "在战斗结算前的时点(所有人出完牌后)调用；回合结束 SyncPower 重建基线时恢复，不永久改牌。",
+        "属性由调用方传入，不写死迅捷/魔术/力量；player_id 默认当前效果归属玩家。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "edit_card_power",
+      "source": "assets/scripts/system/operations/EditCardPower.gd",
+      "signature": "func exec(card:BaseHandCard, vary_num:BaseNumber = BaseNumber.new(0), set_num:BaseNumber = null, player_id:int = -1)",
+      "help": "「设为」填了就先设成那个数。会同步合计威力。",
+      "source_comments": [
+        "修改指定卡牌的威力。卡已打出时，玩家当前的力量总和也跟着变",
+        "改威力前先记下这张牌原本贡献了多少，改完按同一判定入口重新贡献一次，",
+        "这样set_num整体改写和暗置牌不计威力两种情况都能算对",
+        "按来源记账：这张牌只要还计入合计威力，这笔改动就算在它的来源头上"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "edit_card_cost",
+      "source": "assets/scripts/system/operations/EditCardCost.gd",
+      "signature": "func exec(vary_num:BaseNumber = BaseNumber.new(0), set_num:BaseNumber = null, card:BaseHandCard = null)",
+      "help": "「设为」填了就先设成那个数。",
+      "source_comments": [
+        "改手牌的魔力消耗。与EditCardPower分开：改费用不碰合计威力。",
+        "card留空时取当前激活效果所属的卡。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "edit_card_attributes",
+      "source": "assets/scripts/system/operations/EditCardAttributes.gd",
+      "signature": "func exec(add_attributes:Array = [], del_attributes:Array = [], set_attributes:Array = [\"\"], card:BaseCard = null)",
+      "help": "「设为」一栏填了就整个替换。",
+      "source_comments": [
+        "增删或替换卡牌的属性。card留空时取当前激活效果所属的卡牌"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "set_card_concealed",
+      "source": "assets/scripts/system/operations/SetCardConcealed.gd",
+      "signature": "func exec(card:BaseCard, concealed:bool, player_id:int = -1)",
+      "help": "勾上是暗置，不勾是明置。会同步威力。",
+      "source_comments": [
+        "改变卡牌的明置/暗置状态，并实时同步玩家的合计威力。",
+        "不直接按暗置与否加减威力，而是比较变更前后CardCountsPower的结果：",
+        "带\"暗置也计威力\"这类例外效果的牌翻面时前后都计威力，差值为0，不会被误扣。",
+        "所有需要翻面的效果都应走这个入口，避免各自手动增减power时漏掉配对操作。",
+        "非手牌卡(新都的暗置事件牌等)不参与合计威力，只翻面"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "close_card",
+      "source": "assets/scripts/system/operations/CloseCard.gd",
+      "signature": "func exec(card:BaseHandCard, player_id:int = -1)",
+      "help": "先经过可取消的关闭时机；技能牌回技能区、攻击牌转暗置，并同步威力。",
+      "source_comments": [
+        "关闭一张已打出的手牌：技能牌返回技能区(从played_cards移除、停止激活)，",
+        "攻击牌转为暗置(不再计入合计威力)。规则用语\"关闭\"对两类卡效果不同，故按类型分支",
+        "即将关闭：效果可以取消这次关闭（改为别的处理由取消它的效果自己写）",
+        "技能牌离场后不再计入合计威力，先按判定入口扣掉它此前贡献的威力再移出场",
+        "技能牌关闭后立刻明置返回技能区，复用AddSkillToSkillZone一并重新登记其效果"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "set_property",
+      "source": "assets/scripts/system/operations/SetProperty.gd",
+      "signature": "func exec(object, property:String, value)",
+      "help": "写任意对象的属性（高级）。",
+      "source_comments": [
+        "写入任意对象上的属性。与GetProperty成对，不限定卡牌/从者/buff。",
+        "对象或属性不存在时不写，避免把规则写进这个operation。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "edit_location_magic",
+      "source": "assets/scripts/system/operations/EditLocationMagic.gd",
+      "signature": "func exec(location:BaseLocation, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0))",
+      "help": "修改指定席位的魔力数字；设为留空时只增减。",
+      "source_comments": [],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "edit_location_benefit",
+      "source": "assets/scripts/system/operations/EditLocationBenefit.gd",
+      "signature": "func exec(location:BaseLocation, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0))",
+      "help": "回合结束会恢复。",
+      "source_comments": [
+        "改某席位当前的地利数。印刷值留在 _printed_benefit 作基线（回合结束由",
+        "RestoreLocationBenefits 还原），本操作只动当前值 _benefit。",
+        "不替换 _benefit 这个对象、只写它的数值：别处可能持有同一个 BaseNumber 的引用，",
+        "而且构造时 _benefit 与 _printed_benefit 可能就是同一个实例，",
+        "直接替换/就地加会把印刷基线也一起改掉，之后再也还原不回去"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "edit_map_area_score",
+      "source": "assets/scripts/system/operations/EditMapAreaScore.gd",
+      "signature": "func exec(map_area:BaseMapArea, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0))",
+      "help": "修改指定战区的战果数字；设为留空时只增减。",
+      "source_comments": [],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "edit_map_area_move_cost",
+      "source": "assets/scripts/system/operations/EditMapAreaMoveCost.gd",
+      "signature": "func exec(map_area:BaseMapArea, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0))",
+      "help": "修改指定战区的移动消耗数字；设为留空时只增减。",
+      "source_comments": [],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "add_map_area_events",
+      "source": "assets/scripts/system/operations/AddMapAreaEvents.gd",
+      "signature": "func exec(map_area:BaseMapArea, add_event:BaseEvent)",
+      "help": "将事件附到指定战区的事件列表，并将事件来源指向该战区。",
+      "source_comments": [
+        "事件牌挂到区域时，把from指向所属区域，供效果内部用get_property(event, \"from\")反查战场"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "add_event_from_deck",
+      "source": "assets/scripts/system/operations/AddEventFromDeck.gd",
+      "signature": "func exec(map_area:BaseMapArea, add_count:int = 1, concealed:bool = false)",
+      "help": "勾「暗置」则背面朝上放。",
+      "source_comments": [
+        "从事件牌堆头取一张事件牌的克隆体挂到指定战区。局势牌「于某战场增加一张事件牌」",
+        "（新都之战/深山町的杀人魔/转机/命运之夜等）都走这里，add_count 由调用方传入，不写死几张。",
+        "挂克隆体而不是模板：效果登记时会写 _trigger_player_id，直接挂模板会让同一张牌",
+        "下次进场不再被登记（与 EventResolver.place 同一条规则，这里补 add_count 循环）。",
+        "concealed=false：正面事件牌明置进场"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "add_map_area_buff",
+      "source": "assets/scripts/system/operations/AddMapAreaBuff.gd",
+      "signature": "func exec(map_area:BaseMapArea, add_buff:BaseBuff)",
+      "help": "把状态加入指定战区的状态列表，不会自动移除已有状态。",
+      "source_comments": [],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "add_situations",
+      "source": "assets/scripts/system/operations/AddSituations.gd",
+      "signature": "func exec(add_situation:BaseSituation)",
+      "help": "把局势牌追加到地图的局势牌列表；此操作本身不负责立即启用。",
+      "source_comments": [],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "set_location",
+      "source": "assets/scripts/system/operations/SetLocation.gd",
+      "signature": "func exec(setted_location:BaseLocation, player_id:int = -1, is_move:bool = true, ignore_limit:bool = false)",
+      "help": "「算作移动」勾上时要遵守不能进入的限制；效果搬运一般不勾。",
+      "source_comments": [
+        "把玩家放到指定位置（部署、效果搬运、常规移动都走这里落地）。",
+        "参数语义：",
+        "is_move      这一次是不是\"一次常规移动\"。规则上只有常规移动才受目标区域",
+        "_can_move_to 的限制；部署与效果造成的落位传 false，不受该限制。",
+        "ignore_limit 是否忽略落点的人数上限(_pl_num_limit)。需要无视站位上限的效果传 true。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "remove_from_board",
+      "source": "assets/scripts/system/operations/RemoveFromBoard.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "清除玩家当前位置，同时从席位玩家列表移除并记录离场；原本不在版图时返回否。",
+      "source_comments": [
+        "规则：回合结束时将每名御主的立牌移除版图。",
+        "只做\"离开版图\"这一件事：位置置空，并同步从席位的 _players 里摘除——",
+        "只清 location 不摘 _players 的话，席位人数永远只增不减，部署上限判定与展示都会失真。",
+        "没有落点，所以不复用 SetLocation（那是\"落到某个位置\"）",
+        "返回是否真的从版图上移除了（本来就不在版图上返回 false）"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "set_map_area_can_move_to",
+      "source": "assets/scripts/system/operations/SetMapAreaCanMoveTo.gd",
+      "signature": "func exec(map_area:BaseMapArea, value:bool = true)",
+      "help": "局势牌弃置时会恢复原样。",
+      "source_comments": [
+        "改战区的\"能否常规进入\"开关，并在此区第一次被改时记下印刷基线。",
+        "_can_move_to 的印刷值(_printed_can_move_to)是地图数据声明的事实，",
+        "局势牌(如身处地狱之门/天之杯\"无法进入某区\")回合结束弃置时由",
+        "RestoreMapAreaMoveFlags 按基线恢复。只记录一次：连续多张局势牌同回合叠加改动时，",
+        "基线始终是改动前的原值，弃置后一次性还原"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "restore_map_area_move_flags",
+      "source": "assets/scripts/system/operations/RestoreMapAreaMoveFlags.gd",
+      "signature": "func exec()",
+      "help": "把有临时改动的战区能否常规进入恢复到原始值；从未修改的战区不动。",
+      "source_comments": [
+        "把所有战区的\"能否常规进入\"恢复到印刷基线。局势牌弃置时调用——",
+        "局势牌效果(如\"无法进入新都\")只在本回合有效，回合结束必须还原，",
+        "否则一个回合的封区会永久生效。没有基线(从未被改过)的区域不动"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "set_location_pl_num_limit",
+      "source": "assets/scripts/system/operations/SetLocationPlNumLimit.gd",
+      "signature": "func exec(location:BaseLocation, limit:int = -1)",
+      "help": "-1 表示不限。",
+      "source_comments": [
+        "改地点的席位人数上限，并在该地点第一次被改时记下印刷基线。",
+        "_pl_num_limit 的印刷值是地图数据声明的事实；局势牌(如\"魔术工房仅限一人部署\")",
+        "回合结束弃置时由 RestoreLocationPlNumLimits 按基线还原。",
+        "只记录一次基线：同回合多张局势牌叠加改动时，基线始终是改动前的原值。",
+        "locations 传数组时逐个设置（同一张局势牌改多个席位），limit 由调用方传入"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "restore_location_pl_num_limits",
+      "source": "assets/scripts/system/operations/RestoreLocationPlNumLimits.gd",
+      "signature": "func exec()",
+      "help": "把有临时改动的席位人数上限恢复到原始值；从未修改的席位不动。",
+      "source_comments": [
+        "把所有地点的席位人数上限恢复到印刷基线。局势牌(如\"魔术工房仅限一人部署\")弃置时调用——",
+        "席位上限改动只在本回合有效，回合结束必须还原，否则一个回合的限员会永久生效。",
+        "没有基线(从未被改过)的地点不动"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "restore_location_benefits",
+      "source": "assets/scripts/system/operations/RestoreLocationBenefits.gd",
+      "signature": "func exec()",
+      "help": "将所有被修改的席位地利数恢复到原始值，返回实际恢复的席位数量。",
+      "source_comments": [
+        "把所有席位的地利数恢复到印刷基线。回合结束时调用——",
+        "地利修正类效果（远隔操作\"地利效果翻倍\"、占领高地、卫宫\"地利变为3倍\"）",
+        "只在本回合有效，回合结束必须还原，否则同一个席位的地利会跨回合越乘越大，",
+        "而且改动的是共享的地图数据，会连带影响之后占据该席位的其他玩家。",
+        "与 RestoreMapAreaMoveFlags / RestoreLocationPlNumLimits 同一套做法："
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "draw_card_from_pl_deck_to_hand",
+      "source": "assets/scripts/system/operations/DrawCardFromPlDeckToHand.gd",
+      "signature": "func exec(from_index = 0, player_id:int = -1)",
+      "help": "抽第几张默认是 0（最上面）。牌库空了就抽不到，需要时先放一块「洗回弃牌堆」。",
+      "source_comments": [
+        "从牌库抽出下标指定的一张牌进手牌。",
+        "from_index 兼容 int / float / BaseNumber：效果链里上一步算出来的多是 BaseNumber，",
+        "要求调用方先拆包会在 rand/int 这类原生调用点直接抛错",
+        "show(\"超出数组范围\")",
+        "日志：抽牌事实（谁在第几回合哪个阶段抽了哪张），排查\"手牌莫名多出来\"时的第一手依据"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "reshuffle_discard",
+      "source": "assets/scripts/system/operations/ReshuffleDiscard.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "牌库不空时什么都不做。",
+      "source_comments": [
+        "规则：需要从耗尽的牌堆中抽牌时，把相应的弃牌堆洗混作为新的牌堆。",
+        "只做这一件事——搬运与洗牌；抽牌由调用方自己调 draw_card_from_pl_deck_to_hand，",
+        "这样\"洗回牌堆\"也能被其它效果单独使用。",
+        "牌堆还有牌、或两边都空时返回 false（没有发生洗牌）",
+        "日志：牌堆抽空后把弃牌堆洗回（供\"这局洗过几次\"这类历史查询）"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "draw_card_by_card",
+      "source": "assets/scripts/system/operations/DrawCardByCard.gd",
+      "signature": "func exec(card:BaseCard, from:Array, to:Array, to_index = -1)",
+      "help": "目标位置空着或 -1 表示放到最后。",
+      "source_comments": [
+        "把指定的卡从 from 数组搬到 to 数组（to_index 为 -1 时追加到末尾）。",
+        "下标校验一律在搬运之前做完：先 pop 再发现下标非法，卡会同时不在来源区也不在目标区，",
+        "等于静默把卡弄丢（不报错，只是那张牌从牌堆/手牌里凭空消失）。",
+        "index 兼容 int / float / BaseNumber：只有整数值才当\"插入位置\"，-1 表示追加到末尾",
+        "show(\"超出数组范围\")"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "draw_card_by_index",
+      "source": "assets/scripts/system/operations/DrawCardByIndex.gd",
+      "signature": "func exec(from:Array, to:Array, from_index = 0, to_index = -1)",
+      "help": "按从零开始的下标搬运卡牌；目标下标留空或为 -1 时追加到末尾，越界或被阻止时不搬。",
+      "source_comments": [
+        "把 from 数组里指定下标的卡搬到 to 数组（to_index 为 -1 时追加到末尾）。",
+        "与 DrawCardByCard 同理：两个下标都先校验完再动手，避免摘除成功后插入失败把卡弄丢。",
+        "两个下标都兼容 int / float / BaseNumber，与 DrawCardByCard 同款宽松",
+        "show(\"超出数组范围\")",
+        "show(\"超出数组范围\")"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "add_skill_to_skill_zone",
+      "source": "assets/scripts/system/operations/AddSkillToSkillZone.gd",
+      "signature": "func exec(skill, player_id:int = -1)",
+      "help": "不会从原来那一区拿走，需要时再放一块「拿掉」。",
+      "source_comments": [
+        "把技能卡加入玩家的技能区(side.skills)，并把技能自带的效果登记为该玩家的效果",
+        "技能进入技能区后，它自己的效果才开始参与时点检查",
+        "先在触发这个效果的卡的来源里找，找不到再退回玩家的御主",
+        "顺着from链找到效果所属的御主/从者，在它的SKILLS里查找同名技能",
+        "BaseServant目前还没有_specials字段，所以先检查属性是否存在"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "discard_played_cards",
+      "source": "assets/scripts/system/operations/DiscardPlayedCards.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "回合清理：未关闭的残留牌留场；技能回技能区，普通攻击转暗置后进弃牌堆。",
+      "source_comments": [
+        "残留牌回合结束不自动关闭，留在场上继续提供威力；",
+        "但已被自身或其他效果关闭的残留牌此时已是暗置，仍要走\"弃置暗置攻击\"这一步",
+        "技能牌回合结束保持明置并放回技能区，不进入弃牌堆",
+        "普通攻击牌弃置前暗置，再进入弃牌堆",
+        "禁止系效果"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "play_attack",
+      "source": "assets/scripts/system/operations/PlayAttack.gd",
+      "signature": "func exec(attack:BaseAttack, player_id:int = -1, cost:BaseNumber = null, power:BaseNumber = null, ignore_limit:bool = false)",
+      "help": "魔力消耗/威力空着就用牌上的。",
+      "source_comments": [
+        "常规出牌：检查费用/魔力/出牌数量上限，扣费并把攻击牌计入合计威力。",
+        "ignore_limit跳过play_limit常规出牌数量检查，供特殊效果(残留牌重新打出等)复用",
+        "单卡入口仅供显式特殊出牌；常规出牌必须提交整组。",
+        "带有\"无法打出卡牌\"效果的buff(如【败北】)会阻止出牌，",
+        "但不影响已激活的牌和能力的其他使用。按效果名通用查询，不关心具体buff类型"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "play_skill",
+      "source": "assets/scripts/system/operations/PlaySkill.gd",
+      "signature": "func exec(skill:BaseSkill, player_id:int = -1, ignore_limit:bool = false, cost:BaseNumber = null, power:BaseNumber = null)",
+      "help": "先计算卡牌费用与打出条件，再扣魔力、使牌进场并派发打出时机；不能打出时返回否。",
+      "source_comments": [
+        "带有\"无法打出卡牌\"效果的buff(如【败北】)会阻止出牌，",
+        "但不影响已激活的牌和能力的其他使用。按效果名通用查询，不关心具体buff类型",
+        "卡面声明的打出条件与\"需追加打出\"，与攻击牌共用同一套判断",
+        "局面级禁令与攻击牌同一套：宝具是技能卡的属性，禁令声明在局势牌/事件牌上，",
+        "出牌入口只按效果名查询"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "add_attack",
+      "source": "assets/scripts/system/operations/AddAttack.gd",
+      "signature": "func exec(attack:BaseAttack, player_id:int = -1, power:BaseNumber = null)",
+      "help": "不占常规出牌数。",
+      "source_comments": [
+        "是否计入合计威力交给CardCountsPower判定，必须在入场后再判定",
+        "词条规则在打出时点之前结算，理由同 PlayAttack。",
+        "追加打出也算\"使用了这张牌\"，所以同样适用"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "add_skill",
+      "source": "assets/scripts/system/operations/AddSkill.gd",
+      "signature": "func exec(skill:BaseSkill, player_id:int = -1, ignore_limit:bool = false, power:BaseNumber = null)",
+      "help": "不占常规出牌数。",
+      "source_comments": [
+        "是否计入合计威力交给CardCountsPower判定，必须在入场后再判定",
+        "词条规则在打出时点之前结算，理由同 PlayAttack"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "deploy",
+      "source": "assets/scripts/system/operations/Deploy.gd",
+      "signature": "func exec(deploy_location:BaseLocation, player_id:int = -1, ignore_limit:bool = false)",
+      "help": "尝试在指定地点部署，遵守席位人数限制，除非调用方选择无视；落位成功才记录部署。",
+      "source_comments": [
+        "把玩家部署到某个地点（前哨阶段抢席位的常规操作）。",
+        "部署不是\"常规移动\"，固定 is_move = false：不受目标区域 _can_move_to 的限制。",
+        "ignore_limit 透传落点的人数上限开关，由调用方决定要不要无视站位上限。",
+        "部署是独立的规则动作，由入口自己记一条；SetLocation 只记中性的位置变化，",
+        "它分不清\"部署\"和\"效果搬运\"。只在真正落位后才记，落位失败（位置满）不记"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "move",
+      "source": "assets/scripts/system/operations/Move.gd",
+      "signature": "func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false, ignore_battle:bool = false)",
+      "help": "尝试常规移动，交战时通常不能动；落位成功才扣本次移动的魔力。",
+      "source_comments": [
+        "交战状态（与对手同处一处会发生战斗的战场）不能常规移动：判据在查询里，",
+        "不写死战区名。只判当前所站位置——规则允许常规移动\"经过\"已发生交战的战场。",
+        "ignore_engagement_for_move(如言峰监督者中立、以及\"以令咒移动\")让玩家无视交战状态移动，",
+        "不需要调用方额外传ignore_battle",
+        "目标落位失败时不扣费；MoveLocation 用 null 表示没有完成移动。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "move_location",
+      "source": "assets/scripts/system/operations/MoveLocation.gd",
+      "signature": "func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false)",
+      "help": "只改位置，给出本该花多少。",
+      "source_comments": [
+        "沿地图链算出移动后的落点并返回总费用，不扣魔力（扣魔力由 Move 负责）。",
+        "只做\"算目标区域 + 算费用\"这件事：落地（改变 location、同步落点 _players）交给",
+        "SetLocation，与部署/效果搬运共用同一份落地逻辑，不在这里重复实现。",
+        "所在区域从 location 自己的 from 取，不遍历 MapData.areas 反查",
+        "每经过一段的费用减免（玩家级，默认 0），每段单独减、不减成负数"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "deal_player_cards",
+      "source": "assets/scripts/system/operations/DealPlayerCards.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "按游戏的发牌规则重新发放该玩家从者的牌到牌库与技能区，常用于更换从者。",
+      "source_comments": [
+        "按 GameProgress.card_deal_rules 给一名玩家(重新)发放从者的牌到牌库与技能区。",
+        "换从者时用：从者换了，手里的牌也要跟着换成新从者的。",
+        "发放规则(发哪些区、是否洗牌、是否暗置)全部在 card_deal_rules 数据里，这里只做触发"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "refill_hand",
+      "source": "assets/scripts/system/operations/RefillHand.gd",
+      "signature": "func exec(player_id:int = -1, limit = 0)",
+      "help": "补到传入的手牌上限；牌堆空时可洗混弃牌堆继续抽，无法抽牌时停止并返回实抽数量。",
+      "source_comments": [
+        "规则：把自己的手牌补充到手牌上限（已经有上限张以上则不抽）。",
+        "上限由调用方传入，不写在 operation 里——规则数字可能被效果改动。",
+        "牌堆抽空时按规则先用弃牌堆洗混作为新牌堆；两边都空就停下，不报错。",
+        "返回实际抽到的张数",
+        "抽牌入口可能因\"不能抽牌\"这类状态而拒发，抽不动就停，避免死循环"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "played_cards",
+      "source": "assets/scripts/system/operations/PlayedCards.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "只派发该玩家的打出卡牌时机，不移动卡牌、不扣费，也不真正打出一张牌。",
+      "source_comments": [],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "release_true_name",
+      "source": "assets/scripts/system/operations/ReleaseTrueName.gd",
+      "signature": "func exec(player_id:int = -1, shown_areas:Array = [\"servant_skills\", \"master_skills\", \"master._specials.SKILLS\", \"side.skills\", \"hand_cards\", \"played_cards\", \"deck\", \"discard\"])",
+      "help": "翻开从者概览与技能牌。",
+      "source_comments": [
+        "规则：有些卡牌拥有【真名解放】词条，使用这些卡牌后，立即展示你的从者概览卡",
+        "与所有技能牌，并处于【真名解放】状态。",
+        "本operation只做\"解放\"这一件事：把该展示的牌翻到明置、派发时点、记下事实。",
+        "不判断\"哪张牌带真名解放词条\"——那由卡牌数据在自己的效果里调用本函数决定；",
+        "也不负责隐藏（重新盖回去是另一条独立动作，见 HideTrueName），"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "hide_true_name",
+      "source": "assets/scripts/system/operations/HideTrueName.gd",
+      "signature": "func exec(player_id:int = -1, hidden_areas:Array = [\"servant_skills\", \"master_skills\", \"master._specials.SKILLS\", \"side.skills\"])",
+      "help": "将指定区域的技能牌重新暗置并派发真名隐藏时机；原本未解放时不执行并返回否。",
+      "source_comments": [
+        "规则：部分卡牌效果可以【隐藏】你的真名，将你的从者概览卡重新反面，",
+        "表示你失去了【真名解放】状态，重新【真名隐藏】。",
+        "与 ReleaseTrueName 成对，两者是两个独立动作（有效果只解放、有效果只隐藏），",
+        "不合并成一个带开关的函数：合并后调用方每次都要传一个布尔，",
+        "而\"解放\"和\"隐藏\"各自还有不同的展示范围与时点。"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "apply_card_keywords",
+      "source": "assets/scripts/system/operations/ApplyCardKeywords.gd",
+      "signature": "func exec(card, player_id:int = -1)",
+      "help": "按卡牌显式声明的词条派发对应规则动作；未知词条不生效，也不负责出牌。",
+      "source_comments": [
+        "结算一张牌进场时其词条带来的规则行为。",
+        "词条是\"一类牌共有的规则\"（如【真名解放】：使用带此词条的牌后立即真名解放），",
+        "由卡在 JSON 的 keywords 里显式声明，规则本体只写在这里一份——",
+        "不去扫卡面文案里的【xx】字样（文案是给人看的，措辞一改行为就跟着错），",
+        "也不必在每张带词条的牌里把同一段规则复制一遍。"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "manage_buff",
+      "source": "assets/scripts/system/operations/ManageBuff.gd",
+      "signature": "func exec(buff, player_id:int = -1, add_or_del:bool = true)",
+      "help": "「加上」不勾就是去掉。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "defeat",
+      "source": "assets/scripts/system/operations/Defeat.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "先派发可取消的即将败北处理；未被取消时附加败北状态并派发战斗败北时机。",
+      "source_comments": [
+        "给目标玩家附加【败北】buff，并派发 BATTLE_LOSE 时点。",
+        "具体的战斗胜负标记（is_battle_win / is_battle_lose）由 BattleResolver 在结算时自行管理。",
+        "即将败北：效果可以取消（守护、幸运这类\"无视败北\"的替代）"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "remove_defeat",
+      "source": "assets/scripts/system/operations/RemoveDefeat.gd",
+      "signature": "func exec(player_id:int = -1)",
+      "help": "移除该玩家全部败北状态及对应效果，不只移除其中一份。",
+      "source_comments": [
+        "移除指定玩家的所有【败北】buff（含效果彻底摘除）。",
+        "复用于\"无视败北\"类效果；败北可叠加多层，故移除全部层。"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "register_object_effects",
+      "source": "assets/scripts/system/operations/RegisterObjectEffects.gd",
+      "signature": "func exec(object, player_id:int = -1)",
+      "help": "把对象现有的效果登记给指定玩家；不创建新效果，也不改变对象自身数据。",
+      "source_comments": [
+        "把对象上的_effects登记给一名玩家。换御主/从者、把技能放进技能区之外的来源，都只做登记这一件事。"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "unregister_object_effects",
+      "source": "assets/scripts/system/operations/UnregisterObjectEffects.gd",
+      "signature": "func exec(object)",
+      "help": "将对象上的效果逐条从结算池注销；不会删除对象里的原始效果列表。",
+      "source_comments": [
+        "把对象上的_effects从效果池拿掉。与RegisterObjectEffects成对，不做替换或改归属。"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "counter",
+      "source": "assets/scripts/system/operations/Counter.gd",
+      "signature": "func exec(effect:BaseEffect, countered_func:BaseFunc = null)",
+      "help": "未指定具体操作时反制整条效果；指定操作时只跳过那一步，其余步骤仍结算。",
+      "source_comments": [
+        "反制。countered_func留空时整个效果不结算；",
+        "否则只跳过效果里的那一个func，其余func照常结算",
+        "判断"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "close_time_point",
+      "source": "assets/scripts/system/operations/CloseTimePoint.gd",
+      "signature": "func exec(time_point:String, player_id:int = -1, all_players:bool = false)",
+      "help": "关闭某时机并中断仅由该时机触发的待结算效果；可指定玩家或对所有玩家生效。",
+      "source_comments": [
+        "关闭一个时点(如结束他人的回合)。因该时点触发、且没有命中其他时点的效果会被打断，",
+        "已经结算完的效果不回滚。player_id留空表示对当前效果的触发者生效，传-1的话由resolve_player_id解析"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "schedule_effect_on_time_point",
+      "source": "assets/scripts/system/operations/ScheduleEffectOnTimePoint.gd",
+      "signature": "func exec(time_points:Array, funcs:Array, priority:int = 0, require_all:bool = false, expire_time_points:Array = [])",
+      "help": "嘴里的事不会马上做，而是登记起来，等到时机到了做一次。到期时机一到就作废。",
+      "source_comments": [
+        "将当前激活效果的一组 funcs 克隆成新的通用效果，并登记给同一触发者；",
+        "何时执行由调用方传入，规则对象本身不关心令咒/战斗/卡牌名称。",
+        "延迟效果仍是原卡面能力的后续结算：对玩家展示原文案与原来源，",
+        "内部调度名 scheduled_effect 只用于引擎识别，不得泄露到界面。",
+        "延迟 funcs 仍可引用调用效果的 number_index；把数值上下文带过去，但不把规则写死为任意卡。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "emit_time_point",
+      "source": "assets/scripts/system/operations/EmitTimePoint.gd",
+      "signature": "func exec(time_point:String, player_id:int = -1)",
+      "help": "主动派发指定时机；空时机不处理，玩家为 -1 时按全局时机处理。",
+      "source_comments": [
+        "派发一个时点。SetPlayerData只改字段，真名解放/隐藏、自定义时点都要能单独触发。",
+        "player_id为-1时走全局时点，与GameProgress.process_time_point一致。"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "queue_optional_effect_for_players",
+      "source": "assets/scripts/system/operations/QueueOptionalEffectForPlayers.gd",
+      "signature": "func exec(players:Array, funcs:Array, shown_name:String = \"\", effect_name:String = \"queued_optional_effect\", options:Array = [])",
+      "help": "每人单独问一次。",
+      "source_comments": [
+        "给一组玩家分别排入一次可选择发动/放弃的即时效果。",
+        "只负责「逐人建立选择并排队」，不认识令咒、战果、卡名或具体规则；",
+        "具体动作由调用方传入 funcs（单一动作）或 options（多个互斥选项），显示文案由 shown_name 传入。",
+        "每名玩家得到独立 BaseEffect，选择与触发者互不串扰。",
+        ""
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "create_buff",
+      "source": "assets/scripts/system/operations/CreateBuff.gd",
+      "signature": "func exec(buff_name:String, buff_img:String, buff_id:int)",
+      "help": "只创建带指定名称与图片的状态对象；不会把它加入任何玩家或战区，第三个参数当前未使用。",
+      "source_comments": [],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "create_base_number",
+      "source": "assets/scripts/system/operations/CreateBaseNumber.gd",
+      "signature": "func exec(number, can_change:bool = false)",
+      "help": "从整数或小数创建数字对象，可选是否允许被效果改变；不是数字时返回空。",
+      "source_comments": [],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "create_func",
+      "source": "assets/scripts/system/operations/CreateFunc.gd",
+      "signature": "func exec(callable:Callable, parameters:Array)",
+      "help": "根据传入的可调用对象与参数列表新建函数对象；不立即执行它。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "clone_object",
+      "source": "assets/scripts/system/operations/CloneObject.gd",
+      "signature": "func exec(object)",
+      "help": "复制出的东西不在任何一区里。",
+      "source_comments": [
+        "JSON 原语只负责发起复制；字段与重置策略由对象自己的 clone_data 维护。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "create_card",
+      "source": "assets/scripts/system/operations/CreateCard.gd",
+      "signature": "func exec(card_name:String, card_type:String = \"\", owner = null)",
+      "help": "按内部名从卡库新建一张牌，还不在任何一区里，用「把……放进……」放进手牌、牌库等。攻击牌也可以写 strength:2 这种牌库写法。归属空着就是发动这条效果的那张牌。",
+      "source_comments": [
+        "按内部名从已加载的卡库新建一张独立的牌，只负责新建，不放进任何区域：",
+        "放到哪、放几张由调用方用 add_to_array / for_func 等组合。",
+        "card_name：卡的内部名；攻击牌也认牌库构成写法（如 strength:2、special:surveil）。",
+        "card_type：attack / event / situation / command_spell；空字符串表示按这个顺序在各卡库里找。",
+        "owner：新牌归属（from）。不传就归到发动这条效果的那张卡，要改可再用 set_property 改 from。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "build_card",
+      "source": "assets/scripts/system/operations/BuildCard.gd",
+      "signature": "func exec(card_data:Dictionary, card_type:String, owner = null, image_dir:String = \"\", card_back_type:String = \"\")",
+      "help": "按这里写好的整张牌新建一张，牌名、数值、卡图、效果都能自己定。还不在任何一区里，用「把……放进……」放进去，再用「让……上的效果生效」让它的效果起作用。归属空着就是发动这条效果的那张牌。",
+      "source_comments": [
+        "按一份完整的卡牌数据新建一张牌。数据格式与正式卡牌 JSON 相同，建牌走各种卡自己的加载函数，",
+        "所以卡面字段、效果、词条、打出条件的含义与读文件时完全一致。只负责建牌：",
+        "放进哪一区用 add_to_array，让它的效果生效用 register_object_effects。",
+        "card_type：attack / skill / upgrade_skill / buff / thing / event / situation / command_spell。",
+        "owner：新牌归属（from）。不传就归到发动这条效果的那张牌。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "location",
+      "source": "assets/scripts/system/operations/Location.gd",
+      "signature": "func exec(magic:BaseNumber = BaseNumber.new(0), benefit:BaseNumber = BaseNumber.new(0), pl_num_limit:int = 1, will_move_to:bool = false)",
+      "help": "按传入的魔力、地利、人数上限和移动标志创建席位对象；此操作不把席位放到地图。",
+      "source_comments": [],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "tag",
+      "source": "assets/scripts/system/operations/Tag.gd",
+      "signature": "func exec(tag_name:String, from_pl_id:int)",
+      "help": "返回包含标签名及来源玩家编号的字典；不会自动给对象添加标签。",
+      "source_comments": [],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "for_func",
+      "source": "assets/scripts/system/operations/ForFunc.gd",
+      "signature": "func exec(body, count)",
+      "help": "嘴里的事按次数做。",
+      "source_comments": [
+        "按次数重复执行循环体。body用JSON可表达的函数描述",
+        "{\"func_name\":.., \"parameters\":[..], \"var_index\":-1, \"condition\":null}，",
+        "通过EffectManager.run_func_descriptor执行，这样循环体内部也能用self_var/number_index。",
+        "count支持BaseNumber或裸int，兼容效果自带数字直接传入的写法"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "foreach_func",
+      "source": "assets/scripts/system/operations/ForeachFunc.gd",
+      "signature": "func exec(body, arr:Array, parameter_index:int = 0)",
+      "help": "每轮把当前这一个填进嘴里每一步的第「填入位置」个空位（只填空着的）。",
+      "source_comments": [
+        "遍历数组，把当前元素写入循环体第parameter_index个参数位置再执行。",
+        "body同ForFunc，是JSON可表达的函数描述。每次迭代都duplicate一份body的parameters，",
+        "避免污染原始描述(同一个body字典会被反复复用)",
+        "只填空槽：循环体里其他func如果已经写了参数，不被当前元素覆盖"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "while_func",
+      "source": "assets/scripts/system/operations/WhileFunc.gd",
+      "signature": "func exec(body, condition, max_iterations:int = MAX_ITERATIONS)",
+      "help": "最多重复次数是防止写错卡死的保险。",
+      "source_comments": [
+        "condition传裸bool时值是固定的，每轮不会重新判断，所以那种用法只应配合外部",
+        "已经保证有限次数的场景。真正需要\"每轮重新判断\"的循环，condition应传函数描述",
+        "(同body的写法)，这样每轮都会通过EffectManager重新求值，而不是读一次性的快照。",
+        "max_iterations是保底熔断，避免condition写错导致死循环卡死游戏"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "store_value",
+      "source": "assets/scripts/system/operations/StoreValue.gd",
+      "signature": "func exec(value)",
+      "help": "原样给出放进来的东西。常在「对每一个」里先记下当前这一个。",
+      "source_comments": [
+        "透传第一个参数，供foreach/for循环体把当前遍历元素存进self_var，",
+        "这样后续func可以在任意参数位置用self_var引用它，而不必都挤在parameter_index那一格。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "do_nothing",
+      "source": "assets/scripts/system/operations/DoNothing.gd",
+      "signature": "func exec()",
+      "help": "不进行任何操作，用于需要占位但不触发规则动作的效果。",
+      "source_comments": [
+        "编辑数值(记得写发信号)"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "edit_num_and_return",
+      "source": "assets/scripts/system/operations/EditNumAndReturn.gd",
+      "signature": "func exec(num:BaseNumber, add:BaseNumber = BaseNumber.new(0), times:BaseNumber = BaseNumber.new(1), is_round_up:bool = false)",
+      "help": "直接改那个数字本身。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "calculate_number",
+      "source": "assets/scripts/system/operations/CalculateNumber.gd",
+      "signature": "func exec(a, op:String, b = 0)",
+      "help": "算出一个新数字，不改原来的。",
+      "source_comments": [
+        "对两个数字做一次运算并返回新的BaseNumber，不改写传入对象。",
+        "EditMagic/EditNumAndReturn会就地改数，不能拿来算\"16-回合*2\"这类派生值。",
+        "op由调用方传入，不写死某种角色公式。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "random_int",
+      "source": "assets/scripts/system/operations/RandomInt.gd",
+      "signature": "func exec(range_start, range_end)",
+      "help": "返回区间两端在内的随机整数，边界可以是普通数字或数字对象。",
+      "source_comments": [
+        "取区间内的随机整数（含两端）。",
+        "参数兼容 int/float/BaseNumber：效果里的边界多是上一步算出来的BaseNumber，",
+        "每次都要求调用方先拆包太啰嗦。GetCardByIndexFrArr 同样接受 BaseNumber"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "random_float",
+      "source": "assets/scripts/system/operations/RandomFloat.gd",
+      "signature": "func exec(range_start:float, range_end:float)",
+      "help": "返回两个小数边界之间的随机值，不保证结果取到端点。",
+      "source_comments": [
+        "功能函数(记得写发信号)"
+      ],
+      "review": "源码函数体核对后补充说明"
+    },
+    {
+      "operation": "show_message",
+      "source": "assets/scripts/system/operations/ShowMessage.gd",
+      "signature": "func exec(message:String, player_id:int = -1)",
+      "help": "发动者自己填「所有人」则所有人都能看到。",
+      "source_comments": [
+        "把一条提示消息交给界面展示。",
+        "operation只负责\"产生消息\"，不决定显示形态(弹窗/浮窗/日志)——显示是界面层的事，",
+        "这样同一条消息在单机、联机、不同界面上都能复用，不必每加一处提示就改一次效果。",
+        "player_id = -1 表示所有人都能看到；填具体玩家时只给该玩家看(如\"你的移动失败\")"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "power_contribution",
+      "source": "assets/scripts/system/global/board_power_query.gd",
+      "signature": "BoardPowerQuery descriptor",
+      "help": "只在「威力计算」里用：随时按当前场面算，不改任何东西。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "attack_power_contribution",
+      "source": "assets/scripts/system/global/board_power_query.gd",
+      "signature": "BoardPowerQuery descriptor",
+      "help": "只在「威力计算」里用。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "card_power_contribution",
+      "source": "assets/scripts/system/global/board_power_query.gd",
+      "signature": "BoardPowerQuery descriptor",
+      "help": "只在「威力计算」里用。",
+      "source_comments": [],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "ask_player_option",
+      "source": "assets/scripts/system/operations/AskPlayerOption.gd",
+      "signature": "func exec(options:Array, shown_name:String = \"\", player_id:int = -1, max_choices:int = 1)",
+      "help": "执行到这一步时停下来让玩家选，选完做选中那一项下面的积木，再接着做后面的积木。选项里算出的结果后面也能用。",
+      "source_comments": [
+        "效果执行到这一步时，让一名玩家从几个选项里选。",
+        "只负责「建立这次选择并交给 EffectManager 暂停等待」：选完后做什么写在每个选项自己的 funcs 里，",
+        "选项字段与效果自带 options 完全同一份解析（max_uses、select_cards、activation_requirements……都能用）。",
+        "选项里的步骤与发起它的效果共用变量表和效果数字：能读前面算出的结果，后面的步骤也能读选项里算出的结果。",
+        "返回建好的选择效果，调用方一般不用管它。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_map_data_value",
+      "source": "assets/scripts/system/operations/GetMapDataValue.gd",
+      "signature": "func exec(key:String)",
+      "help": "读事件牌堆、事件弃牌区、局势牌堆、局势弃牌区、全部战区等地图字段（高级）。",
+      "source_comments": [
+        "读取 MapData 上的字段（事件牌堆 event_deck、事件弃牌区 event_discard、局势牌堆 situations、",
+        "局势弃牌区 situation_discard、当前局势 active_situation、全部战区 areas……）。",
+        "与 get_game_data_value 对称：字段名由调用方传入，不为每个牌堆各写一个 Get。",
+        "返回的是字段本身（数组是同一个引用），搬运用 draw_card_by_card 直接作用在它上面"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "set_dictionary_value",
+      "source": "assets/scripts/system/operations/SetDictionaryValue.gd",
+      "signature": "func exec(dict, key, value)",
+      "help": "按键写字典里的一项，已有就覆盖（高级）。对象的命名数据、玩家的独立牌区都用它写。",
+      "source_comments": [
+        "把一个值写进字典的某个键（已有就覆盖）。与 get_dictionary_value 成对：",
+        "对象命名计数（_counters）、玩家按名字的独立牌区（extra_zones）、秘密选择的结果表都用它写，",
+        "不为每种字典各写一个 Set。返回写入后的值"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_player_power_breakdown",
+      "source": "assets/scripts/system/operations/GetPlayerPowerBreakdown.gd",
+      "signature": "func exec(player_id:int = -1, include_sources:Array = [], exclude_sources:Array = [])",
+      "help": "两个都不填就是当前合计威力。来源可填 situation 局势、event 事件、master 御主、servant 从者、buff 状态、skill 技能、attack 攻击、command_spell 令咒、self 自己的能力、others 他人的能力、board 场上牌加成、location_benefit 地利。",
+      "source_comments": [
+        "按来源筛选后的合计威力（\"排除局势与事件影响后的合计威力\"\"令咒获得的合计威力\"）。",
+        "以 get_player_total_power 的当前合计威力为起点：",
+        "exclude_sources 不为空时，减去带这些来源标签、且此刻仍在生效的改动；",
+        "include_sources 不为空时，改为只统计带这些来源标签的改动之和（不含起点）。",
+        "两者都空时就是当前合计威力。来源标签："
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "ask_player_number",
+      "source": "assets/scripts/system/operations/AskPlayerNumber.gd",
+      "signature": "func exec(min_value, max_value, player_id:int = -1, shown_name:String = \"\")",
+      "help": "执行到这一步时停下来让玩家选数，选完接着做后面的积木。把结果存进变量，后面的积木读到的就是玩家选的数。",
+      "source_comments": [
+        "效果执行到这一步时，让一名玩家在 [min_value, max_value] 里选一个数（上下限可以是前面算出的变量）。",
+        "复用\"选项 + 数量\"那套已有的输入：建一个只有一项、声明了 quantity_range 的选择，",
+        "界面与 AI 都按已有的数量选择器处理，不另开一种输入类型。",
+        "选中的数写进 result（一个 BaseNumber），返回的也就是它：后面的步骤用 var_index 存下这个返回值，",
+        "等玩家选完（效果恢复执行）时读到的就是玩家选的数；放弃选择时保持 min_value。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "ask_players_secret_option",
+      "source": "assets/scripts/system/operations/AskPlayersSecretOption.gd",
+      "signature": "func exec(players:Array, options:Array, shown_name:String = \"\", reveal:bool = false)",
+      "help": "每人单独秘密选一项，结果按玩家记成一张表。选完公开打勾时，全员选完后公布每人选了什么。",
+      "source_comments": [
+        "让多名玩家各自秘密地从同一组选项里选一项（猜拳、预测、宣言……）。",
+        "每人一次独立的选择，按传入顺序依次询问；谁选了哪一项写进 results（{玩家id : 选项下标}），返回的也就是它，",
+        "后面的步骤用 get_dictionary_value / match_func / compare_number 比较结果。放弃选择的玩家不在 results 里。",
+        "选项格式与 ask_player_option 相同，选项自己的 funcs 照常结算（变量表与发起效果共用）。",
+        "reveal 为 true 时，全员选完后公开每人的选择；为 false 时只留在规则日志里，界面不显示。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "show_cards",
+      "source": "assets/scripts/system/operations/ShowCards.gd",
+      "signature": "func exec(cards:Array, viewer_ids:Array = [], shown_name:String = \"\")",
+      "help": "只是让人看到，不改明置暗置，也不移动牌。给谁看空着表示所有人。",
+      "source_comments": [
+        "把一组牌展示给指定玩家看（展示手牌、牌库顶、弃牌堆……）。只是\"让人看到\"：",
+        "不改明置/暗置状态、不移动牌、不让效果生效——那些是 set_card_concealed、draw_card_by_card 的事。",
+        "viewer_ids 为空表示展示给所有人；展示事实记进规则日志（type show_cards），供\"本回合展示过\"类查询。",
+        "返回被展示的牌"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "build_effect",
+      "source": "assets/scripts/system/operations/BuildEffect.gd",
+      "signature": "func exec(effect_data:Dictionary, owner = null)",
+      "help": "按写好的效果内容新建一条效果，还没挂到任何牌上。用「把……放进……」放进某张牌的效果列表，再用「让……上的效果生效」让它起作用。",
+      "source_comments": [
+        "按卡牌 JSON 里 effects 的单条格式新建一个效果对象（\"授予文字\"类：给对手一项能力、让一张牌获得某效果）。",
+        "只建对象，不挂到牌上也不登记：挂到哪张牌用 add_to_array 放进它的 _effects，",
+        "让它生效用 register_object_effects，与建牌/入区/登记分开组合的做法一致。",
+        "owner：效果归属（from），不传就归到发动这条效果的那张牌",
+        "每次建一份独立数据：同一块积木重复执行不能共用加载器写过的字典"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "activate_effect",
+      "source": "assets/scripts/system/operations/ActivateEffect.gd",
+      "signature": "func exec(effect:BaseEffect, player_id:int = -1)",
+      "help": "让一条已有的效果马上作为这名玩家的一次使用来结算，不看时机；它自己的次数、费用、失去文字等限制照常生效。",
+      "source_comments": [
+        "让一项已经存在的效果作为某名玩家的一次使用进入结算（\"再用一次某能力\"\"组合使用\"\"发动对手的能力\"）。",
+        "不看它的时点是否命中——发动时机由调用方决定；但仍遵守效果自己的规则：",
+        "失去文字/被禁用/每局一次/需激活、选项次数与资源、费用，都照常经由同一条询问与结算链。",
+        "效果已归属别的玩家时复制一份给这名玩家用，用完即移除，不改原效果的归属与用量。",
+        "返回实际排进结算的那个效果，被规则拦下时返回 null"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "flip_card_face",
+      "source": "assets/scripts/system/operations/FlipCardFace.gd",
+      "signature": "func exec(card:BaseCard, face_index = -1)",
+      "help": "双面卡切换到另一面，面的内容写在卡牌的双面数据里。第几面填 -1 表示翻到下一面。",
+      "source_comments": [
+        "双面卡切换到另一面（战型、礼装、第X天、原罪↔美德……）。各面的数据由卡牌 JSON 的 faces 声明，",
+        "格式与这类牌单张的 JSON 相同；切换时按那一面的数据重建卡面字段与效果：",
+        "旧面的效果注销，新面的效果按这张牌原来的归属玩家登记。明暗、激活、关闭这些场上状态不变——",
+        "翻面不是离场。face_index 为 -1 时切到下一面（最后一面之后回到第一面）。",
+        "返回切换后的牌；没声明 faces、下标越界或建不出那一面时返回 null 且不做任何改动"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "cancel_pending_action",
+      "source": "assets/scripts/system/operations/CancelPendingAction.gd",
+      "signature": "func exec()",
+      "help": "只在「即将……时」这类时机里有用：让即将发生的淘汰、败北、关闭、移出游戏、获得战果魔力等不发生。",
+      "source_comments": [
+        "在 before_* 时点里取消这次即将发生的动作（淘汰、败北、关闭、移出游戏、获得战果/魔力、",
+        "使用令咒、局势牌生效……）。只做\"取消\"这一件事：取消之后改成做什么，由同一条效果后续的步骤写。",
+        "没有正在发生的动作时返回 false"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "edit_pending_action",
+      "source": "assets/scripts/system/operations/EditPendingAction.gd",
+      "signature": "func exec(key:String, set_num = null, vary_num = null)",
+      "help": "只在「即将……时」这类时机里有用：改写即将获得的数量等。获得战果与魔力的数量叫 amount，使用令咒的数量也叫 amount。",
+      "source_comments": [
+        "在 before_* 时点里改写这次即将发生的动作携带的数值（如获得战果/魔力的数量 amount、使用令咒的数量）。",
+        "键名由发起动作的一方声明（见各发起处传给 begin_pending_action 的 values），本操作不认识任何键；",
+        "用法与 edit_data_number 一致：set_num 覆盖、vary_num 叠加。返回改写后的数值，键不存在或不是数字时返回 null"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "get_pending_action_value",
+      "source": "assets/scripts/system/operations/GetPendingActionValue.gd",
+      "signature": "func exec(key:String)",
+      "help": "只在「即将……时」这类时机里有用：取出即将发生的那件事带的东西。效果开始时叫 effect，即将关闭或移出的牌叫 card，即将获得的数量叫 amount。",
+      "source_comments": [
+        "读取这次即将发生的动作携带的值（before_* / effect_start 时点里用）：",
+        "即将开始结算的效果（effect）、即将被关闭/移出的牌（card）、即将获得的数量（amount）……",
+        "键名由发起动作的一方声明（见 begin_pending_action 的 values），本操作不认识任何键。",
+        "与 edit_pending_action 的区别：那个只改数值，这里只读，任何类型都原样返回。",
+        "没有正在发生的动作或键不存在时返回 null"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "set_battle_result",
+      "source": "assets/scripts/system/operations/SetBattleResult.gd",
+      "signature": "func exec(map_area:BaseMapArea, winner_ids:Array = [], mode:String = \"replace\")",
+      "help": "方式可选直接指定胜者、追加胜者、只在败北者中比威力。只影响本回合这一次战斗结算。",
+      "source_comments": [
+        "改写本回合某个战场的胜负（直接指定胜者、追加胜者、只在败北者中计胜者）。",
+        "只把改写声明记在战区上（_battle_override），真正的结算仍由 BattleResolver 做：",
+        "它读到声明后按 mode 算出胜者，战果照常按胜者人数分配，之后清掉声明，不留到下一回合。",
+        "mode：",
+        "\"replace\"      胜者直接定为 winner_ids（不比威力）"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "end_game",
+      "source": "assets/scripts/system/operations/EndGame.gd",
+      "signature": "func exec(winner_ids:Array = [])",
+      "help": "马上结束这一局。胜者空着表示无人获胜。",
+      "source_comments": [
+        "立刻结束对局并以给定玩家作为胜者（\"立即获得游戏胜利\"）。",
+        "与 set_player_data(\"victory_override\", true) 的区别：那个只在终局判定时生效，这里是现在就结束。",
+        "胜者写进各玩家的 is_victory，结局事实与提示由 GameProgress.end_game 统一记录——与正常终局同一条路径。",
+        "winner_ids 为空表示无人获胜（全员判负）。已经结束的对局不再重复结束，返回 false"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "add_player",
+      "source": "assets/scripts/system/operations/AddPlayer.gd",
+      "signature": "func exec(controller_id:int = -2, shared_keys:Array = [], overrides:Dictionary = {})",
+      "help": "分身棋子填本体玩家；NPC 填 -2；-1 是普通独立玩家。共用的项与控制者是同一份（如 played_cards、score、magic）。结果是新条目的玩家编号，放上版图、设威力另用积木（高级）。",
+      "source_comments": [
+        "新建一个玩家条目（分身棋子、NPC、代理实体……），返回它的玩家 id。只做\"建条目\"这一件事：",
+        "放上版图用 deploy / set_location，设威力用 edit_power，登记效果用 register_object_effects，",
+        "移除用 remove_from_board + set_player_data(\"is_out\", true)——都由调用方组合。",
+        "",
+        "controller_id：由谁控制。"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    },
+    {
+      "operation": "add_map_area",
+      "source": "assets/scripts/system/operations/AddMapArea.gd",
+      "signature": "func exec(area_data:Dictionary, link_from:BaseMapArea = null, link_to:BaseMapArea = null)",
+      "help": "按写好的战区内容新增一个战区并接进地图。两个指向都空着时按内容里写的下一战区接线、不改旧箭头（高级）。",
+      "source_comments": [
+        "按数据新增一个战区并接进地图（深空、阿里芒戈岛、宅邸……）。",
+        "area_data 的格式与御主 JSON 里 specials.MAP_AREAS 的单项相同（area_name/score/move_cost/can_deploy/locations/",
+        "linked_map_area_name），建区复用 LoadGame.load_map_areas，字段含义与读文件时一致。",
+        "接线：link_to 为新战区往前指向的战区（空则按数据里的 linked_map_area_name 查找）；",
+        "link_from 为改为指向新战区的那个战区（空则不改任何旧箭头）。改箭头只动 _linked_map_area，"
+      ],
+      "review": "源码签名和注释逐项对照；未深入审计函数体"
+    }
+  ]
+}

@@ -1,0 +1,334 @@
+### CreateCard
+#按内部名从已加载的卡库新建一张独立的牌，只负责新建，不放进任何区域：
+#放到哪、放几张由调用方用 add_to_array / for_func 等组合。
+#card_name：卡的内部名；攻击牌也认牌库构成写法（如 strength:2、special:surveil）。
+#card_type：attack / event / situation / command_spell；空字符串表示按这个顺序在各卡库里找。
+#owner：新牌归属（from）。不传就归到发动这条效果的那张卡，要改可再用 set_property 改 from。
+#卡库里存的是模板，直接拿出去会让同一张模板在多处共用，所以复制一份
+exec(card_name:String, card_type:String = "", owner = null)
+### BuildCard
+#按一份完整的卡牌数据新建一张牌。数据格式与正式卡牌 JSON 相同，建牌走各种卡自己的加载函数，
+#所以卡面字段、效果、词条、打出条件的含义与读文件时完全一致。只负责建牌：
+#放进哪一区用 add_to_array，让它的效果生效用 register_object_effects。
+#card_type：attack / skill / upgrade_skill / buff / thing / event / situation / command_spell。
+#owner：新牌归属（from）。不传就归到发动这条效果的那张牌。
+#image_dir：卡图所在目录。不传就用发动这条效果的那张牌的卡图所在目录（编辑器把图存在那里）。
+exec(card_data:Dictionary, card_type:String, owner = null, image_dir:String = "", card_back_type:String = "")
+### EditCardAttributes
+#增删或替换卡牌的属性。card留空时取当前激活效果所属的卡牌
+exec(add_attributes:Array = [], del_attributes:Array = [], set_attributes:Array = [""], card:BaseCard = null)
+### EditCardPower
+#修改指定卡牌的威力。卡已打出时，玩家当前的力量总和也跟着变
+	#改威力前先记下这张牌原本贡献了多少，改完按同一判定入口重新贡献一次，
+	#这样set_num整体改写和暗置牌不计威力两种情况都能算对
+exec(card:BaseHandCard, vary_num:BaseNumber = BaseNumber.new(0)
+### EditCardCost
+#改手牌的魔力消耗。与EditCardPower分开：改费用不碰合计威力。
+#card留空时取当前激活效果所属的卡。
+exec(vary_num:BaseNumber = BaseNumber.new(0)
+### CreateBuff
+
+exec(buff_name:String, buff_img:String, buff_id:int)
+### ManageBuff
+
+exec(buff, player_id:int = -1, add_or_del:bool = true)
+### SetCardConcealed
+#改变卡牌的明置/暗置状态，并实时同步玩家的合计威力。
+#不直接按暗置与否加减威力，而是比较变更前后CardCountsPower的结果：
+#带"暗置也计威力"这类例外效果的牌翻面时前后都计威力，差值为0，不会被误扣。
+#所有需要翻面的效果都应走这个入口，避免各自手动增减power时漏掉配对操作。
+#非手牌卡(新都的暗置事件牌等)不参与合计威力，只翻面
+	#其他手牌翻明时也属于卡牌亮出；事件牌由 EventResolver 在登记效果后统一派发，避免漏触发
+exec(card:BaseCard, concealed:bool, player_id:int = -1)
+### Move
+	#交战状态（与对手同处一处会发生战斗的战场）不能常规移动：判据在查询里，
+	#不写死战区名。只判当前所站位置——规则允许常规移动"经过"已发生交战的战场。
+	#ignore_engagement_for_move(如言峰监督者中立、以及"以令咒移动")让玩家无视交战状态移动，
+	#不需要调用方额外传ignore_battle
+	#目标落位失败时不扣费；MoveLocation 用 null 表示没有完成移动。
+	#MoveLocation 返回 BaseNumber，扣费 operation 需要同样的数值对象，不能直接做 int/Object 运算。
+exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false, ignore_battle:bool = false)
+### Deploy
+#把玩家部署到某个地点（前哨阶段抢席位的常规操作）。
+#部署不是"常规移动"，固定 is_move = false：不受目标区域 _can_move_to 的限制。
+#ignore_limit 透传落点的人数上限开关，由调用方决定要不要无视站位上限。
+	#部署是独立的规则动作，由入口自己记一条；SetLocation 只记中性的位置变化，
+	#它分不清"部署"和"效果搬运"。只在真正落位后才记，落位失败（位置满）不记
+	#把"有没有真的落位"交回调用方：席位满/不可落位时实际没动，
+exec(deploy_location:BaseLocation, player_id:int = -1, ignore_limit:bool = false)
+### AskPlayerOption
+#效果执行到这一步时，让一名玩家从几个选项里选。
+#只负责「建立这次选择并交给 EffectManager 暂停等待」：选完后做什么写在每个选项自己的 funcs 里，
+#选项字段与效果自带 options 完全同一份解析（max_uses、select_cards、activation_requirements……都能用）。
+#选项里的步骤与发起它的效果共用变量表和效果数字：能读前面算出的结果，后面的步骤也能读选项里算出的结果。
+#返回建好的选择效果，调用方一般不用管它。
+#player_id 为 -1 时是发动这条效果的玩家；max_choices 与效果的同名字段含义一致（1 单选，-1 不限）。
+exec(options:Array, shown_name:String = "", player_id:int = -1, max_choices:int = 1)
+### ChangePlOrder
+
+exec(set_order:BaseNumber = null, vary_order:BaseNumber = BaseNumber.new(0)
+### ReleaseTrueName
+#规则：有些卡牌拥有【真名解放】词条，使用这些卡牌后，立即展示你的从者概览卡
+#与所有技能牌，并处于【真名解放】状态。
+#本operation只做"解放"这一件事：把该展示的牌翻到明置、派发时点、记下事实。
+#不判断"哪张牌带真名解放词条"——那由卡牌数据在自己的效果里调用本函数决定；
+#也不负责隐藏（重新盖回去是另一条独立动作，见 HideTrueName），
+#更不改威力/战果（那些是各张卡自己的效果）。
+exec(player_id:int = -1, shown_areas:Array = ["servant_skills", "master_skills", "master._specials.SKILLS", "side.skills", "hand_cards", "played_cards", "deck", "discard"])
+### HideTrueName
+#规则：部分卡牌效果可以【隐藏】你的真名，将你的从者概览卡重新反面，
+#表示你失去了【真名解放】状态，重新【真名隐藏】。
+#与 ReleaseTrueName 成对，两者是两个独立动作（有效果只解放、有效果只隐藏），
+#不合并成一个带开关的函数：合并后调用方每次都要传一个布尔，
+#而"解放"和"隐藏"各自还有不同的展示范围与时点。
+#要盖回去哪些区域由 hidden_areas 传入，默认与解放时展示的区域一致。
+exec(player_id:int = -1, hidden_areas:Array = ["servant_skills", "master_skills", "master._specials.SKILLS", "side.skills"])
+### RemoveFromBoard
+#规则：回合结束时将每名御主的立牌移除版图。
+#只做"离开版图"这一件事：位置置空，并同步从席位的 _players 里摘除——
+#只清 location 不摘 _players 的话，席位人数永远只增不减，部署上限判定与展示都会失真。
+#没有落点，所以不复用 SetLocation（那是"落到某个位置"）
+#返回是否真的从版图上移除了（本来就不在版图上返回 false）
+	#日志：谁离开了哪个战区。供"上回合在哪""本回合是否上过版图"这类历史查询
+exec(player_id:int = -1)
+### AddEventFromDeck
+#从事件牌堆头取一张事件牌的克隆体挂到指定战区。局势牌「于某战场增加一张事件牌」
+#（新都之战/深山町的杀人魔/转机/命运之夜等）都走这里，add_count 由调用方传入，不写死几张。
+#挂克隆体而不是模板：效果登记时会写 _trigger_player_id，直接挂模板会让同一张牌
+#下次进场不再被登记（与 EventResolver.place 同一条规则，这里补 add_count 循环）。
+#concealed=false：正面事件牌明置进场
+		#暗置牌放置时不派发"本牌亮出时"：牌没亮出，提前执行等于泄露暗置信息（ActionPhase 翻开时才派）
+exec(map_area:BaseMapArea, add_count:int = 1, concealed:bool = false)
+### AddSituations
+
+exec(add_situation:BaseSituation)
+### SetLocationPlNumLimit
+#改地点的席位人数上限，并在该地点第一次被改时记下印刷基线。
+#_pl_num_limit 的印刷值是地图数据声明的事实；局势牌(如"魔术工房仅限一人部署")
+#回合结束弃置时由 RestoreLocationPlNumLimits 按基线还原。
+#只记录一次基线：同回合多张局势牌叠加改动时，基线始终是改动前的原值。
+#locations 传数组时逐个设置（同一张局势牌改多个席位），limit 由调用方传入
+exec(location:BaseLocation, limit:int = -1)
+### SetMapAreaCanMoveTo
+#改战区的"能否常规进入"开关，并在此区第一次被改时记下印刷基线。
+#_can_move_to 的印刷值(_printed_can_move_to)是地图数据声明的事实，
+#局势牌(如身处地狱之门/天之杯"无法进入某区")回合结束弃置时由
+#RestoreMapAreaMoveFlags 按基线恢复。只记录一次：连续多张局势牌同回合叠加改动时，
+#基线始终是改动前的原值，弃置后一次性还原
+exec(map_area:BaseMapArea, value:bool = true)
+### EditMapAreaMoveCost
+
+exec(map_area:BaseMapArea, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0)
+### ScheduleEffectOnTimePoint
+# 将当前激活效果的一组 funcs 克隆成新的通用效果，并登记给同一触发者；
+# 何时执行由调用方传入，规则对象本身不关心令咒/战斗/卡牌名称。
+	#延迟效果仍是原卡面能力的后续结算：对玩家展示原文案与原来源，
+	#内部调度名 scheduled_effect 只用于引擎识别，不得泄露到界面。
+	# 延迟 funcs 仍可引用调用效果的 number_index；把数值上下文带过去，但不把规则写死为任意卡。
+exec(time_points:Array, funcs:Array, priority:int = 0, require_all:bool = false, expire_time_points:Array = [])
+### ApplyCardKeywords
+#结算一张牌进场时其词条带来的规则行为。
+#词条是"一类牌共有的规则"（如【真名解放】：使用带此词条的牌后立即真名解放），
+#由卡在 JSON 的 keywords 里显式声明，规则本体只写在这里一份——
+#不去扫卡面文案里的【xx】字样（文案是给人看的，措辞一改行为就跟着错），
+#也不必在每张带词条的牌里把同一段规则复制一遍。
+#
+exec(card, player_id:int = -1)
+### ZeroAttributePower
+#将目标玩家指定属性的攻击威力按0计：扫描其场上这些属性的攻击牌，
+#把它们的威力贡献从合计威力里一次性扣掉。
+#在战斗结算前的时点(所有人出完牌后)调用；回合结束 SyncPower 重建基线时恢复，不永久改牌。
+#属性由调用方传入，不写死迅捷/魔术/力量；player_id 默认当前效果归属玩家。
+exec(player_id:int = -1, attributes:Array = [])
+### EditLives
+	#就地改写玩家自己的数字，避免把效果自带的数字对象挂到玩家身上
+exec(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0)
+### Defeat
+#给目标玩家附加【败北】buff，并派发 BATTLE_LOSE 时点。
+#具体的战斗胜负标记（is_battle_win / is_battle_lose）由 BattleResolver 在结算时自行管理。
+exec(player_id:int = -1)
+### CloseCard
+#关闭一张已打出的手牌：技能牌返回技能区(从played_cards移除、停止激活)，
+#攻击牌转为暗置(不再计入合计威力)。规则用语"关闭"对两类卡效果不同，故按类型分支
+		#技能牌离场后不再计入合计威力，先按判定入口扣掉它此前贡献的威力再移出场
+		#技能牌关闭后立刻明置返回技能区，复用AddSkillToSkillZone一并重新登记其效果
+		#转暗置后不再计入合计威力，由SetCardConcealed同步扣减
+exec(card:BaseHandCard, player_id:int = -1)
+### PlayAttack
+#常规出牌：检查费用/魔力/出牌数量上限，扣费并把攻击牌计入合计威力。
+#ignore_limit跳过play_limit常规出牌数量检查，供特殊效果(残留牌重新打出等)复用
+	# 单卡入口仅供显式特殊出牌；常规出牌必须提交整组。
+	#带有"无法打出卡牌"效果的buff(如【败北】)会阻止出牌，
+	#但不影响已激活的牌和能力的其他使用。按效果名通用查询，不关心具体buff类型
+	#阶段与行动者限制属于"常规出牌"；只有【效果链驱动的特殊出牌】才放宽，
+exec(attack:BaseAttack, player_id:int = -1, cost:BaseNumber = null, power:BaseNumber = null, ignore_limit:bool = false)
+### PlaySkill
+	#带有"无法打出卡牌"效果的buff(如【败北】)会阻止出牌，
+	#但不影响已激活的牌和能力的其他使用。按效果名通用查询，不关心具体buff类型
+	#卡面声明的打出条件与"需追加打出"，与攻击牌共用同一套判断
+	#局面级禁令与攻击牌同一套：宝具是技能卡的属性，禁令声明在局势牌/事件牌上，
+	#出牌入口只按效果名查询
+	#技能区的卡需要足够魔力才能打出，门槛取自规则数字而非写死
+exec(skill:BaseSkill, player_id:int = -1, ignore_limit:bool = false, cost:BaseNumber = null, power:BaseNumber = null)
+### AddAttack
+	#是否计入合计威力交给CardCountsPower判定，必须在入场后再判定
+	#词条规则在打出时点之前结算，理由同 PlayAttack。
+	#追加打出也算"使用了这张牌"，所以同样适用
+exec(attack:BaseAttack, player_id:int = -1, power:BaseNumber = null)
+### AddSkill
+	#是否计入合计威力交给CardCountsPower判定，必须在入场后再判定
+	#词条规则在打出时点之前结算，理由同 PlayAttack
+exec(skill:BaseSkill, player_id:int = -1, ignore_limit:bool = false, power:BaseNumber = null)
+### AddSkillToSkillZone
+#把技能卡加入玩家的技能区(side.skills)，并把技能自带的效果登记为该玩家的效果
+	#技能进入技能区后，它自己的效果才开始参与时点检查
+	#先在触发这个效果的卡的来源里找，找不到再退回玩家的御主
+#顺着from链找到效果所属的御主/从者，在它的SKILLS里查找同名技能
+	#BaseServant目前还没有_specials字段，所以先检查属性是否存在
+exec(skill, player_id:int = -1)
+### DrawCardByCard
+#把指定的卡从 from 数组搬到 to 数组（to_index 为 -1 时追加到末尾）。
+#下标校验一律在搬运之前做完：先 pop 再发现下标非法，卡会同时不在来源区也不在目标区，
+#等于静默把卡弄丢（不报错，只是那张牌从牌堆/手牌里凭空消失）。
+	#index 兼容 int / float / BaseNumber：只有整数值才当"插入位置"，-1 表示追加到末尾
+			#show("超出数组范围")
+	#JSON 里的整数经解析后是 float，所以"整数值的 float"也要当整数用，否则调用方写 0 会被当成非法下标
+exec(card:BaseCard, from:Array, to:Array, to_index = -1)
+### RefillHand
+#规则：把自己的手牌补充到手牌上限（已经有上限张以上则不抽）。
+#上限由调用方传入，不写在 operation 里——规则数字可能被效果改动。
+#牌堆抽空时按规则先用弃牌堆洗混作为新牌堆；两边都空就停下，不报错。
+#返回实际抽到的张数
+		#抽牌入口可能因"不能抽牌"这类状态而拒发，抽不动就停，避免死循环
+	#日志：补牌事实（供"这次补了几张""为什么没补"这类历史查询与排查）
+exec(player_id:int = -1, limit = 0)
+### ReshuffleDiscard
+#规则：需要从耗尽的牌堆中抽牌时，把相应的弃牌堆洗混作为新的牌堆。
+#只做这一件事——搬运与洗牌；抽牌由调用方自己调 draw_card_from_pl_deck_to_hand，
+#这样"洗回牌堆"也能被其它效果单独使用。
+#牌堆还有牌、或两边都空时返回 false（没有发生洗牌）
+	#日志：牌堆抽空后把弃牌堆洗回（供"这局洗过几次"这类历史查询）
+	#提示当事玩家：牌堆抽干了、弃牌堆已洗回。只给他看，别人不需要知道
+exec(player_id:int = -1)
+### EditPower
+	#就地改写玩家自己的数字，避免把效果自带的数字对象挂到玩家身上
+exec(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0)
+### EditMagic
+	#is_magic_immune是规则例外开关，由效果打开；本操作只负责尊重它，不解释谁赋予的
+	#就地改写玩家自己的数字，不能把效果自带的数字对象直接挂到玩家身上，否则后续变化会污染卡面数值
+	#与 set_num 对称：缺省/显式传 null 表示这次只设值或不加不减，不能因此报错
+	#规则：魔力是 0 到上限之间的资源（上限本身是数据、效果可以改）。
+	#夹在这里而不是让各调用方各写一个 min/max：获得魔力的来源有工房充能席、局势牌印刷魔力、
+	#令咒、效果等多处，漏掉任何一处都会出现"21 / 12"这种界面与规则对不上的数字
+exec(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0)
+### EditScore
+	#先把这次的差值固定下来并记完日志，再派发时点：
+	#时点里的效果还会再改战果，本条的 delta 必须仍是这一次自己的
+exec(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0)
+### EditLocationBenefit
+#改某席位当前的地利数。印刷值留在 _printed_benefit 作基线（回合结束由
+#RestoreLocationBenefits 还原），本操作只动当前值 _benefit。
+#不替换 _benefit 这个对象、只写它的数值：别处可能持有同一个 BaseNumber 的引用，
+#而且构造时 _benefit 与 _printed_benefit 可能就是同一个实例，
+#直接替换/就地加会把印刷基线也一起改掉，之后再也还原不回去
+	#印刷基线与当前值共用一个实例时先拆开，否则改当前值会连带改掉基线
+exec(location:BaseLocation, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0)
+### SetPlayerData
+	# 所属御主的初始/替换历史只作为事实写日志；不为单卡新增快照字段。
+exec(key_name:String, value, player_id:int = -1)
+### SetProperty
+#写入任意对象上的属性。与GetProperty成对，不限定卡牌/从者/buff。
+#对象或属性不存在时不写，避免把规则写进这个operation。
+exec(object, property:String, value)
+### RegisterObjectEffects
+#把对象上的_effects登记给一名玩家。换御主/从者、把技能放进技能区之外的来源，都只做登记这一件事。
+exec(object, player_id:int = -1)
+### QueueOptionalEffectForPlayers
+#给一组玩家分别排入一次可选择发动/放弃的即时效果。
+#只负责「逐人建立选择并排队」，不认识令咒、战果、卡名或具体规则；
+#具体动作由调用方传入 funcs（单一动作）或 options（多个互斥选项），显示文案由 shown_name 传入。
+#每名玩家得到独立 BaseEffect，选择与触发者互不串扰。
+#
+#funcs 与 options 二选一：数据要表达"恢复令咒/不恢复令咒"这类多个互斥分支时传 options，
+exec(players:Array, funcs:Array, shown_name:String = "", effect_name:String = "queued_optional_effect", options:Array = [])
+### AddMapAreaEvents
+	#事件牌挂到区域时，把from指向所属区域，供效果内部用get_property(event, "from")反查战场
+exec(map_area:BaseMapArea, add_event:BaseEvent)
+### AddMapAreaBuff
+
+exec(map_area:BaseMapArea, add_buff:BaseBuff)
+### MoveLocation
+#沿地图链算出移动后的落点并返回总费用，不扣魔力（扣魔力由 Move 负责）。
+#只做"算目标区域 + 算费用"这件事：落地（改变 location、同步落点 _players）交给
+#SetLocation，与部署/效果搬运共用同一份落地逻辑，不在这里重复实现。
+	#所在区域从 location 自己的 from 取，不遍历 MapData.areas 反查
+				#area = choose_where_to_go()
+	#常规移动只会落在该区域内标记为_will_move_to的Location上(工房区有多个同级点位)。
+exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false)
+### SetLocation
+#把玩家放到指定位置（部署、效果搬运、常规移动都走这里落地）。
+#参数语义：
+#  is_move      这一次是不是"一次常规移动"。规则上只有常规移动才受目标区域
+#               _can_move_to 的限制；部署与效果造成的落位传 false，不受该限制。
+#  ignore_limit 是否忽略落点的人数上限(_pl_num_limit)。需要无视站位上限的效果传 true。
+#落点所属战区从 location 自己的 from 取：MapData._init() 与 load_locations() 都已把
+exec(setted_location:BaseLocation, player_id:int = -1, is_move:bool = true, ignore_limit:bool = false)
+### DealPlayerCards
+#按 GameProgress.card_deal_rules 给一名玩家(重新)发放从者的牌到牌库与技能区。
+#换从者时用：从者换了，手里的牌也要跟着换成新从者的。
+#发放规则(发哪些区、是否洗牌、是否暗置)全部在 card_deal_rules 数据里，这里只做触发
+exec(player_id:int = -1)
+### EmitTimePoint
+#派发一个时点。SetPlayerData只改字段，真名解放/隐藏、自定义时点都要能单独触发。
+#player_id为-1时走全局时点，与GameProgress.process_time_point一致。
+exec(time_point:String, player_id:int = -1)
+### CardCountsPower
+#判定一张牌当前是否计入玩家的合计威力。所有增减power的位置都应查询本函数，
+#不要各自判断_is_concealed，否则每加一条例外规则都要改多处。
+#默认规则：在场上且明置的牌计入合计威力。两个方向的例外都按效果名查询：
+#  NeverCountsPowerEffect            明置也不计入(优先级最高)
+#  CountsPowerWhileConcealedEffect   暗置也照常计入
+	#不在场上的牌(手牌、技能区、弃牌堆)一律不计威力
+exec(card:BaseHandCard, player_id:int = -1)
+### ModifyAttackPowerByAttribute
+#按属性增减玩家的合计威力：场上每有一张匹配指定属性的攻击牌，合计威力就增减一份power_delta。
+#不改动卡牌自身的_power，牌的印刷威力保持不变，改牌威力请用EditCardPower。
+#required_attributes留空表示匹配所有攻击牌；
+#传入attack时只判定这一张，不传则扫描该玩家场上所有攻击牌；
+#exclude_attack在扫描时排除指定的一张牌，用于"其余攻击"这类自指效果；
+#required_category限定只对某个类别生效(如卡面写"基础牌"就传"basic")，留空表示不限类别。
+exec(required_attributes:Array, power_delta:BaseNumber = BaseNumber.new(0)
+### SyncPower
+#把玩家的合计威力重算为场上明置牌的威力之和，丢弃回合内累积的非卡牌来源加成。
+#power平时由出牌/改威力/翻面等操作实时增减，这个操作用于回合结束等需要重建基线的时点：
+#规则上残留牌跨回合留在场上并继续提供威力，所以基线不是0而是留场牌的威力之和
+exec(player_id:int = -1)
+### Counter
+#反制。countered_func留空时整个效果不结算；
+#否则只跳过效果里的那一个func，其余func照常结算
+#判断
+exec(effect:BaseEffect, countered_func:BaseFunc = null)
+### Tag
+
+exec(tag_name:String, from_pl_id:int)
+### QueryLog
+#查游戏日志：筛出过去发生过的条目，供效果取历史信息——
+#如"上回合我在战斗阶段是否与被淘汰的玩家同场""本回合我打出了几张迅捷攻击"。
+#历史事实统一存在 GameLog 里，各种效果就不必各自维护快照字段。
+#filter: 匹配 type / actor / target / place / tags / data 里的键值。
+#        actor 传 -1 时按当前效果的触发者查（与其它 operation 的玩家参数一致）
+#round_offset: 0=本回合、-1=上一回合…；传 null 表示不限回合
+exec(filter:Dictionary = {}, round_offset = 0, limit:int = -1)
+### DiscardPlayedCards
+		#残留牌回合结束不自动关闭，留在场上继续提供威力；
+		#但已被自身或其他效果关闭的残留牌此时已是暗置，仍要走"弃置暗置攻击"这一步
+			#技能牌回合结束保持明置并放回技能区，不进入弃牌堆
+		#普通攻击牌弃置前暗置，再进入弃牌堆
+#禁止系效果
+exec(player_id:int = -1)
+### EditDataNumber
+#通用BaseNumber字段编辑器：player_data里所有BaseNumber类型的字段(play_limit、
+#total_power_bonus、attack_cost_discount、move_cost_discount_from_workshop、
+#command_spell_count等)都可以用同一个operation改写，不需要为每个字段各写一个
+#Set/EditXxx.gd。用法与EditMagic/EditScore/EditLives一致：set_num覆盖，vary_num叠加
+exec(key:String, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0)

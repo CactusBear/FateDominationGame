@@ -41,6 +41,9 @@ var _can_deploy:bool = false
 #在该战区部署获得魔力时的"来源名"，供 cannot_gain_magic_from_<来源> 这类限制查询。
 #默认空串＝没有来源限制；数字与限制都由数据声明，规则代码不写死"工房"或"workshop"
 var _magic_source:String = ""
+#本回合对这个战场胜负的改写，由 set_battle_result 写入、战斗结算读取后清空：
+#{"mode": "replace"/"add"/"losers_only", "winners": [玩家id]}。空字典表示按常规比威力
+var _battle_override:Dictionary = {}
 
 func _init(area_name:String, score:BaseNumber = BaseNumber.new(0), move_cost:BaseNumber = BaseNumber.new(0), linked_map_area:BaseMapArea = null):
 	_area_name = area_name

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Fate Domination · 进入画面与主菜单概念稿 v1</title>
+<script src="assets/data.js"></script>
+<style>
+@font-face{font-family:"Cinzel";src:url(assets/Cinzel-Regular.ttf);font-weight:400}
+@font-face{font-family:"Cinzel";src:url(assets/Cinzel-Bold.ttf);font-weight:700}
+:root{
+  --ink:#06080d; --ink2:#0d121c; --ink3:#161d2b;
+  --gold:#c9a45c; --gold2:#e8cd86; --gold3:#8a6a32;
+  --mana:#3fd6f0; --mana2:#1a7fa6;
+  --blood:#c81d25; --blood2:#ff4d57;
+  --text:#efe6d2; --dim:#a79e8b; --dim2:#6d665a;
+  --serif:"Noto Serif SC","Source Han Serif SC","SimSun",serif;
+  --latin:"Cinzel",Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:var(--serif);color:var(--text);-webkit-font-smoothing:antialiased}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;background:var(--ink)}
+.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .7s ease}
+.screen.on{opacity:1;pointer-events:auto}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.latin{font-family:var(--latin)}
+
+/* ---------- 通用：细线、版本、角标 ---------- */
+.hair{position:absolute;background:linear-gradient(90deg,transparent,var(--gold3) 20%,var(--gold3) 80%,transparent);height:1px}
+.ver{position:absolute;left:48px;top:36px;font-family:var(--latin);font-size:13px;letter-spacing:3px;color:var(--dim2)}
+.ver b{color:var(--dim)}
+.corner{position:absolute;width:38px;height:38px;border:1px solid rgba(201,164,92,.55)}
+.corner.tl{left:28px;top:28px;border-right:0;border-bottom:0}
+.corner.tr{right:28px;top:28px;border-left:0;border-bottom:0}
+.corner.bl{left:28px;bottom:28px;border-right:0;border-top:0}
+.corner.br{right:28px;bottom:28px;border-left:0;border-top:0}
+
+/* ---------- 进入画面 ---------- */
+#title .bg{position:absolute;inset:0;background:url(assets/bg_bridge.jpg) center/cover;filter:saturate(.8) brightness(.9)}
+#title .kv{position:absolute;right:0;top:0;height:1080px;width:1010px;
+  background:url(assets/kv_saber.jpg) center top/cover;
+  -webkit-mask:linear-gradient(90deg,transparent 0,rgba(0,0,0,.35) 22%,#000 52%,#000 100%);mask:linear-gradient(90deg,transparent 0,rgba(0,0,0,.35) 22%,#000 52%,#000 100%)}
+#title .vign{position:absolute;inset:0;background:
+  linear-gradient(180deg,rgba(6,8,13,.7),transparent 22%,transparent 70%,rgba(6,8,13,.92)),
+  linear-gradient(90deg,rgba(6,8,13,.85) 0,rgba(6,8,13,.55) 38%,transparent 62%)}
+#title .glow{position:absolute;left:1240px;top:160px;width:420px;height:560px;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(63,214,240,.22),transparent);mix-blend-mode:screen;filter:blur(30px);animation:breathe 4.5s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+
+#title .block{position:absolute;left:140px;top:300px;width:820px}
+#title .eyebrow{font-family:var(--latin);font-size:18px;letter-spacing:9px;color:var(--gold);display:flex;align-items:center;gap:18px}
+#title .eyebrow::before{content:"";width:64px;height:1px;background:var(--gold)}
+#title h1{margin-top:22px;font-family:var(--latin);font-weight:700;font-size:150px;line-height:.92;letter-spacing:2px;color:#fff6dc;
+  text-shadow:0 0 18px rgba(232,205,134,.35),0 4px 0 rgba(0,0,0,.6)}
+#title h1 small{display:block;font-size:64px;letter-spacing:14px;color:var(--gold2);margin-top:6px;font-weight:400}
+#title .sub{margin-top:34px;display:flex;align-items:baseline;gap:22px}
+#title .sub .cn{font-size:36px;letter-spacing:12px;color:var(--text);font-weight:700}
+#title .sub .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--gold3),transparent)}
+#title .desc{margin-top:18px;font-size:19px;line-height:1.9;color:var(--dim);letter-spacing:2px;max-width:640px}
+
+#title .press{position:absolute;left:140px;bottom:120px;display:flex;align-items:center;gap:22px;font-size:22px;letter-spacing:8px;color:var(--gold2);animation:press 2.2s ease-in-out infinite}
+#title .press .key{font-family:var(--latin);font-size:14px;letter-spacing:2px;padding:6px 14px;border:1px solid var(--gold3);color:var(--gold);background:rgba(0,0,0,.35)}
+@keyframes press{0%,100%{opacity:.45}50%{opacity:1}}
+
+#title .sigil{position:absolute;right:120px;bottom:88px;width:150px;height:150px;opacity:.9;filter:drop-shadow(0 0 14px rgba(200,29,37,.55))}
+#title .legal{position:absolute;right:300px;bottom:112px;text-align:right;font-size:13px;line-height:1.9;letter-spacing:2px;color:var(--dim2)}
+
+/* 进场动画 */
+#title.on .block>*{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+#title.on .block>*:nth-child(2){animation-delay:.15s}
+#title.on .block>*:nth-child(3){animation-delay:.3s}
+#title.on .block>*:nth-child(4){animation-delay:.45s}
+#title.on .kv{animation:kv 1.6s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes kv{from{opacity:0;transform:translateX(40px) scale(1.03)}to{opacity:1;transform:none}}
+
+/* 魔力粒子 */
+.particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particles i{position:absolute;bottom:-10px;width:3px;height:3px;border-radius:50%;background:var(--gold2);opacity:0;
+  box-shadow:0 0 8px var(--gold2);animation:float linear infinite}
+@keyframes float{0%{opacity:0;transform:translateY(0)}10%{opacity:.9}90%{opacity:.5}100%{opacity:0;transform:translateY(-1150px)}}
+
+/* ---------- 主菜单 ---------- */
+#menu .bg{position:absolute;inset:0;background:url(assets/bg_church.jpg) center/cover;transform:scale(1.04);transition:transform 1.2s ease,filter 1.2s ease}
+#menu .bg.dim{filter:brightness(.55)}
+#menu .vign{position:absolute;inset:0;background:
+  linear-gradient(90deg,rgba(6,8,13,.94) 0,rgba(6,8,13,.86) 30%,rgba(6,8,13,.35) 60%,rgba(6,8,13,.15) 100%),
+  linear-gradient(180deg,rgba(6,8,13,.55),transparent 18%,transparent 80%,rgba(6,8,13,.92))}
+
+/* 顶栏 */
+#menu .top{position:absolute;left:0;right:0;top:0;height:92px;display:flex;align-items:center;padding:0 72px;gap:26px}
+#menu .top .logo{font-family:var(--latin);font-weight:700;font-size:30px;letter-spacing:2px;color:#fff6dc}
+#menu .top .logo small{font-weight:400;color:var(--gold2);letter-spacing:6px;font-size:22px;margin-left:10px}
+#menu .top .sep{width:1px;height:34px;background:var(--gold3)}
+#menu .top .crumb{font-size:17px;letter-spacing:5px;color:var(--dim)}
+#menu .top .right{margin-left:auto;display:flex;align-items:center;gap:26px;font-size:15px;color:var(--dim);letter-spacing:2px}
+#menu .top .profile{display:flex;align-items:center;gap:12px}
+#menu .top .profile .av{width:40px;height:40px;border-radius:50%;background:#000 url(assets/h_tohsaka_rin.png) center/cover;box-shadow:0 0 0 2px var(--ink),0 0 0 3px var(--gold3)}
+#menu .top .profile b{color:var(--text);font-weight:400;letter-spacing:3px}
+
+/* 左侧菜单 */
+#menu nav{position:absolute;left:96px;top:250px;width:640px}
+#menu nav .item{position:relative;display:block;width:100%;text-align:left;padding:18px 0 18px 56px;color:var(--dim);transition:color .25s,padding-left .25s}
+#menu nav .item .idx{position:absolute;left:0;top:26px;font-family:var(--latin);font-size:14px;letter-spacing:2px;color:var(--dim2)}
+#menu nav .item .en{display:block;font-family:var(--latin);font-size:15px;letter-spacing:5px;color:var(--dim2);transition:color .25s}
+#menu nav .item .cn{display:block;margin-top:4px;font-size:44px;letter-spacing:10px;line-height:1.15;font-weight:700}
+#menu nav .item .hint{display:block;height:0;overflow:hidden;font-size:16px;letter-spacing:2px;color:var(--gold2);opacity:0;transition:height .3s,opacity .3s,margin .3s}
+#menu nav .item::before{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:linear-gradient(90deg,rgba(201,164,92,.35),transparent)}
+#menu nav .item::after{content:"";position:absolute;left:36px;top:36px;width:0;height:2px;background:var(--gold2);box-shadow:0 0 10px var(--gold2);transition:width .3s}
+#menu nav .item.sel{color:#fff6dc;padding-left:78px}
+#menu nav .item.sel .en{color:var(--gold)}
+#menu nav .item.sel .idx{color:var(--gold)}
+#menu nav .item.sel::after{width:26px}
+#menu nav .item.sel .hint{height:28px;opacity:1;margin-top:8px}
+#menu nav .item.off .cn{color:var(--dim2)}
+#menu nav .item .tag{display:inline-block;margin-left:14px;vertical-align:middle;font-size:13px;letter-spacing:3px;color:var(--dim2);border:1px solid #3a3a3a;padding:1px 8px}
+
+/* 右侧信息面板 */
+#menu .panel{position:absolute;right:96px;top:250px;width:760px;min-height:520px}
+#menu .panel .pane{position:absolute;inset:0;opacity:0;transform:translateY(14px);transition:opacity .35s,transform .35s;pointer-events:none}
+#menu .panel .pane.on{opacity:1;transform:none;pointer-events:auto}
+.pane h2{font-size:22px;letter-spacing:6px;color:var(--gold2);display:flex;align-items:center;gap:16px}
+.pane h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--gold3),transparent)}
+.pane p{margin-top:12px;font-size:17px;line-height:1.9;letter-spacing:2px;color:var(--dim)}
+.roster{margin-top:30px;display:grid;grid-template-columns:repeat(7,1fr);gap:14px}
+.roster .m{text-align:center}
+.roster .m .av{display:block;width:86px;height:86px;margin:0 auto;border-radius:50%;background:#000 center/cover;box-shadow:0 0 0 2px var(--ink),0 0 0 3px var(--gold3);transition:box-shadow .25s,transform .25s}
+.roster .m:hover .av{box-shadow:0 0 0 2px var(--ink),0 0 0 3px var(--gold2),0 0 18px rgba(232,205,134,.5);transform:translateY(-4px)}
+.roster .m .nm{margin-top:10px;font-size:13px;letter-spacing:0;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.servants{margin-top:30px;display:grid;grid-template-columns:repeat(7,1fr);gap:14px}
+.servants .s{position:relative;aspect-ratio:5/7;background:#000 center/cover;border-radius:4px;box-shadow:0 0 0 1px var(--gold3),0 10px 22px rgba(0,0,0,.6)}
+.servants .s span{position:absolute;left:0;right:0;bottom:0;padding:6px 4px;font-family:var(--latin);font-size:11px;letter-spacing:1px;text-align:center;color:var(--gold2);background:linear-gradient(180deg,transparent,rgba(0,0,0,.85))}
+.modes{margin-top:30px;display:flex;gap:14px}
+.modes .md{flex:1;padding:16px 18px;border:1px solid rgba(201,164,92,.35);background:rgba(6,8,13,.55);cursor:pointer;transition:border-color .25s,background .25s}
+.modes .md:hover,.modes .md.sel{border-color:var(--gold2);background:rgba(201,164,92,.1)}
+.modes .md b{display:block;font-size:20px;letter-spacing:4px;color:var(--text)}
+.modes .md i{display:block;margin-top:6px;font-style:normal;font-size:14px;letter-spacing:1px;color:var(--dim)}
+.cards{margin-top:22px;display:flex;gap:16px}
+.cards .c{width:150px;aspect-ratio:5/7;background:#000 center/cover;border-radius:4px;box-shadow:0 0 0 1px var(--gold3),0 10px 22px rgba(0,0,0,.6);transform:rotate(-2deg)}
+.cards .c:nth-child(2){transform:rotate(1deg) translateY(-8px)}
+.cards .c:nth-child(3){transform:rotate(3deg)}
+.kvlist{margin-top:22px;display:grid;grid-template-columns:200px 1fr;row-gap:12px;font-size:17px;letter-spacing:2px}
+.kvlist dt{color:var(--dim)}
+.kvlist dd{color:var(--text)}
+.kvlist dd .opt{display:inline-block;padding:2px 12px;border:1px solid var(--gold3);margin-right:8px;color:var(--dim)}
+.kvlist dd .opt.on{color:#1a1206;background:linear-gradient(180deg,var(--gold2),var(--gold));border-color:var(--gold2);font-weight:700}
+
+/* 主按钮（面板底部） */
+.cta{margin-top:38px;display:flex;align-items:center;gap:22px}
+.cta .go{position:relative;padding:14px 46px;font-size:22px;letter-spacing:8px;color:#1a1206;font-weight:700;
+  background:linear-gradient(180deg,var(--gold2),var(--gold));clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%);transition:filter .2s}
+.cta .go:hover{filter:brightness(1.12)}
+.cta .ghost{padding:13px 30px;font-size:18px;letter-spacing:5px;color:var(--gold2);border:1px solid var(--gold3);background:rgba(0,0,0,.3)}
+.cta .ghost:hover{border-color:var(--gold2)}
+
+/* 底栏按键提示 */
+#menu .bottom{position:absolute;left:0;right:0;bottom:0;height:70px;display:flex;align-items:center;padding:0 72px;gap:34px;font-size:15px;letter-spacing:3px;color:var(--dim);
+  background:linear-gradient(180deg,transparent,rgba(6,8,13,.9))}
+#menu .bottom .key{font-family:var(--latin);font-size:12px;letter-spacing:1px;padding:4px 9px;border:1px solid var(--gold3);color:var(--gold);margin-right:8px}
+#menu .bottom .fill{flex:1}
+#menu .bottom .note{color:var(--dim2);letter-spacing:1px;font-size:13px}
+
+/* 进场 */
+#menu.on nav .item{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+#menu.on nav .item:nth-child(2){animation-delay:.08s}
+#menu.on nav .item:nth-child(3){animation-delay:.16s}
+#menu.on nav .item:nth-child(4){animation-delay:.24s}
+#menu.on nav .item:nth-child(5){animation-delay:.32s}
+
+/* 过场黑幕 + 令咒闪光 */
+#fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .55s}
+#fade.on{opacity:1;pointer-events:auto}
+#toast{position:absolute;left:50%;bottom:150px;transform:translateX(-50%);padding:12px 32px;font-size:18px;letter-spacing:5px;color:var(--gold2);border:1px solid var(--gold3);background:rgba(6,8,13,.85);opacity:0;transition:opacity .3s;pointer-events:none}
+#toast.on{opacity:1}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+#dbg{position:absolute;left:0;top:0;z-index:99;font:11px monospace;color:#0f0;background:rgba(0,0,0,.8);white-space:pre;display:none}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- 令咒纹：三重环加三刃，红色 -->
+    <symbol id="cs" viewBox="0 0 100 100">
+      <g fill="none" stroke="#e0333c" stroke-width="2.2" stroke-linecap="round">
+        <circle cx="50" cy="50" r="44" opacity=".55"/>
+        <circle cx="50" cy="50" r="30"/>
+        <path d="M50 8 L58 34 L50 42 L42 34 Z" fill="#e0333c"/>
+        <path d="M50 8 L58 34 L50 42 L42 34 Z" fill="#e0333c" transform="rotate(120 50 50)"/>
+        <path d="M50 8 L58 34 L50 42 L42 34 Z" fill="#e0333c" transform="rotate(240 50 50)"/>
+        <path d="M50 58 L56 70 L50 88 L44 70 Z" fill="#ff4d57"/>
+        <path d="M50 58 L56 70 L50 88 L44 70 Z" fill="#ff4d57" transform="rotate(120 50 50)"/>
+        <path d="M50 58 L56 70 L50 88 L44 70 Z" fill="#ff4d57" transform="rotate(240 50 50)"/>
+        <circle cx="50" cy="50" r="6" fill="#ff4d57"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="stage">
+
+  <!-- ================= 进入画面 ================= -->
+  <section id="title" class="screen">
+    <div class="bg"></div>
+    <div class="kv"></div>
+    <div class="glow"></div>
+    <div class="vign"></div>
+    <div class="particles" data-count="34"></div>
+
+    <div class="ver">BUILD <b>0.0.1</b> · CONCEPT</div>
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+
+    <div class="block">
+      <div class="eyebrow">HOLY GRAIL WAR · TACTICAL CARD GAME</div>
+      <h1>FATE<small>DOMINATION</small></h1>
+      <div class="sub"><span class="cn">命运支配</span><span class="rule"></span></div>
+      <p class="desc">七名御主，七骑英灵。以魔力为代价，以令咒为底牌，在冬木的夜色中争夺圣杯。</p>
+    </div>
+
+    <button class="press" id="press"><span class="key">ANY KEY</span>按任意键开始</button>
+
+    <div class="legal">Fate/stay night © TYPE-MOON<br>概念稿 · 原作图仅供参考</div>
+    <svg class="sigil"><use href="#cs"/></svg>
+  </section>
+
+  <!-- ================= 主菜单 ================= -->
+  <section id="menu" class="screen">
+    <div class="bg" id="menubg"></div>
+    <div class="vign"></div>
+    <div class="particles" data-count="18"></div>
+    <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+
+    <header class="top">
+      <div class="logo">FATE<small>DOMINATION</small></div>
+      <i class="sep"></i>
+      <div class="crumb" id="crumb">主菜单</div>
+      <div class="right">
+        <div class="profile"><i class="av"></i><b>远坂凛</b><span>· 御主档案</span></div>
+        <span>2026.09.26</span>
+      </div>
+    </header>
+
+    <nav id="nav">
+      <button class="item sel" data-pane="play">
+        <span class="idx">01</span><span class="en">START GAME</span>
+        <span class="cn">开始游戏</span>
+        <span class="hint">进入战术版图，与六名对手争夺圣杯</span>
+      </button>
+      <button class="item" data-pane="editor">
+        <span class="idx">02</span><span class="en">CARD EDITOR</span>
+        <span class="cn">卡牌效果编辑器</span>
+        <span class="hint">用填空句式编写卡牌效果 JSON</span>
+      </button>
+      <button class="item off" data-pane="gallery">
+        <span class="idx">03</span><span class="en">ARCHIVE</span>
+        <span class="cn">卡牌图鉴<span class="tag">预定</span></span>
+        <span class="hint">浏览全部御主、从者、事件与局势牌</span>
+      </button>
+      <button class="item off" data-pane="settings">
+        <span class="idx">04</span><span class="en">SETTINGS</span>
+        <span class="cn">设置<span class="tag">预定</span></span>
+        <span class="hint">画面、音量、操作与语言</span>
+      </button>
+      <button class="item" data-pane="quit">
+        <span class="idx">05</span><span class="en">QUIT</span>
+        <span class="cn">退出游戏</span>
+        <span class="hint">返回桌面</span>
+      </button>
+    </nav>
+
+    <div class="panel" id="panel">
+      <div class="pane on" data-pane="play">
+        <h2>开始游戏</h2>
+        <p>选择对局模式后进入御主与从者的选择。当前收录七名御主与七骑从者。</p>
+        <div class="modes">
+          <div class="md sel"><b>本地对局</b><i>与 AI 御主同桌，一至七人</i></div>
+          <div class="md"><b>教程</b><i>跟随远坂凛熟悉魔力、令咒与战果</i></div>
+          <div class="md"><b>快速开始</b><i>随机御主与从者，直接开局</i></div>
+        </div>
+        <div class="roster" id="roster"></div>
+        <div class="servants" id="servants"></div>
+        <div class="cta"><button class="go" data-go="主游戏">进入对局</button><button class="ghost">选择御主与从者</button></div>
+      </div>
+
+      <div class="pane" data-pane="editor">
+        <h2>卡牌效果编辑器</h2>
+        <p>面向非程序员的板块式编辑器。选择时点、条件与动作，逐句拼出效果，导出为游戏可直接读取的 JSON。</p>
+        <div class="cards">
+          <div class="c" style="background-image:url(assets/c_sv_artoria.jpg)"></div>
+          <div class="c" style="background-image:url(assets/c_excalibur.jpg)"></div>
+          <div class="c" style="background-image:url(assets/c_jewel.jpg)"></div>
+        </div>
+        <dl class="kvlist">
+          <dt>最近编辑</dt><dd>阿尔托莉雅·潘德拉贡 · 风王结界</dd>
+          <dt>数据目录</dt><dd>data/servants · data/masters · data/events</dd>
+        </dl>
+        <div class="cta"><button class="go" data-go="卡牌效果编辑器">打开编辑器</button><button class="ghost">新手教程</button></div>
+      </div>
+
+      <div class="pane" data-pane="gallery">
+        <h2>卡牌图鉴</h2>
+        <p>尚未接入。预定收录全部卡牌的高清卡面、效果说明与 ruling。</p>
+      </div>
+
+      <div class="pane" data-pane="settings">
+        <h2>设置</h2>
+        <dl class="kvlist">
+          <dt>显示模式</dt><dd><span class="opt on">全屏</span><span class="opt">窗口</span><span class="opt">无边框</span></dd>
+          <dt>分辨率</dt><dd>1920 × 1080</dd>
+          <dt>主音量</dt><dd>80</dd>
+          <dt>语言</dt><dd><span class="opt on">简体中文</span><span class="opt">日本語</span><span class="opt">English</span></dd>
+        </dl>
+        <p style="margin-top:22px;color:var(--dim2)">尚未接入，以上为示意。</p>
+      </div>
+
+      <div class="pane" data-pane="quit">
+        <h2>退出游戏</h2>
+        <p>圣杯战争尚未结束。确定要离开冬木吗。</p>
+        <div class="cta"><button class="go" data-go="退出">退出</button><button class="ghost" id="cancelQuit">留下</button></div>
+      </div>
+    </div>
+
+    <footer class="bottom">
+      <span><i class="key">↑ ↓</i>选择</span>
+      <span><i class="key">ENTER</i>确认</span>
+      <span><i class="key">ESC</i>返回标题</span>
+      <span class="fill"></span>
+      <span class="note">Fate/stay night © TYPE-MOON · 概念稿</span>
+    </footer>
+  </section>
+
+  <div id="fade"></div>
+  <div id="toast"></div>
+  <pre id="dbg"></pre>
+</div>
+
+<script>
+(function(){
+  const q=new URLSearchParams(location.search);
+  const stage=document.getElementById('stage');
+  function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(-50%,-50%) scale(${s})`;stage.style.transformOrigin='center';}
+  addEventListener('resize',fit);fit();
+
+  // 粒子
+  document.querySelectorAll('.particles').forEach(p=>{
+    const n=+p.dataset.count||20;
+    for(let i=0;i<n;i++){const s=document.createElement('i');
+      s.style.left=(Math.random()*100)+'%';s.style.animationDuration=(9+Math.random()*10)+'s';s.style.animationDelay=(-Math.random()*18)+'s';
+      const sz=1.5+Math.random()*2.5;s.style.width=s.style.height=sz+'px';s.style.opacity=0;p.appendChild(s);}
+  });
+
+  // 屏幕切换
+  const title=document.getElementById('title'),menu=document.getElementById('menu'),fade=document.getElementById('fade'),toast=document.getElementById('toast');
+  let cur=null;
+  function show(name,instant){
+    const to=name==='menu'?menu:title,from=cur;
+    if(instant){title.classList.toggle('on',to===title);menu.classList.toggle('on',to===menu);cur=to;return;}
+    fade.classList.add('on');
+    setTimeout(()=>{if(from)from.classList.remove('on');to.classList.add('on');cur=to;fade.classList.remove('on');},560);
+  }
+  function say(t){toast.textContent=t;toast.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>toast.classList.remove('on'),1600);}
+
+  // 主菜单：选择项与右侧面板联动
+  const items=[...document.querySelectorAll('#nav .item')],panes=[...document.querySelectorAll('#panel .pane')];
+  let sel=0;
+  function select(i){sel=(i+items.length)%items.length;
+    items.forEach((it,k)=>it.classList.toggle('sel',k===sel));
+    const name=items[sel].dataset.pane;
+    panes.forEach(p=>p.classList.toggle('on',p.dataset.pane===name));
+    document.getElementById('crumb').textContent='主菜单 · '+items[sel].querySelector('.cn').firstChild.textContent.trim();
+    document.getElementById('menubg').classList.toggle('dim',name==='quit');
+  }
+  items.forEach((it,k)=>{it.addEventListener('mouseenter',()=>select(k));it.addEventListener('focus',()=>select(k));
+    it.addEventListener('click',()=>{const go=items[k].querySelector('.cn').firstChild.textContent.trim();if(it.classList.contains('off'))say(go+' 尚未接入');});});
+  document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>say('切换场景 → '+b.dataset.go)));
+  document.getElementById('cancelQuit').addEventListener('click',()=>select(0));
+
+  // 数据：御主头像、从者卡
+  const D=window.FD_DATA||{masters:[],servants:[]};
+  document.getElementById('roster').innerHTML=D.masters.map(m=>`<div class="m"><i class="av" style="background-image:url(${m.head})"></i><div class="nm">${m.name}</div></div>`).join('');
+  document.getElementById('servants').innerHTML=D.servants.map(s=>`<div class="s" style="background-image:url(${s.img})" title="${s.name}"><span>${(s.cls||'').toUpperCase()}</span></div>`).join('');
+
+  // 键盘
+  addEventListener('keydown',e=>{
+    if(cur===title){show('menu');return;}
+    if(e.key==='ArrowDown')select(sel+1);else if(e.key==='ArrowUp')select(sel-1);
+    else if(e.key==='Enter')items[sel].click();else if(e.key==='Escape')show('title');
+  });
+  title.addEventListener('click',()=>show('menu'));
+
+  // 入口参数：?screen=menu&sel=1&bg=burning
+  if(q.get('bg')){document.getElementById('menubg').style.backgroundImage=`url(assets/bg_${q.get('bg')}.jpg)`;}
+  show(q.get('screen')==='menu'?'menu':'title',true);
+  if(q.has('sel'))select(+q.get('sel'));
+
+  // 调试：输出关键矩形
+  if(q.get('debug')){const d=document.getElementById('dbg');d.style.display='block';
+    const R=[];const S=1/parseFloat(stage.style.transform.match(/scale\(([^)]+)\)/)[1]);const st=stage.getBoundingClientRect();
+    const rect=el=>{const r=el.getBoundingClientRect();return [Math.round((r.left-st.left)*S),Math.round((r.top-st.top)*S),Math.round(r.width*S),Math.round(r.height*S)];};
+    ['#title .block','#title h1','#title .press','#title .sigil','#title .legal','#menu nav','#menu .panel','#menu .top','#menu .bottom','#roster','#servants','#panel .pane.on .cta'].forEach(s=>{const el=document.querySelector(s);if(el)R.push(s+' '+JSON.stringify(rect(el)));});
+    d.textContent=R.join('\n');}
+})();
+</script>
+</body>
+</html>

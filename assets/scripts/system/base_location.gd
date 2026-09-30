@@ -8,6 +8,7 @@ func clone_data(context):
 	cloned._printed_benefit = cloned._benefit if _printed_benefit == _benefit else context.copy(_printed_benefit)
 	cloned._printed_pl_num_limit = _printed_pl_num_limit
 	cloned._players = []
+	cloned._placed_cards = context.copy(_placed_cards)
 	return cloned
 
 
@@ -45,6 +46,8 @@ var _will_move_to:bool
 #常规部署进不去（容量仍可为 -1 表示不限人数），只有效果直接落位才进得去。
 #常规移动是否可达由 _will_move_to 单独决定，两者语义不同
 var _can_deploy:bool
+#放在这个位置上的物件（标记、锚、线索……）。放入/取出用 add_to_array / remove_from_array
+var _placed_cards:Array = []
 
 func _init(magic:BaseNumber = BaseNumber.new(0), benefit:BaseNumber = BaseNumber.new(0), pl_num_limit:int = 1, will_move_to:bool = false, can_deploy:bool = true):
 	_magic = magic

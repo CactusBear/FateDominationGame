@@ -1,0 +1,249 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://assets/scripts/main_menu/main_menu.gd" id="1_menu"]
+[ext_resource type="Texture2D" path="res://assets/images/main_menu/bg_bridge.jpg" id="2_bridge"]
+[ext_resource type="Texture2D" path="res://assets/images/main_menu/kv_saber.jpg" id="3_saber"]
+[ext_resource type="Texture2D" path="res://assets/images/main_menu/bg_church.jpg" id="4_church"]
+[ext_resource type="Texture2D" path="res://assets/images/main_menu/command_sigil.svg" id="5_sigil"]
+[ext_resource type="Shader" path="res://assets/shaders/ui_mask.gdshader" id="6_mask"]
+
+[sub_resource type="ShaderMaterial" id="KvMask"]
+shader = ExtResource("6_mask")
+shader_parameter/shape = 0
+shader_parameter/fade_dir = Vector2(1, 0)
+shader_parameter/fade_start = 0.0
+shader_parameter/fade_end = 0.52
+shader_parameter/softness = 0.01
+
+[sub_resource type="CanvasItemMaterial" id="AddBlend"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="GlowGradient"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0.247, 0.839, 0.941, 0.28, 0.247, 0.839, 0.941, 0)
+
+[sub_resource type="GradientTexture2D" id="GlowTex"]
+gradient = SubResource("GlowGradient")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="Gradient" id="TitleSideGradient"]
+offsets = PackedFloat32Array(0, 0.38, 0.62)
+colors = PackedColorArray(0.024, 0.031, 0.051, 0.85, 0.024, 0.031, 0.051, 0.55, 0.024, 0.031, 0.051, 0)
+
+[sub_resource type="GradientTexture2D" id="TitleSideTex"]
+gradient = SubResource("TitleSideGradient")
+width = 512
+height = 8
+
+[sub_resource type="Gradient" id="VerticalGradient"]
+offsets = PackedFloat32Array(0, 0.22, 0.7, 1)
+colors = PackedColorArray(0.024, 0.031, 0.051, 0.7, 0.024, 0.031, 0.051, 0, 0.024, 0.031, 0.051, 0, 0.024, 0.031, 0.051, 0.92)
+
+[sub_resource type="GradientTexture2D" id="VerticalTex"]
+gradient = SubResource("VerticalGradient")
+width = 8
+height = 512
+fill_from = Vector2(0, 0)
+fill_to = Vector2(0, 1)
+
+[sub_resource type="Gradient" id="MenuSideGradient"]
+offsets = PackedFloat32Array(0, 0.3, 0.6, 1)
+colors = PackedColorArray(0.024, 0.031, 0.051, 0.94, 0.024, 0.031, 0.051, 0.86, 0.024, 0.031, 0.051, 0.35, 0.024, 0.031, 0.051, 0.15)
+
+[sub_resource type="GradientTexture2D" id="MenuSideTex"]
+gradient = SubResource("MenuSideGradient")
+width = 512
+height = 8
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="TitleScreen" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="TitleScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("2_bridge")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="KeyVisual" type="TextureRect" parent="TitleScreen"]
+material = SubResource("KvMask")
+layout_mode = 0
+offset_left = 910.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("3_saber")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Glow" type="TextureRect" parent="TitleScreen"]
+material = SubResource("AddBlend")
+layout_mode = 0
+offset_left = 1180.0
+offset_top = 100.0
+offset_right = 1720.0
+offset_bottom = 780.0
+pivot_offset = Vector2(270, 340)
+mouse_filter = 2
+texture = SubResource("GlowTex")
+expand_mode = 1
+
+[node name="VignetteV" type="TextureRect" parent="TitleScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = SubResource("VerticalTex")
+expand_mode = 1
+
+[node name="VignetteH" type="TextureRect" parent="TitleScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = SubResource("TitleSideTex")
+expand_mode = 1
+
+[node name="Particles" type="CPUParticles2D" parent="TitleScreen"]
+position = Vector2(960, 1090)
+amount = 34
+lifetime = 12.0
+preprocess = 10.0
+emission_shape = 3
+emission_rect_extents = Vector2(960, 1)
+direction = Vector2(0, -1)
+spread = 6.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 70.0
+initial_velocity_max = 130.0
+scale_amount_min = 1.5
+scale_amount_max = 4.0
+color = Color(0.91, 0.804, 0.525, 0.85)
+
+[node name="Sigil" type="TextureRect" parent="TitleScreen"]
+layout_mode = 0
+offset_left = 1650.0
+offset_top = 842.0
+offset_right = 1800.0
+offset_bottom = 992.0
+mouse_filter = 2
+texture = ExtResource("5_sigil")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Content" type="Control" parent="TitleScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Menu" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("4_church")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VignetteH" type="TextureRect" parent="Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = SubResource("MenuSideTex")
+expand_mode = 1
+
+[node name="VignetteV" type="TextureRect" parent="Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = SubResource("VerticalTex")
+expand_mode = 1
+
+[node name="Particles" type="CPUParticles2D" parent="Menu"]
+position = Vector2(960, 1090)
+amount = 18
+lifetime = 14.0
+preprocess = 10.0
+emission_shape = 3
+emission_rect_extents = Vector2(960, 1)
+direction = Vector2(0, -1)
+spread = 6.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 60.0
+initial_velocity_max = 110.0
+scale_amount_min = 1.5
+scale_amount_max = 3.5
+color = Color(0.91, 0.804, 0.525, 0.75)
+
+[node name="Content" type="Control" parent="Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Fade" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 1)
+
+[node name="Toast" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -200.0
+offset_right = 260.0
+offset_bottom = -150.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="Toast"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1

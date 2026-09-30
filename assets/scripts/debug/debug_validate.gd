@@ -41,6 +41,9 @@ static func player_zones(player_id:int) -> Dictionary:
 	var result:Dictionary = {}
 	for key in ROOT_ZONE_KEYS:
 		var value = data.get(key)
+		#分身棋子与控制者共用的牌区只算在控制者名下
+		if GameDataManager.is_shared_with_controller(player_id, key):
+			continue
 		if value is Array:
 			result[key] = value
 	for path in NESTED_ZONE_KEYS:

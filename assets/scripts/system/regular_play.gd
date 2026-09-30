@@ -4,7 +4,9 @@ extends RefCounted
 # 常规出牌逐张提交；play 日志是已提交事实，regular_play 是流程完成事实。
 static func candidates(id: int) -> Array:
 	var d: Dictionary = GameDataManager.get_player_data(id)
-	var cards: Array = d.hand_cards.duplicate()
+	#"视为手牌"的牌区由玩家数据 regular_play_zones 声明（缺省只有手牌）；技能区一直可以常规出牌
+	var zone_cards: Array = play_zone_cards(d)
+	var cards: Array = zone_cards.duplicate()
 	cards.append_array(d.servant_skills)
 	cards.append_array(d.master_skills)
 	cards.append_array(d.side.skills)
@@ -16,9 +18,49 @@ static func candidates(id: int) -> Array:
 	#放进来会让这些牌长出"现在能出"的金框
 	var unique: Array = []
 	for card in cards:
-		if card is BaseHandCard and not card._is_activating and not d.played_cards.has(card) and not d.deck.has(card) and not d.discard.has(card) and not unique.has(card):
-			unique.append(card)
+		if not (card is BaseHandCard) or card._is_activating or d.played_cards.has(card) or unique.has(card):
+			continue
+		#牌库、弃牌堆里的牌只有在它们被声明为出牌区时才算候选
+		if (d.deck.has(card) or d.discard.has(card)) and not zone_cards.has(card):
+			continue
+		unique.append(card)
 	return unique
+
+#玩家"视为手牌"的各牌区里的全部牌（按 regular_play_zones 的顺序），路径格式同 CardZones 的区路径
+static func play_zone_cards(d: Dictionary) -> Array:
+	var result: Array = []
+	for zone in play_zone_arrays(d):
+		for card in zone:
+			if not result.has(card):
+				result.append(card)
+	return result
+
+#regular_play_zones 解析成真实数组；找不到的路径跳过。字段缺失时退回手牌，与原行为一致
+static func play_zone_arrays(d: Dictionary) -> Array:
+	var paths = d.get("regular_play_zones", ["hand_cards"])
+	if not (paths is Array):
+		paths = ["hand_cards"]
+	var arrays: Array = []
+	for path in paths:
+		var node = d
+		for part in str(path).split("/"):
+			node = node.get(part) if node is Dictionary else null
+		if node is Array and not arrays.has(node):
+			arrays.append(node)
+	return arrays
+
+#这张牌是否在"视为手牌"的区里：暗置打出与技能区魔力门槛都以它代替原来的"在手牌中"
+static func in_play_zone(d: Dictionary, card) -> bool:
+	for zone in play_zone_arrays(d):
+		if zone.has(card):
+			return true
+	return false
+
+#打出时从来源区移除：出牌区与技能区都查，不假设牌来自手牌
+static func _take_from_source(d: Dictionary, card) -> void:
+	for zone in play_zone_arrays(d):
+		zone.erase(card)
+	d.hand_cards.erase(card); d.servant_skills.erase(card); d.master_skills.erase(card); d.side.skills.erase(card)
 
 static func completed(id: int) -> bool:
 	return not GameLog.query({"type": "regular_play", "actor": id}, 0).is_empty()
@@ -78,15 +120,15 @@ static func faceup_allowed(card: BaseHandCard, id: int, start_magic = null) -> b
 	var area = d.get("location").get_from() as BaseMapArea if d.get("location") is BaseLocation else null
 	if card._attributes.has(Attributes.SPECIAL) and MapAreaHasEffect.new().exec(area, ForbidSpecialAttackEffect.EFFECT_NAME): return false
 	var threshold: float = d.magic.number if start_magic == null else float(start_magic)
-	if not d.hand_cards.has(card) and not d.is_magic_immune and not d.ignore_skill_zone_magic_limit:
+	if not in_play_zone(d, card) and not d.is_magic_immune and not d.ignore_skill_zone_magic_limit:
 		if not (card is BaseSkill and card._ignore_limit) and threshold < GameData.skill_zone_magic_limit.number: return false
-	return d.is_magic_immune or cost(card, d) <= minf(d.magic.number, GameData.magic_limit.number)
+	return d.is_magic_immune or cost(card, d) <= minf(d.magic.number, GameData.player_magic_limit(id).number)
 
 static func _mode_basic(id: int, card, hidden: bool, magic: float, start_magic: float) -> bool:
 	var d: Dictionary = GameDataManager.get_player_data(id)
 	if not candidates(id).has(card): return false
 	if hidden:
-		return d.hand_cards.has(card) and card is BaseAttack and not card._need_extra_play
+		return in_play_zone(d, card) and card is BaseAttack and not card._need_extra_play
 	return faceup_allowed(card, id, start_magic) and (d.is_magic_immune or cost(card, d) <= magic)
 
 static func _path_exists(id: int, cards: Array, magic: float, count: int, faceup: bool, start_magic: float) -> bool:
@@ -104,7 +146,7 @@ static func _path_exists(id: int, cards: Array, magic: float, count: int, faceup
 static func can_add(id: int, card, hidden: bool) -> bool:
 	if not GameData.player_data_library.has(id) or completed(id): return false
 	var d: Dictionary = GameDataManager.get_player_data(id)
-	if d.is_out or GameProgress.current_player_id != id or GameProgress.get_current_phase().get("name", "") != "action": return false
+	if d.is_out or GameProgress.current_player_id != id or not GameProgress.is_phase_for(id, "action"): return false
 	if PlayerBuffsHaveEffect.new().exec(CannotPlayCardsEffect.EFFECT_NAME, id): return false
 	var count := played_count(id)
 	if count >= limit(id): return false
@@ -125,7 +167,7 @@ static func pending_modes(id:int, pending_cards:Array, pending_hidden:Array, car
 	if !GameData.player_data_library.has(id) or completed(id):
 		return result
 	var d:Dictionary = GameDataManager.get_player_data(id)
-	if d.is_out or GameProgress.current_player_id != id or GameProgress.get_current_phase().get("name", "") != "action":
+	if d.is_out or GameProgress.current_player_id != id or not GameProgress.is_phase_for(id, "action"):
 		return result
 	if PlayerBuffsHaveEffect.new().exec(CannotPlayCardsEffect.EFFECT_NAME, id):
 		return result
@@ -180,7 +222,7 @@ static func can_submit_group(id:int, cards:Array, hidden_flags:Array) -> bool:
 	if cards.size() != hidden_flags.size() or cards.is_empty():
 		return false
 	var d:Dictionary = GameDataManager.get_player_data(id)
-	if d.is_out or GameProgress.current_player_id != id or GameProgress.get_current_phase().get("name", "") != "action":
+	if d.is_out or GameProgress.current_player_id != id or not GameProgress.is_phase_for(id, "action"):
 		return false
 	if PlayerBuffsHaveEffect.new().exec(CannotPlayCardsEffect.EFFECT_NAME, id):
 		return false
@@ -265,7 +307,7 @@ static func submit_group(id:int, cards:Array, hidden_flags:Array) -> bool:
 			GameLog.record_resource_change("magic", id, before, d.magic.number)
 		card._is_concealed = hidden
 		card._is_activating = not hidden
-		d.hand_cards.erase(card); d.servant_skills.erase(card); d.master_skills.erase(card); d.side.skills.erase(card)
+		_take_from_source(d, card)
 		d.played_cards.append(card)
 		if CardCountsPower.new().exec(card, id): d.power.add(card._power)
 		GameLog.record("play", id, -1, "", card, ["play"], {"card_name":card._name, "card_type":"attack" if card is BaseAttack else "skill", "extra":false, "concealed":hidden})
@@ -273,6 +315,10 @@ static func submit_group(id:int, cards:Array, hidden_flags:Array) -> bool:
 			ApplyCardKeywords.new().exec(card, id)
 			#明置卡牌在进入打出区后亮出；暗置卡牌等之后真正翻开时再派发
 			TimePointChecker.card_revealed(card)
+	#打出时点在整批入场、整批 play 日志都写完之后才逐张派发：
+	#卡面「若此牌与一张基础攻击一同打出」这类条件要看得到同批的其他牌，
+	#放在入场循环里会让排在前面的牌漏判排在后面的同批牌（顺序不该影响同时打出的判定）
+	for card in cards:
 		TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, card)
 	GameLog.record("regular_play", id, -1, "", null, [], {"count":played_count(id), "forced":false})
 	return true
@@ -310,7 +356,7 @@ static func add(id: int, card, hidden: bool) -> bool:
 		GameLog.record_resource_change("magic", id, before, d.magic.number)
 	card._is_concealed = hidden
 	card._is_activating = not hidden
-	d.hand_cards.erase(card); d.servant_skills.erase(card); d.master_skills.erase(card); d.side.skills.erase(card)
+	_take_from_source(d, card)
 	d.played_cards.append(card)
 	if CardCountsPower.new().exec(card, id): d.power.add(card._power)
 	GameLog.record("play", id, -1, "", card, ["play"], {"card_name":card._name, "card_type":"attack" if card is BaseAttack else "skill", "extra":false, "concealed":hidden})

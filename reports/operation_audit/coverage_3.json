@@ -1,0 +1,5180 @@
+[
+  {
+    "id": 1161,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "map_graph_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1162,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1163,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "zone_transfer_existing"
+    ]
+  },
+  {
+    "id": 1164,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "map_graph_query_gap"
+    ]
+  },
+  {
+    "id": 1165,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1166,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1167,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1168,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1169,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1170,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1171,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1172,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1173,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1174,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1175,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1176,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1177,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1178,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1179,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1180,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1181,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1182,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "aggregate_property_gap",
+      "distinct_value_count_gap",
+      "log_query_existing"
+    ]
+  },
+  {
+    "id": 1183,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1184,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1185,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap"
+    ]
+  },
+  {
+    "id": 1186,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1187,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1188,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1189,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1190,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1191,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1192,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1193,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1194,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1195,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1196,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap"
+    ]
+  },
+  {
+    "id": 1197,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1198,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1199,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap"
+    ]
+  },
+  {
+    "id": 1200,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap"
+    ]
+  },
+  {
+    "id": 1201,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1202,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1203,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "placed_non_event_object_gap"
+    ]
+  },
+  {
+    "id": 1204,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "placed_non_event_object_gap"
+    ]
+  },
+  {
+    "id": 1205,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "placed_non_event_object_gap"
+    ]
+  },
+  {
+    "id": 1206,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1207,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1208,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "zone_transfer_existing"
+    ]
+  },
+  {
+    "id": 1209,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1210,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1211,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1212,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "zone_transfer_existing"
+    ]
+  },
+  {
+    "id": 1213,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1214,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1215,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1216,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "number_rounding_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1217,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1218,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1219,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1220,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1221,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "zone_transfer_existing"
+    ]
+  },
+  {
+    "id": 1222,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1223,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1224,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1225,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1226,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1227,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1228,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1229,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1230,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1231,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1232,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap"
+    ]
+  },
+  {
+    "id": 1233,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap"
+    ]
+  },
+  {
+    "id": 1234,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1235,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1236,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1237,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1238,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1239,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1240,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1241,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1242,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1243,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1244,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1245,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap"
+    ]
+  },
+  {
+    "id": 1246,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1247,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1248,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1249,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "zone_transfer_existing"
+    ]
+  },
+  {
+    "id": 1250,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1251,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1252,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1253,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1254,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1255,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1256,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1257,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1258,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1259,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1260,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1261,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1262,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1263,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1264,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1265,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1266,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1267,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1268,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1269,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1270,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1271,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1272,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1273,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1274,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1275,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1276,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed"
+    ]
+  },
+  {
+    "id": 1277,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "clone_and_rebind_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1278,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1279,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1280,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1281,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1282,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1283,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1284,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1285,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1286,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1287,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1288,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1289,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1290,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1291,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "effect_targeting_immunity_framework_gap"
+    ]
+  },
+  {
+    "id": 1292,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1293,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1294,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1295,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1296,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1297,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1298,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "zone_transfer_existing"
+    ]
+  },
+  {
+    "id": 1299,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "zone_transfer_existing"
+    ]
+  },
+  {
+    "id": 1300,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "card_controller_gap",
+      "zone_transfer_existing"
+    ]
+  },
+  {
+    "id": 1301,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1302,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1303,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1304,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1305,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1306,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1307,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1308,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1309,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1310,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1311,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1312,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1313,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1314,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "placed_non_event_object_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1315,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1316,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1317,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1318,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1319,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "round_restart_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1320,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1321,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1322,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "round_restart_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1323,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1324,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1325,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1326,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1327,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1328,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "round_restart_framework_gap",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1329,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "scoped_effect_invocation_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1330,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1331,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1332,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1333,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "distinct_value_count_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1334,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1335,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1336,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1337,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1338,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1339,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1340,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1341,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1342,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1343,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1344,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1345,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1346,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1347,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "clone_and_rebind_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1348,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1349,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1350,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1351,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1352,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1353,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1354,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1355,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1356,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1357,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1358,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1359,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1360,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1361,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1362,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1363,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "clone_and_rebind_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1364,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1365,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1366,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1367,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1368,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1369,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1370,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1371,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1372,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1373,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1374,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1375,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1376,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1377,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1378,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1379,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1380,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1381,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1382,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1383,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1384,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1385,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1386,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1387,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1388,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1389,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1390,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1391,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1392,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1393,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1394,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1395,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1396,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1397,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1398,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1399,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1400,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1401,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1402,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1403,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1404,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1405,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1406,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1407,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1408,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1409,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1410,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1411,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1412,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1413,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1414,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1415,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1416,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "number_theory_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1417,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "number_theory_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1418,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1419,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1420,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1421,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1422,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1423,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1424,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1425,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1426,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1427,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1428,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1429,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1430,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1431,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1432,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1433,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1434,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1435,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1436,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_lifecycle_framework_gap",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1437,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1438,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "effect_targeting_immunity_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1439,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1440,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1441,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1442,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1443,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1444,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1445,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1446,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1447,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1448,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1449,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1450,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1451,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1452,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1453,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1454,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1455,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1456,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1457,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1458,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1459,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1460,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1461,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1462,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1463,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1464,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1465,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1466,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1467,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1468,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1469,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1470,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1471,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1472,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1473,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1474,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1475,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1476,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1477,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1478,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1479,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1480,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1481,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1482,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1483,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1484,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1485,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1486,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1487,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1488,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1489,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1490,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1491,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1492,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1493,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1494,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1495,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "map_graph_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1496,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1497,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1498,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1499,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1500,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1501,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1502,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1503,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1504,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1505,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "aggregate_property_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1506,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1507,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "aggregate_property_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1508,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1509,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1510,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1511,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1512,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1513,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1514,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_controller_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1515,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1516,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1517,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1518,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1519,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1520,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1521,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1522,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1523,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1524,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1525,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1526,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1527,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1528,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1529,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1530,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1531,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1532,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1533,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1534,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1535,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1536,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "simultaneous_choice_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1537,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1538,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1539,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1540,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1541,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "simultaneous_choice_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1542,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1543,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1544,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1545,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1546,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1547,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1548,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1549,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_lifecycle_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1550,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1551,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1552,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1553,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_lifecycle_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1554,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1555,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1556,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1557,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1558,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1559,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1560,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1561,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1562,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1563,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1564,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1565,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1566,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1567,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1568,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1569,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1570,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1571,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1572,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1573,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1574,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1575,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1576,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1577,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1578,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1579,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1580,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1581,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1582,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1583,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1584,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1585,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1586,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1587,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1588,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1589,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1590,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1591,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1592,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1593,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1594,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1595,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1596,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1597,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "map_graph_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1598,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1599,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1600,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1601,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "effect_targeting_immunity_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1602,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1603,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1604,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1605,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "object_effect_enablement_gap",
+      "power_source_provenance_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1606,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1607,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1608,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "zone_transfer_existing",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1609,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1610,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1611,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1612,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1613,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "power_source_provenance_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1614,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "aggregate_property_gap",
+      "power_source_provenance_framework_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1615,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1616,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1617,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1618,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1619,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1620,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1621,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1622,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1623,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1624,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1625,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1626,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1627,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1628,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1629,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1630,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1631,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1632,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1633,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1634,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1635,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1636,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1637,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1638,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1639,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1640,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1641,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1642,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1643,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1644,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1645,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1646,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1647,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1648,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1649,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1650,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1651,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1652,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1653,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1654,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1655,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1656,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1657,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1658,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1659,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1660,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1661,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1662,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1663,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1664,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1665,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "create_or_build_card_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1666,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "clone_and_rebind_existing",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1667,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1668,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1669,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1670,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "scoped_effect_invocation_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1671,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1672,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "scoped_effect_invocation_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1673,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "aggregate_property_gap",
+      "distinct_value_count_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1674,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "map_graph_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1675,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "map_graph_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1676,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "map_graph_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1677,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_attachment_zone_gap",
+      "map_graph_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1678,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1679,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "aggregate_property_gap",
+      "distinct_value_count_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1680,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1681,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1682,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1683,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1684,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1685,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1686,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1687,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "zone_transfer_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1688,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1689,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1690,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1691,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "array_window_query_gap",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1692,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1693,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1694,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1695,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1696,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1697,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1698,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1699,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1700,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1701,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1702,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1703,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1704,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1705,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1706,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1707,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1708,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1709,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1710,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1711,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1712,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1713,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1714,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1715,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1716,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1717,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1718,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "card_face_switch_gap",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1719,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1720,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1721,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1722,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1723,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1724,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1725,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "placed_non_event_object_gap",
+      "create_or_build_card_existing",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1726,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1727,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1728,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1729,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1730,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1731,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1732,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  },
+  {
+    "id": 1733,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1734,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1735,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1736,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1737,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1738,
+    "status": "unclear",
+    "mechanisms": [
+      "ocr_unreadable_or_semantically_incomplete"
+    ]
+  },
+  {
+    "id": 1739,
+    "status": "non_rule",
+    "mechanisms": [
+      "overview_token_back_or_no_rule_text"
+    ]
+  },
+  {
+    "id": 1740,
+    "status": "analyzed",
+    "mechanisms": [
+      "existing_primitives_reviewed",
+      "effect_timing_and_conditions_reviewed",
+      "log_query_existing",
+      "player_resource_edit_existing"
+    ]
+  }
+]

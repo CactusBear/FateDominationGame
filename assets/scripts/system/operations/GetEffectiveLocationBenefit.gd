@@ -23,7 +23,10 @@ func exec(player_id:int = -1) -> int:
 		return 0
 	if !_deployed_here(id, loc):
 		return 0
-	return current_benefit(loc)
+	#玩家级基础地利加成（阿周那、糖果这类）只在玩家确实享有地利时叠加：
+	#两条例外（战区不提供地利、不是部署来的）照样挡住它
+	var bonus = (GameDataManager.get_player_data(id) as Dictionary).get("location_benefit_bonus")
+	return current_benefit(loc) + (int(bonus.number) if bonus is BaseNumber else 0)
 
 
 #某席位此刻的地利数：效果改过就用改后的值，没改过就是印刷值。

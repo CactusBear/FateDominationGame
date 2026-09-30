@@ -1,0 +1,97 @@
+{
+  "candidates": [
+    {
+      "file": "E:\\Projects\\Godot\\FateDominationGame-master\\assets\\images\\game_scene\\v2\\background_candidates\\workshop_tokiomi_basement.webp",
+      "area_hint": "魔术工房",
+      "source_url": "https://static.wikia.nocookie.net/typemoon/images/d/d5/Tokiomi_basment.png/revision/latest?cb=20130617222257",
+      "source_page": "https://typemoon.fandom.com/wiki/File:Tokiomi_basment.png",
+      "width": 3659,
+      "height": 1355,
+      "format": "WEBP",
+      "bytes": 314932,
+      "sha256": "36d3787d4410f06d2f616d3a614c1bc26ba96e05834d5e7084ce90a588f7be53",
+      "license_note": "TYPE-MOON/Fate 原作相关图像；Fandom 展示不等于可再发行授权。仅作内部概念参考，正式发布需确认权利或替换授权素材。",
+      "visual_review": "未进行像素视觉判断；区域仅按维基文件名/页面语义建议。"
+    },
+    {
+      "file": "E:\\Projects\\Godot\\FateDominationGame-master\\assets\\images\\game_scene\\v2\\background_candidates\\workshop_caster_sewer.webp",
+      "area_hint": "魔术工房",
+      "source_url": "https://static.wikia.nocookie.net/typemoon/images/6/60/Caster_sewer_workshop.png/revision/latest?cb=20130620163757",
+      "source_page": "https://typemoon.fandom.com/wiki/File:Caster_sewer_workshop.png",
+      "width": 3257,
+      "height": 2029,
+      "format": "WEBP",
+      "bytes": 571194,
+      "sha256": "213f85506d6f6b9301255e26d8484f5a44a48bbbb79f9cffd251acf749ae262c",
+      "license_note": "TYPE-MOON/Fate 原作相关图像；Fandom 展示不等于可再发行授权。仅作内部概念参考，正式发布需确认权利或替换授权素材。",
+      "visual_review": "未进行像素视觉判断；区域仅按维基文件名/页面语义建议。"
+    },
+    {
+      "file": "E:\\Projects\\Godot\\FateDominationGame-master\\assets\\images\\game_scene\\v2\\background_candidates\\miyama_emiya_shed.webp",
+      "area_hint": "深山町",
+      "source_url": "https://static.wikia.nocookie.net/typemoon/images/e/e1/Emiya_residents_shed.png/revision/latest?cb=20130601155355",
+      "source_page": "https://typemoon.fandom.com/wiki/File:Emiya_residents_shed.png",
+      "width": 2000,
+      "height": 1800,
+      "format": "WEBP",
+      "bytes": 710752,
+      "sha256": "a2368b7a0d348beb7dc09a0a0b009148a41831ac77ab2dca10a2b2aa889c8a9f",
+      "license_note": "TYPE-MOON/Fate 原作相关图像；Fandom 展示不等于可再发行授权。仅作内部概念参考，正式发布需确认权利或替换授权素材。",
+      "visual_review": "未进行像素视觉判断；区域仅按维基文件名/页面语义建议。"
+    },
+    {
+      "file": "E:\\Projects\\Godot\\FateDominationGame-master\\assets\\images\\game_scene\\v2\\background_candidates\\miyama_tohsaka_mansion.webp",
+      "area_hint": "深山町",
+      "source_url": "https://static.wikia.nocookie.net/typemoon/images/1/18/Tohsaka_Mansion_%28UBW%29.jpg/revision/latest?cb=20240707013420",
+      "source_page": "https://typemoon.fandom.com/wiki/File:Tohsaka_Mansion_(UBW).jpg",
+      "width": 1920,
+      "height": 1080,
+      "format": "WEBP",
+      "bytes": 216636,
+      "sha256": "a85b63a7b442de689378f89a519496e3b34fa1fa7100d7910cdc92c4007d5589",
+      "license_note": "TYPE-MOON/Fate 原作相关图像；Fandom 展示不等于可再发行授权。仅作内部概念参考，正式发布需确认权利或替换授权素材。",
+      "visual_review": "未进行像素视觉判断；区域仅按维基文件名/页面语义建议。"
+    },
+    {
+      "file": "E:\\Projects\\Godot\\FateDominationGame-master\\assets\\images\\game_scene\\v2\\background_candidates\\shinto_fuyuki_bridge.webp",
+      "area_hint": "新都",
+      "source_url": "https://static.wikia.nocookie.net/typemoon/images/3/32/Fuyuki_bridge.png/revision/latest?cb=20130620163507",
+      "source_page": "https://typemoon.fandom.com/wiki/File:Fuyuki_bridge.png",
+      "width": 2174,
+      "height": 1069,
+      "format": "WEBP",
+      "bytes": 200412,
+      "sha256": "8a53bebe784e1255e79859e6bcc4837947fb68456a5bf82252533558b6c91a31",
+      "license_note": "TYPE-MOON/Fate 原作相关图像；Fandom 展示不等于可再发行授权。仅作内部概念参考，正式发布需确认权利或替换授权素材。",
+      "visual_review": "未进行像素视觉判断；区域仅按维基文件名/页面语义建议。"
+    },
+    {
+      "file": "E:\\Projects\\Godot\\FateDominationGame-master\\assets\\images\\game_scene\\v2\\background_candidates\\scout_fuyuki_cm3.webp",
+      "area_hint": "侦察",
+      "source_url": "https://static.wikia.nocookie.net/typemoon/images/6/61/Fuyuki_%28CM3%29.jpeg/revision/latest?cb=20230817041633",
+      "source_page": "https://typemoon.fandom.com/wiki/File:Fuyuki_(CM3).jpeg",
+      "width": 1925,
+      "height": 1050,
+      "format": "WEBP",
+      "bytes": 800226,
+      "sha256": "8d390b403fe0955197a5a0e7eb161cca2f763b0b49eae51d0de173c58cee3095",
+      "license_note": "TYPE-MOON/Fate 原作相关图像；Fandom 展示不等于可再发行授权。仅作内部概念参考，正式发布需确认权利或替换授权素材。",
+      "visual_review": "未进行像素视觉判断；区域仅按维基文件名/页面语义建议。"
+    },
+    {
+      "file": "E:\\Projects\\Godot\\FateDominationGame-master\\assets\\images\\game_scene\\v2\\background_candidates\\scout_fgo_fuyuki.webp",
+      "area_hint": "侦察",
+      "source_url": "https://static.wikia.nocookie.net/typemoon/images/d/dc/FGO_Fuyuki.png/revision/latest?cb=20230727141734",
+      "source_page": "https://typemoon.fandom.com/wiki/File:FGO_Fuyuki.png",
+      "width": 1920,
+      "height": 1240,
+      "format": "WEBP",
+      "bytes": 359528,
+      "sha256": "1bde419200b4f85dabbf11f0e4391f9d5f08c1472c61ef102851f246f0f51039",
+      "license_note": "TYPE-MOON/Fate 原作相关图像；Fandom 展示不等于可再发行授权。仅作内部概念参考，正式发布需确认权利或替换授权素材。",
+      "visual_review": "未进行像素视觉判断；区域仅按维基文件名/页面语义建议。"
+    }
+  ],
+  "source_api": "https://typemoon.fandom.com/api.php?action=query&generator=images&titles=Fuyuki_City|Fuyuki_Bridge|Emiya_residence|Tohsaka_residence&gimlimit=100&prop=imageinfo&iiprop=url|size&format=json",
+  "notes": "尺寸来自下载后的文件解码，未放大；CDN 可能按客户端返回 WebP 转码，但像素尺寸保持原图级别。未做人眼或模型视觉审核。"
+}

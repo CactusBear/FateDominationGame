@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Fate Domination 对局界面概念稿</title>
+<style>
+@font-face{font-family:"FDSerif";src:local("Noto Serif SC"),local("NotoSerifSC-VF"),local("Source Han Serif SC"),local("SimSun");}
+@font-face{font-family:"FDSans";src:local("Noto Sans SC"),local("NotoSansSC-VF"),local("Microsoft YaHei");}
+:root{
+  --ink:#0a0f1d; --ink2:#0f1628; --panel:rgba(12,18,34,.82); --panel2:rgba(18,26,48,.9);
+  --gold:#d6b46a; --gold2:#f3dca0; --gold-dim:rgba(214,180,106,.35);
+  --seal:#d0243c; --seal2:#ff5a6e; --mana:#58d2ff; --mana2:#a8ecff;
+  --text:#e9e4d6; --muted:#9aa3b8; --line:rgba(214,180,106,.28);
+  --serif:"FDSerif","Noto Serif SC",serif; --sans:"FDSans","Noto Sans SC",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#03050b;overflow:hidden;font-family:var(--sans);color:var(--text)}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center;overflow:hidden;
+  background:#060a14 url(assets/bg_night.jpg) center/cover no-repeat}
+#stage::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 38%,rgba(20,30,70,.0) 0%,rgba(4,6,14,.55) 60%,rgba(2,3,8,.92) 100%)}
+.hair{border:1px solid var(--line)}
+/* 切角面板：FGO 式斜切角 + 金色细线 */
+.plate{position:relative;background:var(--panel);clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px)}
+.plate::after{content:"";position:absolute;inset:0;pointer-events:none;border:1px solid var(--line);
+  clip-path:inherit}
+.serif{font-family:var(--serif)}
+.num{font-family:var(--serif);font-weight:700;font-variant-numeric:tabular-nums}
+.icon{width:22px;height:22px;object-fit:contain;flex:none}
+
+/* ============ 顶栏 ============ */
+#top{position:absolute;left:0;top:0;width:1920px;height:84px;display:flex;align-items:center;gap:18px;padding:0 22px;
+  background:linear-gradient(180deg,rgba(4,7,16,.96),rgba(6,10,22,.72) 80%,transparent)}
+#top::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim) 15%,var(--gold-dim) 85%,transparent)}
+.day{display:flex;align-items:center;gap:12px;min-width:210px}
+.day .moon{width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 36% 34%,#fff8e0,#d9c48d 45%,#6b5a33 100%);box-shadow:0 0 18px rgba(243,220,160,.45)}
+.day .d1{font-family:var(--serif);font-size:13px;color:var(--muted);letter-spacing:.3em}
+.day .d2{font-family:var(--serif);font-size:26px;color:var(--gold2);line-height:1}
+.day .d2 small{font-size:14px;color:var(--muted);margin-left:4px}
+.phases{display:flex;align-items:center;gap:0}
+.ph{position:relative;padding:8px 16px;font-family:var(--serif);font-size:15px;color:var(--muted);letter-spacing:.15em;cursor:pointer}
+.ph+.ph::before{content:"";position:absolute;left:-3px;top:50%;width:6px;height:6px;transform:translateY(-50%) rotate(45deg);border:1px solid var(--gold-dim)}
+.ph.done{color:#6f7890}
+.ph.on{color:var(--gold2);text-shadow:0 0 12px rgba(243,220,160,.6)}
+.ph.on::after{content:"";position:absolute;left:14px;right:14px;bottom:1px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.order{flex:1;display:flex;align-items:center;justify-content:center;gap:4px}
+.seat{display:flex;align-items:center;gap:8px;height:66px;padding:4px 10px 4px 5px;cursor:default;
+  background:linear-gradient(90deg,rgba(20,28,52,.9),rgba(12,18,34,.6));border:1px solid rgba(214,180,106,.18);border-radius:34px 8px 8px 34px;transition:.25s}
+.seat .av{position:relative;width:56px;height:56px;border-radius:50%;flex:none;overflow:hidden;border:2px solid var(--pc,#888);box-shadow:0 0 0 1px rgba(0,0,0,.6)}
+.seat .av img{width:100%;height:100%;object-fit:cover}
+.seat .rk{position:absolute;right:-2px;bottom:-2px;width:20px;height:20px;border-radius:50%;background:var(--ink);border:1px solid var(--gold);font:700 11px/18px var(--serif);text-align:center;color:var(--gold2)}
+.seat .nm{font-family:var(--serif);font-size:15px;color:var(--text);white-space:nowrap}
+.seat .loc{font-size:12px;color:var(--muted);margin-top:1px}
+.seat .st{display:flex;gap:9px;margin-top:3px;font-size:13px}
+.seat .st span{display:flex;align-items:center;gap:3px}
+.seat .st img{width:15px;height:15px}
+.seat .cs{display:flex;gap:2px}
+.seat .cs i{width:7px;height:12px;background:var(--seal);clip-path:polygon(50% 0,100% 40%,50% 100%,0 40%)}
+.seat .cs i.used{background:#3a2a32}
+.seat.self{padding:4px;border-radius:34px;background:rgba(214,180,106,.12);border-color:var(--gold)}
+.seat.acting{border-color:var(--seal2);box-shadow:0 0 0 1px var(--seal2),0 0 22px rgba(255,90,110,.45);background:linear-gradient(90deg,rgba(80,16,30,.9),rgba(30,10,20,.6))}
+.seat.acting .av{animation:pulseRing 1.6s ease-in-out infinite}
+.seat.out{opacity:.35;filter:grayscale(1)}
+.chev{width:12px;height:12px;border-top:2px solid var(--gold-dim);border-right:2px solid var(--gold-dim);transform:rotate(45deg);margin:0 3px;flex:none}
+@keyframes pulseRing{0%,100%{box-shadow:0 0 0 0 rgba(255,90,110,.7)}50%{box-shadow:0 0 0 6px rgba(255,90,110,0)}}
+.topbtn{height:44px;padding:0 18px;display:flex;align-items:center;gap:8px;font-family:var(--serif);font-size:15px;color:var(--gold2);cursor:pointer;
+  background:linear-gradient(180deg,rgba(40,34,20,.8),rgba(18,16,12,.8));border:1px solid var(--gold-dim);border-radius:4px;letter-spacing:.1em}
+.topbtn:hover{border-color:var(--gold);box-shadow:0 0 14px rgba(214,180,106,.35)}
+
+/* ============ 排行榜抽屉 ============ */
+#board{position:absolute;right:18px;top:88px;width:330px;z-index:30;transform:translateY(-12px);opacity:0;pointer-events:none;transition:.25s}
+#board.open{transform:none;opacity:1;pointer-events:auto}
+#board .plate{padding:14px 16px 16px;background:rgba(8,12,24,.95)}
+#board h3{font-family:var(--serif);font-size:17px;color:var(--gold2);letter-spacing:.3em;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+#board h3 small{font-size:12px;color:var(--muted);letter-spacing:.05em}
+.lb{display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px solid rgba(214,180,106,.1);font-size:15px}
+.lb .p{width:26px;font:700 18px var(--serif);color:var(--muted);text-align:center}
+.lb:nth-child(2) .p{color:var(--gold2)}
+.lb img.h{width:36px;height:36px;border-radius:50%;border:2px solid var(--pc)}
+.lb .n{flex:1;font-family:var(--serif)}
+.lb .v{display:flex;align-items:center;gap:4px;font:700 18px var(--serif);color:var(--gold2)}
+.lb.cut{border-bottom:1px dashed var(--seal)}
+.lb.me{background:rgba(214,180,106,.08)}
+.elim{margin-top:10px;display:flex;gap:6px;font-size:12px;color:var(--muted)}
+.elim span{flex:1;text-align:center;padding:5px 0;border:1px solid rgba(214,180,106,.18)}
+.elim span b{display:block;font:700 15px var(--serif);color:var(--text)}
+.elim span.now{border-color:var(--seal);color:var(--seal2)}
+
+/* ============ 中部战场 ============ */
+#mid{position:absolute;left:18px;right:18px;top:92px;height:540px;display:flex;gap:14px}
+#left{width:236px;display:flex;flex-direction:column;gap:10px}
+.lbl{font-family:var(--serif);font-size:13px;letter-spacing:.35em;color:var(--gold);display:flex;align-items:center;gap:8px}
+.lbl::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--gold-dim),transparent)}
+.card{position:relative;aspect-ratio:5/7;border-radius:6px;overflow:hidden;background:#000 center/cover no-repeat;box-shadow:0 6px 18px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.8);cursor:zoom-in;transition:transform .18s,box-shadow .18s}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 26px rgba(0,0,0,.7),0 0 0 1px var(--gold)}
+.card.back{cursor:default}
+.sit{width:236px}
+.sit .card{width:100%}
+.decks{display:flex;gap:10px}
+.mini{flex:1;display:flex;align-items:center;gap:8px;padding:6px 8px;font-size:12px;color:var(--muted)}
+.mini .card{width:34px;flex:none;border-radius:3px;cursor:default}
+.mini .card:hover{transform:none}
+.mini b{display:block;font:700 18px var(--serif);color:var(--text)}
+.track{padding:10px 10px 12px}
+.track .row{display:flex;gap:4px;margin-top:8px}
+.track .r{flex:1;height:26px;display:flex;align-items:center;justify-content:center;font:700 12px var(--serif);color:#6d7690;border:1px solid rgba(214,180,106,.15);position:relative}
+.track .r.past{background:rgba(214,180,106,.1);color:#8b8467}
+.track .r.cur{border-color:var(--gold);color:var(--ink);background:var(--gold)}
+.track .r.cl{border-color:rgba(208,36,60,.55);color:var(--seal2)}
+.track .r.cl::after{content:attr(data-k);position:absolute;top:-15px;font-size:10px;color:var(--seal2)}
+.track .r.grail{background:radial-gradient(circle,rgba(214,180,106,.3),transparent 70%)}
+
+#zones{flex:1;display:flex;gap:0;align-items:stretch}
+.zone{flex:1;position:relative;display:flex;flex-direction:column;min-width:0}
+.zone .plate{flex:1;display:flex;flex-direction:column;background:rgba(8,12,24,.78);overflow:hidden}
+.zart{position:relative;height:190px;background:center/cover no-repeat;flex:none}
+.zart::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,9,20,.05) 30%,rgba(8,12,24,.98) 100%),linear-gradient(90deg,rgba(6,9,20,.55),transparent 45%)}
+.zhead{position:absolute;left:16px;right:14px;top:12px;z-index:2;display:flex;align-items:flex-start;justify-content:space-between}
+.zname{font-family:var(--serif);font-size:30px;font-weight:700;letter-spacing:.12em;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.9),0 0 22px rgba(0,0,0,.6)}
+.zsub{font-size:12px;color:var(--gold2);letter-spacing:.3em;margin-top:2px;text-shadow:0 1px 6px #000}
+.laurel{display:flex;flex-direction:column;align-items:center;gap:0}
+.laurel .v{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;gap:2px;
+  background:radial-gradient(circle at 40% 35%,#6b1422,#2a0710);border:2px solid var(--gold);box-shadow:0 0 14px rgba(214,180,106,.4);font:700 22px var(--serif);color:var(--gold2)}
+.laurel .v img{width:16px;height:16px}
+.laurel .t{font-size:11px;color:var(--gold2);margin-top:3px;letter-spacing:.2em;text-shadow:0 1px 4px #000}
+.zbody{flex:1;display:flex;flex-direction:column;gap:12px;padding:0 14px 14px;margin-top:-54px;position:relative;z-index:2}
+.events{display:flex;gap:8px;min-height:120px;overflow-x:auto;padding-bottom:2px}
+.events .card{width:86px;flex:none}
+.evslot{width:86px;aspect-ratio:5/7;border:1px dashed rgba(214,180,106,.25);border-radius:6px;flex:none}
+.seats{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sq{position:relative;width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;
+  background:radial-gradient(circle,rgba(20,30,56,.9),rgba(8,12,24,.9));border:2px solid var(--gold-dim)}
+.sq .b{font:700 17px var(--serif);color:var(--gold2)}
+.sq.mana{border-color:rgba(88,210,255,.55);box-shadow:inset 0 0 14px rgba(88,210,255,.25)}
+.sq.mana .b{color:var(--mana2)}
+.sq.big{width:70px;height:70px}
+.sq.vang{border-color:var(--gold);box-shadow:0 0 14px rgba(214,180,106,.3),inset 0 0 14px rgba(214,180,106,.2)}
+.sq .occ{position:absolute;inset:3px;border-radius:50%;overflow:hidden;border:2px solid var(--pc)}
+.sq .occ img{width:100%;height:100%;object-fit:cover}
+.sq .tag{position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);padding:0 6px;border-radius:8px;background:var(--ink);border:1px solid currentColor;font:700 11px/15px var(--serif);white-space:nowrap}
+.sq.mana .tag{color:var(--mana2)} .sq.hl .tag{color:var(--gold2)}
+.sq.extra{border-style:dashed;opacity:.9}
+.sq.can{animation:seatGlow 1.8s ease-in-out infinite;cursor:pointer}
+@keyframes seatGlow{0%,100%{box-shadow:0 0 0 0 rgba(243,220,160,.0),inset 0 0 12px rgba(214,180,106,.2)}50%{box-shadow:0 0 16px 2px rgba(243,220,160,.55),inset 0 0 12px rgba(214,180,106,.35)}}
+.melee{position:relative;display:flex;align-items:center;gap:6px;min-height:62px;padding:6px 10px 6px 58px;border-radius:32px;
+  background:linear-gradient(90deg,rgba(90,18,30,.55),rgba(20,14,26,.5));border:1px solid rgba(208,36,60,.45)}
+.melee::before{content:"";position:absolute;left:12px;top:50%;width:34px;height:34px;transform:translateY(-50%);background:url(assets/icon_swords.png) center/contain no-repeat;opacity:.85}
+.melee .tk{width:46px;height:46px;border-radius:50%;overflow:hidden;border:2px solid var(--pc);flex:none;margin-left:-10px;box-shadow:0 0 0 2px #120a12}
+.melee .tk:first-of-type{margin-left:0}
+.melee .tk img{width:100%;height:100%;object-fit:cover}
+.melee.clash{animation:clash 2.2s ease-in-out infinite}
+@keyframes clash{0%,100%{box-shadow:0 0 0 0 rgba(208,36,60,0)}50%{box-shadow:0 0 18px rgba(208,36,60,.55)}}
+.flow{width:46px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding-top:40px}
+.flow .arr{width:40px;height:24px;background:linear-gradient(90deg,transparent,rgba(88,210,255,.6));clip-path:polygon(0 35%,65% 35%,65% 0,100% 50%,65% 100%,65% 65%,0 65%)}
+.flow .c{display:flex;align-items:center;gap:3px;font:700 18px var(--serif);color:var(--mana2)}
+.flow .c img{width:18px;height:18px}
+.scoutinfo{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid rgba(214,180,106,.2);font-size:13px;color:var(--muted)}
+.scoutinfo b{font:700 18px var(--serif);color:var(--gold2);display:flex;align-items:center;gap:3px}
+
+/* ============ 敌方行动横幅 ============ */
+#banner{position:absolute;left:0;right:0;top:360px;height:120px;z-index:40;display:flex;align-items:center;justify-content:center;gap:22px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(70,8,22,.92) 25%,rgba(70,8,22,.92) 75%,transparent);opacity:0;transform:scaleY(.2);transition:.35s}
+#banner.on{opacity:1;transform:none}
+#banner::before,#banner::after{content:"";position:absolute;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--seal2),transparent)}
+#banner::before{top:8px}#banner::after{bottom:8px}
+#banner img{width:88px;height:88px;border-radius:50%;border:3px solid var(--seal2);box-shadow:0 0 24px rgba(255,90,110,.6)}
+#banner .t1{font-family:var(--serif);font-size:40px;font-weight:700;letter-spacing:.2em;color:#fff}
+#banner .t2{font-family:var(--serif);font-size:16px;letter-spacing:.5em;color:var(--seal2)}
+
+/* ============ 底栏 ============ */
+#dock{position:absolute;left:0;right:0;bottom:0;height:436px;
+  background:linear-gradient(180deg,transparent,rgba(5,8,17,.9) 16%,rgba(5,8,17,.97))}
+#status{position:absolute;left:18px;right:18px;top:24px;height:62px;display:flex;align-items:center;gap:22px;padding:0 10px 0 6px}
+.who{display:flex;align-items:center;gap:12px;min-width:250px}
+.who .av{width:58px;height:58px;border-radius:50%;overflow:hidden;border:2px solid var(--gold);box-shadow:0 0 14px rgba(214,180,106,.4)}
+.who .av img{width:100%;height:100%;object-fit:cover}
+.who .n1{font-family:var(--serif);font-size:22px;color:#fff;letter-spacing:.08em}
+.who .n2{font-size:12px;color:var(--muted);letter-spacing:.15em}
+.manabar{flex:1;max-width:620px;display:flex;align-items:center;gap:10px}
+.manabar .segs{flex:1;display:flex;gap:3px;height:22px;padding:3px;border:1px solid rgba(88,210,255,.35);background:rgba(4,10,20,.8);transform:skewX(-18deg)}
+.manabar .segs i{flex:1;background:rgba(88,210,255,.08);transition:.3s}
+.manabar .segs i.f{background:linear-gradient(180deg,var(--mana2),#1d8fc4);box-shadow:0 0 8px rgba(88,210,255,.6)}
+.manabar .segs i.gate{position:relative}
+.manabar .segs i.gate::after{content:"";position:absolute;right:-3px;top:-6px;bottom:-6px;width:2px;background:var(--gold)}
+.manabar .val{font:700 30px var(--serif);color:var(--mana2);min-width:72px}
+.manabar .val small{font-size:15px;color:var(--muted)}
+.res{display:flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid rgba(214,180,106,.22);background:rgba(10,14,28,.7)}
+.res .icon{width:28px;height:28px}
+.res b{font:700 28px var(--serif)}
+.res span{font-size:12px;color:var(--muted);letter-spacing:.2em}
+.res.pw b{color:#ffd9a0}.res.vp b{color:var(--gold2)}
+.seals{display:flex;align-items:center;gap:6px}
+.seals .s{width:30px;height:54px;background:url(assets/seal.png) center/contain no-repeat;filter:drop-shadow(0 0 6px rgba(255,60,80,.8));cursor:pointer;transition:.2s}
+.seals .s:hover{transform:scale(1.12)}
+.seals .s.used{filter:grayscale(1) brightness(.4);cursor:default}
+#endbtn{margin-left:auto;height:56px;padding:0 34px;font-family:var(--serif);font-size:21px;font-weight:700;letter-spacing:.3em;color:#fff;cursor:pointer;border:none;
+  background:linear-gradient(180deg,#e0344d,#8e0f24);clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%);box-shadow:0 0 22px rgba(208,36,60,.5);transition:.2s}
+#endbtn:hover{filter:brightness(1.15)}
+#endbtn:disabled{filter:grayscale(.8) brightness(.6);cursor:default}
+
+#desk{position:absolute;left:18px;right:18px;bottom:16px;height:316px;display:flex;gap:14px}
+.sec{display:flex;flex-direction:column;gap:8px;padding:10px 12px 12px}
+.sec .row{flex:1;display:flex;gap:10px;align-items:flex-end}
+#core .card{width:150px}
+#core .card.cs{width:112px}
+#play{width:430px}
+#play .row{align-items:center;justify-content:flex-start;overflow-x:auto}
+.pslot{width:150px;aspect-ratio:5/7;flex:none;border:1px dashed rgba(214,180,106,.3);border-radius:6px;display:flex;align-items:center;justify-content:center;color:rgba(214,180,106,.4);font-family:var(--serif);font-size:13px;letter-spacing:.3em}
+.pcard{width:150px;flex:none;position:relative}
+.pcard .card{width:100%}
+.pcard .face{position:absolute;left:6px;top:6px;padding:1px 8px;font:12px var(--serif);border-radius:3px;background:rgba(0,0,0,.75);color:var(--gold2);border:1px solid var(--gold-dim)}
+.pcard.fd .face{color:var(--muted)}
+.powersum{margin-left:auto;align-self:center;text-align:center;padding-left:8px}
+.powersum b{display:block;font:700 44px var(--serif);color:#ffd9a0;line-height:1;text-shadow:0 0 18px rgba(255,190,110,.4)}
+.powersum span{font-size:12px;color:var(--muted);letter-spacing:.2em}
+#skills{flex:1;min-width:0}
+#skills .row{align-items:flex-end}
+#skills .card{width:138px}
+.divider{width:1px;align-self:stretch;margin:14px 4px;background:linear-gradient(180deg,transparent,var(--gold-dim),transparent)}
+.upg{position:relative}
+.upg::before{content:"";position:absolute;inset:-5px;border-radius:9px;background:conic-gradient(from 0deg,#f3dca0,#d0243c,#58d2ff,#f3dca0);filter:blur(5px);opacity:.75;animation:spin 5s linear infinite}
+@keyframes spin{to{filter:blur(5px) hue-rotate(360deg)}}
+.upg .card{position:relative}
+.subl{font-size:11px;color:var(--muted);letter-spacing:.3em;text-align:center;margin-top:6px}
+.lock{filter:grayscale(.7) brightness(.55)}
+#logi{width:180px}
+#logi .row{flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.stack{position:relative;width:92px;cursor:default}
+.stack .card{width:92px;cursor:default}
+.stack .card:hover{transform:none}
+.stack::before,.stack::after{content:"";position:absolute;inset:0;border-radius:6px;background:#0a1430;border:1px solid rgba(255,255,255,.08)}
+.stack::before{transform:translate(4px,4px)}.stack::after{transform:translate(2px,2px)}
+.stack .card{z-index:1}
+.stack .cnt{position:absolute;right:-8px;bottom:-8px;z-index:2;width:32px;height:32px;border-radius:50%;background:var(--ink);border:1px solid var(--gold);font:700 15px/30px var(--serif);text-align:center;color:var(--gold2)}
+.stack .nm{position:absolute;left:0;right:0;bottom:-20px;text-align:center;font-size:11px;letter-spacing:.3em;color:var(--muted);z-index:2}
+.dis .card{filter:brightness(.55) saturate(.6)}
+
+/* ============ 手牌抽屉 ============ */
+#hand{position:absolute;left:50%;bottom:0;width:1040px;margin-left:-520px;height:360px;z-index:25;transform:translateY(318px);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+#hand.open{transform:translateY(0)}
+#hand .handle{position:absolute;left:50%;top:0;transform:translateX(-50%);width:240px;height:42px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;
+  font-family:var(--serif);font-size:16px;letter-spacing:.3em;color:var(--gold2);background:linear-gradient(180deg,#2a2213,#120e08);border:1px solid var(--gold);border-bottom:none;clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 100%,0 100%)}
+#hand .handle b{font-size:20px}
+#hand .handle .chv{width:10px;height:10px;border-left:2px solid var(--gold2);border-top:2px solid var(--gold2);transform:rotate(45deg) translate(2px,2px);transition:.3s}
+#hand.open .handle .chv{transform:rotate(225deg)}
+#hand .tray{position:absolute;left:0;right:0;top:42px;bottom:0;display:flex;align-items:center;justify-content:center;gap:26px;padding:0 30px;
+  background:linear-gradient(180deg,rgba(26,20,10,.96),rgba(6,8,16,.98));border-top:1px solid var(--gold);box-shadow:0 -12px 40px rgba(0,0,0,.7)}
+.hc{position:relative;width:200px;flex:none;transition:transform .2s}
+.hc .card{width:100%}
+.hc:hover{transform:translateY(-10px)}
+.hc.ok .card{box-shadow:0 0 0 2px var(--gold),0 0 20px rgba(243,220,160,.5);animation:breathe 2s ease-in-out infinite}
+@keyframes breathe{0%,100%{box-shadow:0 0 0 2px rgba(214,180,106,.7),0 0 10px rgba(243,220,160,.25)}50%{box-shadow:0 0 0 2px var(--gold2),0 0 26px rgba(243,220,160,.7)}}
+.hc .acts{position:absolute;left:0;right:0;top:-6px;display:flex;justify-content:center;gap:8px;opacity:0;transform:translateY(6px);transition:.18s;z-index:3}
+.hc:hover .acts{opacity:1;transform:translateY(-22px)}
+.hc .acts button{padding:5px 16px;font-family:var(--serif);font-size:14px;letter-spacing:.2em;cursor:pointer;border:1px solid var(--gold);color:var(--ink);background:linear-gradient(180deg,var(--gold2),var(--gold));border-radius:3px}
+.hc .acts button.fd{background:linear-gradient(180deg,#2d3552,#161b2e);color:var(--text);border-color:#6d7aa6}
+.hc.no{filter:brightness(.6)}
+
+/* ============ 放大预览 ============ */
+#zoom{position:absolute;z-index:60;width:380px;pointer-events:none;opacity:0;transition:opacity .15s}
+#zoom.on{opacity:1}
+#zoom img{width:100%;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.85),0 0 0 1px var(--gold)}
+
+/* ============ Tweaks ============ */
+#tweaks{position:fixed;right:12px;bottom:12px;z-index:100;font:12px var(--sans);color:var(--text);background:rgba(8,10,20,.92);border:1px solid var(--gold-dim);padding:8px 10px;border-radius:6px;display:flex;flex-direction:column;gap:6px}
+#tweaks b{color:var(--gold2);font-family:var(--serif);letter-spacing:.2em}
+#tweaks .r{display:flex;gap:4px;flex-wrap:wrap}
+#tweaks button{background:#161c30;color:var(--text);border:1px solid #333c5c;padding:3px 8px;cursor:pointer;border-radius:3px;font-size:12px}
+#tweaks button.on{border-color:var(--gold);color:var(--gold2)}
+#tweaks.min .r{display:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 顶栏：回合 / 阶段 / 顺位链 / 排行榜 -->
+  <header id="top">
+    <div class="day">
+      <div class="moon"></div>
+      <div><div class="d1">圣杯战争</div><div class="d2">第五夜<small>/ 11</small></div></div>
+    </div>
+    <nav class="phases" id="phases"></nav>
+    <div class="order" id="order"></div>
+    <div class="topbtn" id="btnBoard"><img class="icon" src="assets/icon_holy_grail.png" alt="">战果</div>
+  </header>
+
+  <aside id="board"><div class="plate">
+    <h3>战果排行<small>第八夜结束 保留前四</small></h3>
+    <div id="lbList"></div>
+    <div class="elim">
+      <span class="now">第八夜<b>前四</b></span><span>第九夜<b>前三</b></span><span>第十夜<b>前二</b></span><span>第十一夜<b>圣杯</b></span>
+    </div>
+  </div></aside>
+
+  <!-- 中部：局势 + 四战区 -->
+  <main id="mid">
+    <section id="left">
+      <div class="lbl">局势</div>
+      <div class="sit"><div class="card" data-img="assets/sit_calm.jpg"></div></div>
+      <div class="decks">
+        <div class="mini plate"><div class="card back" style="background-image:url(assets/back_situation.jpg)"></div><div>局势牌库<b>3</b></div></div>
+        <div class="mini plate"><div class="card back" style="background-image:url(assets/back_event.jpg)"></div><div>事件牌库<b>22</b></div></div>
+      </div>
+      <div class="track plate">
+        <div class="lbl">战局进程</div>
+        <div class="row" id="track"></div>
+      </div>
+    </section>
+    <section id="zones"></section>
+  </main>
+
+  <div id="banner"><img id="bnImg" src="assets/head_rin.png" alt=""><div><div class="t2">敌方行动</div><div class="t1" id="bnName">远坂凛</div></div></div>
+
+  <!-- 底栏 -->
+  <footer id="dock">
+    <div id="status">
+      <div class="who">
+        <div class="av"><img src="assets/head_shirou.png" alt=""></div>
+        <div><div class="n1">卫宫士郎</div><div class="n2">深山町 · 地利 +1</div></div>
+      </div>
+      <div class="manabar">
+        <img class="icon" style="width:34px;height:34px" src="assets/icon_mana_orb.png" alt="">
+        <div class="segs" id="segs"></div>
+        <div class="val num"><span id="manaV">9</span><small> / 12</small></div>
+      </div>
+      <div class="res pw"><img class="icon" src="assets/icon_swords.png" alt=""><div><span>总威力</span><br><b id="pwV">1</b></div></div>
+      <div class="res vp"><img class="icon" src="assets/icon_holy_grail.png" alt=""><div><span>战果</span><br><b>11</b></div></div>
+      <div class="seals" id="seals"></div>
+      <button id="endbtn">结束行动</button>
+    </div>
+
+    <div id="desk">
+      <section class="sec plate" id="core">
+        <div class="lbl">御主与从者</div>
+        <div class="row">
+          <div class="card" data-img="assets/master_shirou.jpg"></div>
+          <div class="card" data-img="assets/servant_artoria.jpg"></div>
+          <div class="card cs" data-img="assets/cs_shirou.jpg"></div>
+        </div>
+      </section>
+      <section class="sec plate" id="play">
+        <div class="lbl">出牌区</div>
+        <div class="row" id="playRow"></div>
+      </section>
+      <section class="sec plate" id="skills">
+        <div class="lbl">技能与宝具</div>
+        <div class="row" id="skillRow"></div>
+      </section>
+      <section class="sec plate" id="logi">
+        <div class="lbl">牌库</div>
+        <div class="row">
+          <div class="stack"><div class="card back" style="background-image:url(assets/back_attack.jpg)"></div><div class="cnt">6</div></div>
+          <div class="stack dis" style="margin-top:14px"><div class="card" style="background-image:url(assets/atk_str3.jpg)"></div><div class="cnt">3</div></div>
+        </div>
+      </section>
+    </div>
+  </footer>
+
+  <!-- 手牌抽屉 -->
+  <div id="hand">
+    <div class="handle" id="handHandle"><span>手牌</span><b class="num" id="handN">3</b><i class="chv"></i></div>
+    <div class="tray" id="tray"></div>
+  </div>
+
+  <div id="zoom"><img alt=""></div>
+</div>
+
+<div id="tweaks">
+  <b>预览切换</b>
+  <div class="r" id="twPhase"></div>
+  <div class="r"><button id="twBanner">敌方行动横幅</button><button id="twHand">展开手牌</button><button id="twBoard">战果排行</button><button id="twMin">收起</button></div>
+</div>
+
+<script>
+const A = 'assets/';
+/* 示例对局数据：七名御主，顺位按顺时针。所有数值只用于演示布局 */
+const P = {
+  rin:{n:'远坂凛',c:'#e0483e',mana:7,vp:14,seal:2},
+  shirou:{n:'卫宫士郎',c:'#d6b46a',mana:9,vp:11,seal:3,self:true},
+  shinji:{n:'间桐慎二',c:'#6fae6a',mana:5,vp:6,seal:3},
+  sakura:{n:'间桐樱',c:'#9b6bd6',mana:10,vp:12,seal:1},
+  illya:{n:'伊莉雅斯菲尔',c:'#e8e8f0',mana:12,vp:15,seal:3},
+  kirei:{n:'言峰绮礼',c:'#b44a7a',mana:4,vp:9,seal:2},
+  kuzuki:{n:'葛木宗一郎',c:'#4f8fcf',mana:3,vp:7,seal:3},
+};
+const ORDER = ['rin','shirou','shinji','sakura','illya','kirei','kuzuki'];
+const LOC = {rin:'深山町',shirou:'深山町',shinji:'魔术工房',sakura:'新都',illya:'新都',kirei:'侦察',kuzuki:'深山町'};
+const PHASES = ['准备','前哨','行动','战斗'];
+let phase = 2, acting = 'shirou';
+
+/* 地图：与 map_data.gd 的席位声明一一对应。数值从数据读取，界面不写死 */
+const ZONES = [
+  {id:'workshop', name:'魔术工房', sub:'MAGE WORKSHOP', art:'zone_workshop.jpg', score:null, move:1,
+   seats:[{k:'mana',v:2,big:true,who:'shinji'},{k:'mana',v:1},{k:'mana',v:1},{k:'mana',v:1},{k:'extra',v:0,hidden:true}], events:null},
+  {id:'miyama', name:'深山町', sub:'MIYAMA', art:'zone_miyama.jpg', score:2, move:2,
+   seats:[{k:'hl',v:3,big:true,who:'rin'},{k:'hl',v:1,who:'shirou'}], melee:['kuzuki'], events:[{img:'ev_fate.jpg'}]},
+  {id:'shinto', name:'新都', sub:'SHINTO', art:'zone_shinto.jpg', score:3, move:2,
+   seats:[{k:'hl',v:3,big:true,who:'illya'},{k:'hl',v:1}], melee:['sakura'], events:[{img:'ev_ley.jpg',hiddenUntil:2}]},
+  {id:'scout', name:'侦察', sub:'RECON', art:'zone_scout.jpg', score:null, scoutVP:2,
+   seats:[{k:'vang',v:null,big:true,who:'kirei'},{k:'extra',v:null,hidden:true}], events:null},
+];
+
+const $ = s => document.querySelector(s);
+const head = k => `${A}head_${k}.png`;
+
+function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);$('#stage').style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener('resize',fit);fit();
+
+function renderPhases(){
+  $('#phases').innerHTML = PHASES.map((p,i)=>`<div class="ph ${i<phase?'done':''} ${i===phase?'on':''}" data-i="${i}">${p}</div>`).join('');
+  $('#twPhase').innerHTML = PHASES.map((p,i)=>`<button class="${i===phase?'on':''}" data-i="${i}">${p}阶段</button>`).join('');
+  $('#endbtn').textContent = '结束' + PHASES[phase];
+}
+
+function renderOrder(){
+  $('#order').innerHTML = ORDER.map((k,i)=>{
+    const p=P[k], cls=['seat',p.self?'self':'',k===acting?'acting':''].join(' ');
+    const av=`<div class="av" style="--pc:${p.c}"><img src="${head(k)}" alt=""><div class="rk">${i+1}</div></div>`;
+    if(p.self) return `<div class="${cls}" style="--pc:${p.c}">${av}</div>` + (i<ORDER.length-1?'<i class="chev"></i>':'');
+    const seals = [0,1,2].map(j=>`<i class="${j>=p.seal?'used':''}"></i>`).join('');
+    return `<div class="${cls}" style="--pc:${p.c}">${av}<div>
+      <div class="nm">${p.n}</div><div class="loc">${phase>=1?LOC[k]:'未部署'}</div>
+      <div class="st"><span><img src="${A}icon_mana_orb.png" alt="">${p.mana}</span><span><img src="${A}icon_holy_grail.png" alt="">${p.vp}</span><span class="cs">${seals}</span></div>
+    </div></div>` + (i<ORDER.length-1?'<i class="chev"></i>':'');
+  }).join('');
+}
+
+function renderBoard(){
+  const rows = ORDER.map(k=>({k,...P[k]})).sort((a,b)=>b.vp-a.vp);
+  $('#lbList').innerHTML = rows.map((r,i)=>`<div class="lb ${i===3?'cut':''} ${r.self?'me':''}" style="--pc:${r.c}">
+    <div class="p">${i+1}</div><img class="h" src="${head(r.k)}" alt=""><div class="n">${r.n}</div>
+    <div class="v"><img class="icon" src="${A}icon_holy_grail.png" alt="">${r.vp}</div></div>`).join('');
+}
+
+function renderTrack(){
+  const cl={9:'4+',10:'3+',11:'2+'};
+  $('#track').innerHTML = Array.from({length:11},(_,i)=>{const d=i+1;
+    return `<div class="r ${d<5?'past':''} ${d===5?'cur':''} ${cl[d]?'cl':''} ${d===11?'grail':''}" data-k="${cl[d]||''}">${d}</div>`}).join('');
+}
+
+function occ(k){return `<div class="occ" style="--pc:${P[k].c}"><img src="${head(k)}" alt=""></div>`}
+function renderZones(){
+  const deploying = phase===1;
+  $('#zones').innerHTML = ZONES.map((z,zi)=>{
+    const seats = z.seats.filter(s=>!(s.hidden && !s.who)).map(s=>{
+      const who = phase>=1 ? s.who : null;
+      const cls=['sq',s.k==='mana'?'mana':'',s.k==='hl'?'hl':'',s.k==='vang'?'vang':'',s.k==='extra'?'extra':'',s.big?'big':'',
+                 deploying && !who && (s.k==='mana'||s.k==='hl')?'can':''].join(' ');
+      const label = s.v!=null ? `+${s.v}` : '';
+      const tag = s.k==='mana'?`<span class="tag">魔力 +${s.v}</span>`: s.k==='hl'?`<span class="tag">地利 +${s.v}</span>`: s.k==='vang'?'<span class="tag" style="color:var(--gold2)">先锋</span>':'';
+      return `<div class="${cls}">${who?occ(who):`<span class="b">${label}</span>`}${tag}</div>`;
+    }).join('');
+    const melee = z.melee!==undefined ? `<div class="melee ${phase>=2&&z.melee.length?'clash':''}">${(phase>=1?z.melee:[]).map(k=>`<div class="tk" style="--pc:${P[k].c}"><img src="${head(k)}" alt=""></div>`).join('')}</div>` : '';
+    const ev = z.events ? `<div class="events">${z.events.map(e=>{
+        const hidden = e.hiddenUntil!==undefined && phase<e.hiddenUntil;
+        return hidden ? `<div class="card back" style="background-image:url(${A}back_event.jpg)"></div>` : `<div class="card" data-img="${A}${e.img}"></div>`;
+      }).join('')}</div>` : '';
+    const scout = z.scoutVP ? `<div class="scoutinfo">战力结算时此处全员获得<b><img class="icon" src="${A}icon_holy_grail.png" alt="">${z.scoutVP}</b></div>` : '';
+    const laurel = z.score!=null ? `<div class="laurel"><div class="v">${z.score}</div><div class="t">竞争战果</div></div>` : '';
+    const flow = z.move!=null && zi<ZONES.length-1 ? `<div class="flow"><div class="arr"></div><div class="c"><img src="${A}icon_mana_orb.png" alt="">${z.move}</div></div>` : '';
+    return `<div class="zone"><div class="plate">
+        <div class="zart" style="background-image:url(${A}${z.art})"></div>
+        <div class="zhead"><div><div class="zname">${z.name}</div><div class="zsub">${z.sub}</div></div>${laurel}</div>
+        <div class="zbody">${ev}<div class="seats">${seats}</div>${melee}${scout}</div>
+      </div></div>${flow}`;
+  }).join('');
+  bindZoom();
+}
+
+/* 资源：魔力长条的金色刻度取自从技能区打出的门槛，数值由卡牌 play_requirements 声明 */
+const SKILL_GATE = 8;
+let mana = 9, seals = 3;
+function renderMana(){
+  $('#segs').innerHTML = Array.from({length:12},(_,i)=>`<i class="${i<mana?'f':''} ${i===SKILL_GATE-1?'gate':''}"></i>`).join('');
+  $('#manaV').textContent = mana;
+  $('#seals').innerHTML = [0,1,2].map(i=>`<div class="s ${i>=seals?'used':''}" title="令咒"></div>`).join('');
+  document.querySelectorAll('#seals .s:not(.used)').forEach(el=>el.onclick=()=>{seals--;mana=Math.min(12,mana+4);renderMana();renderHand();renderSkills()});
+}
+
+/* 技能区：从者三技能 + 御主附加 + 升华技 */
+const SKILLS = [
+  {img:'sk_mana.jpg',cost:3},{img:'sk_wind.jpg',cost:4},{img:'sk_excalibur.jpg',cost:8},
+];
+function renderSkills(){
+  const can = s => phase===2 && mana>=SKILL_GATE && s.cost<=mana && played.length<2;
+  $('#skillRow').innerHTML =
+    SKILLS.map(s=>`<div class="card ${mana<SKILL_GATE?'lock':''}" data-img="${A}${s.img}"></div>`).join('') +
+    `<div class="divider"></div>` +
+    `<div><div class="card" data-img="${A}sk_kanshou.jpg"></div><div class="subl">御主附加</div></div>` +
+    `<div><div class="upg"><div class="card" data-img="${A}sk_caliburn.jpg"></div></div><div class="subl">升华技</div></div>`;
+  bindZoom();
+}
+
+/* 手牌与常规出牌：两张，位于战场时至少一张明置 */
+let hand = [
+  {id:1,img:'atk_str2.jpg',cost:0,power:2},
+  {id:2,img:'atk_agi4.jpg',cost:0,power:4},
+  {id:3,img:'atk_mag5.jpg',cost:1,power:5},
+];
+let played = [];
+const PLAY_COUNT = 2, IN_BATTLEFIELD = true;
+function legalFaces(c){
+  if(phase!==2 || played.length>=PLAY_COUNT) return [];
+  const f=[];
+  const spent = played.filter(p=>p.up).reduce((a,p)=>a+p.cost,0);
+  if(c.cost+spent<=mana) f.push('up');
+  const needUp = IN_BATTLEFIELD && played.length===PLAY_COUNT-1 && !played.some(p=>p.up);
+  if(!needUp) f.push('down');
+  return f;
+}
+function renderHand(){
+  $('#handN').textContent = hand.length;
+  $('#tray').innerHTML = hand.map(c=>{
+    const f=legalFaces(c);
+    return `<div class="hc ${f.length?'ok':'no'}" data-id="${c.id}">
+      ${f.length?`<div class="acts">${f.includes('up')?'<button data-f="up">明置</button>':''}${f.includes('down')?'<button class="fd" data-f="down">暗置</button>':''}</div>`:''}
+      <div class="card" data-img="${A}${c.img}"></div></div>`}).join('');
+  document.querySelectorAll('.hc .acts button').forEach(b=>b.onclick=e=>{
+    e.stopPropagation(); const id=+b.closest('.hc').dataset.id; const c=hand.find(x=>x.id===id);
+    hand=hand.filter(x=>x.id!==id); played.push({...c,up:b.dataset.f==='up'});
+    if(b.dataset.f==='up') mana-=c.cost;
+    hideZoom(); renderAll();
+    if(played.length>=PLAY_COUNT) $('#hand').classList.remove('open');
+  });
+  bindZoom();
+}
+function renderPlay(){
+  const slots = Math.max(PLAY_COUNT, played.length);
+  let h='';
+  for(let i=0;i<slots;i++){
+    const p=played[i];
+    h += p ? `<div class="pcard ${p.up?'':'fd'}"><div class="card ${p.up?'':'back'}" ${p.up?`data-img="${A}${p.img}"`:`style="background-image:url(${A}back_attack.jpg)"`}></div><span class="face">${p.up?'明置':'暗置'}</span></div>`
+           : `<div class="pslot">出牌</div>`;
+  }
+  const pw = 1 + played.filter(p=>p.up).reduce((a,p)=>a+p.power,0);
+  h += `<div class="powersum"><b>${pw}</b><span>合计威力</span></div>`;
+  $('#playRow').innerHTML = h; $('#pwV').textContent = pw;
+  bindZoom();
+}
+
+/* 放大预览：只作用于声明了 data-img 的卡牌，整屏背景和战区插画不参与 */
+function bindZoom(){
+  document.querySelectorAll('.card[data-img]').forEach(el=>{
+    if(!el.style.backgroundImage) el.style.backgroundImage=`url(${el.dataset.img})`;
+    el.onmouseenter=()=>showZoom(el); el.onmouseleave=hideZoom;
+  });
+}
+function showZoom(el){
+  const st=$('#stage').getBoundingClientRect(), s=st.width/1920, r=el.getBoundingClientRect();
+  const z=$('#zoom'); z.querySelector('img').src=el.dataset.img;
+  let x=(r.right-st.left)/s+16, y=(r.top-st.top)/s-40;
+  if(x+380>1900) x=(r.left-st.left)/s-396;
+  y=Math.max(90,Math.min(y,1080-548)); z.style.left=x+'px'; z.style.top=y+'px'; z.classList.add('on');
+}
+function hideZoom(){$('#zoom').classList.remove('on')}
+
+function renderAll(){renderPhases();renderOrder();renderZones();renderMana();renderSkills();renderHand();renderPlay();renderBoard();renderTrack()}
+renderAll();
+
+/* 交互 */
+$('#handHandle').onclick=()=>$('#hand').classList.toggle('open');
+$('#btnBoard').onclick=()=>$('#board').classList.toggle('open');
+function banner(k){
+  acting=k; $('#bnImg').src=head(k); $('#bnName').textContent=P[k].n; $('#banner').classList.add('on'); renderOrder();
+  setTimeout(()=>$('#banner').classList.remove('on'),1800);
+}
+$('#endbtn').onclick=()=>{ $('#hand').classList.remove('open'); banner('shinji'); $('#endbtn').disabled=true;
+  setTimeout(()=>{acting='shirou';$('#endbtn').disabled=false;renderOrder()},4200) };
+document.addEventListener('click',e=>{
+  const b=e.target.closest('#twPhase button, .ph'); if(b){phase=+b.dataset.i; if(phase!==2){played=[];} renderAll();}
+});
+$('#twBanner').onclick=()=>banner('rin');
+$('#twHand').onclick=()=>$('#hand').classList.toggle('open');
+$('#twBoard').onclick=()=>$('#board').classList.toggle('open');
+$('#twMin').onclick=()=>$('#tweaks').classList.toggle('min');
+</script>
+</body>
+</html>

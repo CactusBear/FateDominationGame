@@ -18,6 +18,10 @@ func exec(set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumber.new(0), pl
 		TimePointChecker.dynamic_time_point([TimePoints.LIVES_DECREASE], id)
 
 	if lives.number <= 0:
+		#与高潮淘汰同一个"即将淘汰"询问：被取消时不出局，并派发"免于淘汰"。已经出局的不再询问
+		if !player_data["is_out"] and EffectManager.begin_pending_action(TimePoints.BEFORE_ELIMINATE, id).get("cancelled", false):
+			TimePointChecker.dynamic_time_point([TimePoints.SURVIVE_ELIMINATION], id)
+			return
 		player_data["is_out"] = true
 		TimePointChecker.dynamic_time_point([TimePoints.ELIMINATED], id)
 	elif lives.number == 1:

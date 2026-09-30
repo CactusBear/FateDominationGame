@@ -117,13 +117,29 @@ func run():
 	check(EffectManager.request_manual_activation(play_eff, 0), "a new round offers it again")
 	EffectManager.submit_active_choice(play_eff, false)
 
-	# —— ④ 关闭一名交战玩家的基础攻击，并由它收尾关闭此牌 ——
+	# —— ④ 第二条效果是第一条的连带结果：没先打出力量基本攻击就不能发动 ——
 	setup()
 	var effs3:Array=register_skill_effects("sasaki_kojirou", "ichi_no_tachi", 0)
 	var lock_eff=effect_named(effs3, "ichi_no_tachi_close_engaged_attack")
+	var play_eff3=effect_named(effs3, "ichi_no_tachi_close_and_play_strength")
 	var my_skill_card=lock_eff.from.get_ref() if lock_eff.from is WeakRef else lock_eff.from
 	var victim_card=make_hand_card("strength:2")
 	GameData.player_data_library[1].played_cards.append(victim_card)
+
+	#卡面「若如此」：第二条的前提是本回合第一条已发动。
+	#前提不成立时该选项不可用，与"每回合一次用尽"同一口径——直接不入队询问，
+	#而不是弹出窗口让玩家点一个必定失败的选项
+	check(not EffectManager.request_manual_activation(lock_eff, 0),
+		"without playing a strength attack first it is not offered")
+	check(not victim_card._is_closed, "nothing is closed when the premise is unmet")
+
+	# —— ⑤ 先走第一条，第二条才能接着发动 ——
+	var my_strength_card=make_hand_card("strength:2")
+	GameData.player_data_library[0].hand_cards.append(my_strength_card)
+	check(EffectManager.request_manual_activation(play_eff3, 0), "the first half can be requested")
+	check(EffectManager.submit_option_choice(play_eff3, [0]), "the first half option is accepted")
+	check(EffectManager.submit_card_selection(play_eff3, [my_strength_card]),
+		"playing the strength attack is accepted")
 
 	check(EffectManager.request_manual_activation(lock_eff, 0), "closing an opponent card can be requested")
 	check(EffectManager.submit_option_choice(lock_eff, [0]), "the option is accepted")

@@ -24,4 +24,5 @@ func exec(player_id:int = -1) -> bool:
 		{"count": count})
 	#提示当事玩家：牌堆抽干了、弃牌堆已洗回。只给他看，别人不需要知道
 	EffectManager.push_message("牌库已抽空，弃牌堆 %d 张洗混作为新牌库" % count, player_id)
+	TimePointChecker.dynamic_time_point([TimePoints.DECK_RESHUFFLED], player_id)
 	return true

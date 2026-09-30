@@ -30,13 +30,17 @@ static var _phase_attempted_effect_ids:Dictionary = {}
 func step(host, bot_id: int) -> void:
 	var pl_data: Dictionary = GameDataManager.get_player_data(bot_id)
 	var phase_name: String = str(GameProgress.get_current_phase().get("name", ""))
-	if phase_name == "outpost":
+	#按"视为处于的阶段"做事：被 phase_as 映射到同一阶段里的前哨与行动依次完成
+	var acted: bool = false
+	if GameProgress.is_phase_for(bot_id, "outpost") and pl_data.get("location") == null:
 		_deploy(host, bot_id)
-	elif phase_name == "action":
+		acted = true
+	if GameProgress.is_phase_for(bot_id, "action"):
 		use_command_spell_if_needed(bot_id, pl_data)
 		fulfill_action_requirements(bot_id)
 		_play_regular_cards(host, bot_id)
-	elif phase_name == "battle" or phase_name == "prepare":
+		acted = true
+	if not acted and (phase_name == "battle" or phase_name == "prepare"):
 		#战斗阶段/准备好阶段的主动能力（"战斗阶段：你的总威力+2"这类）必须由使用者发动。
 		#AI 不发动就等于永远拿不到自己卡面上的能力，与本地玩家的判定口径不一致。
 		activate_phase_abilities(bot_id)

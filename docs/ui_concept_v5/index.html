@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Fate Domination 对局界面概念稿 v4</title>
+<style>
+:root{
+  --ink:#0b0e14; --ink2:#131a26; --ink3:#1b2436;
+  --gold:#c9a45c; --gold2:#e8cd86; --gold3:#8a6a32;
+  --mana:#3fd6f0; --mana2:#1a7fa6; --blood:#c81d25; --blood2:#ff4d57; --violet:#5e2a68;
+  --text:#efe6d2; --dim:#a79e8b;
+  --serif:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;
+  --num:Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#05070b;overflow:hidden;font-family:var(--serif);color:var(--text)}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;
+  background:radial-gradient(ellipse at 40% 45%,#141c2c 0%,#0a0d14 70%)}
+.abs{position:absolute}
+.gold-frame{border:1px solid var(--gold3);box-shadow:inset 0 0 0 3px rgba(11,14,20,.85),inset 0 0 0 4px rgba(201,164,92,.55),0 6px 18px rgba(0,0,0,.55);
+  background:linear-gradient(180deg,rgba(24,30,46,.92),rgba(11,14,20,.92))}
+.corner{position:absolute;width:22px;height:22px;pointer-events:none}
+.corner.tl{left:-3px;top:-3px}.corner.tr{right:-3px;top:-3px;transform:scaleX(-1)}
+.corner.bl{left:-3px;bottom:-3px;transform:scaleY(-1)}.corner.br{right:-3px;bottom:-3px;transform:scale(-1,-1)}
+.lbl{font-size:15px;color:var(--gold2);letter-spacing:2px}
+.num{font-family:var(--num);font-weight:bold}
+
+/* ===== 顶栏 ===== */
+#topbar{left:0;top:0;width:1920px;height:44px;display:flex;align-items:center;padding:0 18px;gap:22px;
+  background:linear-gradient(180deg,#1d1426,#0e0b14);border-bottom:1px solid var(--gold3);box-shadow:0 2px 0 rgba(201,164,92,.25)}
+#topbar .day{font-size:22px;color:var(--gold2);letter-spacing:3px}
+#topbar .day b{font-family:var(--num);font-size:26px;color:#fff3cf}
+.phases{display:flex;gap:4px}
+.phase{padding:4px 16px;font-size:17px;color:var(--dim);border:1px solid #3a3040;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+.phase.on{color:#1a1206;background:linear-gradient(180deg,var(--gold2),var(--gold));border-color:var(--gold2);font-weight:bold}
+.phase.done{color:#6f6a60}
+#topbar .actor{font-size:18px}
+#topbar .actor b{color:var(--gold2)}
+#topbar .sp{flex:1}
+.tb-btn{font-family:var(--serif);font-size:17px;color:var(--gold2);background:rgba(201,164,92,.08);border:1px solid var(--gold3);padding:4px 14px;cursor:pointer}
+.tb-btn:hover{background:rgba(201,164,92,.22)}
+
+/* ===== 其他玩家横列 ===== */
+#players{left:10px;top:52px;width:1900px;height:150px;display:flex;gap:8px}
+.pl{position:relative;flex:1;height:150px;padding:10px 12px 10px 112px}
+.pl .ord{position:absolute;left:-2px;top:-2px;width:30px;height:30px;display:grid;place-items:center;font-family:var(--num);font-size:19px;
+  color:#1a1206;background:var(--gold);clip-path:polygon(0 0,100% 0,100% 60%,60% 100%,0 100%);z-index:3}
+.pl .mh{position:absolute;left:14px;top:18px;width:86px;height:86px;border-radius:50%;border:2px solid var(--gold);background:#000 center/cover;box-shadow:0 0 0 3px #0b0e14,0 0 0 4px var(--gold3)}
+.pl .sh{position:absolute;left:66px;top:78px;width:46px;height:46px;border-radius:50%;border:2px solid #7d8aa8;background:#111 center/cover;box-shadow:0 0 0 2px #0b0e14}
+.pl .sh.hidden{background:radial-gradient(circle,#2a3350,#0d1220);display:grid;place-items:center;font-family:var(--num);font-size:11px;color:#b9c3dd}
+.pl .nm{font-size:20px;color:#fff3cf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:62px}
+.pl .sv{font-size:14px;color:var(--dim);margin-left:8px}
+.pl .loc{font-size:15px;color:var(--mana);margin-top:2px;padding-right:62px;white-space:nowrap}
+.pl .row{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:16px;color:var(--dim)}
+.pl .row b{font-family:var(--num);font-size:19px;color:var(--text)}
+.bar{position:relative;height:12px;background:#070a10;border:1px solid #2c3a52;flex:1}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--mana2),var(--mana));box-shadow:0 0 8px var(--mana)}
+.pips{display:flex;gap:4px}
+.pip{width:14px;height:18px}
+.pl .st{position:absolute;right:10px;top:10px;font-size:13px;padding:1px 8px;border:1px solid #3c4a66;color:var(--dim)}
+.pl .st.done{color:var(--gold2);border-color:var(--gold3)}
+.pl.acting{box-shadow:inset 0 0 0 3px rgba(11,14,20,.85),inset 0 0 0 4px var(--blood2),0 0 22px rgba(255,77,87,.7)}
+.pl.acting .mh{border-color:var(--blood2);animation:pulseRed 1.2s infinite}
+.pl.acting .st{color:#fff;background:var(--blood);border-color:var(--blood2)}
+@keyframes pulseRed{0%,100%{box-shadow:0 0 0 3px #0b0e14,0 0 6px 4px rgba(255,77,87,.4)}50%{box-shadow:0 0 0 3px #0b0e14,0 0 18px 10px rgba(255,77,87,.8)}}
+
+/* ===== 地图（主图与展开图共用） ===== */
+.map{position:absolute;overflow:hidden}
+.map .scene{position:absolute;inset:0;background:center/cover no-repeat}
+.map .shade{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(5,7,11,0) 30%,rgba(5,7,11,.72) 85%),linear-gradient(180deg,rgba(5,7,11,.35),rgba(5,7,11,0) 20%,rgba(5,7,11,0) 70%,rgba(5,7,11,.95))}
+.map .title{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:4px 40px;font-size:26px;letter-spacing:8px;color:#fff3cf;
+  background:linear-gradient(90deg,transparent,rgba(94,42,104,.85),transparent);text-shadow:0 0 10px rgba(232,205,134,.6)}
+.map .meta{position:absolute;left:50%;top:52px;transform:translateX(-50%);display:flex;gap:18px;font-size:16px;color:var(--gold2);white-space:nowrap}
+.map .meta b{font-family:var(--num);font-size:20px;color:#fff}
+.slot{position:absolute;display:flex;flex-direction:column;align-items:center;gap:6px}
+.slot .cap{font-size:15px;color:var(--gold2);letter-spacing:2px;text-shadow:0 1px 3px #000}
+.cardimg{border-radius:6px;background:#000 center/cover no-repeat;box-shadow:0 0 0 1px var(--gold3),0 8px 18px rgba(0,0,0,.7);cursor:zoom-in}
+.emptyslot{border:1px dashed rgba(201,164,92,.5);border-radius:6px;display:grid;place-items:center;color:var(--dim);font-size:15px;background:rgba(11,14,20,.5)}
+.circle{position:absolute}
+.seat{position:absolute;width:112px;height:112px;margin:-56px 0 0 -56px}
+.seat svg{position:absolute;inset:0}
+.seat .v{position:absolute;left:0;right:0;top:-26px;text-align:center;font-size:15px;color:var(--gold2);text-shadow:0 1px 3px #000;white-space:nowrap}
+.seat .v b{font-family:var(--num);font-size:22px;color:#fff}
+.seat .who{position:absolute;left:14px;top:14px;width:84px;height:84px;border-radius:50%;background:#000 center/cover;border:2px solid var(--gold2)}
+.seat .who.me{border-color:var(--mana);box-shadow:0 0 16px var(--mana)}
+.seat .who.acting{border-color:var(--blood2);box-shadow:0 0 18px var(--blood2)}
+.seat .many{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;gap:2px}
+.seat .many i{display:block;width:44px;height:44px;border-radius:50%;background:#000 center/cover;border:2px solid var(--gold2)}
+.seat .note{position:absolute;left:0;right:0;top:44px;text-align:center;font-size:14px;color:var(--gold2);text-shadow:0 1px 3px #000}
+.played{position:absolute;display:flex;flex-wrap:wrap;gap:18px 14px;align-content:flex-start}
+.pgrp{position:relative;width:118px;height:176px}
+.pgrp .h{position:absolute;left:-8px;top:-8px;width:38px;height:38px;border-radius:50%;background:#000 center/cover;border:2px solid var(--gold);z-index:5}
+.pgrp .c{position:absolute;width:92px;height:129px}
+.pgrp .c:nth-child(2){left:0;top:12px;transform:rotate(-5deg)}
+.pgrp .c:nth-child(3){left:26px;top:40px;transform:rotate(4deg)}
+.pgrp .pw{position:absolute;right:-6px;bottom:-4px;z-index:6;font-size:13px;color:var(--gold2);background:rgba(11,14,20,.9);border:1px solid var(--gold3);padding:0 6px}
+.pgrp .pw b{font-family:var(--num);font-size:17px;color:#fff}
+.pgrp.mine .h{border-color:var(--mana)}
+.pgrp .pend{position:absolute;left:0;right:0;bottom:-22px;text-align:center;font-size:13px;color:var(--mana)}
+.sectionhead{position:absolute;font-size:16px;color:var(--gold2);letter-spacing:3px;border-bottom:1px solid var(--gold3);padding-bottom:2px}
+
+/* ===== 右侧折叠地图竖条 ===== */
+.fold{position:absolute;top:212px;width:118px;height:588px;cursor:pointer;overflow:hidden;transition:box-shadow .2s}
+.fold .bgimg{position:absolute;inset:0;background:center/cover;filter:brightness(.55) saturate(.8)}
+.fold .fshade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,14,20,.3),rgba(11,14,20,.75))}
+.fold .in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:9px}
+.fold .fname{writing-mode:vertical-rl;font-size:22px;letter-spacing:6px;color:#fff3cf;text-shadow:0 0 8px #000;height:92px}
+.fold .ben{width:52px;height:52px;position:relative}
+.fold .ben b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--num);font-size:22px;color:#fff}
+.fold .heads{display:flex;flex-direction:column;gap:3px;align-items:center;min-height:40px}
+.fold .heads i{display:block;width:40px;height:40px;border-radius:50%;background:#000 center/cover;border:2px solid var(--gold2)}
+.fold .ev{width:66px;height:92px}
+.fold .score{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--gold);background:radial-gradient(circle,#3b1a20,#150a0d);font-size:13px;color:var(--gold2);line-height:1.05;text-align:center}
+.fold .score b{display:block;font-family:var(--num);font-size:20px;color:#fff}
+.fold:hover,.fold.hot{box-shadow:inset 0 0 0 3px rgba(11,14,20,.85),inset 0 0 0 4px var(--gold2),0 0 22px rgba(232,205,134,.55)}
+.fold.battle .fname{color:#ffd0d0}
+#peek{display:none;z-index:40}
+#peek.show{display:block;animation:peekIn .18s ease-out}
+@keyframes peekIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+
+/* ===== 左侧：魔术工房席位 / 令咒 / 威力 ===== */
+#selfres{left:18px;top:520px;width:470px;height:268px;padding:14px 18px}
+.workshop-seats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:8px}
+.ws-seat{padding:8px 12px;border:1px solid var(--gold3);background:rgba(27,36,54,.6);text-align:center}
+.ws-seat .cap{font-size:14px;color:var(--gold2);margin-bottom:4px}
+.ws-seat .val{font-family:var(--num);font-size:28px;color:var(--mana);text-shadow:0 0 8px var(--mana)}
+.ws-seat .who{margin-top:4px;width:36px;height:36px;border-radius:50%;background:#000 center/cover;border:2px solid var(--gold);margin:4px auto 0}
+.ws-seat.empty .who{display:none}
+.crests{display:flex;gap:14px;margin-top:12px;justify-content:center}
+.crest{width:56px;height:70px;cursor:pointer;position:relative;transition:transform .15s}
+.crest:hover{transform:translateY(-4px)}
+.crest.used{opacity:.25;cursor:default}
+.crest.used:hover{transform:none}
+.powerbig{position:absolute;right:18px;top:12px;text-align:right}
+.powerbig b{display:block;font-family:var(--num);font-size:54px;line-height:1;color:#fff3cf;text-shadow:0 0 14px rgba(232,205,134,.7)}
+.buffchips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.chip{font-size:15px;padding:2px 10px;border:1px solid var(--violet);background:rgba(94,42,104,.35);color:#f0d9ff;cursor:zoom-in}
+.chip b{font-family:var(--num);font-size:17px;color:#fff}
+#csmenu{display:none;z-index:60;width:420px;padding:12px}
+#csmenu.show{display:block}
+#csmenu .opt{padding:9px 12px;margin-top:6px;border:1px solid var(--gold3);font-size:17px;cursor:pointer;white-space:pre-line}
+#csmenu .opt:hover{background:rgba(201,164,92,.2)}
+#csmenu .opt.off{opacity:.35;cursor:not-allowed}
+
+/* ===== 左下：从者 + 基础信息 ===== */
+#servant{left:18px;top:800px;width:226px;height:272px;padding:6px}
+#servant .pic{position:absolute;inset:6px;background:center top/cover}
+#servant .cls{position:absolute;left:6px;right:6px;bottom:6px;padding:6px 8px;background:linear-gradient(0deg,rgba(5,7,11,.95),transparent);font-size:18px;color:#fff3cf}
+#servant .cls small{display:block;font-family:var(--num);font-size:13px;color:var(--gold2);letter-spacing:3px}
+#selfinfo{left:252px;top:800px;width:236px;height:272px;padding:14px 16px}
+#selfinfo .n1{font-size:24px;color:#fff3cf}
+#selfinfo .n2{font-size:15px;color:var(--dim);margin-bottom:8px}
+#selfinfo .kv{display:flex;justify-content:space-between;font-size:17px;color:var(--dim);padding:5px 0;border-bottom:1px solid rgba(201,164,92,.18)}
+#selfinfo .kv b{font-family:var(--num);font-size:21px;color:#fff}
+#selfinfo .kv b.s{font-family:var(--serif);font-size:17px;color:var(--mana)}
+
+/* ===== 下方：新底栏布局 ===== */
+#bottombar{position:absolute;left:0;top:800px;width:1920px;height:280px;background:linear-gradient(180deg,rgba(11,14,20,.7),rgba(11,14,20,.95));border-top:1px solid var(--gold3);display:flex;align-items:center;padding:0 24px;gap:20px}
+#servant-card{width:160px;height:240px;position:relative;flex-shrink:0}
+#servant-card .pic{position:absolute;inset:0;background:center top/cover;border-radius:8px;border:2px solid var(--gold)}
+#servant-card .cls{position:absolute;left:0;right:0;bottom:0;padding:6px 8px;background:linear-gradient(0deg,rgba(5,7,11,.95),transparent);font-size:15px;color:#fff3cf;border-radius:0 0 6px 6px}
+#servant-card .cls small{display:block;font-size:11px;color:var(--gold2);letter-spacing:2px}
+#master-info{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+#master-info .top{display:flex;align-items:center;gap:16px}
+#master-info .avatar{width:64px;height:64px;border-radius:50%;background:center/cover;border:2px solid var(--gold);flex-shrink:0}
+#master-info .name-row{flex:1;min-width:0}
+#master-info .n1{font-size:22px;color:#fff3cf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#master-info .n2{font-size:14px;color:var(--dim);margin-top:2px}
+#master-info .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+#master-info .stat{display:flex;align-items:baseline;gap:6px;font-size:15px;color:var(--dim)}
+#master-info .stat b{font-family:var(--num);font-size:20px;color:#fff}
+#master-info .mana-bar{height:24px;background:#05080d;border:1px solid #2c3a52;border-radius:4px;position:relative;overflow:hidden}
+#master-info .mana-bar .fill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--mana2),var(--mana));box-shadow:0 0 12px var(--mana)}
+#master-info .mana-bar .txt{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--num);font-size:16px;color:#fff;text-shadow:0 0 4px #000}
+.hand-drawer{width:400px;height:240px;flex-shrink:0;position:relative}
+.hand-drawer .toggle{position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(135deg,rgba(27,36,54,.8),rgba(11,14,20,.9));border:1px solid var(--gold3);border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+.hand-drawer .toggle:hover{background:linear-gradient(135deg,rgba(27,36,54,.95),rgba(11,14,20,1));border-color:var(--gold2)}
+.hand-drawer .toggle .icon{font-size:48px;color:var(--gold2)}
+.hand-drawer .toggle .label{font-size:18px;color:var(--gold2);letter-spacing:3px}
+.hand-drawer .toggle .count{font-family:var(--num);font-size:14px;color:var(--dim)}
+.ops-panel{width:360px;flex-shrink:0;display:flex;flex-direction:column;gap:10px}
+.ops-row{display:flex;gap:10px;height:110px}
+.op-btn{flex:1;font-family:var(--serif);font-size:22px;letter-spacing:3px;display:grid;place-items:center;cursor:pointer;border-radius:6px;transition:all .2s;border:1px solid}
+.op-btn.primary{background:linear-gradient(180deg,#f3dc9c,var(--gold));border-color:var(--gold2);color:#1a1206}
+.op-btn.danger{background:linear-gradient(180deg,#e05058,var(--blood));border-color:#ff8a90;color:#fff3cf}
+.op-btn.special{background:linear-gradient(180deg,#7b4a8a,var(--violet));border-color:#c79ad6;color:#f5e6ff}
+.op-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.op-btn.off{filter:grayscale(.8) brightness(.6);cursor:not-allowed}
+.op-btn.off:hover{transform:none;box-shadow:none}
+.op-btn small{display:block;font-size:13px;letter-spacing:1px;opacity:.9;margin-top:4px}
+.pile-box{display:flex;gap:8px}
+.pile-item{flex:1;text-align:center;cursor:pointer}
+.pile-item .cb{width:56px;height:78px;margin:0 auto 4px;border-radius:4px;background:center/cover;box-shadow:0 0 0 1px var(--gold3),2px 2px 0 #0b0e14,3px 3px 0 var(--gold3)}
+.pile-item .cb.empty{background:none;border:1px dashed var(--gold3);box-shadow:none}
+.pile-item .label{font-size:13px;color:var(--gold2)}
+.pile-item .label b{font-family:var(--num);font-size:16px;color:#fff}
+
+/* ===== 右下：操作区 ===== */
+#ops{left:1466px;top:816px;width:446px;height:256px}
+.bigbtn{position:absolute;font-family:var(--serif);cursor:pointer;display:grid;place-items:center;color:#1a1206;border:1px solid var(--gold2)}
+#btnPlay{left:10px;top:10px;width:104px;height:236px;font-size:46px;writing-mode:vertical-rl;letter-spacing:10px;
+  background:linear-gradient(180deg,#f3dc9c,var(--gold) 55%,#8a6a32);clip-path:polygon(0 12px,12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px))}
+#btnEnd{left:128px;top:10px;width:196px;height:110px;font-size:30px;letter-spacing:4px;background:linear-gradient(180deg,#e05058,var(--blood) 60%,#6d0d12);color:#fff3cf;border-color:#ff8a90}
+#btnBuff{left:128px;top:136px;width:196px;height:110px;font-size:26px;letter-spacing:3px;background:linear-gradient(180deg,#7b4a8a,var(--violet) 60%,#2d1233);color:#f5e6ff;border-color:#c79ad6}
+.bigbtn small{display:block;font-size:14px;letter-spacing:1px;opacity:.85;writing-mode:horizontal-tb}
+.bigbtn.off{filter:grayscale(.85) brightness(.55);cursor:not-allowed}
+.pile{position:absolute;left:338px;width:98px;height:110px;cursor:pointer;text-align:center}
+.pile .cb{position:absolute;left:18px;top:4px;width:62px;height:86px;border-radius:5px;background:center/cover;box-shadow:0 0 0 1px var(--gold3),3px 3px 0 #0b0e14,4px 4px 0 var(--gold3),7px 7px 0 #0b0e14,8px 8px 0 var(--gold3)}
+.pile .cb.empty{background:none;border:1px dashed var(--gold3);box-shadow:none}
+.pile .pn{position:absolute;left:0;right:0;bottom:-2px;font-size:15px;color:var(--gold2)}
+.pile .pn b{font-family:var(--num);font-size:19px;color:#fff}
+#pileDeck{top:10px}#pileDis{top:136px}
+#buffpop{display:none;z-index:60;left:1466px;top:560px;width:446px;height:246px;padding:14px}
+#buffpop.show{display:block}
+
+/* ===== 其他层 ===== */
+#banner{display:none;left:0;right:0;top:250px;height:86px;z-index:70;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(120,10,18,.88) 25%,rgba(120,10,18,.88) 75%,transparent);border-top:1px solid var(--blood2);border-bottom:1px solid var(--blood2)}
+#banner.show{display:grid;place-items:center;animation:bannerIn .35s ease-out}
+#banner div{font-size:40px;letter-spacing:8px;color:#fff3cf;text-shadow:0 0 16px #ff4d57}
+#banner small{font-size:20px;letter-spacing:3px;color:#ffd0d0;margin-left:18px}
+@keyframes bannerIn{from{opacity:0;transform:scaleY(.2)}to{opacity:1;transform:none}}
+#drawer{display:none;left:0;top:520px;width:1920px;height:560px;z-index:80;padding:22px 36px;background:linear-gradient(180deg,rgba(11,14,20,.93),rgba(11,14,20,.99));border-top:2px solid var(--gold)}
+#drawer.show{display:block;animation:drawerIn .22s ease-out}
+@keyframes drawerIn{from{transform:translateY(120px);opacity:0}to{transform:none;opacity:1}}
+#drawer .grp{display:inline-block;vertical-align:top;margin-right:40px}
+#drawer .row{display:flex;gap:14px;margin-top:10px}
+#drawer .dc{position:relative;width:172px;height:241px}
+#drawer .dc .cardimg{position:absolute;inset:0}
+#drawer .dc .acts{position:absolute;left:0;right:0;top:-2px;display:flex;justify-content:center;gap:6px;transform:translateY(-100%)}
+#drawer .dc.can .cardimg{animation:breathe 1.6s ease-in-out infinite}
+#drawer .close{position:absolute;right:30px;top:16px}
+#zoom{display:none;inset:0;z-index:100;background:rgba(3,4,8,.82)}
+#zoom.show{display:block}
+#zoom .zc{position:absolute;left:470px;top:150px;width:520px;height:728px;border-radius:12px;background:center/cover;box-shadow:0 0 0 2px var(--gold2),0 0 60px rgba(232,205,134,.35)}
+#zoom .zd{position:absolute;left:1030px;top:150px;width:520px;min-height:300px;padding:26px 30px;font-size:21px;line-height:1.7}
+#zoom .zd h2{font-size:34px;color:#fff3cf;letter-spacing:4px;margin-bottom:10px;font-weight:normal}
+#zoom .zd .ln{border-bottom:1px solid rgba(201,164,92,.2);padding:3px 0}
+#zoom .zd .ln span{color:var(--gold2);display:inline-block;min-width:108px}
+#zoom .zd .ef{padding:6px 0;color:var(--text);white-space:pre-line}
+#toast{display:none;left:50%;top:360px;transform:translateX(-50%);z-index:90;padding:10px 30px;font-size:22px}
+#toast.show{display:block}
+#rank{display:none;right:10px;top:48px;width:420px;z-index:65;padding:14px 18px}
+#rank.show{display:block}
+#rank table{width:100%;border-collapse:collapse;font-size:19px}
+#rank td{padding:6px 4px;border-bottom:1px solid rgba(201,164,92,.2)}
+#rank td.n{font-family:var(--num);font-size:22px;color:#fff;text-align:right}
+#rank .hd{display:inline-block;width:32px;height:32px;border-radius:50%;background:center/cover;vertical-align:middle;margin-right:8px;border:1px solid var(--gold)}
+#log{left:1044px;top:606px;width:462px;height:180px;padding:12px 16px;font-size:15px;line-height:1.65;color:var(--dim);overflow:hidden;z-index:6}
+#log p b{color:var(--gold2);font-weight:normal}
+#dbg{display:none;position:absolute;left:0;top:0;z-index:999;max-width:900px;max-height:1080px;overflow:auto;font:12px monospace;background:rgba(0,0,0,.85);color:#9f9}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+ <defs>
+  <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3dc9c"/><stop offset=".5" stop-color="#c9a45c"/><stop offset="1" stop-color="#7a5a26"/></linearGradient>
+  <radialGradient id="gMana" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#bff6ff" stop-opacity=".9"/><stop offset=".55" stop-color="#3fd6f0" stop-opacity=".35"/><stop offset="1" stop-color="#3fd6f0" stop-opacity="0"/></radialGradient>
+  <radialGradient id="gBlood" cx=".5" cy=".4" r=".6"><stop offset="0" stop-color="#ff8a90"/><stop offset=".6" stop-color="#c81d25"/><stop offset="1" stop-color="#4a070b"/></radialGradient>
+ </defs>
+ <symbol id="sCorner" viewBox="0 0 22 22"><path d="M1 21V6Q1 1 6 1H21" fill="none" stroke="url(#gGold)" stroke-width="2"/><path d="M5 17V8Q5 5 8 5H17" fill="none" stroke="#c9a45c" stroke-width=".8"/><circle cx="5" cy="5" r="2" fill="#e8cd86"/></symbol>
+ <!-- 魔术阵：同心环 + 十芒星 + 符文刻度 -->
+ <symbol id="sCircle" viewBox="-100 -100 200 200">
+  <circle r="98" fill="url(#gMana)" opacity=".35"/>
+  <circle r="96" fill="none" stroke="#e8cd86" stroke-width="1.2" opacity=".9"/>
+  <circle r="90" fill="none" stroke="#3fd6f0" stroke-width=".6" stroke-dasharray="2 3" opacity=".9"/>
+  <circle r="84" fill="none" stroke="#e8cd86" stroke-width=".5" opacity=".7"/>
+  <g stroke="#3fd6f0" stroke-width=".7" fill="none" opacity=".85">
+   <polygon points="0,-80 18.1,-24.7 76.1,-24.7 29.3,9.5 47,64.7 0,30.5 -47,64.7 -29.3,9.5 -76.1,-24.7 -18.1,-24.7"/>
+   <polygon points="0,-80 47,64.7 -76.1,-24.7 76.1,-24.7 -47,64.7" />
+  </g>
+  <circle r="52" fill="none" stroke="#e8cd86" stroke-width=".8" opacity=".8"/>
+  <circle r="46" fill="none" stroke="#3fd6f0" stroke-width=".4" opacity=".8"/>
+  <g fill="#e8cd86" opacity=".7" font-size="6" font-family="Georgia" text-anchor="middle">
+   <text y="-86.5">ANFANG · VERTRAG · SCHWERT · SCHICKSAL ·</text>
+  </g>
+  <circle r="4" fill="#bff6ff"/>
+ </symbol>
+ <!-- 席位环 -->
+ <symbol id="sSeat" viewBox="-56 -56 112 112">
+  <circle r="54" fill="rgba(11,14,20,.72)" stroke="url(#gGold)" stroke-width="3"/>
+  <circle r="48" fill="none" stroke="#3fd6f0" stroke-width="1" stroke-dasharray="3 4"/>
+  <g fill="#e8cd86"><circle cx="0" cy="-54" r="3"/><circle cx="54" cy="0" r="3"/><circle cx="0" cy="54" r="3"/><circle cx="-54" cy="0" r="3"/></g>
+ </symbol>
+ <symbol id="sSeatExtra" viewBox="-56 -56 112 112">
+  <circle r="52" fill="rgba(11,14,20,.45)" stroke="#8a6a32" stroke-width="1.5" stroke-dasharray="6 5"/>
+ </symbol>
+ <!-- 令咒纹 -->
+ <symbol id="sCrest" viewBox="0 0 70 88">
+  <path d="M35 4C44 20 60 22 60 40C60 58 46 62 35 84C24 62 10 58 10 40C10 22 26 20 35 4Z" fill="url(#gBlood)" stroke="#ff8a90" stroke-width="1.5"/>
+  <path d="M35 16C38 30 50 32 48 44C46 54 38 56 35 70C32 56 24 54 22 44C20 32 32 30 35 16Z" fill="none" stroke="#ffd0d0" stroke-width="1.2" opacity=".8"/>
+  <path d="M18 40H52M35 26V62" stroke="#ffd0d0" stroke-width=".8" opacity=".6"/>
+ </symbol>
+ <symbol id="sPip" viewBox="0 0 14 18"><path d="M7 1C10 6 13 7 13 10C13 14 9 15 7 17C5 15 1 14 1 10C1 7 4 6 7 1Z" fill="url(#gBlood)" stroke="#ff8a90" stroke-width=".8"/></symbol>
+ <symbol id="sPipOff" viewBox="0 0 14 18"><path d="M7 1C10 6 13 7 13 10C13 14 9 15 7 17C5 15 1 14 1 10C1 7 4 6 7 1Z" fill="none" stroke="#5a3a3d" stroke-width="1"/></symbol>
+ <symbol id="sBen" viewBox="0 0 52 52"><path d="M26 2L48 14V38L26 50L4 38V14Z" fill="rgba(11,14,20,.8)" stroke="url(#gGold)" stroke-width="2.5"/><path d="M26 8L43 17V35L26 44L9 35V17Z" fill="none" stroke="#3fd6f0" stroke-width=".8"/></symbol>
+ <!-- 祭坛 -->
+ <symbol id="sAltar" viewBox="0 0 200 84">
+  <ellipse cx="100" cy="30" rx="96" ry="22" fill="#141a28" stroke="url(#gGold)" stroke-width="2"/>
+  <ellipse cx="100" cy="30" rx="80" ry="15" fill="none" stroke="#3fd6f0" stroke-width="1" stroke-dasharray="4 4"/>
+  <path d="M4 30V52Q100 90 196 52V30Q100 70 4 30Z" fill="#0d111b" stroke="#8a6a32" stroke-width="1.5"/>
+ </symbol>
+</defs>
+</svg>
+
+<div id="stage">
+  <div id="topbar" class="abs"></div>
+  <div id="players" class="abs"></div>
+  <div id="main" class="map gold-frame" style="left:10px;top:212px;width:1500px;height:588px"></div>
+  <div id="folds"></div>
+  <div id="peek" class="map gold-frame" style="left:10px;top:212px;width:1500px;height:588px"></div>
+  <div id="log" class="abs gold-frame"></div>
+
+  <div id="selfres" class="abs gold-frame"></div>
+  <div id="bottombar" class="abs">
+    <div id="servant-card"></div>
+    <div id="master-info"></div>
+    <div class="hand-drawer"></div>
+    <div class="ops-panel"></div>
+  </div>
+  <div id="buffpop" class="abs gold-frame"></div>
+  <div id="csmenu" class="abs gold-frame"></div>
+
+  <div id="banner" class="abs"><div></div></div>
+  <div id="drawer" class="abs"></div>
+  <div id="rank" class="abs gold-frame"></div>
+  <div id="order-panel" class="abs gold-frame"></div>
+  <div id="log-toggle" class="abs" style="left:1520px;top:790px;width:80px;height:30px;background:rgba(27,36,54,.9);border:1px solid var(--gold3);border-radius:4px;cursor:pointer;display:grid;place-items:center;font-size:14px;color:var(--gold2)">记录</div>
+  <div id="toast" class="abs gold-frame"></div>
+  <div id="zoom" class="abs"><div class="zc"></div><div class="zd gold-frame"></div></div>
+</div>
+<pre id="dbg"></pre>
+
+<script src="assets/data.js"></script>
+<script>
+(function(){
+const FD=window.FD_DATA, C=FD.cards, RU=FD.rules, Q=new URLSearchParams(location.search);
+const $=s=>document.querySelector(s);
+const el=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e};
+const corners=e=>{['tl','tr','bl','br'].forEach(k=>{const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('class','corner '+k);s.innerHTML='<use href="#sCorner"/>';e.appendChild(s)});return e};
+const CLS={saber:'Saber',archer:'Archer',lancer:'Lancer',rider:'Rider',caster:'Caster',assassin:'Assassin',berserker:'Berserker'};
+
+/* ---------- 示例对局状态：数值取自 data.js，状态本身是演示用 ---------- */
+const AREAS=FD.map.areas, areaById=id=>AREAS.find(a=>a.id===id);
+const players=[
+ {id:0,master:'emiya_shirou',servant:'emiya',order:1,magic:6,score:5,cs:3,hand:3,loc:['scout',0],revealed:false,played:[['precision_strike_0_2',true],['physical_attack_0_3',true]]},
+ {id:1,master:'illyasviel_von_einzbern',servant:'heracles',order:2,magic:9,score:8,cs:2,hand:1,loc:['miyama',0],revealed:true,played:[['physical_attack_0_3',false],['luck',false]]},
+ {id:2,master:'kotomine_kirei',servant:'cu_chulainn',order:3,magic:4,score:6,cs:3,hand:1,loc:['shinto',0],revealed:false,played:[['magic_blast_0_3',false],['physical_attack_0_3',true]]},
+ {id:6,master:'tohsaka_rin',servant:'artoria_pendragon',order:4,magic:9,score:4,cs:3,hand:3,loc:['workshop',0],revealed:false,me:true,played:[],
+   handCards:['physical_attack_0_3','magic_blast_0_3','luck'],deck:7,discard:2,buffs:[{card:'jewel',level:C.jewel.level}]},
+ {id:3,master:'matou_shinji',servant:'medusa',order:5,magic:3,score:2,cs:3,hand:3,loc:['miyama',1],revealed:false,played:[]},
+ {id:4,master:'matou_sakura',servant:'sasaki_kojirou',order:6,magic:5,score:3,cs:1,hand:3,loc:['shinto',2],revealed:false,played:[]},
+ {id:5,master:'kuzuki_souichirou',servant:'medea',order:7,magic:7,score:1,cs:3,hand:3,loc:['workshop',1],revealed:false,played:[]},
+];
+const events={miyama:[{card:'ley_line',concealed:false}],shinto:[{card:'strength_test',concealed:true}]};
+const S={round:3,phase:'action',situation:'outrage',actor:6,pending:[],playDone:false,log:[]};
+const me=players.find(p=>p.me);
+const mainArea=me.loc[0];
+if(Q.get('enemy')){S.actor=5;}
+const head=p=>FD.heads[p.master].img, hname=p=>FD.heads[p.master].name;
+const svInfo=p=>FD.servants[p.servant];
+const byOrder=()=>players.slice().sort((a,b)=>a.order-b.order);
+const pdata=p=>({magic_limit:RU.magic_limit,play_limit:RU.play_limit,regular_play_min:RU.regular_play_min,skill_zone_magic_limit:RU.skill_zone_magic_limit});
+
+/* ---------- 出牌判定：候选、明置/暗置合法性 ---------- */
+function regularCandidates(){
+  const hand=me.handCards.map(k=>({key:k,zone:'hand'}));
+  const skills=FD.skills.map(k=>({key:k,zone:'skill'}));
+  return hand.concat(skills).filter(c=>!C[c.key].need_extra_play && !S.pending.some(p=>p.key===c.key&&p.zone===c.zone));
+}
+function pendingCost(){return S.pending.filter(p=>!p.concealed).reduce((s,p)=>s+(C[p.key].cost||0),0)}
+function inBattle(){return !!areaById(me.loc[0]).battle}
+function legalModes(c){
+  const R=pdata(me), card=C[c.key], modes=[];
+  if(S.actor!==me.id||S.phase!=='action'||S.playDone) return modes;
+  if(S.pending.length>=R.play_limit) return modes;
+  const cost=card.cost||0, afterCost=pendingCost()+cost;
+  let faceOk=afterCost<=me.magic && afterCost<=R.magic_limit;
+  if(c.zone==='skill' && me.magic<R.skill_zone_magic_limit) faceOk=false;
+  if(faceOk) modes.push('face');
+  let concealOk=RU.concealable_kinds.includes(card.kind);
+  if(concealOk && inBattle()){
+    const remaining=R.play_limit-S.pending.length, hasFace=S.pending.some(p=>!p.concealed);
+    if(!hasFace && remaining===1) concealOk=false;
+  }
+  if(concealOk) modes.push('conceal');
+  return modes;
+}
+function anyPlayable(){return regularCandidates().some(c=>legalModes(c).length)}
+function canFinish(){return S.pending.length>=pdata(me).regular_play_min || !anyPlayable()}
+function play(c,mode){
+  if(!legalModes(c).includes(mode)) return;
+  S.pending.push({key:c.key,zone:c.zone,concealed:mode==='conceal'});
+  if(c.zone==='hand'){me.handCards.splice(me.handCards.indexOf(c.key),1);me.hand=me.handCards.length}
+  logp(`<b>${hname(me)}</b> ${mode==='face'?'明置':'暗置'}打出 ${mode==='face'?C[c.key].name:'一张牌'}`);
+  if(S.pending.length>=pdata(me).play_limit || !anyPlayable()) finishPlay();
+  renderAll();
+}
+function finishPlay(){
+  if(S.playDone) return;
+  const cost=pendingCost(); me.magic-=cost; S.playDone=true;
+  me.played=S.pending.map(p=>[p.key,p.concealed]);
+  logp(`<b>${hname(me)}</b> 完成常规出牌 魔力消耗 ${cost}`);
+}
+function power(p){
+  const loc=areaById(p.loc[0]), seat=loc.seats[p.loc[1]]||{benefit:0};
+  const cards=(p.me && !S.playDone)?S.pending.map(x=>[x.key,x.concealed]):p.played;
+  return cards.reduce((s,[k,con])=>s+(con?0:(C[k].power||0)),0)+(seat.benefit||0)+(p.bonus||0);
+}
+function logp(h){S.log.unshift(h);S.log=S.log.slice(0,7)}
+
+/* ---------- 顶栏 ---------- */
+function renderTop(){
+  const t=$('#topbar'); const actor=players.find(p=>p.id===S.actor);
+  const pi=RU.phases.findIndex(x=>x.id===S.phase);
+  t.innerHTML=`<div class="day">第 <b>${S.round}</b> 天 <span style="color:var(--dim);font-size:16px">共 ${RU.total_rounds}</span></div>
+   <div class="phases">${RU.phases.map((x,i)=>`<div class="phase ${i===pi?'on':i<pi?'done':''}">${x.name}</div>`).join('')}</div>
+   <div class="actor">当前行动 <b>${hname(actor)}</b></div>
+   <div class="actor" style="color:var(--dim)">局势 <b>${C[S.situation].name}</b></div>
+   <div class="sp"></div>
+   <button class="tb-btn" id="btnRank">顺位与战果</button>`;
+  $('#btnRank').onclick=()=>$('#rank').classList.toggle('show');
+  const rk=$('#rank'); const sorted=players.slice().sort((a,b)=>b.score-a.score);
+  rk.innerHTML=`<div class="lbl" style="font-size:18px">战果排行</div><table>${sorted.map((p,i)=>`<tr><td style="width:36px" class="num">${i+1}</td><td><i class="hd" style="background-image:url(${head(p)})"></i>${hname(p)}</td><td style="color:var(--dim);font-size:15px">顺位 ${p.order}</td><td class="n">${p.score}</td></tr>`).join('')}</table>`;
+}
+
+/* ---------- 其他玩家 ---------- */
+function pips(n,max){let h='';for(let i=0;i<max;i++)h+=`<svg class="pip"><use href="#${i<n?'sPip':'sPipOff'}"/></svg>`;return h}
+function renderPlayers(){
+  const box=$('#players'); box.innerHTML='';
+  byOrder().filter(p=>!p.me).forEach(p=>{
+    const d=corners(el('div','pl gold-frame'+(p.id===S.actor?' acting':'')));
+    const sv=svInfo(p), a=areaById(p.loc[0]);
+    const st=p.id===S.actor?'行动中':(p.played.length?'已出牌':'等待');
+    d.innerHTML+=`<div class="ord">${p.order}</div><div class="mh" style="background-image:url(${head(p)})"></div>
+     ${p.revealed?`<div class="sh" style="background-image:url(${sv.img})"></div>`:`<div class="sh hidden">${CLS[sv.cls]||sv.cls}</div>`}
+     <div class="st ${p.played.length?'done':''}">${st}</div>
+     <div class="nm">${hname(p)}</div>
+     <div class="loc">${a.name}<span class="sv">${p.revealed?sv.name:(CLS[sv.cls]||sv.cls)}</span></div>
+     <div class="row">魔力 <div class="bar"><i style="width:${p.magic/RU.magic_limit*100}%"></i></div><b>${p.magic}</b></div>
+     <div class="row">威力 <b>${power(p)}</b> 战果 <b>${p.score}</b> 手牌 <b>${p.hand}</b></div>
+     <div class="pips" style="position:absolute;right:12px;top:40px" title="令咒">${pips(p.cs,RU.command_spell_limit)}</div>`;
+    box.appendChild(d);
+  });
+}
+
+/* ---------- 地图（主图/展开图共用同一个渲染函数） ---------- */
+const SEAT_POS={1:[[0,-1]],2:[[-.72,-.55],[.72,-.55]],3:[[-.8,-.45],[.8,-.45],[0,.95]],4:[[-.84,-.5],[.84,-.5],[-.84,.5],[.84,.5]],5:[[-.84,-.5],[.84,-.5],[-.84,.5],[.84,.5],[0,1.06]]};
+function seatLabel(s){
+  const parts=[];
+  if(s.magic>0)parts.push(`魔力 <b>+${s.magic}</b>`);
+  if(s.benefit>0)parts.push(`地利 <b>${s.benefit}</b>`);
+  return parts.join(' ')||(s.limit<0?'不限人数':'席位');
+}
+function renderMap(box,areaId){
+  const a=areaById(areaId); box.innerHTML='';
+  box.appendChild(el('div','scene')).style.backgroundImage=`url(${a.bg})`;
+  box.appendChild(el('div','shade')); corners(box);
+  box.appendChild(el('div','title',a.name));
+  const meta=[]; if(a.move>0)meta.push(`离开费用 <b>${a.move}</b>`); if(a.score>0)meta.push(`${a.battle?'胜者战果':'在场战果'} <b>${a.score}</b>`); meta.push(a.battle?'战场':'非战场');
+  box.appendChild(el('div','meta',meta.map(x=>`<span>${x}</span>`).join('')));
+  // 左上：事件牌槽位（按放置计划 event_placements 读取）
+  const ev=el('div','slot'); ev.style.cssText='left:24px;top:14px';
+  const evs=events[areaId]||[];
+  ev.appendChild(el('div','cap','事件'));
+  if(evs.length){evs.forEach(e=>{const c=el('div','cardimg');c.style.cssText=`width:170px;height:238px;background-image:url(${e.concealed?'assets/b_event.jpg':C[e.card].img})`;if(!e.concealed)bindZoom(c,e.card);ev.appendChild(c);
+     const sc=el('div','cap',e.concealed?'暗置':`战果 <b class="num" style="color:#fff">${C[e.card].score}</b>`);ev.appendChild(sc)});}
+  else{ev.appendChild(el('div','emptyslot','无事件')).style.cssText='width:170px;height:238px'}
+  box.appendChild(ev);
+  // 局势牌：全局，放在主图事件牌右侧
+  const si=el('div','slot'); si.style.cssText='left:212px;top:14px';
+  si.appendChild(el('div','cap','局势'));
+  const sc=el('div','cardimg'); sc.style.cssText=`width:124px;height:174px;background-image:url(${C[S.situation].img})`; bindZoom(sc,S.situation); si.appendChild(sc);
+  si.appendChild(el('div','cap',`魔力 <b class="num" style="color:#fff">+${C[S.situation].magic}</b>`));
+  box.appendChild(si);
+  // 中间：魔术阵 + 席位
+  const cx=700, cy=318, r=236;
+  const ring=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  ring.setAttribute('class','circle'); ring.style.cssText=`left:${cx-r}px;top:${cy-r}px;width:${2*r}px;height:${2*r}px`;
+  ring.innerHTML='<use href="#sCircle"/>'; box.appendChild(ring);
+  const pos=SEAT_POS[a.seats.length]||SEAT_POS[5];
+  a.seats.forEach((s,i)=>{
+    const st=el('div','seat'); const [px,py]=pos[i];
+    st.style.left=(cx+px*r*.78)+'px'; st.style.top=(cy+py*r*.62)+'px';
+    st.innerHTML=`<svg><use href="#${s.extra?'sSeatExtra':'sSeat'}"/></svg><div class="v">${seatLabel(s)}</div>`;
+    const here=players.filter(p=>p.loc[0]===areaId&&p.loc[1]===i);
+    if(here.length===1){const w=el('div','who'+(here[0].me?' me':'')+(here[0].id===S.actor?' acting':''));w.style.backgroundImage=`url(${head(here[0])})`;st.appendChild(w)}
+    else if(here.length>1){const m=el('div','many');here.forEach(p=>{const i_=el('i');i_.style.backgroundImage=`url(${head(p)})`;m.appendChild(i_)});st.appendChild(m)}
+    if(s.extra)st.appendChild(el('div','note','效果放置'));
+    box.appendChild(st);
+  });
+  // 右上：本战区玩家的出牌组
+  box.appendChild(el('div','sectionhead','出牌区')).style.cssText='left:1034px;top:16px';
+  const pl=el('div','played'); pl.style.cssText='left:1040px;top:52px;width:450px;height:400px';
+  byOrder().filter(p=>p.loc[0]===areaId).forEach(p=>{
+    const mine=p.me && !S.playDone; const cards=mine?S.pending.map(x=>[x.key,x.concealed]):p.played;
+    if(!cards.length && !(p.me && p.id===S.actor)) return;
+    const g=el('div','pgrp'+(p.me?' mine':'')); g.innerHTML=`<div class="h" style="background-image:url(${head(p)})"></div>`;
+    for(let k=0;k<Math.max(2,cards.length);k++){
+      const c=el('div','c cardimg'); const cd=cards[k];
+      if(!cd){c.className='c emptyslot';c.textContent='空';}
+      else{const hide=cd[1]&&!p.me; c.style.backgroundImage=`url(${cd[1]?C[cd[0]].back==='b_skill'?'assets/b_skill.jpg':'assets/b_attack.jpg':C[cd[0]].img})`; if(!hide)bindZoom(c,cd[0]);
+        if(cd[1]&&p.me){c.style.filter='brightness(.8)';c.title='暗置 '+C[cd[0]].name}}
+      g.appendChild(c);
+    }
+    g.appendChild(el('div','pw',`威力 <b>${power(p)}</b>`));
+    if(mine) g.appendChild(el('div','pend',`已选 ${S.pending.length} / ${RU.play_limit}`));
+    pl.appendChild(g);
+  });
+  box.appendChild(pl);
+}
+
+/* ---------- 右侧折叠竖条 ---------- */
+let peekTimer=null;
+function renderFolds(){
+  const box=$('#folds'); box.innerHTML='';
+  AREAS.filter(a=>a.id!==mainArea).forEach((a,i)=>{
+    const f=corners(el('div','fold gold-frame'+(a.battle?' battle':''))); f.style.left=(1520+i*130)+'px'; f.dataset.area=a.id;
+    const heads=players.filter(p=>p.loc[0]===a.id).map(p=>`<i style="background-image:url(${head(p)});${p.id===S.actor?'border-color:var(--blood2)':''}"></i>`).join('');
+    const bens=a.seats.filter(s=>s.benefit>0).map(s=>`<div class="ben"><svg><use href="#sBen"/></svg><b>${s.benefit}</b></div>`).join('');
+    const ev=(events[a.id]||[])[0];
+    f.innerHTML+=`<div class="bgimg" style="background-image:url(${a.bg})"></div><div class="fshade"></div>
+     <div class="in"><div class="fname">${a.name}</div>${bens}<div class="heads">${heads}</div>
+     ${ev?`<div class="ev cardimg" style="background-image:url(${ev.concealed?'assets/b_event.jpg':C[ev.card].img})"></div>`:''}
+     ${a.score>0?`<div class="score">战果<b>${a.score}</b></div>`:''}</div>`;
+    f.onmouseenter=()=>showPeek(a.id); f.onmouseleave=hidePeekSoon;
+    box.appendChild(f);
+  });
+  const pk=$('#peek'); pk.onmouseenter=()=>clearTimeout(peekTimer); pk.onmouseleave=hidePeekSoon;
+}
+function showPeek(id){clearTimeout(peekTimer);const pk=$('#peek');renderMap(pk,id);pk.classList.add('show');pk.dataset.area=id;
+  document.querySelectorAll('.fold').forEach(f=>f.classList.toggle('hot',f.dataset.area===id))}
+function hidePeekSoon(){clearTimeout(peekTimer);peekTimer=setTimeout(()=>{$('#peek').classList.remove('show');document.querySelectorAll('.fold').forEach(f=>f.classList.remove('hot'))},220)}
+
+/* ---------- 左侧：令咒 / 魔力 / 威力 / buff ---------- */
+function renderSelfRes(){
+  const b=$('#selfres'); b.innerHTML=''; corners(b);
+  const pc=S.playDone?0:pendingCost();
+  const w=el('div'); w.innerHTML=`<div class="lbl">令咒</div><div class="crests">${Array.from({length:RU.command_spell_limit},(_,i)=>`<svg class="crest ${i<me.cs?'':'used'}" data-i="${i}"><use href="#sCrest"/></svg>`).join('')}</div>
+   <div class="powerbig"><span class="lbl">合计威力</span><b>${power(me)}</b></div>
+   <div class="lbl" style="margin-top:12px">魔力 <span style="color:var(--dim);font-size:14px">上限 ${RU.magic_limit}</span></div>
+   <div class="mbar"><div class="fill" style="width:${me.magic/RU.magic_limit*100}%"></div>
+     ${pc?`<div class="pend" style="left:${(me.magic-pc)/RU.magic_limit*100}%;width:${pc/RU.magic_limit*100}%"></div>`:''}
+     <div class="ticks">${'<i></i>'.repeat(RU.magic_limit)}</div><div class="txt">${me.magic}${pc?` <span style="color:#ff9aa0;font-size:16px">−${pc}</span>`:''}</div></div>
+   <div class="buffchips">${me.buffs.map(x=>`<span class="chip" data-k="${x.card}">${C[x.card].name} <b>${x.level}</b></span>`).join('')}</div>`;
+  b.appendChild(w);
+  b.querySelectorAll('.crest').forEach(c=>c.onclick=e=>{if(c.classList.contains('used'))return;openCs(e)});
+  b.querySelectorAll('.chip').forEach(c=>bindZoom(c,c.dataset.k));
+}
+function openCs(){
+  const m=$('#csmenu'); const here=areaById(me.loc[0]).name;
+  const can=S.actor===me.id && S.phase==='action';
+  m.innerHTML=`<div class="lbl" style="font-size:18px">使用一枚令咒</div>`+C.cs.options.map((o,i)=>{
+    const ok=can && (!o.allowed_origin_areas || o.allowed_origin_areas.includes(here));
+    return `<div class="opt ${ok?'':'off'}" data-i="${i}">${o.text}</div>`}).join('')+`<div class="opt" data-i="x" style="text-align:center;border-color:#444">取消</div>`;
+  m.style.left='40px'; m.style.top='340px'; m.classList.add('show');
+  m.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{
+    if(o.classList.contains('off'))return; m.classList.remove('show'); if(o.dataset.i==='x')return;
+    const op=C.cs.options[+o.dataset.i]; me.cs--;
+    if(op.magic) me.magic=Math.min(RU.magic_limit,me.magic+op.magic);
+    if(op.power) me.bonus=(me.bonus||0)+op.power;
+    logp(`<b>${hname(me)}</b> 使用令咒 ${op.text.split('\n')[0].replace('行动阶段：','')}`); renderAll();
+  });
+}
+
+/* ---------- 左下：从者与基础信息 ---------- */
+function renderSelf(){
+  const sv=svInfo(me);
+  $('#servant .pic').style.backgroundImage='url(assets/p_artoria.jpg)';
+  $('#servant .cls').innerHTML=`<small>${CLS[sv.cls]}</small>${me.revealed?sv.name:'真名隐藏'}`;
+  const sp=$('#servant'); if(!sp.querySelector('.corner'))corners(sp); sp.onclick=()=>openZoom('sv_artoria'); sp.style.cursor='zoom-in';
+  const b=$('#selfinfo'); const a=areaById(me.loc[0]);
+  b.innerHTML=`<div class="n1">${hname(me)}</div><div class="n2">${sv.name} · ${CLS[sv.cls]}</div>
+   <div class="kv">顺位 <b>${me.order}</b></div><div class="kv">战果 <b>${me.score}</b></div>
+   <div class="kv">位置 <b class="s">${a.name}</b></div><div class="kv">手牌 <b>${me.handCards.length} / ${RU.hand_limit}</b></div>
+   <div class="kv">令咒 <b>${me.cs}</b></div>`; corners(b);
+  const mo=$('#master .oval'); mo.style.backgroundImage='url(assets/p_rin.jpg)'; mo.onclick=()=>openZoom('ms_rin');
+  $('#master .mn').textContent=hname(me);
+}
+
+/* ---------- 下方扇形：左侧御主/从者牌，右侧手牌 ---------- */
+function ownCards(){
+  return [{key:'ms_rin',zone:'master'},{key:'sv_artoria',zone:'servant'}].concat(FD.skills.filter(k=>!S.pending.some(p=>p.key===k)).map(k=>({key:k,zone:'skill'})),
+    [{key:FD.upgrade,zone:'upgrade'},{key:'jewel',zone:'thing'},{key:'yin',zone:'extra'},{key:'cs',zone:'cs'}]);
+}
+function cardEl(c,cls){
+  const d=el('div',cls); const img=el('div','cardimg'); img.style.backgroundImage=`url(${C[c.key].img})`; d.appendChild(img);
+  const modes=(c.zone==='hand'||c.zone==='skill')?legalModes(c):[];
+  if(modes.length){d.classList.add('can');const a=el('div','acts');
+    modes.forEach(m=>{const b=el('button','act'+(m==='conceal'?' dark':''),m==='face'?'明置':'暗置');b.onclick=e=>{e.stopPropagation();play(c,m)};a.appendChild(b)});d.appendChild(a)}
+  d.oncontextmenu=e=>{e.preventDefault();openZoom(c.key)};
+  return d;
+}
+function renderFan(){
+  const f=$('#fan'); f.innerHTML='';
+  const L=ownCards(), H=me.handCards.map(k=>({key:k,zone:'hand'}));
+  const place=(list,x0,x1,dir)=>{
+    const n=list.length; list.forEach((c,i)=>{
+      const d=cardEl(c,'fc '+c.zone); const t=n>1?i/(n-1):.5; const x=x0+(x1-x0)*t;
+      const rot=(t-.5)*(dir*Math.min(22,n*3)); const lift=Math.abs(t-.5)*28;
+      d.style.left=(x-65)+'px'; d.style.top=(888+lift)+'px'; d.style.zIndex=10+i;
+      d.style.transform=`rotate(${rot}deg)`;
+      d.onmouseenter=()=>{d.style.transform='translateY(-150px) scale(1.3)'}; d.onmouseleave=()=>{d.style.transform=`rotate(${rot}deg)`};
+      d.onclick=()=>toggleDrawer(true);
+      f.appendChild(d);
+    });
+  };
+  place(L,580,810,1); place(H,1160,1360,1);
+  const t1=el('div','fantag','御主与从者'); t1.style.cssText='left:640px;top:852px'; f.appendChild(t1);
+  const t2=el('div','fantag',`手牌 ${H.length}`); t2.style.cssText='left:1222px;top:852px'; f.appendChild(t2);
+}
+function toggleDrawer(on){
+  const d=$('#drawer'); if(!on){d.classList.remove('show');return}
+  d.innerHTML=`<button class="tb-btn close">收起</button>`;
+  const g1=el('div','grp','<div class="lbl" style="font-size:18px">手牌</div>'); const r1=el('div','row');
+  me.handCards.forEach(k=>r1.appendChild(cardEl({key:k,zone:'hand'},'dc'))); if(!me.handCards.length)r1.appendChild(el('div','emptyslot','无手牌')).style.cssText='width:172px;height:241px';
+  g1.appendChild(r1); d.appendChild(g1);
+  const g2=el('div','grp','<div class="lbl" style="font-size:18px">御主与从者</div>'); const r2=el('div','row');
+  ownCards().forEach(c=>r2.appendChild(cardEl(c,'dc'))); g2.appendChild(r2); d.appendChild(g2);
+  d.querySelectorAll('.dc').forEach(x=>x.onclick=()=>{}); d.querySelector('.close').onclick=()=>toggleDrawer(false);
+  d.classList.add('show');
+}
+
+/* ---------- 右下：出 / 结束 / buff / 牌堆 / 弃牌堆 ---------- */
+function renderOps(){
+  const o=$('#ops'); const myTurn=S.actor===me.id;
+  const playOn=myTurn && !S.playDone && S.pending.length>=pdata(me).regular_play_min;
+  const endOn=myTurn && (S.playDone || canFinish());
+  o.innerHTML=`<div id="btnPlay" class="bigbtn ${playOn?'':'off'}">出牌</div>
+   <div id="btnEnd" class="bigbtn ${endOn?'':'off'}"><div>结束阶段<small>${S.playDone?'已完成出牌':`已选 ${S.pending.length} / ${RU.play_limit}`}</small></div></div>
+   <div id="btnBuff" class="bigbtn"><div>Buff<small>${me.buffs.length} 项</small></div></div>
+   <div id="pileDeck" class="pile"><div class="cb" style="background-image:url(assets/b_attack.jpg)"></div><div class="pn">牌堆 <b>${me.deck}</b></div></div>
+   <div id="pileDis" class="pile"><div class="cb ${me.discard?'':'empty'}" style="background-image:url(assets/b_attack.jpg);filter:grayscale(.6)"></div><div class="pn">弃牌 <b>${me.discard}</b></div></div>`;
+  $('#btnPlay').onclick=()=>{if(playOn){finishPlay();renderAll()}};
+  $('#btnEnd').onclick=()=>{if(!endOn)return;if(!S.playDone)finishPlay();logp(`<b>${hname(me)}</b> 结束行动阶段`);S.actor=byOrder().find(p=>p.order===me.order+1)?.id??me.id;renderAll();
+    const nx=players.find(p=>p.id===S.actor); if(nx&&!nx.me)showBanner(nx)};
+  $('#btnBuff').onclick=()=>{const p=$('#buffpop');p.innerHTML='<div class="lbl" style="font-size:18px">Buff 区</div>'+me.buffs.map(x=>`<div style="margin-top:10px;font-size:17px"><span class="chip" data-k="${x.card}">${C[x.card].name} <b>${x.level}</b></span><div style="margin-top:6px;color:var(--dim);font-size:15px;line-height:1.6">${C[x.card].effects.join('<br>')}</div></div>`).join('');
+    corners(p);p.classList.toggle('show');p.querySelectorAll('.chip').forEach(c=>bindZoom(c,c.dataset.k))};
+}
+function renderLog(){const l=$('#log');l.innerHTML='<div class="lbl">行动记录</div>'+S.log.map(x=>`<p>${x}</p>`).join('');corners(l)}
+function showBanner(p){const b=$('#banner');b.querySelector('div').innerHTML=`${hname(p)}<small>正在行动</small>`;b.classList.add('show');if(!Q.get('enemy'))setTimeout(()=>b.classList.remove('show'),1800)}
+
+/* ---------- 放大说明 ---------- */
+function descLines(k){
+  const c=C[k], L=[['类别',c.kind]];
+  if(c.cost!=null)L.push(['魔力消耗',c.cost]); if(c.power!=null)L.push(['威力',c.power]);
+  if(c.attrs&&c.attrs.length)L.push(['属性',c.attrs.join(' · ')]);
+  if(c.score!=null)L.push(['战果',c.score]); if(c.magic!=null)L.push(['魔力',c.magic]); if(c.level!=null)L.push(['数量',c.level]);
+  return L;
+}
+function openZoom(k){
+  const z=$('#zoom'), c=C[k]; z.querySelector('.zc').style.backgroundImage=`url(${c.img})`;
+  const d=z.querySelector('.zd'); d.innerHTML=`<h2>${c.name}</h2>`+descLines(k).map(([a,b])=>`<div class="ln"><span>${a}</span>${b}</div>`).join('')+(c.effects||[]).map(e=>`<div class="ef">${e}</div>`).join(''); corners(d);
+  z.classList.add('show');
+}
+function bindZoom(e,k){e.oncontextmenu=ev=>{ev.preventDefault();openZoom(k)};e.onclick=ev=>{ev.stopPropagation();openZoom(k)}}
+$('#zoom').onclick=()=>$('#zoom').classList.remove('show');
+
+function renderAll(){renderTop();renderPlayers();renderMap($('#main'),mainArea);renderFolds();renderSelfRes();renderSelf();renderFan();renderOps();renderLog();
+  if($('#drawer').classList.contains('show'))toggleDrawer(true);
+  const pk=$('#peek'); if(pk.classList.contains('show'))renderMap(pk,pk.dataset.area);}
+
+/* ---------- 初始化与状态参数 ---------- */
+logp('<b>伊莉雅斯菲尔</b> 暗置打出两张牌');logp('<b>言峰绮礼</b> 完成常规出牌');logp('<b>卫宫士郎</b> 于侦察明置打出两张牌');
+function fit(){const s=Q.get('fit')==='1'?1:Math.min(innerWidth/1920,innerHeight/1080);const st=$('#stage');st.style.transform=`scale(${s})`;st.style.left=((innerWidth-1920*s)/2)+'px';st.style.top=((innerHeight-1080*s)/2)+'px'}
+addEventListener('resize',fit); fit();
+renderAll();
+if(Q.get('enemy')) showBanner(players.find(p=>p.id===S.actor));
+if(Q.get('hand')) toggleDrawer(true);
+if(Q.get('peek')) showPeek(Q.get('peek'));
+if(Q.get('zoom')) openZoom(Q.get('zoom'));
+if(Q.get('cs')) openCs();
+if(Q.get('rank')) $('#rank').classList.add('show');
+if(Q.get('hover')){const c=[...document.querySelectorAll('#fan .fc.hand')].find(x=>x.classList.contains('can'));if(c)c.onmouseenter(),c.querySelector('.acts').style.display='flex';}
+
+/* ---------- 自测与调试 ---------- */
+const out={};
+if(Q.get('selftest')){
+  const cand=()=>regularCandidates().map(c=>C[c.key].name+':'+legalModes(c).join('/'));
+  out.start={magic:me.magic,cands:cand(),canFinish:canFinish()};
+  play({key:'excalibur',zone:'skill'},'face'); out.afterExcal={pending:S.pending.map(p=>p.key),pc:pendingCost(),cands:cand(),power:power(me)};
+  play({key:'physical_attack_0_3',zone:'hand'},'face'); out.afterSecond={done:S.playDone,magic:me.magic,power:power(me),played:me.played};
+  out.cands_after=cand();
+  out.yin_candidate=regularCandidates().some(c=>c.key==='yin');
+  out.upgrade_candidate=regularCandidates().some(c=>c.key===FD.upgrade);
+}
+if(Q.get('debug')||Q.get('selftest')){
+  const R=s=>[...document.querySelectorAll(s)].map(e=>{const r=e.getBoundingClientRect();return [s,Math.round(r.left),Math.round(r.top),Math.round(r.width),Math.round(r.height)]});
+  out.rects=['#topbar','#players','.pl','#main','.fold','#selfres','#servant','#selfinfo','#master .oval','#ops','#log','#main .seat','#main .played','#main .slot','#fan .fc'].flatMap(R);
+  const d=$('#dbg'); d.textContent=JSON.stringify(out,null,1); d.style.display=Q.get('debug')==='show'?'block':'none';
+}
+})();
+</script>
+</body>
+</html>

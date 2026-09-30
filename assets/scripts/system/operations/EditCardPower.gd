@@ -15,6 +15,8 @@ func exec(card:BaseHandCard, vary_num:BaseNumber = BaseNumber.new(0), set_num:Ba
 	card.edit_power(vary_num, set_num)
 	if card.has_method("record_modification"):
 		card.record_modification("power", "威力 %d → %d" % [old_power, (card._power as BaseNumber).number])
+	#按来源记账：这张牌只要还计入合计威力，这笔改动就算在它的来源头上
+	PowerSources.record(id, "card_power", (card._power as BaseNumber).number - old_power, card)
 	if !counted:
 		return
 	var player_data:Dictionary = GameDataManager.get_player_data(id)

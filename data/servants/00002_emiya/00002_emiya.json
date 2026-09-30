@@ -36,36 +36,45 @@
 						"is_pure_passive": false,
 						"is_residue": false,
 						"effect_numbers": [],
-						"funcs": [
-							{
-								"func_name": "get_players_in_same_area",
-								"parameters": [],
-								"var_index": 0
-							},
-							{
-								"func_name": "foreach_func",
-								"parameters": [
-									[
-										{
-											"func_name": "zero_attribute_power",
-											"parameters": [
-												null,
-												[
-													"agility"
-												]
-											],
-											"var_index": -1
-										}
-									],
-									{
-										"self_var": 0
-									}
-								],
-								"var_index": -1
-							}
-						],
+						"funcs": [],
 						"is_manual": true,
-						"need_activate": true
+						"need_activate": true,
+						"max_choices": 1,
+						"max_total_uses": 1,
+						"reset_counts_each_round": true,
+						"options": [
+							{
+								"shown_option_name": "战斗阶段：将同一战场所有对手的迅捷属性攻击威力变为0",
+								"funcs": [
+									{
+										"func_name": "get_players_in_same_area",
+										"parameters": [],
+										"var_index": 0
+									},
+									{
+										"func_name": "foreach_func",
+										"parameters": [
+											[
+												{
+													"func_name": "zero_attribute_power",
+													"parameters": [
+														null,
+														[
+															"agility"
+														]
+													],
+													"var_index": -1
+												}
+											],
+											{
+												"self_var": 0
+											}
+										],
+										"var_index": -1
+									}
+								]
+							}
+						]
 					}
 				],
 				"zoom_kind": "card"
@@ -95,7 +104,7 @@
 				"effects": [
 					{
 						"effect_name": "terrain_advantage_triple",
-						"shown_effect_name": "【真名解放】行动阶段：将你的地利变为3倍",
+						"shown_effect_name": "【真名解放】<每局游戏限一次>行动阶段：将你的地利变为3倍",
 						"time_points": [
 							"self_action_phase"
 						],
@@ -184,36 +193,45 @@
 								"is_pure_number": true
 							}
 						],
-						"funcs": [
+						"funcs": [],
+						"is_manual": true,
+						"need_activate": true,
+						"max_choices": 1,
+						"max_total_uses": 1,
+						"reset_counts_each_round": true,
+						"options": [
 							{
-								"func_name": "schedule_effect_on_time_point",
-								"parameters": [
-									[
-										"self_battle_win"
-									],
-									[
-										{
-											"func_name": "edit_score",
-											"parameters": [
-												null,
+								"shown_option_name": "战斗阶段：若赢得本场战斗，获得4战果",
+								"funcs": [
+									{
+										"func_name": "schedule_effect_on_time_point",
+										"parameters": [
+											[
+												"self_battle_win"
+											],
+											[
 												{
-													"number_index": 0
+													"func_name": "edit_score",
+													"parameters": [
+														null,
+														{
+															"number_index": 0
+														}
+													],
+													"var_index": -1
 												}
 											],
-											"var_index": -1
-										}
-									],
-									0,
-									false,
-									[
-										"day_end"
-									]
-								],
-								"var_index": -1
+											0,
+											false,
+											[
+												"day_end"
+											]
+										],
+										"var_index": -1
+									}
+								]
 							}
-						],
-						"is_manual": true,
-						"need_activate": true
+						]
 					}
 				],
 				"zoom_kind": "card"

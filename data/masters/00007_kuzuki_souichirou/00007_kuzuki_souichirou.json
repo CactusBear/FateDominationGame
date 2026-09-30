@@ -175,7 +175,7 @@
 	},
 	{
 	  "effect_name": "outsider_leave_workshop_discount",
-	  "shown_effect_name": "局外人 - 你以常规移动从魔术工房离开时，移动成本-1",
+	  "shown_effect_name": "局外人 - 你以常规移动从魔术工房离开时-1移动成本",
 	  "time_points": [
         "game_start"
 	  ],
@@ -205,7 +205,7 @@
 	},
 	{
 	  "effect_name": "outsider_battle_phase_score_gain",
-	  "shown_effect_name": "局外人 - 战斗阶段结束后，若本回合未获得战果，获得1点战果；若同时是魔术工房唯一玩家，改为获得2点",
+	  "shown_effect_name": "局外人 - 每回合战斗阶段结束后，若你于该回合未获得战果，获得1点战果，若你同时是位于魔术工房的唯一玩家，改为获得2点战果",
 	  "time_points": [
         "self_battle_phase_end"
 	  ],
@@ -418,7 +418,7 @@
 	  "effects": [
 		{
 		  "effect_name": "perfect_breathing_remove_magic_cards",
-		  "shown_effect_name": "解锁此技能后立刻从牌库、弃牌堆及手牌中移除所有魔术牌",
+		  "shown_effect_name": "解锁此技能后立刻从牌库，弃牌堆及手牌中移除所有魔术牌",
 		  "time_points": [
             "game_start"
 		  ],
@@ -509,7 +509,7 @@
 		},
 		{
 		  "effect_name": "passive",
-		  "shown_effect_name": "被动 - 你的迅捷属性基本攻击获得+3威力",
+		  "shown_effect_name": "被动 - 迅捷基础牌威力+3",
 		  "time_points": [
             "self_played_card"
 		  ],

@@ -150,7 +150,7 @@ func refill(player_id:int) -> Dictionary:
 	if d.is_empty():
 		return _fail("玩家不存在")
 	var before:int = d.hand_cards.size()
-	RefillHand.new().exec(player_id, GameData.hand_limit)
+	RefillHand.new().exec(player_id, GameData.player_hand_limit(player_id))
 	return {"ok":true, "changed":d.hand_cards.size() != before, "player_id":player_id, "value":d.hand_cards.size()}
 
 

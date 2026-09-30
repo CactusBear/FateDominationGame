@@ -20,9 +20,11 @@ func exec(player_id:int = -1) -> bool:
 	var area := loc.get_from() as BaseMapArea
 	if area == null or !area._score_need_win:
 		return false
-	for other in GameDataManager.get_active_player_ids():
+	#对手包括 NPC 与其他玩家的分身棋子；自己的分身代表自己，不算对手
+	var self_rep:int = GameDataManager.represented_id(id)
+	for other in GameDataManager.get_board_player_ids():
 		var other_id:int = int(other)
-		if other_id == id:
+		if other_id == id or GameDataManager.represented_id(other_id) == self_rep:
 			continue
 		var other_data:Dictionary = GameDataManager.get_player_data(other_id)
 		if bool(other_data.get("is_out", false)):

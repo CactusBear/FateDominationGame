@@ -82,6 +82,37 @@ func get_current_phase() -> Dictionary:
 	return phases[current_phase_index]
 
 
+#某名玩家此刻"视为处于"哪些阶段。缺省就是当前阶段本身；
+#玩家数据 phase_as 声明了当前阶段的映射时整组替换（可多个、也可为空表示本阶段什么都不做）。
+#例：天堂之孔 {"prepare":["prepare","outpost","action"], "outpost":[], "action":[]}；
+#    无极 {"battle":["battle","action"]}。映射内容全部由数据写入，这里不认识任何卡
+func effective_phase_names(player_id:int) -> Array:
+	var current:String = str(get_current_phase().get("name", ""))
+	if current == "":
+		return []
+	if !GameData.player_data_library.has(player_id):
+		return [current]
+	var mapping = GameData.player_data_library[player_id].get("phase_as", {})
+	if mapping is Dictionary and (mapping as Dictionary).has(current) and mapping[current] is Array:
+		return (mapping[current] as Array).duplicate()
+	return [current]
+
+
+#这名玩家此刻是否视为处于某阶段（常规出牌、部署、阶段能力窗口都按它判定）
+func is_phase_for(player_id:int, phase_name:String) -> bool:
+	return effective_phase_names(player_id).has(phase_name)
+
+
+#这名玩家此刻视为处于的各阶段的持续时点（phases 表里的 mid），供阶段窗口派发与手动能力查询共用
+func effective_phase_mids(player_id:int) -> Array:
+	var mids:Array = []
+	var names:Array = effective_phase_names(player_id)
+	for phase_data in phases:
+		if names.has(str(phase_data.get("name", ""))) and !mids.has(phase_data["mid"]):
+			mids.append(phase_data["mid"])
+	return mids
+
+
 #游戏开始
 func start_game():
 	is_game_over = false
@@ -200,7 +231,7 @@ func start_round():
 	#规则：准备阶段按回合顺位把自己的手牌补充到手牌上限（已有上限张以上则不抽）。
 	#上限数字来自 GameData 的声明，流程里不写死；牌堆抽空时由 operation 负责把弃牌堆洗回
 	for id in get_ordered_player_ids():
-		RefillHand.new().exec(id, GameData.hand_limit)
+		RefillHand.new().exec(id, GameData.player_hand_limit(id))
 	#规则：每一回合开始时抽一张局势牌展示，所有玩家获得其魔力
 	SituationResolver.new().activate()
 	TimePointChecker.global_time_point([TimePoints.DAY_START])
@@ -247,8 +278,8 @@ func end_round():
 	#把各席位的地利按印刷基线还原，否则同一席位的地利会跨回合越乘越大，
 	#而且改的是共享地图数据，会连带影响之后占据该席位的其他玩家
 	RestoreLocationBenefits.new().exec()
-	#规则：每个回合结束时，将回合顺位顺时针后移一位
-	ChangePlOrder.new().exec(null, BaseNumber.new(1))
+	#规则：每个回合结束时，将回合顺位顺时针后移一位（原第二位成为新回合首位）
+	ChangePlOrder.new().exec(null, BaseNumber.new(-1))
 	start_round()
 
 
@@ -320,7 +351,7 @@ func end_phase():
 	_phase_end_running = true
 	if phase["name"] == "battle" and !has_battle_resolved:
 		has_battle_resolved = true
-		last_battle_result = BattleResolver.new().exec(GameDataManager.get_active_player_ids(), BaseNumber.new(1))
+		last_battle_result = BattleResolver.new().exec(GameDataManager.get_board_player_ids(), BaseNumber.new(1))
 	#BATTLE_END 的选择尚未完成时保留阶段、事件和原决策队列，不能开 PHASE_END 新批次。
 	if is_game_over or _effects_block_progress():
 		_phase_end_running = false
@@ -361,7 +392,8 @@ func next_player_in_phase():
 		current_player_id = id
 		#高潮/非高潮与阶段时点一起按玩家派发：触发者拿到self_climax或self_non_climax，
 		#效果因此能表达"高潮回合里我的阶段"（如宝石魔术放宽上限）与"仅非高潮回合"
-		var tps:Array = [phase["mid"]]
+		#阶段窗口按"视为处于的阶段"派发：没有 phase_as 声明时就是当前阶段本身，与原行为一致
+		var tps:Array = effective_phase_mids(id)
 		tps.append(TimePoints.CLIMAX if is_climax_round() else TimePoints.NON_CLIMAX)
 		#先清掉上一轮的玩家级时点再派发：否则"自己的行动阶段"与"他人的行动阶段"
 		#会在同一个人身上同时成立
@@ -385,8 +417,9 @@ func end_current_player_action() -> bool:
 		return true
 	if current_player_id == -1:
 		return false
-	var phase_name:String = str(get_current_phase().get("name", ""))
-	if phase_name == "outpost":
+	#按"视为处于的阶段"判定要履行的义务：被映射到别的阶段做前哨/行动的玩家，
+	#在那一阶段结束时才检查部署与常规出牌；映射成空的阶段没有义务
+	if is_phase_for(current_player_id, "outpost"):
 		#规则：前哨阶段各玩家依次把自己的御主部署到版图上。
 		#这一步不能只由界面负责——不经界面的推进（AI 推演、无界面运行）会全员不部署，
 		#于是没人在版图上、战斗阶段跳过所有人、无人获得战果。
@@ -399,7 +432,7 @@ func end_current_player_action() -> bool:
 			#就"莫名结束前哨"，还白拿了一个没选过的席位收益。
 			EffectManager.push_message("尚未完成前哨部署", current_player_id)
 			return false
-	elif phase_name == "action":
+	if is_phase_for(current_player_id, "action"):
 		#行动结束的声明式前置条件（如"第一回合必须使用一枚令咒"）：
 		#判据在规则层，界面与无界面推进共用同一份，不在这里写死具体规则
 		var requirement_block:String = ActionRules.block_reason(current_player_id)

@@ -39,6 +39,11 @@ func eliminate_player(player_id:int) -> bool:
 	var player_data = GameDataManager.get_player_data(player_id) as Dictionary
 	if player_data["is_out"]:
 		return false
+	#即将淘汰：效果可以取消（遥远的理想乡、阿瓦隆这类"首次淘汰时继续"的替代）。
+	#被取消就派发"免于淘汰"，供"每次从淘汰幸存"类效果监听
+	if EffectManager.begin_pending_action(TimePoints.BEFORE_ELIMINATE, player_id).get("cancelled", false):
+		TimePointChecker.dynamic_time_point([TimePoints.SURVIVE_ELIMINATION], player_id)
+		return false
 	player_data["is_out"] = true
 	#日志：谁被淘汰（供"当时场上有被淘汰的玩家吗"这类历史查询）。
 	#带上当时的战果：事后核对"为什么是他被淘汰"不必再翻别的记录

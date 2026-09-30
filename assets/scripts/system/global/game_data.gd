@@ -86,8 +86,52 @@ func new_player_data() -> Dictionary:
 	"total_power_bonus" : BaseNumber.new(0),
 	"attack_cost_discount" : BaseNumber.new(0),
 	"move_cost_discount_from_workshop" : BaseNumber.new(0),
-	"victory_override" : false
+	"victory_override" : false,
+	#以下是玩家级的规则数字覆盖。null 表示"没有被效果改过"，读取时退回 GameData 的全局值：
+	#这样全局规则改动（例如某张局势牌改了手牌上限）仍然对没被单独改过的玩家生效
+	"hand_limit" : null,
+	"magic_limit" : null,
+	#战果下限：null 表示不设下限（与原有 EditScore 行为一致）；效果需要"不能低于某值"时写入 BaseNumber
+	"score_min" : null,
+	#常规移动每经过一段的费用减免（与离开工房的减免叠加），费用不会被减成负数
+	"move_cost_discount_per_step" : BaseNumber.new(0),
+	#玩家级基础地利加成：只在玩家实际享有地利时叠加，由 GetEffectiveLocationBenefit 统一计入
+	"location_benefit_bonus" : BaseNumber.new(0),
+	#身份标签（异星神、隐匿者、新郎、红队……），判定用 is_in_array，名字由数据起
+	"roles" : [],
+	#恐惧属性等按玩家声明的属性列表，内容由数据写入，程序不推断
+	"fear_attributes" : [],
+	#按名字的独立牌区（月灵髓液、艺术品、记忆……）：{区名 : Array}。
+	#区名由卡牌数据声明，建区用 set_dictionary_value，搬运用 draw_card_by_card
+	"extra_zones" : {},
+	#由谁控制：-1 表示独立玩家（常规）；分身棋子填本体玩家 id；NPC 填 -2（不属于任何玩家）。
+	#受控条目参与版图与战斗，但不单独行动、不单独计胜负/淘汰/顺位。由 add_player 创建时写入
+	"controller" : -1,
+	#阶段视为：{实际阶段名 : [视为的阶段名...]}。天堂之孔"准备阶段即进行前哨与行动"、
+	#无极"战斗阶段可用行动阶段能力"写在这里；空字典表示没有覆盖（与原行为一致）
+	"phase_as" : {},
+	#常规出牌的候选牌区（player_data 里的区路径，如 hand_cards、discard、extra_zones/记忆）。
+	#螺湮城"仅将弃牌堆视为手牌"改这里；缺省就是手牌
+	"regular_play_zones" : ["hand_cards"]
 	}
+
+
+#玩家此刻的手牌上限：有玩家级覆盖用覆盖值，否则用全局规则值
+func player_hand_limit(player_id:int) -> BaseNumber:
+	return _player_limit(player_id, "hand_limit", hand_limit)
+
+
+#玩家此刻的魔力上限：有玩家级覆盖用覆盖值，否则用全局规则值
+func player_magic_limit(player_id:int) -> BaseNumber:
+	return _player_limit(player_id, "magic_limit", magic_limit)
+
+
+func _player_limit(player_id:int, key:String, fallback:BaseNumber) -> BaseNumber:
+	if player_data_library.has(player_id):
+		var own = (player_data_library[player_id] as Dictionary).get(key)
+		if own is BaseNumber:
+			return own
+	return fallback
 
 
 #人数不写死，按需建立玩家数据；已存在的玩家不覆盖

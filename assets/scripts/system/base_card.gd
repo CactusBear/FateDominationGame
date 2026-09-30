@@ -19,6 +19,11 @@ func copy_clone_fields(cloned, context) -> void:
 	cloned._initial_zone = _initial_zone
 	cloned._initial_count = _initial_count
 	cloned._effects = context.copy_effects(_effects, cloned)
+	#附属牌是独立的卡对象，随宿主复制时各复制一份；双面数据是纯字典，按值复制
+	cloned._attached_cards = context.copy(_attached_cards)
+	cloned._faces = context.copy_value(_faces)
+	cloned._face_index = _face_index
+	cloned._text_disabled = _text_disabled
 
 
 
@@ -46,6 +51,17 @@ var _keywords:Array = []
 #当前支持的路径由开局流程白名单解释，未知值不产生行为。
 var _initial_zone:String = ""
 var _initial_count:int = 1
+#附属在这张牌下面的牌（叠放、临摹、酒壶、征服……）。进出用 draw_card_by_card 在数组之间搬运，
+#宿主离场时附属牌怎么处理由卡牌效果自己写，引擎不代做
+var _attached_cards:Array = []
+#双面卡各面的数据：与 JSON 里单张卡同格式的字典数组（卡面字段 + effects）。
+#空数组表示单面卡；切换由 flip_card_face 执行，面的顺序由数据声明
+var _faces:Array = []
+#当前是 _faces 里的第几面
+var _face_index:int = 0
+#失去文字：为 true 时这张牌的效果全部不结算（封印、覆盖、失去文字），
+#恢复时置回 false 即可，效果本身不删
+var _text_disabled:bool = false
 
 func has_keyword(keyword:String) -> bool:
 	return _keywords.has(keyword)

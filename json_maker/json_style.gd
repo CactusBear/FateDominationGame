@@ -17,7 +17,9 @@ const R := 5.0
 func _init(p_shape := "stack", p_fill := Color(0.3, 0.5, 0.9)) -> void:
 	shape = p_shape
 	fill = p_fill
-	border = p_fill.darkened(0.25)
+	# 亮色积木压暗一档当描边；深色空位（墨蓝底）压暗看不见，改用与整体界面一致的暗金线
+	# 深色积木统一用暗金描边勾形；空位比积木更深（接近整屏底色），描边用亮金以示可填
+	border = p_fill.darkened(0.25) if p_fill.get_luminance() > 0.25 else (Color("e8cd86", 0.9) if p_fill.get_luminance() < 0.04 else Color("c9a45c", 0.85))
 	match shape:
 		"reporter", "slot", "empty":
 			content_margin_left = 8
@@ -54,7 +56,7 @@ func _draw(item:RID, rect:Rect2) -> void:
 	var closed := pts.duplicate()
 	closed.append(pts[0])
 	var line := Color(1, 0.85, 0.2) if highlight else border
-	RenderingServer.canvas_item_add_polyline(item, closed, PackedColorArray([line]), 2.0 if highlight else 1.0, true)
+	RenderingServer.canvas_item_add_polyline(item, closed, PackedColorArray([line]), 2.0 if highlight else (1.5 if fill.get_luminance() <= 0.25 else 1.0), true)
 
 
 func _outline(r:Rect2) -> PackedVector2Array:

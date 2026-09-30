@@ -41,6 +41,16 @@ static func _load_file(dir_path:String, file_name:String) -> void:
 	if !(parsed is Dictionary):
 		return
 	var data:Dictionary = parsed
+	var situation := build_situation(data, dir_path)
+	#高潮牌按展示回合索引，非高潮牌进牌堆
+	if data.get("is_climax", false):
+		climax_situations[int(data.get("climax_round", 0))] = situation
+	else:
+		situations.append(situation)
+
+
+#按一份局势牌数据建牌，图片相对 dir_path，不放进任何牌堆。读文件与效果里自定义生成的牌共用这一份
+static func build_situation(data:Dictionary, dir_path:String) -> BaseSituation:
 	var situation := BaseSituation.new(
 		data["card_name"],
 		dir_path + "/" + data["card_img"],
@@ -49,10 +59,7 @@ static func _load_file(dir_path:String, file_name:String) -> void:
 	situation._shown_name = data.get("shown_name", "")
 	situation._zoom_kind = LoadHelper.resolve_zoom_kind(data, "card_img")
 	situation._effects = LoadHelper.load_effects(data.get("effects", []), situation)
-	#高潮牌按展示回合索引，非高潮牌进牌堆
-	if data.get("is_climax", false):
-		situation._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), dir_path, "climax_situation")
-		climax_situations[int(data.get("climax_round", 0))] = situation
-	else:
-		situation._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), dir_path, "situation")
-		situations.append(situation)
+	var back_type := "climax_situation" if data.get("is_climax", false) else "situation"
+	situation._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), dir_path, back_type)
+	LoadHelper.load_object_extras(situation, data)
+	return situation

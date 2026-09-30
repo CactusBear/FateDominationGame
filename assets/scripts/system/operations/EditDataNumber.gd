@@ -12,6 +12,7 @@ func exec(key:String, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumbe
 	if !(player_data.get(key) is BaseNumber):
 		return
 	var num = player_data[key] as BaseNumber
+	var before = num.number
 	if set_num != null:
 		num.set_num(set_num)
 	num.add(vary_num)
@@ -23,3 +24,6 @@ func exec(key:String, set_num:BaseNumber = null, vary_num:BaseNumber = BaseNumbe
 		var high = max_value.number if max_value is BaseNumber else max_value
 		if num.number > high:
 			num.set_num(BaseNumber.new(high))
+	#合计威力加成与出牌威力一样按来源记账（其它字段不属于合计威力，不记）
+	if key == "total_power_bonus":
+		PowerSources.record(player_id, key, num.number - before)

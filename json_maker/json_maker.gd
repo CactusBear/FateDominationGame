@@ -14,8 +14,10 @@ var operations:Array = []
 var time_points:Array = []
 var attributes:Array = []
 var player_keys:Array = []
+var player_key_types:Dictionary = {}   # 玩家数据键 -> 默认值的类型名，按用途筛键时用
 var issues:Array = []
-# 用户自己的导出设置（存在 user://，不动源码与 types.json）：{种类或子牌类型: {root, folder_name, serial_digits, pattern_defaults, sub_image_prefix, images:{字段: 命名}, zip_layout}, "_global": {zip_dir}}
+# 用户自己的导出设置（存在 user://，不动源码与 types.json）：{种类或子牌类型: {root, folder_name, serial_digits, pattern_defaults, sub_image_prefix, images:{字段: 命名}, zip_layout}, "_global": {zip_dir, last_image_dir:{dir, card}}}
+# _global 放跟具体卡无关的编辑器记忆：zip 存到哪，「选图」面板上次去的位置（连当时编辑哪张卡一起记）。
 # 没设的项沿用 types.json 的声明。
 const EXPORT_CFG := "user://json_maker_export.cfg"
 const EXPORT_KEYS := ["root", "folder_name", "serial_digits", "pattern_defaults", "sub_image_prefix", "zip_layout"]
@@ -78,6 +80,50 @@ func list_files(kind_id:String) -> Array:
 	_scan_json(root, str(spec.get("file", "folder")), out)
 	out.sort_custom(func(a, b): return str(a.path) < str(b.path))
 	return out
+
+
+# 内部名索引只读 data，按类型声明的 identity 字段分组；保留对象路径以精确排除自身。
+var _identity_index = null
+
+func identity_conflicts(key:String, value:String, source_path:String, object_path:Array) -> Array:
+	if value == "":
+		return []
+	if not _identity_index is Dictionary:
+		_identity_index = {}
+		var keys:Dictionary = {}
+		for kind in types.get("kinds", {}):
+			var identity := str(kind_spec(str(kind)).get("identity", ""))
+			if identity != "":
+				keys[identity] = true
+		var files:Array = []
+		_scan_json("res://data", "file", files)
+		for file in files:
+			_index_identities(read_json(str(file.path)), keys, str(file.path), [])
+	var source := ProjectSettings.localize_path(source_path).simplify_path() if source_path != "" else ""
+	var out:Array = []
+	for identity_key in _identity_index:
+		for entry in _identity_index[identity_key].get(value, []):
+			if identity_key == key and entry.file == source and entry.path == object_path:
+				continue
+			if not out.has(entry):
+				out.append(entry)
+	return out
+
+
+func _index_identities(value, keys:Dictionary, file:String, at:Array) -> void:
+	if value is Dictionary:
+		for key in keys:
+			if value.get(key) is String and value[key] != "":
+				if not _identity_index.has(key):
+					_identity_index[key] = {}
+				if not _identity_index[key].has(value[key]):
+					_identity_index[key][value[key]] = []
+				_identity_index[key][value[key]].append({"file": file, "path": at})
+		for key in value:
+			_index_identities(value[key], keys, file, at + [key])
+	elif value is Array:
+		for i in value.size():
+			_index_identities(value[i], keys, file, at + [i])
 
 
 func read_json(path:String):
@@ -177,6 +223,7 @@ func save_file(target:String, payload, kind:String, style:Dictionary = {}) -> Di
 		return {"ok": false, "error": "写不进去"}
 	file.store_string(export_text(payload, style))
 	file.close()
+	_identity_index = null
 	return {"ok": true, "path": target}
 
 
@@ -300,7 +347,7 @@ func place_images(data, kind_id:String, folder:String, from_folder:String) -> Di
 			result.missing.append(name)
 			continue
 		plan.append({"obj": obj, "key": field.key, "source": source, "base": target_base})
-	# 有找不到的图就一张都不搬，免得留下半套文件
+	# 有找不到的图就一张都不复制，免得留下半套文件
 	if not result.missing.is_empty():
 		return result
 	for step in plan:
@@ -318,6 +365,9 @@ func place_images(data, kind_id:String, folder:String, from_folder:String) -> Di
 func images_of(data, kind_id:String) -> Array:
 	var out:Array = []
 	_images_walk(data, export_spec(kind_id), true, out)
+	# 自定义牌的图同子牌：和本卡放同一个文件夹，名字前加子牌前缀
+	for hit in custom_cards(data):
+		_images_walk(hit.card, export_spec(str(hit.kind)), false, out)
 	return out
 
 
@@ -579,6 +629,20 @@ func container_params() -> Dictionary:
 	return out
 
 
+# 哪些操作的哪几个参数是选项列表（每项带自己的一串操作）。只认 blocks[x].kinds 里声明为 options 的。
+func option_params() -> Dictionary:
+	var out := {}
+	for item in operations:
+		var kinds:Dictionary = block_spec(item.func_name).get("kinds", {})
+		var positions:Array = []
+		for i in item.params.size():
+			if str(kinds.get(item.params[i].name, "")) == "options":
+				positions.append(i)
+		if not positions.is_empty():
+			out[item.func_name] = positions
+	return out
+
+
 # 空位用什么控件：先看这个操作的逐个声明，再看按形参名的总表，都没有就是普通输入框。
 func param_kind(func_name:String, param_name:String) -> String:
 	var own:Dictionary = block_spec(func_name).get("kinds", {})
@@ -589,6 +653,351 @@ func param_kind(func_name:String, param_name:String) -> String:
 
 func kind_choices(kind:String) -> Array:
 	return types.get("kind_choices", {}).get(kind, [])
+
+
+# kind_choices 声明的可选值做成下拉分组；值原样带着（-1、null 都可以）。
+func kind_choice_groups(kind:String) -> Array:
+	var items:Array = []
+	for c in kind_choices(kind):
+		var v = _whole_numbers(c.get("v"))
+		items.append({"id": "" if v == null else str(v), "shown": str(c.get("shown", "")), "value": v})
+	return [] if items.is_empty() else [{"shown": "可选值", "items": items}]
+
+
+# 卡背种类：直接读加载器用的 LoadHelper.CARD_BACK_FILES；中文名借 custom_card_type 和卡牌种类的名字，没有就显示原名。
+func card_back_groups() -> Array:
+	var names := {}
+	for c in kind_choices("custom_card_type"):
+		names[str(c.v)] = str(c.shown)
+	var items:Array = []
+	for key in LoadHelper.CARD_BACK_FILES:
+		var id := str(key)
+		items.append({"id": id, "shown": str(names.get(id, kind_spec(id).get("shown", "")))})
+	return [{"shown": "卡背种类", "items": items}]
+
+
+# 某个操作的某个参数在卡库里实际写过的字面值，按出现次数排，给空位当下拉候选。
+# 只收字面值：文字、数字、开关，以及不含变量、效果数字、嵌套操作和整条效果的列表与字典。读一次存起来，重新扫描时清掉。
+var _used_values = null
+
+
+func used_value_groups(func_name:String, param_name:String) -> Array:
+	if not _used_values is Dictionary:
+		_used_values = {}
+		var param_names := {}
+		for kind in file_kinds():
+			for file in list_files(str(kind.id)):
+				_collect_used(read_json(str(file.path)), param_names)
+	var found:Dictionary = _used_values.get(func_name + ":" + param_name, {})
+	if found.is_empty():
+		return []
+	var rows:Array = found.values()
+	rows.sort_custom(func(a, b): return a.id < b.id if a.count == b.count else a.count > b.count)
+	var items:Array = []
+	for row in rows:
+		items.append({"id": row.id, "shown": "", "value": row.value})
+	return [{"shown": "卡库里用过的", "items": items}]
+
+
+func _collect_used(value, param_names:Dictionary) -> void:
+	if value is Dictionary:
+		if value.get("func_name") is String and value.get("parameters") is Array:
+			var fn := str(value.func_name)
+			if not param_names.has(fn):
+				var list:Array = []
+				for p in operation_of(fn).get("params", []):
+					list.append(str(p.name))
+				param_names[fn] = list
+			var names:Array = param_names[fn]
+			var params:Array = value.parameters
+			for i in mini(params.size(), names.size()):
+				if params[i] != null and not _has_ref(params[i]):
+					_add_used(fn + ":" + str(names[i]), _whole_numbers(params[i]))
+		for key in value:
+			_collect_used(value[key], param_names)
+	elif value is Array:
+		for item in value:
+			_collect_used(item, param_names)
+
+
+func _has_ref(value) -> bool:
+	if value is Dictionary:
+		for key in ["self_var", "number_index", "func_name", "effect_name"]:
+			if value.has(key):
+				return true
+		for key in value:
+			if _has_ref(value[key]):
+				return true
+	elif value is Array:
+		for item in value:
+			if _has_ref(item):
+				return true
+	return false
+
+
+func _add_used(where:String, value) -> void:
+	var table:Dictionary = _used_values.get(where, {})
+	var key := JSON.stringify(value)
+	if not table.has(key):
+		table[key] = {"id": value if value is String else key, "value": value, "count": 0}
+	table[key].count += 1
+	_used_values[where] = table
+
+
+# 下拉搜索面板用的分组候选：[{shown, items:[{id, shown}]}]。
+# 内部名：先列 data 里（正在编辑的这张卡）所有声明在 name_rules.fields 的内部名，再列 name_library 声明的卡库牌名。
+# 传了 source 时，internal_name_sources 里给这个形参声明的字段和卡库种类排在前面，其余内部名归到「其他」组放在后面，不删。
+func internal_name_groups(data, source:String = "") -> Array:
+	var rules:Dictionary = types.get("name_rules", {})
+	var fields:Dictionary = rules.get("fields", {})
+	var shown_keys:Dictionary = rules.get("shown", {})
+	var sources:Dictionary = types.get("internal_name_sources", {}).get(source, {})
+	var allowed_fields:Array = sources.get("fields", [])
+	var allowed_kinds:Array = sources.get("kinds", [])
+	var found := {}
+	_collect_names(data, fields, shown_keys, found)
+	var first:Array = []
+	var rest:Array = []
+	for field in fields:
+		if found.has(field):
+			var group := {"shown": "这张卡里的" + str(fields[field]), "items": found[field]}
+			(first if sources.is_empty() or allowed_fields.has(field) else rest).append(group)
+	for group in library_name_groups():
+		var fit := sources.is_empty()
+		for kind in allowed_kinds:
+			if str(group.shown) == "卡库里的" + str(kind_spec(str(kind)).get("shown", kind)):
+				fit = true
+		(first if fit else rest).append(group)
+	for group in rest:
+		first.append({"shown": "其他 · " + str(group.shown), "items": group.items})
+	return first
+
+
+# 卡库牌名要读全部卡文件，读一次存起来；重新扫描积木时清掉
+var _library_names = null
+
+
+func library_name_groups() -> Array:
+	if _library_names is Array:
+		return _library_names
+	_library_names = []
+	for kind in types.get("name_library", {}).get("kinds", []):
+		var spec := kind_spec(str(kind))
+		var items:Array = []
+		for file in list_files(str(kind)):
+			var card = read_json(str(file.path))
+			var cards:Array = card if card is Array else [card]
+			for one in cards:
+				if one is Dictionary and str(one.get(spec.get("identity", ""), "")) != "":
+					items.append({"id": str(one[spec.identity]), "shown": str(one.get(spec.get("shown_key", ""), ""))})
+		if not items.is_empty():
+			_library_names.append({"shown": "卡库里的" + str(spec.get("shown", kind)), "items": items})
+	return _library_names
+
+
+func _collect_names(value, fields:Dictionary, shown_keys:Dictionary, found:Dictionary) -> void:
+	if value is Dictionary:
+		for field in fields:
+			if value.get(field) is String and str(value[field]) != "":
+				var list:Array = found.get(field, [])
+				var id := str(value[field])
+				if not list.any(func(x): return x.id == id):
+					list.append({"id": id, "shown": str(value.get(shown_keys.get(field, ""), ""))})
+				found[field] = list
+		for key in value:
+			_collect_names(value[key], fields, shown_keys, found)
+	elif value is Array:
+		for item in value:
+			_collect_names(item, fields, shown_keys, found)
+
+
+# 对象属性名：按 object_classes 反射脚本自己声明的属性（不含父类的，父类另成一组），中文名查 property_names。
+# 传了控件名时按 object_property_filters 声明的值类型筛。
+func object_property_groups(kind:String = "") -> Array:
+	var rule = types.get("object_property_filters", {}).get(kind)
+	return script_property_groups(types.get("object_classes", {}).get("scripts", {}), rule.get("types", []) if rule is Dictionary else [])
+
+
+# 其余按脚本属性列候选的空位（游戏数据键、战场数据键……）：types.json 的 property_sources 声明 {控件名: {分组名: 脚本路径}}。
+func property_source_groups(kind:String) -> Array:
+	var scripts = types.get("property_sources", {}).get(kind)
+	return script_property_groups(scripts) if scripts is Dictionary else []
+
+
+# {分组名: 脚本路径} → 每个脚本自己声明的属性一组。want_types 不空时只留这些类型的属性（类取 class_name）。
+func script_property_groups(scripts:Dictionary, want_types:Array = []) -> Array:
+	var names:Dictionary = types.get("property_names", {})
+	var out:Array = []
+	for group in scripts:
+		var script = load(str(scripts[group])) if ResourceLoader.exists(str(scripts[group])) else null
+		if not script is Script:
+			continue
+		var items:Array = []
+		for prop in script.get_script_property_list():
+			var pname := str(prop.name)
+			if int(prop.usage) & PROPERTY_USAGE_SCRIPT_VARIABLE == 0 or pname.ends_with(".gd"):
+				continue
+			if not want_types.is_empty():
+				var ptype := str(prop.class_name) if str(prop.get("class_name", "")) != "" else type_string(int(prop.type))
+				if not want_types.has(ptype):
+					continue
+			items.append({"id": pname, "shown": str(names.get(pname, ""))})
+		if not items.is_empty():
+			out.append({"shown": str(group), "items": items})
+	return out
+
+
+# 玩家数据键：与原来的下拉同一份来源（GameData.new_player_data 的键），中文名查 player_key_names。
+# 传了控件名时按 player_key_filters 的声明筛（值类型、要不要「区.子项」路径、另列的路径）；没声明就全列。
+func player_key_groups(kind:String = "") -> Array:
+	var names:Dictionary = types.get("player_key_names", {})
+	var rule = types.get("player_key_filters", {}).get(kind)
+	var items:Array = []
+	var keys:Array = player_keys.duplicate()
+	if rule is Dictionary:
+		for extra in rule.get("extra", []):
+			if not keys.has(str(extra)):
+				keys.append(str(extra))
+	for key in keys:
+		if rule is Dictionary:
+			var dotted := str(key).find(".") != -1
+			if dotted and not bool(rule.get("dotted", false)):
+				continue
+			var want:Array = rule.get("values", [])
+			if player_key_types.has(key) and not want.is_empty() and not want.has(player_key_types[key]):
+				continue
+		var base := str(key).split(".")[0]
+		var shown := str(names.get(key, "")) if names.has(key) else (str(names.get(base, base)) + " · " + str(key).get_slice(".", 1) if str(key).find(".") != -1 else "")
+		items.append({"id": str(key), "shown": shown})
+	return [{"shown": "玩家数据", "items": items}]
+
+
+# ---------- 空位能放什么结果 ----------
+# 空位接受的类型：blocks[x].accepts → param_accepts（按形参名）→ 形参自己的类型。
+func param_accept(func_name:String, param_name:String, type_name:String) -> String:
+	var own:Dictionary = block_spec(func_name).get("accepts", {})
+	if own.has(param_name):
+		return str(own[param_name])
+	var table:Dictionary = types.get("param_accepts", {})
+	if table.has(param_name) and param_name != "note":
+		return str(table[param_name])
+	return type_name
+
+
+# 积木给出的结果类型：blocks[x].result 的声明优先，否则用反射到的 exec 返回类型，都没有是空（不知道）。
+func result_of(func_name:String) -> String:
+	var spec := block_spec(func_name)
+	if spec.has("result"):
+		return str(spec.result)
+	return str(operation_of(func_name).get("returns", ""))
+
+
+# 结果能不能放进空位。不知道的一边（空、Variant、Nil）一律算能放，不猜；
+# 「没有结果」哪里都不放。多种可接受用 | 分开，数组比较元素类型，类按 class_name 的继承关系比较。
+func type_fits(accept:String, result:String) -> bool:
+	if result == "none":
+		return false
+	if _unknown_type(accept) or _unknown_type(result):
+		return true
+	for want in accept.split("|"):
+		for got in result.split("|"):
+			if _one_type_fits(want.strip_edges(), got.strip_edges()):
+				return true
+	return false
+
+
+func _unknown_type(type_name:String) -> bool:
+	return type_name in ["", "Variant", "Nil"]
+
+
+func _one_type_fits(want:String, got:String) -> bool:
+	if _unknown_type(want) or _unknown_type(got) or want == got:
+		return true
+	var want_elem = _array_elem(want)
+	var got_elem = _array_elem(got)
+	if want_elem != null or got_elem != null:
+		# 数组对数组才比元素；一边写的是不带元素的 Array 就算相符
+		if want_elem == null:
+			return want == "Array"
+		if got_elem == null:
+			return got == "Array"
+		return _one_type_fits(want_elem, got_elem)
+	var families:Dictionary = types.get("type_families", {})
+	for family in families:
+		if family == "note":
+			continue
+		var members:Array = families[family]
+		var want_in:bool = want == family or members.has(want)
+		var got_in:bool = got == family or members.has(got)
+		if want_in and got_in:
+			return true
+	# 玩家编号本身就是整数：整数格也能放
+	if got == "player":
+		return want == "int" or want == "number"
+	return _is_subclass(got, want)
+
+
+# "Array[X]" 返回 "X"，不是数组类型返回 null。
+func _array_elem(type_name:String):
+	if type_name.begins_with("Array[") and type_name.ends_with("]"):
+		return type_name.substr(6, type_name.length() - 7)
+	return null
+
+
+var _class_parents = null   # class_name -> 父类名，读 ProjectSettings 的全局类表
+
+
+func _is_subclass(child:String, parent:String) -> bool:
+	if not _class_parents is Dictionary:
+		_class_parents = {}
+		for info in ProjectSettings.get_global_class_list():
+			_class_parents[str(info["class"])] = str(info["base"])
+	var at := child
+	var guard := 0
+	while _class_parents.has(at) and guard < 32:
+		at = str(_class_parents[at])
+		if at == parent:
+			return true
+		guard += 1
+	return false
+
+
+# value_sources 声明的卡库文字值：读 kinds 里各卡种的全部文件，收集任意层级 field 键的文字值。
+var _value_source_cache := {}
+
+
+func value_source_groups(kind:String) -> Array:
+	var rule = types.get("value_sources", {}).get(kind)
+	if not rule is Dictionary:
+		return []
+	if not _value_source_cache.has(kind):
+		var found := {}
+		for card_kind in rule.get("kinds", []):
+			for file in list_files(str(card_kind)):
+				_collect_field(read_json(str(file.path)), str(rule.get("field", "")), found)
+		var items:Array = []
+		var ids := found.keys()
+		ids.sort()
+		for id in ids:
+			items.append({"id": str(id), "shown": ""})
+		_value_source_cache[kind] = [] if items.is_empty() else [{"shown": "卡库里的", "items": items}]
+	return _value_source_cache[kind]
+
+
+func _collect_field(value, field:String, found:Dictionary) -> void:
+	if value is Dictionary:
+		if value.get(field) is String and str(value[field]) != "":
+			found[str(value[field])] = true
+		for key in value:
+			_collect_field(value[key], field, found)
+	elif value is Array:
+		for item in value:
+			_collect_field(item, field, found)
+
+
+# 操作执行后给不给出结果：只有 no_result 显式列出的操作算没有结果。
+func has_result(func_name:String) -> bool:
+	return not (types.get("no_result", {}).get("funcs", []) as Array).has(func_name)
 
 
 func time_point_shown(point_id:String) -> String:
@@ -674,6 +1083,7 @@ func _check_object(data:Dictionary, spec:Dictionary, where:String) -> void:
 			continue
 		if data.has(key):
 			_check_value(data[key], field, _where(where) + str(field.get("shown", key)))
+			_check_name(data[key], key, _where(where) + str(field.get("shown", key)))
 	for item in spec.get("lists", []):
 		if bool(item.get("required", false)) and not data.has(item.key):
 			issues.append(_where(where) + str(item.get("shown", item.key)) + " 缺失")
@@ -707,6 +1117,32 @@ func _check_list(value, item_id:String, label:String, where:String) -> void:
 			issues.append(prefix + "不是对象")
 			continue
 		_check_object(value[i], child, prefix)
+	_check_unique_names(value, _where(where) + label)
+
+
+# 内部名格式：规则写在 types.json 的 name_rules，只检查其中列出的字段。
+func _check_name(value, key:String, label:String) -> void:
+	var rules:Dictionary = types.get("name_rules", {})
+	if not rules.get("fields", {}).has(key) or str(value) == "":
+		return
+	var regex := RegEx.new()
+	if regex.compile(str(rules.get("pattern", ""))) != OK:
+		return
+	if regex.search(str(value)) == null:
+		issues.append(label + " 「" + str(value) + "」格式不对：" + str(rules.get("pattern_shown", "")))
+
+
+# 同一列表里不能重名的内部名（name_rules.unique_in_list 声明）。
+func _check_unique_names(list:Array, label:String) -> void:
+	for key in types.get("name_rules", {}).get("unique_in_list", []):
+		var seen := {}
+		for item in list:
+			if not item is Dictionary or str(item.get(key, "")) == "":
+				continue
+			var name := str(item[key])
+			if seen.has(name):
+				issues.append(label + " 里有重名的「" + name + "」")
+			seen[name] = true
 
 
 func _check_value(value, field:Dictionary, label:String) -> void:
@@ -776,6 +1212,8 @@ func _check_block(block, label:String) -> void:
 				issues.append(label + " 至少要 " + str(required_count) + " 个参数，现在是 " + str(given) + " 个")
 			for param in block.parameters:
 				_check_param(param, label)
+			for hit in _custom_cards_of_block(block):
+				_check_object(hit.card, kind_spec(hit.kind), label + " 生成的「" + str(hit.card.get(kind_spec(hit.kind).get("identity", ""), "")) + "」 / ")
 	elif block.has("self_var"):
 		if str(block.get("sub_func", "")) == "":
 			issues.append(label + " 没写要调用的方法")
@@ -802,6 +1240,9 @@ func _check_number_refs(effect:Dictionary, where:String) -> void:
 
 
 func _walk_refs(node, count:int, where:String) -> void:
+	# 嵌着的整条效果引用的是它自己的效果数字，由检查那张牌时单独查
+	if node is Dictionary and node.has("effect_name"):
+		return
 	if node is Dictionary:
 		if node.has("number_index") and int(node.number_index) >= count:
 			issues.append(_where(where) + "引用了不存在的效果数字")
@@ -810,6 +1251,51 @@ func _walk_refs(node, count:int, where:String) -> void:
 	elif node is Array:
 		for item in node:
 			_walk_refs(item, count, where)
+
+
+# 一块操作里写着的自定义牌：参数声明为 card_data 的那一格是整张牌，
+# 同一块里声明为 custom_card_type 的那一格决定它按哪种卡解释（custom_card_types 表）。只认声明，不按内容猜。
+func _custom_cards_of_block(block:Dictionary) -> Array:
+	var out:Array = []
+	var func_name := str(block.get("func_name", ""))
+	var op := operation_of(func_name)
+	var params:Array = block.get("parameters", []) if block.get("parameters") is Array else []
+	var data_at := -1
+	var type_at := -1
+	for i in op.get("params", []).size():
+		match param_kind(func_name, str(op.params[i].name)):
+			"card_data":
+				data_at = i
+			"custom_card_type":
+				type_at = i
+	if data_at < 0 or data_at >= params.size() or not params[data_at] is Dictionary:
+		return out
+	var type_id := str(params[type_at]) if type_at >= 0 and type_at < params.size() else ""
+	var kind := custom_card_kind(type_id)
+	if kind != "":
+		out.append({"card": params[data_at], "kind": kind})
+	return out
+
+
+# 自定义牌的种类 → types.json 的卡种（决定表单、校验与图片命名）。
+func custom_card_kind(type_id:String) -> String:
+	for item in types.get("custom_card_types", []):
+		if str(item.type) == type_id:
+			return str(item.kind)
+	return ""
+
+
+# 整张卡里所有写在操作里的自定义牌（含自定义牌自己效果里再生成的），[{card, kind}]。
+func custom_cards(value, out:Array = []) -> Array:
+	if value is Dictionary:
+		if value.has("func_name"):
+			out.append_array(_custom_cards_of_block(value))
+		for key in value:
+			custom_cards(value[key], out)
+	elif value is Array:
+		for item in value:
+			custom_cards(item, out)
+	return out
 
 
 func _where(prefix:String) -> String:
@@ -967,6 +1453,10 @@ func reload_catalog() -> void:
 	var parsed = JSON.parse_string(FileAccess.get_file_as_string(TYPES_PATH))
 	if parsed is Dictionary:
 		types = parsed
+	_library_names = null
+	_identity_index = null
+	_used_values = null
+	_value_source_cache.clear()
 	_load_operations()
 
 
@@ -1050,7 +1540,13 @@ func _reflect_return(class_name_text:String) -> String:
 	var inst = script.new()
 	for method in inst.get_method_list():
 		if method.name == "exec":
-			return "bool" if int(method["return"].type) == TYPE_BOOL else ""
+			var ret:Dictionary = method["return"]
+			if str(ret.get("class_name", "")) != "":
+				return str(ret.class_name)
+			match int(ret.type):
+				TYPE_BOOL, TYPE_ARRAY, TYPE_INT, TYPE_FLOAT, TYPE_STRING, TYPE_DICTIONARY:
+					return type_string(int(ret.type))
+			return ""
 	return ""
 
 
@@ -1071,6 +1567,26 @@ func _load_time_points() -> void:
 	time_points.sort_custom(func(a, b): return a.shown < b.shown)
 
 
+# 时机分组：按 types.json 的 time_point_groups 声明排，没列进任何一组的放进「未分类」。
+func time_point_groups() -> Array:
+	var out:Array = []
+	var placed := {}
+	for group in types.get("time_point_groups", []):
+		var items:Array = []
+		for point_id in group.get("points", []):
+			var shown := _time_point_known(str(point_id))
+			if shown == "":
+				continue
+			items.append({"id": str(point_id), "shown": shown})
+			placed[str(point_id)] = true
+		if not items.is_empty():
+			out.append({"shown": str(group.get("shown", "")), "points": items})
+	var rest:Array = time_points.filter(func(p): return not placed.has(p.id))
+	if not rest.is_empty():
+		out.append({"shown": "未分类", "points": rest})
+	return out
+
+
 func _time_point_known(point_id:String) -> String:
 	for item in time_points:
 		if item.id == point_id:
@@ -1086,10 +1602,104 @@ func _load_attributes() -> void:
 
 func _load_player_keys() -> void:
 	player_keys.clear()
+	player_key_types.clear()
 	var data := GameData.new_player_data()
 	for key in data:
 		player_keys.append(str(key))
+		player_key_types[str(key)] = _value_type(data[key])
 		if data[key] is Dictionary:
 			for child in data[key]:
-				player_keys.append(str(key) + "." + str(child))
+				var path := str(key) + "." + str(child)
+				player_keys.append(path)
+				player_key_types[path] = _value_type(data[key][child])
 	player_keys.sort()
+
+
+# 值的类型名：对象取脚本的 class_name（数字对象是 BaseNumber），其余用内置类型名，null 是 Nil。
+func _value_type(value) -> String:
+	if value is Object and value.get_script() != null and str(value.get_script().get_global_name()) != "":
+		return str(value.get_script().get_global_name())
+	return type_string(typeof(value))
+
+
+# =============== 新手教程 ===============
+# 教程全是数据：目录里每份 json 是一套，步骤的说明、配图、高亮的控件、完成条件都写在文件里，程序只负责显示与判定。
+
+const TUTORIAL_DIR := "res://json_maker/tutorials"
+
+
+# 目录里的教程，按 order 再按文件名排。没有 steps 列表的文件不算教程。
+func list_tutorials(folder := TUTORIAL_DIR) -> Array:
+	var out:Array = []
+	var dir := DirAccess.open(folder)
+	if dir == null:
+		return out
+	for name in dir.get_files():
+		if name.get_extension().to_lower() != "json":
+			continue
+		var file_path := folder.path_join(name)
+		var loaded = read_json(file_path)
+		if not loaded is Dictionary or not loaded.get("steps") is Array:
+			continue
+		out.append({"path": file_path, "title": str(loaded.get("title", name.get_basename())), "order": float(loaded.get("order", 0)), "data": loaded})
+	out.sort_custom(func(a, b): return a.order < b.order if a.order != b.order else str(a.path) < str(b.path))
+	return out
+
+
+# 一条完成条件。from 选数据来源：data（正在编辑的整张卡，默认）或 state（界面状态）。
+# path 逐段往里走：文字是键名，数字是下标，字典表示「列表里第一个包含这些内容的那一项」。
+# 走到之后按 has（期望值是实际值的一部分）或 not_empty 判断；都没写就只要求那里有值。
+func tutorial_check(check:Dictionary, data, state:Dictionary) -> bool:
+	var value = state if str(check.get("from", "data")) == "state" else data
+	for part in check.get("path", []):
+		value = _step_into(value, part)
+	if check.has("has"):
+		return value_has(value, check.has)
+	if bool(check.get("not_empty", false)):
+		return not _is_blank(value)
+	return value != null
+
+
+func _step_into(value, part):
+	if part is Dictionary:
+		if value is Array:
+			for item in value:
+				if value_has(item, part):
+					return item
+		return null
+	if value is Dictionary:
+		return value.get(str(part))
+	if value is Array and (part is int or part is float) and int(part) >= 0 and int(part) < value.size():
+		return value[int(part)]
+	return null
+
+
+# expected 是不是 actual 的一部分：字典逐键比较；列表里每一项都要能在实际列表里找到；数字按数值比较；其余要相等。
+func value_has(actual, expected) -> bool:
+	if expected is Dictionary:
+		if not actual is Dictionary:
+			return false
+		for key in expected:
+			if not actual.has(key) or not value_has(actual[key], expected[key]):
+				return false
+		return true
+	if expected is Array:
+		if not actual is Array:
+			return false
+		for want in expected:
+			if not actual.any(func(got): return value_has(got, want)):
+				return false
+		return true
+	if (expected is int or expected is float) and (actual is int or actual is float):
+		return float(expected) == float(actual)
+	return typeof(actual) == typeof(expected) and actual == expected
+
+
+func _is_blank(value) -> bool:
+	if value == null:
+		return true
+	if value is String:
+		return value.strip_edges() == ""
+	if value is Array or value is Dictionary:
+		return value.is_empty()
+	return false

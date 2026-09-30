@@ -60,6 +60,7 @@ static func _create_attack(data:Dictionary) -> BaseAttack:
 	attack._category = data.get("category", BaseAttack.CATEGORY_NON_BASIC)
 	attack._effects = LoadHelper.load_effects(data.get("effects", []), attack)
 	attack._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), data["_dir_path"], "attack")
+	LoadHelper.load_object_extras(attack, data)
 	return attack
 
 

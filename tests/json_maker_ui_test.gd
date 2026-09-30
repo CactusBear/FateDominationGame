@@ -24,6 +24,15 @@ func run() -> void:
 	add_child(ui)
 	await get_tree().process_frame
 	check(ui.palette_box.get_child_count() > 50, "palette filled " + str(ui.palette_box.get_child_count()))
+	var sections:Array = ui._palette_sections("")
+	check(sections.size() == 2 and sections[0].shown == "取值积木" and sections[1].shown == "执行积木", "palette separates value and action blocks")
+	check(_section_has_operation(sections[0], "get_current_round") and _section_has_operation(sections[0], "store_value"), "reporters include query and control reporter")
+	check(_section_has_operation(sections[1], "edit_magic") and not _section_has_operation(sections[1], "store_value"), "actions exclude control reporter")
+	check(ui.palette_section == "action" and ui.palette_box.get_node_or_null(ui._category_anchor("action", "控制流")) != null and ui.palette_box.get_node_or_null(ui._category_anchor("value", "控制流")) == null, "action tab shows only action categories")
+	ui.value_tab.pressed.emit()
+	check(ui.palette_section == "value" and ui.palette_box.get_node_or_null(ui._category_anchor("value", "控制流")) != null and ui.palette_box.get_node_or_null(ui._category_anchor("action", "控制流")) == null, "value tab shows only value categories")
+	ui.action_tab.pressed.emit()
+	check(ui.palette_section == "action" and ui.palette_hint.text.find("执行") != -1, "action tab restores action list and explanation")
 	var opened := 0
 	var subs := 0
 	var bad:Array = []
@@ -140,6 +149,281 @@ func run() -> void:
 		if str(s).find("如果") != -1:
 			has_if_issue = true
 	check(has_if_issue, "empty if condition is reported")
+
+	# 变量小标签：有结果的积木末尾有「变量 n」，没人读时 JSON 不写 var_index；拖进空位后才写
+	ui.effects_view[0].lists.funcs.clear()
+	ui.effects_view[0].lists.funcs.append(ui._new_op("get_current_round"))
+	ui.effects_view[0].lists.funcs.append(ui._new_op("edit_score"))
+	ui._paint_scripts()
+	await get_tree().process_frame
+	var tag = ui.script_box.find_child("ResultTag", true, false)
+	check(tag != null, "reporter block shows a result tag")
+	check(_block_panel(ui.script_box, "edit_score").find_child("ResultTag", true, false) == null, "declared no-result op has no tag")
+	ui._commit()
+	check(int(ui.data.effects[0].funcs[0].get("var_index", -1)) == -1, "unused result tag writes no var_index " + JSON.stringify(ui.data.effects[0].funcs))
+	var tag_n := int(ui.effects_view[0].lists.funcs[0].tag_var)
+	var var_payload := {"new": {"kind": "var_ref", "slot": {"s": "var", "n": tag_n}}}
+	var score_node:Dictionary = ui.effects_view[0].lists.funcs[1]
+	var score_slot = null
+	for c in _block_panel(ui.script_box, "edit_score").get_parent().find_children("*", "Control", true, false):
+		if c.has_meta("drop") and str(c.get_meta("drop").kind) == "slot" and is_same(c.get_meta("drop").holder, score_node.params) and int(c.get_meta("drop").key) == 1:
+			score_slot = c
+	check(score_slot != null and ui._can_drop_on(Vector2.ZERO, var_payload, score_slot), "result tag can be dropped into a slot")
+	ui._drop_on(Vector2.ZERO, var_payload, score_slot)
+	await get_tree().process_frame
+	ui._commit()
+	var tagged:Array = ui.data.effects[0].funcs
+	check(int(tagged[0].get("var_index", -1)) == tag_n and tagged[1].parameters[1] is Dictionary and int(tagged[1].parameters[1].get("self_var", -2)) == tag_n, "read tag var is written " + JSON.stringify(tagged))
+
+	# 数字：数字空位直接是输入框，填了就是可更改的效果数字；▾ 里可改成固定数字（先弹警告）
+	ui.effects_view[0].lists.funcs.clear()
+	var magic_op:Dictionary = ui._new_op("edit_magic")
+	magic_op.params[1] = {"s": "lit", "v": null}
+	ui.effects_view[0].lists.funcs.append(magic_op)
+	ui._paint_scripts()
+	await get_tree().process_frame
+	var new_num = ui.script_box.find_child("NewNumber", true, false)
+	check(new_num != null, "empty number slot shows a number box")
+	new_num.value = 3
+	await get_tree().process_frame
+	await get_tree().process_frame
+	check(str(magic_op.params[1].get("s", "")) == "num", "typed number becomes an effect number")
+	var nums:Array = ui.effects_view[0].effect.effect_numbers
+	var num_rec:Dictionary = nums[int(magic_op.params[1].i)]
+	check(int(num_rec.number) == 3 and bool(num_rec.can_change), "effect number defaults to changeable")
+	var mode = ui.script_box.find_child("NumberMode", true, false)
+	check(mode != null, "number shows its mode menu")
+	mode.get_popup().id_pressed.emit(0)
+	await get_tree().process_frame
+	var confirm = ui.find_child("FixNumberConfirm", true, false)
+	check(confirm != null and bool(num_rec.can_change), "fixing a number asks first")
+	confirm.confirmed.emit()
+	await get_tree().process_frame
+	check(not bool(num_rec.can_change) and str(magic_op.params[1].get("s", "")) == "num", "BaseNumber slot stays an effect number, just fixed")
+
+	# 加选项按钮必须追加选择，不能把已有步骤包进选项。
+	var before_choice:Array = ui.effects_view[0].lists.funcs.duplicate()
+	var add_choice:Button = null
+	for button in ui.script_box.find_children("*", "Button", true, false):
+		if button.text in ["改成让玩家选一项", "在下面加选项"]:
+			add_choice = button
+	check(add_choice != null, "add choice button exists")
+	if add_choice != null:
+		add_choice.pressed.emit()
+		await get_tree().process_frame
+		await get_tree().process_frame
+		ui._commit()
+		var appended:Array = ui.effects_view[0].lists.funcs
+		check(appended.size() == before_choice.size() + 1, "button appends choice after existing blocks")
+		check(not ui.data.effects[0].has("options"), "button does not wrap existing blocks into effect options")
+		if appended.size() == before_choice.size() + 1:
+			check(is_same(appended[0], before_choice[0]), "existing block identity is preserved")
+			check(appended.back().func == "ask_player_option" and appended.back().params[0].items[0].body.is_empty(), "new choice starts empty at the end")
+			check(ui.data.effects[0].funcs.back().func_name == "ask_player_option", "export keeps choice last")
+			if OS.get_cmdline_user_args().has("--capture-option-append"):
+				await RenderingServer.frame_post_draw
+				get_viewport().get_texture().get_image().save_png(OS.get_environment("TEMP").path_join("add-option-append.png"))
+	# 恢复本段测试前的结构，后面的拖放测试独立运行。
+	ui.effects_view[0].effect.erase("options")
+	ui.effects_view[0].options.clear()
+	ui.effects_view[0].lists.funcs = before_choice
+
+	# 让玩家选：不必接在「当……时」后面，接在任何积木后面都行；选项里是一串积木
+	ui.effects_view[0].lists.funcs.clear()
+	ui.effects_view[0].lists.funcs.append(ui._new_op("get_current_round"))
+	ui._paint_scripts()
+	var ask_zone = _find_drop(ui.script_box, "stack", true)
+	ui._drop_on(Vector2.ZERO, {"new": {"kind": "op", "func": "ask_player_option"}}, ask_zone)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var ask_list:Array = ui.effects_view[0].lists.funcs
+	check(ask_list.size() == 2 and ask_list[1].func == "ask_player_option", "ask block placed after another block")
+	check(ui.script_box.find_child("AddOption", true, false) != null, "ask block shows its options")
+	var add_requirement = ui.script_box.find_child("AddRequirement", true, false)
+	check(add_requirement != null, "inline choice shows prerequisite editor")
+	if add_requirement != null:
+		add_requirement.pressed.emit()
+		await get_tree().process_frame
+		await get_tree().process_frame
+		var choice_item:Dictionary = ask_list[1].params[0].items[0]
+		choice_item.opt.activation_requirements[0]["message"] = "需要满足条件"
+		choice_item.reqs[0].append(ui._new_op("get_current_round"))
+		ui._commit()
+		var requirement_json:Dictionary = ui.data.effects[0].funcs[1].parameters[0][0].activation_requirements[0]
+		check(requirement_json.message == "需要满足条件" and requirement_json.funcs[0].func_name == "get_current_round", "inline prerequisite blocks export")
+		var restored:Array = ui.codec.decode_list(ui.data.effects[0].funcs)
+		check(restored[1].params[0].items[0].reqs[0][0].func == "get_current_round", "inline prerequisite blocks reload")
+	var opt_zone = null
+	for c in ui.script_box.find_children("*", "Control", true, false):
+		if c.has_meta("drop") and str(c.get_meta("drop").kind) == "stack" and str(c.get_meta("drop").get("context", "")) == "option":
+			opt_zone = c
+	check(opt_zone != null, "each option has a block stack")
+	ui._drop_on(Vector2.ZERO, {"new": {"kind": "op", "func": "edit_score"}}, opt_zone)
+	await get_tree().process_frame
+	ui._commit()
+	var ask_json:Dictionary = ui.data.effects[0].funcs[1]
+	check(ask_json.func_name == "ask_player_option" and ask_json.parameters[0] is Array and ask_json.parameters[0][0].funcs[0].func_name == "edit_score", "ask block encodes options with their funcs " + JSON.stringify(ask_json))
+
+	# 搜索下拉：属性名、内部名、玩家数据键都能搜，找不到可以直接打字
+	var props:Array = ui.maker.object_property_groups()
+	var prop_ids := []
+	for g in props:
+		for it in g.items:
+			prop_ids.append(it.id)
+	check(prop_ids.has("_other_things") and prop_ids.has("_cost") and prop_ids.has("from"), "property dropdown lists real object fields")
+	ui._open_search_popup(ui, props, func(_v): pass, true)
+	ui.tp_search.text = "附带"
+	ui._fill_time_point_tree()
+	var typed_first = ui.tp_tree.get_root().get_first_child()
+	check(typed_first != null and str(typed_first.get_metadata(0)) == "附带", "typed text offered as fallback first")
+	var found_other := false
+	var grp = typed_first.get_next()
+	while grp != null:
+		var it = grp.get_first_child()
+		while it != null:
+			if str(it.get_metadata(0)) == "_other_things":
+				found_other = true
+			it = it.get_next()
+		grp = grp.get_next()
+	check(found_other, "search by chinese name finds _other_things")
+	var picked_v := []
+	ui.tp_pick = func(v): picked_v.append(v)
+	ui.tp_search.text = "no_such_field_xyz"
+	ui._fill_time_point_tree()
+	ui._pick_first_time_point()
+	check(picked_v == ["no_such_field_xyz"], "enter with no match uses typed text " + str(picked_v))
+	ui.tp_popup.hide()
+
+	# 所有空位都是「分类 + 搜索」下拉，打字兜底
+	ui.effects_view[0].lists.funcs.clear()
+	var cr_op:Dictionary = ui._new_op("can_gain_magic")
+	var bm_op:Dictionary = ui._new_op("set_battle_result")
+	ui.effects_view[0].lists.funcs.append(ui._new_op("get_current_round"))
+	ui.effects_view[0].lists.funcs.append(cr_op)
+	ui.effects_view[0].lists.funcs.append(bm_op)
+	ui._paint_scripts()
+	await get_tree().process_frame
+	var pickers:Array = ui.script_box.find_children("SlotPicker", "Button", true, false)
+	check(pickers.size() >= 5, "every literal slot has a dropdown " + str(pickers.size()))
+	var plain:Array = []
+	for c in ui.script_box.find_children("*", "LineEdit", true, false) + ui.script_box.find_children("*", "OptionButton", true, false):
+		if c.get_parent() is SpinBox or not _in_block(c):
+			continue
+		plain.append(c.get_class() + " " + str(c.get("placeholder_text")))
+	check(plain.is_empty(), "no bare text box or option menu left in blocks " + str(plain))
+	var mode_groups:Array = ui._slot_groups("String", "battle_mode", "set_battle_result:mode", ui.effects_view[0].effect)
+	var group_names := []
+	for g in mode_groups:
+		group_names.append(str(g.shown))
+	check(str(mode_groups[0].shown) == "可选值" and mode_groups[0].items.size() == 3 and mode_groups[0].get("open", false), "declared choices listed first and opened " + str(group_names))
+	check(group_names.has("特殊") and group_names.any(func(n): return str(n).begins_with("积木 · ")), "other relevant groups kept after declared choices " + str(group_names))
+	var special_items:Array = mode_groups[group_names.find("特殊")].items
+	check(special_items.any(func(it): return it.value is Dictionary and str(it.value.get("_pick", "")) == "loop"), "loop item offered for text slot")
+	var bool_groups:Array = ui._slot_groups("bool", "", "unknown:flag", ui.effects_view[0].effect)
+	check(bool_groups[0].items.size() == 2 and bool_groups[0].items[0].value is bool, "boolean slot offers boolean values first")
+	var bool_blocks:Array = []
+	for g in bool_groups:
+		if str(g.shown).begins_with("积木 · "):
+			for it in g.items:
+				bool_blocks.append(str(it.id))
+	check(not bool_blocks.is_empty() and bool_blocks.all(func(f): return str(ui.maker.operation_of(f).get("returns", "")) != "Array"), "boolean slot keeps blocks but drops declared array results")
+	var buff_groups:Array = ui._slot_groups("String", "internal_name", "get_buff_by_name_fr_arr:buff_name", ui.effects_view[0].effect)
+	var first_card_group := -1
+	for i in buff_groups.size():
+		if str(buff_groups[i].shown).find("攻击牌") != -1:
+			first_card_group = i
+			break
+	check(first_card_group == -1 or str(buff_groups[first_card_group].shown).begins_with("其他 · "), "buff name puts unrelated card names under 其他")
+	var card_groups:Array = ui._slot_groups("String", "internal_name", "get_cards_by_name_fr_arr:card_name", ui.effects_view[0].effect)
+	check(str(card_groups[0].shown).find("攻击牌") != -1 or str(card_groups[0].shown).find("卡库里的") != -1, "card name lists cards first " + str(card_groups[0].shown))
+	# 兜底：面板最后一项是「显示其他所有字段」，点它在原地展开其余来源，再点收起
+	ui._open_search_popup(ui.script_box, mode_groups, func(_v): pass, true, Callable(), ui._all_field_groups)
+	var more_row:TreeItem = null
+	var row:TreeItem = ui.tp_tree.get_root().get_first_child()
+	while row != null:
+		if row.has_meta("more"):
+			more_row = row
+		row = row.get_next()
+	check(more_row != null and more_row.get_next() == null, "fallback row is the last item in the dropdown")
+	var groups_before:int = ui.tp_groups.size()
+	ui._toggle_more_groups()
+	check(ui.tp_extra.size() > 0 and ui.tp_extra.all(func(g): return str(g.shown).begins_with("其他 · ")), "fallback expands all other fields " + str(ui.tp_extra.size()))
+	check(ui.tp_groups.size() == groups_before, "expanding the fallback leaves the main list alone")
+	check(ui.tp_more.is_valid() and ui.tp_more_open, "fallback row stays expanded in dropdown")
+	var fb_expanded_children:int = -1
+	var fb_scan:TreeItem = ui.tp_tree.get_root().get_first_child()
+	while fb_scan != null:
+		if fb_scan.has_meta("more"):
+			fb_expanded_children = fb_scan.get_child_count()
+		fb_scan = fb_scan.get_next()
+	check(fb_expanded_children > 0, "expanded fallback lists other fields")
+	ui._toggle_more_groups()
+	var fb_collapsed_children:int = -1
+	var fb_still_last:bool = false
+	var fb_scan2:TreeItem = ui.tp_tree.get_root().get_first_child()
+	while fb_scan2 != null:
+		if fb_scan2.has_meta("more"):
+			fb_collapsed_children = fb_scan2.get_child_count()
+			fb_still_last = fb_scan2.get_next() == null
+		fb_scan2 = fb_scan2.get_next()
+	check(not ui.tp_more_open and fb_collapsed_children == 0 and fb_still_last, "fallback collapses again and stays last")
+	ui.tp_popup.hide()
+	# 按结果类型筛：战区格只列给出战区的积木，玩家格不列给出牌的积木；被筛掉的在兜底里
+	var area_groups:Array = ui._slot_groups("BaseMapArea", "", "get_map_area_score:map_area", ui.effects_view[0].effect)
+	var area_blocks:Array = []
+	for g in area_groups:
+		if str(g.shown).begins_with("积木 · "):
+			for it in g.items:
+				area_blocks.append(str(it.id))
+	check(area_blocks.has("get_location_map_area") and not area_blocks.has("get_player_name") and not area_blocks.has("get_player_deck"), "area slot lists only area results " + str(area_blocks))
+	var area_more:Array = ui._slot_more_groups("BaseMapArea", "get_map_area_score:map_area", ui.effects_view[0].effect)
+	check(area_more.any(func(g): return str(g.shown).begins_with("类型不符的积木 · ") and g.items.any(func(it): return str(it.id) == "get_player_name")), "filtered blocks kept in fallback")
+	var num_blocks:Array = []
+	for g in ui._slot_groups("BaseNumber", "", "edit_magic:vary_num", ui.effects_view[0].effect):
+		if str(g.shown).begins_with("积木 · "):
+			for it in g.items:
+				num_blocks.append(str(it.id))
+	check(num_blocks.has("get_current_round") and num_blocks.has("calculate_number") and not num_blocks.has("get_player_hand_cards"), "number slot lists number results " + str(num_blocks.size()))
+	check(ui.maker.type_fits("Array[BaseCard]", "Array[BaseAttack]") and not ui.maker.type_fits("Array[player]", "Array[BaseCard]") and ui.maker.type_fits("int", "player"), "type fit follows class inheritance and arrays")
+	# 每个空位都有兜底：数字格也不例外
+	var num_pickers:Array = []
+	ui.effects_view[0].lists.funcs.clear()
+	ui.effects_view[0].lists.funcs.append(ui._new_op("edit_magic"))
+	ui._paint_scripts()
+	await get_tree().process_frame
+	num_pickers = ui.script_box.find_children("SlotPicker", "Button", true, false)
+	check(not num_pickers.is_empty(), "number slot has a dropdown")
+	(num_pickers[0] as Button).pressed.emit()
+	check(ui.tp_more.is_valid(), "number slot dropdown offers the show-all fallback")
+	ui.tp_popup.hide()
+	# 玩家数据键按用途筛：改数字项只列数字，不列带点路径
+	var number_keys:Array = ui._kind_groups("player_number_key", "edit_data_number:key")[0].items.map(func(it): return str(it.id))
+	check(number_keys.has("play_limit") and not number_keys.has("deck") and not number_keys.any(func(k): return k.find(".") != -1), "number key slot lists numeric keys only " + str(number_keys.size()))
+	var zone_paths:Array = ui._kind_groups("player_zone_path", "hide_true_name:hidden_areas")[0].items.map(func(it): return str(it.id))
+	check(zone_paths.has("side.skills") and zone_paths.has("master._specials.SKILLS") and not zone_paths.has("magic"), "zone path slot lists array paths " + str(zone_paths.size()))
+	check(not ui._kind_groups("card_tag", "tag:tag_name").is_empty(), "tag names collected from card library")
+	var used:Array = ui.maker.used_value_groups("log_field_values", "field")
+	check(not used.is_empty() and used[0].items.size() >= 2, "values used in the card library offered " + str(used))
+	var scoped:Array = ui._slot_groups("String", ui._slot_kind("log_field_values:field"), "log_field_values:field", ui.effects_view[0].effect)
+	check(str(scoped[0].shown) == "可选值" and scoped[0].items.any(func(it): return str(it.id) == "winners"), "declared log fields listed first and cover used values")
+	var unlisted:Array = ui._slot_groups("String", "", "show_message:message", ui.effects_view[0].effect)
+	check(str(unlisted[0].shown) == "卡库里用过的", "unlisted field offers real used values first " + str(unlisted[0].shown))
+	var bm_mode:int = ui._param_index(ui.maker.operation_of("set_battle_result"), "mode")
+	ui._apply_pick(bm_op.params, bm_mode, "add", "String", ui.effects_view[0].effect)
+	check(bm_op.params[bm_mode].v == "add", "picking a choice writes the value")
+	ui._apply_typed(bm_op.params, bm_mode, "my_mode", "String", ui.effects_view[0].effect)
+	check(bm_op.params[bm_mode].v == "my_mode", "typed text used as-is for text slots")
+	var cr_player:int = ui._param_index(ui.maker.operation_of("can_gain_magic"), "player_id")
+	ui._apply_pick(cr_op.params, cr_player, {"_pick": "var", "n": 4}, "int", ui.effects_view[0].effect)
+	check(cr_op.params[cr_player].get("s") == "var" and int(cr_op.params[cr_player].n) == 4, "picking a result reads that variable")
+	ui._apply_pick(cr_op.params, cr_player, {"_pick": "op", "func": "get_pl_id_using_eff"}, "int", ui.effects_view[0].effect)
+	check(cr_op.params[cr_player].get("s") == "block" and cr_op.params[cr_player].b.func == "get_pl_id_using_eff", "picking a block nests it")
+	ui._apply_typed(cr_op.params, cr_player, "abc", "int", ui.effects_view[0].effect)
+	check(cr_op.params[cr_player].get("s") == "block", "invalid typed number is refused")
+	ui._apply_typed(cr_op.params, cr_player, "2", "int", ui.effects_view[0].effect)
+	check(cr_op.params[cr_player].get("v") is int and cr_op.params[cr_player].v == 2, "typed number converted " + str(cr_op.params[cr_player]))
+	await get_tree().process_frame
+	ui._commit()
 	# 保存：打开一张真实卡、不改动，另存到临时目录，字节必须与原文件一致（缩进与换行照原样）
 	for k in ui.kind_button.item_count:
 		if str(ui.kind_button.get_item_metadata(k)) == "master":
@@ -206,7 +490,7 @@ func run() -> void:
 	check(ui.data.get("shown_master_name") == name_before and not ui.dirty, "jump to a history node restores it and clears dirty at saved node")
 	check(ui.history.size() == 3, "jumping back keeps later nodes for redo")
 
-	# 导出：命名规则按 data 现有结构；新选的图搬进 json 所在文件夹并按规则改名；打包 zip
+	# 导出：命名规则按 data 现有结构；新选的图复制进 json 所在文件夹并按规则改名；打包 zip
 	check(ui.maker.folder_for("master", {"master_name": "tohsaka_rin"}) == "00002_tohsaka_rin", "existing serial reused")
 	check(ui.maker.folder_for("master", {"master_name": "new_probe_master"}).ends_with("_new_probe_master") and ui.maker.folder_for("master", {"master_name": "new_probe_master"}).length() == 5 + 1 + 16, "new master gets next 5-digit serial")
 	check(ui.maker.suggest_path("attack", {"attack_name": "probe_x", "category": "basic"}) == "res://data/attacks/basic/probe_x/probe_x.json", "attack folder follows category")
@@ -314,6 +598,14 @@ func _diff(a, b, where:String) -> void:
 		print("DIFF changed ", where, " ", JSON.stringify(a).left(200), " -> ", JSON.stringify(b).left(200))
 
 
+func _section_has_operation(section:Dictionary, func_name:String) -> bool:
+	for entry in section.categories:
+		for item in entry.items:
+			if str(item.get("func", "")) == func_name:
+				return true
+	return false
+
+
 func _find_drop(root:Node, kind:String, last := false):
 	var found = null
 	for child in root.get_children():
@@ -327,6 +619,16 @@ func _find_drop(root:Node, kind:String, last := false):
 				return inner
 			found = inner
 	return found
+
+
+# 是否画在某块积木里面（效果头部的原文、设置表单不算）
+func _in_block(c:Node) -> bool:
+	var p := c.get_parent()
+	while p != null:
+		if p.has_meta("block"):
+			return true
+		p = p.get_parent()
+	return false
 
 
 # 脚本区里画出来的某块积木（按 operation 名找）

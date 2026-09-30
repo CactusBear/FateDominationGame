@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fate Domination - 灵子战略全息交锋战盘 (UI 概念原型)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --c-bg: #03060f;
+  --c-panel: rgba(8, 14, 28, 0.88);
+  --c-panel-deep: rgba(4, 8, 18, 0.95);
+  --c-panel-border: rgba(212, 176, 106, 0.35);
+  --c-panel-glow: rgba(212, 176, 106, 0.15);
+  
+  --c-gold: #d4b06a;
+  --c-gold-bright: #fae4a8;
+  --c-gold-dim: #7d6537;
+  --c-gold-border: rgba(212, 176, 106, 0.45);
+  
+  --c-mana: #34d8ff;
+  --c-mana-glow: rgba(52, 216, 255, 0.55);
+  --c-mana-deep: #0a4060;
+  
+  --c-seal: #e6193c;
+  --c-seal-glow: rgba(230, 25, 60, 0.6);
+  --c-seal-dim: #4a101b;
+  
+  --c-text: #ece6d8;
+  --c-text-dim: #9aa5b8;
+  --c-text-muted: #5e697d;
+  
+  --f-display: 'Cinzel', 'Noto Serif SC', serif;
+  --f-serif: 'Noto Serif SC', 'Source Han Serif SC', serif;
+  --f-sans: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  
+  --scale: 1;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; height: 100%;
+  background: #010307;
+  overflow: hidden;
+  font-family: var(--f-sans);
+  color: var(--c-text);
+  user-select: none;
+}
+
+/* ================= 1920x1080 舞台居中等比缩放 ================= */
+#stage {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 1920px; height: 1080px;
+  transform-origin: center center;
+  transform: translate(-50%, -50%) scale(var(--scale));
+  overflow: hidden;
+  background: var(--c-bg) url(assets/bg_night.jpg) center/cover no-repeat;
+  box-shadow: 0 0 100px rgba(0, 0, 0, 0.95);
+}
+
+/* 背景灵子微粒与夜色压暗渐变 */
+#stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(10, 18, 40, 0.4) 0%, rgba(2, 4, 10, 0.85) 75%, rgba(1, 2, 5, 0.98) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 缓慢旋转的背景魔术大阵 */
+.bg-magic-circle {
+  position: absolute;
+  left: 50%; top: 48%;
+  width: 1100px; height: 1100px;
+  margin: -550px 0 0 -550px;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 1;
+  animation: rot 240s linear infinite;
+}
+@keyframes rot { to { transform: rotate(360deg); } }
+
+/* 通用切角金属框与圣杯细线 */
+.fate-panel {
+  position: relative;
+  background: var(--c-panel);
+  border: 1px solid var(--c-panel-border);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6), 0 8px 30px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+}
+.fate-panel-diamond {
+  position: relative;
+}
+.fate-panel-diamond::before, .fate-panel-diamond::after {
+  content: "";
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--c-gold);
+  transform: rotate(45deg);
+  z-index: 3;
+}
+.fate-panel-diamond::before { left: -3px; top: -3px; }
+.fate-panel-diamond::after { right: -3px; bottom: -3px; }
+
+/* 标题徽章 */
+.section-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-serif);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--c-gold-bright);
+  text-transform: uppercase;
+}
+.section-tag::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--c-gold-border), transparent);
+}
+.en-tag {
+  font-family: var(--f-display);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--c-gold-dim);
+}
+
+/* ================= 布局：左中右三翼战略大盘 ================= */
+#hud-left {
+  position: absolute;
+  left: 24px; top: 24px; bottom: 24px;
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 10;
+}
+
+#hud-center {
+  position: absolute;
+  left: 420px; right: 410px; top: 20px; bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 10;
+}
+
+#hud-right {
+  position: absolute;
+  right: 24px; top: 24px; bottom: 24px;
+  width: 370px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 10;
+}
+
+/* ================= 左翼：主仆圣坛与技能展翼 ================= */
+.nexus-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
+  overflow: hidden;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+
+.covenant-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(212, 176, 106, 0.2);
+}
+.covenant-pair {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.covenant-pair .av-box {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--c-gold);
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(212, 176, 106, 0.4);
+}
+.covenant-pair .av-box img { width: 100%; height: 100%; object-fit: cover; }
+.covenant-pair .names { display: flex; flex-direction: column; gap: 2px; }
+.covenant-pair .names .m-name { font-family: var(--f-serif); font-size: 16px; font-weight: 700; color: #fff; }
+.covenant-pair .names .s-name { font-size: 12px; color: var(--c-gold); letter-spacing: 0.1em; }
+
+/* 契约卡平铺区 (御主卡 / 从者卡 / 令咒) */
+.core-cards-row {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+.card-item {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(212, 176, 106, 0.25);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #060912;
+}
+.card-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 0 1.5px var(--c-gold);
+}
+.card-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.core-cards-row .card-item {
+  width: 108px;
+  height: 152px;
+}
+
+/* 技能与宝具翼展区 (平铺展示全部技能、附加物与升华技) */
+.skills-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.skills-container::-webkit-scrollbar { width: 3px; }
+.skills-container::-webkit-scrollbar-thumb { background: var(--c-gold-dim); border-radius: 2px; }
+
+.skill-card-strip {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: rgba(14, 22, 42, 0.65);
+  border: 1px solid rgba(212, 176, 106, 0.2);
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+.skill-card-strip:hover {
+  background: rgba(20, 32, 60, 0.85);
+  border-color: var(--c-gold);
+  transform: translateX(3px);
+}
+.skill-card-strip .mini-card {
+  width: 72px; height: 100px;
+  flex: none;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(212, 176, 106, 0.3);
+}
+.skill-card-strip .mini-card img { width: 100%; height: 100%; object-fit: cover; }
+.skill-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.skill-info .title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.skill-info .name {
+  font-family: var(--f-serif);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-gold-bright);
+}
+.skill-info .badges {
+  display: flex;
+  gap: 4px;
+}
+.badge {
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--f-serif);
+}
+.badge-cost { background: var(--c-mana-deep); color: var(--c-mana); border: 1px solid rgba(52, 216, 255, 0.4); }
+.badge-power { background: rgba(180, 110, 20, 0.4); color: #ffd699; border: 1px solid rgba(255, 180, 80, 0.4); }
+.badge-upg { background: rgba(180, 20, 50, 0.45); color: #ff8fa0; border: 1px solid var(--c-seal); }
+.skill-info .desc {
+  font-size: 11px;
+  color: var(--c-text-dim);
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+/* 升华技特效条目 */
+.skill-card-strip.is-upg {
+  position: relative;
+  background: linear-gradient(90deg, rgba(45, 15, 30, 0.7), rgba(20, 28, 55, 0.7));
+  border-color: rgba(230, 25, 60, 0.45);
+}
+.skill-card-strip.is-upg::after {
+  content: "";
+  position: absolute;
+  right: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, var(--c-seal), var(--c-gold));
+}
+
+/* ================= 中央大区：冬木全息俯瞰战略沙盘 ================= */
+/* 顶部天幕：战局日程 + 全局局势卡 */
+.center-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px 24px;
+  clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 100%, 0 100%);
+}
+.phase-chronos {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.chronos-dial {
+  display: flex;
+  flex-direction: column;
+}
+.chronos-dial .grail-war-tag {
+  font-family: var(--f-serif);
+  font-size: 11px;
+  letter-spacing: 0.35em;
+  color: var(--c-gold);
+}
+.chronos-dial .day-text {
+  font-family: var(--f-serif);
+  font-size: 26px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+.chronos-dial .day-text small {
+  font-size: 13px;
+  color: var(--c-text-muted);
+  margin-left: 6px;
+}
+
+.phase-track {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.phase-node {
+  padding: 5px 12px;
+  font-family: var(--f-serif);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--c-text-muted);
+  border: 1px solid rgba(212, 176, 106, 0.15);
+  background: rgba(8, 14, 26, 0.6);
+  position: relative;
+}
+.phase-node.done { color: var(--c-text-dim); }
+.phase-node.active {
+  color: #120e06;
+  background: linear-gradient(180deg, var(--c-gold-bright), var(--c-gold));
+  border-color: var(--c-gold);
+  box-shadow: 0 0 14px rgba(212, 176, 106, 0.5);
+}
+
+/* 局势微缩挂载区 */
+.global-situation-hub {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.sit-card-box {
+  width: 56px; height: 78px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--c-gold);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  flex: none;
+  cursor: pointer;
+}
+.sit-card-box img { width: 100%; height: 100%; object-fit: cover; }
+.sit-text-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sit-text-box .sit-name {
+  font-family: var(--f-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-gold-bright);
+}
+.sit-text-box .sit-rule {
+  font-size: 12px;
+  color: var(--c-text-dim);
+  max-width: 320px;
+}
+.deck-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(12, 18, 34, 0.8);
+  border: 1px solid rgba(212, 176, 106, 0.2);
+  border-radius: 12px;
+  font-size: 11px;
+  color: var(--c-text-dim);
+}
+.deck-pill b { color: var(--c-gold); font-family: var(--f-display); }
+
+/* ================= 战略全息沙盘：四战略要冲节点 ================= */
+.hologram-battleground {
+  position: relative;
+  height: 480px;
+  margin: 10px 0;
+  perspective: 1000px;
+}
+
+/* SVG 灵脉光缆背景 */
+.leyline-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 战略要冲节点卡 (Tactical Node) */
+.tactical-node {
+  position: absolute;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(6, 11, 24, 0.92);
+  border: 1px solid rgba(212, 176, 106, 0.4);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(10, 20, 50, 0.6);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.tactical-node:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: var(--c-gold);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9), 0 0 25px rgba(212, 176, 106, 0.3);
+  z-index: 5;
+}
+
+/* 4个要冲的全新战略地理坐标分布 */
+/* 1. 魔术工房：北部圆藏山灵脉洞穴/召唤阵 (顶部中央偏左) */
+#node-workshop {
+  left: 20px; top: 10px;
+  width: 250px; height: 215px;
+}
+/* 2. 深山町：西部传统街区要冲 (底部中央偏左) */
+#node-miyama {
+  left: 300px; top: 10px;
+  width: 380px; height: 220px;
+}
+/* 3. 新都：东部现代繁华商业核心 (中上方偏右) */
+#node-shinto {
+  left: 300px; bottom: 10px;
+  width: 380px; height: 220px;
+}
+/* 4. 侦察：跨海大桥与海港开阔哨点 (底部偏左) */
+#node-scout {
+  left: 20px; bottom: 10px;
+  width: 250px; height: 215px;
+}
+
+/* 战区插画顶部背景条 */
+.node-banner {
+  position: relative;
+  height: 90px;
+  overflow: hidden;
+}
+.node-banner img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: saturate(0.9) brightness(0.85);
+}
+.node-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(6, 11, 24, 0.1) 0%, rgba(6, 11, 24, 0.95) 100%);
+}
+.node-title-overlay {
+  position: absolute;
+  left: 12px; right: 12px; bottom: 6px;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.node-title-overlay .cn {
+  font-family: var(--f-serif);
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+.node-title-overlay .en {
+  font-family: var(--f-display);
+  font-size: 11px;
+  color: var(--c-gold);
+  letter-spacing: 0.2em;
+}
+.node-cost-tag {
+  font-size: 11px;
+  color: var(--c-mana);
+  background: rgba(10, 30, 50, 0.8);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(52, 216, 255, 0.3);
+}
+
+/* 节点下半部：席位与交锋信息 */
+.node-body {
+  flex: 1;
+  padding: 8px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+/* 席位圆环槽 */
+.seats-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.seat-orb {
+  position: relative;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--c-gold-border);
+  background: radial-gradient(circle, rgba(16, 26, 48, 0.9), rgba(6, 10, 20, 0.9));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.seat-orb:hover { transform: scale(1.08); border-color: var(--c-gold); }
+.seat-orb .seat-val {
+  font-family: var(--f-serif);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-gold-bright);
+}
+.seat-orb.mana-seat { border-color: rgba(52, 216, 255, 0.4); }
+.seat-orb.mana-seat .seat-val { color: var(--c-mana); }
+
+/* 入驻御主头像 */
+.seat-orb .occupant {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid var(--c-gold);
+}
+.seat-orb .occupant img { width: 100%; height: 100%; object-fit: cover; }
+.seat-orb.is-me {
+  box-shadow: 0 0 12px rgba(212, 176, 106, 0.6), inset 0 0 8px rgba(212, 176, 106, 0.4);
+  border-color: var(--c-gold-bright);
+}
+
+/* 混战交锋横条 (深山町 / 新都) */
+.clash-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, rgba(60, 10, 22, 0.7), rgba(20, 10, 25, 0.6));
+  border: 1px solid rgba(230, 25, 60, 0.4);
+}
+.clash-bar .swords {
+  width: 20px; height: 20px;
+  background: url(assets/icon_swords.png) center/contain no-repeat;
+  flex: none;
+}
+.clash-bar .contest-title {
+  font-family: var(--f-serif);
+  font-size: 12px;
+  color: #ff99a8;
+  letter-spacing: 0.1em;
+}
+.clash-fighters {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+.clash-fighter-av {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--c-seal);
+}
+.clash-fighter-av img { width: 100%; height: 100%; object-fit: cover; }
+
+/* 战区事件牌挂载栏 */
+.node-event-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(14, 20, 36, 0.7);
+  border: 1px dashed rgba(212, 176, 106, 0.3);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+.node-event-badge img { width: 20px; height: 28px; border-radius: 2px; }
+.node-event-badge .ev-name { color: var(--c-gold); font-family: var(--f-serif); }
+
+/* ================= 中央下部：投影出牌熔炉 & 魔术回路 ================= */
+.center-bottom-forge {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 战术出牌与决战结算区 (投影熔炉) */
+.projection-forge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 16px) 100%, 16px 100%);
+  gap: 16px;
+}
+.forge-cards-tray {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+.forge-slot {
+  width: 90px; height: 126px;
+  border: 1px dashed rgba(212, 176, 106, 0.35);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--c-gold-dim);
+  font-family: var(--f-serif);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  background: rgba(8, 14, 26, 0.4);
+}
+.forge-card-active {
+  position: relative;
+  width: 90px; height: 126px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(212, 176, 106, 0.4);
+  border: 1px solid var(--c-gold);
+}
+.forge-card-active img { width: 100%; height: 100%; object-fit: cover; }
+.forge-card-active .face-tag {
+  position: absolute;
+  left: 4px; top: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--c-gold);
+  color: var(--c-gold-bright);
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+/* 威力合计爆发仪表 */
+.power-surge-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+  border-left: 1px solid rgba(212, 176, 106, 0.2);
+}
+.power-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.power-indicator .val {
+  font-family: var(--f-serif);
+  font-size: 40px;
+  font-weight: 900;
+  color: #ffe099;
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(255, 200, 100, 0.6);
+}
+.power-indicator .lbl {
+  font-family: var(--f-serif);
+  font-size: 11px;
+  color: var(--c-gold-dim);
+  letter-spacing: 0.2em;
+}
+
+/* 核心三维资源矩阵与结束行动大按钮 */
+.action-dock-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 16px;
+  background: var(--c-panel-deep);
+  border: 1px solid var(--c-gold-border);
+  border-radius: 6px;
+}
+
+/* 魔术回路长条 (横贯中央) */
+.circuit-mana-gauge {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.circuit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.circuit-header .label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--f-serif);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-mana);
+  letter-spacing: 0.1em;
+}
+.circuit-header .label img { width: 18px; height: 18px; }
+.circuit-header .value {
+  font-family: var(--f-display);
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--c-mana);
+}
+.circuit-header .value small { font-size: 13px; color: var(--c-text-muted); }
+
+/* 魔术回路分段神经纹理光槽 */
+.circuit-nodes-row {
+  display: flex;
+  gap: 4px;
+  height: 16px;
+  padding: 2px;
+  background: rgba(2, 6, 14, 0.9);
+  border: 1px solid rgba(52, 216, 255, 0.3);
+  transform: skewX(-15deg);
+}
+.circuit-seg {
+  flex: 1;
+  background: rgba(52, 216, 255, 0.08);
+  border-radius: 1px;
+  transition: all 0.3s;
+}
+.circuit-seg.lit {
+  background: linear-gradient(180deg, #7fe9ff, var(--c-mana));
+  box-shadow: 0 0 8px var(--c-mana-glow);
+}
+.circuit-seg.gate {
+  position: relative;
+}
+.circuit-seg.gate::after {
+  content: "";
+  position: absolute;
+  right: -2px; top: -4px; bottom: -4px; width: 2px;
+  background: var(--c-gold);
+}
+
+/* 战果积分 */
+.resource-trophy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(20, 26, 44, 0.7);
+  border: 1px solid rgba(212, 176, 106, 0.3);
+  border-radius: 4px;
+}
+.resource-trophy img { width: 24px; height: 24px; }
+.resource-trophy .v-col { display: flex; flex-direction: column; }
+.resource-trophy .v-num { font-family: var(--f-serif); font-size: 24px; font-weight: 900; color: var(--c-gold-bright); line-height: 1; }
+.resource-trophy .v-lbl { font-size: 10px; color: var(--c-gold-dim); letter-spacing: 0.15em; }
+
+/* 3画鲜红令咒 */
+.command-seals-rack {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+}
+.seal-stroke {
+  width: 24px; height: 42px;
+  background: url(assets/seal.png) center/contain no-repeat;
+  filter: drop-shadow(0 0 8px rgba(230, 25, 60, 0.8));
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+}
+.seal-stroke:hover { transform: scale(1.15); filter: drop-shadow(0 0 14px rgba(255, 60, 80, 1)); }
+.seal-stroke.used { filter: grayscale(1) brightness(0.3); cursor: default; }
+
+/* 结束行动大按钮 (斜切角棱镜风格) */
+.btn-end-turn {
+  height: 52px;
+  padding: 0 32px;
+  background: linear-gradient(180deg, #d6223e, #800e20);
+  border: 1px solid #ff5a75;
+  clip-path: polygon(14px 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+  font-family: var(--f-serif);
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(230, 25, 60, 0.55);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.btn-end-turn:hover {
+  filter: brightness(1.2);
+  box-shadow: 0 0 35px rgba(255, 60, 90, 0.8);
+  transform: translateY(-2px);
+}
+
+/* ================= 右翼：因果律顺位仪与对手监控阵 ================= */
+.chronos-order-box {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+}
+
+/* 垂直圆弧顺位链 (Turn Order Arc) */
+.order-orbit-track {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.order-seat-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: rgba(12, 18, 36, 0.7);
+  border: 1px solid rgba(212, 176, 106, 0.15);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+.order-seat-strip:hover {
+  background: rgba(20, 30, 60, 0.85);
+  border-color: var(--c-gold-border);
+}
+.order-seat-strip.is-acting {
+  border-color: #ff4d6d;
+  background: linear-gradient(90deg, rgba(80, 12, 28, 0.85), rgba(20, 28, 55, 0.7));
+  box-shadow: 0 0 18px rgba(255, 77, 109, 0.45);
+}
+.order-seat-strip.is-me {
+  border-color: var(--c-gold-bright);
+  background: linear-gradient(90deg, rgba(60, 45, 15, 0.8), rgba(16, 24, 45, 0.7));
+}
+.order-rk-num {
+  font-family: var(--f-display);
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--c-gold);
+  width: 18px;
+  text-align: center;
+}
+.order-av {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--c-gold);
+  flex: none;
+}
+.order-av img { width: 100%; height: 100%; object-fit: cover; }
+.order-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.order-info .name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.order-info .m-name {
+  font-family: var(--f-serif);
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+.order-info .loc-name {
+  font-size: 11px;
+  color: var(--c-gold-dim);
+}
+.order-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--c-text-dim);
+}
+.order-stats-row span { display: flex; align-items: center; gap: 3px; }
+.order-stats-row img { width: 12px; height: 12px; }
+.order-seals-dots {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+.order-seals-dots i {
+  width: 5px; height: 10px;
+  background: var(--c-seal);
+  clip-path: polygon(50% 0, 100% 30%, 65% 100%, 35% 100%, 0 30%);
+}
+.order-seals-dots i.used { background: #332025; }
+
+/* 战果排行榜与淘汰阶段一览 */
+.grail-standings-card {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+.grail-standings-card h4 {
+  font-family: var(--f-serif);
+  font-size: 14px;
+  color: var(--c-gold-bright);
+  letter-spacing: 0.2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.grail-standings-card h4 small { font-size: 11px; color: var(--c-text-muted); }
+.standings-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+.standing-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(212, 176, 106, 0.1);
+  font-size: 13px;
+}
+.standing-row .rank { font-family: var(--f-display); font-weight: 700; width: 18px; color: var(--c-gold); }
+.standing-row .av-mini { width: 26px; height: 26px; border-radius: 50%; overflow: hidden; border: 1px solid var(--c-gold-dim); }
+.standing-row .av-mini img { width: 100%; height: 100%; object-fit: cover; }
+.standing-row .nm { flex: 1; font-family: var(--f-serif); font-size: 13px; }
+.standing-row .score { font-family: var(--f-display); font-weight: 700; font-size: 15px; color: var(--c-gold-bright); }
+.standing-row.cutline { border-bottom: 1px dashed var(--c-seal); }
+
+/* 淘汰规则刻度 */
+.elim-thresholds {
+  display: flex;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--c-text-muted);
+}
+.elim-pill {
+  flex: 1;
+  padding: 4px 2px;
+  text-align: center;
+  background: rgba(10, 16, 30, 0.8);
+  border: 1px solid rgba(212, 176, 106, 0.15);
+  border-radius: 2px;
+}
+.elim-pill.current {
+  border-color: var(--c-seal);
+  color: #ff8095;
+  background: rgba(45, 10, 20, 0.6);
+}
+.elim-pill b { display: block; font-size: 12px; color: #fff; font-family: var(--f-serif); }
+
+/* ================= 手牌抽屉 (扇形/升降全息手牌翼) ================= */
+#hand-drawer {
+  position: absolute;
+  left: 420px;
+  right: 410px;
+  bottom: 0;
+  height: 250px;
+  z-index: 50;
+  transform: translateY(212px);
+  transition: transform 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.15);
+  display: flex;
+  flex-direction: column;
+}
+#hand-drawer.open {
+  transform: translateY(0);
+}
+
+/* 抽屉抓手 */
+.drawer-toggle {
+  align-self: center;
+  width: 220px; height: 38px;
+  background: linear-gradient(180deg, #2a2215, #120e0a);
+  border: 1px solid var(--c-gold);
+  border-bottom: none;
+  clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 100%, 0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--c-gold-bright);
+  font-family: var(--f-serif);
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.6);
+  flex: none;
+}
+.drawer-toggle:hover {
+  background: linear-gradient(180deg, #3d301c, #1a140d);
+}
+.drawer-toggle .caret {
+  width: 8px; height: 8px;
+  border-left: 2px solid var(--c-gold-bright);
+  border-top: 2px solid var(--c-gold-bright);
+  transform: rotate(45deg);
+  transition: transform 0.3s;
+}
+#hand-drawer.open .drawer-toggle .caret {
+  transform: rotate(225deg);
+}
+
+.hand-deck-tray {
+  flex: 1;
+  background: linear-gradient(180deg, rgba(16, 12, 8, 0.98), rgba(4, 6, 14, 0.98));
+  border-top: 1px solid var(--c-gold);
+  box-shadow: 0 -15px 50px rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 0 20px;
+}
+
+/* 单张手牌槽位 */
+.hand-card-wrapper {
+  position: relative;
+  width: 135px;
+  height: 189px;
+  flex: none;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.hand-card-wrapper:hover {
+  transform: translateY(-16px) scale(1.05);
+  z-index: 10;
+}
+
+/* 合法出牌呼吸金框 (高饱和度黄金与高斯外发光) */
+.hand-card-wrapper.playable {
+  position: relative;
+}
+.hand-card-wrapper.playable::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 10px;
+  border: 3px solid #ffdc73;
+  box-shadow: 0 0 24px 6px rgba(255, 220, 115, 0.85), inset 0 0 12px rgba(255, 220, 115, 0.4);
+  animation: breatheGold 1.8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 5;
+}
+@keyframes breatheGold {
+  0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 4px #ffc83b); }
+  50% { opacity: 1; filter: drop-shadow(0 0 16px #ffea85); }
+}
+
+.hand-card-wrapper .card-item {
+  width: 100%; height: 100%;
+}
+
+/* 悬浮在卡顶的明置/暗置快速出牌按钮 (杜绝二级弹窗) */
+.play-affordance-menu {
+  position: absolute;
+  left: 50%; top: -38px;
+  transform: translateX(-50%);
+  display: none;
+  gap: 6px;
+  z-index: 20;
+}
+.hand-card-wrapper:hover .play-affordance-menu {
+  display: flex;
+}
+.btn-play-face {
+  padding: 5px 14px;
+  font-family: var(--f-serif);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+}
+.btn-play-face.reveal {
+  background: linear-gradient(180deg, var(--c-gold-bright), var(--c-gold));
+  color: #1a1205;
+  border: 1px solid #fff;
+}
+.btn-play-face.hidden {
+  background: linear-gradient(180deg, #2a3556, #141a2e);
+  color: #e6ecfa;
+  border: 1px solid #6377a8;
+}
+.btn-play-face:hover {
+  filter: brightness(1.2);
+}
+
+/* ================= 敌方行动大型战略横幅 ================= */
+#enemy-action-banner {
+  position: absolute;
+  left: 0; right: 0; top: 320px;
+  height: 120px;
+  background: linear-gradient(90deg, transparent 5%, rgba(90, 8, 24, 0.94) 30%, rgba(90, 8, 24, 0.94) 70%, transparent 95%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scaleY(0.2);
+  transition: all 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+#enemy-action-banner.show {
+  opacity: 1;
+  transform: scaleY(1);
+}
+#enemy-action-banner::before, #enemy-action-banner::after {
+  content: "";
+  position: absolute;
+  left: 15%; right: 15%; height: 1px;
+  background: linear-gradient(90deg, transparent, #ff4a68, transparent);
+}
+#enemy-action-banner::before { top: 8px; }
+#enemy-action-banner::after { bottom: 8px; }
+
+.enemy-av-ring {
+  width: 86px; height: 86px;
+  border-radius: 50%;
+  border: 3px solid #ff4a68;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(255, 74, 104, 0.7);
+}
+.enemy-av-ring img { width: 100%; height: 100%; object-fit: cover; }
+.enemy-meta-text {
+  display: flex;
+  flex-direction: column;
+}
+.enemy-meta-text .sub-warn {
+  font-family: var(--f-serif);
+  font-size: 15px;
+  letter-spacing: 0.5em;
+  color: #ff758d;
+}
+.enemy-meta-text .main-warn {
+  font-family: var(--f-serif);
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: #fff;
+  text-shadow: 0 0 18px rgba(255, 74, 104, 0.6);
+}
+
+/* ================= 悬浮卡牌大图浮窗 (Card Zoom Overlay) ================= */
+#card-zoom-overlay {
+  position: absolute;
+  z-index: 80;
+  width: 380px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 0 2px var(--c-gold);
+}
+#card-zoom-overlay.active { opacity: 1; }
+#card-zoom-overlay img { width: 100%; height: 100%; display: block; }
+
+/* ================= 底部状态自测与参数控制台 ================= */
+#test-console {
+  position: fixed;
+  left: 20px; bottom: 20px;
+  background: rgba(4, 7, 16, 0.95);
+  border: 1px solid var(--c-gold-border);
+  padding: 8px 12px;
+  border-radius: 4px;
+  z-index: 100;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+#test-console span { color: var(--c-gold); font-family: var(--f-serif); font-weight: 700; margin-right: 4px; }
+.ctrl-btn {
+  padding: 4px 10px;
+  background: #141b30;
+  border: 1px solid #32406a;
+  color: var(--c-text);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+}
+.ctrl-btn:hover { border-color: var(--c-gold); color: #fff; }
+.ctrl-btn.active { background: #263359; border-color: var(--c-gold-bright); color: var(--c-gold-bright); }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <!-- 缓慢旋转的背景深层魔法阵 -->
+  <svg class="bg-magic-circle" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="48" fill="none" stroke="#d4b06a" stroke-width="0.5" stroke-dasharray="2, 4"/>
+    <circle cx="50" cy="50" r="42" fill="none" stroke="#34d8ff" stroke-width="0.3"/>
+    <circle cx="50" cy="50" r="36" fill="none" stroke="#d4b06a" stroke-width="0.8"/>
+    <polygon points="50,14 81,68 19,68" fill="none" stroke="#d4b06a" stroke-width="0.5"/>
+    <polygon points="50,86 81,32 19,32" fill="none" stroke="#34d8ff" stroke-width="0.5"/>
+    <circle cx="50" cy="50" r="24" fill="none" stroke="#d4b06a" stroke-width="0.4" stroke-dasharray="1, 2"/>
+  </svg>
+
+  <!-- ======================= 左翼：主仆圣坛与技能展翼 ======================= -->
+  <aside id="hud-left">
+    <div class="fate-panel nexus-box fate-panel-diamond">
+      <div class="covenant-head">
+        <div class="covenant-pair">
+          <div class="av-box"><img src="assets/head_shirou.png" alt="卫宫士郎"></div>
+          <div class="names">
+            <span class="m-name">卫宫士郎</span>
+            <span class="s-name">Saber · 契约连结</span>
+          </div>
+        </div>
+        <div class="section-tag"><span class="en-tag">COVENANT</span></div>
+      </div>
+
+      <!-- 主仆本体卡平铺区 (消除留白) -->
+      <div class="core-cards-row">
+        <div class="card-item" data-zoom="assets/card_shirou_hd.jpg" title="御主卡：卫宫士郎">
+          <img src="assets/card_shirou_hd.jpg" alt="卫宫士郎御主卡">
+        </div>
+        <div class="card-item" data-zoom="assets/card_artoria_hd.jpg" title="从者卡：阿尔托莉雅·潘德拉贡">
+          <img src="assets/card_artoria_hd.jpg" alt="从者卡阿尔托莉雅">
+        </div>
+        <div class="card-item" data-zoom="assets/card_command_spell_full.jpg" title="令咒与契约">
+          <img src="assets/card_command_spell_full.jpg" alt="令咒卡">
+        </div>
+      </div>
+
+      <div class="section-tag" style="margin-top: 4px;">从者技能与宝具 <span class="en-tag">SKILLS & PHANTASMS</span></div>
+      
+      <!-- 从者技能牌 / 御主附加牌 / 升华技 平铺展开列表 -->
+      <div class="skills-container">
+        <!-- 对魔力 -->
+        <div class="skill-card-strip" data-zoom="assets/card_mana_resistance_hd.jpg">
+          <div class="mini-card"><img src="assets/card_mana_resistance_hd.jpg" alt="对魔力"></div>
+          <div class="skill-info">
+            <div class="title-row">
+              <span class="name">对魔力</span>
+              <div class="badges">
+                <span class="badge badge-cost">魔力消耗 3</span>
+                <span class="badge badge-power">威力 3</span>
+              </div>
+            </div>
+            <div class="desc">宝具绽放
+若你打出了战斗中魔力消耗最高的宝具攻击，获得战果。若其消耗≥4，额外获得战果</div>
+          </div>
+        </div>
+
+        <!-- 风王结界 -->
+        <div class="skill-card-strip" data-zoom="assets/card_wind_barrier_hd.jpg">
+          <div class="mini-card"><img src="assets/card_wind_barrier_hd.jpg" alt="风王结界"></div>
+          <div class="skill-info">
+            <div class="title-row">
+              <span class="name">风王结界</span>
+              <div class="badges">
+                <span class="badge badge-cost">魔力消耗 2</span>
+                <span class="badge badge-power">威力 3</span>
+              </div>
+            </div>
+            <div class="desc">战斗阶段：手牌中所有攻击牌魔力消耗-1
+【真名解放】时恢复原魔力消耗</div>
+          </div>
+        </div>
+
+        <!-- 誓约胜利之剑 (宝具) -->
+        <div class="skill-card-strip" data-zoom="assets/card_excalibur_hd.jpg">
+          <div class="mini-card"><img src="assets/card_excalibur_hd.jpg" alt="誓约胜利之剑"></div>
+          <div class="skill-info">
+            <div class="title-row">
+              <span class="name">誓约胜利之剑</span>
+              <div class="badges">
+                <span class="badge badge-cost">魔力消耗 12</span>
+                <span class="badge badge-power">威力 8</span>
+              </div>
+            </div>
+            <div class="desc">对城宝具 · 战斗阶段
+破坏所处战区所有其他攻击牌与防壁</div>
+          </div>
+        </div>
+
+        <!-- 御主附加物：干将·莫邪 -->
+        <div class="skill-card-strip" data-zoom="assets/card_kanshou_hd.jpg">
+          <div class="mini-card"><img src="assets/card_kanshou_hd.jpg" alt="干将莫邪"></div>
+          <div class="skill-info">
+            <div class="title-row">
+              <span class="name">干将·莫邪</span>
+              <div class="badges">
+                <span class="badge badge-cost">魔力消耗 2</span>
+                <span class="badge badge-power">威力 2</span>
+              </div>
+            </div>
+            <div class="desc">投影魔术 · 连续攻击
+打出后本回合追加一次迅速攻击额度</div>
+          </div>
+        </div>
+
+        <!-- 升华技：必胜黄金之剑 (发光高阶) -->
+        <div class="skill-card-strip is-upg" data-zoom="assets/card_caliburn_hd.jpg">
+          <div class="mini-card"><img src="assets/card_caliburn_hd.jpg" alt="必胜黄金之剑"></div>
+          <div class="skill-info">
+            <div class="title-row">
+              <span class="name">必胜黄金之剑</span>
+              <div class="badges">
+                <span class="badge badge-upg">升华技</span>
+                <span class="badge badge-cost">魔力消耗 8</span>
+              </div>
+            </div>
+            <div class="desc">真名斩击 · 契约奇迹
+自身合计威力与从者合计威力叠加结算</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ======================= 中央核心：战略沙盘与投影出牌 ======================= -->
+  <main id="hud-center">
+    <!-- 顶部天幕：局势与战程 -->
+    <header class="fate-panel center-top-bar fate-panel-diamond">
+      <div class="phase-chronos">
+        <div class="chronos-dial">
+          <span class="grail-war-tag">FIFTH HEAVEN'S FEEL</span>
+          <div class="day-text">第五夜 <small>/ 11</small></div>
+        </div>
+        <div class="phase-track">
+          <div class="phase-node done">准备</div>
+          <div class="phase-node done">前哨</div>
+          <div class="phase-node active">行动阶段</div>
+          <div class="phase-node">战斗结算</div>
+        </div>
+      </div>
+
+      <!-- 全局局势卡 -->
+      <div class="global-situation-hub">
+        <div class="sit-card-box" data-zoom="assets/card_situation_1.jpg">
+          <img src="assets/card_situation_1.jpg" alt="局势牌">
+        </div>
+        <div class="sit-text-box">
+          <span class="sit-name">暴风雨前的宁静</span>
+          <span class="sit-rule">迅速攻击于深山町和新都获得合计威力+2</span>
+        </div>
+        <div class="deck-pill">局势牌库 <b>3</b></div>
+        <div class="deck-pill">事件牌库 <b>22</b></div>
+      </div>
+    </header>
+
+    <!-- 冬木俯瞰全息战略沙盘 (地理格局分布式四个要冲) -->
+    <section class="hologram-battleground">
+      <!-- 灵脉网络动态光缆 -->
+      <svg class="leyline-svg">
+        <defs>
+          <linearGradient id="lineGlow1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#34d8ff" stop-opacity="0.2"/>
+            <stop offset="50%" stop-color="#34d8ff" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#d4b06a" stop-opacity="0.3"/>
+          </linearGradient>
+        </defs>
+        <!-- 工房到深山町 -->
+        <path d="M 270 110 Q 285 110 300 110" fill="none" stroke="url(#lineGlow1)" stroke-width="2.5" stroke-dasharray="6, 4"/>
+        <!-- 深山町到新都 (跨灵脉) -->
+        <path d="M 490 230 Q 490 270 490 310" fill="none" stroke="url(#lineGlow1)" stroke-width="2.5" stroke-dasharray="6, 4"/>
+        <!-- 侦察到新都 -->
+        <path d="M 270 370 Q 285 370 300 370" fill="none" stroke="url(#lineGlow1)" stroke-width="2.5" stroke-dasharray="6, 4"/>
+        <!-- 侦察到工房 (海陆回环) -->
+        <path d="M 145 225 Q 145 270 145 315" fill="none" stroke="url(#lineGlow1)" stroke-width="1.5" stroke-dasharray="4, 6"/>
+      </svg>
+
+      <!-- 1. 魔术工房 (圆藏山/柳洞寺灵脉大阵) -->
+      <div class="tactical-node" id="node-workshop">
+        <div class="node-banner">
+          <img src="assets/zone_summoning.jpg" alt="魔术工房">
+          <div class="node-title-overlay">
+            <div>
+              <div class="cn">魔术工房</div>
+              <div class="en">WORKSHOP</div>
+            </div>
+            <div class="node-cost-tag">移动魔力 1</div>
+          </div>
+        </div>
+        <div class="node-body">
+          <div class="seats-cluster">
+            <!-- 慎二入驻魔力+2席 -->
+            <div class="seat-orb mana-seat" title="间桐慎二 充能+2">
+              <div class="occupant"><img src="assets/head_shinji.png" alt="慎二"></div>
+            </div>
+            <div class="seat-orb mana-seat" title="魔力充能席 +1"><span class="seat-val">+1</span></div>
+            <div class="seat-orb mana-seat" title="魔力充能席 +1"><span class="seat-val">+1</span></div>
+            <div class="seat-orb mana-seat" title="魔力充能席 +1"><span class="seat-val">+1</span></div>
+          </div>
+          <div class="node-event-badge">
+            <span class="en-tag">MANA FLOW</span>
+            <span class="ev-name">灵脉充能节点 · 无争夺</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 深山町 (传统都会要冲 · 卫宫士郎我方驻留地) -->
+      <div class="tactical-node" id="node-miyama">
+        <div class="node-banner">
+          <img src="assets/zone_intersection.jpg" alt="深山町">
+          <div class="node-title-overlay">
+            <div>
+              <div class="cn">深山町</div>
+              <div class="en">MIYAMA TOWN</div>
+            </div>
+            <div class="node-cost-tag">移动魔力 2</div>
+          </div>
+        </div>
+        <div class="node-body">
+          <div class="seats-cluster">
+            <!-- 远坂凛 地利+3 -->
+            <div class="seat-orb" title="远坂凛 地利+3">
+              <div class="occupant"><img src="assets/head_rin.png" alt="远坂凛"></div>
+            </div>
+            <!-- 卫宫士郎 地利+1 (我方) -->
+            <div class="seat-orb is-me" title="卫宫士郎 地利+1 (你当前在此)">
+              <div class="occupant"><img src="assets/head_shirou.png" alt="卫宫士郎"></div>
+            </div>
+            <!-- 附加挂载事件牌 -->
+            <div class="node-event-badge" style="margin-left: auto;" data-zoom="assets/card_event_1.jpg">
+              <img src="assets/card_event_1.jpg" alt="事件">
+              <span class="ev-name">宿命决斗</span>
+            </div>
+          </div>
+          <!-- 混战交锋横条 (士郎/凛 VS 葛木宗一郎) -->
+          <div class="clash-bar">
+            <div class="swords"></div>
+            <div class="contest-title">争夺战果 2 · 混战爆发</div>
+            <div class="clash-fighters">
+              <div class="clash-fighter-av" title="葛木宗一郎"><img src="assets/head_kuzuki.png" alt="葛木"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 新都 (现代商业核心街区 · 高激烈冲突) -->
+      <div class="tactical-node" id="node-shinto">
+        <div class="node-banner">
+          <img src="assets/zone_shinto_roof.jpg" alt="新都">
+          <div class="node-title-overlay">
+            <div>
+              <div class="cn">新都</div>
+              <div class="en">SHINTO CITY</div>
+            </div>
+            <div class="node-cost-tag">移动魔力 2</div>
+          </div>
+        </div>
+        <div class="node-body">
+          <div class="seats-cluster">
+            <!-- 伊莉雅 地利+3 -->
+            <div class="seat-orb" title="伊莉雅斯菲尔 地利+3">
+              <div class="occupant"><img src="assets/head_illya.png" alt="伊莉雅"></div>
+            </div>
+            <div class="seat-orb" title="空置席位 地利+1"><span class="seat-val">+1</span></div>
+            <!-- 附加挂载事件牌 -->
+            <div class="node-event-badge" style="margin-left: auto;" data-zoom="assets/card_event_2.jpg">
+              <img src="assets/card_event_2.jpg" alt="事件">
+              <span class="ev-name">灵脉喷涌</span>
+            </div>
+          </div>
+          <!-- 混战交锋横条 (伊莉雅 VS 间桐樱) -->
+          <div class="clash-bar">
+            <div class="swords"></div>
+            <div class="contest-title">争夺战果 3 · 激战交锋</div>
+            <div class="clash-fighters">
+              <div class="clash-fighter-av" title="间桐樱"><img src="assets/head_sakura.png" alt="间桐樱"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 侦察 (冬木大桥与海港要塞) -->
+      <div class="tactical-node" id="node-scout">
+        <div class="node-banner">
+          <img src="assets/zone_harbour.jpg" alt="侦察">
+          <div class="node-title-overlay">
+            <div>
+              <div class="cn">侦察哨所</div>
+              <div class="en">RECON HARBOUR</div>
+            </div>
+            <div class="node-cost-tag">移动魔力 2</div>
+          </div>
+        </div>
+        <div class="node-body">
+          <div class="seats-cluster">
+            <!-- 言峰绮礼 先锋驻守 -->
+            <div class="seat-orb" title="言峰绮礼 先锋席">
+              <div class="occupant"><img src="assets/head_kirei.png" alt="言峰绮礼"></div>
+            </div>
+            <div class="seat-orb" title="待机席位"><span class="seat-val">先锋</span></div>
+          </div>
+          <div class="node-event-badge">
+            <span class="en-tag">REWARD</span>
+            <span class="ev-name">战力结算时此处全员获得战果 2</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 下半部：投影出牌熔炉 + 魔术回路资源条 -->
+    <footer class="center-bottom-forge">
+      <!-- 战斗出牌区 (已打出卡牌平铺展示) -->
+      <div class="fate-panel projection-forge fate-panel-diamond">
+        <div class="forge-cards-tray">
+          <div class="section-tag" style="writing-mode: vertical-rl; transform: rotate(180deg); margin-right: 4px;">
+            投影出牌区 <span class="en-tag">COMBAT FORGE</span>
+          </div>
+          <!-- 已出第一张牌：迅速攻击 (明置) -->
+          <div class="forge-card-active" data-zoom="assets/card_atk_1.jpg">
+            <img src="assets/card_atk_1.jpg" alt="出牌">
+            <span class="face-tag">明置</span>
+          </div>
+          <!-- 待出牌空槽位 -->
+          <div class="forge-slot">
+            <span style="font-size: 20px;">+</span>
+            <span>追加打出</span>
+          </div>
+        </div>
+
+        <!-- 威力合计爆发仪表 -->
+        <div class="power-surge-box">
+          <div class="power-indicator">
+            <span class="val" id="disp-power">1</span>
+            <span class="lbl">合计威力</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 核心三维资源控制底栏 (魔术回路长条 + 战果 + 令咒 + 结束按钮) -->
+      <div class="action-dock-bar">
+        <!-- 魔术回路长条 (9 / 12) -->
+        <div class="circuit-mana-gauge">
+          <div class="circuit-header">
+            <div class="label">
+              <img src="assets/icon_mana_orb.png" alt="魔力">
+              <span>魔术回路神经活化 (魔力)</span>
+            </div>
+            <div class="value"><span id="disp-mana">9</span> <small>/ 12</small></div>
+          </div>
+          <div class="circuit-nodes-row" id="mana-circuits-row">
+            <!-- 由 JS 渲染 12 个发光回路刻度 -->
+          </div>
+        </div>
+
+        <!-- 战果积分 -->
+        <div class="resource-trophy">
+          <img src="assets/icon_holy_grail.png" alt="战果">
+          <div class="v-col">
+            <span class="v-num">11</span>
+            <span class="v-lbl">战果</span>
+          </div>
+        </div>
+
+        <!-- 3画血红令咒 -->
+        <div class="command-seals-rack">
+          <div class="seal-stroke" title="第一画令咒 (可发动移动/强化/增幅)"></div>
+          <div class="seal-stroke" title="第二画令咒"></div>
+          <div class="seal-stroke" title="第三画令咒"></div>
+        </div>
+
+        <!-- 结束行动按钮 -->
+        <button class="btn-end-turn" id="btn-end-action">结束行动</button>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ======================= 右翼：因果律顺位仪与圣杯监视阵 ======================= -->
+  <aside id="hud-right">
+    <!-- 垂直因果律顺位罗盘 -->
+    <div class="fate-panel chronos-order-box fate-panel-diamond">
+      <div class="section-tag">因果行动顺位 <span class="en-tag">TURN ORDER</span></div>
+      <div class="order-orbit-track" id="order-track-list">
+        <!-- 顺位1：远坂凛 (当前行动中，高亮红光) -->
+        <div class="order-seat-strip is-acting">
+          <span class="order-rk-num">I</span>
+          <div class="order-av"><img src="assets/head_rin.png" alt="远坂凛"></div>
+          <div class="order-info">
+            <div class="name-row">
+              <span class="m-name">远坂凛</span>
+              <span class="loc-name">深山町</span>
+            </div>
+            <div class="order-stats-row">
+              <span>魔力 7</span>
+              <span>战果 14</span>
+              <div class="order-seals-dots"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 顺位2：间桐慎二 -->
+        <div class="order-seat-strip">
+          <span class="order-rk-num">II</span>
+          <div class="order-av"><img src="assets/head_shinji.png" alt="间桐慎二"></div>
+          <div class="order-info">
+            <div class="name-row">
+              <span class="m-name">间桐慎二</span>
+              <span class="loc-name">魔术工房</span>
+            </div>
+            <div class="order-stats-row">
+              <span>魔力 5</span>
+              <span>战果 6</span>
+              <div class="order-seals-dots"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 顺位3：卫宫士郎 (我方) -->
+        <div class="order-seat-strip is-me">
+          <span class="order-rk-num">III</span>
+          <div class="order-av"><img src="assets/head_shirou.png" alt="卫宫士郎"></div>
+          <div class="order-info">
+            <div class="name-row">
+              <span class="m-name">卫宫士郎</span>
+              <span class="loc-name" style="color: var(--c-gold-bright);">深山町 · 我方</span>
+            </div>
+            <div class="order-stats-row">
+              <span style="color: var(--c-mana);">魔力 9</span>
+              <span style="color: var(--c-gold-bright);">战果 11</span>
+              <div class="order-seals-dots"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 顺位4：间桐樱 -->
+        <div class="order-seat-strip">
+          <span class="order-rk-num">IV</span>
+          <div class="order-av"><img src="assets/head_sakura.png" alt="间桐樱"></div>
+          <div class="order-info">
+            <div class="name-row">
+              <span class="m-name">间桐樱</span>
+              <span class="loc-name">新都</span>
+            </div>
+            <div class="order-stats-row">
+              <span>魔力 10</span>
+              <span>战果 12</span>
+              <div class="order-seals-dots"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 顺位5：伊莉雅斯菲尔 -->
+        <div class="order-seat-strip">
+          <span class="order-rk-num">V</span>
+          <div class="order-av"><img src="assets/head_illya.png" alt="伊莉雅"></div>
+          <div class="order-info">
+            <div class="name-row">
+              <span class="m-name">伊莉雅斯菲尔</span>
+              <span class="loc-name">新都</span>
+            </div>
+            <div class="order-stats-row">
+              <span>魔力 12</span>
+              <span>战果 15</span>
+              <div class="order-seals-dots"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 顺位6：言峰绮礼 -->
+        <div class="order-seat-strip">
+          <span class="order-rk-num">VI</span>
+          <div class="order-av"><img src="assets/head_kirei.png" alt="言峰绮礼"></div>
+          <div class="order-info">
+            <div class="name-row">
+              <span class="m-name">言峰绮礼</span>
+              <span class="loc-name">侦察</span>
+            </div>
+            <div class="order-stats-row">
+              <span>魔力 4</span>
+              <span>战果 9</span>
+              <div class="order-seals-dots"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 顺位7：葛木宗一郎 -->
+        <div class="order-seat-strip">
+          <span class="order-rk-num">VII</span>
+          <div class="order-av"><img src="assets/head_kuzuki.png" alt="葛木宗一郎"></div>
+          <div class="order-info">
+            <div class="name-row">
+              <span class="m-name">葛木宗一郎</span>
+              <span class="loc-name">深山町</span>
+            </div>
+            <div class="order-stats-row">
+              <span>魔力 3</span>
+              <span>战果 7</span>
+              <div class="order-seals-dots"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 圣杯战争战果天平榜 (点击可随时折叠展开) -->
+    <div class="fate-panel grail-standings-card fate-panel-diamond">
+      <h4>
+        <span>圣杯战果天平</span>
+        <small>第八夜保留前四</small>
+      </h4>
+
+      <div class="standings-list">
+        <div class="standing-row">
+          <span class="rank">1</span>
+          <div class="av-mini"><img src="assets/head_illya.png" alt=""></div>
+          <span class="nm">伊莉雅斯菲尔</span>
+          <span class="score">15</span>
+        </div>
+        <div class="standing-row">
+          <span class="rank">2</span>
+          <div class="av-mini"><img src="assets/head_rin.png" alt=""></div>
+          <span class="nm">远坂凛</span>
+          <span class="score">14</span>
+        </div>
+        <div class="standing-row">
+          <span class="rank">3</span>
+          <div class="av-mini"><img src="assets/head_sakura.png" alt=""></div>
+          <span class="nm">间桐樱</span>
+          <span class="score">12</span>
+        </div>
+        <div class="standing-row cutline">
+          <span class="rank">4</span>
+          <div class="av-mini" style="border-color: var(--c-gold);"><img src="assets/head_shirou.png" alt=""></div>
+          <span class="nm" style="color: var(--c-gold-bright);">卫宫士郎 (我方)</span>
+          <span class="score">11</span>
+        </div>
+        <div class="standing-row" style="opacity: 0.65;">
+          <span class="rank">5</span>
+          <div class="av-mini"><img src="assets/head_kirei.png" alt=""></div>
+          <span class="nm">言峰绮礼</span>
+          <span class="score">9</span>
+        </div>
+        <div class="standing-row" style="opacity: 0.65;">
+          <span class="rank">6</span>
+          <div class="av-mini"><img src="assets/head_kuzuki.png" alt=""></div>
+          <span class="nm">葛木宗一郎</span>
+          <span class="score">7</span>
+        </div>
+        <div class="standing-row" style="opacity: 0.65;">
+          <span class="rank">7</span>
+          <div class="av-mini"><img src="assets/head_shinji.png" alt=""></div>
+          <span class="nm">间桐慎二</span>
+          <span class="score">6</span>
+        </div>
+      </div>
+
+      <!-- 淘汰预兆刻度条 -->
+      <div class="elim-thresholds">
+        <div class="elim-pill current">第八夜<b>保留前四</b></div>
+        <div class="elim-pill">第九夜<b>保留前三</b></div>
+        <div class="elim-pill">第十夜<b>决战前二</b></div>
+        <div class="elim-pill">第十一夜<b>圣杯降临</b></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ======================= 展开式全息手牌抽屉 ======================= -->
+  <div id="hand-drawer">
+    <div class="drawer-toggle" id="drawer-toggle-btn">
+      <span class="caret"></span>
+      <span>手牌指令刻印 (3)</span>
+      <span class="caret"></span>
+    </div>
+
+    <div class="hand-deck-tray">
+      <!-- 手牌 1：基础攻击 (迅速，合法可出：金色呼吸描边) -->
+      <div class="hand-card-wrapper playable">
+        <div class="play-affordance-menu">
+          <button class="btn-play-face reveal" onclick="simulatePlayCard('迅速攻击', '明置', 2)">明置打出</button>
+          <button class="btn-play-face hidden" onclick="simulatePlayCard('迅速攻击', '暗置', 2)">暗置打出</button>
+        </div>
+        <div class="card-item" data-zoom="assets/card_atk_2.jpg">
+          <img src="assets/card_atk_2.jpg" alt="手牌1">
+        </div>
+      </div>
+
+      <!-- 手牌 2：强力攻击 (合法可出：金色呼吸描边) -->
+      <div class="hand-card-wrapper playable">
+        <div class="play-affordance-menu">
+          <button class="btn-play-face reveal" onclick="simulatePlayCard('强力攻击', '明置', 3)">明置打出</button>
+          <button class="btn-play-face hidden" onclick="simulatePlayCard('强力攻击', '暗置', 3)">暗置打出</button>
+        </div>
+        <div class="card-item" data-zoom="assets/card_atk_3.jpg">
+          <img src="assets/card_atk_3.jpg" alt="手牌2">
+        </div>
+      </div>
+
+      <!-- 手牌 3：基础技能 · 侦察 -->
+      <div class="hand-card-wrapper">
+        <div class="play-affordance-menu">
+          <button class="btn-play-face reveal" onclick="simulatePlayCard('侦察技能', '明置', 0)">发动技能</button>
+        </div>
+        <div class="card-item" data-zoom="assets/card_surveil.jpg">
+          <img src="assets/card_surveil.jpg" alt="手牌3">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= 敌方行动大型横幅 ======================= -->
+  <div id="enemy-action-banner">
+    <div class="enemy-av-ring"><img src="assets/head_rin.png" alt="远坂凛"></div>
+    <div class="enemy-meta-text">
+      <span class="sub-warn">ENEMY ACTION PHASE</span>
+      <span class="main-warn">远坂凛 于 深山町 发动行动</span>
+    </div>
+  </div>
+
+  <!-- ======================= 悬浮卡牌放大浮窗 ======================= -->
+  <div id="card-zoom-overlay">
+    <img id="zoom-img" src="" alt="放大预览">
+  </div>
+</div>
+
+<!-- ======================= 底部自测与状态切换控制台 ======================= -->
+<div id="test-console">
+  <span>原型演示状态切换:</span>
+  <button class="ctrl-btn" onclick="toggleHand()">展开/收起手牌 (H)</button>
+  <button class="ctrl-btn" onclick="toggleBanner()">敌方行动横幅 (B)</button>
+  <button class="ctrl-btn" onclick="toggleStandings()">折叠/展开排行榜</button>
+  <button class="ctrl-btn" onclick="addMana(2)">+2 魔力</button>
+  <button class="ctrl-btn" onclick="costMana(3)">-3 魔力</button>
+</div>
+
+<script>
+// 自适应等比缩放 1920x1080
+function fitStage() {
+  const stage = document.getElementById('stage');
+  const sw = 1920, sh = 1080;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const scale = Math.min(vw / sw, vh / sh);
+  document.documentElement.style.setProperty('--scale', scale);
+}
+window.addEventListener('resize', fitStage);
+fitStage();
+
+// 魔力条渲染 (9/12)
+let currentMana = 9;
+const maxMana = 12;
+
+function renderMana() {
+  const container = document.getElementById('mana-circuits-row');
+  container.innerHTML = '';
+  for (let i = 1; i <= maxMana; i++) {
+    const seg = document.createElement('div');
+    seg.className = 'circuit-seg' + (i <= currentMana ? ' lit' : '');
+    if (i === 4 || i === 8) seg.classList.add('gate');
+    container.appendChild(seg);
+  }
+  document.getElementById('disp-mana').innerText = currentMana;
+}
+renderMana();
+
+function addMana(val) {
+  currentMana = Math.min(maxMana, currentMana + val);
+  renderMana();
+}
+function costMana(val) {
+  currentMana = Math.max(0, currentMana - val);
+  renderMana();
+}
+
+// 手牌展开收起
+const handDrawer = document.getElementById('hand-drawer');
+const drawerToggleBtn = document.getElementById('drawer-toggle-btn');
+function toggleHand() {
+  handDrawer.classList.toggle('open');
+}
+drawerToggleBtn.addEventListener('click', toggleHand);
+
+// 敌方行动横幅
+const banner = document.getElementById('enemy-action-banner');
+function toggleBanner() {
+  banner.classList.toggle('show');
+}
+
+// 排行榜折叠
+function toggleStandings() {
+  const box = document.querySelector('.grail-standings-card');
+  if (box.style.display === 'none') {
+    box.style.display = 'flex';
+  } else {
+    box.style.display = 'none';
+  }
+}
+
+// 卡牌放大预览悬浮
+const zoomOverlay = document.getElementById('card-zoom-overlay');
+const zoomImg = document.getElementById('zoom-img');
+
+document.querySelectorAll('[data-zoom]').forEach(el => {
+  el.addEventListener('mouseenter', (e) => {
+    const src = el.getAttribute('data-zoom');
+    if (!src) return;
+    zoomImg.src = src;
+    zoomOverlay.classList.add('active');
+    updateZoomPos(e);
+  });
+  el.addEventListener('mousemove', (e) => {
+    updateZoomPos(e);
+  });
+  el.addEventListener('mouseleave', () => {
+    zoomOverlay.classList.remove('active');
+  });
+});
+
+function updateZoomPos(e) {
+  const zoomW = 380;
+  const zoomH = 532;
+  let x = e.clientX + 24;
+  let y = e.clientY - 120;
+  if (x + zoomW > window.innerWidth) x = e.clientX - zoomW - 24;
+  if (y + zoomH > window.innerHeight) y = window.innerHeight - zoomH - 20;
+  if (y < 20) y = 20;
+  zoomOverlay.style.left = x + 'px';
+  zoomOverlay.style.top = y + 'px';
+}
+
+// 模拟打出卡牌
+function simulatePlayCard(cardName, face, powerAdd) {
+  const powerEl = document.getElementById('disp-power');
+  let p = parseInt(powerEl.innerText) || 0;
+  p += powerAdd;
+  powerEl.innerText = p;
+  
+  // 闪烁提示
+  powerEl.style.transform = 'scale(1.3)';
+  setTimeout(() => { powerEl.style.transform = 'scale(1)'; }, 300);
+}
+
+// URL 参数快速直达模式
+const params = new URLSearchParams(window.location.search);
+if (params.get('hand') === '1') {
+  handDrawer.classList.add('open');
+}
+if (params.get('banner') === '1') {
+  banner.classList.add('show');
+}
+if (params.get('zoom') === '1') {
+  zoomImg.src = 'assets/card_excalibur_hd.jpg';
+  zoomOverlay.classList.add('active');
+  zoomOverlay.style.left = '700px';
+  zoomOverlay.style.top = '240px';
+}
+
+// 键盘快捷键监听
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'h' || e.key === 'H') toggleHand();
+  if (e.key === 'b' || e.key === 'B') toggleBanner();
+});
+</script>
+</body>
+</html>

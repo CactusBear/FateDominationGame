@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Fate Domination · 对局界面概念稿 v1</title>
+<script src="assets/data.js"></script>
+<style>
+@font-face{font-family:"Cinzel";src:url(assets/Cinzel-Regular.ttf);font-weight:400}
+@font-face{font-family:"Cinzel";src:url(assets/Cinzel-Bold.ttf);font-weight:700}
+:root{
+  --ink:#06080d; --ink2:#0d121c; --ink3:#161d2b;
+  --gold:#c9a45c; --gold2:#e8cd86; --gold3:#8a6a32;
+  --mana:#3fd6f0; --mana2:#1a7fa6;
+  --blood:#c81d25; --blood2:#ff4d57;
+  --text:#efe6d2; --dim:#a79e8b; --dim2:#6d665a;
+  --serif:"Noto Serif SC","Source Han Serif SC","SimSun",serif;
+  --latin:"Cinzel",Georgia,serif;
+  --card-w:143px; --card-h:200px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;font-family:var(--serif);color:var(--text);-webkit-font-smoothing:antialiased}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;background:var(--ink)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.latin{font-family:var(--latin)}
+.bg{position:absolute;inset:0;background:url(assets/bg_church.jpg) center/cover;filter:saturate(.75) brightness(.7)}
+.vign{position:absolute;inset:0;background:
+  linear-gradient(180deg,rgba(6,8,13,.92) 0,rgba(6,8,13,.55) 12%,rgba(6,8,13,.35) 45%,rgba(6,8,13,.9) 62%,rgba(6,8,13,.97) 100%)}
+.corner{position:absolute;width:38px;height:38px;border:1px solid rgba(201,164,92,.55);pointer-events:none}
+.corner.tl{left:20px;top:20px;border-right:0;border-bottom:0}
+.corner.tr{right:20px;top:20px;border-left:0;border-bottom:0}
+.corner.bl{left:20px;bottom:20px;border-right:0;border-top:0}
+.corner.br{right:20px;bottom:20px;border-left:0;border-top:0}
+.particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particles i{position:absolute;bottom:-10px;width:3px;height:3px;border-radius:50%;background:var(--gold2);opacity:0;box-shadow:0 0 8px var(--gold2);animation:float linear infinite}
+@keyframes float{0%{opacity:0;transform:translateY(0)}10%{opacity:.7}90%{opacity:.35}100%{opacity:0;transform:translateY(-1150px)}}
+@keyframes breathe{0%,100%{box-shadow:0 0 0 2px var(--gold2),0 0 10px rgba(232,205,134,.35)}50%{box-shadow:0 0 0 3px var(--gold2),0 0 26px rgba(232,205,134,.9)}}
+
+/* 通用面板 */
+.panel{position:relative;background:rgba(6,8,13,.72);border:1px solid rgba(201,164,92,.35)}
+.panel::before{content:"";position:absolute;left:10px;right:10px;top:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 50%,transparent)}
+.ph{display:flex;align-items:center;gap:12px;padding:10px 16px 8px;font-size:15px;letter-spacing:5px;color:var(--gold2)}
+.ph .en{font-family:var(--latin);font-size:11px;letter-spacing:3px;color:var(--dim2)}
+.ph .fill{flex:1;height:1px;background:linear-gradient(90deg,var(--gold3),transparent)}
+.ph .tg{font-size:12px;letter-spacing:1px;color:var(--dim);border:1px solid var(--gold3);padding:1px 8px}
+.ph .tg:hover{color:var(--gold2);border-color:var(--gold2)}
+
+/* ---------- 顶栏 ---------- */
+#top{position:absolute;left:0;right:0;top:0;height:88px;display:flex;align-items:center;padding:0 60px;gap:28px}
+#top .night{display:flex;align-items:baseline;gap:14px}
+#top .night .n{font-family:var(--latin);font-weight:700;font-size:40px;color:#fff6dc;text-shadow:0 0 14px rgba(232,205,134,.35)}
+#top .night .cn{font-size:20px;letter-spacing:6px;color:var(--gold2)}
+#top .night .sub{font-size:13px;letter-spacing:2px;color:var(--dim2)}
+#top .sep{width:1px;height:40px;background:var(--gold3)}
+#top .sit{display:flex;align-items:center;gap:12px;cursor:pointer}
+#top .sit .thumb{width:38px;height:53px;background:#000 center/cover;box-shadow:0 0 0 1px var(--gold3)}
+#top .sit .nm{font-size:17px;letter-spacing:3px;color:var(--text)}
+#top .sit .ef{font-size:13px;letter-spacing:1px;color:var(--dim);margin-top:3px}
+#top .sit .mg{font-size:13px;color:var(--mana);letter-spacing:1px;margin-top:3px}
+#phases{margin-left:auto;margin-right:auto;display:flex;align-items:center;gap:0}
+#phases .p{position:relative;display:flex;flex-direction:column;align-items:center;width:150px;color:var(--dim2)}
+#phases .p .en{font-family:var(--latin);font-size:10px;letter-spacing:3px}
+#phases .p .cn{font-size:17px;letter-spacing:4px;margin-top:3px}
+#phases .p .dot{width:10px;height:10px;margin-top:8px;transform:rotate(45deg);border:1px solid var(--gold3);background:var(--ink)}
+#phases .p.done .dot{background:var(--gold3)}
+#phases .p.cur{color:#fff6dc}
+#phases .p.cur .en{color:var(--gold)}
+#phases .p.cur .dot{background:var(--gold2);box-shadow:0 0 14px var(--gold2);border-color:var(--gold2)}
+#phases .p::after{content:"";position:absolute;right:-40px;bottom:5px;width:80px;height:1px;background:var(--gold3);opacity:.6}
+#phases .p:last-child::after{display:none}
+#order{display:flex;align-items:center;gap:10px}
+#order .lb{font-size:13px;letter-spacing:3px;color:var(--dim);margin-right:4px}
+#order .av{position:relative;width:44px;height:44px;border-radius:50%;background:#000 center/cover;box-shadow:0 0 0 2px var(--ink),0 0 0 3px var(--gold3);opacity:.55;transition:opacity .3s,transform .3s}
+#order .av.cur{opacity:1;transform:scale(1.18);box-shadow:0 0 0 2px var(--ink),0 0 0 3px var(--gold2),0 0 18px rgba(232,205,134,.7)}
+#order .av.me{opacity:.95}
+#order .av.done{opacity:.3;filter:grayscale(.6)}
+#order .av i{position:absolute;left:-4px;top:-6px;font-family:var(--latin);font-size:10px;color:var(--gold);background:var(--ink);padding:0 3px;border:1px solid var(--gold3)}
+#order .av.me::after{content:"";position:absolute;left:50%;bottom:-9px;width:0;height:0;transform:translateX(-50%);border:5px solid transparent;border-bottom-color:var(--gold2)}
+
+/* ---------- 版图 ---------- */
+#map{position:absolute;left:40px;top:104px;width:1400px;height:520px;display:flex;align-items:stretch;gap:0;transition:width .35s}
+#map.wide{width:1800px}
+.area{position:relative;flex:1 1 auto;border:1px solid rgba(201,164,92,.4);background:#000 center/cover;overflow:hidden;transition:flex-basis .35s}
+.area::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,8,13,.3),rgba(6,8,13,.55) 45%,rgba(6,8,13,.94) 100%)}
+.area::after{content:"";position:absolute;left:12px;right:12px;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 50%,transparent)}
+.area .hd{position:absolute;left:0;right:0;top:0;padding:14px 18px;display:flex;align-items:flex-start;gap:12px}
+.area .hd .cn{font-size:30px;letter-spacing:8px;font-weight:700;color:#fff6dc;text-shadow:0 2px 6px rgba(0,0,0,.8)}
+.area .hd .en{display:block;font-family:var(--latin);font-size:11px;letter-spacing:4px;color:var(--gold);margin-top:2px}
+.area .hd .vp{margin-left:auto;text-align:right}
+.area .hd .vp b{display:block;font-family:var(--latin);font-size:26px;color:var(--gold2)}
+.area .hd .vp span{font-size:12px;letter-spacing:2px;color:var(--dim)}
+.area.me{border-color:var(--gold2);box-shadow:inset 0 0 0 1px rgba(232,205,134,.35),0 0 24px rgba(232,205,134,.15)}
+.area .tag{position:absolute;left:18px;top:74px;font-size:12px;letter-spacing:2px;color:var(--dim);border:1px solid rgba(201,164,92,.35);padding:2px 8px;background:rgba(6,8,13,.6)}
+.area .tag.warn{color:var(--blood2);border-color:rgba(200,29,37,.5)}
+/* 事件牌槽 */
+.evslot{position:absolute;right:18px;top:78px;width:96px;height:134px;background:#000 center/cover;box-shadow:0 0 0 1px var(--gold3),0 10px 22px rgba(0,0,0,.7);cursor:pointer;transition:transform .2s}
+.evslot:hover{transform:translateY(-3px)}
+.evslot .cap{position:absolute;left:0;right:0;bottom:0;padding:5px 4px;font-size:12px;letter-spacing:1px;text-align:center;color:var(--gold2);background:linear-gradient(180deg,transparent,rgba(0,0,0,.9))}
+.evslot .vp{position:absolute;left:-8px;top:-8px;width:28px;height:28px;display:grid;place-items:center;font-family:var(--latin);font-size:14px;color:#1a1206;background:linear-gradient(180deg,var(--gold2),var(--gold));transform:rotate(45deg)}
+.evslot .vp b{transform:rotate(-45deg)}
+.evslot.back .cap{color:var(--dim)}
+.evtext{position:absolute;right:124px;top:80px;width:150px;font-size:13px;line-height:1.7;letter-spacing:1px;color:var(--dim);text-align:right}
+.evtext b{display:block;color:var(--text);font-weight:400;font-size:14px}
+/* 席位 */
+.seats{position:absolute;left:18px;right:18px;bottom:96px;display:flex;gap:14px;align-items:flex-end}
+.seat{position:relative;width:78px;height:78px;flex:0 0 auto}
+.seat svg{position:absolute;inset:0;width:100%;height:100%}
+.seat .val{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-family:var(--latin);font-size:22px;color:var(--gold2);pointer-events:none}
+.seat .val small{display:block;font-family:var(--serif);font-size:10px;letter-spacing:1px;color:var(--dim)}
+.seat.mana .val{color:var(--mana)}
+.seat .occ{position:absolute;left:50%;top:50%;width:58px;height:58px;transform:translate(-50%,-50%);border-radius:50%;background:#000 center/cover;box-shadow:0 0 0 2px var(--ink),0 0 0 3px var(--gold3)}
+.seat .occ.me{box-shadow:0 0 0 2px var(--ink),0 0 0 3px var(--gold2),0 0 18px rgba(232,205,134,.6)}
+.seat .occ.act{animation:breathe 1.6s ease-in-out infinite}
+.seat .occ .tr{position:absolute;left:-14px;top:-8px;padding:0 5px;font-family:var(--latin);font-size:12px;color:var(--gold2);background:var(--ink);border:1px solid var(--gold3)}
+.seat .occ .tr.mn{color:var(--mana)}
+.seat .occ .pw{position:absolute;right:-12px;bottom:-8px;min-width:26px;padding:0 5px;font-family:var(--latin);font-size:13px;text-align:center;color:#fff6dc;background:var(--ink);border:1px solid var(--gold3)}
+.seat .occ .nm{position:absolute;left:50%;bottom:-24px;transform:translateX(-50%);white-space:nowrap;font-size:12px;letter-spacing:1px;color:var(--text);text-shadow:0 1px 4px #000}
+.seat.free .val{opacity:.55}
+.seat.unl{width:auto;min-width:78px;height:78px;display:flex;align-items:center;gap:6px;padding:0 10px;border:1px dashed rgba(201,164,92,.35);border-radius:39px}
+.seat.unl .occ{position:static;transform:none;width:52px;height:52px}
+.seat.unl .lbl{font-size:11px;letter-spacing:1px;color:var(--dim);writing-mode:vertical-rl}
+/* 战力对照 */
+.duel{position:absolute;left:18px;right:18px;bottom:14px;display:flex;flex-direction:column;gap:5px}
+.duel .row{display:flex;align-items:center;gap:8px;font-size:13px;letter-spacing:1px;color:var(--dim)}
+.duel .row b{width:46px;font-family:var(--latin);font-size:16px;color:var(--text);text-align:right;font-weight:400}
+.duel .row .bar{flex:1;height:5px;background:rgba(255,255,255,.08)}
+.duel .row .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold3),var(--gold2))}
+.duel .row.me b{color:var(--gold2)}
+.duel .row.lead .bar i{box-shadow:0 0 8px var(--gold2)}
+.duel .row .nm{width:64px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.duel .empty{font-size:13px;letter-spacing:2px;color:var(--dim2)}
+/* 移动箭头 */
+.link{position:relative;flex:0 0 40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--dim)}
+.link svg{width:26px;height:26px;fill:none;stroke:var(--gold3);stroke-width:1.5}
+.link .cost{font-family:var(--latin);font-size:15px;color:var(--mana)}
+.link .lb{font-size:10px;letter-spacing:1px;color:var(--dim2);writing-mode:vertical-rl}
+.link.ok .cost{color:var(--gold2)}
+.link.ok svg{stroke:var(--gold2)}
+.area .mv{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:10px 22px;font-size:16px;letter-spacing:4px;color:#1a1206;font-weight:700;background:linear-gradient(180deg,var(--gold2),var(--gold));clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);opacity:0;pointer-events:none;transition:opacity .2s}
+.area.canmove:hover .mv{opacity:1;pointer-events:auto}
+.area.canmove:hover{border-color:var(--gold2)}
+
+/* ---------- 右列：战果榜 / 御主情报 ---------- */
+#side{position:absolute;left:1480px;top:104px;width:400px;height:520px;display:flex;flex-direction:column;gap:12px;transition:transform .35s,opacity .3s}
+#side.off{transform:translateX(420px);opacity:0;pointer-events:none}
+#rank{flex:0 0 auto;max-height:330px;display:flex;flex-direction:column}
+#rank .body{overflow-y:auto;min-height:0;scrollbar-width:thin;scrollbar-color:var(--gold3) transparent}
+#rank .body{padding:2px 16px 12px}
+#rank .r{display:grid;grid-template-columns:22px 30px 1fr 54px;align-items:center;gap:10px;padding:3px 0;border-bottom:1px solid rgba(201,164,92,.12);font-size:14px}
+#rank .r .i{font-family:var(--latin);font-size:13px;color:var(--dim2)}
+#rank .r .av{width:26px;height:26px;border-radius:50%;background:#000 center/cover;box-shadow:0 0 0 1px var(--gold3)}
+#rank .r .nm{letter-spacing:2px;color:var(--text)}
+#rank .r .vp{font-family:var(--latin);font-size:18px;color:var(--gold2);text-align:right}
+#rank .r.me .nm{color:var(--gold2)}
+#rank .r.cut{opacity:.5}
+#rank .r.cut .vp{color:var(--dim)}
+#rank .cutline{margin:6px 0 2px;font-size:12px;letter-spacing:2px;color:var(--blood2);display:flex;align-items:center;gap:8px}
+#rank .cutline::before,#rank .cutline::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(200,29,37,.6),transparent)}
+#intel{flex:1;min-height:0;display:flex;flex-direction:column}
+#intel .body{flex:1;min-height:0;padding:0 12px 6px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--gold3) transparent}
+#intel::after{content:"";position:absolute;left:1px;right:1px;bottom:0;height:34px;background:linear-gradient(180deg,transparent,rgba(6,8,13,.95));pointer-events:none}
+#intel .more{position:absolute;right:14px;bottom:4px;font-size:11px;letter-spacing:2px;color:var(--gold);pointer-events:none}
+.foe{display:grid;grid-template-columns:40px 1fr 70px;column-gap:10px;padding:5px 4px;border-bottom:1px solid rgba(201,164,92,.12);align-items:center}
+.foe .av{width:40px;height:40px;border-radius:50%;background:#000 center/cover;box-shadow:0 0 0 1px var(--gold3)}
+.foe .av.act{animation:breathe 1.6s ease-in-out infinite}
+.foe .l1{display:flex;align-items:baseline;gap:8px;font-size:14px;letter-spacing:2px;color:var(--text)}
+.foe .l1 .sv{font-family:var(--latin);font-size:10px;letter-spacing:2px;color:var(--dim2)}
+.foe .l1 .sv.rev{color:var(--blood2)}
+.foe .l1 .loc{margin-left:auto;font-size:12px;letter-spacing:1px;color:var(--dim)}
+.foe .l2{margin-top:5px;display:flex;align-items:center;gap:6px}
+.foe .mbar{flex:1;height:6px;display:flex;gap:1px}
+.foe .mbar i{flex:1;background:rgba(255,255,255,.07)}
+.foe .mbar i.on{background:var(--mana);box-shadow:0 0 4px rgba(63,214,240,.6)}
+.foe .l2 b{font-family:var(--latin);font-size:13px;color:var(--mana);font-weight:400;width:22px;text-align:right}
+.foe .r{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.foe .r .pw{font-family:var(--latin);font-size:22px;color:#fff6dc;line-height:1}
+.foe .r .pw small{font-family:var(--serif);font-size:10px;letter-spacing:1px;color:var(--dim);margin-left:3px}
+.foe .r .cs{display:flex;gap:3px}
+.foe .r .cs svg{width:14px;height:14px;opacity:.25}
+.foe .r .cs svg.on{opacity:1;filter:drop-shadow(0 0 3px rgba(255,77,87,.6))}
+#sidetab{position:absolute;left:1848px;top:104px;width:32px;height:520px;background:rgba(6,8,13,.8);border:1px solid rgba(201,164,92,.35);display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;font-size:13px;letter-spacing:5px;color:var(--gold2);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s}
+#sidetab.on{opacity:1;pointer-events:auto}
+
+/* ---------- 敌方行动横幅 ---------- */
+#banner{position:absolute;left:50%;top:112px;transform:translateX(-50%) translateY(-12px);display:flex;align-items:center;gap:18px;padding:10px 34px 10px 12px;background:rgba(6,8,13,.9);border:1px solid rgba(200,29,37,.55);opacity:0;pointer-events:none;transition:opacity .35s,transform .35s;z-index:5}
+#banner.on{opacity:1;transform:translateX(-50%)}
+#banner .av{width:52px;height:52px;border-radius:50%;background:#000 center/cover;box-shadow:0 0 0 2px var(--ink),0 0 0 3px var(--blood2)}
+#banner .t{font-size:22px;letter-spacing:6px;color:#fff6dc}
+#banner .t small{display:block;font-family:var(--latin);font-size:11px;letter-spacing:4px;color:var(--blood2);margin-top:2px}
+#banner .dots i{display:inline-block;width:6px;height:6px;margin-left:5px;border-radius:50%;background:var(--blood2);animation:blink 1.2s infinite}
+#banner .dots i:nth-child(2){animation-delay:.2s}#banner .dots i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+
+/* ---------- 底部：御主信息条 ---------- */
+#me{position:absolute;left:40px;right:40px;top:640px;height:76px;display:flex;align-items:center;gap:22px;padding:0 20px;background:rgba(6,8,13,.78);border:1px solid rgba(201,164,92,.45)}
+#me::before{content:"";position:absolute;left:10px;right:10px;top:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--gold2) 50%,transparent)}
+#me .id{display:flex;align-items:center;gap:14px;width:300px}
+#me .id .av{width:56px;height:56px;border-radius:50%;background:#000 center/cover;box-shadow:0 0 0 2px var(--ink),0 0 0 3px var(--gold2)}
+#me .id .nm{font-size:22px;letter-spacing:4px;color:#fff6dc}
+#me .id .sv{font-family:var(--latin);font-size:11px;letter-spacing:3px;color:var(--gold);margin-top:3px}
+#me .id .sv i{font-style:normal;font-family:var(--serif);color:var(--dim);margin-left:8px;letter-spacing:1px}
+#me .id .loc{font-size:12px;letter-spacing:2px;color:var(--dim);margin-top:2px}
+#me .stat{display:flex;flex-direction:column;gap:4px}
+#me .stat .lb{font-size:12px;letter-spacing:3px;color:var(--dim)}
+#me .stat .lb b{font-family:var(--latin);font-weight:400;color:var(--mana);font-size:16px;margin-left:8px}
+#mana{width:520px;height:14px;display:flex;gap:2px}
+#mana i{flex:1;background:rgba(255,255,255,.07);position:relative}
+#mana i.on{background:linear-gradient(180deg,#7be8fa,var(--mana) 60%,var(--mana2));box-shadow:0 0 6px rgba(63,214,240,.55)}
+#mana i.spend{background:rgba(63,214,240,.25);outline:1px dashed var(--mana)}
+#mana i.gate::after{content:"";position:absolute;right:-2px;top:-5px;bottom:-5px;width:1px;background:var(--gold2)}
+#mana i.gate::before{content:"技能区 8";position:absolute;right:-6px;top:-19px;font-size:10px;letter-spacing:1px;color:var(--gold);white-space:nowrap}
+#seals{display:flex;align-items:center;gap:8px}
+#seals svg{width:34px;height:34px;cursor:pointer;transition:transform .2s;filter:drop-shadow(0 0 6px rgba(255,77,87,.5))}
+#seals svg:hover{transform:scale(1.15)}
+#seals svg.used{opacity:.22;filter:none;cursor:default}
+#me .num{text-align:center;min-width:70px}
+#me .num b{display:block;font-family:var(--latin);font-size:30px;line-height:1;color:#fff6dc;font-weight:400}
+#me .num b.gold{color:var(--gold2)}
+#me .num span{display:block;font-size:11px;letter-spacing:3px;color:var(--dim);margin-top:4px}
+#me .vsep{width:1px;height:44px;background:var(--gold3)}
+#me .end{margin-left:auto;display:flex;align-items:center;gap:16px}
+#me .end .prog{font-size:13px;letter-spacing:2px;color:var(--dim)}
+#me .end .prog b{color:var(--text);font-family:var(--latin);font-weight:400}
+#endbtn{padding:11px 34px;font-size:18px;letter-spacing:6px;color:#1a1206;font-weight:700;background:linear-gradient(180deg,var(--gold2),var(--gold));clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);transition:filter .2s,opacity .2s}
+#endbtn:hover{filter:brightness(1.12)}
+#endbtn:disabled{opacity:.35;cursor:default;filter:grayscale(.4)}
+/* 令咒选项 */
+#cspop{position:absolute;left:0;top:0;width:250px;padding:8px;background:rgba(6,8,13,.95);border:1px solid rgba(200,29,37,.5);opacity:0;pointer-events:none;transition:opacity .2s;z-index:6}
+#cspop.on{opacity:1;pointer-events:auto}
+#cspop .o{display:block;width:100%;text-align:left;padding:8px 10px;font-size:14px;letter-spacing:1px;line-height:1.5;color:var(--text);border-bottom:1px solid rgba(201,164,92,.12);white-space:pre-line}
+#cspop .o:hover{color:var(--gold2);background:rgba(201,164,92,.08)}
+#cspop .o:disabled{color:var(--dim2);cursor:default}
+
+/* ---------- 底部：牌区平铺 ---------- */
+#zones{position:absolute;left:40px;right:40px;top:728px;height:266px;display:flex;justify-content:space-between;align-items:flex-start}
+.zone{position:relative;display:flex;flex-direction:column;gap:8px}
+.zone .zl{display:flex;align-items:baseline;gap:8px;font-size:13px;letter-spacing:4px;color:var(--gold2);padding-left:2px}
+.zone .zl .en{font-family:var(--latin);font-size:10px;letter-spacing:2px;color:var(--dim2)}
+.zone .zl .hint{margin-left:auto;font-size:12px;letter-spacing:1px;color:var(--dim)}
+.zone .cards{display:flex;gap:12px}
+.card{position:relative;width:var(--card-w);height:var(--card-h);background:#000 center/cover;box-shadow:0 0 0 1px var(--gold3),0 10px 22px rgba(0,0,0,.6);cursor:pointer;transition:transform .2s,box-shadow .2s;flex:0 0 auto}
+.card:hover{transform:translateY(-5px);box-shadow:0 0 0 1px var(--gold2),0 14px 26px rgba(0,0,0,.7)}
+.card .cap{position:absolute;left:0;right:0;bottom:0;padding:22px 6px 6px;font-size:12px;letter-spacing:1px;text-align:center;color:var(--gold2);background:linear-gradient(180deg,transparent,rgba(0,0,0,.92));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .cp{position:absolute;left:-1px;top:-1px;display:flex;gap:2px}
+.card .cp i{min-width:24px;height:24px;display:grid;place-items:center;font-family:var(--latin);font-size:13px;color:#fff6dc;background:var(--ink);border:1px solid var(--gold3);font-style:normal;padding:0 4px}
+.card .cp i.c{color:var(--mana)}
+.card .cp i.p{color:var(--gold2)}
+.card.dim{filter:grayscale(.7) brightness(.55)}
+.card.lock::after{content:"未解锁";position:absolute;inset:0;display:grid;place-items:center;font-size:14px;letter-spacing:4px;color:var(--dim);background:rgba(6,8,13,.45)}
+.card.ok{animation:breathe 1.8s ease-in-out infinite}
+.card.played{transform:none;cursor:default}
+.card .face{position:absolute;left:0;right:0;top:0;padding:4px;text-align:center;font-size:11px;letter-spacing:3px;color:#1a1206;background:linear-gradient(180deg,var(--gold2),var(--gold))}
+.card .face.down{color:var(--text);background:rgba(6,8,13,.85);border-bottom:1px solid var(--gold3)}
+.card .stack{position:absolute;right:-6px;top:-6px;min-width:26px;height:26px;display:grid;place-items:center;font-family:var(--latin);font-size:13px;color:#1a1206;background:var(--gold2)}
+.slot{width:var(--card-w);height:var(--card-h);border:1px dashed rgba(201,164,92,.4);display:grid;place-items:center;color:var(--dim2);font-size:13px;letter-spacing:3px;text-align:center;line-height:1.8;flex:0 0 auto}
+/* 卡顶方式按钮 */
+.ways{position:absolute;left:0;right:0;top:-38px;display:flex;justify-content:center;gap:6px;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;transform:translateY(6px)}
+.card:hover .ways{opacity:1;pointer-events:auto;transform:none}
+.ways button{padding:6px 12px;font-size:13px;letter-spacing:3px;color:#1a1206;font-weight:700;background:linear-gradient(180deg,var(--gold2),var(--gold));clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.ways button.down{color:var(--text);background:rgba(6,8,13,.92);box-shadow:inset 0 0 0 1px var(--gold3)}
+.ways button:hover{filter:brightness(1.12)}
+
+/* ---------- 手牌抽屉 ---------- */
+#drawer{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:560px;height:70px;transition:height .35s cubic-bezier(.2,.7,.2,1),width .35s;z-index:4}
+#drawer .tab{position:absolute;left:0;right:0;bottom:0;height:70px;display:flex;align-items:flex-end;justify-content:center;cursor:pointer}
+#drawer .tab .peek{position:absolute;left:50%;bottom:-62px;transform:translateX(-50%);display:flex;gap:-30px}
+#drawer .tab .peek i{display:block;width:96px;height:134px;margin:0 -26px;background:#000 center/cover;box-shadow:0 0 0 1px var(--gold3),0 -6px 20px rgba(0,0,0,.7);transform-origin:bottom center;transition:transform .3s}
+#drawer .tab .peek i:nth-child(1){transform:rotate(-9deg) translateY(6px)}
+#drawer .tab .peek i:nth-child(3){transform:rotate(9deg) translateY(6px)}
+#drawer .tab:hover .peek i{transform:translateY(-34px)}
+#drawer .tab:hover .peek i:nth-child(1){transform:rotate(-11deg) translateY(-28px)}
+#drawer .tab:hover .peek i:nth-child(3){transform:rotate(11deg) translateY(-28px)}
+#drawer .tab .lb{position:relative;z-index:1;padding:5px 26px;font-size:14px;letter-spacing:5px;color:var(--gold2);background:rgba(6,8,13,.94);border:1px solid var(--gold3);border-bottom:0}
+#drawer .tab .lb b{font-family:var(--latin);font-weight:400;margin-left:6px}
+#drawer .tab .lb .ok{display:inline-block;width:8px;height:8px;margin-left:10px;border-radius:50%;background:var(--gold2);box-shadow:0 0 8px var(--gold2);animation:blink 1.4s infinite;vertical-align:middle}
+#drawer .sheet{position:absolute;left:0;right:0;bottom:0;top:0;opacity:0;pointer-events:none;transition:opacity .25s;background:#0a0e16;border:1px solid rgba(201,164,92,.45);border-bottom:0}
+#drawer .sheet::before{content:"";position:absolute;left:10px;right:10px;top:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--gold2) 50%,transparent)}
+#drawer.open{height:364px;width:1000px}
+#drawer.open .tab{display:none}
+#drawer.open .sheet{opacity:1;pointer-events:auto}
+#drawer .sheet .hh{position:absolute;left:0;right:0;top:14px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:14px;letter-spacing:4px;color:var(--gold2)}
+#drawer .sheet .hh .en{font-family:var(--latin);font-size:11px;letter-spacing:3px;color:var(--dim2)}
+#drawer .sheet .hh .x{margin-left:20px;font-size:12px;letter-spacing:1px;color:var(--dim);border:1px solid var(--gold3);padding:2px 10px}
+#drawer .sheet .hh .x:hover{color:var(--gold2);border-color:var(--gold2)}
+#hand{position:absolute;left:0;right:0;bottom:28px;display:flex;justify-content:center;gap:34px;align-items:flex-end}
+#hand .card{--card-w:200px;--card-h:280px;width:200px;height:280px}
+#hand .card .cap{font-size:15px;padding-bottom:10px}
+#hand .card .cp i{min-width:30px;height:30px;font-size:16px}
+#hand .card .attrs{position:absolute;left:6px;bottom:44px;display:flex;gap:4px}
+.attrs i{font-size:11px;letter-spacing:1px;color:var(--text);background:rgba(6,8,13,.85);border:1px solid var(--gold3);padding:1px 6px;font-style:normal}
+#hand .card .why{position:absolute;left:0;right:0;top:-30px;text-align:center;font-size:12px;letter-spacing:1px;color:var(--dim)}
+#drawer .sheet .note{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:12px;letter-spacing:2px;color:var(--dim2)}
+
+/* ---------- 放大 ---------- */
+#zoom{position:absolute;inset:0;background:rgba(6,8,13,.82);display:flex;align-items:center;justify-content:center;gap:56px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20}
+#zoom.on{opacity:1;pointer-events:auto}
+#zoom .big{width:480px;height:672px;background:#000 center/cover;box-shadow:0 0 0 1px var(--gold2),0 30px 60px rgba(0,0,0,.8)}
+#zoom .info{width:560px}
+#zoom .info .kind{font-family:var(--latin);font-size:13px;letter-spacing:5px;color:var(--gold)}
+#zoom .info h3{margin-top:10px;font-size:40px;letter-spacing:8px;color:#fff6dc;font-weight:700}
+#zoom .info dl{margin-top:26px;display:grid;grid-template-columns:110px 1fr;row-gap:12px;font-size:17px;letter-spacing:2px}
+#zoom .info dt{color:var(--dim)}
+#zoom .info dd{color:var(--text)}
+#zoom .info dd.mana{color:var(--mana);font-family:var(--latin);font-size:22px}
+#zoom .info dd.pow{color:var(--gold2);font-family:var(--latin);font-size:22px}
+#zoom .info .efs{margin-top:26px;border-top:1px solid var(--gold3);padding-top:18px;display:flex;flex-direction:column;gap:12px}
+#zoom .info .efs p{font-size:17px;line-height:1.8;letter-spacing:1px;color:var(--text);white-space:pre-line}
+#zoom .info .efs p::before{content:"";display:inline-block;width:8px;height:8px;margin-right:12px;transform:rotate(45deg);background:var(--gold);vertical-align:middle}
+#zoom .x{position:absolute;right:60px;top:40px;font-size:14px;letter-spacing:3px;color:var(--dim);border:1px solid var(--gold3);padding:6px 16px}
+#zoom .x:hover{color:var(--gold2);border-color:var(--gold2)}
+
+#toast{position:absolute;left:50%;top:660px;transform:translateX(-50%);padding:10px 30px;font-size:17px;letter-spacing:4px;color:var(--gold2);border:1px solid var(--gold3);background:rgba(6,8,13,.92);opacity:0;transition:opacity .3s;pointer-events:none;z-index:30;white-space:nowrap}
+#toast.on{opacity:1}
+#stage.enemy #me,#stage.enemy #zones,#stage.enemy #drawer{opacity:.55;filter:saturate(.7)}
+#stage.enemy #drawer{pointer-events:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+#dbg{position:absolute;left:0;top:0;z-index:99;font:11px monospace;color:#0f0;background:rgba(0,0,0,.85);white-space:pre;display:none;padding:6px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="cs" viewBox="0 0 100 100">
+      <g fill="none" stroke="#e0333c" stroke-width="2.2" stroke-linecap="round">
+        <circle cx="50" cy="50" r="44" opacity=".55"/><circle cx="50" cy="50" r="30"/>
+        <path d="M50 8 L58 34 L50 42 L42 34 Z" fill="#e0333c"/>
+        <path d="M50 8 L58 34 L50 42 L42 34 Z" fill="#e0333c" transform="rotate(120 50 50)"/>
+        <path d="M50 8 L58 34 L50 42 L42 34 Z" fill="#e0333c" transform="rotate(240 50 50)"/>
+        <path d="M50 58 L56 70 L50 88 L44 70 Z" fill="#ff4d57"/>
+        <path d="M50 58 L56 70 L50 88 L44 70 Z" fill="#ff4d57" transform="rotate(120 50 50)"/>
+        <path d="M50 58 L56 70 L50 88 L44 70 Z" fill="#ff4d57" transform="rotate(240 50 50)"/>
+        <circle cx="50" cy="50" r="6" fill="#ff4d57"/>
+      </g>
+    </symbol>
+    <!-- 席位环：双环加四刻 -->
+    <symbol id="seat" viewBox="0 0 100 100">
+      <g fill="none" stroke="#c9a45c" stroke-width="1.4">
+        <circle cx="50" cy="50" r="46" opacity=".5"/><circle cx="50" cy="50" r="38"/>
+        <path d="M50 2v8M50 90v8M2 50h8M90 50h8" stroke-width="2"/>
+        <path d="M50 12 l3 6 -3 3 -3 -3z" fill="#c9a45c"/>
+      </g>
+    </symbol>
+    <symbol id="seat-mana" viewBox="0 0 100 100">
+      <g fill="none" stroke="#3fd6f0" stroke-width="1.4">
+        <circle cx="50" cy="50" r="46" opacity=".45"/><circle cx="50" cy="50" r="38"/>
+        <path d="M50 2v8M50 90v8M2 50h8M90 50h8" stroke-width="2"/>
+      </g>
+    </symbol>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></symbol>
+  </defs>
+</svg>
+
+<div id="stage">
+  <div class="bg"></div><div class="vign"></div>
+  <div class="particles" data-count="16"></div>
+  <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+
+  <!-- 顶栏：夜数 / 局势 / 阶段 / 顺位 -->
+  <header id="top">
+    <div class="night"><span class="n" id="nightN">III</span><span class="cn" id="nightCn">第三夜</span><span class="sub" id="nightSub"></span></div>
+    <i class="sep"></i>
+    <div class="sit" id="sit"></div>
+    <div id="phases"></div>
+    <div id="order"><span class="lb">顺位</span></div>
+  </header>
+
+  <!-- 版图 -->
+  <div id="map"></div>
+
+  <!-- 右列 -->
+  <aside id="side">
+    <div class="panel" id="rank">
+      <div class="ph">战果排行<span class="en">VICTORY POINTS</span><span class="fill"></span><button class="tg" id="rankTg">收起</button></div>
+      <div class="body"></div>
+    </div>
+    <div class="panel" id="intel">
+      <div class="ph">御主情报<span class="en">MASTERS</span><span class="fill"></span><span class="en">魔力 · 合计威力 · 令咒</span></div>
+      <div class="body"></div>
+      <span class="more">滚动查看全部 ▾</span>
+    </div>
+  </aside>
+  <div id="sidetab">战果 · 情报</div>
+
+  <!-- 敌方行动横幅 -->
+  <div id="banner"><i class="av"></i><div class="t"><span id="bannerName"></span><small>ENEMY TURN · 行动阶段</small></div><span class="dots"><i></i><i></i><i></i></span></div>
+
+  <!-- 御主信息条 -->
+  <div id="me">
+    <div class="id"><i class="av" id="meAv"></i><div><div class="nm" id="meName"></div><div class="sv" id="meSv"></div><div class="loc" id="meLoc"></div></div></div>
+    <i class="vsep"></i>
+    <div class="stat"><span class="lb">魔力<b id="manaN">0</b></span><div id="mana"></div></div>
+    <i class="vsep"></i>
+    <div class="stat"><span class="lb">令咒</span><div id="seals"></div></div>
+    <i class="vsep"></i>
+    <div class="num"><b id="powerN">0</b><span>合计威力</span></div>
+    <div class="num"><b class="gold" id="vpN">0</b><span>战果</span></div>
+    <div class="end"><span class="prog">常规出牌 <b id="progN">0 / 2</b></span><button id="endbtn">结束行动阶段</button></div>
+  </div>
+  <div id="cspop"></div>
+
+  <!-- 牌区平铺 -->
+  <div id="zones"></div>
+
+  <!-- 手牌抽屉 -->
+  <div id="drawer">
+    <div class="tab" id="drawerTab"><span class="peek" id="peek"></span><span class="lb">手牌<b id="handN">0</b><i class="ok" id="handOk"></i></span></div>
+    <div class="sheet">
+      <div class="hh">手牌<span class="en">HAND</span><span id="handHint"></span><button class="x" id="drawerX">收起</button></div>
+      <div id="hand"></div>
+      <div class="note">悬停可出的牌 · 卡顶只显示规则允许的方式</div>
+    </div>
+  </div>
+
+  <div id="zoom"><div class="big"></div><div class="info"></div><button class="x">关闭</button></div>
+  <div id="toast"></div>
+  <pre id="dbg"></pre>
+</div>
+
+<script>
+(function(){
+const D=window.FD, R=D.rules, q=new URLSearchParams(location.search);
+const $=s=>document.querySelector(s);
+const stage=$('#stage');
+function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(-50%,-50%) scale(${s})`;stage.style.transformOrigin='center';}
+addEventListener('resize',fit);fit();
+document.querySelectorAll('.particles').forEach(p=>{for(let i=0;i<+p.dataset.count;i++){const s=document.createElement('i');s.style.left=(Math.random()*100)+'%';s.style.animationDuration=(9+Math.random()*10)+'s';s.style.animationDelay=(-Math.random()*18)+'s';p.appendChild(s);}});
+
+const M=Object.fromEntries(D.masters.map(m=>[m.id,m])), SV=Object.fromEntries(D.servants.map(s=>[s.id,s]));
+const AREA=Object.fromEntries(D.map.areas.map(a=>[a.id,a])), ORDER=D.map.areas.map(a=>a.id);
+const EV=Object.fromEntries(D.events.map(e=>[e.name,e])), SI=Object.fromEntries(D.situations.map(s=>[s.name,s]));
+const ATK=Object.fromEntries(D.basic_attacks.map(a=>[a.id,a]));
+const BATTLE=['miyama','shinto'];
+const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI'], CN=['一','二','三','四','五','六','七','八','九','十','十一'];
+
+/* ---------- 对局状态（概念稿演示数据；数值口径来自规则文档与 data.js） ---------- */
+const S={
+  round:3, phase:'action',
+  situation:'完美的流动',
+  events:{miyama:{name:'圣地',up:true}, shinto:{name:'光荣的决斗',up:true}},
+  // 威力修正：来自当前局势/事件卡面文字，概念稿里显式声明，不解析文案
+  mods:[{attr:'magic',areas:BATTLE,plus:2,src:'局势 · 完美的流动'},{attr:'magic',areas:['miyama'],plus:3,src:'事件 · 圣地'},{attr:'strength',areas:['shinto'],plus:2,src:'事件 · 光荣的决斗'}],
+  players:[
+    {master:'tohsaka_rin',servant:'artoria_pendragon',me:true,area:'miyama',seat:0,magic:9,vp:6,seals:[1,1,0],revealed:false,played:[],bonus:0},
+    {master:'matou_sakura',servant:'heracles',area:'shinto',seat:0,magic:3,vp:8,seals:[1,1,1],revealed:true,power:7,done:true},
+    {master:'kotomine_kirei',servant:'sasaki_kojirou',area:'miyama',seat:1,magic:6,vp:3,seals:[1,0,0],revealed:false,power:8,done:true},
+    {master:'emiya_shirou',servant:'emiya',area:'workshop',seat:0,magic:7,vp:4,seals:[1,1,1],revealed:false,power:0},
+    {master:'matou_shinji',servant:'medusa',area:'shinto',seat:1,magic:5,vp:5,seals:[1,1,0],revealed:false,power:9},
+    {master:'illyasviel_von_einzbern',servant:'cu_chulainn',area:'scout',seat:0,magic:10,vp:7,seals:[1,1,1],revealed:false,power:0},
+    {master:'kuzuki_souichirou',servant:'medea',area:'workshop',seat:1,magic:8,vp:2,seals:[1,1,1],revealed:false,power:0},
+  ],
+  order:[1,2,0,3,4,5,6], acting:0,
+  hand:['magic_blast_0_4','physical_attack_1_5','luck'],
+  // 技能区当前费用修正：风王结界卡面「若你的真名隐藏，此牌的魔力消耗-2」
+  skillCostMod:{wind_barrier:p=>p.revealed?0:-2},
+  upgradeUnlocked:false,
+};
+const me=S.players.find(p=>p.me), meIdx=S.players.indexOf(me);
+if(q.get('enemy'))S.acting=+q.get('enemy')||2;
+if(q.get('magic'))me.magic=+q.get('magic');
+
+/* ---------- 工具 ---------- */
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1600);}
+const attrName=a=>D.attr_names[a]||a;
+function skillsOf(p){const sv=SV[p.servant];return sv.skills.map((s,i)=>({...s,id:['mana_resistance','wind_barrier','excalibur'][i]||('skill'+i),kind:'skill',costNow:s.cost+((S.skillCostMod[['mana_resistance','wind_barrier','excalibur'][i]]||(()=>0))(p))}));}
+function handCards(){return S.hand.map((id,i)=>({...ATK[id],uid:'h'+i,kind:'attack',costNow:ATK[id].cost}));}
+function modsFor(card,area){return S.mods.filter(m=>card.attributes.includes(m.attr)&&m.areas.includes(area));}
+function cardPower(card,area){return card.power+modsFor(card,area).reduce((a,m)=>a+m.plus,0);}
+function terrainOf(p){const s=AREA[p.area].seats[p.seat];return s&&s.terrain||0;}
+function totalPower(p){if(!p.me)return p.power||0;return p.played.filter(c=>c.up).reduce((a,c)=>a+cardPower(c,p.area),0)+terrainOf(p)+(p.bonus||0);}
+function occupants(area){return S.players.filter(p=>p.area===area);}
+function engaged(p){return BATTLE.includes(p.area)&&occupants(p.area).length>1;}
+function moveCost(from,to){let c=0;for(let i=ORDER.indexOf(from);i<ORDER.indexOf(to);i++)c+=AREA[ORDER[i]].move_cost;return c;}
+function canMove(to){if(S.acting!==meIdx||S.phase!=='action'||me.played.length)return null;if(engaged(me))return null;const i=ORDER.indexOf(me.area),j=ORDER.indexOf(to);if(j<=i)return null;const c=moveCost(me.area,to);if(c>me.magic)return null;const a=AREA[to];if(a.id==='workshop'||a.id==='scout'){const cap=a.seats.length;if(occupants(to).length>=cap)return null;}return c;}
+/* 出牌判据：与规则「常规出牌」逐条对应 */
+function ways(card){
+  const out={up:false,down:false,why:[]};
+  if(S.acting!==meIdx||S.phase!=='action'){out.why.push('非你的行动阶段');return out;}
+  if(me.played.length>=R.regular_play){out.why.push('常规出牌已满');return out;}
+  const onField=BATTLE.includes(me.area);
+  if(card.kind==='skill'){
+    if(me.magic<R.skill_min_magic)out.why.push('技能区出牌需魔力 '+R.skill_min_magic);
+    else if(card.costNow>me.magic)out.why.push('魔力不足');
+    else out.up=true;
+    return out;
+  }
+  if(card.costNow<=me.magic)out.up=true;else out.why.push('魔力不足');
+  const hasUp=me.played.some(c=>c.up);
+  const others=handCards().filter(c=>c.uid!==card.uid&&c.costNow<=me.magic).length+skillsOf(me).filter(s=>me.magic>=R.skill_min_magic&&s.costNow<=me.magic).length;
+  if(!onField||hasUp||(me.played.length===0&&others>0))out.down=true;else out.why.push('位于战场须有一张明置');
+  return out;
+}
+function play(card,up){
+  if(up){me.magic-=Math.max(0,card.costNow);}
+  me.played.push({...card,up});
+  if(card.kind==='skill'){me.skillOut=(me.skillOut||[]).concat(card.id);}
+  else{S.hand.splice(S.hand.findIndex((id,i)=>'h'+i===card.uid),1);}
+  if(card.attributes.includes('noble_phantasm')&&up&&card.effects.some(e=>e.includes('真名解放'))){me.revealed=true;toast('真名解放 · 概览与技能牌已公开');}
+  if(me.played.length>=R.regular_play){$('#drawer').classList.remove('open');}
+  render();
+}
+function useSeal(k){const i=me.seals.indexOf(1);if(i<0)return;me.seals[i]=0;
+  if(k===0)me.magic=Math.min(R.magic_max,me.magic+4);else if(k===1)me.bonus=(me.bonus||0)+2;else toast('令咒移动 · 请选择目标位置');
+  $('#cspop').classList.remove('on');render();}
+
+/* ---------- 渲染 ---------- */
+function rTop(){
+  $('#nightN').textContent=ROMAN[S.round-1];$('#nightCn').textContent='第'+CN[S.round-1]+'夜';
+  const cut=R.elimination[S.round];$('#nightSub').textContent=cut?'本夜结束 仅前 '+cut+' 名留存':'共 '+R.rounds+' 夜 · 第 8 夜起淘汰';
+  const s=SI[S.situation];
+  $('#sit').innerHTML=`<i class="thumb" style="background-image:url(${s.img})"></i><div><div class="nm">${s.name}<span class="latin" style="font-size:10px;letter-spacing:3px;color:var(--dim2);margin-left:10px">${s.climax?'CLIMAX':'SITUATION'}</span></div><div class="ef">${s.effects.join(' · ')}</div><div class="mg">所有玩家魔力 +${s.magic}</div></div>`;
+  $('#sit').onclick=()=>zoom({kind:'局势',name:s.name,img:s.img,effects:s.effects,extra:[['魔力',s.magic]]});
+  const pi=R.phases.findIndex(p=>p.id===S.phase);
+  $('#phases').innerHTML=R.phases.map((p,i)=>`<div class="p ${i<pi?'done':i===pi?'cur':''}"><span class="en">${p.en}</span><span class="cn">${p.name}</span><i class="dot"></i></div>`).join('');
+  const o=$('#order');o.querySelectorAll('.av').forEach(e=>e.remove());
+  S.order.forEach((pi2,k)=>{const p=S.players[pi2];const a=document.createElement('i');a.className='av'+(pi2===S.acting?' cur':'')+(p.me?' me':'')+(p.done&&pi2!==S.acting?' done':'');a.style.backgroundImage=`url(${M[p.master].header})`;a.title=M[p.master].name;a.innerHTML=`<i>${k+1}</i>`;o.appendChild(a);});
+}
+function rMap(){
+  const map=$('#map');map.innerHTML='';
+  ORDER.forEach((id,idx)=>{
+    const a=AREA[id],occ=occupants(id),isBattle=BATTLE.includes(id);
+    const el=document.createElement('section');el.className='area'+(me.area===id?' me':'');el.dataset.area=id;
+    el.style.flexBasis={workshop:'280px',miyama:'420px',shinto:'420px',scout:'200px'}[id];
+    el.style.backgroundImage=`url(${a.img})`;
+    let h=`<div class="hd"><div><span class="cn">${a.name}</span><span class="en">${{workshop:'MAGIC WORKSHOP',miyama:'MIYAMA',shinto:'SHINTO',scout:'SCOUT'}[id]}</span></div>`;
+    if(isBattle)h+=`<div class="vp"><b>+${a.competition}</b><span>竞争战果</span></div>`;
+    else if(id==='scout')h+=`<div class="vp"><b>+${R.scout_score}</b><span>结算战果</span></div>`;
+    h+=`</div>`;
+    if(id==='workshop')h+=`<span class="tag">部署即获魔力 · 上限 ${a.seats.length} 人</span>`;
+    if(id==='scout')h+=`<span class="tag">仅限 1 人 · 不发生战斗</span>`;
+    if(isBattle&&occ.length>1)h+=`<span class="tag warn">交战中 · ${occ.length} 人</span>`;
+    else if(isBattle)h+=`<span class="tag">未发生战斗</span>`;
+    if(isBattle){const ev=S.events[id],e=EV[ev.name];
+      h+=`<div class="evtext"><b>${ev.up?e.name:'暗置事件'}</b>${ev.up?e.effects.join('<br>'):'行动阶段开始时展示'}</div>`;
+      h+=`<div class="evslot ${ev.up?'':'back'}" data-ev="${id}" style="background-image:url(${ev.up?e.img:D.backs.event})"><span class="vp"><b>${ev.up?e.score:'?'}</b></span><span class="cap">${ev.up?'事件 · 明置':'事件 · 暗置'}</span></div>`;}
+    h+=`<div class="seats">`;
+    a.seats.forEach((s,si)=>{const ps=occ.filter(p=>p.seat===si);
+      const val=s.magic!=null?`<span class="val">${s.magic}<small>魔力</small></span>`:s.terrain!=null&&!s.unlimited?`<span class="val">+${s.terrain}<small>地利</small></span>`:s.scout?`<span class="val">◎<small>侦察</small></span>`:'';
+      if(s.unlimited){h+=`<div class="seat unl"><span class="lbl">无地利 · 不限</span>${ps.map(p=>occHtml(p)).join('')}</div>`;return;}
+      h+=`<div class="seat ${s.magic!=null?'mana':''} ${ps.length?'':'free'}"><svg><use href="#${s.magic!=null?'seat-mana':'seat'}"/></svg>${ps.length?occHtml(ps[0]):val}</div>`;});
+    h+=`</div>`;
+    if(isBattle){h+=`<div class="duel">`;
+      if(occ.length){const mx=Math.max(1,...occ.map(totalPower));occ.sort((x,y)=>totalPower(y)-totalPower(x)).forEach(p=>{const tp=totalPower(p);h+=`<div class="row ${p.me?'me':''} ${tp===mx?'lead':''}"><span class="nm">${M[p.master].name}</span><span class="bar"><i style="width:${tp/mx*100}%"></i></span><b>${tp}</b></div>`;});}
+      else h+=`<span class="empty">无人部署</span>`;
+      h+=`</div>`;}
+    const mc=canMove(id);if(mc!=null){el.classList.add('canmove');h+=`<button class="mv" data-move="${id}">移动至此 · 魔力 ${mc}</button>`;}
+    el.innerHTML=h;map.appendChild(el);
+    if(idx<ORDER.length-1){const l=document.createElement('div');const ok=canMove(ORDER[idx+1])!=null;l.className='link'+(ok?' ok':'');l.innerHTML=`<span class="cost">${a.move_cost}</span><svg><use href="#arrow"/></svg><span class="lb">移动成本</span>`;map.appendChild(l);}
+  });
+  map.querySelectorAll('[data-ev]').forEach(el=>el.onclick=()=>{const ev=S.events[el.dataset.ev];if(!ev.up){toast('暗置事件 · 行动阶段开始时展示');return;}const e=EV[ev.name];zoom({kind:'事件',name:e.name,img:e.img,effects:e.effects,extra:[['战果',e.score]]});});
+  map.querySelectorAll('[data-move]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const to=b.dataset.move;me.magic-=moveCost(me.area,to);me.area=to;me.seat=AREA[to].seats.findIndex((s,i)=>!s.unlimited&&!occupants(to).some(p=>p.seat===i));if(me.seat<0)me.seat=AREA[to].seats.length-1;me.movedIn=true;toast('已移动至 '+AREA[to].name+' · 移动后不获得地利');render();});
+}
+function occHtml(p){const tp=BATTLE.includes(p.area)?`<span class="pw">${totalPower(p)}</span>`:'';const st=AREA[p.area].seats[p.seat]||{};const tr=st.terrain?`<span class="tr">+${st.terrain}</span>`:st.magic!=null?`<span class="tr mn">${st.magic}</span>`:'';return `<i class="occ ${p.me?'me':''} ${S.players.indexOf(p)===S.acting&&!p.me?'act':''}" style="background-image:url(${M[p.master].header})" title="${M[p.master].name}">${tr}${tp}<span class="nm">${M[p.master].name}</span></i>`;}
+function rSide(){
+  const cut=R.elimination[S.round];
+  const sorted=[...S.players].sort((a,b)=>b.vp-a.vp);
+  let h='';sorted.forEach((p,i)=>{if(cut&&i===cut)h+=`<div class="cutline">淘汰线 · 第 ${S.round} 夜结束</div>`;h+=`<div class="r ${p.me?'me':''} ${cut&&i>=cut?'cut':''}"><span class="i">${String(i+1).padStart(2,'0')}</span><i class="av" style="background-image:url(${M[p.master].header})"></i><span class="nm">${M[p.master].name}</span><span class="vp">${p.vp}</span></div>`;});
+  $('#rank .body').innerHTML=h;
+  $('#intel .body').innerHTML=S.players.filter(p=>!p.me).map(p=>{const pi=S.players.indexOf(p);const sv=SV[p.servant];
+    return `<div class="foe"><i class="av ${pi===S.acting?'act':''}" style="background-image:url(${M[p.master].header})"></i><div><div class="l1">${M[p.master].name}<span class="sv ${p.revealed?'rev':''}">${p.revealed?D.class_names[sv.cls].toUpperCase()+' · '+sv.name:'SERVANT ？'}</span><span class="loc">${AREA[p.area].name}</span></div>
+      <div class="l2"><span class="mbar">${Array.from({length:R.magic_max},(_,i)=>`<i class="${i<p.magic?'on':''}"></i>`).join('')}</span><b>${p.magic}</b></div></div>
+      <div class="r"><span class="pw">${totalPower(p)}<small>威力</small></span><span class="cs">${p.seals.map(s=>`<svg class="${s?'on':''}"><use href="#cs"/></svg>`).join('')}</span></div></div>`;}).join('');
+}
+function rMe(){
+  const m=M[me.master],sv=SV[me.servant];
+  $('#meAv').style.backgroundImage=`url(${m.header})`;$('#meName').textContent=m.name;
+  $('#meSv').innerHTML=`${D.class_names[sv.cls].toUpperCase()}<i>${me.revealed?sv.name+' · 真名解放':'真名隐藏'}</i>`;
+  const seat=AREA[me.area].seats[me.seat];const t=terrainOf(me);
+  $('#meLoc').textContent=AREA[me.area].name+(t?' · 地利 +'+t:seat&&seat.magic!=null?' · 工房席':'')+(engaged(me)?' · 交战中':'');
+  $('#manaN').textContent=me.magic;
+  $('#mana').innerHTML=Array.from({length:R.magic_max},(_,i)=>`<i class="${i<me.magic?'on':''} ${i===R.skill_min_magic-1?'gate':''}"></i>`).join('');
+  $('#seals').innerHTML=me.seals.map((s,i)=>`<svg class="${s?'':'used'}" data-seal="${i}"><use href="#cs"/></svg>`).join('');
+  $('#seals').querySelectorAll('svg:not(.used)').forEach(el=>el.onclick=e=>{e.stopPropagation();const pop=$('#cspop');const r=el.getBoundingClientRect(),st=stage.getBoundingClientRect(),sc=stage.getBoundingClientRect().width/1920;pop.style.left=((r.left-st.left)/sc-100)+'px';pop.style.top=((r.top-st.top)/sc-150)+'px';
+    pop.innerHTML=`<div class="ph" style="padding:4px 10px 8px">令咒<span class="en">COMMAND SEAL</span></div>`+D.command_spell.options.map((o,i)=>`<button class="o" data-k="${i}" ${i===2&&!BATTLE.includes(me.area)?'disabled':''}>${o}</button>`).join('');
+    pop.querySelectorAll('.o').forEach(b=>b.onclick=()=>useSeal(+b.dataset.k));pop.classList.toggle('on');});
+  $('#powerN').textContent=totalPower(me);$('#vpN').textContent=me.vp;
+  $('#progN').textContent=`${me.played.length} / ${R.regular_play}`;
+  const anyPlayable=[...handCards(),...skillsOf(me).filter(s=>!(me.skillOut||[]).includes(s.id))].some(c=>{const w=ways(c);return w.up||w.down;});
+  const ok=S.acting===meIdx&&(me.played.length>=R.regular_play||!anyPlayable);
+  $('#endbtn').disabled=!ok;
+  $('#endbtn').textContent=S.acting!==meIdx?'等待其他御主':'结束行动阶段';
+}
+function cardHtml(c,opts={}){
+  const cp=c.cost!=null?`<span class="cp"><i class="c" title="魔力消耗">${c.costNow!=null&&c.costNow!==c.cost?c.costNow+'<s style="font-size:10px;margin-left:3px;opacity:.6">'+c.cost+'</s>':c.cost}</i><i class="p" title="威力">${c.power}</i></span>`:'';
+  return `<div class="card ${opts.cls||''}" data-card="${opts.key}" style="background-image:url(${opts.back?D.backs[opts.back]:c.img})">${opts.face||''}${cp}${opts.stack?`<span class="stack">${opts.stack}</span>`:''}${opts.ways||''}<span class="cap">${opts.cap||c.name}</span></div>`;
+}
+const REG={};
+function reg(key,obj){REG[key]=obj;return key;}
+function rZones(){
+  const m=M[me.master],sv=SV[me.servant];const z=$('#zones');
+  let h='';
+  // 出牌区
+  h+=`<div class="zone"><div class="zl">出牌区<span class="en">PLAYED</span></div><div class="cards">`;
+  for(let i=0;i<R.regular_play;i++){const c=me.played[i];
+    if(c)h+=cardHtml(c,{key:reg('pl'+i,{kind:c.kind==='skill'?'技能':'攻击',card:c}),cls:'played',face:`<span class="face ${c.up?'':'down'}">${c.up?'明置':'暗置'}</span>`,back:c.up?null:'attack',cap:c.up?c.name+' · 威力 '+cardPower(c,me.area):'暗置 · 不计威力'});
+    else h+=`<div class="slot">第 ${i+1} 张<br>常规出牌</div>`;}
+  h+=`</div></div>`;
+  // 御主 + 从者概览
+  h+=`<div class="zone"><div class="zl">御主 · 从者<span class="en">MASTER · SERVANT</span></div><div class="cards">`;
+  h+=cardHtml({name:m.name,img:m.card},{key:reg('mc',{kind:'御主',card:{name:m.name,img:m.card,effects:m.effects}})});
+  h+=cardHtml({name:sv.name,img:sv.card},{key:reg('sc',{kind:'从者概览',card:{name:sv.name,img:sv.card,effects:['职阶 '+D.class_names[sv.cls],'牌库 12 张攻击牌 · 技能区 3 张技能牌']}}),cap:me.revealed?sv.name:D.class_names[sv.cls]+' · 真名隐藏'});
+  h+=`</div></div>`;
+  // 技能区
+  h+=`<div class="zone"><div class="zl">技能区<span class="en">SKILLS</span><span class="hint">魔力 ≥ ${R.skill_min_magic} 可打出</span></div><div class="cards">`;
+  skillsOf(me).forEach(s=>{const out=(me.skillOut||[]).includes(s.id);const w=out?{}:ways(s);
+    h+=cardHtml(s,{key:reg('sk_'+s.id,{kind:'技能',card:s}),cls:(w.up?'ok':'')+(out?' dim':''),ways:w.up?`<span class="ways"><button data-play="sk_${s.id}" data-up="1">明置打出</button></span>`:'',cap:out?s.name+' · 已打出':s.name});});
+  h+=`</div></div>`;
+  // 御主附加 + 升华技
+  h+=`<div class="zone"><div class="zl">御主附加<span class="en">MASTER CARDS</span></div><div class="cards">`;
+  m.things.forEach(t=>{h+=cardHtml({name:t.name,img:t.img},{key:reg('th_'+t.name,{kind:'御主附加',card:{name:t.name,img:t.img,effects:t.effects}}),stack:t.name==='宝石'?'×10':''});});
+  m.attacks.forEach(a=>{h+=cardHtml(a,{key:reg('ma_'+a.name,{kind:'御主攻击 · 游戏外区',card:a}),stack:'×3',cap:a.name+' · 游戏外'});});
+  const up=m.upgrade;h+=cardHtml(up,{key:reg('up',{kind:'升华技',card:up}),cls:S.upgradeUnlocked?'':'lock dim'});
+  h+=`</div></div>`;
+  z.innerHTML=h;
+  bindCards(z);
+}
+function bindCards(root){
+  root.querySelectorAll('[data-card]').forEach(el=>{el.onclick=e=>{if(e.target.closest('.ways'))return;const r=REG[el.dataset.card];if(r)zoom({kind:r.kind,...r.card});};el.oncontextmenu=e=>{e.preventDefault();const r=REG[el.dataset.card];if(r)zoom({kind:r.kind,...r.card});};});
+  root.querySelectorAll('[data-play]').forEach(b=>b.onclick=e=>{e.stopPropagation();const r=REG[b.dataset.play];play(r.card,b.dataset.up==='1');});
+}
+function rHand(){
+  const cards=handCards();
+  $('#handN').textContent=cards.length;
+  $('#peek').innerHTML=cards.map(c=>`<i style="background-image:url(${D.backs.attack})"></i>`).join('');
+  const any=cards.some(c=>{const w=ways(c);return w.up||w.down;});
+  $('#handOk').style.display=any?'inline-block':'none';
+  $('#handHint').textContent=S.acting!==meIdx?'等待其他御主行动':me.played.length>=R.regular_play?'常规出牌已完成':`还可打出 ${R.regular_play-me.played.length} 张`;
+  $('#hand').innerHTML=cards.map(c=>{const w=ways(c);
+    const wy=(w.up||w.down)?`<span class="ways">${w.up?`<button data-play="${c.uid}" data-up="1">明置</button>`:''}${w.down?`<button class="down" data-play="${c.uid}" data-up="0">暗置</button>`:''}</span>`:'';
+    reg(c.uid,{kind:'攻击',card:c});
+    return cardHtml(c,{key:c.uid,cls:(w.up||w.down)?'ok':'dim',ways:wy,cap:c.name+(w.up?' · 威力 '+cardPower(c,me.area):'')}).replace('<span class="cap">',`<span class="attrs">${c.attributes.map(a=>`<i>${attrName(a)}</i>`).join('')}</span>${(!w.up&&!w.down&&w.why.length)?`<span class="why">${w.why[0]}</span>`:''}<span class="cap">`);}).join('');
+  bindCards($('#hand'));
+}
+function rBanner(){
+  const p=S.players[S.acting];const on=!p.me;
+  stage.classList.toggle('enemy',on);
+  $('#banner').classList.toggle('on',on);
+  if(on){$('#banner .av').style.backgroundImage=`url(${M[p.master].header})`;$('#bannerName').textContent=M[p.master].name+' 行动中';}
+}
+function render(){rTop();rMap();rSide();rMe();rZones();rHand();rBanner();}
+
+/* ---------- 放大 ---------- */
+function zoom(o){const z=$('#zoom');z.querySelector('.big').style.backgroundImage=`url(${o.img})`;
+  let dl='';
+  if(o.cost!=null)dl+=`<dt>魔力消耗</dt><dd class="mana">${o.costNow!=null&&o.costNow!==o.cost?o.costNow+' <s style="font-size:15px;opacity:.6">'+o.cost+'</s>':o.cost}</dd>`;
+  if(o.power!=null)dl+=`<dt>威力</dt><dd class="pow">${o.power}</dd>`;
+  if(o.attributes&&o.attributes.length)dl+=`<dt>属性</dt><dd>${o.attributes.map(attrName).join(' · ')}</dd>`;
+  (o.extra||[]).forEach(([k,v])=>dl+=`<dt>${k}</dt><dd>${v}</dd>`);
+  dl+=`<dt>类别</dt><dd>${o.kind}</dd>`;
+  z.querySelector('.info').innerHTML=`<div class="kind">${o.kind}</div><h3>${o.name}</h3><dl>${dl}</dl><div class="efs">${(o.effects||[]).map(e=>`<p>${e}</p>`).join('')}</div>`;
+  z.classList.add('on');}
+$('#zoom').onclick=e=>{if(e.target.id==='zoom'||e.target.classList.contains('x'))$('#zoom').classList.remove('on');};
+
+/* ---------- 交互 ---------- */
+$('#drawerTab').onclick=()=>$('#drawer').classList.add('open');
+$('#drawerX').onclick=()=>$('#drawer').classList.remove('open');
+$('#rankTg').onclick=()=>{const b=$('#rank .body');const off=b.style.display==='none';b.style.display=off?'':'none';$('#rankTg').textContent=off?'收起':'展开';};
+$('#sidetab').onclick=()=>toggleSide(false);
+$('#intel .ph').onclick=()=>toggleSide(true);
+function toggleSide(off){$('#side').classList.toggle('off',off);$('#sidetab').classList.toggle('on',off);$('#map').classList.toggle('wide',off);}
+$('#endbtn').onclick=()=>{if($('#endbtn').disabled)return;me.done=true;const k=S.order.indexOf(meIdx);S.acting=S.order[(k+1)%S.order.length];toast('行动阶段结束 · 等待其他御主');render();};
+addEventListener('click',e=>{if(!e.target.closest('#cspop')&&!e.target.closest('#seals'))$('#cspop').classList.remove('on');});
+addEventListener('keydown',e=>{if(e.key==='Escape'){$('#zoom').classList.remove('on');$('#drawer').classList.remove('open');}if(e.key===' '){e.preventDefault();$('#drawer').classList.toggle('open');}});
+
+/* ---------- 入口参数 ---------- */
+render();
+if(q.get('hand'))$('#drawer').classList.add('open');
+if(q.get('side')==='0')toggleSide(true);
+if(q.get('zoom')){const s=skillsOf(me)[2];zoom({kind:'技能',...s});}
+if(q.get('played')){const hc=handCards();play(hc[0],true);if(q.get('played')==='2')play(handCards()[0],false);}
+if(q.get('debug')){const d=$('#dbg');d.style.display='block';const S1=1/parseFloat(stage.style.transform.match(/scale\(([^)]+)\)/)[1]);const st=stage.getBoundingClientRect();
+  const rect=el=>{const r=el.getBoundingClientRect();return [Math.round((r.left-st.left)*S1),Math.round((r.top-st.top)*S1),Math.round(r.width*S1),Math.round(r.height*S1)];};
+  const L=[];['#top','#phases','#order','#map','.area[data-area=workshop]','.area[data-area=miyama]','.area[data-area=shinto]','.area[data-area=scout]','#side','#rank','#intel','#me','#mana','#endbtn','#zones','#drawer','#hand','#banner'].forEach(s=>{const el=document.querySelector(s);if(el)L.push(s+' '+JSON.stringify(rect(el)));});
+  document.querySelectorAll('.zone').forEach((z,i)=>L.push('.zone'+i+' '+JSON.stringify(rect(z))));
+  document.querySelectorAll('.area[data-area=miyama] .seat').forEach((z,i)=>L.push('miyama.seat'+i+' '+JSON.stringify(rect(z))));
+  d.textContent=L.join('\n');}
+if(q.get('selftest')){const out=[];out.push('magic='+me.magic+' power='+totalPower(me)+' area='+me.area+' terrain='+terrainOf(me));
+  handCards().forEach(c=>{const w=ways(c);out.push(`hand ${c.name} cost=${c.costNow} up=${w.up} down=${w.down} why=${w.why.join('/')} power_here=${cardPower(c,me.area)}`);});
+  skillsOf(me).forEach(s=>{const w=ways(s);out.push(`skill ${s.name} cost=${s.cost}->${s.costNow} up=${w.up} why=${w.why.join('/')}`);});
+  out.push('end_enabled='+!$('#endbtn').disabled);
+  out.push('move: '+ORDER.map(a=>a+'='+canMove(a)).join(' '));
+  const pre=document.createElement('pre');pre.id='selftest';pre.style.cssText='position:absolute;left:0;bottom:0;z-index:99;font:11px monospace;color:#0f0;background:rgba(0,0,0,.85);padding:6px';pre.textContent=out.join('\n');stage.appendChild(pre);}
+})();
+</script>
+</body>
+</html>

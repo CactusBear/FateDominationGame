@@ -277,6 +277,7 @@ func load_master_file(path:String, master_file_name:String):
 		"_command_spell_img" : LoadHelper.resolve_zoom_kind(data, "command_spell_img")
 	}
 	master._zoom_kind = str(master._zoom_kinds["_master_card_img"])
+	LoadHelper.load_object_extras(master, data)
 	var effects = load_effects(data["effects"], master)
 	var specials = data["specials"] as Dictionary
 	var upgrade_skill = load_skills(data.get("upgrade_skill", []), path, master, "upgrade_skill")
@@ -332,7 +333,8 @@ func load_servant_file(path:String, servant_file_name:String):
 	var servant_name = data["servant_name"]
 	var shown_servant_name = data["shown_servant_name"]
 	var servant_class = data["servant_class"]
-	var header_img = path + "/" + data["header_img"]
+	var header_file = data.get("header_img", "")
+	var header_img:String = path + "/" + str(header_file) if header_file is String and header_file != "" else ""
 	var servant_card_img = path + "/" + data["servant_card_img"]
 
 	var servant = BaseServant.new(servant_name, shown_servant_name, servant_class, header_img, servant_card_img)
@@ -343,6 +345,7 @@ func load_servant_file(path:String, servant_file_name:String):
 		"_servant_card_img" : LoadHelper.resolve_zoom_kind(data, "servant_card_img")
 	}
 	servant._zoom_kind = str(servant._zoom_kinds["_servant_card_img"])
+	LoadHelper.load_object_extras(servant, data)
 	var effects = load_effects(data["effects"], servant)
 	var specials = data["specials"] as Dictionary
 	if specials.has("SKILLS") :
@@ -395,6 +398,7 @@ func load_skills(skills:Array, pic_path:String, from, type_name:String = "skill"
 		skill._need_extra_play = bool(ski.get("need_extra_play", false))
 		#词条(如真名解放)：卡自己显式声明，引擎按词条名执行对应规则。没声明就没有
 		skill._keywords = ski.get("keywords", [])
+		LoadHelper.load_object_extras(skill, ski)
 		ski_arr.append(skill)
 
 	return ski_arr
@@ -419,6 +423,8 @@ func load_attacks(attacks:Array, pic_path:String, from, owner_effects_data:Array
 		var power = load_number(att["power"])
 		var attack = BaseAttack.new(attack_name, attack_card_img, attributes, cost, power)
 		attack._shown_name = att.get("shown_attack_name", "")
+		#写了类别就按写的，没写保持构造时的默认
+		attack._category = att.get("category", attack._category)
 		var effects = load_effects(att["effects"], attack)
 		attack._effects = effects
 		attack.from = from
@@ -436,6 +442,7 @@ func load_attacks(attacks:Array, pic_path:String, from, owner_effects_data:Array
 		attack._initial_count = maxi(0, int(att.get("initial_count", 1)))
 		#词条同技能牌：攻击牌也能带词条(如御主附加牌带真名解放)，声明在卡自己身上
 		attack._keywords = att.get("keywords", [])
+		LoadHelper.load_object_extras(attack, att)
 		att_arr.append(attack)
 
 	return att_arr
@@ -460,6 +467,7 @@ func load_buffs(buffs:Array, pic_path:String, from):
 		buff._is_active = is_active
 		buff._buff_level = buff_level
 		buff.from = from
+		LoadHelper.load_object_extras(buff, buf)
 		buff_arr.append(buff)
 	
 	return buff_arr
@@ -480,6 +488,7 @@ func load_other_master_things(things:Array, pic_path:String, from):
 		card._effects = load_effects(thing.get("effects", []), card)
 		card._attributes = []
 		card.from = from
+		LoadHelper.load_object_extras(card, thing)
 		card.add_object()
 		thing_arr.append(card)
 	
@@ -497,6 +506,8 @@ func load_map_areas(map_areas:Array, from):
 		#是否接受前哨阶段部署由地图数据声明，不在代码里按战区名/下标写死
 		map_area._can_deploy = bool(area.get("can_deploy", false))
 		var locations = load_locations(area["locations"], map_area)
+		#读出来的席位要挂回战区，否则新战区没有任何席位（之前 MAP_AREAS 没有使用方，这一步一直缺着）
+		map_area.set_map_area_locations(locations)
 		var linked_map_area_name = area["linked_map_area_name"]
 		var link_dic:Dictionary = {
 			map_area : linked_map_area_name

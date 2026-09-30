@@ -102,6 +102,25 @@ static func load_number(number:Dictionary):
 	return num
 
 
+#各类对象共有的可选声明，所有建对象的加载入口都调用这一处，字段支持不会在各类卡之间分叉：
+#  values       对象的命名数据（{名字: 数字声明 或 普通值}，数字声明按 load_number 解析）
+#  alias_names  "同时名为/视为"的别名
+#  faces        双面卡各面的数据（只对卡牌有意义），格式与这类牌单张的 JSON 相同
+static func load_object_extras(obj, data:Dictionary) -> void:
+	if obj == null or data == null:
+		return
+	if data.get("values") is Dictionary:
+		var values:Dictionary = {}
+		for key in data["values"].keys():
+			var raw = data["values"][key]
+			values[key] = load_number(raw) if raw is Dictionary and raw.has("number") else raw
+		obj._values = values
+	if data.get("alias_names") is Array:
+		obj._alias_names = (data["alias_names"] as Array).duplicate()
+	if obj is BaseCard and data.get("faces") is Array:
+		obj._faces = (data["faces"] as Array).duplicate(true)
+
+
 #把 JSON 效果数组解析成 BaseEffect 数组。from 为效果归属对象。
 static func load_effects(effects:Array, from) -> Array:
 	var eff_arr:Array

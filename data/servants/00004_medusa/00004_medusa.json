@@ -111,7 +111,9 @@
                   "self_var": 4
                 }
               }
-            ]
+            ],
+            "need_activate": true,
+            "source_bound": true
           },
           {
             "effect_name": "riding_mount_summon_play_low_power_cards",
@@ -265,79 +267,95 @@
             "effect_numbers": [],
             "funcs": [
               {
-                "func_name": "get_players_in_same_area",
-                "parameters": [
-                  -1,
-                  false
-                ],
-                "var_index": 0
-              },
-              {
-                "func_name": "foreach_func",
+                "func_name": "schedule_effect_on_time_point",
                 "parameters": [
                   [
+                    "self_battle_phase_start"
+                  ],
+                  [
                     {
-                      "func_name": "get_player_played_cards",
+                      "func_name": "get_players_in_same_area",
                       "parameters": [
-                        null
+                        -1,
+                        false
                       ],
-                      "var_index": 1
+                      "var_index": 0
                     },
                     {
-                      "func_name": "get_cards_by_attributes_fr_arr",
+                      "func_name": "foreach_func",
                       "parameters": [
                         [
-                          "magic"
+                          {
+                            "func_name": "get_player_played_cards",
+                            "parameters": [
+                              null
+                            ],
+                            "var_index": 1
+                          },
+                          {
+                            "func_name": "get_cards_by_attributes_fr_arr",
+                            "parameters": [
+                              [
+                                "magic"
+                              ],
+                              {
+                                "self_var": 1
+                              }
+                            ],
+                            "var_index": 2
+                          },
+                          {
+                            "func_name": "array_length",
+                            "parameters": [
+                              {
+                                "self_var": 2
+                              }
+                            ],
+                            "var_index": 3
+                          },
+                          {
+                            "func_name": "compare_number",
+                            "parameters": [
+                              {
+                                "self_var": 3
+                              },
+                              0
+                            ],
+                            "var_index": 4
+                          },
+                          {
+                            "func_name": "if_func",
+                            "parameters": [
+                              {
+                                "self_var": 4
+                              },
+                              0
+                            ],
+                            "var_index": 5
+                          },
+                          {
+                            "func_name": "defeat",
+                            "parameters": [
+                              null
+                            ],
+                            "var_index": -1,
+                            "condition": {
+                              "self_var": 5
+                            }
+                          }
                         ],
                         {
-                          "self_var": 1
+                          "self_var": 0
                         }
                       ],
-                      "var_index": 2
-                    },
-                    {
-                      "func_name": "array_length",
-                      "parameters": [
-                        {
-                          "self_var": 2
-                        }
-                      ],
-                      "var_index": 3
-                    },
-                    {
-                      "func_name": "compare_number",
-                      "parameters": [
-                        {
-                          "self_var": 3
-                        },
-                        0
-                      ],
-                      "var_index": 4
-                    },
-                    {
-                      "func_name": "if_func",
-                      "parameters": [
-                        {
-                          "self_var": 4
-                        },
-                        0
-                      ],
-                      "var_index": 5
-                    },
-                    {
-                      "func_name": "defeat",
-                      "parameters": [
-                        null
-                      ],
-                      "var_index": -1,
-                      "condition": {
-                        "self_var": 5
-                      }
+                      "var_index": -1
                     }
                   ],
-                  {
-                    "self_var": 0
-                  }
+                  0,
+                  false,
+                  [
+                    "day_end"
+                  ]
                 ],
                 "var_index": -1
               }

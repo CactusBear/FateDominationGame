@@ -56,6 +56,11 @@ func exec(setted_location:BaseLocation, player_id:int = -1, is_move:bool = true,
 	GameLog.record("move", player_id, -1,
 		str(area._area_name) if area != null else "", null,
 		["move"], {"is_move": is_move, "from_area": old_area_name})
+	#进入/离开地点是比常规移动更宽的事实（部署、效果搬运都算），带落点/旧位置作来源派发
+	if old_location != setted_location:
+		if old_location != null:
+			TimePointChecker.dynamic_time_point([TimePoints.LEAVE_LOCATION], player_id, old_location)
+		TimePointChecker.dynamic_time_point([TimePoints.ENTER_LOCATION], player_id, setted_location)
 	return true
 
 

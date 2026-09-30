@@ -19,7 +19,8 @@ func exec(active_player_ids:Array = [], area_battle_score:BaseNumber = BaseNumbe
 	}
 	var ids:Array = active_player_ids.duplicate()
 	if ids.is_empty():
-		ids = GameDataManager.get_active_player_ids()
+		#版图上的全部参战条目：独立玩家 + 分身棋子/NPC（add_player 创建的受控条目）
+		ids = GameDataManager.get_board_player_ids()
 
 	#在任何结算效果执行前固定参战区域与数值起点，之后移动不改变战报归属。
 	var score_before:Dictionary = {}
@@ -67,6 +68,9 @@ func exec(active_player_ids:Array = [], area_battle_score:BaseNumber = BaseNumbe
 			_resolve_battle_area(area, player_ids, result)
 		else:
 			_resolve_non_battle_area(area, player_ids, result)
+	#胜负改写只对本回合这一次结算有效：没人参战、不比威力的战场上的声明也一并作废，不留到下一回合
+	for area:BaseMapArea in MapData.areas:
+		area._battle_override = {}
 
 	#胜者判定之后的时点：派发在全部区域结算完之后。
 	#"此战场胜者可恢复1枚令咒"这类规则要在知道本场胜者之后才能触发，
@@ -121,15 +125,26 @@ func _register_event_effects(ids:Array):
 #处理需要战斗胜利才能拿战果的战场
 func _resolve_battle_area(area:BaseMapArea, player_ids:Array, result:Dictionary):
 	var effective_ids:Array = []
+	var excluded_ids:Array = []
 	var buffs_checker = PlayerBuffsHaveEffect.new()
 	for id in player_ids:
 		#带有"排除出胜负判定"效果(如【败北】)的玩家被忽略，
 		#既不能获胜也不能阻止他人获胜。按效果名通用查询，不关心具体buff类型
 		if buffs_checker.exec(ExcludedFromBattleWinEffect.EFFECT_NAME, id):
+			excluded_ids.append(id)
 			continue
 		effective_ids.append(id)
+	#效果对本战场胜负的改写（set_battle_result）。"只在败北者中计胜者"换一批比威力的人；
+	#"指定胜者/追加胜者"在比完威力之后处理。改写只作用于本战场本回合，结算时清空
+	var override:Dictionary = area._battle_override
+	var override_winners:Array = []
+	for id in override.get("winners", []):
+		if player_ids.has(id):
+			override_winners.append(id)
+	if str(override.get("mode", "")) == "losers_only":
+		effective_ids = excluded_ids
 
-	if effective_ids.is_empty():
+	if effective_ids.is_empty() and override_winners.is_empty():
 		result["draw_areas"].append(area._area_name)
 		#全员被排除也要留一条事实，否则这场战斗在日志里完全不存在
 		_record_battle(area, player_ids, [])
@@ -163,6 +178,15 @@ func _resolve_battle_area(area:BaseMapArea, player_ids:Array, result:Dictionary)
 			winners = [id]
 		elif power == highest_power:
 			winners.append(id)
+	match str(override.get("mode", "")):
+		"replace":
+			winners = override_winners.duplicate()
+		"add":
+			for id in override_winners:
+				if !winners.has(id):
+					winners.append(id)
+	if winners.is_empty():
+		result["draw_areas"].append(area._area_name)
 
 	#先记这场战斗的结果，再发战果、再派生败时点：
 	#胜败时点里的效果要能查到本场战斗，不能等一切都派发完才补记
@@ -177,17 +201,21 @@ func _resolve_battle_area(area:BaseMapArea, player_ids:Array, result:Dictionary)
 		total_score += (area._score as BaseNumber).number
 
 	#这里只发基础奖池；全部效果完成后的实得由结算起止快照统一生成。
+	#战果与胜时点落到"代表者"：分身棋子赢了算它的控制者赢（represented_id），独立玩家与 NPC 就是自己。
+	#平分按参战条目数算（两个条目并列就是两份），与原规则一致
 	if winners.size() == 1:
 		var winner_id:int = winners[0]
-		EditScore.new().exec(null, BaseNumber.new(total_score), winner_id)
-		TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], winner_id)
+		var rep_id:int = GameDataManager.represented_id(winner_id)
+		EditScore.new().exec(null, BaseNumber.new(total_score), rep_id)
+		TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], rep_id)
 		result["winners_by_area"][area._area_name] = [winner_id]
-	else:
+	elif winners.size() > 1:
 		#平局：战果平分并向上取整
 		var split_score:int = ceili(float(total_score) / winners.size())
 		for winner_id in winners:
-			EditScore.new().exec(null, BaseNumber.new(split_score), winner_id)
-			TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], winner_id)
+			var rep_id:int = GameDataManager.represented_id(winner_id)
+			EditScore.new().exec(null, BaseNumber.new(split_score), rep_id)
+			TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], rep_id)
 		result["winners_by_area"][area._area_name] = winners
 	#本场战斗的完整结算过程：参战者、每人威力构成、总战果来源、各人实得战果。
 	#界面战报按这份数据逐条展示"每个战场每人多少威力、怎么结算的"，
@@ -214,7 +242,7 @@ func _resolve_battle_area(area:BaseMapArea, player_ids:Array, result:Dictionary)
 		var player_data = GameDataManager.get_player_data(id) as Dictionary
 		var already_excluded:bool = buffs_checker.exec(ExcludedFromBattleWinEffect.EFFECT_NAME, id)
 		if !already_excluded:
-			TimePointChecker.dynamic_time_point([TimePoints.BATTLE_LOSE], id)
+			TimePointChecker.dynamic_time_point([TimePoints.BATTLE_LOSE], GameDataManager.represented_id(id))
 	
 	# 派发战斗结束时点由 exec 在"全部战区结算完之后"统一做一次（见 exec 里的
 	# TimePoints.BATTLE_END 派发）：那里才能保证每个战场的战斗日志都已写好，

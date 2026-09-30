@@ -22,3 +22,6 @@ func exec(from_index = 0, player_id:int = -1):
 	#日志：抽牌事实（谁在第几回合哪个阶段抽了哪张），排查"手牌莫名多出来"时的第一手依据
 	GameLog.record("draw", player_id, -1, "", card, ["draw"],
 		{"card_name": card.get_shown_name() if card.has_method("get_shown_name") else str(card), "from_index": index})
+	#抽牌时点带上这张牌作来源；牌区变化（离开牌库、进入手牌）与其它搬运入口同一套派发
+	TimePointChecker.dynamic_time_point([TimePoints.CARD_DRAWN], player_id, card)
+	CardZones.notify_moved(card, {"player_id": player_id, "zone": "deck"}, {"player_id": player_id, "zone": "hand_cards"})

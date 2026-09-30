@@ -73,6 +73,9 @@
 						"options": [
 							{
 								"shown_option_name": "关闭此牌，从手牌打出一张力量基本攻击",
+								"tags": [
+									"ichi_no_tachi_played_strength"
+								],
 								"select_cards": {
 									"source": "hand_cards",
 									"attributes": [
@@ -153,6 +156,26 @@
 						"options": [
 							{
 								"shown_option_name": "关闭一名交战玩家的一张基础攻击",
+								"activation_requirements": [
+									{
+										"message": "本回合尚未以【一之太刀】打出力量基本攻击",
+										"funcs": [
+											{
+												"func_name": "log_exists",
+												"parameters": [
+													-1,
+													{
+														"tags": [
+															"ichi_no_tachi_played_strength"
+														]
+													},
+													0
+												],
+												"var_index": 0
+											}
+										]
+									}
+								],
 								"select_players": {
 									"candidates": [
 										{
@@ -484,7 +507,8 @@
 									"self_var": 11
 								}
 							}
-						]
+						],
+						"need_activate": true
 					}
 				],
 				"zoom_kind": "card"

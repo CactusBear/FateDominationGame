@@ -9,8 +9,7 @@
       "effect_name": "absorb_magic_command",
       "shown_effect_name": "吸魔命令 - 进入深山町时，获得1点魔力",
       "time_points": [
-        "self_deploy",
-        "self_move_end"
+        "self_enter_location"
       ],
       "priority": 0,
       "is_pure_passive": true,
@@ -55,8 +54,7 @@
             {
               "number_index": 0
             },
-            -1,
-            0
+            -1
           ],
           "var_index": -1,
           "condition": {

@@ -18,11 +18,17 @@ func exec(from:Array, to:Array, from_index = 0, to_index = -1):
 		if index < 0 or index > to.size():
 			#show("超出数组范围")
 			return
+	#与 DrawCardByCard 同一套：可被取消的搬运先问，搬完再派发牌区变化时点
+	if !CardZones.allow_move(card, from, to):
+		return
+	var from_info:Dictionary = CardZones.locate(from)
+	var to_info:Dictionary = CardZones.locate(to)
 	from.pop_at(src)
 	if index == -1:
 		to.append(card)
-		return
-	to.insert(index, card)
+	else:
+		to.insert(index, card)
+	CardZones.notify_moved(card, from_info, to_info)
 
 
 func _index_of(value, fallback:int) -> int:

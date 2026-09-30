@@ -29,6 +29,11 @@ func exec(item, player_id:int = -1):
 		player_data["out_of_game"]["others"],
 		player_data["out_of_game"]["command_spell"]
 	]
+	#按名字的独立牌区（extra_zones）由卡牌数据建立，数量与名字都不固定，逐个追加进来查
+	var extra = player_data.get("extra_zones")
+	if extra is Dictionary:
+		for key in extra.keys():
+			zones.append(extra[key])
 	for zone in zones:
 		if zone is Array and zone.has(item):
 			return zone

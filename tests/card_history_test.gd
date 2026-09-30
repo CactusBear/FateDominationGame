@@ -55,6 +55,7 @@ func test_cost_timing():
 	check(ReleaseTrueName.new().exec(0), "A09 true-name release succeeds")
 	check(skill._cost.number == 4, "A09 true-name release restores Wind Barrier printed cost")
 	check(HideTrueName.new().exec(0), "A09 true-name can be hidden for play fixture")
+	check(skill._cost.number == 2, "A09 hiding true name again immediately discounts Wind Barrier")
 	d.magic.number = 2
 	check(PlaySkill.new().exec(skill, 0, true), "A09 PlaySkill accepts after cost-calculation discount")
 	check(d.magic.number == 0, "A09 deducted discounted cost in the same play")
