@@ -19,9 +19,13 @@ func _card(row: Control, id: int) -> Control:
 	return null
 
 func shot(name: String) -> void:
-	if DisplayServer.get_name() != "headless":
-		await RenderingServer.frame_post_draw
-		get_viewport().get_texture().get_image().save_png("res://tests/runtime_reports/" + name + ".png")
+	if DisplayServer.get_name() == "headless":
+		return
+	await RenderingServer.frame_post_draw
+	# res:// 在运行模式下只读，save_png 会静默失败；写到项目目录的绝对路径
+	var dir := ProjectSettings.globalize_path("res://tests/runtime_reports")
+	DirAccess.make_dir_recursive_absolute(dir)
+	get_viewport().get_texture().get_image().save_png(dir.path_join(name + ".png"))
 
 func run() -> void:
 	var board = load("res://assets/scenes/game_scene/battle_board_v2.tscn").instantiate()

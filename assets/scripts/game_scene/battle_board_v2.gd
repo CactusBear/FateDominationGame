@@ -174,6 +174,10 @@ var _gold_frame_node: Panel = null
 var _gold_frame_tween: Tween = null
 ## 顺位动画代际：每次换人/轮次变更递增，过期的异步动画在 await 后自行中止，避免并发污染
 var _rival_anim_generation: int = 0
+## 顺位动画（金框飞行/传送带/轮次更迭）是否仍在播放：播放期间冻结行动读条。
+## 否则 TURN_ENTRY_SECONDS+TURN_READ_SECONDS（0.95s）会先于约 2 秒的轮次动画走完，
+## AI 在动画中途就行动、新的换人动画把轮次动画顶掉，卡片停在中间态。
+var _rival_anim_busy: bool = false
 ## 换人金框尚未落位时，刷新不能提前亮起该玩家的卡片
 var _pending_rival_highlight_id: int = -1
 var _banner_actor_id: int = -1
@@ -345,7 +349,7 @@ func _process(delta: float) -> void:
 	# 等待输入 / AI 推进 / 消息 / 战报 / 终局都在这里跑
 	_process_waiting_inputs(delta)
 	_update_turn_presentation(delta)
-	if _turn_read_remaining <= 0.0:
+	if _turn_read_remaining <= 0.0 and not _rival_anim_busy:
 		_check_and_step_ai(delta)
 	_check_game_over()
 	_update_ai_play_prompt_geometry()
@@ -825,9 +829,16 @@ func _bind_rivals() -> void:
 		_set_text(card, "Stats/ScoreStat/V", str(_num(pl.get("score"))))
 		_bind_sigils(card.get_node("Stats/Spells"), _num(pl.get("command_spell_count")), _num(pl.get("command_spell_limit")))
 	_rival_order_snapshot = ids.duplicate()
+	# move_child 会让 HBoxContainer 在本次布局里立刻把卡片排到新顺序的位置，而动画的 _pin_cards_to
+	# 要等下一帧才执行——中间那一帧整排卡片提前跳到位，就是"所有玩家信息一瞬间的错位"。
+	# HBoxContainer 的排序走 MessageQueue（idle flush），这里用 call_deferred 把钉位置排在排序之后。
+	if order_changed:
+		call_deferred("_pin_cards_to", old_positions)
 	if round_changed:
+		_rival_anim_busy = true
 		_animate_round_change(old_positions, ids.duplicate(), previous_ids)
 	elif order_changed:
+		_rival_anim_busy = true
 		_animate_actor_handoff(old_positions, ids.duplicate(), previous_ids)
 	_last_round = GameProgress.current_round
 
@@ -863,7 +874,7 @@ func _set_acting_highlight(card: Control, acting: bool) -> void:
 			_breathe(breath)
 
 
-## 换人时独立飞行的金框覆盖层（懒创建，Breath 变体，不附着在任何玩家卡上）
+## 换人时独立飞行的金框覆盖层（懒创建，只描边不填充，不附着在任何玩家卡上）
 func _gold_frame_overlay() -> Panel:
 	if _gold_frame_node == null or not is_instance_valid(_gold_frame_node):
 		_gold_frame_node = Panel.new()
@@ -871,6 +882,14 @@ func _gold_frame_overlay() -> Panel:
 		_gold_frame_node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_gold_frame_node.visible = false
 		add_child(_gold_frame_node)
+		# Breath 变体带"阴影色填充"，套在卡片上会把整张牌染成淡金（飞行途中看起来像另一张亮卡在滑动、盖住沿途卡片）。
+		# 金框要的是"脱离开的一张空框"：复制它的边框样式，只去掉背景填充与阴影。
+		var base := _gold_frame_node.get_theme_stylebox("panel")
+		if base is StyleBoxFlat:
+			var outline := (base as StyleBoxFlat).duplicate() as StyleBoxFlat
+			outline.bg_color = Color(0, 0, 0, 0)
+			outline.shadow_size = 0
+			_gold_frame_node.add_theme_stylebox_override("panel", outline)
 	return _gold_frame_node
 
 
@@ -884,14 +903,11 @@ func _pin_cards_to(old_positions: Dictionary) -> void:
 			card.position = inv * (old_positions[id] as Vector2)
 
 
-## 读取 HBoxContainer 排版出的目标位置（本地坐标）
+## 目标位置：按卡序累加实际宽度与容器间距自行推算（HBoxContainer 默认 BEGIN，与容器排版一致）。
+## 不能直接读 child.position：换人那一帧整排卡片已被钉回旧位置（见 _bind_rivals 里的 call_deferred），
+## 读到的会是旧位置，传送带就原地不动；且 HBoxContainer 的排版结果也只在排序帧短暂存在。
 func _collect_targets(expected_ids: Array) -> Dictionary:
-	var targets: Dictionary = {}
-	for child in _rivals.get_children():
-		var id := int(child.get_meta("turn_order_player_id", -1))
-		if expected_ids.has(id):
-			targets[id] = (child as Control).position
-	return targets
+	return _layout_positions(expected_ids)
 
 
 ## 按给定 id 顺序累加卡片实际宽度与容器间距，算出该排列下每张卡的布局 x。
@@ -981,6 +997,8 @@ func _animate_actor_handoff(old_positions: Dictionary, expected_ids: Array, prev
 	_pending_rival_highlight_id = -1
 	_set_acting_highlight(next_card, true)
 	await _shift_cards(targets, expected_ids, previous_ids)
+	if gen == _rival_anim_generation:
+		_rival_anim_busy = false
 
 
 ## 轮次变更：最后行动者先整体左移回到规则顺位，再由上一回合首位下抽绕到末位。
@@ -1004,6 +1022,8 @@ func _animate_round_change(old_positions: Dictionary, expected_ids: Array, previ
 		return
 	# 阶段2：上一回合首位下抽，其余左移补位，首位从下方绕到末位再上移
 	await _drop_first_to_tail(first_of_round, targets)
+	if gen == _rival_anim_generation:
+		_rival_anim_busy = false
 
 
 ## 轮次变更第二阶段：首位下抽离开横列，其余左移补位，首位从下方绕到末位再上移。
@@ -1045,7 +1065,8 @@ func _update_turn_presentation(delta: float) -> void:
 	var key := [GameProgress.current_round, GameProgress.current_phase_index, GameProgress.current_player_id]
 	if key != _turn_presentation_key:
 		refresh_all_ui()
-	else:
+	elif not _rival_anim_busy:
+		# 顺位动画播放期间冻结行动读条：动画演完才开始行动
 		_turn_read_remaining = maxf(0.0, _turn_read_remaining - delta)
 
 func _set_banner_actor(id: int) -> void:
@@ -1207,7 +1228,7 @@ func _bind_seat_rows(area: BaseMapArea, seats: Control) -> void:
 ## 卷轴本体（战区）点击。点击落在这里时消费等待中的位置选择，或走部署/移动
 ## 入口。复用 _on_battlefield_clicked 已写好的判据链：等位置 → 部署 → 移动
 func _on_strip_gui_input(event: InputEvent, strip: Control) -> void:
-	if _is_debug_console_blocking_progress():
+	if _is_progress_blocked():
 		return
 	if not event is InputEventMouseButton or not event.pressed:
 		return
@@ -2146,7 +2167,7 @@ func _refresh_command_spell_glow(card: Control) -> void:
 
 
 func _on_command_spell_clicked(event: InputEvent) -> void:
-	if _is_debug_console_blocking_progress():
+	if _is_progress_blocked():
 		return
 	if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed):
 		return
@@ -2341,6 +2362,12 @@ func _is_debug_console_blocking_progress() -> bool:
 	return is_debug_console_enabled() and _debug_console != null and _debug_console.session != null and _debug_console.session.is_paused()
 
 
+## 进度闸门：调试控制台暂停、或顺位动画（换人交接 / 轮次更迭）仍在播放时，界面不接受推进操作。
+## 等动画演完再开始行动，否则玩家的结束阶段会和动画抢同一批卡片、把动画顶掉。
+func _is_progress_blocked() -> bool:
+	return _is_debug_console_blocking_progress() or _rival_anim_busy
+
+
 func set_debug_console_enabled(enabled: bool) -> void:
 	if enabled:
 		if is_debug_console_enabled():
@@ -2413,7 +2440,7 @@ func _show_tactical_confirm(desc_str: String, is_alert: bool = false) -> void:
 
 
 func _on_tactical_confirm_execute() -> void:
-	if _is_debug_console_blocking_progress():
+	if _is_progress_blocked():
 		return
 	if _tactical_confirm != null:
 		_tactical_confirm.visible = false
@@ -3424,7 +3451,7 @@ static func _format_game_log_line(e: Dictionary) -> String:
 
 # --- 战区点击（消费位置等待 / 部署 / 移动） ---
 func _on_battlefield_clicked(target_area_idx: int) -> void:
-	if _is_debug_console_blocking_progress():
+	if _is_progress_blocked():
 		return
 	var pending_loc: Dictionary = EffectManager.get_pending_location_selection()
 	if not pending_loc.is_empty():
@@ -3515,7 +3542,7 @@ func _pending_location_hint(pending: Dictionary) -> String:
 
 # --- 结束行动：直接走引擎 ---
 func _on_end_phase_pressed() -> void:
-	if _is_debug_console_blocking_progress():
+	if _is_progress_blocked():
 		return
 	if GameProgress.current_player_id != _local_player_id:
 		return
