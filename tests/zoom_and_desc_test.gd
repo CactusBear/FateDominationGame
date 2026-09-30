@@ -141,12 +141,23 @@ func run() -> void:
 	check(not board._hover_desc.visible, "second right click closes description")
 	await click_at(zoom_point)
 	check(board._hover_desc.visible, "third right click reopens description")
-
-	# 手牌右键仍是明置/暗置，不弹说明
-	await point_at(Vector2(5, 400))
-	check(board._hover_desc.visible and not board._hover_zoom.visible, "description remains readable after pointer leaves")
+	# 指针停在说明面板上算仍在看这张牌：放大图与说明都保持，可以滚动阅读
+	await point_at(board._hover_desc.get_global_rect().get_center())
+	check(board._hover_desc.visible and board._hover_zoom.visible, "description and preview stay while pointer reads the panel")
 	await click_at(board._hover_desc.get_node("Close").get_global_rect().get_center(), MOUSE_BUTTON_LEFT)
 	check(not board._hover_desc.visible, "description closes with close button")
+	# 说明与放大图共生：指针离开源卡、放大图与说明面板后，两者一起收起
+	await point_at(Vector2(5, 400))
+	await point_at(slot.get_global_transform() * Vector2(slot.size.x * 0.5, 8.0))
+	check(board._hover_zoom.visible, "hover reopens the preview")
+	var zoom_point2: Vector2 = board._hover_zoom.get_global_rect().get_center()
+	await point_at(zoom_point2)
+	await click_at(zoom_point2)
+	check(board._hover_desc.visible and board._hover_zoom.visible, "description reopens on the preview")
+	await point_at(Vector2(5, 400))
+	check(not board._hover_desc.visible and not board._hover_zoom.visible, "description disappears together with the preview")
+
+	# 手牌右键仍是明置/暗置，不弹说明
 	var card = slot.get_meta("card")
 	var concealed_before: bool = card._is_concealed
 	await point_at(slot.get_global_transform() * Vector2(slot.size.x * 0.5, 8.0))
@@ -215,8 +226,10 @@ func run() -> void:
 	board._close_card_desc()
 	played_slot.set_meta("zoom_desc", "测试说明\n".repeat(80))
 	board._show_desc_for(played_slot)
-	await frames(4)
+	# 指针停在说明面板上（保活冻结）再检查长说明：面板不会在阅读途中被收走
+	await point_at(board._hover_desc.get_global_rect().get_center(), 6)
 	var body := board._hover_desc.get_node("VBox/Body") as ScrollContainer
+	check(board._hover_desc.visible, "long description stays while pointer rests on the panel")
 	check(body.get_v_scroll_bar().max_value > body.size.y, "long description can scroll")
 	var esc := InputEventKey.new()
 	esc.keycode = KEY_ESCAPE

@@ -37,22 +37,55 @@ const HELD_HOVER_SPEED := 14.0
 ## 悬浮放大的纵向跟随比例与上升上限：横向不跟随，纵向只向上
 const HELD_HOVER_FOLLOW := 0.35
 const HELD_HOVER_MAX_SHIFT := Vector2(70, 46)
+## 牌面翻转（明置↔暗置等换面）的总时长：折到最窄换贴图，再展开，两段各占一半。
+## 时长是表现参数，与规则无关；换面越频繁的入口越应该短。
+const CARD_FLIP_SECONDS := 0.26
 
 ## 在途飞牌的尺寸跟随速度（越大越快贴上目标尺寸）
 const FLY_RESIZE_SPEED := 14.0
 const REFRESH_INTERVAL := 0.5
 const TOAST_SECONDS := 1.6
+## 未公开（暗置）遮罩：半透明灰 + 闭眼图标。语义是"这张牌已有，但对观看者隐藏"，
+## 与旧控制器（tactical_board_ui.gd）同一套视觉，改动时两边要一起看。
+const CONCEAL_ICON := "assets/images/ui/icons/icon_eye_closed.png"
+const CONCEAL_COLOR := Color(0.32, 0.32, 0.36, 0.55)
+## 未激活遮罩：半透明深红，不带图标。语义是"这张卡还没生效"，与未公开是两回事，可以同时盖
+const INACTIVE_COLOR := Color(0.45, 0.06, 0.10, 0.45)
 const RIVAL_SHIFT_SECONDS := 0.6
 const TURN_ENTRY_SECONDS := 0.5
 const TURN_READ_SECONDS := 0.45
+## 中央回合横幅：淡入/淡出单段与完全显示的基准时长，实际时长再乘以节奏缩放 _banner_pace。
+## 节奏由"上一次横幅是否已演完"判断——没演完就又换人说明切得快，本次动画相应缩短，
+## 避免"实际已轮到下一名玩家、横幅还停在上一名玩家"；不依赖绝对时间，固定帧率跑测试也不会脱节。
+const BANNER_FADE_BASE := 0.22
+const BANNER_HOLD_BASE := TURN_ENTRY_SECONDS + TURN_READ_SECONDS
+## 节奏缩放上下限：切得越快缩得越小（但不至于几乎看不见），节奏慢下来后逐步回到 1.0
+const BANNER_PACE_MIN := 0.35
+const BANNER_PACE_MAX := 1.0
+## 阶段更迭横幅：淡入/淡出与保持时长（阶段切换节奏固定，不像行动者横幅那样随切人速度）
+const PHASE_BANNER_FADE := 0.28
+const PHASE_BANNER_HOLD := 0.70
+## 战斗胜利播报：全屏遮罩的入场/确认节奏（UI 表现节奏，非规则数字）
+const BROADCAST_BACKDROP_FADE := 0.30   # 遮罩淡入
+const BROADCAST_TITLE_SECONDS := 0.55   # 标题缩放回弹入场
+const BROADCAST_CARD_STEP := 0.18       # 每个战场块淡入单段时长
+const BROADCAST_AI_CONFIRM_STEP := 0.28 # AI 玩家逐人确认间隔（让 n/7 可见地累加）
 ## 换人时金框从旧行动者脱离、平移到新行动者的飞行时长（顿挫：金框先飞，卡片后移）
-const GOLD_FRAME_FLY_SECONDS := 0.32
+## 加上传送带 HANDOFF_SLIDE_SECONDS 就是一次换人的总时长；两者一起调，比例保持不变（约 0.65 : 1）。
+const GOLD_FRAME_FLY_SECONDS := 0.15
+## 换人传送带：整排卡片左移补位的时长（wrap 卡按 0.4 / 0.6 拆成左出与右进两段）。
+## 与读条用的 TURN_ENTRY_SECONDS 分开，换人动画可以单独调速而不动行动窗口。
+const HANDOFF_SLIDE_SECONDS := 0.23
 ## 轮次变更：首位下抽/右移/上移的单段时长（下抽、右移、上移各一段）
 const ROUND_DROP_SECONDS := 0.30
 ## 轮次变更：其余玩家向左补位的左移时长
 const ROUND_SLIDE_SECONDS := 0.55
 ## 轮次变更：首位下抽离开顺位横列的纵向下沉量（相对卡高）
 const ROUND_DROP_RATIO := 1.15
+## 轮次变更：被抽出的首位卡会越过顶栏叠进战区卷轴范围，用这个图层抬到卷轴之上（落位后归零）
+const ROUND_LIFTED_Z := 100
+## 提示横幅的图层：要压过被抽出的卡片，避免卡片平移经过时盖住"XX 的行动"
+const BANNER_Z := 120
 
 
 ## 卷轴出牌区：所有比例都相对"卡高"，随可用区域与牌数动态求解，不写死某个牌数
@@ -99,6 +132,9 @@ const BREATH_MIN_ALPHA := 0.6
 
 var _local_player_id: int = -1
 var _main_area_index: int = -1
+## 本地玩家本局是否已【真名解放】：技能区牌的卡面是否已向其他玩家公开，由它决定未公开遮罩。
+## 每次绑定手牌/技能区时刷新一次，避免每张牌各自去查一遍事实日志。
+var _local_true_name_released := false
 ## 当前放大卡图对应的展示位：鼠标移到卡图上时用它调出右键说明
 var _hover_zoom_source: Control = null
 var _zoom_hide_remaining := -1.0
@@ -183,8 +219,31 @@ var _pending_rival_highlight_id: int = -1
 var _banner_actor_id: int = -1
 var _banner_initialized := false
 var _banner_tween: Tween
+## 横幅节奏缩放：上一次横幅没演完就又切人了就调小（动画缩短），演完了慢慢回到 1.0
+var _banner_pace: float = 1.0
+## 上一次绑定的阶段下标：变了就播阶段更迭横幅（首次进入第 0 阶段不播）
+var _last_phase_index: int = -1
+## 阶段更迭横幅播放期间冻结行动
+var _phase_anim_busy: bool = false
+## 阶段横幅独立素材（不复用行动者 Banner），懒创建
+var _phase_banner: Control = null
+var _phase_banner_label: Label = null
+var _phase_line_left: ColorRect = null
+var _phase_line_right: ColorRect = null
+var _phase_tween: Tween = null
 var _turn_presentation_key: Array = []
 var _turn_read_remaining := 0.0
+## 战斗胜利播报：结算后弹出的全屏遮罩层状态
+var _broadcast_registered := false
+var _broadcast_node: Control = null
+var _broadcast_active := false
+var _broadcast_reveal_done := false
+var _broadcast_ai_queue: Array = []
+var _broadcast_ai_timer := 0.0
+var _broadcast_avatar_mat: ShaderMaterial = null
+var _broadcast_font_regular: Font = null
+var _broadcast_font_bold: Font = null
+var _broadcast_reveal_tween: Tween = null
 
 
 
@@ -227,6 +286,8 @@ func _ready() -> void:
 	# 提到最后一位保证横幅在上，同时忽略鼠标，避免它吃掉底下的地图点击
 	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	move_child(_banner, get_child_count() - 1)
+	# 轮次变更时被抽出的卡会抬到卷轴之上，横幅要再高一层才不会被它平移时盖住
+	_banner.z_index = BANNER_Z
 	_ops.get_node("EndButton").pressed.connect(_on_end_phase_pressed)
 	_ops.get_node("PlayButton").pressed.connect(_confirm_held_cards)
 	_top.get_node("LogButton").pressed.connect(_open_game_log)
@@ -285,6 +346,12 @@ func _ready() -> void:
 	_select_scroll(_default_area_index())
 
 
+func _exit_tree() -> void:
+	if _broadcast_registered:
+		GameProgress.unregister_battle_broadcast_consumer(self)
+		_broadcast_registered = false
+
+
 func _open_game_log() -> void:
 	var lines := PackedStringArray()
 	var battle_res: Dictionary = GameProgress.last_battle_result if GameProgress else {}
@@ -311,6 +378,11 @@ func _default_area_index() -> int:
 func _process(delta: float) -> void:
 	var _t0 := Time.get_ticks_usec()
 	_update_fly_sizes(delta)
+	#首次运行本帧循环即登记为胜利播报消费者：被动实例化（测试里 set_process(false)）不走到这里，
+	#也就不会在战斗结算后阻塞推进。
+	if not _broadcast_registered:
+		_broadcast_registered = true
+		GameProgress.register_battle_broadcast_consumer(self)
 	# 帧率/耗时诊断（定位完可关）：_fade_debug 为假时整段不累加、不打印
 	if _fade_debug:
 		_fps_t += delta
@@ -349,7 +421,8 @@ func _process(delta: float) -> void:
 	# 等待输入 / AI 推进 / 消息 / 战报 / 终局都在这里跑
 	_process_waiting_inputs(delta)
 	_update_turn_presentation(delta)
-	if _turn_read_remaining <= 0.0 and not _rival_anim_busy:
+	_update_battle_broadcast(delta)
+	if _turn_read_remaining <= 0.0 and not _rival_anim_busy and not _phase_anim_busy:
 		_check_and_step_ai(delta)
 	_check_game_over()
 	_update_ai_play_prompt_geometry()
@@ -376,6 +449,12 @@ func refresh_all_ui() -> void:
 		_turn_presentation_key = key
 	_main_area_index = clampi(_main_area_index, -1, MapData.areas.size() - 1)
 	_breathing.clear()
+	# 阶段更迭：先播提示横幅，动画期间冻结行动（首次进入第 0 阶段不播）
+	if GameProgress.current_phase_index != _last_phase_index:
+		var first_phase := _last_phase_index < 0
+		_last_phase_index = GameProgress.current_phase_index
+		if not first_phase and GameProgress.current_phase_index >= 0:
+			_show_phase_banner(GameProgress.current_phase_index)
 	_bind_top()
 	_bind_rivals()
 	_bind_situation_and_piles()
@@ -928,7 +1007,7 @@ func _layout_positions(ids: Array) -> Dictionary:
 
 ## 传送带：从当前视觉位置并排左移到目标位置，队首卡左出右进绕到队尾。
 ## 调用前卡片已钉在旧位置；await 到所有平移完成，供调用方串行。
-func _shift_cards(targets: Dictionary, expected_ids: Array, previous_ids: Array) -> void:
+func _shift_cards(targets: Dictionary, expected_ids: Array, previous_ids: Array, seconds: float) -> void:
 	var wrap_count := previous_ids.find(expected_ids[0])
 	var cyclic := wrap_count > 0 and previous_ids.size() == expected_ids.size() and targets.size() == expected_ids.size()
 	if cyclic:
@@ -948,14 +1027,14 @@ func _shift_cards(targets: Dictionary, expected_ids: Array, previous_ids: Array)
 			var wrap_tween := card.create_tween()
 			_rival_wrap_tweens.append(wrap_tween)
 			pending.append(wrap_tween)
-			wrap_tween.tween_property(card, "position:x", -card.size.x, TURN_ENTRY_SECONDS * 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+			wrap_tween.tween_property(card, "position:x", -card.size.x, seconds * 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 			wrap_tween.tween_callback(func() -> void: card.position = Vector2(_rivals.size.x, target.y))
-			wrap_tween.tween_property(card, "position", target, TURN_ENTRY_SECONDS * 0.6).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+			wrap_tween.tween_property(card, "position", target, seconds * 0.6).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		else:
 			if _rival_shift_tween == null:
 				_rival_shift_tween = create_tween().set_parallel(true)
 				pending.append(_rival_shift_tween)
-			_rival_shift_tween.tween_property(card, "position", target, TURN_ENTRY_SECONDS).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+			_rival_shift_tween.tween_property(card, "position", target, seconds).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	for t in pending:
 		if t.is_running():
 			await t.finished
@@ -996,7 +1075,7 @@ func _animate_actor_handoff(old_positions: Dictionary, expected_ids: Array, prev
 	# 金框落位（或本就没有跨卡飞行）后，新行动者亮起高亮，并解除刷新对它的压制
 	_pending_rival_highlight_id = -1
 	_set_acting_highlight(next_card, true)
-	await _shift_cards(targets, expected_ids, previous_ids)
+	await _shift_cards(targets, expected_ids, previous_ids, HANDOFF_SLIDE_SECONDS)
 	if gen == _rival_anim_generation:
 		_rival_anim_busy = false
 
@@ -1017,7 +1096,7 @@ func _animate_round_change(old_positions: Dictionary, expected_ids: Array, previ
 	# 中间态卡序与最终态不同，位置要按中间态自身累加宽度算，不能套用最终态的 targets
 	var mid_ids: Array = [int(expected_ids.back())] + expected_ids.slice(0, -1)
 	var stage1_target := _layout_positions(mid_ids)
-	await _shift_cards(stage1_target, mid_ids, previous_ids)
+	await _shift_cards(stage1_target, mid_ids, previous_ids, TURN_ENTRY_SECONDS)
 	if gen != _rival_anim_generation or not is_inside_tree():
 		return
 	# 阶段2：上一回合首位下抽，其余左移补位，首位从下方绕到末位再上移
@@ -1033,6 +1112,8 @@ func _drop_first_to_tail(first_id: int, targets: Dictionary) -> void:
 		return
 	# 下抽/绕到末位的过程中首位要离开顺位横列，先关掉容器裁剪，否则抽出的卡会被裁掉看不见
 	_rivals.clip_contents = false
+	# 抽出的卡会向下越过顶栏、叠进战区卷轴范围，必须抬到卷轴之上，否则会被战区盖住
+	first_card.z_index = ROUND_LIFTED_Z
 	var tail: Vector2 = targets[first_id]
 	var drop_y := first_card.size.y * ROUND_DROP_RATIO
 	# 1) 首位向下抽出，留出空位
@@ -1059,32 +1140,145 @@ func _drop_first_to_tail(first_id: int, targets: Dictionary) -> void:
 	var move_up := first_card.create_tween()
 	move_up.tween_property(first_card, "position:y", 0.0, ROUND_DROP_SECONDS).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	await move_up.finished
+	# 回到顶栏后撤销图层提升（测试会校验不留高图层）
+	first_card.z_index = 0
 
 ## 自动推进前逐帧捕获行动窗口，不依赖半秒一次的全屏刷新。
 func _update_turn_presentation(delta: float) -> void:
 	var key := [GameProgress.current_round, GameProgress.current_phase_index, GameProgress.current_player_id]
 	if key != _turn_presentation_key:
 		refresh_all_ui()
-	elif not _rival_anim_busy:
-		# 顺位动画播放期间冻结行动读条：动画演完才开始行动
+	elif not _rival_anim_busy and not _phase_anim_busy:
+		# 顺位动画 / 阶段横幅播放期间冻结行动读条：动画演完才开始行动
 		_turn_read_remaining = maxf(0.0, _turn_read_remaining - delta)
 
 func _set_banner_actor(id: int) -> void:
 	_bind_avatar(_banner.get_node("Avatar"), _header_img(id))
 	_set_text(_banner, "Text", "%s 的行动" % ("我方" if id == _local_player_id else _player_name(id)))
 
-## 横幅只原位更新；交接动作由顶部整张玩家卡承担。
+## 按"上一次横幅是否已演完"调整节奏缩放：没演完就切换说明切得快，缩短本次动画；
+## 演完了才切换说明节奏从容，缩放逐步回到 1.0。
+func _banner_tick_pace(previous_still_running: bool) -> void:
+	_banner_pace = BANNER_PACE_MIN if previous_still_running else BANNER_PACE_MAX
+
+
+## 横幅淡入/淡出单段时长
+func _banner_fade_seconds() -> float:
+	return BANNER_FADE_BASE * _banner_pace
+
+
+## 横幅完全显示的保持时长
+func _banner_hold_seconds() -> float:
+	return BANNER_HOLD_BASE * _banner_pace
+
+
+## 横幅原位淡入淡出；交接动作由顶部整张玩家卡承担。
+## 行动者一切换就重设内容并从透明淡入，淡出时长按本次切人节奏伸缩：
+## 这样实际已经轮到下一名玩家时，屏幕上不会还挂着上一名玩家的横幅。
 func _show_banner_actor(id: int) -> void:
+	# 上一次横幅还没演完就又切人 → 说明切得快，本次动画相应缩短
+	_banner_tick_pace(_banner_tween != null and _banner_tween.is_running())
 	if _banner_tween != null:
 		_banner_tween.kill()
 	_set_banner_actor(id)
+	var fade := _banner_fade_seconds()
+	var hold := _banner_hold_seconds()
 	_banner.show()
-	_banner.modulate.a = 1.0
-	if id == _local_player_id:
-		_banner_tween = _banner.create_tween()
-		_banner_tween.tween_interval(TURN_ENTRY_SECONDS + TURN_READ_SECONDS)
-		_banner_tween.tween_property(_banner, "modulate:a", 0.0, 0.2)
-		_banner_tween.tween_callback(_banner.hide)
+	_banner.modulate.a = 0.0
+	_banner_tween = _banner.create_tween()
+	_banner_tween.tween_property(_banner, "modulate:a", 1.0, fade)
+	_banner_tween.tween_interval(hold)
+	_banner_tween.tween_property(_banner, "modulate:a", 0.0, fade)
+	_banner_tween.tween_callback(_banner.hide)
+
+
+## 阶段更迭横幅：独立素材——金色描边大字 + 两侧向中间展开的金线，透明背景，懒创建。
+func _phase_banner_node() -> Control:
+	if _phase_banner != null and is_instance_valid(_phase_banner):
+		return _phase_banner
+	_phase_banner = Control.new()
+	_phase_banner.name = "PhaseBanner"
+	_phase_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_phase_banner.visible = false
+	_phase_banner.z_index = BANNER_Z
+	_phase_banner.set_anchors_preset(Control.PRESET_CENTER)
+	_phase_banner.position = Vector2(-330, -72)
+	_phase_banner.size = Vector2(660, 144)
+	var font := (_banner.get_node("Text") as Label).get_theme_font("font")
+
+	_phase_banner_label = Label.new()
+	_phase_banner_label.name = "Label"
+	_phase_banner_label.position = Vector2(210, 42)
+	_phase_banner_label.size = Vector2(240, 60)
+	_phase_banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_phase_banner_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_phase_banner_label.add_theme_font_override("font", font)
+	_phase_banner_label.add_theme_font_size_override("font_size", 36)
+	_phase_banner_label.add_theme_color_override("font_color", Color(0.97, 0.84, 0.46, 1.0))
+	_phase_banner_label.add_theme_color_override("font_outline_color", Color(0.28, 0.16, 0.05, 1.0))
+	_phase_banner_label.add_theme_constant_override("outline_size", 8)
+	_phase_banner_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.55))
+	_phase_banner_label.add_theme_constant_override("shadow_offset_x", 3)
+	_phase_banner_label.add_theme_constant_override("shadow_offset_y", 3)
+	_phase_banner.add_child(_phase_banner_label)
+
+	_phase_line_left = ColorRect.new()
+	_phase_line_left.name = "LineLeft"
+	_phase_line_left.color = Color(0.90, 0.72, 0.30, 0.95)
+	_phase_line_left.position = Vector2(16, 71)
+	_phase_line_left.size = Vector2(194, 2)
+	_phase_line_left.pivot_offset = Vector2(194, 1)
+	_phase_line_left.scale.x = 0.0
+	_phase_banner.add_child(_phase_line_left)
+
+	_phase_line_right = ColorRect.new()
+	_phase_line_right.name = "LineRight"
+	_phase_line_right.color = Color(0.90, 0.72, 0.30, 0.95)
+	_phase_line_right.position = Vector2(450, 71)
+	_phase_line_right.size = Vector2(194, 2)
+	_phase_line_right.pivot_offset = Vector2(0, 1)
+	_phase_line_right.scale.x = 0.0
+	_phase_banner.add_child(_phase_line_right)
+
+	add_child(_phase_banner)
+	return _phase_banner
+
+
+## 阶段更迭提示：金线向中间展开、大字过冲回弹，随后淡出；期间冻结行动。
+## 动画结束后补上行动者提示（当前阶段的首位玩家）。
+func _show_phase_banner(phase_index: int) -> void:
+	var phase_name := str(GameProgress.phases[phase_index].get("name", ""))
+	if phase_name == "":
+		return
+	var pb := _phase_banner_node()
+	_phase_banner_label.text = "%s阶段" % _phase_cn(phase_name)
+	_phase_anim_busy = true
+	if _phase_tween != null:
+		_phase_tween.kill()
+	pb.visible = true
+	pb.modulate.a = 0.0
+	_phase_banner_label.pivot_offset = _phase_banner_label.size * 0.5
+	_phase_banner_label.scale = Vector2(0.82, 0.82)
+	_phase_line_left.scale.x = 0.0
+	_phase_line_right.scale.x = 0.0
+	_phase_tween = pb.create_tween()
+	_phase_tween.set_parallel(true)
+	_phase_tween.tween_property(pb, "modulate:a", 1.0, PHASE_BANNER_FADE).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_phase_tween.tween_property(_phase_banner_label, "scale", Vector2.ONE, PHASE_BANNER_FADE * 1.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_phase_tween.tween_property(_phase_line_left, "scale:x", 1.0, PHASE_BANNER_FADE * 1.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_phase_tween.tween_property(_phase_line_right, "scale:x", 1.0, PHASE_BANNER_FADE * 1.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	_phase_tween.set_parallel(false)
+	_phase_tween.tween_interval(PHASE_BANNER_HOLD)
+	_phase_tween.tween_property(pb, "modulate:a", 0.0, PHASE_BANNER_FADE).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	_phase_tween.tween_callback(func() -> void:
+		pb.visible = false
+		_phase_banner_label.scale = Vector2.ONE
+		_phase_anim_busy = false
+		# 阶段动画演完后补上行动者提示（当前阶段的首位玩家）
+		var curr := GameProgress.current_player_id
+		if curr >= 0:
+			_show_banner_actor(curr)
+	)
 
 
 ## ---------- 12 局势 / 弃牌 / 17 路线 ----------
@@ -1593,13 +1787,19 @@ func _bind_hint() -> void:
 	if not _banner_initialized:
 		_banner_initialized = true
 		_banner_actor_id = curr
-		_banner.visible = curr >= 0 and not mine
-		if curr >= 0:
+		# 开局首名行动者沿用"非我方才亮相"的规则，同样走淡入淡出
+		if curr >= 0 and not mine:
+			_show_banner_actor(curr)
+		elif curr >= 0:
 			_set_banner_actor(curr)
+		else:
+			_banner.hide()
 	elif curr != _banner_actor_id:
 		_banner_actor_id = curr
 		if curr >= 0:
-			_show_banner_actor(curr)
+			if not _phase_anim_busy:
+				_show_banner_actor(curr)
+			# 阶段横幅播放期间先不显示行动者，等阶段动画结束的 callback 补上
 		else:
 			if _banner_tween != null:
 				_banner_tween.kill()
@@ -1676,13 +1876,14 @@ func _bind_master() -> void:
 			_portrait_textures[path] = ImageTexture.create_from_image(image.get_region(region))
 		portrait.texture = _portrait_textures[path]
 	_set_text(_master, "Name", _player_name(_local_player_id))
-	_master.get_node("ActingTag").visible = _is_acting(_local_player_id)
 
 
 ## ---------- 11 御主下方的手牌抽屉与椭圆两侧的技能卡 ----------
 
 func _bind_hand() -> void:
 	var pl := _pl(_local_player_id)
+	# 真名是否解放同时决定技能区牌要不要盖未公开遮罩，整组绑定前取一次
+	_local_true_name_released = ReleaseTrueName.is_released(_local_player_id)
 	var live_cards: Array = []
 	for card in pl.get("hand_cards", []):
 		if card is BaseHandCard:
@@ -1776,7 +1977,9 @@ func _layout_held_group(entries: Array, template: String, left: float, right: fl
 		# 位置与倾角由 _update_held_cards 同步过渡，避免两个时钟造成牌面歪乱。
 		slot.set_meta("rest_rotation", angle)
 		slot.set_meta("held_group", group)
-		_bind_hand_card(slot, entry.card, entry.kind, entry.count, _is_acting(_local_player_id))
+		# 未公开遮罩由调用方声明：技能区/御主牌区要标出"这张牌对别人是暗的"，
+		# 手牌区不标——手牌本来只有自己可见，盖闭眼遮罩没有信息量，只会挡住卡面
+		_bind_hand_card(slot, entry.card, entry.kind, entry.count, _is_acting(_local_player_id), group == "zone")
 		var badge := slot.get_node("StackCount") as Label
 		badge.visible = entry.stack_count > 1
 		badge.text = "x%d" % entry.stack_count if badge.visible else ""
@@ -1951,14 +2154,73 @@ func _held_card_playable(card) -> bool:
 	return true
 
 
-func _bind_hand_card(node: Control, card, kind: String, count: int, mine: bool) -> void:
+## 牌面翻转动画：绕垂直中线折到最窄时执行 on_mid（换贴图/换遮罩由调用方决定），再展开。
+## 二维投影模拟，与头像翻转同一手法；只负责"折、在中点回调、再展开"这一件事。
+## 作用在卡图节点（Frame）而不是卡位：卡位的 scale 被悬浮缩放每帧 lerp 控制，两处会互相打架。
+## 回调与采样一律按 instance_id 取节点，避免卡位被刷新回收后 lambda 捕获已释放对象。
+func _play_card_flip(frame: Control, on_mid: Callable) -> void:
+	# 用 _meta_or 判存在性，不要写 get_meta(key, null)（见其定义处的说明）
+	var running: Tween = _meta_or(frame, "card_flip_tween", null) as Tween
+	if running != null and running.is_valid():
+		running.kill()
+	var step := CARD_FLIP_SECONDS * 0.5
+	var id := frame.get_instance_id()
+	frame.set_meta("card_flipping", true)
+	frame.pivot_offset = frame.size * 0.5
+	var tween := frame.create_tween()
+	frame.set_meta("card_flip_tween", tween)
+	tween.tween_method(_apply_flip_scale.bind(id), 1.0, 0.0, step).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tween.tween_callback(on_mid)
+	tween.tween_method(_apply_flip_scale.bind(id), 0.0, 1.0, step).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.finished.connect(_finish_card_flip.bind(id))
+
+
+func _apply_flip_scale(v: float, id: int) -> void:
+	var node := instance_from_id(id) as Control
+	if node != null:
+		node.scale.x = maxf(v, 0.02)
+
+
+## 翻面中点：贴图与未公开遮罩一起换——遮罩的有无也属于"这一面"的观感
+func _apply_hand_face(id: int, img: String, mark: bool) -> void:
+	var node := instance_from_id(id) as Control
+	if node == null:
+		return
+	_set_img(node, "Img", img)
+	_sync_overlay(node, mark, "ConcealOverlay", CONCEAL_COLOR, CONCEAL_ICON)
+
+
+func _finish_card_flip(id: int) -> void:
+	var node := instance_from_id(id) as Control
+	if node == null:
+		return
+	node.scale = Vector2.ONE
+	node.set_meta("card_flipping", false)
+
+
+func _bind_hand_card(node: Control, card, kind: String, count: int, mine: bool, show_conceal_mark: bool = true) -> void:
 	var frame := node.get_node("Frame") as Control
 	frame.modulate = Color.WHITE
 	node.get_node("Breath").hide()
 	var awakened := not (card is BaseSkill and not bool(card.get("_is_awakened")))
-	var face_visible: bool = awakened and not card._is_concealed
+	var concealed := bool(card._is_concealed)
 	var back: String = str(card.get("_card_back_img"))
-	_bind_card(frame, str(card.get("_card_img")) if face_visible else back)
+	# 暗置＝贴卡背（牌面不给看）；未公开遮罩（半透明灰 + 闭眼图标）表达"这张牌还没向其他玩家公开"，
+	# 明置≠已公开：技能区牌的卡面要等【真名解放】才真正公开（见 ReleaseTrueName / HideTrueName）。
+	# 未觉醒升华技本来就只有卡背（玩家尚未获得这张牌）。
+	var face_img: String = str(card.get("_card_img")) if awakened and not concealed else back
+	var mark: bool = awakened and show_conceal_mark and (concealed or not _local_true_name_released)
+	var prev_face: String = str(frame.get_meta("face_img", ""))
+	var prev_mark: bool = bool(frame.get_meta("face_mark", false))
+	frame.set_meta("face_img", face_img)
+	frame.set_meta("face_mark", mark)
+	if prev_face != "" and (prev_face != face_img or prev_mark != mark):
+		# 换面（明置↔暗置、升华技觉醒等）：折到最窄时同时换贴图与遮罩，不让牌面瞬间跳变
+		_play_card_flip(frame, _apply_hand_face.bind(frame.get_instance_id(), face_img, mark))
+	elif not bool(frame.get_meta("card_flipping", false)):
+		# 动画进行中不要提前换面（贴图与遮罩都由动画在中点换）
+		_bind_card(frame, face_img)
+		_sync_overlay(frame, mark, "ConcealOverlay", CONCEAL_COLOR, CONCEAL_ICON)
 	if kind == "升华技":
 		_set_variation(frame, "CardUpgrade")
 	var playable := awakened and _held_card_playable(card)
@@ -2248,6 +2510,8 @@ func _check_waiting_location_selection() -> void:
 
 # --- AI 推进 ---
 func _check_and_step_ai(delta: float) -> void:
+	if _broadcast_active:
+		return
 	if GameProgress.is_game_over:
 		return
 	if _effect_result_modal != null and _effect_result_modal.visible:
@@ -2365,7 +2629,7 @@ func _is_debug_console_blocking_progress() -> bool:
 ## 进度闸门：调试控制台暂停、或顺位动画（换人交接 / 轮次更迭）仍在播放时，界面不接受推进操作。
 ## 等动画演完再开始行动，否则玩家的结束阶段会和动画抢同一批卡片、把动画顶掉。
 func _is_progress_blocked() -> bool:
-	return _is_debug_console_blocking_progress() or _rival_anim_busy
+	return _is_debug_console_blocking_progress() or _rival_anim_busy or _phase_anim_busy or _broadcast_active
 
 
 func set_debug_console_enabled(enabled: bool) -> void:
@@ -2952,6 +3216,319 @@ func _battle_result_line(area_name: String, detail: Dictionary) -> String:
 	return "【%s】胜者：%s，最高威力 %d" % [area_name, "、".join(names), int(detail.get("highest_power", 0))]
 
 
+# --- 战斗胜利播报 ---
+## 全屏遮罩层：骨架（背板/暗角/粒子/标题/副标题/滚动区/继续按钮）在 tscn 里，脚本只按数据
+## 生成每个战场的明细块并绑定文案、播放入场与确认节奏。样式用 v2 既有 Theme 变体 + 自绘金色装饰。
+func _battle_broadcast_node() -> Control:
+	if _broadcast_node != null and is_instance_valid(_broadcast_node):
+		return _broadcast_node
+	_broadcast_node = get_node_or_null("BattleBroadcast") as Control
+	if _broadcast_node == null:
+		return null
+	var btn := _broadcast_node.get_node("ContinueBtn") as Button
+	if btn != null and not btn.pressed.is_connected(_on_broadcast_continue_pressed):
+		btn.pressed.connect(_on_broadcast_continue_pressed)
+	_broadcast_node.hide()
+	return _broadcast_node
+
+
+## 每帧检查：结算暂停后弹出播报；AI 玩家逐人自动确认；全部确认后引擎放行并收起。
+func _update_battle_broadcast(delta: float) -> void:
+	if GameProgress == null:
+		return
+	var pending := GameProgress.is_battle_broadcast_pending()
+	if pending and not _broadcast_active:
+		_show_battle_broadcast()
+	elif not pending and _broadcast_active:
+		# 兜底：引擎已放行但播报还挂着（如外部直接全部确认），收起
+		_hide_broadcast()
+	if _broadcast_active:
+		_tick_broadcast_ai_confirm(delta)
+		_refresh_broadcast_continue()
+
+
+## 弹出播报：逐战场生成明细块，再播放标题 + 分块入场。
+func _show_battle_broadcast() -> void:
+	var overlay := _battle_broadcast_node()
+	if overlay == null:
+		return
+	var res: Dictionary = GameProgress.last_battle_result if GameProgress else {}
+	var details: Dictionary = res.get("details_by_area", {})
+	var list := overlay.get_node("AreaScroll/List") as VBoxContainer
+	_clear(list)
+	# 按地图从左到右的顺序（MapData.areas）从上到下排列
+	for area: BaseMapArea in MapData.areas:
+		var area_name := str(area._area_name)
+		if details.has(area_name):
+			list.add_child(_build_broadcast_area_row(area_name, details[area_name]))
+	_broadcast_active = true
+	_broadcast_reveal_done = false
+	_broadcast_ai_queue = []
+	_broadcast_ai_timer = 0.0
+	overlay.modulate.a = 0.0
+	overlay.visible = true
+	move_child(overlay, get_child_count() - 1)
+	_play_broadcast_open(overlay, list)
+
+
+## 入场动画：背板淡入 + 标题缩放回弹 + 各战场块依次淡入，放完后开始 AI 逐人确认。
+func _play_broadcast_open(overlay: Control, list: VBoxContainer) -> void:
+	if _broadcast_reveal_tween != null and _broadcast_reveal_tween.is_valid():
+		_broadcast_reveal_tween.kill()
+	var title := overlay.get_node("Title") as Label
+	var sub := overlay.get_node("Subtitle") as Label
+	var continue_btn := overlay.get_node("ContinueBtn") as Button
+	continue_btn.visible = false
+	continue_btn.modulate.a = 0.0
+	var rows: Array = []
+	for child in list.get_children():
+		if child is Control:
+			rows.append(child)
+	for row in rows:
+		(row as Control).modulate.a = 0.0
+	title.pivot_offset = title.size * 0.5
+	title.scale = Vector2(0.72, 0.72)
+	title.modulate.a = 0.0
+	sub.modulate.a = 0.0
+	_broadcast_reveal_tween = create_tween()
+	_broadcast_reveal_tween.tween_property(overlay, "modulate:a", 1.0, BROADCAST_BACKDROP_FADE)
+	_broadcast_reveal_tween.set_parallel(true)
+	_broadcast_reveal_tween.tween_property(title, "modulate:a", 1.0, BROADCAST_TITLE_SECONDS)
+	_broadcast_reveal_tween.tween_property(title, "scale", Vector2.ONE, BROADCAST_TITLE_SECONDS * 1.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_broadcast_reveal_tween.tween_property(sub, "modulate:a", 1.0, BROADCAST_TITLE_SECONDS)
+	_broadcast_reveal_tween.set_parallel(false)
+	for i in range(rows.size()):
+		var r := rows[i] as Control
+		_broadcast_reveal_tween.tween_property(r, "modulate:a", 1.0, BROADCAST_CARD_STEP)
+	_broadcast_reveal_tween.tween_callback(func() -> void:
+		_broadcast_reveal_done = true
+		_queue_ai_confirmations()
+	)
+
+
+## 把非本地的在局玩家排进自动确认队列：他们没界面，逐人自动确认。
+func _queue_ai_confirmations() -> void:
+	_broadcast_ai_queue = []
+	if GameProgress == null:
+		return
+	for id in GameProgress.battle_broadcast_confirmers():
+		if int(id) != _local_player_id:
+			_broadcast_ai_queue.append(int(id))
+	_broadcast_ai_timer = 0.0
+
+
+## AI 玩家逐人确认：让「已确认 n/7」可见地累加，而不是瞬间跳满。
+func _tick_broadcast_ai_confirm(delta: float) -> void:
+	if not _broadcast_reveal_done or _broadcast_ai_queue.is_empty():
+		return
+	_broadcast_ai_timer += delta
+	if _broadcast_ai_timer < BROADCAST_AI_CONFIRM_STEP:
+		return
+	_broadcast_ai_timer = 0.0
+	GameProgress.confirm_battle_broadcast(int(_broadcast_ai_queue.pop_front()))
+
+
+## 亮起「继续」按钮并实时刷新「已确认 n/7」提示。
+func _refresh_broadcast_continue() -> void:
+	var overlay := _battle_broadcast_node()
+	if overlay == null:
+		return
+	var btn := overlay.get_node("ContinueBtn") as Button
+	if not _broadcast_reveal_done:
+		return
+	if not btn.visible:
+		btn.visible = true
+		btn.modulate.a = 0.0
+		var tw := btn.create_tween()
+		tw.tween_property(btn, "modulate:a", 1.0, 0.3)
+	var confirmed := GameProgress.battle_broadcast_confirmed_count()
+	var total := GameProgress.battle_broadcast_confirmers().size()
+	btn.text = "继续（已确认 %d/%d）" % [confirmed, total]
+
+
+## 「继续」按钮：本地玩家确认自己；AI 玩家由上面的逐人自动确认补齐。
+func _on_broadcast_continue_pressed() -> void:
+	if GameProgress != null and GameProgress.is_battle_broadcast_pending():
+		GameProgress.confirm_battle_broadcast(_local_player_id)
+
+
+func _hide_broadcast() -> void:
+	_broadcast_active = false
+	if _broadcast_reveal_tween != null and _broadcast_reveal_tween.is_valid():
+		_broadcast_reveal_tween.kill()
+	var overlay := _battle_broadcast_node()
+	if overlay != null:
+		overlay.visible = false
+
+
+## 一个战场的结算明细块：结论 + 每名参战者的威力构成 + 战果去向。
+## 所有数值都读 BattleResolver 写好的 last_battle_result，界面不重算威力/战果/胜负。
+func _build_broadcast_area_row(area_name: String, detail: Dictionary) -> Control:
+	var row := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.04, 0.06, 0.11, 0.78)
+	sb.border_color = Color(0.72, 0.56, 0.26, 0.5)
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(10)
+	row.add_theme_stylebox_override("panel", sb)
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	# 战区地图半透明背景（铺满卡片，垫在内容之下）
+	var area_img := _broadcast_area_image(area_name)
+	if area_img != "" and LoadHelper.texture_exists(area_img):
+		var bg := TextureRect.new()
+		bg.texture = LoadHelper.load_texture(area_img)
+		bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		bg.modulate = Color(1, 1, 1, 0.14)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(bg)
+
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 7)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 22)
+	margin.add_theme_constant_override("margin_right", 22)
+	margin.add_theme_constant_override("margin_top", 16)
+	margin.add_theme_constant_override("margin_bottom", 16)
+	margin.add_child(box)
+	row.add_child(margin)
+
+	var winners: Array = detail.get("winners", [])
+	var needs_win: bool = bool(detail.get("needs_win", true))
+	# 标题只写战区名
+	var title := Label.new()
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.add_theme_font_override("font", _broadcast_font(true))
+	title.add_theme_font_size_override("font_size", 24)
+	title.text = area_name
+	title.add_theme_color_override("font_color", Color(1.0, 0.85, 0.35))
+	box.add_child(title)
+	# 结论：仅战斗区域写胜者；魔术工房/侦察（无需比威力）只写标题不写胜者
+	if needs_win:
+		var concl := Label.new()
+		concl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		concl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		concl.add_theme_font_override("font", _broadcast_font(false))
+		concl.add_theme_font_size_override("font_size", 16)
+		if winners.is_empty():
+			concl.text = "无人可获胜，战区战果保留"
+			concl.add_theme_color_override("font_color", Color(0.72, 0.76, 0.82))
+		else:
+			concl.text = "胜者：%s" % _broadcast_names_text(winners)
+			concl.add_theme_color_override("font_color", Color(1.0, 0.85, 0.35))
+		box.add_child(concl)
+
+	# 细分隔线
+	var sep := ColorRect.new()
+	sep.color = Color(0.72, 0.56, 0.26, 0.32)
+	sep.custom_minimum_size = Vector2(0, 1)
+	sep.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_child(sep)
+
+	# 每名参战玩家：头像 + 威力构成
+	var powers: Dictionary = detail.get("powers", {})
+	var effective: Array = detail.get("effective_players", [])
+	for pid in detail.get("players", []):
+		var pname: String = _player_name(int(pid))
+		var prow := HBoxContainer.new()
+		prow.add_theme_constant_override("separation", 10)
+		var avatar := TextureRect.new()
+		avatar.custom_minimum_size = Vector2(36, 36)
+		avatar.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		avatar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		avatar.material = _broadcast_avatar_mask()
+		var himg := _header_img(int(pid))
+		avatar.texture = LoadHelper.load_texture(himg) if himg != "" and LoadHelper.texture_exists(himg) else null
+		prow.add_child(avatar)
+		var line := Label.new()
+		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		line.add_theme_font_override("font", _broadcast_font(false))
+		line.add_theme_font_size_override("font_size", 17)
+		if powers.has(pid):
+			var pw: Dictionary = powers[pid]
+			var parts: Array[String] = ["%s 威力 %d ＝ 出牌 %d" % [pname, int(pw.get("total", 0)), int(pw.get("power", 0))]]
+			for item in [["bonus", "加成"], ["board", "场上牌"], ["location_benefit", "地利"]]:
+				var v: int = int(pw.get(item[0], 0))
+				if v != 0:
+					parts.append("%s %+d" % [item[1], v])
+			line.text = " ＋ ".join(parts)
+			line.add_theme_color_override("font_color", Color(1.0, 0.9, 0.5) if winners.has(pid) else Color(0.85, 0.88, 0.95))
+		elif not effective.has(pid):
+			line.text = "%s 不参与胜负判定" % pname
+			line.add_theme_color_override("font_color", Color(0.72, 0.62, 0.62))
+		else:
+			line.text = "%s 未参与威力比较" % pname
+			line.add_theme_color_override("font_color", Color(0.72, 0.74, 0.8))
+		prow.add_child(line)
+		box.add_child(prow)
+
+	# 战果去向：事件牌 + 竞争 = 总战果，再写每人实得净变化（含令咒 / 扣分）
+	var total_score: int = int(detail.get("total_score", 0))
+	var score_line := Label.new()
+	score_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	score_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	score_line.add_theme_font_override("font", _broadcast_font(false))
+	score_line.add_theme_font_size_override("font_size", 16)
+	score_line.add_theme_color_override("font_color", Color(1.0, 0.85, 0.45))
+	var gained: Dictionary = detail.get("score_gained", {})
+	var gained_parts: Array[String] = []
+	for pid in gained.keys():
+		gained_parts.append("%s %+d" % [_player_name(int(pid)), int(gained[pid])])
+	var source_text: String = "事件牌 %d ＋ 竞争 %d ＝ %d" % [int(detail.get("event_score", 0)), int(detail.get("competition_score", 0)), total_score]
+	if gained_parts.is_empty():
+		score_line.text = "战果 %s，无人获得" % source_text
+	else:
+		score_line.text = "战果 %s；%s" % [source_text, "、".join(gained_parts)]
+	box.add_child(score_line)
+	return row
+
+
+## 播报文案的衬线中文字体（与主题 CnSys 同源：Noto Serif SC / 思源宋体 / 宋体），懒建共享。
+func _broadcast_font(bold: bool) -> Font:
+	if bold:
+		if _broadcast_font_bold == null:
+			var f := SystemFont.new()
+			f.font_names = PackedStringArray(["Noto Serif SC", "Source Han Serif SC", "SimSun"])
+			f.font_weight = 700
+			_broadcast_font_bold = f
+		return _broadcast_font_bold
+	if _broadcast_font_regular == null:
+		var f := SystemFont.new()
+		f.font_names = PackedStringArray(["Noto Serif SC", "Source Han Serif SC", "SimSun"])
+		_broadcast_font_regular = f
+	return _broadcast_font_regular
+
+
+## 战区名 → 该战区的地图底图（按 MapData.areas 顺序对应 AREA_IMAGES）。
+func _broadcast_area_image(area_name: String) -> String:
+	for i in range(MapData.areas.size()):
+		var area: BaseMapArea = MapData.areas[i]
+		if str(area._area_name) == area_name:
+			return _area_image(i)
+	return ""
+
+
+## 播报玩家头像的圆形遮罩材质（复用 ui_mask 着色器，懒建共享）
+func _broadcast_avatar_mask() -> ShaderMaterial:
+	if _broadcast_avatar_mat == null:
+		_broadcast_avatar_mat = ShaderMaterial.new()
+		_broadcast_avatar_mat.shader = load("res://assets/shaders/ui_mask.gdshader")
+		_broadcast_avatar_mat.set_shader_parameter("shape", 1)
+		_broadcast_avatar_mat.set_shader_parameter("softness", 0.02)
+	return _broadcast_avatar_mat
+
+
+## 一组玩家的示人名字，用顿号连接（平局双方、胜者名单共用）
+func _broadcast_names_text(ids: Array) -> String:
+	var parts: Array[String] = []
+	for id in ids:
+		parts.append(_player_name(int(id)))
+	return "、".join(parts)
+
+
 # --- 卡面渲染（明置 / 暗置 / 未激活遮罩） ---
 func _render_card_face(node: TextureRect, obj, owned: bool, fallback_type: String = "skill", show_conceal_mark: bool = true, concealed_override = null) -> void:
 	if node == null or obj == null:
@@ -2959,11 +3536,11 @@ func _render_card_face(node: TextureRect, obj, owned: bool, fallback_type: Strin
 	var concealed: bool = bool(concealed_override) if concealed_override != null else (obj is BaseCard and bool(obj.get("_is_concealed")))
 	if obj is BaseSkill and not bool(obj.get("_is_awakened")):
 		node.texture = LoadHelper.load_texture(LoadHelper.resolve_card_back("", "", "upgrade_skill"))
-		_sync_overlay(node, false, "ConcealOverlay", Color(0, 0, 0, 0))
-		_sync_overlay(node, false, "InactiveOverlay", Color(0, 0, 0, 0))
+		_sync_overlay(node, false, "ConcealOverlay", CONCEAL_COLOR)
+		_sync_overlay(node, false, "InactiveOverlay", INACTIVE_COLOR)
 		_disable_card_zoom(node)
 		return
-	_sync_overlay(node, concealed and owned and show_conceal_mark, "ConcealOverlay", Color(0.32, 0.32, 0.36, 0.55))
+	_sync_overlay(node, concealed and owned and show_conceal_mark, "ConcealOverlay", CONCEAL_COLOR, CONCEAL_ICON)
 	if concealed and not owned:
 		node.texture = LoadHelper.load_texture(LoadHelper.resolve_card_back("", "", fallback_type))
 		_disable_card_zoom(node)
@@ -2971,7 +3548,7 @@ func _render_card_face(node: TextureRect, obj, owned: bool, fallback_type: Strin
 	var img = obj.get("_card_img")
 	if img != null and str(img) != "" and LoadHelper.texture_exists(str(img)):
 		node.texture = LoadHelper.load_texture(str(img))
-	_sync_overlay(node, _is_card_inactive(obj), "InactiveOverlay", Color(0.45, 0.06, 0.10, 0.45))
+	_sync_overlay(node, _is_card_inactive(obj), "InactiveOverlay", INACTIVE_COLOR)
 	bind_zoom_for_card(node, obj)
 
 
@@ -2982,7 +3559,7 @@ func _is_card_inactive(obj) -> bool:
 	return not bool(buff.get("_is_active"))
 
 
-func _sync_overlay(node: Control, show_overlay: bool, overlay_name: String, color: Color) -> void:
+func _sync_overlay(node: Control, show_overlay: bool, overlay_name: String, color: Color, icon_path := "") -> void:
 	var overlay := node.get_node_or_null(overlay_name) as ColorRect
 	if not show_overlay:
 		if overlay:
@@ -2995,7 +3572,24 @@ func _sync_overlay(node: Control, show_overlay: bool, overlay_name: String, colo
 		overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		node.add_child(overlay)
+		if icon_path != "":
+			var icon := TextureRect.new()
+			icon.name = "OverlayIcon"
+			icon.texture = LoadHelper.load_texture(icon_path)
+			icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			# 纯 UI 装饰，不是卡也不是头像：显式关掉放大，否则它接近正方形会被当成展示位
+			icon.set_meta("zoom_disabled", true)
+			overlay.add_child(icon)
 	overlay.visible = true
+	var icon_node := overlay.get_node_or_null("OverlayIcon") as TextureRect
+	if icon_node:
+		# 图标跟着卡位大小走，卡越小图标越小，始终占卡面约四成宽（与旧控制器一致）
+		var side: float = maxf(18.0, minf(node.size.x, node.size.y) * 0.40)
+		icon_node.custom_minimum_size = Vector2(side, side)
+		icon_node.size = Vector2(side, side)
+		icon_node.position = (node.size - icon_node.size) * 0.5
 
 
 # --- 放大 / 说明面板 ---
@@ -3009,6 +3603,10 @@ func _show_zoom_for(card: Control) -> void:
 	var tex: Texture2D = LoadHelper.load_texture(img_path)
 	_hover_zoom_source = card
 	_zoom_hide_remaining = -1.0
+	# 说明面板与放大图共生：放大图换到别的展示位时，上一张牌的说明一起收，
+	# 不让说明停留在已经不再查看的牌上。
+	if _hover_desc != null and _hover_desc.visible and _desc_source_id != card.get_instance_id():
+		_close_card_desc()
 	# 图标左侧常显无背景小字“右键大图查看文字说明”（tscn 的 Hint/DefaultHint）；
 	# 需要额外文字说明的展示位用 zoom_hint 声明（显示在图标右侧），
 	# 没有说明的展示位（title 与 desc 都为空）整组提示都不显示，避免误导。
@@ -3114,10 +3712,23 @@ func _on_hover_zoom_gui_input(event: InputEvent) -> void:
 			_hover_zoom.accept_event()
 
 
+## 鼠标是否落在「查看卡片」的浮层上（放大卡图或说明面板，含其子节点）。
+## 落在浮层上视为仍在看这张牌，保活计时冻结。
+func _is_zoom_overlay(ctrl: Control) -> bool:
+	if ctrl == null:
+		return false
+	for layer in [_hover_zoom, _hover_desc]:
+		if layer != null and is_instance_valid(layer) and layer.visible \
+				and (ctrl == layer or layer.is_ancestor_of(ctrl)):
+			return true
+	return false
+
+
 ## 每帧推进两件事：
 ## ① 悬浮够时长才放大——短暂划过、或从一张牌扫到另一张时都不弹图；
-## ② 收起——源被刷新释放或被禁用时立即收，鼠标离开源与放大图后按保活窗口收。
-## 鼠标落在放大卡图上视为"仍在看这张牌"：保持显示并取消收起计时，右键说明才有下手处。
+## ② 收起——源被刷新释放或被禁用时立即收，鼠标离开源卡、放大图与说明面板后按保活窗口收。
+## 放大图与说明面板属于同一个「查看卡片」状态：鼠标落在源卡、放大图或说明面板上都保持，
+## 三者全部离开后一起收起，说明不会在放大图消失后孤立残留在屏幕上。
 func _update_hover_zoom_keepalive(delta: float) -> void:
 	if _hover_zoom == null:
 		return
@@ -3125,7 +3736,7 @@ func _update_hover_zoom_keepalive(delta: float) -> void:
 			or not _hover_zoom_source.is_visible_in_tree() or bool(_hover_zoom_source.get_meta("zoom_disabled", false))):
 		_hide_event_zoom(false)
 	var hovered := get_viewport().gui_get_hovered_control()
-	if hovered != null and (hovered == _hover_zoom or _hover_zoom.is_ancestor_of(hovered)):
+	if _is_zoom_overlay(hovered):
 		_zoom_hide_remaining = -1.0
 		return
 	var candidate := _zoom_hover_candidate()
@@ -3144,13 +3755,14 @@ func _update_hover_zoom_keepalive(delta: float) -> void:
 				_show_zoom_for(candidate)
 			_zoom_hide_remaining = -1.0
 			return
-	if not _hover_zoom.visible:
+	if not _hover_zoom.visible and not (_hover_desc != null and _hover_desc.visible):
 		return
 	if _zoom_hide_remaining < 0.0:
 		_zoom_hide_remaining = ZOOM_KEEPALIVE_SECONDS
 	_zoom_hide_remaining -= delta
 	if _zoom_hide_remaining <= 0.0:
-		_hide_event_zoom(false)
+		# 一并收说明：放大图消失后说明不该单独留着
+		_hide_event_zoom(true)
 
 func _on_zoom_target_gui_input(event: InputEvent, node: Control) -> void:
 	if node.get_meta("zoom_disabled", false):
@@ -3650,6 +4262,9 @@ func _bind_player_row(grp: Control, pid: int) -> void:
 		cards_row.move_child(slot, k)
 		var hidden := bool(card.get("_is_concealed")) and pid != _local_player_id
 		_bind_card(slot, _back("attack" if card is BaseAttack else "skill") if hidden else str(card.get("_card_img")), 0.85 if hidden else 1.0)
+		# 自己打出的暗置牌仍显示卡面，盖未公开遮罩（半透明灰 + 闭眼图标）标出"它对别人是暗的"；
+		# 他人的暗置牌只给卡背，不给内容
+		_sync_overlay(slot, bool(card.get("_is_concealed")) and pid == _local_player_id, "ConcealOverlay", CONCEAL_COLOR, CONCEAL_ICON)
 		slot.set_meta("card_object", card)
 		slot.set_meta("card", card)
 		slot.set_meta("card_owner", pid)

@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://drw7psqfct2vv" path="res://assets/images/main_menu/command_sigil.svg" id="6_sigil"]
 [ext_resource type="Script" uid="uid://d0b27v2vpg4hb" path="res://assets/scripts/game_scene/seat_ring.gd" id="7_seatring"]
 [ext_resource type="Shader" path="res://assets/shaders/ui_flow_border.gdshader" id="10_flow"]
+[ext_resource type="Texture2D" uid="uid://dhhioh8s08qtq" path="res://assets/images/game_scene/v2/ui/master_oval_frame.svg" id="11_ovalframe"]
 [sub_resource type="ShaderMaterial" id="FlowBorderMat"]
 shader = ExtResource("10_flow")
 [sub_resource type="StyleBoxFlat" id="SB_AvBlood"]
@@ -323,12 +324,6 @@ border_color = Color(0.7882, 0.6431, 0.3608, 0.35)
 shadow_color = Color(0, 0, 0, 0.55)
 shadow_size = 12
 shadow_offset = Vector2(0, 8)
-[sub_resource type="StyleBoxFlat" id="SB_GoldTag"]
-content_margin_left = 14.0
-content_margin_top = 2.0
-content_margin_right = 14.0
-content_margin_bottom = 2.0
-bg_color = Color(0.7882, 0.6431, 0.3608, 1)
 [sub_resource type="StyleBoxFlat" id="SB_Halo"]
 bg_color = Color(0.0235, 0.0314, 0.051, 0.8)
 border_width_left = 1
@@ -573,8 +568,6 @@ GoldButtonV/styles/normal = SubResource("SB_GoldN")
 GoldButtonV/styles/pressed = SubResource("SB_GoldH")
 GoldPanel/base_type = &"Panel"
 GoldPanel/styles/panel = SubResource("SB_Panel")
-GoldTag/base_type = &"PanelContainer"
-GoldTag/styles/panel = SubResource("SB_GoldTag")
 Halo/base_type = &"Panel"
 Halo/styles/panel = SubResource("SB_Halo")
 HintBox/base_type = &"Panel"
@@ -1936,6 +1929,15 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 0
+[node name="OvalFrame" type="TextureRect" parent="Master" unique_id=938104112]
+layout_mode = 0
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 270.0
+offset_bottom = 350.0
+mouse_filter = 2
+expand_mode = 1
+texture = ExtResource("11_ovalframe")
 [node name="Latin" type="Label" parent="Master" unique_id=104565738]
 layout_mode = 0
 offset_top = 306.0
@@ -1955,24 +1957,6 @@ theme_type_variation = &"Title"
 theme_override_fonts/font = SubResource("CnR4")
 theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
-[node name="ActingTag" type="PanelContainer" parent="Master" unique_id=1421271369]
-visible = false
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_top = -14.0
-offset_bottom = 6.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_type_variation = &"GoldTag"
-[node name="Label" type="Label" parent="Master/ActingTag" unique_id=1272915491]
-layout_mode = 2
-theme_type_variation = &"Ink"
-theme_override_fonts/font = SubResource("CnB3")
-theme_override_font_sizes/font_size = 11
-text = "你的行动"
 [node name="Ops" type="Panel" parent="." unique_id=1330080819]
 layout_mode = 0
 offset_left = 1480.0
@@ -2548,6 +2532,115 @@ offset_bottom = 732.0
 focus_mode = 2
 theme_override_font_sizes/normal_font_size = 22
 selection_enabled = true
+[node name="BattleBroadcast" type="Control" parent="."]
+visible = false
+z_index = 120
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="BattleBroadcast"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.03, 0.05, 0.1, 0.93)
+
+[node name="Vignette" type="TextureRect" parent="BattleBroadcast"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("RadialTex")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Sparks" type="CPUParticles2D" parent="BattleBroadcast"]
+position = Vector2(960, 1080)
+amount = 44
+lifetime = 6.0
+preprocess = 4.0
+emission_shape = 3
+emission_rect_extents = Vector2(960, 1)
+direction = Vector2(0, -1)
+spread = 8.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 50.0
+initial_velocity_max = 130.0
+scale_amount_min = 1.2
+scale_amount_max = 2.6
+color = Color(0.93, 0.8, 0.5, 0.8)
+texture = SubResource("DustTexture")
+
+[node name="Title" type="Label" parent="BattleBroadcast"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = 88.0
+offset_right = 1760.0
+offset_bottom = 170.0
+theme_type_variation = &"Gold2"
+theme_override_fonts/font = SubResource("CnB8")
+theme_override_font_sizes/font_size = 56
+theme_override_colors/font_outline_color = Color(0.15, 0.1, 0.03, 1)
+theme_override_constants/outline_size = 10
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+text = "战斗结算"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="BattleBroadcast"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = 178.0
+offset_right = 1760.0
+offset_bottom = 214.0
+theme_type_variation = &"Dim"
+theme_override_fonts/font = SubResource("CnR4")
+theme_override_font_sizes/font_size = 20
+text = "各战场胜负 · 威力构成 · 战果去向"
+horizontal_alignment = 1
+
+[node name="Divider" type="ColorRect" parent="BattleBroadcast"]
+layout_mode = 0
+offset_left = 460.0
+offset_top = 230.0
+offset_right = 1460.0
+offset_bottom = 232.0
+color = Color(0.72, 0.56, 0.26, 0.55)
+
+[node name="AreaScroll" type="ScrollContainer" parent="BattleBroadcast"]
+layout_mode = 0
+offset_left = 460.0
+offset_top = 252.0
+offset_right = 1460.0
+offset_bottom = 928.0
+horizontal_scroll_mode = 0
+
+[node name="List" type="VBoxContainer" parent="BattleBroadcast/AreaScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 30
+
+[node name="ContinueBtn" type="Button" parent="BattleBroadcast"]
+layout_mode = 0
+offset_left = 760.0
+offset_top = 952.0
+offset_right = 1160.0
+offset_bottom = 1016.0
+theme_type_variation = &"GoldButtonV"
+theme_override_font_sizes/font_size = 22
+text = "继续"
+
 [node name="ModalLayer" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15

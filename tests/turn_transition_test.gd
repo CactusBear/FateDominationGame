@@ -76,15 +76,20 @@ func run() -> void:
 	check(target.position.x > 0.0, "actor does not teleport to front")
 	var previous_x := target.position.x
 	var changed_frames := 0
+	var mid_slide := 0
 	var outgoing_min_x := outgoing.position.x
 	for i in range(10):
 		await get_tree().process_frame
 		if not is_equal_approx(previous_x, target.position.x):
 			changed_frames += 1
 		previous_x = target.position.x
+		# 「中间位置」＝已离开原位、又没到队首。换人时长是表现参数（可以调快），
+		# 所以这里只证明整排卡是连续滑过去的、不是一帧跳到位，不绑定具体时长。
+		if target.position.x < original_x and target.position.x > 0.0:
+			mid_slide += 1
 		outgoing_min_x = minf(outgoing_min_x, outgoing.position.x)
 	check(changed_frames >= 3, "horizontal travel changes over multiple frames")
-	check(target.position.x < original_x and target.position.x > 0.0, "remaining cards slide left together")
+	check(mid_slide >= 3, "remaining cards slide left together")
 	check(outgoing_min_x < 0.0, "previous actor exits at left edge")
 	await shot("actor_queue_mid")
 	var active_tween: Tween = board._rival_shift_tween

@@ -1,0 +1,677 @@
+[
+  {
+    "scene": "array_result_drag_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT {\"checks\":12,\"failures\":[]}",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "artoria_skills_test",
+    "exit": 0,
+    "checks": 20,
+    "failures": [],
+    "result": "RESULT checks=20 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "ask_player_option_test",
+    "exit": 0,
+    "checks": 10,
+    "failures": [],
+    "result": "RESULT checks=10 failures=0",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "avatar_entrance_test",
+    "exit": 0,
+    "checks": 8,
+    "failures": [],
+    "result": "RESULT checks=8 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "avatar_parallel_test",
+    "exit": 0,
+    "checks": 20,
+    "failures": [],
+    "result": "RESULT checks=20 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "battle_board_v2_test",
+    "exit": 0,
+    "checks": 38,
+    "failures": [],
+    "result": "RESULT checks=38 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "battle_broadcast_test",
+    "exit": 0,
+    "checks": 28,
+    "failures": [],
+    "result": "RESULT checks=28 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "battle_event_discard_test",
+    "exit": 0,
+    "checks": 24,
+    "failures": [],
+    "result": "RESULT checks=24 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "battle_log_button_test",
+    "exit": 0,
+    "checks": 10,
+    "failures": [],
+    "result": "RESULT checks=10 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "battle_play_groups_test",
+    "exit": 0,
+    "checks": 43,
+    "failures": [],
+    "result": "RESULT checks=43 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "battle_score_report_test",
+    "exit": 0,
+    "checks": 234,
+    "failures": [],
+    "result": "RESULT checks=234 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "battle_scroll_full_game_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT checks=13 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "battle_scroll_test",
+    "exit": 0,
+    "checks": 74,
+    "failures": [],
+    "result": "RESULT checks=74 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "battlefield_conceal_test",
+    "exit": 0,
+    "checks": 18,
+    "failures": [],
+    "result": "RESULT checks=18 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "board_presentation_test",
+    "exit": 0,
+    "checks": 11,
+    "failures": [],
+    "result": "RESULT checks=11 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "card_effect_runtime_test",
+    "exit": 0,
+    "checks": 80,
+    "failures": [],
+    "result": "RESULT checks=80 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "card_history_test",
+    "exit": 0,
+    "checks": 26,
+    "failures": [],
+    "result": "RESULT checks=26 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "card_keyword_test",
+    "exit": 0,
+    "checks": 30,
+    "failures": [],
+    "result": "RESULT checks=30 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "card_revealed_test",
+    "exit": 0,
+    "checks": 15,
+    "failures": [],
+    "result": "RESULT checks=15 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "card_selection_owner_test",
+    "exit": 0,
+    "checks": 17,
+    "failures": [],
+    "result": "RESULT checks=17 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "card_zone_browser_test",
+    "exit": 0,
+    "checks": 106,
+    "failures": [],
+    "result": "RESULT {\"checks\":106,\"failures\":[]}",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "climax_elimination_test",
+    "exit": 0,
+    "checks": 16,
+    "failures": [],
+    "result": "RESULT checks=16 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "climax_gated_ability_test",
+    "exit": 0,
+    "checks": 11,
+    "failures": [],
+    "result": "RESULT checks=11 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "command_spell_test",
+    "exit": 0,
+    "checks": 54,
+    "failures": [],
+    "result": "RESULT checks=54 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "create_card_test",
+    "exit": 0,
+    "checks": 57,
+    "failures": [],
+    "result": "RESULT checks=57 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "debug_console_test",
+    "exit": 0,
+    "checks": 81,
+    "failures": [],
+    "result": "RESULT checks=81 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "deploy_rules_layer_test",
+    "exit": 0,
+    "checks": 22,
+    "failures": [],
+    "result": "RESULT checks=22 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "deploy_rules_test",
+    "exit": 0,
+    "checks": 21,
+    "failures": [],
+    "result": "RESULT checks=21 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "effect_body_fill2_test",
+    "exit": 0,
+    "checks": 30,
+    "failures": [],
+    "result": "RESULT checks=30 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "effect_body_fill_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT checks=12 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "engagement_test",
+    "exit": 0,
+    "checks": 19,
+    "failures": [],
+    "result": "RESULT checks=19 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "extra_play_limit_test",
+    "exit": 0,
+    "checks": 22,
+    "failures": [],
+    "result": "RESULT checks=22 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "fd39_operations_test",
+    "exit": 0,
+    "checks": 101,
+    "failures": [],
+    "result": "RESULT checks=101 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "full_game_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT checks=13 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "hand_fan_arc_test",
+    "exit": 0,
+    "checks": 20,
+    "failures": [],
+    "result": "RESULT checks=20 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "hand_fan_limits_test",
+    "exit": 0,
+    "checks": 0,
+    "failures": [],
+    "result": "RESULT checks=0 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "held_cards_test",
+    "exit": 0,
+    "checks": 58,
+    "failures": [],
+    "result": "RESULT checks=58 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "held_cards_window_test",
+    "exit": 0,
+    "checks": 37,
+    "failures": [],
+    "result": "RESULT checks=37 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "ichi_no_tachi_test",
+    "exit": 0,
+    "checks": 28,
+    "failures": [],
+    "result": "RESULT checks=28 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "json_codec_test",
+    "exit": 0,
+    "checks": 14,
+    "failures": [],
+    "result": "RESULT {\"checks\":14,\"failures\":[]}",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "json_maker_clipboard_test",
+    "exit": 0,
+    "checks": 8,
+    "failures": [],
+    "result": "RESULT checks=8 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "json_maker_drag_edge_test",
+    "exit": 0,
+    "checks": 2,
+    "failures": [],
+    "result": "RESULT checks=2 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "json_maker_identity_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT checks=13 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "json_maker_image_picker_test",
+    "exit": 0,
+    "checks": 28,
+    "failures": [],
+    "result": "RESULT checks=28 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "json_maker_popup_palette_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT {\"checks\":13,\"failures\":[]}",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "json_maker_six_features_test",
+    "exit": 0,
+    "checks": null,
+    "failures": [],
+    "result": "FEATURE RESULT 0 failures: []",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "json_maker_tutorial_test",
+    "exit": 0,
+    "checks": 278,
+    "failures": [],
+    "result": "RESULT checks=278 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "json_maker_ui_test",
+    "exit": 0,
+    "checks": 131,
+    "failures": [],
+    "result": "RESULT {\"checks\":131,\"failures\":[]}",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "location_benefit_test",
+    "exit": 0,
+    "checks": 15,
+    "failures": [],
+    "result": "RESULT checks=15 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "magic_limit_test",
+    "exit": 0,
+    "checks": 8,
+    "failures": [],
+    "result": "RESULT checks=8 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "main_menu_test",
+    "exit": 0,
+    "checks": 32,
+    "failures": [],
+    "result": "RESULT checks=32 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "outpost_identity_test",
+    "exit": 0,
+    "checks": 40,
+    "failures": [],
+    "result": "RESULT checks=40 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "pending_board_power_test",
+    "exit": 0,
+    "checks": 171,
+    "failures": [],
+    "result": "RESULT {\"checks\":171,\"failures\":[]}",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "phase_window_settlement_test",
+    "exit": 0,
+    "checks": 10,
+    "failures": [],
+    "result": "RESULT checks=10 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "piercing_cost_test",
+    "exit": 0,
+    "checks": 11,
+    "failures": [],
+    "result": "RESULT checks=11 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "post_battle_choice_test",
+    "exit": 0,
+    "checks": 180,
+    "failures": [],
+    "result": "RESULT checks=180 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "prepare_phase_test",
+    "exit": 0,
+    "checks": 14,
+    "failures": [],
+    "result": "RESULT checks=14 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "regular_play_test",
+    "exit": 0,
+    "checks": 54,
+    "failures": [],
+    "result": "RESULT checks=54 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "reported_activation_test",
+    "exit": 0,
+    "checks": 75,
+    "failures": [],
+    "result": "RESULT checks=75 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "reported_board_power_test",
+    "exit": 0,
+    "checks": 47,
+    "failures": [],
+    "result": "RESULT checks=47 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "reported_ui_test",
+    "exit": 0,
+    "checks": 116,
+    "failures": [],
+    "result": "RESULT {\"checks\":116,\"failures\":[]}",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "round_change_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT checks=13 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "section5_engine_test",
+    "exit": 0,
+    "checks": 56,
+    "failures": [],
+    "result": "RESULT checks=56 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "servant_optional_avatar_test",
+    "exit": 0,
+    "checks": 9,
+    "failures": [],
+    "result": "RESULT {\"checks\":9,\"failures\":[]}",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "servant_skill_eight_magic_test",
+    "exit": 0,
+    "checks": 26,
+    "failures": [],
+    "result": "RESULT checks=26 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "switch_performance_test",
+    "exit": 0,
+    "checks": 1,
+    "failures": [],
+    "result": "RESULT checks=1 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "takeoff_refresh_test",
+    "exit": 0,
+    "checks": 8,
+    "failures": [],
+    "result": "RESULT checks=8 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "time_point_label_test",
+    "exit": 0,
+    "checks": 7,
+    "failures": [],
+    "result": "RESULT checks=7 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "turn_order_test",
+    "exit": 0,
+    "checks": 5,
+    "failures": [],
+    "result": "RESULT checks=5 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "turn_transition_test",
+    "exit": 0,
+    "checks": 50,
+    "failures": [],
+    "result": "RESULT checks=50 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "twelve_labors_lifecycle_test",
+    "exit": 0,
+    "checks": 134,
+    "failures": [],
+    "result": "RESULT checks=134 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "ui_mask_alpha_test",
+    "exit": 0,
+    "checks": 0,
+    "failures": [],
+    "result": "RESULT checks=0 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "ui_refresh_cost_test",
+    "exit": 0,
+    "checks": 25,
+    "failures": [],
+    "result": "RESULT checks=25 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "venue_rule_fixes_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT checks=12 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "zoom_and_desc_test",
+    "exit": 0,
+    "checks": 15,
+    "failures": [],
+    "result": "RESULT checks=15 failures=[]",
+    "error_count": 0,
+    "errors": []
+  }
+]

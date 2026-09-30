@@ -39,6 +39,9 @@ func run() -> void:
 	# 用引擎部署规则把所有玩家摆上版图（本地玩家 6 进工房、其余按可部署战区轮流）
 	GameProgress.current_round = 1
 	GameProgress.current_phase_index = 2
+	# 阶段横幅只在真正阶段推进时播；这里直接改下标是为了固定测试场景，
+	# 同步记录避免把它误当成一次阶段更迭（否则横幅停在"行动阶段"、挤掉行动者提示）
+	board._last_phase_index = 2
 	var areas: Array = DeployRules.deployable_areas()
 	check(not areas.is_empty(), "has deployable areas")
 	var i := 0
@@ -177,7 +180,7 @@ func run() -> void:
 	GameProgress.current_player_id = GameData.player_id
 	board.refresh_all_ui()
 	await get_tree().process_frame
-	check(board.get_node("Master/ActingTag").visible, "master tag when acting")
+	check(board.get_node("Master/OvalFrame").texture != null, "master oval deco frame")
 	check(_labels_with(stage, "轮到你行动") == 1, "own turn hint")
 	for b in ops.find_children("*", "Button", true, false):
 		if (b as Button).text == "结束阶段":

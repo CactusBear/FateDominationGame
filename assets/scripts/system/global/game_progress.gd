@@ -24,6 +24,13 @@ var _phase_end_dispatched:bool = false
 var _phase_end_running:bool = false
 #本回合战斗阶段结算结果，供最终回合判定胜负时查询深山町战斗胜者
 var last_battle_result:Dictionary = {}
+#战斗结算后、全部在局玩家确认播报前保持暂停：玩家逐个确认，全部确认后继续推进。
+var _battle_broadcast_pending:bool = false
+#登记胜利播报消费者的实例。有消费者时战斗结算后暂停等播报；
+#没有消费者（无界面 / AI 推演 / 旧界面）或消费者已失效时直接放行，不阻塞推进。
+var _battle_broadcast_consumer:Object = null
+#本次播报已确认的玩家（无重复）。全部在局玩家确认后才清位并继续推进。
+var _battle_broadcast_confirmed:Array = []
 var climax_keep_counts:Dictionary = {
 	8: BaseNumber.new(4),
 	9: BaseNumber.new(3),
@@ -121,6 +128,8 @@ func start_game():
 	_phase_end_pending = false
 	_phase_end_dispatched = false
 	_phase_end_running = false
+	_battle_broadcast_pending = false
+	_battle_broadcast_confirmed = []
 	#新的一局：历史日志清空
 	GameLog.reset()
 	EffectManager.sync_loaded_effect_pool()
@@ -293,7 +302,7 @@ func refresh_first_player():
 
 #阶段
 func advance_phase():
-	if is_game_over or _phase_end_running:
+	if is_game_over or _phase_end_running or _battle_broadcast_pending:
 		return
 	if _phase_end_pending:
 		end_phase()
@@ -341,8 +350,62 @@ func _effects_block_progress() -> bool:
 	return EffectManager.is_running or EffectManager.is_waiting_for_choice()
 
 
+#战斗结算播报：结算完成后、播报关闭前保持暂停，由 UI 在播报关闭后调用 resume 继续推进。
+#消费者登记：界面在自己的每帧循环真正运行时登记自己；被动实例化（如测试里的纯渲染器
+#set_process(false)）不登记，也就不会阻塞推进。登记 / 注销是显式动作，不靠猜测判断。
+func register_battle_broadcast_consumer(consumer: Object) -> void:
+	_battle_broadcast_consumer = consumer
+
+
+func unregister_battle_broadcast_consumer(consumer: Object) -> void:
+	if _battle_broadcast_consumer == consumer:
+		_battle_broadcast_consumer = null
+
+
+#是否有存活的播报消费者：没有（无界面 / AI 推演 / 旧界面）时战斗结算后直接放行。
+func has_battle_broadcast_consumer() -> bool:
+	return _battle_broadcast_consumer != null and is_instance_valid(_battle_broadcast_consumer)
+
+
+func is_battle_broadcast_pending() -> bool:
+	return _battle_broadcast_pending
+
+
+#播报需要哪些玩家确认：本局仍在场的玩家。人数不写死，读活跃玩家列表。
+func battle_broadcast_confirmers() -> Array:
+	return GameDataManager.get_active_player_ids()
+
+
+func battle_broadcast_confirmed_count() -> int:
+	return _battle_broadcast_confirmed.size()
+
+
+#某名玩家是否已确认本次播报。
+func is_battle_broadcast_confirmed(player_id:int) -> bool:
+	return _battle_broadcast_confirmed.has(int(player_id))
+
+
+#某名玩家确认本次播报；全部在局玩家都确认后才清位并继续推进。
+#不在场玩家（已被淘汰）无需确认，也不能推进确认进度。
+func confirm_battle_broadcast(player_id:int) -> void:
+	if not _battle_broadcast_pending:
+		return
+	var pid:int = int(player_id)
+	var confirmers:Array = battle_broadcast_confirmers()
+	if not confirmers.has(pid):
+		return
+	if not _battle_broadcast_confirmed.has(pid):
+		_battle_broadcast_confirmed.append(pid)
+	for id in confirmers:
+		if not _battle_broadcast_confirmed.has(int(id)):
+			return
+	_battle_broadcast_pending = false
+	_battle_broadcast_confirmed.clear()
+	advance_phase()
+
+
 func end_phase():
-	if is_game_over or _phase_end_running or _effects_block_progress():
+	if is_game_over or _phase_end_running or _effects_block_progress() or _battle_broadcast_pending:
 		return
 	var phase = get_current_phase()
 	if phase.is_empty():
@@ -367,6 +430,13 @@ func end_phase():
 	if is_game_over or _effects_block_progress():
 		return
 	_phase_end_pending = false
+	#战斗结算完毕并派发完 PHASE_END 后：有活跃播报消费者时先停住，等播报关闭再进下一回合。
+	#last_battle_result 非空是战斗确实结算过的判据（无人可胜 / 无需战斗的战区也会留下明细）；
+	#没有消费者（无界面 / AI 推演 / 旧界面）时不暂停，避免推进卡死。
+	if phase["name"] == "battle" and not last_battle_result.is_empty() and not is_game_over and has_battle_broadcast_consumer():
+		_battle_broadcast_pending = true
+		_battle_broadcast_confirmed = []
+		return
 	advance_phase()
 
 
