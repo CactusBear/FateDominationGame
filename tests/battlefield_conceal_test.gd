@@ -1,8 +1,6 @@
 extends Node
-#规则：与至少一名对手同处一处会发生战斗的战场（即处于交战状态）时，
-#常规出的一组牌里至少要有一张明置。
-#非交战（该战场没有对手，敌人离开后就是这样）与工房/侦察这类不会发生战斗的地点，
-#两张都暗置都合法——"战场"在这里指交战，不指"站进了某个计分战区"。
+#规则：位于战场，常规出牌至少一明，与是否有对手无关。
+#工房和侦察不是战场，允许两张都暗置；无法明置的规则例外独立处理。
 var failures:Array=[]
 var checks:=0
 func check(ok:bool,label:String):
@@ -41,6 +39,15 @@ func run():
 	check(RegularPlay.modes(0,c[1]) == [false],"only faceup remains legal for the last card")
 	check(RegularPlay.add(0,c[1],false),"faceup second card completes the group")
 	check(RegularPlay.completed(0),"group completed with one faceup card")
+	# 对手不存在或离开，区域也不会从战场变成非战场。
+	d=setup(); d.location=MapData.miyama0
+	c=d.hand_cards.duplicate()
+	check(not IsEngaged.new().exec(0) and RegularPlay.battlefield(d),"unopposed battlefield is still a battlefield")
+	check(not RegularPlay.can_submit_group(0,[c[0],c[1]],[true,true]),"unopposed battlefield rejects two concealed cards when faceup is possible")
+	check(RegularPlay.can_submit_group(0,[c[0],c[1]],[false,true]),"unopposed battlefield allows mixed group")
+	_engage(MapData.miyama)
+	GameData.player_data_library[1].location=MapData.magic_workshop0
+	check(RegularPlay.battlefield(d),"opponent leaving does not change battlefield classification")
 
 	#已经有一张明置之后，再暗置是允许的（规则只要求"至少一明"）
 	d=setup(); d.location=MapData.miyama0; d.play_limit.number=3
@@ -56,9 +63,18 @@ func run():
 	check(RegularPlay.add(0,c[0],true),"first concealed card off battlefield")
 	check(RegularPlay.can_add(0,c[1],true),"second concealed card allowed off battlefield")
 	check(RegularPlay.add(0,c[1],true) and RegularPlay.completed(0),"two concealed cards complete off battlefield")
+	d=setup(); d.location=MapData.scout0
+	c=d.hand_cards.duplicate()
+	check(not RegularPlay.battlefield(d),"scout is not a battlefield")
+	check(RegularPlay.can_submit_group(0,[c[0],c[1]],[true,true]),"scout permits two concealed cards")
+	# 即使工房有其他玩家，它也不是战场。
+	d=setup(); d.location=MapData.magic_workshop0
+	_engage(MapData.magic_workshop)
+	c=d.hand_cards.duplicate()
+	check(RegularPlay.can_submit_group(0,[c[0],c[1]],[true,true]),"shared workshop still permits two concealed cards")
 
 	#界面层：按钮条必须按最新 modes 实时重算，不能读卡位上缓存的旧值。
-	#用户现象"非交战时仍不能暗置两张"就出在这里——规则允许，但第二张的
+	#非战场允许两张暗置，第二张的
 	#暗置按钮不出现，因为 _update_regular_play_bars 读的是整屏刷新时写死的缓存。
 	#先实例化界面再 setup：场景的 _ready 在引擎未启动时会自己 game_start，
 	#那会覆盖测试铺好的手牌与玩家数据（顺序反了三条断言全假）

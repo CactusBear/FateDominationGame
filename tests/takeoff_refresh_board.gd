@@ -1,4 +1,4 @@
-extends "res://assets/scripts/game_scene/battle_board_v2.gd"
+extends "res://scripts/game_scene/battle_board_v2.gd"
 
 var refresh_calls := 0
 

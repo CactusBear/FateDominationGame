@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3]
 
-[ext_resource type="Script" path="res://assets/scripts/debug/debug_console_ui.gd" id="1_console"]
-[ext_resource type="Script" path="res://assets/scripts/debug/debug_action_panel.gd" id="2_actions"]
+[ext_resource type="Script" path="res://scripts/debug/debug_console_ui.gd" id="1_console"]
+[ext_resource type="Script" path="res://scripts/debug/debug_action_panel.gd" id="2_actions"]
 
 [sub_resource type="StyleBoxFlat" id="StylePanel"]
 bg_color = Color(0.055, 0.067, 0.09, 0.98)
@@ -32,6 +32,7 @@ content_margin_right = 6.0
 content_margin_bottom = 6.0
 
 [node name="DebugConsole" type="CanvasLayer"]
+process_mode = 3
 layer = 30
 script = ExtResource("1_console")
 

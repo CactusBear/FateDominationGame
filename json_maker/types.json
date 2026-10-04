@@ -1187,6 +1187,11 @@
     }
   ],
   "blocks": {
+    "awaken_skill": {
+      "say": "为 {player_id} 觉醒 {skill}",
+      "help": "只觉醒该玩家现有升华技并派发解锁时点；是否加入技能区由数据声明。",
+      "result": "bool"
+    },
     "get_all_players_id": {
       "say": "所有玩家",
       "help": "列出本局全部玩家（包括已出局的）。",
@@ -1608,6 +1613,11 @@
       "say": "{map_area} 里有几个人",
       "help": "把战区内所有席位的在场玩家数量相加，不按玩家编号去重。",
       "result": "int"
+    },
+    "restrict_abilities": {
+      "say": "限制 {players} 使用 {phase_mids} 类别能力",
+      "help": "只登记禁令；来源停止激活或回合结束默认取先到，可分别声明期限开关。",
+      "result": "bool"
     },
     "get_players_in_same_area": {
       "say": "和 {player_id} 在同一战区的玩家",
@@ -2123,6 +2133,9 @@
     "schedule_effect_on_time_point": {
       "say": "等到 {time_points} 时再做",
       "help": "嘴里的事不会马上做，而是登记起来，等到时机到了做一次。到期时机一到就作废。",
+      "script": [
+        "funcs"
+      ],
       "result": "BaseEffect"
     },
     "emit_time_point": {
@@ -3645,10 +3658,10 @@
   "property_sources": {
     "note": "按脚本属性列候选的空位：控件名 → {分组名: 脚本路径}，下拉反射这些脚本自己声明的属性。",
     "game_data_key": {
-      "游戏数据": "res://assets/scripts/system/global/game_data.gd"
+      "游戏数据": "res://scripts/system/global/game_data.gd"
     },
     "map_data_key": {
-      "地图数据": "res://assets/scripts/system/map_data.gd"
+      "地图数据": "res://scripts/system/map_data.gd"
     }
   },
   "player_key_filters": {
@@ -3708,20 +3721,20 @@
   "object_classes": {
     "note": "「属性名」下拉从这些脚本反射真实属性，按类分组；property_names 给中文名，没写的显示原名。",
     "scripts": {
-      "所有对象": "res://assets/scripts/system/base_object.gd",
-      "牌": "res://assets/scripts/system/base_card.gd",
-      "手牌": "res://assets/scripts/system/base_handcard.gd",
-      "攻击牌": "res://assets/scripts/system/base_attack.gd",
-      "技能牌": "res://assets/scripts/system/base_skill.gd",
-      "状态": "res://assets/scripts/system/base_buff.gd",
-      "事件牌": "res://assets/scripts/system/base_event.gd",
-      "局势牌": "res://assets/scripts/system/base_situation.gd",
-      "御主": "res://assets/scripts/system/base_master.gd",
-      "从者": "res://assets/scripts/system/base_servant.gd",
-      "效果": "res://assets/scripts/system/base_effect.gd",
-      "席位": "res://assets/scripts/system/base_location.gd",
-      "战区": "res://assets/scripts/system/base_map_area.gd",
-      "数字": "res://assets/scripts/system/base_number.gd"
+      "所有对象": "res://scripts/system/base_object.gd",
+      "牌": "res://scripts/system/base_card.gd",
+      "手牌": "res://scripts/system/base_handcard.gd",
+      "攻击牌": "res://scripts/system/base_attack.gd",
+      "技能牌": "res://scripts/system/base_skill.gd",
+      "状态": "res://scripts/system/base_buff.gd",
+      "事件牌": "res://scripts/system/base_event.gd",
+      "局势牌": "res://scripts/system/base_situation.gd",
+      "御主": "res://scripts/system/base_master.gd",
+      "从者": "res://scripts/system/base_servant.gd",
+      "效果": "res://scripts/system/base_effect.gd",
+      "席位": "res://scripts/system/base_location.gd",
+      "战区": "res://scripts/system/base_map_area.gd",
+      "数字": "res://scripts/system/base_number.gd"
     }
   },
   "property_names": {
@@ -3752,6 +3765,7 @@
     "_selected_player": "选中的玩家",
     "_selected_players": "选中的玩家们",
     "_trigger_player_id": "发动的玩家",
+    "_event_player_id": "时点当事玩家",
     "_area_name": "战区名",
     "_locations": "席位",
     "_players": "席位上的玩家",

@@ -7,7 +7,7 @@
   "effects": [
 	{
 	  "effect_name": "jewel_sorcery_gain",
-	  "shown_effect_name": "宝石魔术·聚宝 - 游戏开始时获得【宝石】",
+	  "shown_effect_name": "宝石魔术·聚宝 - 游戏开始时，你获得10枚【宝石】",
 	  "time_points": [
         "game_start"
 	  ],
@@ -262,7 +262,9 @@
 		  "parameters": [
 			-1,
 			{
-			  "tags": ["command_spell_gain_magic"]
+			  "tags": [
+				"command_spell_gain_magic"
+			  ]
 			},
 			0
 		  ],
@@ -1196,7 +1198,7 @@
 		  "effect_name": "placeholder_jewel_sword_passive_power",
 		  "shown_effect_name": "被动 - 你的魔术基础牌和【阴炁弹】的威力+2",
 		  "time_points": [
-            "game_start"
+			"self_played_card"
 		  ],
 		  "priority": 0,
 		  "is_pure_passive": true,
@@ -1210,11 +1212,86 @@
 		  ],
 		  "funcs": [
 			{
-			  "func_name": "do_nothing",
-			  "parameters": [],
+			  "func_name": "log_field_values",
+			  "parameters": [
+				{
+				  "type": "time_point",
+				  "tags": "played_card",
+				  "actor": -1
+				},
+				0,
+				"object",
+				1
+			  ],
+			  "var_index": 0
+			},
+			{
+			  "func_name": "get_card_by_index_fr_arr",
+			  "parameters": [
+				0,
+				{
+				  "self_var": 0
+				}
+			  ],
+			  "var_index": 1
+			},
+			{
+			  "func_name": "modify_attack_power_by_attribute",
+			  "parameters": [
+				[
+				  "magic"
+				],
+				{
+				  "number_index": 0
+				},
+				-1,
+				{
+				  "self_var": 1
+				},
+				null,
+				"basic"
+			  ],
 			  "var_index": -1
+			},
+			{
+			  "func_name": "get_property",
+			  "parameters": [
+				{
+				  "self_var": 1
+				},
+				"_name"
+			  ],
+			  "var_index": 2
+			},
+			{
+			  "func_name": "if_func",
+			  "parameters": [
+				{
+				  "self_var": 2
+				},
+				"yin_qi_bullet"
+			  ],
+			  "var_index": 3
+			},
+			{
+			  "func_name": "modify_attack_power_by_attribute",
+			  "parameters": [
+				[],
+				{
+				  "number_index": 0
+				},
+				-1,
+				{
+				  "self_var": 1
 			}
-		  ]
+			  ],
+			  "var_index": -1,
+			  "condition": {
+				"self_var": 3
+			  }
+			}
+		  ],
+		  "need_activate": false
 		},
 		{
 		  "effect_name": "placeholder_jewel_sword_drain",
@@ -1226,25 +1303,42 @@
 		  "is_pure_passive": false,
 		  "is_residue": false,
 		  "effect_numbers": [],
+		  "is_manual": true,
+		  "max_total_uses": 1,
+		  "reset_counts_each_round": true,
+		  "options": [
+			{
+			  "shown_option_name": "获得本回合花费的魔力",
 		  "funcs": [
 			{
-			  "func_name": "do_nothing",
-			  "parameters": [],
-			  "var_index": -1
-			}
+				  "func_name": "sum_log_data",
+				  "parameters": [
+					{
+					  "type": "magic_decrease",
+					  "tags": "magic_spend"
+					},
+					0,
+					"spent"
+				  ],
+				  "var_index": 0
+				},
+				{
+				  "func_name": "edit_magic",
+				  "parameters": [
+					null,
+					{
+					  "self_var": 0
+					},
+					-1
 		  ]
 		},
 		{
-		  "effect_name": "jewel_sword_remove_after_battle",
-		  "shown_effect_name": "战斗结束后 - 将此牌移除游戏",
-		  "time_points": [
-            "self_battle_phase_end"
+				  "func_name": "schedule_effect_on_time_point",
+				  "parameters": [
+					[
+					  "battle_end"
 		  ],
-		  "priority": 0,
-		  "is_pure_passive": false,
-		  "is_residue": false,
-		  "effect_numbers": [],
-		  "funcs": [
+					[
 			{
 			  "func_name": "get_eff_source_card",
 			  "parameters": [],
@@ -1288,7 +1382,46 @@
 			  ],
 			  "var_index": -1
 			}
+					],
+					0,
+					false,
+					[
+					  "day_end"
 		  ]
+				  ]
+				}
+			  ]
+			}
+		  ]
+		},
+		{
+		  "effect_name": "upgrade_join_skill_zone",
+		  "shown_effect_name": "将此牌加入你的技能区",
+		  "time_points": [
+			"self_skill_awakened"
+		  ],
+		  "priority": 0,
+		  "is_pure_passive": true,
+		  "is_residue": false,
+		  "effect_numbers": [],
+		  "funcs": [
+			{
+			  "func_name": "get_eff_source_card",
+			  "parameters": [],
+			  "var_index": 0
+			},
+			{
+			  "func_name": "add_skill_to_skill_zone",
+			  "parameters": [
+				{
+				  "self_var": 0
+				}
+			  ],
+			  "var_index": -1
+			}
+		  ],
+		  "need_activate": false,
+		  "source_bound": true
 		}
 	  ],
 	  "zoom_kind": "card",

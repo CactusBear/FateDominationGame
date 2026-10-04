@@ -44,9 +44,9 @@ func run():
 	check(not first_modes.has(false),"pending UI rejects a faceup choice that makes the group impossible")
 	check(first_modes.has(true),"pending UI keeps the concealed choice that has a valid completion")
 	d=setup(2); c=d.hand_cards.duplicate(); d.location=MapData.miyama0
-	# 非交战状态（战区只有自己）：允许两张都暗置
-	check(RegularPlay.pending_modes(0,[c[0]],[true],c[1]).has(true),"peaceful battlefield allows both cards hidden")
-	# 放入对手变为交战状态：强制要求必须至少一张明置
+	# 位于战场即要求至少一明，不因没有对手而解除。
+	check(not RegularPlay.pending_modes(0,[c[0]],[true],c[1]).has(true),"battlefield requires faceup even without an opponent")
+	# 放入对手后出牌限制不变，交战只改变移动等独立判定。
 	GameData.player_data_library[1] = GameData.new_player_data()
 	var opp_d = GameData.player_data_library[1]
 	opp_d.is_out = false

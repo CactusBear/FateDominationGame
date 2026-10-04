@@ -67,6 +67,9 @@ func run() -> void:
 	ui._select_kind(idx)
 	ui._new_card()
 	ui._add_effect()
+	check(not ui.data.effects[0].is_pure_passive and ui.data.effects[0].need_activate, "新效果默认需要激活，不是自动被动")
+	check(ui.data.effects[0].is_manual, "新效果默认由玩家点击发动")
+	check(ui.data.effects[0].once_per_game and ui.data.effects[0].source_bound, "新效果默认每局一次且只受自身牌影响")
 	ui._paint_scripts()
 	var view:Dictionary = ui.effects_view[0]
 	var zone = _find_drop(ui.script_box, "stack")
@@ -539,7 +542,7 @@ func run() -> void:
 	ui.maker.export_overrides = saved_overrides
 	OS.move_to_trash(ProjectSettings.globalize_path(exp_root))
 	# 新 operation 自动加入：放一个新脚本进 operations 目录，扫描后出现在积木区；删掉后消失
-	var op_path := "res://assets/scripts/system/operations/JsonProbeOp.gd"
+	var op_path := "res://scripts/system/operations/JsonProbeOp.gd"
 	var f := FileAccess.open(op_path, FileAccess.WRITE)
 	f.store_string("extends RefCounted\n\n# 临时探针：给某人加一点东西\nfunc exec(amount:int, player_id:int = -1):\n\treturn amount\n")
 	f.close()

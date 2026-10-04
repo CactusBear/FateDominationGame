@@ -46,6 +46,34 @@ func run() -> void:
 		area._events.clear()
 		for loc in area._locations:
 			loc._players.clear()
+	# 复用正式席位模板，分别核对金色角标和下方席位说明。
+	board.set_process(false)
+	var benefit_loc: BaseLocation = null
+	for area: BaseMapArea in MapData.areas:
+		for loc: BaseLocation in area._locations:
+			if loc._magic.number <= 0 and GetEffectiveLocationBenefit.current_benefit(loc) > 0:
+				benefit_loc = loc
+				break
+		if benefit_loc != null:
+			break
+	check(benefit_loc != null, "fixture has a benefit seat")
+	if benefit_loc != null:
+		benefit_loc._players.append(0)
+		var slot: Control = board._spawn("SeatSlot", board)
+		slot.position = Vector2(600, 400)
+		slot.size = Vector2(74, 92)
+		var seat := slot.get_node("Seat") as Control
+		board._bind_seat(seat, benefit_loc, true)
+		var benefit := GetEffectiveLocationBenefit.current_benefit(benefit_loc)
+		check(seat.get_node("Badge/Label").text == str(benefit), "gold badge contains only benefit number")
+		check(seat.get_node("Label").text == "地利 %d" % benefit, "lower benefit label remains unchanged")
+		if DisplayServer.get_name() != "headless":
+			await RenderingServer.frame_post_draw
+			var image := get_viewport().get_texture().get_image()
+			check(image.get_region(Rect2i(580, 390, 120, 120)).save_png("user://benefit_number_badge.png") == OK, "benefit badge screenshot saved")
+		benefit_loc._players.clear()
+		slot.queue_free()
+	board.set_process(true)
 	for id in [0, 1]:
 		var loc: BaseLocation = MapData.miyama._locations[id]
 		check(SetLocation.new().exec(loc, id, false, true), "fixture places participant %d" % id)
@@ -56,7 +84,10 @@ func run() -> void:
 	GameProgress.has_battle_resolved = false
 	GameLog.set_context(GameProgress.current_round, "battle")
 	TimePointChecker.set_phase_time_points([TimePoints.DAY, TimePoints.PHASE, TimePoints.BATTLE_PHASE])
-	GameProgress.end_phase()
+	var ordered_ids: Array = GameProgress.get_ordered_player_ids()
+	GameProgress.current_player_id = int(ordered_ids.back())
+	GameProgress.current_phase_player_index = ordered_ids.size()
+	check(GameProgress.end_current_player_action(), "last battle participant finishes through real progression entry")
 
 	# ① 结算数据字段齐备，且胜负正确
 	check(GameProgress.last_battle_result.has("details_by_area"), "battle result carries details_by_area")
@@ -74,11 +105,29 @@ func run() -> void:
 	check(GameProgress.is_battle_broadcast_pending(), "broadcast pending after battle resolve")
 	check(GameProgress.current_phase_index == 3, "phase not advanced while pending")
 
-	# ③ 播报层在结算后可见，内容与数据一致
-	await get_tree().process_frame
-	await get_tree().process_frame
+	# ③ 正式逐帧循环等待三秒后才显示；等待期间不确认、不推进回合。
 	var overlay: Control = board.get_node_or_null("BattleBroadcast")
-	check(overlay != null and overlay.visible, "broadcast overlay visible after resolve")
+	check(overlay != null and not overlay.visible, "broadcast overlay hidden immediately after resolve")
+	var shown_early := false
+	var progressed_early := false
+	var confirmed_early := false
+	for i in range(240):
+		await get_tree().process_frame
+		if board._broadcast_wait_elapsed < board.BROADCAST_OPEN_DELAY:
+			shown_early = shown_early or overlay.visible
+			progressed_early = progressed_early or GameProgress.current_phase_index != 3
+			confirmed_early = confirmed_early or GameProgress.battle_broadcast_confirmed_count() > 0
+		if overlay.visible:
+			break
+	check(not shown_early, "no settlement overlay before three-second delay")
+	check(not progressed_early and not confirmed_early, "delay keeps phase paused and confirmations untouched")
+	check(overlay.visible and board._broadcast_wait_elapsed >= 3.0, "broadcast overlay appears only after three seconds")
+	print("BROADCAST_DELAY elapsed=", board._broadcast_wait_elapsed)
+	if DisplayServer.get_name() != "headless":
+		board.set_process(false)
+		await get_tree().create_timer(2.0).timeout
+		await RenderingServer.frame_post_draw
+		check(get_viewport().get_texture().get_image().save_png("user://battle_broadcast_delayed.png") == OK, "delayed broadcast screenshot saved")
 	var list := overlay.get_node("AreaScroll/List") as VBoxContainer
 	check(list != null and list.get_child_count() == details.size(), "one area row per battlefield")
 	var text: String = _label_text(overlay)
@@ -104,6 +153,8 @@ func run() -> void:
 			check(GameProgress.is_battle_broadcast_pending(), "still pending after %d confirmation(s)" % (i + 1))
 	check(not GameProgress.is_battle_broadcast_pending(), "pending cleared after all players confirm")
 	check(GameProgress.current_round == 2, "all-confirm advances to next round")
+	board._update_battle_broadcast(0.0)
+	check(board._broadcast_wait_elapsed == 0.0, "cleared broadcast resets wait for next battle")
 
 	print("RESULT checks=", checks, " failures=", failures)
 	var f := FileAccess.open("res://battle_broadcast_result.json", FileAccess.WRITE)

@@ -118,7 +118,7 @@ for k in ['attack', 'skill', 'event', 'situation', 'master', 'servant', 'command
     backs[k] = save_card(os.path.join(ROOT, f'data/card_backs/{k}_card_back.png'), f'back_{k}.jpg')
 
 # ---------- 地图数值（从 map_data.gd 声明抽取） ----------
-gd = open(os.path.join(ROOT, 'assets/scripts/system/map_data.gd'), encoding='utf-8').read()
+gd = open(os.path.join(ROOT, 'scripts/system/map_data.gd'), encoding='utf-8').read()
 def loc(name):
     m = re.search(rf'var {name} = BaseLocation\.new\(BaseNumber\.new\((\d+)\),BaseNumber\.new\((\d+)\)(?:,(-?\d+))?(?:,(true|false))?(?:,(true|false))?', gd)
     return {'magic': int(m.group(1)), 'benefit': int(m.group(2)),
@@ -157,7 +157,7 @@ for area in areas:
     area['melee_arc'] = {'start': 55, 'end': 125, 'gap': 14}
 
 # ---------- 规则常量（GameData 声明 + 局势牌高潮数据） ----------
-gdata = open(os.path.join(ROOT, 'assets/scripts/system/global/game_data.gd'), encoding='utf-8').read()
+gdata = open(os.path.join(ROOT, 'scripts/system/global/game_data.gd'), encoding='utf-8').read()
 def gconst(name):
     return int(re.search(rf'var {name}:BaseNumber = BaseNumber\.new\((\d+)\)', gdata).group(1))
 def pconst(name):

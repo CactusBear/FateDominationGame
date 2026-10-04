@@ -18,7 +18,7 @@ func _ready(): call_deferred("run")
 
 func run():
 	# —— 第一段：常量覆盖。判据取自脚本常量表，新增时点必须同步补显示名 ——
-	var consts:Dictionary = load("res://assets/scripts/system/time_points.gd").get_script_constant_map()
+	var consts:Dictionary = load("res://scripts/system/time_points.gd").get_script_constant_map()
 	var values:Array[String]=[]
 	var point_names:Dictionary={}
 	for key in consts:

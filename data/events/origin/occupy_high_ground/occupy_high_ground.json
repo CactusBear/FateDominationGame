@@ -54,7 +54,7 @@
 								"var_index": 3
 							},
 							{
-								"func_name": "get_player_location_benefit",
+								"func_name": "get_effective_location_benefit",
 								"parameters": [
 									{
 										"self_var": 3

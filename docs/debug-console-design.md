@@ -1,6 +1,6 @@
 # 游戏调试控制台设计
 
-状态：已实现为按钮式控制台。实现位于 `assets/scripts/debug/` 与 `assets/scenes/debug/debug_console.tscn`，宿主接线位于 `tactical_board_ui.gd`。界面不提供命令行：操作页按分组列出按钮，选中后用下拉、多选、数值与开关控件填参数，提交时以结构化参数调用 registry；文中出现的命令名仅是 registry 的白名单键与审计用名，不是输入语法。
+状态：已实现为按钮式控制台。实现位于 `scripts/debug/` 与 `assets/scenes/debug/debug_console.tscn`，宿主接线位于 `tactical_board_ui.gd`。界面不提供命令行：操作页按分组列出按钮，选中后用下拉、多选、数值与开关控件填参数，提交时以结构化参数调用 registry；文中出现的命令名仅是 registry 的白名单键与审计用名，不是输入语法。
 
 ## 1. 依据、范围与阅读约定
 
@@ -21,7 +21,7 @@
 | 项 | 约定 |
 |---|---|
 | 场景 | `assets/scenes/debug/debug_console.tscn` |
-| 脚本 | `assets/scripts/debug/debug_console_ui.gd` |
+| 脚本 | `scripts/debug/debug_console_ui.gd` |
 | 根节点 | `CanvasLayer`，`layer` 高于棋盘与常规弹窗、低于系统级遮罩即可；具体数值实施时按现有 `MODAL_Z_THRESHOLD` 对齐，不写死魔法数到别的文件 |
 | 不注册 | 不进 `project.godot` autoload，不把面板骨架写进 `tactical_board_ui.tscn` |
 | 宿主 | `tactical_board_ui.gd` 持有实例引用与启用开关 |
@@ -70,11 +70,11 @@
 
 ```
 assets/scenes/debug/debug_console.tscn
-assets/scripts/debug/debug_console_ui.gd      # 面板、输入、展示；不改规则
-assets/scripts/debug/debug_session.gd         # 暂停令牌、安全边界、事务、审计
-assets/scripts/debug/debug_command_registry.gd
-assets/scripts/debug/debug_validate.gd        # 提交后只报告，不静默修正
-assets/scripts/debug/debug_adapters/
+scripts/debug/debug_console_ui.gd      # 面板、输入、展示；不改规则
+scripts/debug/debug_session.gd         # 暂停令牌、安全边界、事务、审计
+scripts/debug/debug_command_registry.gd
+scripts/debug/debug_validate.gd        # 提交后只报告，不静默修正
+scripts/debug/debug_adapters/
   debug_player_adapter.gd                     # 资源、淘汰恢复政策入口
   debug_card_adapter.gd                       # 搬运、克隆入区、明暗、关闭
   debug_map_adapter.gd                        # 部署/移动/瞬移/离板
@@ -103,9 +103,9 @@ assets/scripts/debug/debug_adapters/
 
 `EffectManager.is_running == false` 仍可能 `is_waiting_for_choice()`，不代表能安全裸改。
 
-暂停不用 `SceneTree.paused`，也不用 `reset_runtime()` 清空队列。增加由 `DebugSession` 持有的令牌，宿主与 AI 在现有推进点查询：
+打开控制台使用 `SceneTree.paused` 暂停游戏节点、动画与计时，控制台场景声明 `PROCESS_MODE_ALWAYS`，继续处理自己的按钮、刷新和关闭快捷键。不调用 `reset_runtime()` 清空队列。关闭或禁用时仅恢复由控制台发起的场景暂停，保留打开前的暂停状态。`DebugSession` 的令牌仍供宿主与 AI 的推进入口及显式单步查询：
 
-- `tactical_board_ui._process`：令牌有效时跳过 `_check_and_step_ai`、跳过本地结束行动与自动提交等待；仍刷新只读 UI、威力浮层、消息展示。
+- `tactical_board_ui._process`：场景暂停期间不执行；控制台自己的只读页签继续刷新。令牌闸门仍阻止直接入口自动推进。
 - `_check_waiting_effects` 等：令牌有效时不自动 `submit_active_choice`。
 - `GameProgress.end_current_player_action`：不在进程层写死调试名；由 UI/AI 调用方在令牌有效时不要调用。控制台自己的规则动作命令在安全边界内可调用。
 
@@ -314,7 +314,7 @@ assets/scripts/debug/debug_adapters/
 ## 11. 实施顺序（得到指令后）
 
 1. 空场景 + 宿主 `set_debug_console_enabled`，反引号与遮罩，不停游戏。
-2. `DebugSession` 令牌，AI 与自动推进停住，只读刷新仍在。
+2. 控制台暂停场景树并持有 `DebugSession` 令牌，AI、游戏计时与动画停住，控制台只读刷新仍在。
 3. 只读页签与 `inspect.*`。
 4. 资源与牌区命令 + 校验。
 5. 地图规则动作与瞬移。

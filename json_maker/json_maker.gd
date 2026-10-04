@@ -6,7 +6,7 @@ extends RefCounted
 # 不调用任何既有编辑器的场景、脚本或保存入口。
 
 const TYPES_PATH := "res://json_maker/types.json"
-const OPS_DIR := "res://assets/scripts/system/operations/"
+const OPS_DIR := "res://scripts/system/operations/"
 const IMAGE_EXTS := ["png", "jpg", "jpeg", "webp"]
 
 var types:Dictionary = {}
@@ -108,6 +108,42 @@ func identity_conflicts(key:String, value:String, source_path:String, object_pat
 			if not out.has(entry):
 				out.append(entry)
 	return out
+
+
+# 检查当前草稿里所有本体和子牌的内部名，并复用全库索引检查已存在的重名。
+# 身份字段仍完全来自 types.json 的 kinds 声明，不按字段名猜对象类型。
+func identity_issues(data, source_path:String = "") -> Array:
+	var out:Array = []
+	var seen:Dictionary = {}
+	_collect_identity_issues(data, source_path, [], seen, out)
+	return out
+
+
+func _collect_identity_issues(value, source_path:String, at:Array, seen:Dictionary, out:Array) -> void:
+	if value is Dictionary:
+		var checked:Dictionary = {}
+		for kind in types.get("kinds", {}):
+			var spec:Dictionary = kind_spec(str(kind))
+			var key := str(spec.get("identity", ""))
+			if key == "" or not value.get(key) is String or str(value[key]).strip_edges() == "":
+				continue
+			if checked.has(key):
+				continue
+			checked[key] = true
+			var name := str(value[key]).strip_edges()
+			if not seen.has(key):
+				seen[key] = {}
+			if seen[key].has(name):
+				out.append("内部名「" + name + "」在当前卡里重复")
+			else:
+				seen[key][name] = at.duplicate()
+			for hit in identity_conflicts(key, name, source_path, at):
+				out.append("内部名「" + name + "」与 data 中已有对象重复：" + str(hit.file) + " → " + JSON.stringify(hit.path))
+		for child_key in value:
+			_collect_identity_issues(value[child_key], source_path, at + [child_key], seen, out)
+	elif value is Array:
+		for i in value.size():
+			_collect_identity_issues(value[i], source_path, at + [i], seen, out)
 
 
 func _index_identities(value, keys:Dictionary, file:String, at:Array) -> void:
@@ -1078,7 +1114,7 @@ func _default_of(field:Dictionary):
 func _check_object(data:Dictionary, spec:Dictionary, where:String) -> void:
 	for field in spec.get("fields", []):
 		var key := str(field.key)
-		if bool(field.get("required", false)) and not data.has(key):
+		if bool(field.get("required", false)) and (not data.has(key) or (data[key] is String and str(data[key]).strip_edges() == "")):
 			issues.append(_where(where) + str(field.get("shown", key)) + " 还没填")
 			continue
 		if data.has(key):
@@ -1350,7 +1386,7 @@ func _ensure_dir(folder:String) -> void:
 	DirAccess.make_dir_recursive_absolute(_abs(folder))
 
 
-const ALL_OPS_PATH := "res://assets/scripts/system/global/all_operations.gd"
+const ALL_OPS_PATH := "res://scripts/system/global/all_operations.gd"
 const UNREGISTERED := "未登记"
 
 var _op_mtimes := {}   # 脚本路径 -> 上次读到的修改时间，变了就绕过缓存重新读
@@ -1552,7 +1588,7 @@ func _reflect_return(class_name_text:String) -> String:
 
 func _load_time_points() -> void:
 	time_points.clear()
-	var script := load("res://assets/scripts/system/time_points.gd")
+	var script := load("res://scripts/system/time_points.gd")
 	var constants:Dictionary = script.get_script_constant_map()
 	var shown:Dictionary = constants.get("shown_time_points", {})
 	for key in constants:

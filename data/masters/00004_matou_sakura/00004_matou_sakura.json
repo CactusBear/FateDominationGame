@@ -641,6 +641,7 @@
 	  },
 	  {
 		"buff_name": "corrosion",
+		"values": {"bound_upgrade_skill": "corrosion"},
 		"shown_buff_name": "腐蚀",
 		"buff_img": "",
 		"is_active": false,
@@ -651,22 +652,215 @@
 		},
 		"effects": [
 		  {
-			"effect_name": "placeholder_corrosion_steal_skill",
-			"shown_effect_name": "你只能在游戏的前四回合中解锁此牌。每局游戏限一次，当一名玩家被淘汰且【被污染的圣杯】处于激活状态，你可将其拥有的任意张从者技能牌加入你的技能区",
-			"time_points": [
-              "others_eliminated"
-			],
-			"priority": 0,
-			"is_pure_passive": false,
-			"is_residue": false,
-			"effect_numbers": [],
-			"funcs": [
-			  {
-				"func_name": "do_nothing",
-				"parameters": [],
-				"var_index": -1
-			  }
-			]
+		    "effect_name": "placeholder_corrosion_steal_skill",
+		    "shown_effect_name": "你只能在游戏的前四回合中解锁此牌。每局游戏限一次，当一名玩家被淘汰且【被污染的圣杯】处于激活状态，你可将其拥有的任意张从者技能牌加入你的技能区",
+		    "time_points": [
+		      "others_eliminated"
+		    ],
+		    "priority": 0,
+		    "is_pure_passive": false,
+		    "is_residue": false,
+		    "effect_numbers": [],
+		    "funcs": [],
+		    "max_total_uses": 1,
+		    "need_activate": false,
+		    "options": [
+		      {
+		        "shown_option_name": "将被淘汰玩家拥有的任意张从者技能加入技能区",
+		        "select_cards": {
+		          "source": [
+		            "servant_skills",
+		            "played_cards",
+		            "hand_cards",
+		            "deck",
+		            "discard",
+		            "side.skills"
+		          ],
+		          "owner": "event_player",
+		          "card_type": "servant_skill",
+		          "min": 0,
+		          "max": -1
+		        },
+		        "activation_requirements": [
+		          {
+		            "message": "被污染的圣杯未激活",
+		            "funcs": [
+		              {
+		                "func_name": "get_player_buffs",
+		                "parameters": [],
+		                "var_index": 0
+		              },
+		              {
+		                "func_name": "get_objects_by_name_fr_arr",
+		                "parameters": [
+		                  "corrupted_grail",
+		                  {
+		                    "self_var": 0
+		                  }
+		                ],
+		                "var_index": 1
+		              },
+		              {
+		                "func_name": "get_card_by_index_fr_arr",
+		                "parameters": [
+		                  0,
+		                  {
+		                    "self_var": 1
+		                  }
+		                ],
+		                "var_index": 2
+		              },
+		              {
+		                "func_name": "get_property",
+		                "parameters": [
+		                  {
+		                    "self_var": 2
+		                  },
+		                  "_is_active"
+		                ],
+		                "var_index": 3
+		              }
+		            ]
+		          }
+		        ],
+		        "funcs": [
+		          {
+		            "func_name": "get_activating_eff",
+		            "parameters": [],
+		            "var_index": 0
+		          },
+		          {
+		            "func_name": "get_property",
+		            "parameters": [
+		              {
+		                "self_var": 0
+		              },
+		              "_event_player_id"
+		            ],
+		            "var_index": 1
+		          },
+		          {
+		            "func_name": "get_property",
+		            "parameters": [
+		              {
+		                "self_var": 0
+		              },
+		              "_selected_cards"
+		            ],
+		            "var_index": 2
+		          },
+		          {
+		            "func_name": "get_player_servant_skills",
+		            "parameters": [],
+		            "var_index": 3
+		          },
+		          {
+		            "func_name": "foreach_func",
+		            "parameters": [
+		              [
+		                {
+		                  "func_name": "card_counts_power",
+		                  "parameters": [
+		                    null,
+		                    {
+		                      "self_var": 1
+		                    }
+		                  ],
+		                  "var_index": 5
+		                },
+		                {
+		                  "func_name": "get_property",
+		                  "parameters": [
+		                    null,
+		                    "_power"
+		                  ],
+		                  "var_index": 6
+		                },
+		                {
+		                  "func_name": "calculate_number",
+		                  "parameters": [
+		                    0,
+		                    "-",
+		                    {
+		                      "self_var": 6
+		                    }
+		                  ],
+		                  "var_index": 7
+		                },
+		                {
+		                  "func_name": "edit_data_number",
+		                  "parameters": [
+		                    "power",
+		                    null,
+		                    {
+		                      "self_var": 7
+		                    },
+		                    {
+		                      "self_var": 1
+		                    }
+		                  ],
+		                  "var_index": -1,
+		                  "condition": {
+		                    "self_var": 5
+		                  }
+		                },
+		                {
+		                  "func_name": "set_property",
+		                  "parameters": [
+		                    null,
+		                    "_is_activating",
+		                    false
+		                  ],
+		                  "var_index": -1
+		                },
+		                {
+		                  "func_name": "find_player_array_containing",
+		                  "parameters": [
+		                    null,
+		                    {
+		                      "self_var": 1
+		                    }
+		                  ],
+		                  "var_index": 4
+		                },
+		                {
+		                  "func_name": "unregister_object_effects",
+		                  "parameters": [
+		                    null
+		                  ],
+		                  "var_index": -1
+		                },
+		                {
+		                  "func_name": "register_object_effects",
+		                  "parameters": [
+		                    null,
+		                    -1
+		                  ],
+		                  "var_index": -1
+		                },
+		                {
+		                  "func_name": "draw_card_by_card",
+		                  "parameters": [
+		                    null,
+		                    {
+		                      "self_var": 4
+		                    },
+		                    {
+		                      "self_var": 3
+		                    }
+		                  ],
+		                  "var_index": -1
+		                }
+		              ],
+		              {
+		                "self_var": 2
+		              }
+		            ],
+		            "var_index": -1
+		          }
+		        ]
+		      }
+		    ]
 		  }
 		],
 		"zoom_kind": "token"
@@ -728,7 +922,115 @@
 	  },
 	  "ignore_limit": false,
 	  "is_awakened": false,
-	  "effects": []
+	  "effects": [
+	    {
+	      "effect_name": "corrosion_bind_ability",
+	      "shown_effect_name": "解锁腐蚀能力",
+	      "time_points": [
+	        "self_skill_awakened"
+	      ],
+	      "source_bound": true,
+	      "priority": 0,
+	      "is_pure_passive": true,
+	      "is_residue": false,
+	      "effect_numbers": [],
+	      "funcs": [
+	        {
+	          "func_name": "get_eff_source_card",
+	          "parameters": [],
+	          "var_index": 0
+	        },
+	        {
+	          "func_name": "get_property",
+	          "parameters": [
+	            {
+	              "self_var": 0
+	            },
+	            "_values"
+	          ],
+	          "var_index": 1
+	        },
+	        {
+	          "func_name": "get_dictionary_value",
+	          "parameters": [
+	            {
+	              "self_var": 1
+	            },
+	            "ability_buff"
+	          ],
+	          "var_index": 2
+	        },
+	        {
+	          "func_name": "get_player_master",
+	          "parameters": [],
+	          "var_index": 3
+	        },
+	        {
+	          "func_name": "get_property",
+	          "parameters": [
+	            {
+	              "self_var": 3
+	            },
+	            "_specials"
+	          ],
+	          "var_index": 4
+	        },
+	        {
+	          "func_name": "get_dictionary_value",
+	          "parameters": [
+	            {
+	              "self_var": 4
+	            },
+	            "BUFFS"
+	          ],
+	          "var_index": 5
+	        },
+	        {
+	          "func_name": "get_objects_by_name_fr_arr",
+	          "parameters": [
+	            {
+	              "self_var": 2
+	            },
+	            {
+	              "self_var": 5
+	            }
+	          ],
+	          "var_index": 6
+	        },
+	        {
+	          "func_name": "get_card_by_index_fr_arr",
+	          "parameters": [
+	            0,
+	            {
+	              "self_var": 6
+	            }
+	          ],
+	          "var_index": 7
+	        },
+	        {
+	          "func_name": "set_property",
+	          "parameters": [
+	            {
+	              "self_var": 7
+	            },
+	            "_is_active",
+	            true
+	          ],
+	          "var_index": -1
+	        },
+	        {
+	          "func_name": "manage_buff",
+	          "parameters": [
+	            {
+	              "self_var": 7
+	            }
+	          ],
+	          "var_index": -1
+	        }
+	      ]
+	    }
+	  ],
+	  "values": {"awaken_last_round": 4, "ability_buff": "corrosion"}
 	}
   ]
 }

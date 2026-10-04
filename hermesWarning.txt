@@ -4,3 +4,4 @@
 计划完要写的operations后思考计划制作的operation有没有可以被原先的operation组合替代的，避免冗余，也尽量不要改现有的operation，多调用几个operation能解决的情况就不要改operation；
 任何涉及规则的部分都不要写死，考虑例外情况；
 不允许使用vision_analyze，只能使用模型原生读图能力，如果无法使用则告诉我；
+设计功能时，一定要考虑极限情况的处理，不要自以为是地预设条件；

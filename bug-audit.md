@@ -7,7 +7,7 @@
 
     git show --stat HEAD
 
-引擎侧看 `assets/scripts/system/**`，数据看 `data/**`；`addons/godot_ai/**` 是 MCP 插件，不属于业务代码，跳过。最近一个提交改过的文件就是重点。
+引擎侧看 `scripts/system/**`，数据看 `data/**`；`addons/godot_ai/**` 是 MCP 插件，不属于业务代码，跳过。最近一个提交改过的文件就是重点。
 
 ## 2. 全量卡图核对时先建立覆盖清单
 

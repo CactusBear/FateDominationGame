@@ -259,7 +259,7 @@
 				"ignore_limit": false,
 				"effects": [
 					{
-						"effect_name": "placeholder_rebuild_hand_from_all_zones",
+						"effect_name": "rebuild_hand_from_all_zones",
 						"source_bound": true,
 						"shown_effect_name": "【真名解放】打出时：以你打出的牌、手牌、牌库和弃牌堆任意组建一组至多12张牌的手牌",
 						"time_points": [
@@ -275,11 +275,22 @@
 								"is_pure_number": true
 							}
 						],
-						"funcs": [
+						"options": [
 							{
-								"func_name": "do_nothing",
-								"parameters": [],
-								"var_index": -1
+								"shown_option_name": "重组手牌",
+								"select_cards": {"source": ["played_cards", "hand_cards", "deck", "discard", "servant_skills", "master_skills", "side", "extra_zones", "master._specials", "master._other_things", "master._upgrade_skill", "servant._upgrade_skill", "side.master._specials", "side.master._other_things", "side.master._upgrade_skill", "side.servant._upgrade_skill"], "card_type": "hand_card", "exclude_source_card": true, "excluded_source": "out_of_game", "mandatory_source": "hand_cards", "min": 0, "max": 12},
+								"funcs": [
+									{"func_name": "get_player_hand_cards", "parameters": [-1], "var_index": 0},
+									{"func_name": "get_activating_eff", "parameters": [], "var_index": 1},
+									{"func_name": "get_property", "parameters": [{"self_var": 1}, "_selected_cards"], "var_index": 2},
+									{"func_name": "array_difference", "parameters": [{"self_var": 2}, {"self_var": 0}], "var_index": 3},
+									{"func_name": "foreach_func", "parameters": [[
+										{"func_name": "find_player_array_containing", "parameters": [null, -1], "var_index": 4},
+										{"func_name": "draw_card_by_card", "parameters": [null, {"self_var": 4}, {"self_var": 0}], "var_index": -1},
+										{"func_name": "is_in_array", "parameters": [null, {"self_var": 0}], "var_index": 5},
+										{"func_name": "set_property", "parameters": [null, "_is_activating", false], "var_index": -1, "condition": {"self_var": 5}}
+									], {"self_var": 3}], "var_index": -1}
+								]
 							}
 						]
 					},

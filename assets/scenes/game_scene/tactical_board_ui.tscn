@@ -25,7 +25,7 @@
 [ext_resource type="Texture2D" uid="uid://dabn4r07nq7cy" path="res://data/servants/00001_artoria_pendragon/00001_artoria_pendragon_excalibur.png" id="23_skill_excalibur"]
 [ext_resource type="Texture2D" uid="uid://dj6onobegw6ls" path="res://data/masters/00001_emiya_shirou/00001_emiya_shirou_kanshou_and_bakuya.png" id="24_extra_kanshou"]
 [ext_resource type="Texture2D" uid="uid://d2g0xvjidqf5f" path="res://data/masters/00001_emiya_shirou/00001_emiya_shirou_caliburn.png" id="25_extra_caliburn"]
-[ext_resource type="Script" uid="uid://c53pthermh42y" path="res://assets/scripts/game_scene/tactical_board_ui.gd" id="27_ui_script"]
+[ext_resource type="Script" uid="uid://c53pthermh42y" path="res://scripts/game_scene/tactical_board_ui.gd" id="27_ui_script"]
 [ext_resource type="Texture2D" uid="uid://deosk88yw3cu6" path="res://assets/images/ui/icons/icon_mana_orb.png" id="28_icon_mana"]
 [ext_resource type="Texture2D" uid="uid://dkfomrxfg323l" path="res://assets/images/ui/icons/icon_holy_grail.png" id="29_icon_grail"]
 [ext_resource type="Texture2D" uid="uid://jqr2rtnfts3i" path="res://assets/images/ui/icons/icon_swords.png" id="30_icon_swords"]

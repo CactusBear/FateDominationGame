@@ -1,0 +1,14 @@
+{
+  "default_mode": "unique_master_class_pool",
+  "modes": [
+    {
+      "id": "unique_master_class_pool",
+      "name": "自选御主与随机职阶池",
+      "script": "res://scripts/selection/class_pool_selection.gd",
+      "regular_classes": ["saber", "archer", "assassin", "caster", "rider", "berserker", "lancer"],
+      "per_class_count": 1,
+      "special_count": 1,
+      "randomize_initial_order": true
+    }
+  ]
+}

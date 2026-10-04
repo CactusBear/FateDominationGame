@@ -179,7 +179,7 @@ func _test_single_reward() -> void:
 	_use_commands(1)
 	var detail := _battle("single reward", [0], {0: _base_pool() + 2, 1: 0})
 	# 只调用现有排版方法，不入树、不启动 UI，也不自行补写 report 数据。
-	var ui = load("res://assets/scripts/game_scene/tactical_board_ui.gd").new()
+	var ui = load("res://scripts/game_scene/tactical_board_ui.gd").new()
 	var row:Control = ui._build_battle_report_area_row(MapData.miyama._area_name, detail)
 	var text := _label_text(row)
 	var shown_name:String = ui._player_shown_name_by_id(0)

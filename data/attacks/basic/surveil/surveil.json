@@ -24,8 +24,11 @@
         "self_action_phase"
       ],
       "priority": 0,
-      "is_pure_passive": true,
+      "is_manual": true,
+      "is_pure_passive": false,
       "need_activate": true,
+      "max_total_uses": 1,
+      "reset_counts_each_round": true,
       "is_residue": false,
       "effect_numbers": [
         {
@@ -34,6 +37,91 @@
           "is_pure_number": true
         }
       ],
+      "options": [
+        {
+          "activation_requirements": [
+            {
+              "message": "所在地点或目标地点禁止移动",
+              "funcs": [
+                {
+                  "func_name": "get_location_map_area",
+                  "parameters": [],
+                  "var_index": 0
+                },
+                {
+                  "func_name": "map_area_has_effect",
+                  "parameters": [
+                    {
+                      "self_var": 0
+                    },
+                    "area_locked"
+                  ],
+                  "var_index": 1
+                },
+                {
+                  "func_name": "store_value",
+                  "parameters": [
+                    {
+                      "self_var": 0
+                    }
+                  ],
+                  "var_index": 2
+                },
+                {
+                  "func_name": "for_func",
+                  "parameters": [
+                    [
+                      {
+                        "func_name": "get_property",
+                        "parameters": [
+                          {
+                            "self_var": 2
+                          },
+                          "_linked_map_area"
+                        ],
+                        "var_index": 2
+                      }
+                    ],
+                    {
+                      "number_index": 0
+                    }
+                  ],
+                  "var_index": -1
+                },
+                {
+                  "func_name": "map_area_has_effect",
+                  "parameters": [
+                    {
+                      "self_var": 2
+                    },
+                    "area_locked"
+                  ],
+                  "var_index": 3
+                },
+                {
+                  "func_name": "or_func",
+                  "parameters": [
+                    {
+                      "self_var": 1
+                    },
+                    {
+                      "self_var": 3
+                    }
+                  ],
+                  "var_index": 4
+                },
+                {
+                  "func_name": "not_func",
+                  "parameters": [
+                    {
+                      "self_var": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "shown_option_name": "沿箭头移动至下一地点",
       "funcs": [
         {
           "func_name": "move_location",
@@ -46,6 +134,8 @@
           ],
           "var_index": -1
         }
+      ]
+    }
       ]
     }
   ],

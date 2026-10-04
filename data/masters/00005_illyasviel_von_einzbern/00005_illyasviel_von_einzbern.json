@@ -444,10 +444,10 @@
 		  "effect_name": "third_magic_remove_strength_cards",
 		  "shown_effect_name": "解锁此技能后立刻从牌库，弃牌堆及手牌中移除所有力量牌",
 		  "time_points": [
-            "game_start"
+			"self_skill_awakened"
 		  ],
 		  "priority": 0,
-		  "is_pure_passive": false,
+		  "is_pure_passive": true,
 		  "is_residue": false,
 		  "effect_numbers": [],
 		  "funcs": [
@@ -529,7 +529,9 @@
 			  ],
 			  "var_index": -1
 			}
-		  ]
+		  ],
+		  "source_bound": true,
+		  "need_activate": false
 		},
 		{
 		  "effect_name": "passive",
@@ -567,7 +569,8 @@
 		  "effect_name": "placeholder_third_magic_heavens_feel_win",
 		  "shown_effect_name": "当局势牌为【天之杯】时，未被淘汰的玩家全部获胜",
 		  "time_points": [
-            "game"
+			"self_skill_awakened",
+			"situation_activated"
 		  ],
 		  "priority": 0,
 		  "is_pure_passive": true,
@@ -575,11 +578,67 @@
 		  "effect_numbers": [],
 		  "funcs": [
 			{
-			  "func_name": "do_nothing",
+			  "func_name": "get_situations",
 			  "parameters": [],
-			  "var_index": -1
+			  "var_index": 0
+			},
+			{
+			  "func_name": "get_objects_by_name_fr_arr",
+			  "parameters": [
+				"heavens_feel",
+				{
+				  "self_var": 0
 			}
-		  ]
+			  ],
+			  "var_index": 1
+			},
+			{
+			  "func_name": "array_length",
+			  "parameters": [
+				{
+				  "self_var": 1
+				}
+			  ],
+			  "var_index": 2
+			},
+			{
+			  "func_name": "if_func",
+			  "parameters": [
+				{
+				  "self_var": 2
+				},
+				0
+			  ],
+			  "var_index": 3
+			},
+			{
+			  "func_name": "not_func",
+			  "parameters": [
+				{
+				  "self_var": 3
+				}
+			  ],
+			  "var_index": 4
+			},
+			{
+			  "func_name": "get_active_players_id",
+			  "parameters": [],
+			  "var_index": 5
+			},
+			{
+			  "func_name": "end_game",
+			  "parameters": [
+				{
+				  "self_var": 5
+				}
+			  ],
+			  "var_index": -1,
+			  "condition": {
+				"self_var": 4
+			  }
+			}
+		  ],
+		  "need_activate": false
 		}
 	  ],
 	  "zoom_kind": "card",

@@ -221,6 +221,35 @@
 							]
 						}
 					]
+				},
+				{
+					"effect_name": "upgrade_join_skill_zone",
+					"shown_effect_name": "将此牌加入你的技能区",
+					"time_points": [
+						"self_skill_awakened"
+					],
+					"priority": 0,
+					"is_pure_passive": true,
+					"is_residue": false,
+					"effect_numbers": [],
+					"funcs": [
+						{
+							"func_name": "get_eff_source_card",
+							"parameters": [],
+							"var_index": 0
+						},
+						{
+							"func_name": "add_skill_to_skill_zone",
+							"parameters": [
+								{
+									"self_var": 0
+								}
+							],
+							"var_index": -1
+						}
+					],
+					"need_activate": false,
+					"source_bound": true
 				}
 			],
 			"zoom_kind": "card",

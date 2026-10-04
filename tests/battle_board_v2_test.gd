@@ -135,6 +135,29 @@ func run() -> void:
 		board.refresh_all_ui()
 		await get_tree().process_frame
 	check(_labels_with(stage, "正在行动") == 1 and board.get_node("Banner").visible and str(board.get_node("Banner/Text").text).ends_with("的行动"), "enemy acting hint + banner")
+	# 本方面板：从者卡竖向放大到接近面板底部，右侧信息列（数值/令咒/玩家）重排后互不压到
+	var self_panel: Control = stage.get_node("Self")
+	var servant_slot: Control = self_panel.get_node("ServantCard")
+	var stats_col: Control = self_panel.get_node("Stats")
+	var spell_row: Control = self_panel.get_node("Spells")
+	var avatar: Control = self_panel.get_node("Me/Avatar")
+	var panel_rect := self_panel.get_global_rect()
+	var servant_rect := servant_slot.get_global_rect()
+	check(servant_rect.end.y >= panel_rect.end.y - 40.0, "servant card reaches near the panel bottom (gap %.0f)" % (panel_rect.end.y - servant_rect.end.y))
+	check(servant_rect.end.x <= stats_col.get_global_rect().position.x - 8.0, "servant card clears the stats column")
+	check(not servant_rect.intersects(spell_row.get_global_rect()), "servant card does not overlap the command spell row")
+	check(not servant_rect.intersects(avatar.get_global_rect()), "servant card does not overlap the player area")
+	check(is_equal_approx(servant_rect.size.x / servant_rect.size.y, 130.0 / 182.0), "servant card keeps the card face ratio")
+	check(servant_rect.end.y <= panel_rect.end.y and spell_row.get_global_rect().end.x <= panel_rect.end.x, "restacked self panel stays inside its frame")
+	# 令咒板块挪到玩家列下方，数值列纵向拉开铺满到接近面板底：两块原本的空白都该被填掉
+	var player_col: Rect2 = self_panel.get_node("Me").get_global_rect()
+	var player_name_row: Rect2 = (self_panel.get_node("Me/Name") as Control).get_global_rect()
+	var spell_rect: Rect2 = spell_row.get_global_rect()
+	check(spell_rect.position.x >= player_col.position.x - 0.5 and spell_rect.position.y >= player_name_row.end.y, "command spell row sits under the player info")
+	check(spell_row.has_node("SpellCard/Img") and spell_row.get_node("SpellCard").size == Vector2(90, 126),
+		"local command spells retain the restored full-height card frame")
+	var power_row: Control = stats_col.get_node("PowerRow")
+	check(power_row.get_global_rect().end.y >= panel_rect.end.y - 44.0, "stats column stretches down to the panel bottom (gap %.0f)" % (panel_rect.end.y - power_row.get_global_rect().end.y))
 	var ops: Control = stage.get_node("Ops")
 	var end_btn: Button = null
 	for b in ops.find_children("*", "Button", true, false):
@@ -186,6 +209,37 @@ func run() -> void:
 		if (b as Button).text == "结束阶段":
 			check(not b.disabled, "end phase enabled on own turn")
 	check(board._main_area_index == idx, "hover index kept across refresh")
+	# 多事件真实卡位：展开中间态、完全水平无重叠、离开后恢复牌堆。
+	var saved_events: Array = a0._events.duplicate()
+	for k in range(3):
+		var ev := BaseEvent.new("展开探针", str(GameData.player_data_library[GameData.player_id]["played_cards"][0]._card_img))
+		a0._events.append(ev)
+	board.refresh_all_ui()
+	await get_tree().process_frame
+	var event_row: Control = strips.get_child(idx).get_node("EventIcons")
+	var event_cards: Array = event_row.get_children()
+	event_cards.sort_custom(func(a, b): return int(a.get_meta("event_index")) < int(b.get_meta("event_index")))
+	var event_mouse: Vector2 = event_cards[0].get_global_rect().get_center()
+	board._update_event_fan(board.SCROLL_LEAVE_SECONDS * 0.5, event_mouse)
+	check(is_equal_approx(float(strips.get_child(idx).get_meta("event_fan")), 0.5), "event fan has animated intermediate state")
+	board._update_event_fan(board.SCROLL_LEAVE_SECONDS, event_mouse)
+	var aligned := true
+	var separated := true
+	for k in range(1, event_cards.size()):
+		aligned = aligned and is_equal_approx(event_cards[k].position.y, event_cards[0].position.y)
+		separated = separated and event_cards[k].get_global_rect().position.x >= event_cards[k - 1].get_global_rect().end.x
+	check(aligned, "expanded events align horizontally without vertical offset")
+	check(separated, "expanded events do not overlap")
+	check(event_cards[-1].get_global_rect().end.x <= strips.get_child(idx).get_global_rect().end.x, "event fan stays inside scroll")
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_png("user://event_fan_expanded.png")
+	board._update_event_fan(board.SCROLL_LEAVE_SECONDS * 0.5, Vector2(-100, -100))
+	check(is_equal_approx(float(strips.get_child(idx).get_meta("event_fan")), 0.5), "event fan closes with animation")
+	board._update_event_fan(board.SCROLL_LEAVE_SECONDS, Vector2(-100, -100))
+	check(is_zero_approx(float(strips.get_child(idx).get_meta("event_fan"))), "event fan returns to stack after mouse leaves")
+	a0._events.assign(saved_events)
+	board.refresh_all_ui()
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		await get_tree().process_frame

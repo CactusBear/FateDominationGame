@@ -1524,7 +1524,11 @@ func _add_effect() -> void:
 	var effect := maker.blank_required("effect")
 	effect["effect_name"] = "effect_" + str(obj.effects.size() + 1)
 	effect["priority"] = 0
-	effect["is_pure_passive"] = true
+	effect["is_pure_passive"] = false
+	effect["need_activate"] = true
+	effect["is_manual"] = true
+	effect["once_per_game"] = true
+	effect["source_bound"] = true
 	obj.effects.append(effect)
 	_add_effect_view(effect, "")
 	_refresh_scripts()
@@ -3042,15 +3046,33 @@ func _number_mode_button(entries:Array) -> MenuButton:
 
 
 func _confirm_fixed_number(apply:Callable) -> void:
+	_confirm("改成固定数字",
+		"固定数字不能再被任何效果更改（例如「费用减一」「威力加倍」都会对它无效）。\n卡面上的数字一般都应当能被更改，除非这张牌写明了这个数字不变。\n\n确定要改成固定数字吗？",
+		"改成固定数字", apply, "FixNumberConfirm")
+
+
+## 通用二次确认：确认才执行 apply，取消什么都不做；弹窗用完即销毁。
+## dialog_name 供测试/外部按名字找到这个弹窗，不传则用默认节点名
+func _confirm(title:String, text:String, ok_text:String, apply:Callable, dialog_name:String = "") -> void:
 	var dialog := ConfirmationDialog.new()
-	dialog.name = "FixNumberConfirm"
-	dialog.title = "改成固定数字"
-	dialog.dialog_text = "固定数字不能再被任何效果更改（例如「费用减一」「威力加倍」都会对它无效）。\n卡面上的数字一般都应当能被更改，除非这张牌写明了这个数字不变。\n\n确定要改成固定数字吗？"
-	dialog.ok_button_text = "改成固定数字"
+	if dialog_name != "":
+		dialog.name = dialog_name
+	dialog.title = title
+	dialog.dialog_text = text
+	dialog.ok_button_text = ok_text
 	dialog.confirmed.connect(func(): apply.call(); dialog.queue_free())
 	dialog.canceled.connect(dialog.queue_free)
 	add_child(dialog)
 	dialog.popup_centered()
+
+
+## 工具栏「返回主菜单」：有未保存修改先确认，否则直接切场景
+func return_to_main_menu() -> void:
+	var go := func(): get_tree().change_scene_to_file(GameStart.MAIN_MENU_SCENE)
+	if dirty:
+		_confirm("返回主菜单", "当前卡牌有未保存的修改，返回主菜单会丢失这些修改。\n\n仍要返回吗？", "不保存并返回", go)
+	else:
+		go.call()
 
 
 func _new_number_slot(value, effect = null) -> Dictionary:
@@ -3432,6 +3454,9 @@ func _collect_issues() -> Array:
 	var stored = data
 	for issue in maker.validate(stored, card_kind):
 		out.append(str(issue))
+	for issue in maker.identity_issues(stored, path):
+		if not out.has(str(issue)):
+			out.append(str(issue))
 	# 其他子牌的效果：按已写回的 JSON 临时解码检查，保证保存前整张卡都查过
 	var all:Array = []
 	_all_effects(data, "", all)
@@ -3783,6 +3808,10 @@ func _image_tile(full:String, shown_name:String, is_folder:bool) -> Control:
 		button.icon = _thumb_texture(full, Vector2i(IMAGE_TILE_SIZE, IMAGE_TILE_SIZE))
 		# 刷新会释放当前按钮，必须等 pressed 信号派发结束再选图。
 		button.pressed.connect(_use_picked_image.bind(full), CONNECT_DEFERRED)
+		button.gui_input.connect(func(event:InputEvent):
+			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and event.double_click:
+				# 双击沿用同一选图入口，随后关闭选图面板；文件夹仍只负责进入目录。
+				_use_picked_image_and_close.call_deferred(full))
 	tile.add_child(button)
 	var label := _label(shown_name, 14, C_TEXT)
 	label.name = "ImageTileName"
@@ -3816,6 +3845,16 @@ func _image_dir_up() -> void:
 func _use_picked_image(source:String) -> void:
 	_image_chosen(source)
 	_fill_image_picker()
+
+
+func _use_picked_image_and_close(source:String) -> void:
+	if not is_instance_valid(image_picker):
+		return
+	_image_chosen(source)
+	var dialog := image_picker
+	image_picker = null
+	dialog.hide()
+	dialog.queue_free()
 
 
 # 图标的缩略图：先缩到显示尺寸再做纹理，免得把整张大卡图都留在内存里。

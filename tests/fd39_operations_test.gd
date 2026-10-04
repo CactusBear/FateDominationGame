@@ -90,11 +90,11 @@ func test_registry() -> void:
 		"cancel_pending_action", "edit_pending_action", "set_battle_result", "end_game", "add_map_area"]
 	var missing:Array = []
 	for n in names:
-		if AllOperations.get_class_name_of(n) == "" or !ResourceLoader.exists("res://assets/scripts/system/operations/%s.gd" % LoadHelper.func_name_to_class_name(n)):
+		if AllOperations.get_class_name_of(n) == "" or !ResourceLoader.exists("res://scripts/system/operations/%s.gd" % LoadHelper.func_name_to_class_name(n)):
 			missing.append(n)
 	check(missing.is_empty(), "new operations registered and on disk " + str(missing))
 	var files:Array = []
-	for f in DirAccess.get_files_at("res://assets/scripts/system/operations"):
+	for f in DirAccess.get_files_at("res://scripts/system/operations"):
 		if f.ends_with(".gd"):
 			files.append(f.get_basename())
 	var classes:Array = []

@@ -191,6 +191,11 @@ theme_override_font_sizes/font_size = 15
 horizontal_alignment = 2
 autowrap_mode = 3
 
+[node name="MainMenuButton" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+tooltip_text = "回到主菜单。有没保存的修改会先问一声。"
+text = "返回主菜单"
+
 [node name="SplitOuter" type="HSplitContainer" parent="VBoxContainer" unique_id=1990728853 groups=["layout_split"]]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -970,6 +975,8 @@ autostart = true
 [connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/RescanButton" to="." method="rescan_catalog"]
 
 [connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/TutorialButton" to="." method="open_tutorial_menu"]
+
+[connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/MainMenuButton" to="." method="return_to_main_menu"]
 [connection signal="pressed" from="TutorialPanel/VBoxContainer/TutorialHeader/HBoxContainer/TutorialCloseButton" to="." method="close_tutorial"]
 [connection signal="gui_input" from="TutorialPanel/VBoxContainer/TutorialHeader" to="." method="_on_tutorial_header_input"]
 [connection signal="pressed" from="TutorialPanel/VBoxContainer/HBoxContainer/TutorialPrev" to="." method="tutorial_prev"]

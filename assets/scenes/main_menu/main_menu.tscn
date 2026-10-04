@@ -1,65 +1,28 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene format=3 uid="uid://dbh4v18tvckyp"]
 
-[ext_resource type="Script" path="res://assets/scripts/main_menu/main_menu.gd" id="1_menu"]
-[ext_resource type="Texture2D" path="res://assets/images/main_menu/bg_bridge.jpg" id="2_bridge"]
-[ext_resource type="Texture2D" path="res://assets/images/main_menu/kv_saber.jpg" id="3_saber"]
-[ext_resource type="Texture2D" path="res://assets/images/main_menu/bg_church.jpg" id="4_church"]
-[ext_resource type="Texture2D" path="res://assets/images/main_menu/command_sigil.svg" id="5_sigil"]
-[ext_resource type="Shader" path="res://assets/shaders/ui_mask.gdshader" id="6_mask"]
+[ext_resource type="Script" uid="uid://e1ig44n16qsj" path="res://scripts/main_menu/main_menu.gd" id="1_menu"]
+[ext_resource type="VideoStream" uid="uid://q32uymxj3f6u" path="res://assets/videos/main_menu/knight_idle_hq1080.ogv" id="4_sky"]
+[ext_resource type="Texture2D" uid="uid://bv3dnsb132hw" path="res://assets/images/main_menu/title_fate.svg" id="5_title"]
+[ext_resource type="Texture2D" uid="uid://dktua13oyhui3" path="res://assets/images/main_menu/title_domination.svg" id="6_subtitle"]
 
-[sub_resource type="ShaderMaterial" id="KvMask"]
-shader = ExtResource("6_mask")
-shader_parameter/shape = 0
-shader_parameter/fade_dir = Vector2(1, 0)
-shader_parameter/fade_start = 0.0
-shader_parameter/fade_end = 0.52
-shader_parameter/softness = 0.01
+[sub_resource type="Gradient" id="GradientShade"]
+offsets = PackedFloat32Array(0, 0.3, 0.55)
+colors = PackedColorArray(0.03, 0.04, 0.1, 0.45, 0.03, 0.04, 0.1, 0.25, 0.03, 0.04, 0.1, 0)
 
-[sub_resource type="CanvasItemMaterial" id="AddBlend"]
-blend_mode = 1
+[sub_resource type="GradientTexture2D" id="TextureShade"]
+gradient = SubResource("GradientShade")
+width = 512
+height = 8
 
-[sub_resource type="Gradient" id="GlowGradient"]
-offsets = PackedFloat32Array(0, 1)
-colors = PackedColorArray(0.247, 0.839, 0.941, 0.28, 0.247, 0.839, 0.941, 0)
+[sub_resource type="Gradient" id="GradientLine"]
+colors = PackedColorArray(0.86, 0.72, 0.42, 0, 0.95, 0.83, 0.56, 0.95)
 
-[sub_resource type="GradientTexture2D" id="GlowTex"]
-gradient = SubResource("GlowGradient")
+[sub_resource type="GradientTexture2D" id="TextureLine"]
+gradient = SubResource("GradientLine")
 width = 256
-height = 256
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(0.5, 0)
+height = 4
 
-[sub_resource type="Gradient" id="TitleSideGradient"]
-offsets = PackedFloat32Array(0, 0.38, 0.62)
-colors = PackedColorArray(0.024, 0.031, 0.051, 0.85, 0.024, 0.031, 0.051, 0.55, 0.024, 0.031, 0.051, 0)
-
-[sub_resource type="GradientTexture2D" id="TitleSideTex"]
-gradient = SubResource("TitleSideGradient")
-width = 512
-height = 8
-
-[sub_resource type="Gradient" id="VerticalGradient"]
-offsets = PackedFloat32Array(0, 0.22, 0.7, 1)
-colors = PackedColorArray(0.024, 0.031, 0.051, 0.7, 0.024, 0.031, 0.051, 0, 0.024, 0.031, 0.051, 0, 0.024, 0.031, 0.051, 0.92)
-
-[sub_resource type="GradientTexture2D" id="VerticalTex"]
-gradient = SubResource("VerticalGradient")
-width = 8
-height = 512
-fill_from = Vector2(0, 0)
-fill_to = Vector2(0, 1)
-
-[sub_resource type="Gradient" id="MenuSideGradient"]
-offsets = PackedFloat32Array(0, 0.3, 0.6, 1)
-colors = PackedColorArray(0.024, 0.031, 0.051, 0.94, 0.024, 0.031, 0.051, 0.86, 0.024, 0.031, 0.051, 0.35, 0.024, 0.031, 0.051, 0.15)
-
-[sub_resource type="GradientTexture2D" id="MenuSideTex"]
-gradient = SubResource("MenuSideGradient")
-width = 512
-height = 8
-
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=940991793]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -68,138 +31,33 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_menu")
 
-[node name="TitleScreen" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="Background" type="TextureRect" parent="TitleScreen"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-texture = ExtResource("2_bridge")
-expand_mode = 1
-stretch_mode = 6
-
-[node name="KeyVisual" type="TextureRect" parent="TitleScreen"]
-material = SubResource("KvMask")
+[node name="Background" type="VideoStreamPlayer" parent="." unique_id=795352481]
 layout_mode = 0
-offset_left = 910.0
-offset_right = 1920.0
-offset_bottom = 1080.0
+offset_left = -40.0
+offset_top = -30.0
+offset_right = 1960.0
+offset_bottom = 1110.0
 mouse_filter = 2
-texture = ExtResource("3_saber")
-expand_mode = 1
-stretch_mode = 6
+stream = ExtResource("4_sky")
+autoplay = true
+expand = true
+loop = true
 
-[node name="Glow" type="TextureRect" parent="TitleScreen"]
-material = SubResource("AddBlend")
-layout_mode = 0
-offset_left = 1180.0
-offset_top = 100.0
-offset_right = 1720.0
-offset_bottom = 780.0
-pivot_offset = Vector2(270, 340)
-mouse_filter = 2
-texture = SubResource("GlowTex")
-expand_mode = 1
-
-[node name="VignetteV" type="TextureRect" parent="TitleScreen"]
+[node name="Shade" type="TextureRect" parent="." unique_id=1520978823]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-texture = SubResource("VerticalTex")
+texture = SubResource("TextureShade")
 expand_mode = 1
 
-[node name="VignetteH" type="TextureRect" parent="TitleScreen"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-texture = SubResource("TitleSideTex")
-expand_mode = 1
-
-[node name="Particles" type="CPUParticles2D" parent="TitleScreen"]
+[node name="Particles" type="CPUParticles2D" parent="." unique_id=2099427670]
 position = Vector2(960, 1090)
-amount = 34
-lifetime = 12.0
-preprocess = 10.0
-emission_shape = 3
-emission_rect_extents = Vector2(960, 1)
-direction = Vector2(0, -1)
-spread = 6.0
-gravity = Vector2(0, 0)
-initial_velocity_min = 70.0
-initial_velocity_max = 130.0
-scale_amount_min = 1.5
-scale_amount_max = 4.0
-color = Color(0.91, 0.804, 0.525, 0.85)
-
-[node name="Sigil" type="TextureRect" parent="TitleScreen"]
-layout_mode = 0
-offset_left = 1650.0
-offset_top = 842.0
-offset_right = 1800.0
-offset_bottom = 992.0
-mouse_filter = 2
-texture = ExtResource("5_sigil")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Content" type="Control" parent="TitleScreen"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="Menu" type="Control" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="Background" type="TextureRect" parent="Menu"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-texture = ExtResource("4_church")
-expand_mode = 1
-stretch_mode = 6
-
-[node name="VignetteH" type="TextureRect" parent="Menu"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-texture = SubResource("MenuSideTex")
-expand_mode = 1
-
-[node name="VignetteV" type="TextureRect" parent="Menu"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-texture = SubResource("VerticalTex")
-expand_mode = 1
-
-[node name="Particles" type="CPUParticles2D" parent="Menu"]
-position = Vector2(960, 1090)
-amount = 18
-lifetime = 14.0
+amount = 28
+lifetime = 13.0
 preprocess = 10.0
 emission_shape = 3
 emission_rect_extents = Vector2(960, 1)
@@ -207,27 +65,53 @@ direction = Vector2(0, -1)
 spread = 6.0
 gravity = Vector2(0, 0)
 initial_velocity_min = 60.0
-initial_velocity_max = 110.0
+initial_velocity_max = 120.0
 scale_amount_min = 1.5
 scale_amount_max = 3.5
-color = Color(0.91, 0.804, 0.525, 0.75)
+color = Color(0.91, 0.804, 0.525, 0.8)
 
-[node name="Content" type="Control" parent="Menu"]
+[node name="Title" type="TextureRect" parent="." unique_id=805638713]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 80.0
+offset_right = 672.0
+offset_bottom = 287.4074
+mouse_filter = 2
+texture = ExtResource("5_title")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Domination" type="TextureRect" parent="." unique_id=137765961]
+layout_mode = 0
+offset_left = 128.0
+offset_top = 324.0
+offset_right = 688.0
+offset_bottom = 375.9355
+mouse_filter = 2
+texture = ExtResource("6_subtitle")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TitleRule" type="TextureRect" parent="." unique_id=1201458925]
+layout_mode = 0
+offset_left = 128.0
+offset_top = 404.0
+offset_right = 720.0
+offset_bottom = 406.0
+mouse_filter = 2
+texture = SubResource("TextureLine")
+expand_mode = 1
+
+[node name="Content" type="Control" parent="." unique_id=2099746391]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
-[node name="Fade" type="ColorRect" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0, 0, 0, 1)
-
-[node name="Toast" type="PanelContainer" parent="."]
+[node name="Toast" type="PanelContainer" parent="." unique_id=803091833]
 visible = false
 layout_mode = 1
 anchors_preset = 7
@@ -243,7 +127,16 @@ grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
 
-[node name="Label" type="Label" parent="Toast"]
+[node name="Label" type="Label" parent="Toast" unique_id=39841045]
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Fade" type="ColorRect" parent="." unique_id=1878320311]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

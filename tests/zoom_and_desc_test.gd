@@ -25,6 +25,10 @@ func frames(count := 3) -> void:
 	for i in range(count):
 		await get_tree().process_frame
 		if is_instance_valid(board):
+			# 冻结规则推进但继续实际 UI 动画；出牌组的可见性与布局由此生产回调更新。
+			board._update_power_badges()
+			board._update_fly_sizes(1.0 / 60.0)
+			board._update_event_fan(1.0 / 60.0, board.get_global_mouse_position())
 			board._update_held_cards(1.0 / 60.0)
 			board._update_hover_zoom_keepalive(1.0 / 60.0)
 
@@ -74,8 +78,12 @@ func run() -> void:
 	check(slot.get_meta("zoom_right_action", "") == "none", "held card keeps right click for conceal")
 	check(frame.mouse_filter == Control.MOUSE_FILTER_IGNORE, "card face stays mouse transparent")
 	check(not board.get_node("Background").has_meta("zoom_bound"), "background excluded")
-	for target in [board.get_node("Self/ServantCard"), board.get_node("Master/Frame/Img"), board.get_node("Self/Stats/Spells").get_child(0)]:
+	for target in [board.get_node("Self/ServantCard"), board.get_node("Master/Frame/Img")]:
 		check(target.has_meta("zoom_bound"), "static card bound " + target.name)
+	check(board.get_node("Self/Spells/SpellCard").has_meta("zoom_bound"), "local complete command-spell card declares preview")
+	for rival in board._rivals.get_children():
+		if rival.has_node("Stats/Spells"):
+			check(not rival.get_node("Stats/Spells").get_child(0).has_meta("zoom_bound"), "rival decorative icon remains excluded from card preview")
 	var unknown = CloneObject.new().exec(slot.get_meta("card"))
 	unknown._zoom_kind = ""
 	unknown._zoom_kinds.clear()
@@ -191,10 +199,12 @@ func run() -> void:
 	await verify_target(played_slot, "played")
 	await verify_target(board.get_node("Self/ServantCard"), "servant")
 	await verify_target(board.get_node("Master/Frame/Img"), "master")
-	var spell: Control = board.get_node("Self/Stats/Spells").get_child(0)
+	var spell: Control = board.get_node("Self/Spells").get_child(0)
 	board.refresh_all_ui()
-	check(board.get_node("Self/Stats/Spells").get_child(0) == spell, "refresh preserves command spell preview source")
-	await verify_target(spell, "command spell")
+	check(board.get_node("Self/Spells").get_child(0) == spell, "refresh preserves the complete local command-spell card")
+	board._hide_event_zoom(true)
+	await point_at(spell.get_global_rect().get_center(), 50)
+	check(board._hover_zoom.visible, "real hover enlarges the complete local command-spell card")
 	if MapData.active_situation != null:
 		await verify_target(board._situation.get_node("SituCard"), "situation")
 	while area._events.size() < 2:

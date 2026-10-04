@@ -420,10 +420,10 @@
 		  "effect_name": "perfect_breathing_remove_magic_cards",
 		  "shown_effect_name": "解锁此技能后立刻从牌库，弃牌堆及手牌中移除所有魔术牌",
 		  "time_points": [
-            "game_start"
+			"self_skill_awakened"
 		  ],
 		  "priority": 0,
-		  "is_pure_passive": false,
+		  "is_pure_passive": true,
 		  "is_residue": false,
 		  "effect_numbers": [],
 		  "funcs": [
@@ -505,7 +505,9 @@
 			  ],
 			  "var_index": -1
 			}
-		  ]
+		  ],
+		  "source_bound": true,
+		  "need_activate": false
 		},
 		{
 		  "effect_name": "passive",
@@ -546,7 +548,8 @@
 		  "effect_name": "placeholder_perfect_breathing_snake_becomes_attack",
 		  "shown_effect_name": "你的【蛇】获得以下效果 - 被动/战斗阶段：花费6点魔力，将此牌加入你的攻击中",
 		  "time_points": [
-            "self_battle_phase"
+			"self_skill_awakened",
+			"self_card_to_hand"
 		  ],
 		  "priority": 0,
 		  "is_pure_passive": true,
@@ -560,11 +563,225 @@
 		  ],
 		  "funcs": [
 			{
-			  "func_name": "do_nothing",
+			  "func_name": "get_player_deck",
+			  "parameters": [],
+			  "var_index": 0
+			},
+			{
+			  "func_name": "get_player_hand_cards",
+			  "parameters": [],
+			  "var_index": 1
+			},
+			{
+			  "func_name": "get_player_discard",
+			  "parameters": [],
+			  "var_index": 2
+			},
+			{
+			  "func_name": "get_player_played_cards",
+			  "parameters": [],
+			  "var_index": 3
+			},
+			{
+			  "func_name": "merge_arrays",
+			  "parameters": [
+				{
+				  "self_var": 0
+				},
+				{
+				  "self_var": 1
+				},
+				{
+				  "self_var": 2
+				},
+				{
+				  "self_var": 3
+				}
+			  ],
+			  "var_index": 4
+			},
+			{
+			  "func_name": "get_objects_by_name_fr_arr",
+			  "parameters": [
+				"snake",
+				{
+				  "self_var": 4
+				}
+			  ],
+			  "var_index": 5
+			},
+			{
+			  "func_name": "foreach_func",
+			  "parameters": [
+				[
+				  {
+					"func_name": "store_value",
+					"parameters": [
+					  null
+					],
+					"var_index": 20
+				  },
+				  {
+					"func_name": "card_has_effect",
+					"parameters": [
+					  "perfect_breathing_snake_attack",
+					  {
+						"self_var": 20
+					  }
+					],
+					"var_index": 21
+				  },
+				  {
+					"func_name": "not_func",
+					"parameters": [
+					  {
+						"self_var": 21
+					  }
+					],
+					"var_index": 22
+				  },
+				  {
+					"func_name": "build_effect",
+					"parameters": [
+					  {
+						"effect_name": "perfect_breathing_snake_attack",
+						"shown_effect_name": "被动/战斗阶段：花费6点魔力，将此牌加入你的攻击中",
+						"time_points": [
+							"self_battle_phase"
+						],
+						"priority": 0,
+						"is_pure_passive": false,
+						"is_residue": false,
+						"effect_numbers": [],
+						"funcs": [
+							{
+								"func_name": "get_eff_source_card",
+								"parameters": [],
+								"var_index": 0
+							},
+							{
+								"func_name": "find_player_array_containing",
+								"parameters": [
+									{
+										"self_var": 0
+									}
+								],
+								"var_index": 1
+							},
+							{
+								"func_name": "get_player_played_cards",
+								"parameters": [],
+								"var_index": 2
+							},
+							{
+								"func_name": "draw_card_by_card",
+								"parameters": [
+									{
+										"self_var": 0
+									},
+									{
+										"self_var": 1
+									},
+									{
+										"self_var": 2
+									}
+								],
+								"var_index": -1
+							},
+							{
+								"func_name": "set_property",
+								"parameters": [
+									{
+										"self_var": 0
+									},
+									"_is_activating",
+									true
+								],
+								"var_index": -1
+							},
+							{
+								"func_name": "set_property",
+								"parameters": [
+									{
+										"self_var": 0
+									},
+									"_is_concealed",
+									false
+								],
+								"var_index": -1
+							},
+							{
+								"func_name": "sync_power",
 			  "parameters": [],
 			  "var_index": -1
 			}
-		  ]
+						],
+						"need_activate": false,
+						"is_manual": true,
+						"cost": {
+							"number": 6,
+							"can_change": true,
+							"is_pure_number": true
+						}
+					  },
+					  {
+						"self_var": 20
+					  }
+					],
+					"var_index": 23,
+					"condition": {
+					  "self_var": 22
+					}
+				  },
+				  {
+					"func_name": "get_property",
+					"parameters": [
+					  {
+						"self_var": 20
+					  },
+					  "_effects"
+					],
+					"var_index": 24,
+					"condition": {
+					  "self_var": 22
+					}
+				  },
+				  {
+					"func_name": "add_to_array",
+					"parameters": [
+					  {
+						"self_var": 23
+					  },
+					  {
+						"self_var": 24
+					  }
+					],
+					"var_index": -1,
+					"condition": {
+					  "self_var": 22
+					}
+				  },
+				  {
+					"func_name": "register_object_effects",
+					"parameters": [
+					  {
+						"self_var": 20
+					  }
+					],
+					"var_index": -1,
+					"condition": {
+					  "self_var": 22
+					}
+				  }
+				],
+				{
+				  "self_var": 5
+				}
+			  ],
+			  "var_index": -1
+			}
+		  ],
+		  "need_activate": false
 		}
 	  ],
 	  "zoom_kind": "card",

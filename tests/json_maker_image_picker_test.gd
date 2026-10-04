@@ -104,33 +104,19 @@ func _ready() -> void:
 	ui._show_image_dir("Z:/没有这个位置")
 	check(ui.image_dir.trim_suffix("/") == ProjectSettings.globalize_path("res://").trim_suffix("/"), "打不开的位置不改变当前目录")
 
-	# 从卡文件夹点一个图标：真实点击就该选中它
+	# 从卡文件夹双击一个图标：真实双击应选中它并直接关闭面板
 	ui._show_image_dir(ARTORIA_FOLDER)
 	await get_tree().process_frame
 	var tile_buttons:Array = picture_tiles(ui)
 	check(not tile_buttons.is_empty(), "卡文件夹里有点得动的图标")
 	if not tile_buttons.is_empty():
 		var tile:Button = tile_buttons[0]
-		if DisplayServer.get_name() != "headless":
-			await get_tree().process_frame
-			# 面板是嵌入式子窗口：控件矩形相对子窗口，真实输入要加上子窗口位置
-			var at:Vector2 = tile.get_global_rect().get_center() + Vector2(ui.image_picker.position)
-			Input.warp_mouse(at)
-			await get_tree().process_frame
-			for pressed in [true, false]:
-				var event := InputEventMouseButton.new()
-				event.position = at
-				event.global_position = at
-				event.button_index = MOUSE_BUTTON_LEFT
-				event.pressed = pressed
-				Input.parse_input_event(event)
-				await get_tree().process_frame
-		else:
-			tile.pressed.emit()
+		await click_folder(ui, tile, true)
 		await get_tree().process_frame
 		var chosen := str(ui.data.get("servant_card_img", ""))
 		check(chosen.begins_with("res://json_maker/pending_images/"), "点图标就把它选成待整理路径 " + chosen)
 		check(ui.dirty, "选图把卡标成还没保存")
+		check(ui.image_picker == null, "图片双击后直接关闭选图面板")
 	check(FileAccess.get_file_as_bytes(ARTORIA) == before_bytes, "选图不改动正式卡文件")
 
 	# 记忆：没保存过的新卡，下次打开从上次去的位置开始，不再每次退回系统图片目录

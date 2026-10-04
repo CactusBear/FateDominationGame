@@ -1,0 +1,70 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/game_scene/mana_sigil.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/images/game_scene/v2/ui/mana/01_灰色_加大断裂.svg" id="2"]
+[ext_resource type="Texture2D" path="res://assets/images/game_scene/v2/ui/mana/03_红色_扁平.svg" id="3"]
+[ext_resource type="Texture2D" path="res://assets/images/game_scene/v2/ui/mana/02_金色_扁平.svg" id="4"]
+[ext_resource type="Texture2D" path="res://assets/images/game_scene/v2/ui/mana/04_绿色_扁平.svg" id="5"]
+[ext_resource type="Texture2D" path="res://assets/images/game_scene/v2/ui/mana/05_青色_扩大光晕.svg" id="6"]
+[ext_resource type="FontFile" path="res://assets/fonts/Cinzel-Bold.ttf" id="7"]
+[ext_resource type="Shader" path="res://assets/shaders/mana_sigil.gdshader" id="8"]
+
+[sub_resource type="ShaderMaterial" id="Ink"]
+resource_local_to_scene = true
+shader = ExtResource("8")
+
+[sub_resource type="ShaderMaterial" id="OldInk"]
+resource_local_to_scene = true
+shader = ExtResource("8")
+
+[node name="ManaSigil" type="Control"]
+layout_mode = 0
+mouse_filter = 1
+script = ExtResource("1")
+thresholds = PackedInt32Array(0, 1, 5, 9, 12)
+color_values = PackedFloat32Array(0, 1, 6.5, 10, 12)
+glow_bands = PackedInt32Array(4)
+textures = Array[Texture2D]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")])
+colors = PackedColorArray(0.3765, 0.3922, 0.4275, 1, 0.9373, 0.3529, 0.3882, 1, 0.9137, 0.7098, 0.2941, 1, 0.2157, 0.6549, 0.4275, 1, 0, 0.8314, 0.7373, 1)
+number_font = ExtResource("7")
+
+[node name="Previous" type="TextureRect" parent="."]
+material = SubResource("OldInk")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Image" type="TextureRect" parent="."]
+material = SubResource("Ink")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Number" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_shadow_color = Color(0.01, 0.02, 0.04, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 2
+theme_override_colors/font_outline_color = Color(0.01, 0.02, 0.04, 1)
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "0"

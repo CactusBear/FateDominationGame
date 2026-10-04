@@ -135,6 +135,15 @@ func run() -> void:
 	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], 0)
 	check(not bool(d.get("victory_override", false)), "winning another round does not grant victory")
 
+	# 审计反例：未打出宝具不能获得宝具绽放战果。
+	skills = setup(1, false)
+	d = GameData.player_data_library[0]
+	open_battle_window()
+	var bloom := effect_of(skills["mana_resistance"], "np_bloom_score")
+	var score_before = d.score.number
+	check(not activate(bloom), "no NP: bloom is refused at the real activation entry")
+	check(d.score.number == score_before, "no NP: score stays unchanged")
+
 	LoadSituation.climax_situations = previous_climax
 	MapData.active_situation = previous_situation
 	print("RESULT checks=", checks, " failures=", failures)

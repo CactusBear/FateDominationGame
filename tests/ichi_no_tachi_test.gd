@@ -81,7 +81,7 @@ func run():
 	var e2=effect_named(effs, "ichi_no_tachi_close_engaged_attack")
 	check(e1 != null and e2 != null, "both halves of 一之太刀 are loaded")
 	check(e1._is_manual and e1._need_activate, "playing a card is player-activated and needs activation")
-	check(e2._is_manual and e2._need_activate, "closing an opponent's card is the same")
+	check(e2._is_manual and not e2._need_activate, "continuation is available after source closes")
 
 	# —— ② 候选只含力量基本攻击 ——
 	setup()
@@ -105,6 +105,8 @@ func run():
 	check(EffectManager.submit_card_selection(play_eff, [strength_card]), "picking the strength card is accepted")
 	check(GameData.player_data_library[0].magic.number == magic_before + 2, "it grants 2 magic")
 	check(GameData.player_data_library[0].played_cards.has(strength_card), "the picked card is played")
+	var source_card = play_eff.from.get_ref() if play_eff.from is WeakRef else play_eff.from
+	check(source_card._is_closed and not source_card._is_activating, "first half immediately closes its own card")
 
 	# 每回合一次，否则可以反复发动刷魔力。
 	# 次数上限在"能不能选"这一层把关：本回合已用完时不再入队询问
@@ -114,7 +116,9 @@ func run():
 	check(not EffectManager.submit_option_choice(play_eff, [0]),
 		"a second submission in the same round is refused")
 	EffectManager.reset_round_option_counts()
-	check(EffectManager.request_manual_activation(play_eff, 0), "a new round offers it again")
+	source_card._is_closed = false
+	source_card._is_activating = true
+	check(EffectManager.request_manual_activation(play_eff, 0), "a new round offers it after reactivation")
 	EffectManager.submit_active_choice(play_eff, false)
 
 	# —— ④ 第二条效果是第一条的连带结果：没先打出力量基本攻击就不能发动 ——
@@ -152,6 +156,46 @@ func run():
 	check(EffectManager.submit_card_selection(lock_eff, [victim_card]), "closing his card is accepted")
 	check(victim_card._is_closed, "the chosen card is closed")
 	check(my_skill_card._is_closed, "the ability closes its own card at the end")
+
+	# 入口反例：提交时魔力下降，打出失败不得奖励魔力或开放连带关闭。
+	setup()
+	var failed_effs = register_skill_effects("sasaki_kojirou", "ichi_no_tachi", 0)
+	var failed_play = effect_named(failed_effs, "ichi_no_tachi_close_and_play_strength")
+	var failed_lock = effect_named(failed_effs, "ichi_no_tachi_close_engaged_attack")
+	var unaffordable = make_hand_card("strength:2")
+	GameData.player_data_library[0].hand_cards.append(unaffordable)
+	check(EffectManager.request_manual_activation(failed_play, 0), "failure fixture opens ability")
+	check(EffectManager.submit_option_choice(failed_play, [0]), "failure fixture opens card selection")
+	check(not EffectManager.submit_card_selection(failed_play, []), "zero cards are refused")
+	check(EffectManager.request_manual_activation(failed_play, 0), "declining selection allows a fresh request")
+	check(EffectManager.submit_option_choice(failed_play, [0]), "fresh request opens selection for failure path")
+	unaffordable._cost.set_num(BaseNumber.new(20))
+	GameData.player_data_library[1].played_cards.append(make_hand_card("strength:2"))
+	GameData.player_data_library[0].magic.set_num(BaseNumber.new(0))
+	check(EffectManager.submit_card_selection(failed_play, [unaffordable]), "failed card play still resolves the declared selection")
+	check(not GameData.player_data_library[0].played_cards.has(unaffordable), "unaffordable attack does not enter play")
+	check(GameData.player_data_library[0].magic.number == 0, "failed play grants no magic")
+	check(not EffectManager.request_manual_activation(failed_lock, 0), "failed play unlocks no continuation")
+
+	setup()
+	GameProgress.current_phase_index = 2
+	GameLog.set_context(1, "action")
+	GameData.player_data_library[0].magic.set_num(BaseNumber.new(7))
+	var template = named(named(GameData.loaded_servants, "sasaki_kojirou")._specials.SKILLS, "ichi_no_tachi")
+	var low_skill = CloneObject.new().exec(template)
+	GameData.player_data_library[0].servant_skills.append(low_skill)
+	var filler = make_hand_card("strength:2")
+	GameData.player_data_library[0].hand_cards.append(filler)
+	check(RegularPlay.submit_group(0, [low_skill, filler], [false, true]), "ichi submits below the skill-zone magic threshold")
+	setup()
+	GameProgress.current_phase_index = 2
+	GameLog.set_context(1, "action")
+	GameData.player_data_library[0].magic.set_num(BaseNumber.new(7))
+	var other = CloneObject.new().exec(named(named(GameData.loaded_servants, "sasaki_kojirou")._specials.SKILLS, "ni_no_tachi"))
+	GameData.player_data_library[0].servant_skills.append(other)
+	filler = make_hand_card("strength:2")
+	GameData.player_data_library[0].hand_cards.append(filler)
+	check(not RegularPlay.submit_group(0, [other, filler], [false, true]), "other skills remain blocked below threshold")
 
 	print("RESULT checks=",checks," failures=",failures)
 	get_tree().quit(0 if failures.is_empty() else 1)

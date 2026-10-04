@@ -2,8 +2,8 @@ extends Node
 
 # RED 交给主代理串行运行；本场景不自动修改生产代码。
 const UI_SCENE = preload("res://assets/scenes/game_scene/tactical_board_ui.tscn")
-const TOTAL_SCRIPT = preload("res://assets/scripts/system/operations/GetPlayerTotalPower.gd")
-const BOARD_SCRIPT = preload("res://assets/scripts/system/global/board_power_query.gd")
+const TOTAL_SCRIPT = preload("res://scripts/system/operations/GetPlayerTotalPower.gd")
+const BOARD_SCRIPT = preload("res://scripts/system/global/board_power_query.gd")
 var failures:Array = []
 var checks:int = 0
 var scene

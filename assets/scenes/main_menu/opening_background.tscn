@@ -1,0 +1,801 @@
+[gd_scene load_steps=34 format=3]
+
+[ext_resource type="VideoStream" path="res://assets/videos/main_menu/opening_sky_seedvr80_1080p60_v4.ogv" id="1_sky"]
+[ext_resource type="FontFile" path="res://assets/fonts/Cinzel-Bold.ttf" id="2_bold"]
+[ext_resource type="FontFile" path="res://assets/fonts/Cinzel-Regular.ttf" id="3_regular"]
+[ext_resource type="FontFile" path="res://assets/fonts/CormorantGaramond-Variable.ttf" id="10_garamond"]
+[ext_resource type="Script" path="res://scripts/main_menu/opening_warp.gd" id="4_warp"]
+[ext_resource type="Shader" path="res://assets/shaders/warp_jump.gdshader" id="5_warp"]
+[ext_resource type="Shader" path="res://assets/shaders/grail_mud.gdshader" id="6_grail"]
+[ext_resource type="Shader" path="res://assets/shaders/portal_dolly.gdshader" id="7_portal"]
+[ext_resource type="Script" path="res://scripts/main_menu/viewport_fit.gd" id="8_fit"]
+[ext_resource type="Shader" path="res://assets/shaders/shard_suck.gdshader" id="9_shard"]
+
+[sub_resource type="SystemFont" id="FontChinese"]
+font_names = PackedStringArray("Noto Serif SC", "Source Han Serif SC", "SimSun")
+
+[sub_resource type="FontVariation" id="FontChineseSpaced"]
+base_font = SubResource("FontChinese")
+spacing_glyph = 14
+
+[sub_resource type="FontVariation" id="FontPromptEn"]
+base_font = ExtResource("3_regular")
+spacing_glyph = 7
+
+[sub_resource type="FontVariation" id="FontTitle"]
+base_font = ExtResource("10_garamond")
+variation_opentype = {2003265652: 500}
+spacing_glyph = 2
+
+[sub_resource type="FontVariation" id="FontTitleSub"]
+base_font = ExtResource("10_garamond")
+variation_opentype = {2003265652: 400}
+spacing_glyph = 8
+
+[sub_resource type="FontVariation" id="FontEyebrow"]
+base_font = ExtResource("3_regular")
+spacing_glyph = 9
+
+[sub_resource type="FontVariation" id="FontCaption"]
+base_font = ExtResource("3_regular")
+spacing_glyph = 3
+
+[sub_resource type="FontVariation" id="FontSubtitleCn"]
+base_font = SubResource("FontChinese")
+spacing_glyph = 22
+
+[sub_resource type="Gradient" id="GradientLine"]
+colors = PackedColorArray(0.86, 0.72, 0.42, 0, 0.95, 0.83, 0.56, 0.95)
+
+[sub_resource type="GradientTexture2D" id="TextureLine"]
+gradient = SubResource("GradientLine")
+width = 256
+height = 4
+
+[sub_resource type="Animation" id="AnimationReveal"]
+resource_name = "reveal"
+length = 4.4
+tracks/0/type = "value"
+tracks/0/path = NodePath("Fade:color")
+tracks/0/interp = 1
+tracks/0/keys = {"times": PackedFloat32Array(0, 1.6), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(0, 0, 0, 1), Color(0, 0, 0, 0)]}
+tracks/1/type = "value"
+tracks/1/path = NodePath("TextLayer/TextRoot/Title:modulate")
+tracks/1/interp = 1
+tracks/1/keys = {"times": PackedFloat32Array(0, 1.2, 2.6), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]}
+tracks/2/type = "value"
+tracks/2/path = NodePath("TextLayer/TextRoot/Domination:modulate")
+tracks/2/interp = 1
+tracks/2/keys = {"times": PackedFloat32Array(0, 1.2, 2.6), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]}
+tracks/3/type = "value"
+tracks/3/path = NodePath("TextLayer/TextRoot/Title:scale")
+tracks/3/interp = 2
+tracks/3/keys = {"times": PackedFloat32Array(0, 1.2, 3.2), "transitions": PackedFloat32Array(1, 0.4, 1), "update": 0, "values": [Vector2(1.04, 1.04), Vector2(1.04, 1.04), Vector2(1, 1)]}
+tracks/4/type = "value"
+tracks/4/path = NodePath("TextLayer/TextRoot/DividerLeft:scale")
+tracks/4/interp = 2
+tracks/4/keys = {"times": PackedFloat32Array(0, 2.2, 3.2), "transitions": PackedFloat32Array(1, 0.5, 1), "update": 0, "values": [Vector2(0, 1), Vector2(0, 1), Vector2(1, 1)]}
+tracks/5/type = "value"
+tracks/5/path = NodePath("TextLayer/TextRoot/DividerRight:scale")
+tracks/5/interp = 2
+tracks/5/keys = {"times": PackedFloat32Array(0, 2.2, 3.2), "transitions": PackedFloat32Array(1, 0.5, 1), "update": 0, "values": [Vector2(0, 1), Vector2(0, 1), Vector2(1, 1)]}
+tracks/6/type = "value"
+tracks/6/path = NodePath("TextLayer/TextRoot/DividerGem:modulate")
+tracks/6/interp = 1
+tracks/6/keys = {"times": PackedFloat32Array(0, 2.2, 2.8), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]}
+tracks/7/type = "value"
+tracks/7/path = NodePath("TextLayer/TextRoot/StartPrompt:modulate")
+tracks/7/interp = 1
+tracks/7/keys = {"times": PackedFloat32Array(0, 3.2, 4.2), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]}
+tracks/8/type = "value"
+tracks/8/path = NodePath("TextLayer/TextRoot/PromptLineLeft:modulate")
+tracks/8/interp = 1
+tracks/8/keys = {"times": PackedFloat32Array(0, 3.2, 4.2), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]}
+tracks/9/type = "value"
+tracks/9/path = NodePath("TextLayer/TextRoot/PromptLineRight:modulate")
+tracks/9/interp = 1
+tracks/9/keys = {"times": PackedFloat32Array(0, 3.2, 4.2), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]}
+tracks/10/type = "value"
+tracks/10/path = NodePath("TextLayer/TextRoot/StartPromptEn:modulate")
+tracks/10/interp = 1
+tracks/10/keys = {"times": PackedFloat32Array(0, 3.2, 4.2), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]}
+tracks/11/type = "value"
+tracks/11/path = NodePath("TextLayer/TextRoot/Eyebrow:modulate")
+tracks/11/interp = 1
+tracks/11/keys = {"times": PackedFloat32Array(0, 1.0, 2.2), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]}
+tracks/12/type = "value"
+tracks/12/path = NodePath("TextLayer/TextRoot/SubtitleCn:modulate")
+tracks/12/interp = 1
+tracks/12/keys = {"times": PackedFloat32Array(0, 2.6, 3.6), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]}
+tracks/13/type = "value"
+tracks/13/path = NodePath("TextLayer/TextRoot/Version:modulate")
+tracks/13/interp = 1
+tracks/13/keys = {"times": PackedFloat32Array(0, 3.6, 4.4), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1)]}
+
+
+[sub_resource type="AnimationLibrary" id="LibraryReveal"]
+_data = {"reveal": SubResource("AnimationReveal")}
+
+[sub_resource type="Animation" id="AnimationBreath"]
+resource_name = "breathe"
+length = 3.4
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/path = NodePath("TextLayer/TextRoot/StartPrompt:self_modulate")
+tracks/0/interp = 2
+tracks/0/keys = {"times": PackedFloat32Array(0, 1.7, 3.4), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.4), Color(1, 1, 1, 1)]}
+tracks/1/type = "value"
+tracks/1/path = NodePath("TextLayer/TextRoot/StartPromptEn:self_modulate")
+tracks/1/interp = 2
+tracks/1/keys = {"times": PackedFloat32Array(0, 1.7, 3.4), "transitions": PackedFloat32Array(1, 1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.4), Color(1, 1, 1, 1)]}
+
+[sub_resource type="AnimationLibrary" id="LibraryBreath"]
+_data = {"breathe": SubResource("AnimationBreath")}
+
+[sub_resource type="Animation" id="AnimationPress"]
+resource_name = "press"
+length = 0.24
+tracks/0/type = "value"
+tracks/0/path = NodePath("TextLayer/TextRoot/StartPrompt:scale")
+tracks/0/interp = 2
+tracks/0/keys = {"times": PackedFloat32Array(0, 0.07, 0.16, 0.24), "transitions": PackedFloat32Array(1, 1, 1, 1), "update": 0, "values": [Vector2(1, 1), Vector2(0.94, 0.94), Vector2(1.025, 1.025), Vector2(1, 1)]}
+tracks/1/type = "value"
+tracks/1/path = NodePath("TextLayer/TextRoot/StartPromptEn:scale")
+tracks/1/interp = 2
+tracks/1/keys = {"times": PackedFloat32Array(0, 0.07, 0.16, 0.24), "transitions": PackedFloat32Array(1, 1, 1, 1), "update": 0, "values": [Vector2(1, 1), Vector2(0.94, 0.94), Vector2(1.025, 1.025), Vector2(1, 1)]}
+
+[sub_resource type="AnimationLibrary" id="LibraryPress"]
+_data = {"press": SubResource("AnimationPress")}
+
+[sub_resource type="Animation" id="AnimationWarp"]
+resource_name = "warp"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("WarpFX:visible")
+tracks/0/interp = 1
+tracks/0/keys = {"times": PackedFloat32Array(0), "transitions": PackedFloat32Array(1), "update": 1, "values": [true]}
+tracks/1/type = "value"
+tracks/1/path = NodePath("WarpFX:material:shader_parameter/zoom")
+tracks/1/interp = 1
+tracks/1/keys = {"times": PackedFloat32Array(0, 0.35, 0.6, 0.7, 0.82, 0.94, 1.04, 1.12, 1.42), "transitions": PackedFloat32Array(1, 0.5, 1, 0.2, 1, 0.2, 1, 2.6, 1), "update": 0, "values": [1, 1, 0.94, 0.94, 1.22, 1.22, 1.55, 1.55, 18]}
+tracks/2/type = "value"
+tracks/2/path = NodePath("WarpFX:material:shader_parameter/pull")
+tracks/2/interp = 1
+tracks/2/keys = {"times": PackedFloat32Array(0, 0.35, 0.6, 0.7, 0.82, 0.94, 1.04, 1.12, 1.42), "transitions": PackedFloat32Array(1, 0.5, 1, 0.2, 1, 0.2, 1, 1, 1), "update": 0, "values": [0, 0, 0.3, 0.3, 0.12, 0.12, 0.05, 0.05, 0]}
+tracks/3/type = "value"
+tracks/3/path = NodePath("WarpFX:material:shader_parameter/twist")
+tracks/3/interp = 1
+tracks/3/keys = {"times": PackedFloat32Array(0, 0.35, 0.6, 0.7, 0.82, 0.94, 1.04, 1.12, 1.42), "transitions": PackedFloat32Array(1, 0.5, 1, 0.2, 1, 0.2, 1, 2.4, 1), "update": 0, "values": [0, 0, -0.3, -0.3, 0.9, 0.95, 2.2, 2.25, 7]}
+tracks/4/type = "value"
+tracks/4/path = NodePath("WarpFX:material:shader_parameter/streak")
+tracks/4/interp = 1
+tracks/4/keys = {"times": PackedFloat32Array(0, 0.7, 0.74, 0.86, 0.94, 0.98, 1.08, 1.12, 1.27, 1.42), "transitions": PackedFloat32Array(1, 0.2, 1, 1, 0.2, 1, 1, 2, 1, 1), "update": 0, "values": [0, 0, 0.45, 0.06, 0.06, 0.65, 0.15, 0.15, 0.92, 0.92]}
+tracks/5/type = "value"
+tracks/5/path = NodePath("WarpFX:material:shader_parameter/chroma")
+tracks/5/interp = 1
+tracks/5/keys = {"times": PackedFloat32Array(0, 0.35, 0.6, 0.7, 0.74, 0.86, 0.94, 0.98, 1.08, 1.12, 1.34), "transitions": PackedFloat32Array(1, 0.5, 1, 0.2, 1, 1, 0.2, 1, 1, 2, 1), "update": 0, "values": [0, 0, 0.01, 0.01, 0.035, 0.012, 0.012, 0.06, 0.02, 0.02, 0.12]}
+tracks/6/type = "value"
+tracks/6/path = NodePath("WarpFX:material:shader_parameter/shake")
+tracks/6/interp = 1
+tracks/6/keys = {"times": PackedFloat32Array(0, 0.6, 0.605, 0.695, 0.7, 0.82, 0.825, 0.935, 0.94, 1.04, 1.045, 1.115, 1.12), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [0, 0, 0.0018, 0.0018, 0, 0, 0.0024, 0.0024, 0, 0, 0.0032, 0.0032, 0]}
+tracks/7/type = "value"
+tracks/7/path = NodePath("WarpFX:material:shader_parameter/wave_radius")
+tracks/7/interp = 1
+tracks/7/keys = {"times": PackedFloat32Array(0, 0.7, 0.82, 0.94, 1.04, 1.115, 1.12, 1.27), "transitions": PackedFloat32Array(1, 0.2, 1, 0.2, 1, 1, 0.2, 1), "update": 0, "values": [0.1, 0.1, 0.7, 0.7, 1.5, 1.5, 0.1, 1.7]}
+tracks/8/type = "value"
+tracks/8/path = NodePath("WarpFX:material:shader_parameter/wave_strength")
+tracks/8/interp = 1
+tracks/8/keys = {"times": PackedFloat32Array(0, 0.7, 0.705, 0.94, 1.04, 1.12, 1.125, 1.27), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [0, 0, 0.9, 0.6, 0, 0, 1, 0]}
+tracks/9/type = "value"
+tracks/9/path = NodePath("WarpFX:material:shader_parameter/lines")
+tracks/9/interp = 1
+tracks/9/keys = {"times": PackedFloat32Array(0, 0.7, 0.71, 0.94, 0.95, 1.12, 1.37, 1.46), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 2, 1, 1), "update": 0, "values": [0, 0, 1, 0.7, 1.3, 1.1, 2.2, 0]}
+tracks/10/type = "value"
+tracks/10/path = NodePath("WarpFX:material:shader_parameter/line_travel")
+tracks/10/interp = 1
+tracks/10/keys = {"times": PackedFloat32Array(0, 0.7, 0.82, 0.94, 1.04, 1.12, 1.42), "transitions": PackedFloat32Array(1, 0.2, 1, 0.2, 1, 2.4, 1), "update": 0, "values": [0, 0, 0.45, 0.45, 1, 1, 4]}
+tracks/11/type = "value"
+tracks/11/path = NodePath("WarpFX:material:shader_parameter/flash")
+tracks/11/interp = 1
+tracks/11/keys = {"times": PackedFloat32Array(0, 1.26, 1.42, 1.46, 2), "transitions": PackedFloat32Array(1, 2, 1, 1, 1), "update": 0, "values": [0, 0, 0.92, 1, 1]}
+tracks/12/type = "value"
+tracks/12/path = NodePath("Fade:color")
+tracks/12/interp = 1
+tracks/12/keys = {"times": PackedFloat32Array(0, 1.46, 1.77, 2), "transitions": PackedFloat32Array(1, 0.5, 1, 1), "update": 0, "values": [Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 1), Color(0, 0, 0, 1)]}
+tracks/13/type = "value"
+tracks/13/path = NodePath("TextLayer/TextRoot/Eyebrow:modulate")
+tracks/13/interp = 1
+tracks/13/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/14/type = "value"
+tracks/14/path = NodePath("TextLayer/TextRoot/Title:modulate")
+tracks/14/interp = 1
+tracks/14/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/15/type = "value"
+tracks/15/path = NodePath("TextLayer/TextRoot/DividerLeft:modulate")
+tracks/15/interp = 1
+tracks/15/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/16/type = "value"
+tracks/16/path = NodePath("TextLayer/TextRoot/DividerRight:modulate")
+tracks/16/interp = 1
+tracks/16/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/17/type = "value"
+tracks/17/path = NodePath("TextLayer/TextRoot/DividerGem:modulate")
+tracks/17/interp = 1
+tracks/17/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/18/type = "value"
+tracks/18/path = NodePath("TextLayer/TextRoot/SubtitleCn:modulate")
+tracks/18/interp = 1
+tracks/18/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/19/type = "value"
+tracks/19/path = NodePath("TextLayer/TextRoot/StartPrompt:modulate")
+tracks/19/interp = 1
+tracks/19/keys = {"times": PackedFloat32Array(0, 0.15), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/20/type = "value"
+tracks/20/path = NodePath("TextLayer/TextRoot/StartPromptEn:modulate")
+tracks/20/interp = 1
+tracks/20/keys = {"times": PackedFloat32Array(0, 0.15), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/21/type = "value"
+tracks/21/path = NodePath("TextLayer/TextRoot/PromptLineLeft:modulate")
+tracks/21/interp = 1
+tracks/21/keys = {"times": PackedFloat32Array(0, 0.15), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/22/type = "value"
+tracks/22/path = NodePath("TextLayer/TextRoot/PromptLineRight:modulate")
+tracks/22/interp = 1
+tracks/22/keys = {"times": PackedFloat32Array(0, 0.15), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/23/type = "value"
+tracks/23/path = NodePath("TextLayer/TextRoot/Version:modulate")
+tracks/23/interp = 1
+tracks/23/keys = {"times": PackedFloat32Array(0, 0.15), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+
+[sub_resource type="Animation" id="AnimationGrail"]
+resource_name = "grail"
+length = 1.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("GrailFX:visible")
+tracks/0/interp = 1
+tracks/0/keys = {"times": PackedFloat32Array(0), "transitions": PackedFloat32Array(1), "update": 1, "values": [true]}
+tracks/1/type = "value"
+tracks/1/path = NodePath("GrailFX:material:shader_parameter/corrupt")
+tracks/1/interp = 1
+tracks/1/keys = {"times": PackedFloat32Array(0, 0.15, 0.45), "transitions": PackedFloat32Array(1, 0.5, 1), "update": 0, "values": [0.0, 0.0, 1.0]}
+tracks/2/type = "value"
+tracks/2/path = NodePath("GrailFX:material:shader_parameter/pulse")
+tracks/2/interp = 1
+tracks/2/keys = {"times": PackedFloat32Array(0, 0.35, 0.42, 0.55, 0.6, 0.67, 0.82), "transitions": PackedFloat32Array(1, 1, 0.5, 1, 1, 0.5, 1), "update": 0, "values": [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0]}
+tracks/3/type = "value"
+tracks/3/path = NodePath("GrailFX:material:shader_parameter/hole_fill")
+tracks/3/interp = 1
+tracks/3/keys = {"times": PackedFloat32Array(0, 0.4, 0.7), "transitions": PackedFloat32Array(1, 0.6, 1), "update": 0, "values": [0.0, 0.0, 1.0]}
+tracks/4/type = "value"
+tracks/4/path = NodePath("GrailFX:material:shader_parameter/spill")
+tracks/4/interp = 1
+tracks/4/keys = {"times": PackedFloat32Array(0, 0.55, 1.0), "transitions": PackedFloat32Array(1, 0.6, 1), "update": 0, "values": [0.0, 0.0, 1.0]}
+tracks/5/type = "value"
+tracks/5/path = NodePath("GrailFX:material:shader_parameter/fall")
+tracks/5/interp = 1
+tracks/5/keys = {"times": PackedFloat32Array(0, 0.8, 1.25), "transitions": PackedFloat32Array(1, 0.6, 1), "update": 0, "values": [0.0, 0.0, 1.0]}
+tracks/6/type = "value"
+tracks/6/path = NodePath("GrailFX:material:shader_parameter/rim")
+tracks/6/interp = 1
+tracks/6/keys = {"times": PackedFloat32Array(0, 0.5, 0.8), "transitions": PackedFloat32Array(1, 0.5, 1), "update": 0, "values": [0.0, 0.0, 1.0]}
+tracks/7/type = "value"
+tracks/7/path = NodePath("TextLayer/TextRoot/Eyebrow:modulate")
+tracks/7/interp = 1
+tracks/7/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/8/type = "value"
+tracks/8/path = NodePath("TextLayer/TextRoot/Title:modulate")
+tracks/8/interp = 1
+tracks/8/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/9/type = "value"
+tracks/9/path = NodePath("TextLayer/TextRoot/DividerLeft:modulate")
+tracks/9/interp = 1
+tracks/9/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/10/type = "value"
+tracks/10/path = NodePath("TextLayer/TextRoot/DividerRight:modulate")
+tracks/10/interp = 1
+tracks/10/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/11/type = "value"
+tracks/11/path = NodePath("TextLayer/TextRoot/DividerGem:modulate")
+tracks/11/interp = 1
+tracks/11/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/12/type = "value"
+tracks/12/path = NodePath("TextLayer/TextRoot/SubtitleCn:modulate")
+tracks/12/interp = 1
+tracks/12/keys = {"times": PackedFloat32Array(0, 0.35), "transitions": PackedFloat32Array(2, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/13/type = "value"
+tracks/13/path = NodePath("TextLayer/TextRoot/StartPrompt:modulate")
+tracks/13/interp = 1
+tracks/13/keys = {"times": PackedFloat32Array(0, 0.15), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/14/type = "value"
+tracks/14/path = NodePath("TextLayer/TextRoot/StartPromptEn:modulate")
+tracks/14/interp = 1
+tracks/14/keys = {"times": PackedFloat32Array(0, 0.15), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/15/type = "value"
+tracks/15/path = NodePath("TextLayer/TextRoot/PromptLineLeft:modulate")
+tracks/15/interp = 1
+tracks/15/keys = {"times": PackedFloat32Array(0, 0.15), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/16/type = "value"
+tracks/16/path = NodePath("TextLayer/TextRoot/PromptLineRight:modulate")
+tracks/16/interp = 1
+tracks/16/keys = {"times": PackedFloat32Array(0, 0.15), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/17/type = "value"
+tracks/17/path = NodePath("TextLayer/TextRoot/Version:modulate")
+tracks/17/interp = 1
+tracks/17/keys = {"times": PackedFloat32Array(0, 0.15), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+tracks/18/type = "value"
+tracks/18/path = NodePath("GrailFX:material:shader_parameter/pool")
+tracks/18/interp = 1
+tracks/18/keys = {"times": PackedFloat32Array(0, 1.0, 1.45), "transitions": PackedFloat32Array(1, 0.7, 1), "update": 0, "values": [0.0, 0.0, 1.0]}
+
+[sub_resource type="Animation" id="AnimationPortal"]
+resource_name = "portal"
+length = 1.8
+tracks/0/type = "value"
+tracks/0/path = NodePath("PortalFX:visible")
+tracks/0/interp = 1
+tracks/0/keys = {"times": PackedFloat32Array(0.0), "transitions": PackedFloat32Array(1), "update": 1, "values": [true]}
+tracks/1/type = "value"
+tracks/1/path = NodePath("PortalFX:material:shader_parameter/inner_depth")
+tracks/1/interp = 1
+tracks/1/keys = {"times": PackedFloat32Array(0.0, 0.0333, 0.0667, 0.1, 0.1333, 0.1667, 0.2, 0.2333, 0.2667, 0.3, 0.3333, 0.3667, 0.4, 0.4333, 0.4667, 0.5, 0.5333, 0.5667, 0.6, 0.6333, 0.6667, 0.7, 0.7333, 0.7667, 0.8, 0.8333, 0.8667, 0.9, 0.9333, 0.9667, 1.0, 1.0333, 1.0667, 1.1, 1.1333, 1.1667, 1.2, 1.2333, 1.2667, 1.3, 1.3333, 1.3667, 1.4, 1.4333, 1.4667, 1.5, 1.5333, 1.5667, 1.6, 1.6333, 1.6667, 1.7, 1.7333, 1.7667, 1.8), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
+tracks/2/type = "value"
+tracks/2/path = NodePath("PortalFX:material:shader_parameter/outer_angle")
+tracks/2/interp = 1
+tracks/2/keys = {"times": PackedFloat32Array(0.0, 0.0333, 0.0667, 0.1, 0.1333, 0.1667, 0.2, 0.2333, 0.2667, 0.3, 0.3333, 0.3667, 0.4, 0.4333, 0.4667, 0.5, 0.5333, 0.5667, 0.6, 0.6333, 0.6667, 0.7, 0.7333, 0.7667, 0.8, 0.8333, 0.8667, 0.9, 0.9333, 0.9667, 1.0, 1.0333, 1.0667, 1.1, 1.1333, 1.1667, 1.2, 1.2333, 1.2667, 1.3, 1.3333, 1.3667, 1.4, 1.4333, 1.4667, 1.5, 1.5333, 1.5667, 1.6, 1.6333, 1.6667, 1.7, 1.7333, 1.7667, 1.8), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0004, 0.0014, 0.0036, 0.007, 0.0121, 0.019, 0.028, 0.0392, 0.053, 0.0694, 0.0887, 0.1111, 0.1367, 0.1658, 0.1985, 0.235, 0.2754, 0.3201, 0.369, 0.4223, 0.4803, 0.543, 0.6106, 0.6834, 0.7613, 0.8445, 0.9336, 1.028, 1.1282, 1.2347, 1.3469, 1.4654, 1.5906, 1.7219, 1.8599, 2.005, 2.1567, 2.3153, 2.4816, 2.6548, 2.8353, 3.024, 3.2197, 3.4233, 3.6354, 3.855, 4.0827, 4.2, 4.2]}
+tracks/3/type = "value"
+tracks/3/path = NodePath("PortalFX:material:shader_parameter/outer_zoom")
+tracks/3/interp = 1
+tracks/3/keys = {"times": PackedFloat32Array(0.0, 0.0333, 0.0667, 0.1, 0.1333, 0.1667, 0.2, 0.2333, 0.2667, 0.3, 0.3333, 0.3667, 0.4, 0.4333, 0.4667, 0.5, 0.5333, 0.5667, 0.6, 0.6333, 0.6667, 0.7, 0.7333, 0.7667, 0.8, 0.8333, 0.8667, 0.9, 0.9333, 0.9667, 1.0, 1.0333, 1.0667, 1.1, 1.1333, 1.1667, 1.2, 1.2333, 1.2667, 1.3, 1.3333, 1.3667, 1.4, 1.4333, 1.4667, 1.5, 1.5333, 1.5667, 1.6, 1.6333, 1.6667, 1.7, 1.7333, 1.7667, 1.8), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [1.0, 1.0, 1.0, 1.0, 1.0002, 1.0024, 1.0066, 1.0128, 1.021, 1.0309, 1.0427, 1.0563, 1.0716, 1.0886, 1.1074, 1.1279, 1.15, 1.1739, 1.1993, 1.2264, 1.2552, 1.2856, 1.3175, 1.3512, 1.3863, 1.4231, 1.4615, 1.5014, 1.5429, 1.586, 1.6306, 1.6767, 1.7245, 1.7736, 1.8244, 1.8767, 1.9305, 1.9858, 2.0427, 2.101, 2.1608, 2.2223, 2.285, 2.3493, 2.4152, 2.4825, 2.5512, 2.6216, 2.65, 2.65, 2.65, 2.65, 2.65, 2.65, 2.65]}
+tracks/4/type = "value"
+tracks/4/path = NodePath("PortalFX:material:shader_parameter/aperture_scale")
+tracks/4/interp = 1
+tracks/4/keys = {"times": PackedFloat32Array(0.0, 0.0333, 0.0667, 0.1, 0.1333, 0.1667, 0.2, 0.2333, 0.2667, 0.3, 0.3333, 0.3667, 0.4, 0.4333, 0.4667, 0.5, 0.5333, 0.5667, 0.6, 0.6333, 0.6667, 0.7, 0.7333, 0.7667, 0.8, 0.8333, 0.8667, 0.9, 0.9333, 0.9667, 1.0, 1.0333, 1.0667, 1.1, 1.1333, 1.1667, 1.2, 1.2333, 1.2667, 1.3, 1.3333, 1.3667, 1.4, 1.4333, 1.4667, 1.5, 1.5333, 1.5667, 1.6, 1.6333, 1.6667, 1.7, 1.7333, 1.7667, 1.8), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
+tracks/5/type = "value"
+tracks/5/path = NodePath("PortalFX:material:shader_parameter/inner_blur_angle")
+tracks/5/interp = 1
+tracks/5/keys = {"times": PackedFloat32Array(0.0, 0.0333, 0.0667, 0.1, 0.1333, 0.1667, 0.2, 0.2333, 0.2667, 0.3, 0.3333, 0.3667, 0.4, 0.4333, 0.4667, 0.5, 0.5333, 0.5667, 0.6, 0.6333, 0.6667, 0.7, 0.7333, 0.7667, 0.8, 0.8333, 0.8667, 0.9, 0.9333, 0.9667, 1.0, 1.0333, 1.0667, 1.1, 1.1333, 1.1667, 1.2, 1.2333, 1.2667, 1.3, 1.3333, 1.3667, 1.4, 1.4333, 1.4667, 1.5, 1.5333, 1.5667, 1.6, 1.6333, 1.6667, 1.7, 1.7333, 1.7667, 1.8), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}
+tracks/6/type = "value"
+tracks/6/path = NodePath("PortalFX:material:shader_parameter/outer_blur_angle")
+tracks/6/interp = 1
+tracks/6/keys = {"times": PackedFloat32Array(0.0, 0.0333, 0.0667, 0.1, 0.1333, 0.1667, 0.2, 0.2333, 0.2667, 0.3, 0.3333, 0.3667, 0.4, 0.4333, 0.4667, 0.5, 0.5333, 0.5667, 0.6, 0.6333, 0.6667, 0.7, 0.7333, 0.7667, 0.8, 0.8333, 0.8667, 0.9, 0.9333, 0.9667, 1.0, 1.0333, 1.0667, 1.1, 1.1333, 1.1667, 1.2, 1.2333, 1.2667, 1.3, 1.3333, 1.3667, 1.4, 1.4333, 1.4667, 1.5, 1.5333, 1.5667, 1.6, 1.6333, 1.6667, 1.7, 1.7333, 1.7667, 1.8), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0001, 0.0007, 0.0016, 0.0029, 0.0044, 0.0062, 0.0083, 0.0106, 0.0131, 0.0158, 0.0187, 0.0219, 0.0252, 0.0287, 0.0324, 0.0363, 0.0404, 0.0446, 0.0491, 0.0536, 0.0584, 0.0633, 0.0684, 0.0737, 0.0791, 0.0846, 0.0904, 0.0962, 0.1023, 0.1084, 0.1148, 0.1212, 0.1278, 0.1346, 0.1415, 0.1485, 0.1557, 0.163, 0.1705, 0.1781, 0.1858, 0.1937, 0.2017, 0.2098, 0.2181, 0.2265, 0.235, 0.2437, 0.2481, 0.2481]}
+tracks/7/type = "value"
+tracks/7/path = NodePath("PortalFX:material:shader_parameter/radial_blur")
+tracks/7/interp = 1
+tracks/7/keys = {"times": PackedFloat32Array(0.0, 0.0333, 0.0667, 0.1, 0.1333, 0.1667, 0.2, 0.2333, 0.2667, 0.3, 0.3333, 0.3667, 0.4, 0.4333, 0.4667, 0.5, 0.5333, 0.5667, 0.6, 0.6333, 0.6667, 0.7, 0.7333, 0.7667, 0.8, 0.8333, 0.8667, 0.9, 0.9333, 0.9667, 1.0, 1.0333, 1.0667, 1.1, 1.1333, 1.1667, 1.2, 1.2333, 1.2667, 1.3, 1.3333, 1.3667, 1.4, 1.4333, 1.4667, 1.5, 1.5333, 1.5667, 1.6, 1.6333, 1.6667, 1.7, 1.7333, 1.7667, 1.8), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0002, 0.0004, 0.0007, 0.0009, 0.0012, 0.0016, 0.0019, 0.0023, 0.0027, 0.0031, 0.0035, 0.004, 0.0045, 0.0049, 0.0054, 0.0059, 0.0064, 0.0069, 0.0075, 0.008, 0.0086, 0.0091, 0.0097, 0.0103, 0.0109, 0.0115, 0.0121, 0.0127, 0.0134, 0.014, 0.0147, 0.0153, 0.016, 0.0167, 0.0173, 0.018, 0.0187, 0.0194, 0.0201, 0.0209, 0.0216, 0.0223, 0.0231, 0.0234, 0.0234, 0.0234, 0.0234, 0.0234, 0.0234, 0.0234]}
+tracks/8/type = "value"
+tracks/8/path = NodePath("PortalFX:material:shader_parameter/center_light")
+tracks/8/interp = 1
+tracks/8/keys = {"times": PackedFloat32Array(0.0, 0.0333, 0.0667, 0.1, 0.1333, 0.1667, 0.2, 0.2333, 0.2667, 0.3, 0.3333, 0.3667, 0.4, 0.4333, 0.4667, 0.5, 0.5333, 0.5667, 0.6, 0.6333, 0.6667, 0.7, 0.7333, 0.7667, 0.8, 0.8333, 0.8667, 0.9, 0.9333, 0.9667, 1.0, 1.0333, 1.0667, 1.1, 1.1333, 1.1667, 1.2, 1.2333, 1.2667, 1.3, 1.3333, 1.3667, 1.4, 1.4333, 1.4667, 1.5, 1.5333, 1.5667, 1.6, 1.6333, 1.6667, 1.7, 1.7333, 1.7667, 1.8), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}
+tracks/9/type = "value"
+tracks/9/path = NodePath("PortalFX:material:shader_parameter/cloud_light")
+tracks/9/interp = 1
+tracks/9/keys = {"times": PackedFloat32Array(0.0, 0.0333, 0.0667, 0.1, 0.1333, 0.1667, 0.2, 0.2333, 0.2667, 0.3, 0.3333, 0.3667, 0.4, 0.4333, 0.4667, 0.5, 0.5333, 0.5667, 0.6, 0.6333, 0.6667, 0.7, 0.7333, 0.7667, 0.8, 0.8333, 0.8667, 0.9, 0.9333, 0.9667, 1.0, 1.0333, 1.0667, 1.1, 1.1333, 1.1667, 1.2, 1.2333, 1.2667, 1.3, 1.3333, 1.3667, 1.4, 1.4333, 1.4667, 1.5, 1.5333, 1.5667, 1.6, 1.6333, 1.6667, 1.7, 1.7333, 1.7667, 1.8), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0053, 0.021, 0.0397, 0.0605, 0.0829, 0.1065, 0.1312, 0.1569, 0.1835, 0.2109, 0.239, 0.2677, 0.2972, 0.3272, 0.3577, 0.3889, 0.4204, 0.4525, 0.4851, 0.5181, 0.5515, 0.5854, 0.6196, 0.6541, 0.6892, 0.7245, 0.7601, 0.7962, 0.8326, 0.8692, 0.9063, 0.9435, 0.9811, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
+tracks/10/type = "value"
+tracks/10/path = NodePath("PortalFX:material:shader_parameter/blue_cover")
+tracks/10/interp = 1
+tracks/10/keys = {"times": PackedFloat32Array(0.0, 0.48, 1.42, 1.60), "transitions": PackedFloat32Array(1, 1, 1, 1), "update": 0, "values": [0.0, 0.0, 0.72, 1.0]}
+tracks/11/type = "value"
+tracks/11/path = NodePath("PortalFX:material:shader_parameter/white_cover")
+tracks/11/interp = 1
+tracks/11/keys = {"times": PackedFloat32Array(0.0, 0.0333, 0.0667, 0.1, 0.1333, 0.1667, 0.2, 0.2333, 0.2667, 0.3, 0.3333, 0.3667, 0.4, 0.4333, 0.4667, 0.5, 0.5333, 0.5667, 0.6, 0.6333, 0.6667, 0.7, 0.7333, 0.7667, 0.8, 0.8333, 0.8667, 0.9, 0.9333, 0.9667, 1.0, 1.0333, 1.0667, 1.1, 1.1333, 1.1667, 1.2, 1.2333, 1.2667, 1.3, 1.3333, 1.3667, 1.4, 1.4333, 1.4667, 1.5, 1.5333, 1.5667, 1.6, 1.6333, 1.6667, 1.7, 1.7333, 1.7667, 1.8), "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), "update": 0, "values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0554, 0.3245, 0.6755, 0.9446, 1.0, 1.0, 1.0]}
+tracks/12/type = "value"
+tracks/12/path = NodePath("PortalFX:material:shader_parameter/shatter")
+tracks/12/interp = 1
+tracks/12/keys = {"times": PackedFloat32Array(0.0), "transitions": PackedFloat32Array(1), "update": 1, "values": [0.0]}
+tracks/13/type = "value"
+tracks/13/path = NodePath("TextLayer:material:shader_parameter/shatter")
+tracks/13/interp = 1
+tracks/13/keys = {"times": PackedFloat32Array(0.0), "transitions": PackedFloat32Array(1), "update": 1, "values": [0.0]}
+tracks/14/type = "value"
+tracks/14/path = NodePath("TextLayer:modulate")
+tracks/14/interp = 1
+tracks/14/keys = {"times": PackedFloat32Array(0.0, 0.35), "transitions": PackedFloat32Array(1, 1), "update": 0, "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]}
+
+[sub_resource type="AnimationLibrary" id="LibraryWarp"]
+_data = {"warp": SubResource("AnimationWarp"), "grail": SubResource("AnimationGrail"), "portal": SubResource("AnimationPortal")}
+
+[sub_resource type="ShaderMaterial" id="MaterialWarp"]
+shader = ExtResource("5_warp")
+shader_parameter/center = Vector2(0.499, 0.474)
+
+[sub_resource type="ShaderMaterial" id="MaterialGrail"]
+shader = ExtResource("6_grail")
+shader_parameter/hole_center = Vector2(0.5, 0.478)
+shader_parameter/hole_radius = 0.37
+shader_parameter/ring_outer = 0.53
+
+[sub_resource type="ShaderMaterial" id="MaterialPortal"]
+shader = ExtResource("7_portal")
+shader_parameter/center = Vector2(0.5, 0.478)
+shader_parameter/hole_radius = 0.37
+shader_parameter/light_origin = 0.0
+shader_parameter/light_hold = 1.0
+shader_parameter/cloud_light = 0.0
+shader_parameter/blue_cover = 0.0
+shader_parameter/shatter = 0.0
+
+[sub_resource type="ShaderMaterial" id="MaterialShardText"]
+shader = ExtResource("9_shard")
+shader_parameter/origin = Vector2(0.5, 0.478)
+
+[node name="OpeningBackground" type="Control" node_paths=PackedStringArray("warp_player", "reveal_player", "feedback_player", "stop_players", "freeze_videos", "warm_up_nodes")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_warp")
+warp_player = NodePath("Warp")
+warp_animation = &"portal"
+next_scene = "res://assets/scenes/main_menu/main_menu.tscn"
+reveal_player = NodePath("Reveal")
+feedback_player = NodePath("PressFeedback")
+stop_players = [NodePath("Reveal"), NodePath("Breathing")]
+freeze_videos = [NodePath("Background")]
+warm_up_nodes = [NodePath("WarpFX"), NodePath("GrailFX"), NodePath("PortalFX")]
+
+[node name="Background" type="VideoStreamPlayer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stream = ExtResource("1_sky")
+volume_db = -80.0
+autoplay = true
+expand = true
+loop = true
+
+
+[node name="WarpFX" type="ColorRect" parent="."]
+visible = false
+material = SubResource("MaterialWarp")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="GrailFX" type="ColorRect" parent="."]
+visible = false
+material = SubResource("MaterialGrail")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PortalFX" type="ColorRect" parent="."]
+visible = false
+material = SubResource("MaterialPortal")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextLayer" type="CanvasGroup" parent="."]
+material = SubResource("MaterialShardText")
+
+[node name="TextRoot" type="Control" parent="TextLayer"]
+layout_mode = 3
+mouse_filter = 2
+script = ExtResource("8_fit")
+
+[node name="Bounds" type="ColorRect" parent="TextLayer/TextRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="Title" type="Label" parent="TextLayer/TextRoot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.4
+anchor_right = 0.5
+anchor_bottom = 0.4
+offset_left = -330.0
+offset_top = -148.0
+offset_right = 330.0
+offset_bottom = 28.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(330, 88)
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.965, 0.89, 1)
+theme_override_colors/font_shadow_color = Color(0.02, 0.01, 0.07, 0.55)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 4
+theme_override_fonts/font = SubResource("FontTitle")
+theme_override_font_sizes/font_size = 190
+text = "Fate"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Domination" type="Label" parent="TextLayer/TextRoot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.4
+anchor_right = 0.5
+anchor_bottom = 0.4
+offset_left = -560.0
+offset_top = 132.0
+offset_right = 560.0
+offset_bottom = 252.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(560, 60)
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.965, 0.89, 1)
+theme_override_colors/font_shadow_color = Color(0.02, 0.01, 0.07, 0.55)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 4
+theme_override_fonts/font = SubResource("FontTitleSub")
+theme_override_font_sizes/font_size = 70
+text = "DOMINATION"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DividerLeft" type="TextureRect" parent="TextLayer/TextRoot"]
+visible = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.4
+anchor_right = 0.5
+anchor_bottom = 0.4
+offset_left = -285.0
+offset_top = 62.0
+offset_right = -86.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0, 1)
+pivot_offset = Vector2(199, 1)
+mouse_filter = 2
+texture = SubResource("TextureLine")
+expand_mode = 1
+
+[node name="DividerRight" type="TextureRect" parent="TextLayer/TextRoot"]
+visible = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.4
+anchor_right = 0.5
+anchor_bottom = 0.4
+offset_left = 86.0
+offset_top = 62.0
+offset_right = 285.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0, 1)
+pivot_offset = Vector2(0, 1)
+mouse_filter = 2
+texture = SubResource("TextureLine")
+expand_mode = 1
+flip_h = true
+
+[node name="DividerGem" type="ColorRect" parent="TextLayer/TextRoot"]
+visible = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.4
+anchor_right = 0.5
+anchor_bottom = 0.4
+offset_left = -7.0
+offset_top = 56.0
+offset_right = 7.0
+offset_bottom = 70.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 0.785398
+pivot_offset = Vector2(7, 7)
+mouse_filter = 2
+color = Color(0.96, 0.84, 0.58, 1)
+
+[node name="StartPrompt" type="Label" parent="TextLayer/TextRoot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.75
+anchor_right = 0.5
+anchor_bottom = 0.75
+offset_left = -360.0
+offset_top = -28.0
+offset_right = 360.0
+offset_bottom = 28.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(360, 28)
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.98, 0.94, 1)
+theme_override_colors/font_shadow_color = Color(0.03, 0.01, 0.08, 0.95)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = SubResource("FontChineseSpaced")
+theme_override_font_sizes/font_size = 30
+text = "按任意键开始"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StartPromptEn" type="Label" parent="TextLayer/TextRoot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.75
+anchor_right = 0.5
+anchor_bottom = 0.75
+offset_left = -360.0
+offset_top = 24.0
+offset_right = 360.0
+offset_bottom = 52.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(360, 14)
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.95, 0.89, 0.76, 0.9)
+theme_override_colors/font_shadow_color = Color(0.03, 0.01, 0.08, 0.95)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = SubResource("FontPromptEn")
+theme_override_font_sizes/font_size = 18
+text = "PRESS ANY KEY TO START"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PromptLineLeft" type="TextureRect" parent="TextLayer/TextRoot"]
+visible = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.75
+anchor_right = 0.5
+anchor_bottom = 0.75
+offset_left = -245.0
+offset_top = -1.0
+offset_right = -155.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("TextureLine")
+expand_mode = 1
+
+[node name="PromptLineRight" type="TextureRect" parent="TextLayer/TextRoot"]
+visible = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.75
+anchor_right = 0.5
+anchor_bottom = 0.75
+offset_left = 155.0
+offset_top = -1.0
+offset_right = 245.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("TextureLine")
+expand_mode = 1
+flip_h = true
+
+[node name="Eyebrow" type="Label" parent="TextLayer/TextRoot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.4
+anchor_right = 0.5
+anchor_bottom = 0.4
+offset_left = -600.0
+offset_top = -118.0
+offset_right = 600.0
+offset_bottom = -82.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.93, 0.82, 0.58, 1)
+theme_override_colors/font_shadow_color = Color(0.03, 0.01, 0.08, 0.9)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = SubResource("FontEyebrow")
+theme_override_font_sizes/font_size = 22
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SubtitleCn" type="Label" parent="TextLayer/TextRoot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.4
+anchor_right = 0.5
+anchor_bottom = 0.4
+offset_left = -300.0
+offset_top = 72.0
+offset_right = 300.0
+offset_bottom = 122.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.975, 0.92, 1)
+theme_override_colors/font_shadow_color = Color(0.03, 0.01, 0.08, 0.85)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 3
+theme_override_fonts/font = SubResource("FontSubtitleCn")
+theme_override_font_sizes/font_size = 30
+text = "命运支配"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Version" type="Label" parent="TextLayer/TextRoot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 58.0
+offset_top = -118.0
+offset_right = 430.0
+offset_bottom = -82.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.93, 0.87, 0.74, 0.8)
+theme_override_colors/font_shadow_color = Color(0.03, 0.01, 0.08, 0.9)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = SubResource("FontCaption")
+theme_override_font_sizes/font_size = 16
+text = "BUILD 0.0.1"
+vertical_alignment = 1
+
+[node name="Fade" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Reveal" type="AnimationPlayer" parent="."]
+libraries = {&"": SubResource("LibraryReveal")}
+autoplay = "reveal"
+
+[node name="Breathing" type="AnimationPlayer" parent="."]
+libraries = {&"": SubResource("LibraryBreath")}
+autoplay = "breathe"
+
+[node name="Warp" type="AnimationPlayer" parent="."]
+libraries = {&"": SubResource("LibraryWarp")}
+
+[node name="PressFeedback" type="AnimationPlayer" parent="."]
+libraries = {&"": SubResource("LibraryPress")}

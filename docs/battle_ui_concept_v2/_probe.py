@@ -20,7 +20,7 @@ for p in sorted(glob.glob(os.path.join(ROOT, 'data/masters/*/*.json'))):
     print(f"{d['shown_master_name']:6s} card={card.size} ratio={card.size[0]/card.size[1]:.3f}  cs={cs.size} ratio={cs.size[0]/cs.size[1]:.3f}")
 
 print('=== game_data.gd 里 command_spell_limit 相关声明 ===')
-gdata = open(os.path.join(ROOT, 'assets/scripts/system/global/game_data.gd'), encoding='utf-8').read()
+gdata = open(os.path.join(ROOT, 'scripts/system/global/game_data.gd'), encoding='utf-8').read()
 for m in re.finditer(r'.*command_spell.*', gdata):
     print(m.group(0).strip())
 

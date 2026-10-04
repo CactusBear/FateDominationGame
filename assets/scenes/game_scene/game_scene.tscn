@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://c6poaobifhu56" path="res://assets/images/game_scene/game_board.png" id="1_hbfn1"]
 [ext_resource type="Texture2D" uid="uid://c5rr8wykga03a" path="res://assets/images/game_scene/back_ground.png" id="1_vntgr"]
 [ext_resource type="Texture2D" uid="uid://c5bi2tjycxlxh" path="res://assets/images/ui/play_pad.png" id="2_3i0jb"]
-[ext_resource type="Script" path="res://assets/scripts/game_scene/PlayerPad.gd" id="2_yd56s"]
+[ext_resource type="Script" path="res://scripts/game_scene/PlayerPad.gd" id="2_yd56s"]
 [ext_resource type="Texture2D" uid="uid://cr52hmyk0vpjh" path="res://assets/images/ui/command_spell_pad.png" id="6_57ppi"]
 [ext_resource type="Texture2D" uid="uid://ctsm80wtpro48" path="res://assets/images/ui/skill_pad.png" id="7_2u3bw"]
 [ext_resource type="Texture2D" uid="uid://dgdw6q4xgk7xt" path="res://assets/images/ui/deck_pad.png" id="7_m3qc2"]

@@ -1,16 +1,21 @@
 [gd_scene format=3 uid="uid://c876mcqtn6sgs"]
-[ext_resource type="Script" uid="uid://km8mndlgh6y1" path="res://assets/scripts/game_scene/battle_board_v2.gd" id="1_board"]
-[ext_resource type="Texture2D" uid="uid://dg3hbpcekqkru" path="res://assets/images/game_scene/v2/ui/right_click_hint.svg" id="8_rc_hint"]
-[ext_resource type="Script" path="res://assets/scripts/game_scene/held_card_hit_area.gd" id="9_held_hit"]
+
+[ext_resource type="Script" uid="uid://km8mndlgh6y1" path="res://scripts/game_scene/battle_board_v2.gd" id="1_board"]
 [ext_resource type="FontFile" uid="uid://csuhjha1jspla" path="res://assets/fonts/Cinzel-Regular.ttf" id="3_cinzel"]
 [ext_resource type="FontFile" uid="uid://5f0hgqvkjpek" path="res://assets/fonts/Cinzel-Bold.ttf" id="4_cinzelb"]
 [ext_resource type="Shader" uid="uid://gqidg2wcbhu5" path="res://assets/shaders/ui_mask.gdshader" id="5_mask"]
 [ext_resource type="Texture2D" uid="uid://drw7psqfct2vv" path="res://assets/images/main_menu/command_sigil.svg" id="6_sigil"]
-[ext_resource type="Script" uid="uid://d0b27v2vpg4hb" path="res://assets/scripts/game_scene/seat_ring.gd" id="7_seatring"]
-[ext_resource type="Shader" path="res://assets/shaders/ui_flow_border.gdshader" id="10_flow"]
+[ext_resource type="Script" uid="uid://d0b27v2vpg4hb" path="res://scripts/game_scene/seat_ring.gd" id="7_seatring"]
+[ext_resource type="Texture2D" uid="uid://dg3hbpcekqkru" path="res://assets/images/game_scene/v2/ui/right_click_hint.svg" id="8_rc_hint"]
+[ext_resource type="Script" uid="uid://dw8gm575ooi4x" path="res://scripts/game_scene/held_card_hit_area.gd" id="9_held_hit"]
+[ext_resource type="Shader" uid="uid://du3lu4a0hq4o7" path="res://assets/shaders/ui_flow_border.gdshader" id="10_flow"]
 [ext_resource type="Texture2D" uid="uid://dhhioh8s08qtq" path="res://assets/images/game_scene/v2/ui/master_oval_frame.svg" id="11_ovalframe"]
-[sub_resource type="ShaderMaterial" id="FlowBorderMat"]
-shader = ExtResource("10_flow")
+[ext_resource type="PackedScene" path="res://assets/scenes/game_scene/mana_sigil.tscn" id="12_mana"]
+[ext_resource type="Texture2D" uid="uid://b87lk04tbipgl" path="res://assets/images/game_scene/v2/ui/command_spell_small.svg" id="13_spell_small"]
+[ext_resource type="Texture2D" uid="uid://cs0frjtjia2m5" path="res://assets/images/game_scene/v2/ui/special_command_spell_small.svg" id="14_special_spell_small"]
+[ext_resource type="Texture2D" uid="uid://bbm3axnihupdq" path="res://assets/images/game_scene/v2/ui/rival_corner.svg" id="15_rival_corner"]
+[ext_resource type="Texture2D" uid="uid://chggdegl646nq" path="res://assets/images/game_scene/v2/ui/played_stack_collapse.svg" id="16_stack_collapse"]
+
 [sub_resource type="StyleBoxFlat" id="SB_AvBlood"]
 bg_color = Color(0.0235, 0.0314, 0.051, 1)
 border_width_left = 2
@@ -22,33 +27,7 @@ corner_radius_top_left = 999
 corner_radius_top_right = 999
 corner_radius_bottom_right = 999
 corner_radius_bottom_left = 999
-[sub_resource type="ShaderMaterial" id="MasterOvalMask"]
-shader = ExtResource("5_mask")
-shader_parameter/shape = 1
-shader_parameter/softness = 0.015
-[sub_resource type="StyleBoxFlat" id="HeldOutline"]
-draw_center = false
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.9098, 0.8039, 0.5255, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-[sub_resource type="StyleBoxFlat" id="SelectedOutline"]
-draw_center = false
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-[sub_resource type="StyleBoxEmpty" id="MasterEmpty"]
+
 [sub_resource type="StyleBoxFlat" id="SB_AvGold2"]
 bg_color = Color(0.0235, 0.0314, 0.051, 1)
 border_width_left = 3
@@ -60,6 +39,7 @@ corner_radius_top_left = 999
 corner_radius_top_right = 999
 corner_radius_bottom_right = 999
 corner_radius_bottom_left = 999
+
 [sub_resource type="StyleBoxFlat" id="SB_AvGold3"]
 bg_color = Color(0.0235, 0.0314, 0.051, 1)
 border_width_left = 2
@@ -71,6 +51,7 @@ corner_radius_top_left = 999
 corner_radius_top_right = 999
 corner_radius_bottom_right = 999
 corner_radius_bottom_left = 999
+
 [sub_resource type="StyleBoxFlat" id="SB_AvMana"]
 bg_color = Color(0.0235, 0.0314, 0.051, 1)
 border_width_left = 3
@@ -82,6 +63,7 @@ corner_radius_top_left = 999
 corner_radius_top_right = 999
 corner_radius_bottom_right = 999
 corner_radius_bottom_left = 999
+
 [sub_resource type="StyleBoxFlat" id="SB_AvThin"]
 bg_color = Color(0.0235, 0.0314, 0.051, 1)
 border_width_left = 1
@@ -93,29 +75,34 @@ corner_radius_top_left = 999
 corner_radius_top_right = 999
 corner_radius_bottom_right = 999
 corner_radius_bottom_left = 999
+
 [sub_resource type="StyleBoxFlat" id="SB_BadgeDim"]
 bg_color = Color(0.6549, 0.6196, 0.5451, 1)
 corner_radius_top_left = 999
 corner_radius_top_right = 999
 corner_radius_bottom_right = 999
 corner_radius_bottom_left = 999
+
 [sub_resource type="StyleBoxFlat" id="SB_BadgeGold"]
 bg_color = Color(0.9098, 0.8039, 0.5255, 1)
 corner_radius_top_left = 999
 corner_radius_top_right = 999
 corner_radius_bottom_right = 999
 corner_radius_bottom_left = 999
+
 [sub_resource type="StyleBoxFlat" id="SB_BadgeMana"]
 bg_color = Color(0.2471, 0.8392, 0.9412, 1)
 corner_radius_top_left = 999
 corner_radius_top_right = 999
 corner_radius_bottom_right = 999
 corner_radius_bottom_left = 999
+
 [sub_resource type="StyleBoxFlat" id="SB_Banner"]
 bg_color = Color(0.0235, 0.0314, 0.051, 0.95)
 border_width_top = 1
 border_width_bottom = 1
 border_color = Color(1, 0.302, 0.3412, 1)
+
 [sub_resource type="StyleBoxFlat" id="SB_Bar"]
 bg_color = Color(1, 1, 1, 0.05)
 border_width_left = 1
@@ -123,6 +110,7 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.2471, 0.8392, 0.9412, 0.3)
+
 [sub_resource type="StyleBoxFlat" id="SB_Board"]
 bg_color = Color(0.0392, 0.0549, 0.0863, 1)
 border_width_left = 1
@@ -133,6 +121,7 @@ border_color = Color(0.7882, 0.6431, 0.3608, 0.35)
 shadow_color = Color(0, 0, 0, 0.55)
 shadow_size = 12
 shadow_offset = Vector2(0, 8)
+
 [sub_resource type="StyleBoxFlat" id="SB_Breath"]
 bg_color = Color(0, 0, 0, 0)
 border_width_left = 2
@@ -146,6 +135,7 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 shadow_color = Color(0.9098, 0.8039, 0.5255, 0.6)
 shadow_size = 10
+
 [sub_resource type="StyleBoxFlat" id="SB_BuffActive"]
 content_margin_left = 6.0
 content_margin_top = 3.0
@@ -154,6 +144,7 @@ content_margin_bottom = 3.0
 bg_color = Color(1, 1, 1, 0.04)
 border_width_left = 2
 border_color = Color(0.2471, 0.8392, 0.9412, 1)
+
 [sub_resource type="StyleBoxFlat" id="SB_BuffInactive"]
 content_margin_left = 6.0
 content_margin_top = 3.0
@@ -162,8 +153,10 @@ content_margin_bottom = 3.0
 bg_color = Color(1, 1, 1, 0.04)
 border_width_left = 2
 border_color = Color(0.4275, 0.4, 0.3529, 1)
+
 [sub_resource type="StyleBoxFlat" id="SB_CapBar"]
 bg_color = Color(0, 0, 0, 0.85)
+
 [sub_resource type="StyleBoxFlat" id="SB_Card"]
 bg_color = Color(0, 0, 0, 1)
 border_width_left = 1
@@ -177,6 +170,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 shadow_size = 8
 shadow_offset = Vector2(0, 6)
+
 [sub_resource type="StyleBoxFlat" id="SB_CardClear"]
 bg_color = Color(0, 0, 0, 0)
 border_width_left = 1
@@ -188,6 +182,7 @@ corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
+
 [sub_resource type="StyleBoxFlat" id="SB_CardUpgrade"]
 bg_color = Color(0, 0, 0, 1)
 border_width_left = 1
@@ -201,6 +196,7 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 shadow_size = 8
 shadow_offset = Vector2(0, 6)
+
 [sub_resource type="StyleBoxFlat" id="SB_Disc"]
 bg_color = Color(0, 0, 0, 1)
 border_width_left = 2
@@ -212,6 +208,7 @@ corner_radius_top_left = 999
 corner_radius_top_right = 999
 corner_radius_bottom_right = 999
 corner_radius_bottom_left = 999
+
 [sub_resource type="StyleBoxFlat" id="SB_DotClimaxPassed"]
 bg_color = Color(0.7843, 0.1137, 0.1451, 1)
 border_width_left = 1
@@ -223,6 +220,7 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
 [sub_resource type="StyleBoxFlat" id="SB_DotClimaxPending"]
 bg_color = Color(0, 0, 0, 0)
 border_width_left = 1
@@ -234,6 +232,7 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
 [sub_resource type="StyleBoxFlat" id="SB_DotCurrent"]
 bg_color = Color(0.9098, 0.8039, 0.5255, 1)
 border_width_left = 1
@@ -245,6 +244,7 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
 [sub_resource type="StyleBoxFlat" id="SB_DotPassed"]
 bg_color = Color(0.5412, 0.4157, 0.1961, 1)
 border_width_left = 1
@@ -256,6 +256,7 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
 [sub_resource type="StyleBoxFlat" id="SB_DotPending"]
 bg_color = Color(0, 0, 0, 0)
 border_width_left = 1
@@ -267,15 +268,18 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
 [sub_resource type="SystemFont" id="CnSys"]
 font_names = PackedStringArray("Noto Serif SC", "Source Han Serif SC", "SimSun")
 subpixel_positioning = 0
+
 [sub_resource type="FontVariation" id="CnR3"]
 base_font = SubResource("CnSys")
 variation_opentype = {
 2003265652: 400
 }
 spacing_glyph = 3
+
 [sub_resource type="StyleBoxFlat" id="SB_GhostD"]
 bg_color = Color(0, 0, 0, 0.35)
 border_width_left = 1
@@ -283,8 +287,10 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.2275, 0.2275, 0.2275, 1)
+
 [sub_resource type="StyleBoxFlat" id="SB_Empty"]
 bg_color = Color(0, 0, 0, 0)
+
 [sub_resource type="StyleBoxFlat" id="SB_GhostH"]
 bg_color = Color(0.7882, 0.6431, 0.3608, 0.15)
 border_width_left = 1
@@ -292,6 +298,7 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.9098, 0.8039, 0.5255, 1)
+
 [sub_resource type="StyleBoxFlat" id="SB_GhostN"]
 bg_color = Color(0, 0, 0, 0.35)
 border_width_left = 1
@@ -299,21 +306,27 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.5412, 0.4157, 0.1961, 1)
+
 [sub_resource type="SystemFont" id="CnSysB"]
 font_names = PackedStringArray("Noto Serif SC", "Source Han Serif SC", "SimSun")
 font_weight = 700
 subpixel_positioning = 0
+
 [sub_resource type="FontVariation" id="CnB0"]
 base_font = SubResource("CnSysB")
 variation_opentype = {
 2003265652: 700
 }
+
 [sub_resource type="StyleBoxFlat" id="SB_GoldD"]
 bg_color = Color(0.0863, 0.1137, 0.1686, 1)
+
 [sub_resource type="StyleBoxFlat" id="SB_GoldH"]
 bg_color = Color(0.9098, 0.8039, 0.5255, 1)
+
 [sub_resource type="StyleBoxFlat" id="SB_GoldN"]
 bg_color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [sub_resource type="StyleBoxFlat" id="SB_Panel"]
 bg_color = Color(0.051, 0.0706, 0.1098, 0.93)
 border_width_left = 1
@@ -324,6 +337,7 @@ border_color = Color(0.7882, 0.6431, 0.3608, 0.35)
 shadow_color = Color(0, 0, 0, 0.55)
 shadow_size = 12
 shadow_offset = Vector2(0, 8)
+
 [sub_resource type="StyleBoxFlat" id="SB_Halo"]
 bg_color = Color(0.0235, 0.0314, 0.051, 0.8)
 border_width_left = 1
@@ -335,10 +349,13 @@ corner_radius_top_left = 999
 corner_radius_top_right = 999
 corner_radius_bottom_right = 999
 corner_radius_bottom_left = 999
+
 [sub_resource type="StyleBoxFlat" id="SB_Hint"]
 bg_color = Color(0.0235, 0.0314, 0.051, 0.85)
+
 [sub_resource type="StyleBoxFlat" id="SB_Lock"]
 bg_color = Color(0.0235, 0.0314, 0.051, 0.8)
+
 [sub_resource type="StyleBoxFlat" id="SB_Master"]
 bg_color = Color(0, 0, 0, 1)
 border_width_left = 2
@@ -353,6 +370,7 @@ corner_radius_bottom_left = 3
 shadow_color = Color(0, 0, 0, 0.7)
 shadow_size = 20
 shadow_offset = Vector2(0, 12)
+
 [sub_resource type="StyleBoxFlat" id="SB_Outline"]
 bg_color = Color(0, 0, 0, 0)
 border_width_left = 1
@@ -360,6 +378,7 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.7882, 0.6431, 0.3608, 0.3)
+
 [sub_resource type="StyleBoxFlat" id="SB_PhaseOff"]
 content_margin_left = 14.0
 content_margin_top = 3.0
@@ -372,6 +391,7 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.7882, 0.6431, 0.3608, 0.25)
+
 [sub_resource type="StyleBoxFlat" id="SB_PhaseOn"]
 content_margin_left = 14.0
 content_margin_top = 3.0
@@ -384,6 +404,21 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.9098, 0.8039, 0.5255, 1)
+
+[sub_resource type="StyleBoxFlat" id="SB_PlayGroupDeco"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.0392, 0.0549, 0.0863, 0.55)
+border_width_left = 1
+border_width_bottom = 1
+border_color = Color(0.7882, 0.6431, 0.3608, 0.7)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
 [sub_resource type="StyleBoxFlat" id="SB_RivalActing"]
 bg_color = Color(0.051, 0.0706, 0.1098, 0.93)
 border_width_left = 1
@@ -391,6 +426,7 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.9098, 0.8039, 0.5255, 1)
+
 [sub_resource type="StyleBoxFlat" id="SB_Rival"]
 bg_color = Color(0.051, 0.0706, 0.1098, 0.93)
 border_width_left = 1
@@ -398,6 +434,7 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.7882, 0.6431, 0.3608, 0.3)
+
 [sub_resource type="StyleBoxFlat" id="SB_ScoreCircle"]
 bg_color = Color(0, 0, 0, 0)
 border_width_left = 1
@@ -409,6 +446,7 @@ corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
+
 [sub_resource type="StyleBoxFlat" id="SB_SelfSlot"]
 bg_color = Color(0.051, 0.0706, 0.1098, 0.9)
 border_width_left = 1
@@ -416,13 +454,55 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.7882, 0.6431, 0.3608, 0.3)
-[sub_resource type="StyleBoxFlat" id="SB_Strip"]
-bg_color = Color(0.051, 0.0706, 0.1098, 0.55)
+
+[sub_resource type="StyleBoxFlat" id="SB_SpellCount"]
+bg_color = Color(0.0235, 0.0314, 0.051, 0.92)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
+border_color = Color(0.5412, 0.4157, 0.1961, 1)
+corner_radius_top_left = 999
+corner_radius_top_right = 999
+corner_radius_bottom_right = 999
+corner_radius_bottom_left = 999
+
+[sub_resource type="StyleBoxFlat" id="SB_SpellFrame"]
+bg_color = Color(0.0235, 0.0314, 0.051, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5412, 0.4157, 0.1961, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0.7882, 0.6431, 0.3608, 0.22)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="SB_SpellInner"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7882, 0.6431, 0.3608, 0.42)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxEmpty" id="SB_SpellPlain"]
+
+[sub_resource type="StyleBoxFlat" id="SB_Strip"]
+bg_color = Color(0.051, 0.0706, 0.1098, 0.55)
+border_width_left = 1
+border_width_top = 0
+border_width_right = 1
+border_width_bottom = 0
 border_color = Color(0.7882, 0.6431, 0.3608, 0.24)
+
 [sub_resource type="StyleBoxFlat" id="SB_StripCap"]
 bg_color = Color(0.7882, 0.6431, 0.3608, 0.55)
 border_width_left = 1
@@ -434,6 +514,7 @@ corner_radius_top_left = 2
 corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
+
 [sub_resource type="StyleBoxFlat" id="SB_Tag"]
 content_margin_left = 8.0
 content_margin_top = 2.0
@@ -445,27 +526,14 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.5412, 0.4157, 0.1961, 1)
-[sub_resource type="StyleBoxFlat" id="SB_PlayGroupDeco"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0.0392, 0.0549, 0.0863, 0.55)
-border_width_left = 1
-border_width_top = 0
-border_width_right = 0
-border_width_bottom = 1
-border_color = Color(0.7882, 0.6431, 0.3608, 0.7)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+
 [sub_resource type="StyleBoxFlat" id="SB_TitleTag"]
 content_margin_left = 10.0
 content_margin_top = 0.0
 content_margin_right = 10.0
 content_margin_bottom = 0.0
 bg_color = Color(0.0235, 0.0314, 0.051, 1)
+
 [sub_resource type="StyleBoxFlat" id="SB_Toast"]
 content_margin_left = 32.0
 content_margin_top = 12.0
@@ -477,11 +545,21 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.5412, 0.4157, 0.1961, 1)
+
 [sub_resource type="StyleBoxFlat" id="SB_Top"]
 bg_color = Color(0.0235, 0.0314, 0.051, 0.85)
 border_width_bottom = 1
 border_color = Color(0.7882, 0.6431, 0.3608, 0.25)
+
+[sub_resource type="FontVariation" id="CnR2"]
+base_font = SubResource("CnSys")
+variation_opentype = {
+2003265652: 400
+}
+spacing_glyph = 2
+
 [sub_resource type="Theme" id="Theme"]
+default_font = SubResource("CnR2")
 AvatarBlood/base_type = &"Panel"
 AvatarBlood/styles/panel = SubResource("SB_AvBlood")
 AvatarGold2/base_type = &"Panel"
@@ -514,8 +592,6 @@ BuffInactive/base_type = &"PanelContainer"
 BuffInactive/styles/panel = SubResource("SB_BuffInactive")
 CapBar/base_type = &"Panel"
 CapBar/styles/panel = SubResource("SB_CapBar")
-PlayGroupDeco/base_type = &"Panel"
-PlayGroupDeco/styles/panel = SubResource("SB_PlayGroupDeco")
 Card/base_type = &"Panel"
 Card/styles/panel = SubResource("SB_Card")
 CardClear/base_type = &"Panel"
@@ -586,6 +662,8 @@ PhaseOff/base_type = &"PanelContainer"
 PhaseOff/styles/panel = SubResource("SB_PhaseOff")
 PhaseOn/base_type = &"PanelContainer"
 PhaseOn/styles/panel = SubResource("SB_PhaseOn")
+PlayGroupDeco/base_type = &"Panel"
+PlayGroupDeco/styles/panel = SubResource("SB_PlayGroupDeco")
 RivalActing/base_type = &"Panel"
 RivalActing/styles/panel = SubResource("SB_RivalActing")
 RivalCard/base_type = &"Panel"
@@ -594,6 +672,14 @@ ScoreCircle/base_type = &"Panel"
 ScoreCircle/styles/panel = SubResource("SB_ScoreCircle")
 SelfSlot/base_type = &"Panel"
 SelfSlot/styles/panel = SubResource("SB_SelfSlot")
+SpellCount/base_type = &"PanelContainer"
+SpellCount/styles/panel = SubResource("SB_SpellCount")
+SpellFrame/base_type = &"Panel"
+SpellFrame/styles/panel = SubResource("SB_SpellFrame")
+SpellInner/base_type = &"Panel"
+SpellInner/styles/panel = SubResource("SB_SpellInner")
+SpellPlain/base_type = &"Panel"
+SpellPlain/styles/panel = SubResource("SB_SpellPlain")
 Strip/base_type = &"Panel"
 Strip/styles/panel = SubResource("SB_Strip")
 StripCap/base_type = &"Panel"
@@ -612,9 +698,11 @@ TopBar/base_type = &"Panel"
 TopBar/styles/panel = SubResource("SB_Top")
 White/base_type = &"Label"
 White/colors/font_color = Color(1, 1, 1, 1)
+
 [sub_resource type="Gradient" id="RadialGradient"]
 offsets = PackedFloat32Array(0, 0.45, 1)
 colors = PackedColorArray(0.024, 0.031, 0.051, 0, 0.024, 0.031, 0.051, 0.45, 0.024, 0.031, 0.051, 0.92)
+
 [sub_resource type="GradientTexture2D" id="RadialTex"]
 gradient = SubResource("RadialGradient")
 width = 512
@@ -622,49 +710,53 @@ height = 512
 fill = 1
 fill_from = Vector2(0.43, 0.47)
 fill_to = Vector2(0.43, 0)
+
 [sub_resource type="Gradient" id="VerticalGradient"]
 offsets = PackedFloat32Array(0, 0.22, 0.45, 1)
 colors = PackedColorArray(0.024, 0.031, 0.051, 0.9, 0.024, 0.031, 0.051, 0.35, 0.024, 0.031, 0.051, 0, 0.024, 0.031, 0.051, 0.85)
+
 [sub_resource type="GradientTexture2D" id="VerticalTex"]
 gradient = SubResource("VerticalGradient")
 width = 8
 height = 512
 fill_to = Vector2(0, 1)
+
 [sub_resource type="FontVariation" id="LatB2"]
 base_font = ExtResource("4_cinzelb")
 spacing_glyph = 2
+
 [sub_resource type="FontVariation" id="LatR4"]
 base_font = ExtResource("3_cinzel")
 spacing_glyph = 4
+
 [sub_resource type="FontVariation" id="CnR1"]
 base_font = SubResource("CnSys")
 variation_opentype = {
 2003265652: 400
 }
 spacing_glyph = 1
+
 [sub_resource type="FontVariation" id="CnR4"]
 base_font = SubResource("CnSys")
 variation_opentype = {
 2003265652: 400
 }
 spacing_glyph = 4
-[sub_resource type="FontVariation" id="CnR2"]
-base_font = SubResource("CnSys")
-variation_opentype = {
-2003265652: 400
-}
-spacing_glyph = 2
+
 [sub_resource type="FontVariation" id="LatR0"]
 base_font = ExtResource("3_cinzel")
+
 [sub_resource type="FontVariation" id="LatR5"]
 base_font = ExtResource("3_cinzel")
 spacing_glyph = 5
+
 [sub_resource type="FontVariation" id="CnB6"]
 base_font = SubResource("CnSysB")
 variation_opentype = {
 2003265652: 700
 }
 spacing_glyph = 6
+
 [sub_resource type="ShaderMaterial" id="CircleMask"]
 shader = ExtResource("5_mask")
 shader_parameter/shape = 1
@@ -672,40 +764,38 @@ shader_parameter/fade_dir = Vector2(1, 0)
 shader_parameter/fade_start = 0.0
 shader_parameter/fade_end = 0.5
 shader_parameter/softness = 0.02
+
 [sub_resource type="FontVariation" id="CnB8"]
 base_font = SubResource("CnSysB")
 variation_opentype = {
 2003265652: 700
 }
 spacing_glyph = 8
+
 [sub_resource type="FontVariation" id="LatR3"]
 base_font = ExtResource("3_cinzel")
 spacing_glyph = 3
-[sub_resource type="FontVariation" id="LatR1"]
-base_font = ExtResource("3_cinzel")
-spacing_glyph = 1
-[sub_resource type="FontVariation" id="CnB3"]
-base_font = SubResource("CnSysB")
-variation_opentype = {
-2003265652: 700
-}
-spacing_glyph = 3
+
+[sub_resource type="StyleBoxEmpty" id="MasterEmpty"]
+
+[sub_resource type="ShaderMaterial" id="MasterOvalMask"]
+shader = ExtResource("5_mask")
+shader_parameter/shape = 1
+shader_parameter/fade_dir = Vector2(1, 0)
+shader_parameter/fade_start = 0.0
+shader_parameter/fade_end = 0.5
+shader_parameter/softness = 0.015
+
 [sub_resource type="FontVariation" id="CnR5"]
 base_font = SubResource("CnSys")
 variation_opentype = {
 2003265652: 400
 }
 spacing_glyph = 5
-[sub_resource type="FontVariation" id="LatR2"]
-base_font = ExtResource("3_cinzel")
-spacing_glyph = 2
-[sub_resource type="FontVariation" id="CnR0"]
-base_font = SubResource("CnSys")
-variation_opentype = {
-2003265652: 400
-}
+
 [sub_resource type="Gradient" id="DustGradient"]
 colors = PackedColorArray(1, 0.85, 0.6, 0.6, 1, 0.85, 0.6, 0)
+
 [sub_resource type="GradientTexture2D" id="DustTexture"]
 gradient = SubResource("DustGradient")
 width = 12
@@ -713,12 +803,81 @@ height = 12
 fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0.5, 0)
+
+[sub_resource type="FontVariation" id="CnDrawerR2"]
+base_font = SubResource("CnR2")
+variation_opentype = {
+2003265652: 400
+}
+spacing_glyph = 2
+spacing_top = -2
+spacing_bottom = -2
+
+[sub_resource type="FontVariation" id="CnB3"]
+base_font = SubResource("CnSysB")
+variation_opentype = {
+2003265652: 700
+}
+spacing_glyph = 3
+
+[sub_resource type="FontVariation" id="LatR2"]
+base_font = ExtResource("3_cinzel")
+spacing_glyph = 2
+
+[sub_resource type="FontVariation" id="CnR0"]
+base_font = SubResource("CnSys")
+variation_opentype = {
+2003265652: 400
+}
+
 [sub_resource type="FontVariation" id="CnB1"]
 base_font = SubResource("CnSysB")
 variation_opentype = {
 2003265652: 700
 }
 spacing_glyph = 1
+
+[sub_resource type="FontVariation" id="LatR1"]
+base_font = ExtResource("3_cinzel")
+spacing_glyph = 1
+
+[sub_resource type="ShaderMaterial" id="FlowBorderMat"]
+shader = ExtResource("10_flow")
+shader_parameter/rect_size = Vector2(72, 560)
+shader_parameter/border_width = 4.0
+shader_parameter/edge_softness = 1.5
+shader_parameter/frame_color = Color(0.9098, 0.8039, 0.5255, 1)
+shader_parameter/base_alpha = 0.3
+shader_parameter/flow_alpha = 1.0
+shader_parameter/glow_size = 26.0
+shader_parameter/flow_speed = 300.0
+shader_parameter/flow_spacing = 700.0
+shader_parameter/flow_length = 560.0
+
+[sub_resource type="StyleBoxFlat" id="HeldOutline"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.9098, 0.8039, 0.5255, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="SelectedOutline"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [node name="BattleBoardV2" type="Control" unique_id=1889712621]
 layout_mode = 3
 anchors_preset = 15
@@ -728,8 +887,8 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme")
 script = ExtResource("1_board")
+
 [node name="Background" type="TextureRect" parent="." unique_id=785109332]
-modulate = Color(0.62, 0.62, 0.66, 1)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -739,7 +898,9 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="VignetteRadial" type="TextureRect" parent="." unique_id=177290443]
+modulate = Color(1, 1, 1, 0.45)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -749,7 +910,9 @@ grow_vertical = 2
 mouse_filter = 2
 texture = SubResource("RadialTex")
 expand_mode = 1
+
 [node name="VignetteV" type="TextureRect" parent="." unique_id=441777199]
+modulate = Color(1, 1, 1, 0.55)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -759,6 +922,7 @@ grow_vertical = 2
 mouse_filter = 2
 texture = SubResource("VerticalTex")
 expand_mode = 1
+
 [node name="Particles" type="CPUParticles2D" parent="." unique_id=704844833]
 position = Vector2(960, 1090)
 amount = 22
@@ -774,12 +938,14 @@ initial_velocity_max = 110.0
 scale_amount_min = 1.5
 scale_amount_max = 3.0
 color = Color(0.91, 0.804, 0.525, 0.7)
+
 [node name="Top" type="Panel" parent="." unique_id=1192385071]
 layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 46.0
 mouse_filter = 2
 theme_type_variation = &"TopBar"
+
 [node name="Logo" type="Label" parent="Top" unique_id=6466907]
 layout_mode = 0
 offset_left = 40.0
@@ -790,6 +956,7 @@ theme_type_variation = &"Title"
 theme_override_fonts/font = SubResource("LatB2")
 theme_override_font_sizes/font_size = 18
 text = "FATE"
+
 [node name="Logo2" type="Label" parent="Top" unique_id=1515377465]
 layout_mode = 0
 offset_left = 102.0
@@ -800,6 +967,7 @@ theme_type_variation = &"Gold2"
 theme_override_fonts/font = SubResource("LatR4")
 theme_override_font_sizes/font_size = 13
 text = "DOMINATION"
+
 [node name="Sep" type="ColorRect" parent="Top" unique_id=2088909055]
 layout_mode = 0
 offset_left = 230.0
@@ -808,6 +976,7 @@ offset_right = 231.0
 offset_bottom = 34.0
 mouse_filter = 2
 color = Color(0.5412, 0.4157, 0.1961, 1)
+
 [node name="Center" type="HBoxContainer" parent="Top" unique_id=1425851718]
 layout_mode = 0
 offset_left = 252.0
@@ -816,28 +985,33 @@ offset_right = 1552.0
 offset_bottom = 38.0
 mouse_filter = 2
 theme_override_constants/separation = 16
+
 [node name="RoundLabel" type="Label" parent="Top/Center" unique_id=625006212]
 layout_mode = 2
 theme_type_variation = &"Text"
 theme_override_fonts/font = SubResource("CnR3")
 theme_override_font_sizes/font_size = 16
 text = "第 1 回合"
+
 [node name="NightLabel" type="Label" parent="Top/Center" unique_id=1514729218]
 layout_mode = 2
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 13
 text = "夜 1 / 11"
+
 [node name="Phases" type="HBoxContainer" parent="Top/Center" unique_id=1975306128]
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 theme_override_constants/separation = 6
+
 [node name="Dots" type="HBoxContainer" parent="Top/Center" unique_id=944604987]
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 theme_override_constants/separation = 4
+
 [node name="BoardButton" type="Button" parent="Top" unique_id=1102551806]
 layout_mode = 0
 offset_left = 1770.0
@@ -847,6 +1021,7 @@ offset_bottom = 37.0
 focus_mode = 0
 theme_type_variation = &"GhostButton"
 text = "战果榜"
+
 [node name="LogButton" type="Button" parent="Top" unique_id=712475768]
 layout_mode = 0
 offset_left = 1648.0
@@ -856,22 +1031,25 @@ offset_bottom = 37.0
 focus_mode = 0
 theme_type_variation = &"GhostButton"
 text = "日志"
+
 [node name="Rivals" type="HBoxContainer" parent="." unique_id=1922141861]
 layout_mode = 0
-offset_left = 40.0
+offset_left = 220.0
 offset_top = 58.0
-offset_right = 1240.0
-offset_bottom = 208.0
+offset_right = 1420.0
+offset_bottom = 300.0
 mouse_filter = 2
 theme_override_constants/separation = 6
+
 [node name="Situation" type="Panel" parent="." unique_id=521982251]
 layout_mode = 0
-offset_left = 1250.0
+offset_left = 40.0
 offset_top = 66.0
-offset_right = 1400.0
-offset_bottom = 208.0
+offset_right = 202.0
+offset_bottom = 226.0
 mouse_filter = 2
 theme_type_variation = &"GoldPanel"
+
 [node name="CornerTL1" type="ColorRect" parent="Situation" unique_id=992420957]
 layout_mode = 0
 offset_left = -1.0
@@ -879,6 +1057,7 @@ offset_top = -1.0
 offset_right = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerTL2" type="ColorRect" parent="Situation" unique_id=594791085]
 layout_mode = 0
 offset_left = -1.0
@@ -886,6 +1065,7 @@ offset_top = -1.0
 offset_bottom = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR1" type="ColorRect" parent="Situation" unique_id=18197647]
 layout_mode = 1
 anchors_preset = 3
@@ -896,8 +1076,11 @@ anchor_bottom = 1.0
 offset_left = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR2" type="ColorRect" parent="Situation" unique_id=1147225457]
 layout_mode = 1
 anchors_preset = 3
@@ -908,8 +1091,11 @@ anchor_bottom = 1.0
 offset_top = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="Title" type="PanelContainer" parent="Situation" unique_id=1094451232]
 layout_mode = 1
 anchors_preset = 5
@@ -921,23 +1107,26 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"TitleTag"
+
 [node name="Label" type="Label" parent="Situation/Title" unique_id=1119219891]
 layout_mode = 2
 theme_type_variation = &"Gold"
 theme_override_fonts/font = SubResource("CnR4")
 theme_override_font_sizes/font_size = 12
-text = "局势"
+text = "当前局势"
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="SituCard" type="Panel" parent="Situation" unique_id=1917377065]
 visible = false
 layout_mode = 0
 offset_left = 31.0
 offset_top = 10.0
-offset_right = 119.0
-offset_bottom = 132.0
+offset_right = 131.0
+offset_bottom = 149.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Situation/SituCard" unique_id=1471605292]
 layout_mode = 1
 anchors_preset = 15
@@ -952,24 +1141,27 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Empty" type="Label" parent="Situation" unique_id=907229995]
 layout_mode = 0
 offset_top = 60.0
-offset_right = 150.0
+offset_right = 162.0
 offset_bottom = 80.0
 theme_type_variation = &"Dim2"
 theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 12
 text = "尚无局势"
 horizontal_alignment = 1
+
 [node name="Piles" type="Panel" parent="." unique_id=94732392]
 layout_mode = 0
-offset_left = 1412.0
+offset_left = 1440.0
 offset_top = 66.0
-offset_right = 1542.0
+offset_right = 1570.0
 offset_bottom = 208.0
 mouse_filter = 2
 theme_type_variation = &"GoldPanel"
+
 [node name="CornerTL1" type="ColorRect" parent="Piles" unique_id=491003337]
 layout_mode = 0
 offset_left = -1.0
@@ -977,6 +1169,7 @@ offset_top = -1.0
 offset_right = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerTL2" type="ColorRect" parent="Piles" unique_id=747651666]
 layout_mode = 0
 offset_left = -1.0
@@ -984,6 +1177,7 @@ offset_top = -1.0
 offset_bottom = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR1" type="ColorRect" parent="Piles" unique_id=1765640548]
 layout_mode = 1
 anchors_preset = 3
@@ -994,8 +1188,11 @@ anchor_bottom = 1.0
 offset_left = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR2" type="ColorRect" parent="Piles" unique_id=1358194785]
 layout_mode = 1
 anchors_preset = 3
@@ -1006,8 +1203,11 @@ anchor_bottom = 1.0
 offset_top = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="Title" type="PanelContainer" parent="Piles" unique_id=294793447]
 layout_mode = 1
 anchors_preset = 5
@@ -1019,6 +1219,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"TitleTag"
+
 [node name="Label" type="Label" parent="Piles/Title" unique_id=1936581744]
 layout_mode = 2
 theme_type_variation = &"Gold"
@@ -1027,6 +1228,7 @@ theme_override_font_sizes/font_size = 12
 text = "弃牌"
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="EventPile" type="Control" parent="Piles" unique_id=102598133]
 anchors_preset = 0
 offset_left = 8.0
@@ -1034,6 +1236,7 @@ offset_top = 26.0
 offset_right = 60.0
 offset_bottom = 100.0
 mouse_filter = 2
+
 [node name="Back2" type="Panel" parent="Piles/EventPile" unique_id=1941075216]
 layout_mode = 0
 offset_left = 2.0
@@ -1042,6 +1245,7 @@ offset_right = 54.0
 offset_bottom = 72.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Piles/EventPile/Back2" unique_id=1775238676]
 modulate = Color(0.7, 0.7, 0.7, 1)
 layout_mode = 1
@@ -1057,12 +1261,14 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Back1" type="Panel" parent="Piles/EventPile" unique_id=1249925679]
 layout_mode = 0
 offset_right = 52.0
 offset_bottom = 74.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Piles/EventPile/Back1" unique_id=532305677]
 modulate = Color(0.7, 0.7, 0.7, 1)
 layout_mode = 1
@@ -1078,6 +1284,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Count" type="PanelContainer" parent="Piles/EventPile" unique_id=103168168]
 custom_minimum_size = Vector2(18, 18)
 layout_mode = 0
@@ -1087,6 +1294,7 @@ offset_right = 58.0
 offset_bottom = 10.0
 mouse_filter = 2
 theme_type_variation = &"BadgeGold"
+
 [node name="Label" type="Label" parent="Piles/EventPile/Count" unique_id=125947034]
 layout_mode = 2
 theme_type_variation = &"Ink"
@@ -1094,6 +1302,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Label" type="Label" parent="Piles/EventPile" unique_id=1106201139]
 layout_mode = 0
 offset_left = -10.0
@@ -1105,6 +1314,7 @@ theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
 text = "事件"
 horizontal_alignment = 1
+
 [node name="Open" type="Button" parent="Piles/EventPile" unique_id=1000569155]
 layout_mode = 0
 offset_left = -10.0
@@ -1114,6 +1324,7 @@ offset_bottom = 94.0
 tooltip_text = "查看事件弃牌"
 mouse_default_cursor_shape = 2
 flat = true
+
 [node name="SituationPile" type="Control" parent="Piles" unique_id=443898256]
 anchors_preset = 0
 offset_left = 70.0
@@ -1121,6 +1332,7 @@ offset_top = 26.0
 offset_right = 122.0
 offset_bottom = 100.0
 mouse_filter = 2
+
 [node name="Back2" type="Panel" parent="Piles/SituationPile" unique_id=233088033]
 layout_mode = 0
 offset_left = 2.0
@@ -1129,6 +1341,7 @@ offset_right = 54.0
 offset_bottom = 72.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Piles/SituationPile/Back2" unique_id=180549996]
 modulate = Color(0.7, 0.7, 0.7, 1)
 layout_mode = 1
@@ -1144,12 +1357,14 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Back1" type="Panel" parent="Piles/SituationPile" unique_id=1521996613]
 layout_mode = 0
 offset_right = 52.0
 offset_bottom = 74.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Piles/SituationPile/Back1" unique_id=1777103506]
 modulate = Color(0.7, 0.7, 0.7, 1)
 layout_mode = 1
@@ -1165,6 +1380,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Count" type="PanelContainer" parent="Piles/SituationPile" unique_id=1692458804]
 custom_minimum_size = Vector2(18, 18)
 layout_mode = 0
@@ -1174,6 +1390,7 @@ offset_right = 58.0
 offset_bottom = 10.0
 mouse_filter = 2
 theme_type_variation = &"BadgeGold"
+
 [node name="Label" type="Label" parent="Piles/SituationPile/Count" unique_id=1084842946]
 layout_mode = 2
 theme_type_variation = &"Ink"
@@ -1181,6 +1398,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Label" type="Label" parent="Piles/SituationPile" unique_id=1989154657]
 layout_mode = 0
 offset_left = -10.0
@@ -1192,14 +1410,16 @@ theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
 text = "局势"
 horizontal_alignment = 1
+
 [node name="Route" type="Panel" parent="." unique_id=1943510358]
 layout_mode = 0
-offset_left = 1554.0
+offset_left = 1582.0
 offset_top = 66.0
 offset_right = 1880.0
 offset_bottom = 208.0
 mouse_filter = 2
 theme_type_variation = &"GoldPanel"
+
 [node name="CornerTL1" type="ColorRect" parent="Route" unique_id=903877623]
 layout_mode = 0
 offset_left = -1.0
@@ -1207,6 +1427,7 @@ offset_top = -1.0
 offset_right = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerTL2" type="ColorRect" parent="Route" unique_id=1216484322]
 layout_mode = 0
 offset_left = -1.0
@@ -1214,6 +1435,7 @@ offset_top = -1.0
 offset_bottom = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR1" type="ColorRect" parent="Route" unique_id=272318759]
 layout_mode = 1
 anchors_preset = 3
@@ -1224,8 +1446,11 @@ anchor_bottom = 1.0
 offset_left = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR2" type="ColorRect" parent="Route" unique_id=1730255516]
 layout_mode = 1
 anchors_preset = 3
@@ -1236,8 +1461,11 @@ anchor_bottom = 1.0
 offset_top = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="Title" type="PanelContainer" parent="Route" unique_id=1945282437]
 layout_mode = 1
 anchors_preset = 5
@@ -1249,6 +1477,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"TitleTag"
+
 [node name="Label" type="Label" parent="Route/Title" unique_id=786642244]
 layout_mode = 2
 theme_type_variation = &"Gold"
@@ -1257,6 +1486,7 @@ theme_override_font_sizes/font_size = 12
 text = "移动路线 · 费用"
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Row" type="HBoxContainer" parent="Route" unique_id=589334878]
 layout_mode = 0
 offset_left = 12.0
@@ -1265,6 +1495,7 @@ offset_right = 314.0
 offset_bottom = 90.0
 mouse_filter = 2
 theme_override_constants/separation = 0
+
 [node name="Note" type="Label" parent="Route" unique_id=1161665722]
 layout_mode = 0
 offset_top = 116.0
@@ -1275,6 +1506,7 @@ theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
 text = "悬浮右侧竖条切换主图 · 令咒可代替移动费用"
 horizontal_alignment = 1
+
 [node name="Events" type="Panel" parent="." unique_id=1846737717]
 layout_mode = 0
 offset_left = 40.0
@@ -1283,6 +1515,7 @@ offset_right = 270.0
 offset_bottom = 534.0
 mouse_filter = 2
 theme_type_variation = &"GoldPanel"
+
 [node name="CornerTL1" type="ColorRect" parent="Events" unique_id=388105511]
 layout_mode = 0
 offset_left = -1.0
@@ -1290,6 +1523,7 @@ offset_top = -1.0
 offset_right = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerTL2" type="ColorRect" parent="Events" unique_id=851724371]
 layout_mode = 0
 offset_left = -1.0
@@ -1297,6 +1531,7 @@ offset_top = -1.0
 offset_bottom = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR1" type="ColorRect" parent="Events" unique_id=1497378764]
 layout_mode = 1
 anchors_preset = 3
@@ -1307,8 +1542,11 @@ anchor_bottom = 1.0
 offset_left = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR2" type="ColorRect" parent="Events" unique_id=342964247]
 layout_mode = 1
 anchors_preset = 3
@@ -1319,8 +1557,11 @@ anchor_bottom = 1.0
 offset_top = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="Title" type="PanelContainer" parent="Events" unique_id=1806965541]
 layout_mode = 1
 anchors_preset = 5
@@ -1332,6 +1573,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"TitleTag"
+
 [node name="Label" type="Label" parent="Events/Title" unique_id=2119293232]
 layout_mode = 2
 theme_type_variation = &"Gold"
@@ -1340,6 +1582,7 @@ theme_override_font_sizes/font_size = 12
 text = "事件"
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Stack" type="Control" parent="Events" unique_id=1630031277]
 anchors_preset = 0
 offset_left = 35.0
@@ -1347,6 +1590,7 @@ offset_top = 22.0
 offset_right = 195.0
 offset_bottom = 246.0
 mouse_filter = 2
+
 [node name="Hint" type="Label" parent="Events" unique_id=1613111166]
 layout_mode = 0
 offset_top = 266.0
@@ -1357,6 +1601,7 @@ theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
 text = "点击放大"
 horizontal_alignment = 1
+
 [node name="Main" type="Control" parent="." unique_id=778975724]
 clip_contents = true
 anchors_preset = 0
@@ -1365,6 +1610,7 @@ offset_top = 230.0
 offset_right = 1110.0
 offset_bottom = 790.0
 mouse_filter = 2
+
 [node name="TitleBg" type="ColorRect" parent="Main" unique_id=1898189802]
 visible = false
 layout_mode = 0
@@ -1374,6 +1620,7 @@ offset_right = 430.0
 offset_bottom = 86.0
 mouse_filter = 2
 color = Color(0.0235, 0.0314, 0.051, 0.85)
+
 [node name="Latin" type="Label" parent="Main" unique_id=1690547663]
 visible = false
 layout_mode = 0
@@ -1385,6 +1632,7 @@ theme_type_variation = &"Gold"
 theme_override_fonts/font = SubResource("LatR5")
 theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
+
 [node name="Name" type="Label" parent="Main" unique_id=86622523]
 visible = false
 layout_mode = 0
@@ -1396,20 +1644,23 @@ theme_type_variation = &"Title"
 theme_override_fonts/font = SubResource("CnB6")
 theme_override_font_sizes/font_size = 22
 horizontal_alignment = 1
+
 [node name="Groups" type="ScrollContainer" parent="Main" unique_id=1916562970]
-anchors_preset = 0
+layout_mode = 0
 offset_left = 100.0
 offset_top = 110.0
 offset_right = 460.0
 offset_bottom = 410.0
-mouse_filter = 1
 horizontal_scroll_mode = 3
 vertical_scroll_mode = 3
+metadata/max_groups_per_row = 3
+
 [node name="List" type="Control" parent="Main/Groups" unique_id=1810160001]
-mouse_filter = 1
-custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 1
+
 [node name="More" type="Label" parent="Main" unique_id=1952860120]
 visible = false
 layout_mode = 0
@@ -1421,6 +1672,7 @@ theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 11
 text = "滚动查看更多出牌组"
 horizontal_alignment = 1
+
 [node name="Seats" type="Control" parent="." unique_id=845188271]
 anchors_preset = 0
 offset_left = 40.0
@@ -1428,17 +1680,20 @@ offset_top = 570.0
 offset_right = 440.0
 offset_bottom = 762.0
 mouse_filter = 2
+
 [node name="MeleeScroll" type="ScrollContainer" parent="Seats" unique_id=1875409288]
 layout_mode = 0
 offset_right = 418.0
 offset_bottom = 92.0
 horizontal_scroll_mode = 3
 vertical_scroll_mode = 0
+
 [node name="Row" type="Control" parent="Seats/MeleeScroll" unique_id=153568654]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
+
 [node name="SeatScroll" type="ScrollContainer" parent="Seats" unique_id=502196947]
 layout_mode = 0
 offset_top = 100.0
@@ -1446,11 +1701,13 @@ offset_right = 400.0
 offset_bottom = 192.0
 horizontal_scroll_mode = 3
 vertical_scroll_mode = 0
+
 [node name="Row" type="Control" parent="Seats/SeatScroll" unique_id=263081786]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
+
 [node name="Strips" type="Control" parent="." unique_id=796469596]
 layout_mode = 1
 anchors_preset = 15
@@ -1459,6 +1716,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
 [node name="StripsHint" type="Label" parent="." unique_id=1915085500]
 layout_mode = 0
 offset_left = 1654.0
@@ -1470,6 +1728,7 @@ theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
 text = "悬浮展开战区"
 horizontal_alignment = 1
+
 [node name="Hint" type="Panel" parent="." unique_id=1800469318]
 layout_mode = 0
 offset_left = 1130.0
@@ -1478,12 +1737,14 @@ offset_right = 1620.0
 offset_bottom = 752.0
 mouse_filter = 2
 theme_type_variation = &"HintBox"
+
 [node name="Bar" type="ColorRect" parent="Hint" unique_id=238636014]
 layout_mode = 0
 offset_right = 3.0
 offset_bottom = 62.0
 mouse_filter = 2
 color = Color(0.9098, 0.8039, 0.5255, 1)
+
 [node name="Main" type="Label" parent="Hint" unique_id=1822698692]
 layout_mode = 0
 offset_left = 16.0
@@ -1493,6 +1754,7 @@ offset_bottom = 30.0
 theme_type_variation = &"Text"
 theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 15
+
 [node name="Sub" type="Label" parent="Hint" unique_id=521239313]
 layout_mode = 0
 offset_left = 16.0
@@ -1502,6 +1764,7 @@ offset_bottom = 52.0
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 12
+
 [node name="Banner" type="Panel" parent="." unique_id=507545322]
 visible = false
 layout_mode = 0
@@ -1511,6 +1774,7 @@ offset_right = 1020.0
 offset_bottom = 370.0
 mouse_filter = 2
 theme_type_variation = &"Banner"
+
 [node name="Avatar" type="Panel" parent="Banner" unique_id=1534313848]
 layout_mode = 0
 offset_left = 48.0
@@ -1519,6 +1783,7 @@ offset_right = 78.0
 offset_bottom = 41.0
 mouse_filter = 2
 theme_type_variation = &"AvatarBlood"
+
 [node name="Img" type="TextureRect" parent="Banner/Avatar" unique_id=91436867]
 material = SubResource("CircleMask")
 layout_mode = 1
@@ -1534,6 +1799,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Text" type="Label" parent="Banner" unique_id=523089653]
 layout_mode = 0
 offset_left = 90.0
@@ -1543,6 +1809,7 @@ offset_bottom = 43.0
 theme_type_variation = &"Title"
 theme_override_fonts/font = SubResource("CnB8")
 theme_override_font_sizes/font_size = 22
+
 [node name="Self" type="Panel" parent="." unique_id=2085805786]
 layout_mode = 0
 offset_left = 40.0
@@ -1551,6 +1818,7 @@ offset_right = 440.0
 offset_bottom = 1064.0
 mouse_filter = 2
 theme_type_variation = &"GoldPanel"
+
 [node name="CornerTL1" type="ColorRect" parent="Self" unique_id=1153244992]
 layout_mode = 0
 offset_left = -1.0
@@ -1558,6 +1826,7 @@ offset_top = -1.0
 offset_right = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerTL2" type="ColorRect" parent="Self" unique_id=1549060877]
 layout_mode = 0
 offset_left = -1.0
@@ -1565,6 +1834,7 @@ offset_top = -1.0
 offset_bottom = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR1" type="ColorRect" parent="Self" unique_id=319891366]
 layout_mode = 1
 anchors_preset = 3
@@ -1575,8 +1845,11 @@ anchor_bottom = 1.0
 offset_left = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR2" type="ColorRect" parent="Self" unique_id=583607570]
 layout_mode = 1
 anchors_preset = 3
@@ -1587,16 +1860,20 @@ anchor_bottom = 1.0
 offset_top = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="ServantCard" type="Panel" parent="Self" unique_id=1804711184]
 layout_mode = 0
 offset_left = 10.0
 offset_top = 28.0
-offset_right = 140.0
-offset_bottom = 210.0
+offset_right = 180.0
+offset_bottom = 266.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Self/ServantCard" unique_id=39346573]
 layout_mode = 1
 anchors_preset = 15
@@ -1611,24 +1888,27 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="ClassBg" type="ColorRect" parent="Self/ServantCard" unique_id=1082714221]
 visible = false
 layout_mode = 0
 offset_left = 1.0
-offset_top = 158.0
-offset_right = 129.0
-offset_bottom = 181.0
+offset_top = 214.0
+offset_right = 169.0
+offset_bottom = 237.0
 mouse_filter = 2
 color = Color(0, 0, 0, 0.8)
+
 [node name="Class" type="Label" parent="Self/ServantCard" unique_id=2145268250]
 layout_mode = 0
 offset_top = -24.0
-offset_right = 130.0
+offset_right = 170.0
 offset_bottom = -4.0
 theme_type_variation = &"Gold2"
 theme_override_fonts/font = SubResource("LatR3")
 theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
+
 [node name="HiddenTag" type="PanelContainer" parent="Self/ServantCard" unique_id=968248940]
 layout_mode = 0
 offset_left = 6.0
@@ -1637,41 +1917,47 @@ offset_right = 66.0
 offset_bottom = 26.0
 mouse_filter = 2
 theme_type_variation = &"Tag"
+
 [node name="Label" type="Label" parent="Self/ServantCard/HiddenTag" unique_id=552651491]
 layout_mode = 2
 theme_type_variation = &"Gold2"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
 text = "真名隐藏"
+
 [node name="Stats" type="Control" parent="Self" unique_id=1392501342]
 anchors_preset = 0
-offset_left = 152.0
+offset_left = 192.0
 offset_top = 14.0
-offset_right = 282.0
+offset_right = 288.0
 offset_bottom = 274.0
 mouse_filter = 2
+
 [node name="ScoreK" type="Label" parent="Self/Stats" unique_id=316722905]
 layout_mode = 0
 offset_top = 2.0
-offset_right = 100.0
+offset_right = 96.0
 offset_bottom = 18.0
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 12
 text = "战果"
+
 [node name="ScoreRow" type="HBoxContainer" parent="Self/Stats" unique_id=611838123]
 layout_mode = 0
 offset_top = 20.0
-offset_right = 130.0
+offset_right = 96.0
 offset_bottom = 56.0
 mouse_filter = 2
 theme_override_constants/separation = 6
+
 [node name="Score" type="Label" parent="Self/Stats/ScoreRow" unique_id=854849552]
 layout_mode = 2
 theme_type_variation = &"Gold2"
 theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 30
 text = "0"
+
 [node name="Rank" type="Label" parent="Self/Stats/ScoreRow" unique_id=905454325]
 layout_mode = 2
 size_flags_vertical = 8
@@ -1679,115 +1965,171 @@ theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 14
 text = "名次 1"
+
 [node name="MagicK" type="Label" parent="Self/Stats" unique_id=2091409264]
 layout_mode = 0
-offset_top = 60.0
-offset_right = 100.0
-offset_bottom = 76.0
+offset_top = 109.0
+offset_right = 96.0
+offset_bottom = 125.0
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 12
 text = "魔力"
-[node name="MagicBar" type="Panel" parent="Self/Stats" unique_id=1040462807]
-layout_mode = 0
-offset_top = 80.0
-offset_right = 130.0
-offset_bottom = 94.0
-mouse_filter = 2
-theme_type_variation = &"Bar"
-[node name="Fill" type="ColorRect" parent="Self/Stats/MagicBar" unique_id=249101316]
-layout_mode = 1
-anchors_preset = 9
-anchor_bottom = 1.0
-mouse_filter = 2
-color = Color(0.2471, 0.8392, 0.9412, 1)
-[node name="Threshold" type="ColorRect" parent="Self/Stats/MagicBar" unique_id=1050800795]
-layout_mode = 1
-anchors_preset = 9
-anchor_bottom = 1.0
-offset_top = -1.0
-offset_right = 1.0
-offset_bottom = 1.0
-mouse_filter = 2
-color = Color(0.9098, 0.8039, 0.5255, 1)
-[node name="MagicNum" type="Label" parent="Self/Stats" unique_id=1819083704]
-layout_mode = 0
-offset_top = 77.0
-offset_right = 124.0
-offset_bottom = 97.0
-theme_type_variation = &"White"
-theme_override_fonts/font = SubResource("LatR0")
-theme_override_font_sizes/font_size = 13
-text = "0 / 0"
-horizontal_alignment = 2
+
+[node name="MagicSigil" parent="Self/Stats" unique_id=464460076 instance=ExtResource("12_mana")]
+anchors_preset = 0
+offset_left = 8.0
+offset_top = 126.0
+offset_right = 88.0
+offset_bottom = 206.0
+
 [node name="PowerK" type="Label" parent="Self/Stats" unique_id=315352757]
 layout_mode = 0
-offset_top = 104.0
-offset_right = 100.0
-offset_bottom = 120.0
+offset_top = 204.0
+offset_right = 96.0
+offset_bottom = 220.0
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 12
 text = "合计威力"
+
 [node name="PowerRow" type="HBoxContainer" parent="Self/Stats" unique_id=1723687033]
 layout_mode = 0
-offset_top = 122.0
-offset_right = 130.0
-offset_bottom = 162.0
+offset_top = 222.0
+offset_right = 96.0
+offset_bottom = 262.0
 mouse_filter = 2
 theme_override_constants/separation = 8
+
 [node name="Power" type="Label" parent="Self/Stats/PowerRow" unique_id=1187036143]
 layout_mode = 2
 theme_type_variation = &"Title"
 theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 30
 text = "0"
-[node name="Break" type="Label" parent="Self/Stats/PowerRow" unique_id=1791738170]
-custom_minimum_size = Vector2(76, 0)
+
+[node name="BreakScroll" type="ScrollContainer" parent="Self/Stats/PowerRow" unique_id=1906459848]
+custom_minimum_size = Vector2(58, 0)
 layout_mode = 2
-size_flags_vertical = 8
+size_flags_horizontal = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="Break" type="Label" parent="Self/Stats/PowerRow/BreakScroll" unique_id=1791738170]
+custom_minimum_size = Vector2(58, 0)
+layout_mode = 2
+size_flags_horizontal = 3
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
+vertical_alignment = 2
 autowrap_mode = 3
-[node name="SpellK" type="Label" parent="Self/Stats" unique_id=788469168]
+
+[node name="SpellK" type="Label" parent="Self" unique_id=788469168]
 layout_mode = 0
-offset_top = 166.0
-offset_right = 100.0
-offset_bottom = 182.0
+offset_left = 296.0
+offset_top = 130.0
+offset_right = 386.0
+offset_bottom = 148.0
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 12
 text = "令咒"
-[node name="Spells" type="HBoxContainer" parent="Self/Stats" unique_id=925870558]
-layout_mode = 0
-offset_left = -142.0
-offset_top = 200.0
-offset_right = 130.0
+
+[node name="Spells" type="Control" parent="Self" unique_id=925870558]
+z_index = 30
+anchors_preset = 0
+offset_left = 296.0
+offset_top = 150.0
+offset_right = 386.0
 offset_bottom = 276.0
 mouse_filter = 2
+
+[node name="SpellCard" type="Panel" parent="Self/Spells" unique_id=14923453]
+layout_mode = 0
+offset_right = 90.0
+offset_bottom = 126.0
+theme_type_variation = &"Card"
+
+[node name="Img" type="TextureRect" parent="Self/Spells/SpellCard" unique_id=1790064005]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = -1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SpecialScroll" type="ScrollContainer" parent="Self/Spells" unique_id=1894204157]
+visible = false
+layout_mode = 0
+offset_left = 96.0
+offset_right = 186.0
+offset_bottom = 126.0
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 0
+
+[node name="Cards" type="HBoxContainer" parent="Self/Spells/SpecialScroll" unique_id=1196443722]
+layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 6
+
+[node name="CountBadge" type="PanelContainer" parent="Self" unique_id=2121517504]
+z_index = 31
+layout_mode = 0
+offset_left = 374.0
+offset_top = 264.0
+offset_right = 398.0
+offset_bottom = 288.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"BadgeDim"
+theme_override_styles/panel = SubResource("SB_AvThin")
+
+[node name="Label" type="Label" parent="Self/CountBadge" unique_id=1626188971]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.62, 0.48, 1)
+theme_override_fonts/font = SubResource("CnB0")
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Divider" type="ColorRect" parent="Self" unique_id=71402008]
 layout_mode = 0
-offset_left = 292.0
+offset_left = 291.0
 offset_top = 14.0
-offset_right = 293.0
+offset_right = 292.0
 offset_bottom = 274.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 0.25)
+
 [node name="Me" type="Control" parent="Self" unique_id=2083887153]
 anchors_preset = 0
-offset_left = 303.0
+offset_left = 296.0
 offset_top = 14.0
-offset_right = 393.0
+offset_right = 386.0
 offset_bottom = 274.0
 mouse_filter = 2
+
 [node name="Avatar" type="Panel" parent="Self/Me" unique_id=160373067]
-layout_mode = 0
-offset_right = 64.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -32.0
+offset_right = 32.0
 offset_bottom = 64.0
+grow_horizontal = 2
 mouse_filter = 2
 theme_type_variation = &"AvatarMana"
+
 [node name="Img" type="TextureRect" parent="Self/Me/Avatar" unique_id=311199255]
 material = SubResource("CircleMask")
 layout_mode = 1
@@ -1803,68 +2145,28 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
+[node name="PlayerName" type="Label" parent="Self/Me" unique_id=1720416935]
+layout_mode = 0
+offset_top = 66.0
+offset_right = 90.0
+offset_bottom = 84.0
+theme_type_variation = &"Dim"
+theme_override_fonts/font = SubResource("CnR1")
+theme_override_font_sizes/font_size = 11
+
 [node name="Name" type="Label" parent="Self/Me" unique_id=1224904099]
 layout_mode = 0
-offset_top = 72.0
+offset_top = 84.0
 offset_right = 90.0
-offset_bottom = 96.0
+offset_bottom = 108.0
 theme_type_variation = &"Title"
 theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 17
-[node name="OrderK" type="Label" parent="Self/Me" unique_id=121758581]
-layout_mode = 0
-offset_top = 104.0
-offset_right = 90.0
-offset_bottom = 118.0
-theme_type_variation = &"Dim"
-theme_override_fonts/font = SubResource("CnR1")
-theme_override_font_sizes/font_size = 11
-text = "顺位"
-[node name="Order" type="Label" parent="Self/Me" unique_id=358351544]
-layout_mode = 0
-offset_top = 120.0
-offset_right = 90.0
-offset_bottom = 142.0
-theme_type_variation = &"Gold2"
-theme_override_fonts/font = SubResource("LatR1")
-theme_override_font_sizes/font_size = 16
-[node name="PlaceK" type="Label" parent="Self/Me" unique_id=534165204]
-layout_mode = 0
-offset_top = 148.0
-offset_right = 90.0
-offset_bottom = 162.0
-theme_type_variation = &"Dim"
-theme_override_fonts/font = SubResource("CnR1")
-theme_override_font_sizes/font_size = 11
-text = "所在"
-[node name="Place" type="Label" parent="Self/Me" unique_id=2014865360]
-layout_mode = 0
-offset_top = 164.0
-offset_right = 90.0
-offset_bottom = 204.0
-theme_type_variation = &"Text"
-theme_override_fonts/font = SubResource("CnR1")
-theme_override_font_sizes/font_size = 13
-autowrap_mode = 3
-[node name="HandK" type="Label" parent="Self/Me" unique_id=683784299]
-layout_mode = 0
-offset_top = 206.0
-offset_right = 90.0
-offset_bottom = 220.0
-theme_type_variation = &"Dim"
-theme_override_fonts/font = SubResource("CnR1")
-theme_override_font_sizes/font_size = 11
-text = "手牌 · 牌库"
-[node name="Hand" type="Label" parent="Self/Me" unique_id=1577705374]
-layout_mode = 0
-offset_top = 222.0
-offset_right = 90.0
-offset_bottom = 244.0
-theme_type_variation = &"Gold2"
-theme_override_fonts/font = SubResource("LatR1")
-theme_override_font_sizes/font_size = 16
-[node name="AreaTitle" type="Control" parent="."]
+
+[node name="AreaTitle" type="Control" parent="." unique_id=235148005]
 layout_mode = 1
+anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -150.0
@@ -1873,32 +2175,38 @@ offset_right = 150.0
 offset_bottom = 322.0
 grow_horizontal = 2
 mouse_filter = 2
-[node name="Latin" type="Label" parent="AreaTitle"]
+
+[node name="Latin" type="Label" parent="AreaTitle" unique_id=2086577150]
 layout_mode = 1
+anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 18.0
-mouse_filter = 2
+grow_horizontal = 2
 theme_type_variation = &"Gold"
 theme_override_fonts/font = SubResource("LatR5")
 theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
-[node name="Name" type="Label" parent="AreaTitle"]
+
+[node name="Name" type="Label" parent="AreaTitle" unique_id=378748025]
 layout_mode = 1
+anchors_preset = 10
 anchor_right = 1.0
 offset_top = 18.0
 offset_bottom = 56.0
-mouse_filter = 2
+grow_horizontal = 2
 theme_type_variation = &"Title"
-theme_override_fonts/font = SubResource("CnB6")
-theme_override_font_sizes/font_size = 22
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
 theme_override_constants/outline_size = 4
+theme_override_fonts/font = SubResource("CnB6")
+theme_override_font_sizes/font_size = 22
 horizontal_alignment = 1
+
 [node name="Master" type="Control" parent="." unique_id=2023044057]
 layout_mode = 1
+anchors_preset = 7
 anchor_left = 0.5
-anchor_right = 0.5
 anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -110.0
 offset_top = -432.0
@@ -1907,13 +2215,15 @@ offset_bottom = -132.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
+
 [node name="Frame" type="Panel" parent="Master" unique_id=1277818270]
-theme_override_styles/panel = SubResource("MasterEmpty")
 layout_mode = 0
 offset_right = 220.0
 offset_bottom = 300.0
 mouse_filter = 2
 theme_type_variation = &"MasterFrame"
+theme_override_styles/panel = SubResource("MasterEmpty")
+
 [node name="Img" type="TextureRect" parent="Master/Frame" unique_id=82422709]
 material = SubResource("MasterOvalMask")
 layout_mode = 1
@@ -1928,7 +2238,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
-stretch_mode = 0
+
 [node name="OvalFrame" type="TextureRect" parent="Master" unique_id=938104112]
 layout_mode = 0
 offset_left = -50.0
@@ -1936,8 +2246,9 @@ offset_top = -50.0
 offset_right = 270.0
 offset_bottom = 350.0
 mouse_filter = 2
-expand_mode = 1
 texture = ExtResource("11_ovalframe")
+expand_mode = 1
+
 [node name="Latin" type="Label" parent="Master" unique_id=104565738]
 layout_mode = 0
 offset_top = 306.0
@@ -1948,6 +2259,7 @@ theme_override_fonts/font = SubResource("LatR4")
 theme_override_font_sizes/font_size = 10
 text = "MASTER"
 horizontal_alignment = 1
+
 [node name="Name" type="Label" parent="Master" unique_id=762517992]
 layout_mode = 0
 offset_top = 320.0
@@ -1957,6 +2269,7 @@ theme_type_variation = &"Title"
 theme_override_fonts/font = SubResource("CnR4")
 theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
+
 [node name="Ops" type="Panel" parent="." unique_id=1330080819]
 layout_mode = 0
 offset_left = 1480.0
@@ -1964,6 +2277,7 @@ offset_top = 800.0
 offset_right = 1880.0
 offset_bottom = 1064.0
 theme_type_variation = &"GoldPanel"
+
 [node name="CornerTL1" type="ColorRect" parent="Ops" unique_id=2032981529]
 layout_mode = 0
 offset_left = -1.0
@@ -1971,6 +2285,7 @@ offset_top = -1.0
 offset_right = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerTL2" type="ColorRect" parent="Ops" unique_id=550404075]
 layout_mode = 0
 offset_left = -1.0
@@ -1978,6 +2293,7 @@ offset_top = -1.0
 offset_bottom = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR1" type="ColorRect" parent="Ops" unique_id=1461586229]
 layout_mode = 1
 anchors_preset = 3
@@ -1988,8 +2304,11 @@ anchor_bottom = 1.0
 offset_left = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR2" type="ColorRect" parent="Ops" unique_id=424979415]
 layout_mode = 1
 anchors_preset = 3
@@ -2000,8 +2319,11 @@ anchor_bottom = 1.0
 offset_top = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="PlayButton" type="Button" parent="Ops" unique_id=1150863344]
 layout_mode = 0
 offset_left = 14.0
@@ -2013,6 +2335,7 @@ theme_type_variation = &"GoldButtonV"
 disabled = true
 text = "出
 牌"
+
 [node name="EndButton" type="Button" parent="Ops" unique_id=193494049]
 layout_mode = 0
 offset_left = 122.0
@@ -2024,6 +2347,7 @@ theme_type_variation = &"GhostButton"
 theme_override_fonts/font = SubResource("CnR5")
 theme_override_font_sizes/font_size = 17
 text = "结束阶段"
+
 [node name="BuffBox" type="Panel" parent="Ops" unique_id=1287672913]
 layout_mode = 0
 offset_left = 122.0
@@ -2032,6 +2356,7 @@ offset_right = 294.0
 offset_bottom = 250.0
 mouse_filter = 2
 theme_type_variation = &"Outline"
+
 [node name="Title" type="Label" parent="Ops/BuffBox" unique_id=199424455]
 layout_mode = 0
 offset_top = 6.0
@@ -2042,6 +2367,7 @@ theme_override_fonts/font = SubResource("LatR3")
 theme_override_font_sizes/font_size = 11
 text = "BUFF"
 horizontal_alignment = 1
+
 [node name="List" type="VBoxContainer" parent="Ops/BuffBox" unique_id=118200871]
 clip_contents = true
 layout_mode = 0
@@ -2051,6 +2377,7 @@ offset_right = 164.0
 offset_bottom = 162.0
 mouse_filter = 2
 theme_override_constants/separation = 5
+
 [node name="None" type="Label" parent="Ops/BuffBox/List" unique_id=422838734]
 layout_mode = 2
 theme_type_variation = &"Dim2"
@@ -2058,6 +2385,7 @@ theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 11
 text = "无状态"
 horizontal_alignment = 1
+
 [node name="Deck" type="Control" parent="Ops" unique_id=1609781738]
 anchors_preset = 0
 offset_left = 314.0
@@ -2065,6 +2393,7 @@ offset_top = 14.0
 offset_right = 380.0
 offset_bottom = 106.0
 mouse_filter = 2
+
 [node name="Back2" type="Panel" parent="Ops/Deck" unique_id=1396082664]
 layout_mode = 0
 offset_left = 2.0
@@ -2073,6 +2402,7 @@ offset_right = 68.0
 offset_bottom = 90.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Ops/Deck/Back2" unique_id=498951921]
 modulate = Color(0.7, 0.7, 0.7, 1)
 layout_mode = 1
@@ -2088,12 +2418,14 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Back1" type="Panel" parent="Ops/Deck" unique_id=921290640]
 layout_mode = 0
 offset_right = 66.0
 offset_bottom = 92.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Ops/Deck/Back1" unique_id=909086484]
 modulate = Color(0.7, 0.7, 0.7, 1)
 layout_mode = 1
@@ -2109,6 +2441,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Count" type="PanelContainer" parent="Ops/Deck" unique_id=145175481]
 custom_minimum_size = Vector2(22, 22)
 layout_mode = 0
@@ -2118,6 +2451,7 @@ offset_right = 76.0
 offset_bottom = 14.0
 mouse_filter = 2
 theme_type_variation = &"BadgeGold"
+
 [node name="Label" type="Label" parent="Ops/Deck/Count" unique_id=236703996]
 layout_mode = 2
 theme_type_variation = &"Ink"
@@ -2125,6 +2459,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Label" type="Label" parent="Ops/Deck" unique_id=1810672961]
 layout_mode = 0
 offset_left = -10.0
@@ -2136,6 +2471,7 @@ theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
 text = "牌库"
 horizontal_alignment = 1
+
 [node name="Discard" type="Control" parent="Ops" unique_id=840084540]
 anchors_preset = 0
 offset_left = 314.0
@@ -2143,6 +2479,7 @@ offset_top = 140.0
 offset_right = 380.0
 offset_bottom = 232.0
 mouse_filter = 2
+
 [node name="Back2" type="Panel" parent="Ops/Discard" unique_id=847441875]
 layout_mode = 0
 offset_left = 2.0
@@ -2151,6 +2488,7 @@ offset_right = 68.0
 offset_bottom = 90.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Ops/Discard/Back2" unique_id=1277031579]
 modulate = Color(0.7, 0.7, 0.7, 1)
 layout_mode = 1
@@ -2166,12 +2504,14 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Back1" type="Panel" parent="Ops/Discard" unique_id=853732852]
 layout_mode = 0
 offset_right = 66.0
 offset_bottom = 92.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Ops/Discard/Back1" unique_id=1738290638]
 modulate = Color(0.7, 0.7, 0.7, 1)
 layout_mode = 1
@@ -2187,6 +2527,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Count" type="PanelContainer" parent="Ops/Discard" unique_id=1398087294]
 custom_minimum_size = Vector2(22, 22)
 layout_mode = 0
@@ -2196,6 +2537,7 @@ offset_right = 76.0
 offset_bottom = 14.0
 mouse_filter = 2
 theme_type_variation = &"BadgeGold"
+
 [node name="Label" type="Label" parent="Ops/Discard/Count" unique_id=621979355]
 layout_mode = 2
 theme_type_variation = &"Ink"
@@ -2203,6 +2545,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Label" type="Label" parent="Ops/Discard" unique_id=1208220376]
 layout_mode = 0
 offset_left = -10.0
@@ -2214,6 +2557,7 @@ theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
 text = "弃牌堆"
 horizontal_alignment = 1
+
 [node name="Board" type="Panel" parent="." unique_id=1695016299]
 visible = false
 layout_mode = 0
@@ -2222,6 +2566,7 @@ offset_top = 58.0
 offset_right = 1880.0
 offset_bottom = 158.0
 theme_type_variation = &"BoardPanel"
+
 [node name="CornerTL1" type="ColorRect" parent="Board" unique_id=1053152539]
 layout_mode = 0
 offset_left = -1.0
@@ -2229,6 +2574,7 @@ offset_top = -1.0
 offset_right = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerTL2" type="ColorRect" parent="Board" unique_id=873238125]
 layout_mode = 0
 offset_left = -1.0
@@ -2236,6 +2582,7 @@ offset_top = -1.0
 offset_bottom = 9.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR1" type="ColorRect" parent="Board" unique_id=29590598]
 layout_mode = 1
 anchors_preset = 3
@@ -2246,8 +2593,11 @@ anchor_bottom = 1.0
 offset_left = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="CornerBR2" type="ColorRect" parent="Board" unique_id=1333704820]
 layout_mode = 1
 anchors_preset = 3
@@ -2258,8 +2608,11 @@ anchor_bottom = 1.0
 offset_top = -9.0
 offset_right = 1.0
 offset_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="Title" type="PanelContainer" parent="Board" unique_id=18702745]
 layout_mode = 1
 anchors_preset = 5
@@ -2271,6 +2624,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"TitleTag"
+
 [node name="Label" type="Label" parent="Board/Title" unique_id=739183420]
 layout_mode = 2
 theme_type_variation = &"Gold"
@@ -2279,6 +2633,7 @@ theme_override_font_sizes/font_size = 12
 text = "战果榜"
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Rows" type="VBoxContainer" parent="Board" unique_id=344051474]
 layout_mode = 0
 offset_left = 12.0
@@ -2287,6 +2642,7 @@ offset_right = 408.0
 offset_bottom = 80.0
 mouse_filter = 2
 theme_override_constants/separation = 0
+
 [node name="Overlay" type="Control" parent="." unique_id=182110429]
 layout_mode = 1
 anchors_preset = 15
@@ -2295,6 +2651,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
 [node name="TL1" type="ColorRect" parent="Overlay" unique_id=82775961]
 layout_mode = 0
 offset_left = 14.0
@@ -2303,6 +2660,7 @@ offset_right = 44.0
 offset_bottom = 15.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 0.55)
+
 [node name="TL2" type="ColorRect" parent="Overlay" unique_id=2100769611]
 layout_mode = 0
 offset_left = 14.0
@@ -2311,6 +2669,7 @@ offset_right = 15.0
 offset_bottom = 44.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 0.55)
+
 [node name="TR1" type="ColorRect" parent="Overlay" unique_id=352829346]
 layout_mode = 0
 offset_left = 1876.0
@@ -2319,6 +2678,7 @@ offset_right = 1906.0
 offset_bottom = 15.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 0.55)
+
 [node name="TR2" type="ColorRect" parent="Overlay" unique_id=196926181]
 layout_mode = 0
 offset_left = 1905.0
@@ -2327,6 +2687,7 @@ offset_right = 1906.0
 offset_bottom = 44.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 0.55)
+
 [node name="BL1" type="ColorRect" parent="Overlay" unique_id=634158774]
 layout_mode = 0
 offset_left = 14.0
@@ -2335,6 +2696,7 @@ offset_right = 44.0
 offset_bottom = 1066.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 0.55)
+
 [node name="BL2" type="ColorRect" parent="Overlay" unique_id=886565341]
 layout_mode = 0
 offset_left = 14.0
@@ -2343,6 +2705,7 @@ offset_right = 15.0
 offset_bottom = 1066.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 0.55)
+
 [node name="BR1" type="ColorRect" parent="Overlay" unique_id=1693144886]
 layout_mode = 0
 offset_left = 1876.0
@@ -2351,6 +2714,7 @@ offset_right = 1906.0
 offset_bottom = 1066.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 0.55)
+
 [node name="BR2" type="ColorRect" parent="Overlay" unique_id=501794380]
 layout_mode = 0
 offset_left = 1905.0
@@ -2359,6 +2723,7 @@ offset_right = 1906.0
 offset_bottom = 1066.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 0.55)
+
 [node name="Hand" type="Control" parent="." unique_id=1525987025]
 layout_mode = 1
 anchors_preset = 15
@@ -2367,6 +2732,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
 [node name="Toast" type="PanelContainer" parent="." unique_id=1211422681]
 visible = false
 layout_mode = 1
@@ -2383,16 +2749,18 @@ grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
 theme_type_variation = &"Toast"
+
 [node name="Label" type="Label" parent="Toast" unique_id=592057556]
-layout_mode = 2
 custom_minimum_size = Vector2(500, 0)
-autowrap_mode = 3
-max_lines_visible = 3
+layout_mode = 2
 theme_type_variation = &"Gold2"
 theme_override_fonts/font = SubResource("CnR4")
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 3
+max_lines_visible = 3
+
 [node name="EventDiscardMenu" type="PanelContainer" parent="." unique_id=1680324759]
 visible = false
 z_index = 50
@@ -2402,24 +2770,29 @@ offset_top = 216.0
 offset_right = 1628.0
 offset_bottom = 378.0
 theme_type_variation = &"GoldPanel"
+
 [node name="Choices" type="VBoxContainer" parent="EventDiscardMenu" unique_id=261545214]
 layout_mode = 2
 theme_override_constants/separation = 6
+
 [node name="Shinto" type="Button" parent="EventDiscardMenu/Choices" unique_id=28957242]
 custom_minimum_size = Vector2(220, 48)
 layout_mode = 2
 theme_type_variation = &"GhostButton"
 text = "新都"
+
 [node name="Miyama" type="Button" parent="EventDiscardMenu/Choices" unique_id=2102986545]
 custom_minimum_size = Vector2(220, 48)
 layout_mode = 2
 theme_type_variation = &"GhostButton"
 text = "深山町"
+
 [node name="Other" type="Button" parent="EventDiscardMenu/Choices" unique_id=238112913]
 custom_minimum_size = Vector2(220, 48)
 layout_mode = 2
 theme_type_variation = &"GhostButton"
 text = "其他"
+
 [node name="CardBrowser" type="Control" parent="." unique_id=2032077320]
 visible = false
 z_index = 100
@@ -2429,6 +2802,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
 [node name="Shade" type="ColorRect" parent="CardBrowser" unique_id=446375000]
 layout_mode = 1
 anchors_preset = 15
@@ -2437,6 +2811,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.02, 0.03, 0.05, 0.8)
+
 [node name="Panel" type="Panel" parent="CardBrowser" unique_id=1223243193]
 layout_mode = 0
 offset_left = 360.0
@@ -2444,6 +2819,7 @@ offset_top = 250.0
 offset_right = 1560.0
 offset_bottom = 830.0
 theme_type_variation = &"GoldPanel"
+
 [node name="Title" type="Label" parent="CardBrowser/Panel" unique_id=415749278]
 layout_mode = 0
 offset_left = 24.0
@@ -2452,6 +2828,7 @@ offset_right = 1060.0
 offset_bottom = 56.0
 theme_type_variation = &"Gold2"
 theme_override_font_sizes/font_size = 24
+
 [node name="Close" type="Button" parent="CardBrowser/Panel" unique_id=2044733843]
 layout_mode = 0
 offset_left = 1080.0
@@ -2460,6 +2837,7 @@ offset_right = 1180.0
 offset_bottom = 56.0
 theme_type_variation = &"GhostButton"
 text = "关闭"
+
 [node name="Empty" type="Label" parent="CardBrowser/Panel" unique_id=631922703]
 layout_mode = 0
 offset_left = 24.0
@@ -2470,6 +2848,7 @@ theme_type_variation = &"Dim"
 theme_override_font_sizes/font_size = 20
 text = "这里还没有卡"
 horizontal_alignment = 1
+
 [node name="CardScroll" type="ScrollContainer" parent="CardBrowser/Panel" unique_id=222201005]
 layout_mode = 0
 offset_left = 24.0
@@ -2477,11 +2856,13 @@ offset_top = 100.0
 offset_right = 1176.0
 offset_bottom = 548.0
 vertical_scroll_mode = 0
+
 [node name="Row" type="HBoxContainer" parent="CardBrowser/Panel/CardScroll" unique_id=1348676147]
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 theme_override_constants/separation = 28
+
 [node name="LogBrowser" type="Control" parent="." unique_id=706258614]
 visible = false
 z_index = 110
@@ -2491,6 +2872,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
 [node name="Shade" type="ColorRect" parent="LogBrowser" unique_id=1109317622]
 layout_mode = 1
 anchors_preset = 15
@@ -2499,6 +2881,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.02, 0.03, 0.05, 0.8)
+
 [node name="Panel" type="Panel" parent="LogBrowser" unique_id=1070926931]
 layout_mode = 0
 offset_left = 360.0
@@ -2506,6 +2889,7 @@ offset_top = 160.0
 offset_right = 1560.0
 offset_bottom = 920.0
 theme_type_variation = &"GoldPanel"
+
 [node name="Title" type="Label" parent="LogBrowser/Panel" unique_id=1641007083]
 layout_mode = 0
 offset_left = 24.0
@@ -2515,6 +2899,7 @@ offset_bottom = 56.0
 theme_type_variation = &"Gold2"
 theme_override_font_sizes/font_size = 24
 text = "对局日志"
+
 [node name="Close" type="Button" parent="LogBrowser/Panel" unique_id=37839130]
 layout_mode = 0
 offset_left = 1080.0
@@ -2523,6 +2908,7 @@ offset_right = 1180.0
 offset_bottom = 56.0
 theme_type_variation = &"GhostButton"
 text = "关闭"
+
 [node name="Entries" type="RichTextLabel" parent="LogBrowser/Panel" unique_id=1950749864]
 layout_mode = 0
 offset_left = 24.0
@@ -2532,7 +2918,8 @@ offset_bottom = 732.0
 focus_mode = 2
 theme_override_font_sizes/normal_font_size = 22
 selection_enabled = true
-[node name="BattleBroadcast" type="Control" parent="."]
+
+[node name="BattleBroadcast" type="Control" parent="." unique_id=245638959]
 visible = false
 z_index = 120
 layout_mode = 1
@@ -2542,7 +2929,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Backdrop" type="ColorRect" parent="BattleBroadcast"]
+[node name="Backdrop" type="ColorRect" parent="BattleBroadcast" unique_id=996798691]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2551,7 +2938,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.03, 0.05, 0.1, 0.93)
 
-[node name="Vignette" type="TextureRect" parent="BattleBroadcast"]
+[node name="Vignette" type="TextureRect" parent="BattleBroadcast" unique_id=2143955796]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2563,9 +2950,10 @@ texture = SubResource("RadialTex")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Sparks" type="CPUParticles2D" parent="BattleBroadcast"]
+[node name="Sparks" type="CPUParticles2D" parent="BattleBroadcast" unique_id=2138721670]
 position = Vector2(960, 1080)
 amount = 44
+texture = SubResource("DustTexture")
 lifetime = 6.0
 preprocess = 4.0
 emission_shape = 3
@@ -2578,27 +2966,26 @@ initial_velocity_max = 130.0
 scale_amount_min = 1.2
 scale_amount_max = 2.6
 color = Color(0.93, 0.8, 0.5, 0.8)
-texture = SubResource("DustTexture")
 
-[node name="Title" type="Label" parent="BattleBroadcast"]
+[node name="Title" type="Label" parent="BattleBroadcast" unique_id=887337415]
 layout_mode = 0
 offset_left = 160.0
 offset_top = 88.0
 offset_right = 1760.0
 offset_bottom = 170.0
 theme_type_variation = &"Gold2"
-theme_override_fonts/font = SubResource("CnB8")
-theme_override_font_sizes/font_size = 56
-theme_override_colors/font_outline_color = Color(0.15, 0.1, 0.03, 1)
-theme_override_constants/outline_size = 10
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_colors/font_outline_color = Color(0.15, 0.1, 0.03, 1)
 theme_override_constants/shadow_offset_x = 4
 theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = SubResource("CnB8")
+theme_override_font_sizes/font_size = 56
 text = "战斗结算"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Subtitle" type="Label" parent="BattleBroadcast"]
+[node name="Subtitle" type="Label" parent="BattleBroadcast" unique_id=79806977]
 layout_mode = 0
 offset_left = 160.0
 offset_top = 178.0
@@ -2610,7 +2997,7 @@ theme_override_font_sizes/font_size = 20
 text = "各战场胜负 · 威力构成 · 战果去向"
 horizontal_alignment = 1
 
-[node name="Divider" type="ColorRect" parent="BattleBroadcast"]
+[node name="Divider" type="ColorRect" parent="BattleBroadcast" unique_id=26031630]
 layout_mode = 0
 offset_left = 460.0
 offset_top = 230.0
@@ -2618,7 +3005,7 @@ offset_right = 1460.0
 offset_bottom = 232.0
 color = Color(0.72, 0.56, 0.26, 0.55)
 
-[node name="AreaScroll" type="ScrollContainer" parent="BattleBroadcast"]
+[node name="AreaScroll" type="ScrollContainer" parent="BattleBroadcast" unique_id=930536733]
 layout_mode = 0
 offset_left = 460.0
 offset_top = 252.0
@@ -2626,12 +3013,12 @@ offset_right = 1460.0
 offset_bottom = 928.0
 horizontal_scroll_mode = 0
 
-[node name="List" type="VBoxContainer" parent="BattleBroadcast/AreaScroll"]
+[node name="List" type="VBoxContainer" parent="BattleBroadcast/AreaScroll" unique_id=82919941]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 30
 
-[node name="ContinueBtn" type="Button" parent="BattleBroadcast"]
+[node name="ContinueBtn" type="Button" parent="BattleBroadcast" unique_id=1665044444]
 layout_mode = 0
 offset_left = 760.0
 offset_top = 952.0
@@ -2641,7 +3028,35 @@ theme_type_variation = &"GoldButtonV"
 theme_override_font_sizes/font_size = 22
 text = "继续"
 
-[node name="ModalLayer" type="Control" parent="."]
+[node name="ManaCostPreview" type="PanelContainer" parent="." unique_id=1944988523]
+visible = false
+z_index = 40
+custom_minimum_size = Vector2(252, 108)
+layout_mode = 0
+mouse_filter = 2
+theme_type_variation = &"GoldPanel"
+
+[node name="Box" type="VBoxContainer" parent="ManaCostPreview" unique_id=1269685572]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Cost" type="Label" parent="ManaCostPreview/Box" unique_id=381925288]
+layout_mode = 2
+theme_type_variation = &"Gold2"
+theme_override_fonts/font = SubResource("CnB0")
+theme_override_font_sizes/font_size = 19
+horizontal_alignment = 1
+
+[node name="Remaining" type="Label" parent="ManaCostPreview/Box" unique_id=450264116]
+layout_mode = 2
+theme_type_variation = &"Dim2"
+theme_override_fonts/font = SubResource("CnB0")
+theme_override_font_sizes/font_size = 15
+horizontal_alignment = 1
+
+[node name="ModalLayer" type="Control" parent="." unique_id=1052360311]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2649,7 +3064,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-[node name="TacticalConfirm" type="Panel" parent="ModalLayer"]
+
+[node name="TacticalConfirm" type="Panel" parent="ModalLayer" unique_id=2094504154]
 visible = false
 z_index = 60
 layout_mode = 0
@@ -2658,7 +3074,8 @@ offset_top = 380.0
 offset_right = 1160.0
 offset_bottom = 560.0
 theme_type_variation = &"GoldPanel"
-[node name="Box" type="VBoxContainer" parent="ModalLayer/TacticalConfirm"]
+
+[node name="Box" type="VBoxContainer" parent="ModalLayer/TacticalConfirm" unique_id=244832333]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2667,63 +3084,159 @@ offset_left = 16.0
 offset_top = 16.0
 offset_right = -16.0
 offset_bottom = -16.0
-[node name="ConfirmDesc" type="Label" parent="ModalLayer/TacticalConfirm/Box"]
-custom_minimum_size = Vector2(360, 90)
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ConfirmDesc" type="Label" parent="ModalLayer/TacticalConfirm/Box" unique_id=440763386]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
 size_flags_horizontal = 3
-autowrap_mode = 3
 theme_type_variation = &"Gold2"
 theme_override_font_sizes/font_size = 18
-text = ""
-[node name="ButtonsRow" type="HBoxContainer" parent="ModalLayer/TacticalConfirm/Box"]
-alignment = 2
+autowrap_mode = 3
+
+[node name="ButtonsRow" type="HBoxContainer" parent="ModalLayer/TacticalConfirm/Box" unique_id=1747828582]
+layout_mode = 2
 theme_override_constants/separation = 12
-[node name="BtnConfirmAction" type="Button" parent="ModalLayer/TacticalConfirm/Box/ButtonsRow"]
+alignment = 2
+
+[node name="BtnConfirmAction" type="Button" parent="ModalLayer/TacticalConfirm/Box/ButtonsRow" unique_id=663607959]
 custom_minimum_size = Vector2(120, 44)
+layout_mode = 2
 theme_type_variation = &"GoldButtonV"
+theme_override_fonts/font = SubResource("CnR2")
+theme_override_font_sizes/font_size = 18
 text = "确认"
-[node name="BtnCancelAction" type="Button" parent="ModalLayer/TacticalConfirm/Box/ButtonsRow"]
+
+[node name="BtnCancelAction" type="Button" parent="ModalLayer/TacticalConfirm/Box/ButtonsRow" unique_id=970408347]
 custom_minimum_size = Vector2(120, 44)
+layout_mode = 2
 theme_type_variation = &"GhostButton"
+theme_override_fonts/font = SubResource("CnR2")
+theme_override_font_sizes/font_size = 18
 text = "取消"
-[node name="EffectChoice" type="Panel" parent="ModalLayer"]
+
+[node name="PauseMenu" type="Panel" parent="ModalLayer"]
+visible = false
+z_index = 90
+layout_mode = 0
+offset_left = 760.0
+offset_top = 360.0
+offset_right = 1160.0
+offset_bottom = 600.0
+theme_type_variation = &"GoldPanel"
+
+[node name="Box" type="VBoxContainer" parent="ModalLayer/PauseMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="ModalLayer/PauseMenu/Box"]
+layout_mode = 2
+theme_type_variation = &"Gold"
+theme_override_fonts/font = SubResource("CnR2")
+theme_override_font_sizes/font_size = 22
+text = "暂停"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="ModalLayer/PauseMenu/Box"]
+layout_mode = 2
+theme_type_variation = &"Gold2"
+theme_override_fonts/font = SubResource("CnR2")
+theme_override_font_sizes/font_size = 15
+text = "返回主菜单会作废本局全部进度"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="BtnResume" type="Button" parent="ModalLayer/PauseMenu/Box"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_type_variation = &"GoldButtonV"
+theme_override_fonts/font = SubResource("CnR2")
+theme_override_font_sizes/font_size = 18
+text = "继续"
+
+[node name="BtnMainMenu" type="Button" parent="ModalLayer/PauseMenu/Box"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_type_variation = &"GhostButton"
+theme_override_fonts/font = SubResource("CnR2")
+theme_override_font_sizes/font_size = 18
+text = "返回主菜单"
+
+[node name="BtnQuit" type="Button" parent="ModalLayer/PauseMenu/Box"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_type_variation = &"GhostButton"
+theme_override_fonts/font = SubResource("CnR2")
+theme_override_font_sizes/font_size = 18
+text = "退出游戏"
+
+[node name="EffectChoice" type="Panel" parent="ModalLayer" unique_id=402024552]
 visible = false
 z_index = 70
 layout_mode = 0
-offset_left = 560.0
+offset_left = 660.0
 offset_top = 240.0
-offset_right = 1360.0
-offset_bottom = 680.0
+offset_right = 1260.0
+offset_bottom = 420.0
 theme_type_variation = &"GoldPanel"
-[node name="Box" type="VBoxContainer" parent="ModalLayer/EffectChoice"]
+
+[node name="Box" type="VBoxContainer" parent="ModalLayer/EffectChoice" unique_id=352021840]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = -16.0
-[node name="Desc" type="Label" parent="ModalLayer/EffectChoice/Box"]
-custom_minimum_size = Vector2(720, 80)
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Desc" type="Label" parent="ModalLayer/EffectChoice/Box" unique_id=599506685]
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
 size_flags_horizontal = 3
-autowrap_mode = 3
 theme_type_variation = &"Gold2"
 theme_override_font_sizes/font_size = 18
-text = ""
-[node name="OptionsRow" type="VBoxContainer" parent="ModalLayer/EffectChoice/Box"]
-size_flags_vertical = 3
-[node name="ButtonsRow" type="HBoxContainer" parent="ModalLayer/EffectChoice/Box"]
-alignment = 2
+autowrap_mode = 3
+
+[node name="OptionsRow" type="VBoxContainer" parent="ModalLayer/EffectChoice/Box" unique_id=1406995572]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ButtonsRow" type="HBoxContainer" parent="ModalLayer/EffectChoice/Box" unique_id=1009841970]
+layout_mode = 2
 theme_override_constants/separation = 12
-[node name="BtnConfirm" type="Button" parent="ModalLayer/EffectChoice/Box/ButtonsRow"]
+alignment = 2
+
+[node name="BtnConfirm" type="Button" parent="ModalLayer/EffectChoice/Box/ButtonsRow" unique_id=1381791]
 custom_minimum_size = Vector2(140, 44)
+layout_mode = 2
 theme_type_variation = &"GoldButtonV"
+theme_override_fonts/font = SubResource("CnR2")
+theme_override_font_sizes/font_size = 18
 text = "确认发动"
-[node name="BtnCancel" type="Button" parent="ModalLayer/EffectChoice/Box/ButtonsRow"]
-custom_minimum_size = Vector2(120, 44)
+
+[node name="BtnCancel" type="Button" parent="ModalLayer/EffectChoice/Box/ButtonsRow" unique_id=1005288144]
+custom_minimum_size = Vector2(140, 44)
+layout_mode = 2
 theme_type_variation = &"GhostButton"
+theme_override_fonts/font = SubResource("CnR2")
+theme_override_font_sizes/font_size = 18
 text = "放弃"
-[node name="EffectResult" type="Panel" parent="ModalLayer"]
+
+[node name="EffectResult" type="Panel" parent="ModalLayer" unique_id=2095408775]
 visible = false
 z_index = 65
 layout_mode = 0
@@ -2732,7 +3245,8 @@ offset_top = 260.0
 offset_right = 1300.0
 offset_bottom = 620.0
 theme_type_variation = &"GoldPanel"
-[node name="Box" type="VBoxContainer" parent="ModalLayer/EffectResult"]
+
+[node name="Box" type="VBoxContainer" parent="ModalLayer/EffectResult" unique_id=2114880925]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2741,22 +3255,30 @@ offset_left = 16.0
 offset_top = 16.0
 offset_right = -16.0
 offset_bottom = -16.0
-[node name="ResultScroll" type="ScrollContainer" parent="ModalLayer/EffectResult/Box"]
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ResultScroll" type="ScrollContainer" parent="ModalLayer/EffectResult/Box" unique_id=837923978]
 custom_minimum_size = Vector2(640, 260)
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
-[node name="ResultDesc" type="Label" parent="ModalLayer/EffectResult/Box/ResultScroll"]
+
+[node name="ResultDesc" type="Label" parent="ModalLayer/EffectResult/Box/ResultScroll" unique_id=1644213907]
+layout_mode = 2
 size_flags_horizontal = 3
-autowrap_mode = 3
 theme_type_variation = &"Gold2"
 theme_override_font_sizes/font_size = 18
-text = ""
-[node name="BtnClose" type="Button" parent="ModalLayer/EffectResult/Box"]
+autowrap_mode = 3
+
+[node name="BtnClose" type="Button" parent="ModalLayer/EffectResult/Box" unique_id=400446134]
 custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
 theme_type_variation = &"GhostButton"
 text = "关闭"
-[node name="CardSelect" type="Panel" parent="ModalLayer"]
+
+[node name="CardSelect" type="Panel" parent="ModalLayer" unique_id=1408763982]
 visible = false
 z_index = 70
 layout_mode = 0
@@ -2765,7 +3287,8 @@ offset_top = 200.0
 offset_right = 1560.0
 offset_bottom = 720.0
 theme_type_variation = &"GoldPanel"
-[node name="Box" type="VBoxContainer" parent="ModalLayer/CardSelect"]
+
+[node name="Box" type="VBoxContainer" parent="ModalLayer/CardSelect" unique_id=1531347115]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2774,35 +3297,52 @@ offset_left = 16.0
 offset_top = 16.0
 offset_right = -16.0
 offset_bottom = -16.0
-[node name="Title" type="Label" parent="ModalLayer/CardSelect/Box"]
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="ModalLayer/CardSelect/Box" unique_id=1421061858]
+layout_mode = 2
 theme_type_variation = &"Gold2"
 theme_override_font_sizes/font_size = 20
 text = "请选择牌"
-[node name="Hint" type="Label" parent="ModalLayer/CardSelect/Box"]
+autowrap_mode = 3
+
+[node name="Hint" type="Label" parent="ModalLayer/CardSelect/Box" unique_id=586988720]
+layout_mode = 2
 theme_type_variation = &"Dim"
 theme_override_font_sizes/font_size = 14
 text = "已选 0"
-[node name="CardScroll" type="ScrollContainer" parent="ModalLayer/CardSelect/Box"]
+
+[node name="CardScroll" type="ScrollContainer" parent="ModalLayer/CardSelect/Box" unique_id=901834760]
 custom_minimum_size = Vector2(1140, 360)
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-horizontal_scroll_mode = 0
-[node name="CardRow" type="HBoxContainer" parent="ModalLayer/CardSelect/Box/CardScroll"]
+
+[node name="CardRow" type="HBoxContainer" parent="ModalLayer/CardSelect/Box/CardScroll" unique_id=1616859003]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 18
-[node name="ButtonsRow" type="HBoxContainer" parent="ModalLayer/CardSelect/Box"]
-alignment = 2
+
+[node name="ButtonsRow" type="HBoxContainer" parent="ModalLayer/CardSelect/Box" unique_id=1723837]
+layout_mode = 2
 theme_override_constants/separation = 12
-[node name="BtnConfirmSelect" type="Button" parent="ModalLayer/CardSelect/Box/ButtonsRow"]
+alignment = 2
+
+[node name="BtnConfirmSelect" type="Button" parent="ModalLayer/CardSelect/Box/ButtonsRow" unique_id=1935161064]
 custom_minimum_size = Vector2(140, 44)
+layout_mode = 2
 theme_type_variation = &"GoldButtonV"
 text = "确认弃置"
-[node name="BtnCancelSelect" type="Button" parent="ModalLayer/CardSelect/Box/ButtonsRow"]
+
+[node name="BtnCancelSelect" type="Button" parent="ModalLayer/CardSelect/Box/ButtonsRow" unique_id=201958466]
 custom_minimum_size = Vector2(120, 44)
+layout_mode = 2
 theme_type_variation = &"GhostButton"
 text = "取消"
-[node name="PlayerSelect" type="Panel" parent="ModalLayer"]
+
+[node name="PlayerSelect" type="Panel" parent="ModalLayer" unique_id=1083148834]
 visible = false
 z_index = 70
 layout_mode = 0
@@ -2811,7 +3351,8 @@ offset_top = 380.0
 offset_right = 1220.0
 offset_bottom = 540.0
 theme_type_variation = &"GoldPanel"
-[node name="Box" type="VBoxContainer" parent="ModalLayer/PlayerSelect"]
+
+[node name="Box" type="VBoxContainer" parent="ModalLayer/PlayerSelect" unique_id=859127101]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2820,13 +3361,20 @@ offset_left = 16.0
 offset_top = 16.0
 offset_right = -16.0
 offset_bottom = -16.0
-[node name="Title" type="Label" parent="ModalLayer/PlayerSelect/Box"]
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="ModalLayer/PlayerSelect/Box" unique_id=9770473]
+layout_mode = 2
 theme_type_variation = &"Gold2"
 theme_override_font_sizes/font_size = 18
 text = "请选择目标"
-[node name="NameRow" type="HBoxContainer" parent="ModalLayer/PlayerSelect/Box"]
+
+[node name="NameRow" type="HBoxContainer" parent="ModalLayer/PlayerSelect/Box" unique_id=337785287]
+layout_mode = 2
 theme_override_constants/separation = 12
-[node name="OpponentDrawer" type="Panel" parent="ModalLayer"]
+
+[node name="OpponentDrawer" type="Panel" parent="ModalLayer" unique_id=1064051215]
 visible = false
 z_index = 60
 layout_mode = 0
@@ -2835,7 +3383,8 @@ offset_top = 60.0
 offset_right = 1900.0
 offset_bottom = 1040.0
 theme_type_variation = &"GoldPanel"
-[node name="VBox" type="VBoxContainer" parent="ModalLayer/OpponentDrawer"]
+
+[node name="VBox" type="VBoxContainer" parent="ModalLayer/OpponentDrawer" unique_id=1271768483]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2844,13 +3393,20 @@ offset_left = 12.0
 offset_top = 12.0
 offset_right = -12.0
 offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 8
-[node name="HeaderBar" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox"]
+
+[node name="HeaderBar" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox" unique_id=862250890]
+layout_mode = 2
 theme_override_constants/separation = 12
-[node name="SelectedAvatarFrame" type="Panel" parent="ModalLayer/OpponentDrawer/VBox/HeaderBar"]
+
+[node name="SelectedAvatarFrame" type="Panel" parent="ModalLayer/OpponentDrawer/VBox/HeaderBar" unique_id=770453356]
 custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
 theme_type_variation = &"AvatarGold2"
-[node name="Avatar" type="TextureRect" parent="ModalLayer/OpponentDrawer/VBox/HeaderBar/SelectedAvatarFrame"]
+
+[node name="Avatar" type="TextureRect" parent="ModalLayer/OpponentDrawer/VBox/HeaderBar/SelectedAvatarFrame" unique_id=834320282]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2864,91 +3420,254 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
-[node name="OrderBadge" type="Label" parent="ModalLayer/OpponentDrawer/VBox/HeaderBar"]
+
+[node name="OrderBadge" type="Label" parent="ModalLayer/OpponentDrawer/VBox/HeaderBar" unique_id=1569270243]
+layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"Gold2"
 theme_override_font_sizes/font_size = 18
-text = ""
 vertical_alignment = 1
-[node name="BtnCloseOppDrawer" type="Button" parent="ModalLayer/OpponentDrawer/VBox/HeaderBar"]
-custom_minimum_size = Vector2(90, 36)
-theme_type_variation = &"GhostButton"
-text = "关闭"
-[node name="IdentityHint" type="Label" parent="ModalLayer/OpponentDrawer/VBox"]
+
+[node name="IdentityHint" type="Label" parent="ModalLayer/OpponentDrawer/VBox" unique_id=1069456600]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
 theme_type_variation = &"Gold2"
+theme_override_fonts/font = SubResource("CnDrawerR2")
 theme_override_font_sizes/font_size = 14
 text = "真名未解放"
-[node name="ResourceVisuals" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox"]
-theme_override_constants/separation = 4
-[node name="MagicH" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/ResourceVisuals"]
+vertical_alignment = 1
+
+[node name="ResourceVisuals" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox" unique_id=1570205818]
+custom_minimum_size = Vector2(0, 92)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="MagicH" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/ResourceVisuals" unique_id=1194443029]
+layout_mode = 2
 theme_override_constants/separation = 6
-[node name="Magic" type="Label" parent="ModalLayer/OpponentDrawer/VBox/ResourceVisuals/MagicH"]
+
+[node name="Magic" type="Label" parent="ModalLayer/OpponentDrawer/VBox/ResourceVisuals/MagicH" unique_id=1270742751]
+custom_minimum_size = Vector2(0, 17)
+layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"Gold2"
+theme_override_fonts/font = SubResource("CnDrawerR2")
 theme_override_font_sizes/font_size = 14
 text = "魔力: 0"
-[node name="CommandSpells" type="Label" parent="ModalLayer/OpponentDrawer/VBox/ResourceVisuals"]
+vertical_alignment = 1
+
+[node name="Power" type="Label" parent="ModalLayer/OpponentDrawer/VBox/ResourceVisuals" unique_id=665432155]
+custom_minimum_size = Vector2(0, 17)
+layout_mode = 2
 theme_type_variation = &"Gold2"
+theme_override_fonts/font = SubResource("CnDrawerR2")
+theme_override_font_sizes/font_size = 14
+text = "合计威力 0"
+vertical_alignment = 1
+
+[node name="CommandSpells" type="Label" parent="ModalLayer/OpponentDrawer/VBox/ResourceVisuals" unique_id=1285502863]
+custom_minimum_size = Vector2(0, 17)
+layout_mode = 2
+theme_type_variation = &"Gold2"
+theme_override_fonts/font = SubResource("CnDrawerR2")
 theme_override_font_sizes/font_size = 14
 text = "令咒 ×0"
-[node name="BattleMarker" type="Label" parent="ModalLayer/OpponentDrawer/VBox/ResourceVisuals"]
+vertical_alignment = 1
+
+[node name="BattleMarker" type="Label" parent="ModalLayer/OpponentDrawer/VBox/ResourceVisuals" unique_id=1482555706]
+custom_minimum_size = Vector2(0, 17)
+layout_mode = 2
 theme_type_variation = &"Gold2"
+theme_override_fonts/font = SubResource("CnDrawerR2")
 theme_override_font_sizes/font_size = 14
 text = "未部署"
-[node name="CardsContentRow" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox"]
+vertical_alignment = 1
+
+[node name="Sections" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox" unique_id=60856572]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 12
-[node name="Col_MasterServant" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/CardsContentRow"]
-custom_minimum_size = Vector2(220, 0)
-theme_override_constants/separation = 6
-[node name="CardsH" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/CardsContentRow/Col_MasterServant"]
 theme_override_constants/separation = 8
-[node name="MasterCard" type="TextureRect" parent="ModalLayer/OpponentDrawer/VBox/CardsContentRow/Col_MasterServant/CardsH"]
-custom_minimum_size = Vector2(96, 132)
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 6
-[node name="ServantCard" type="TextureRect" parent="ModalLayer/OpponentDrawer/VBox/CardsContentRow/Col_MasterServant/CardsH"]
-custom_minimum_size = Vector2(96, 132)
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 6
-[node name="Col_PlayedCards_Opponent" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/CardsContentRow"]
+
+[node name="Row_MasterServant" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections" unique_id=1307073641]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 4
-[node name="Label" type="Label" parent="ModalLayer/OpponentDrawer/VBox/CardsContentRow/Col_PlayedCards_Opponent"]
+
+[node name="Title" type="Label" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_MasterServant" unique_id=1808134876]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_type_variation = &"Gold2"
+theme_override_fonts/font = SubResource("CnDrawerR2")
+theme_override_font_sizes/font_size = 14
+text = "御主与从者"
+vertical_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_MasterServant" unique_id=1939016683]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 0
+
+[node name="CardsH" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_MasterServant/Scroll" unique_id=2144198841]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="MasterCard" type="TextureRect" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_MasterServant/Scroll/CardsH" unique_id=2049980529]
+custom_minimum_size = Vector2(96, 132)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="ServantCard" type="TextureRect" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_MasterServant/Scroll/CardsH" unique_id=821685751]
+custom_minimum_size = Vector2(96, 132)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Row_Played" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections" unique_id=1785855319]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_Played" unique_id=902292941]
+layout_mode = 2
 theme_type_variation = &"Gold2"
 theme_override_font_sizes/font_size = 14
-text = ""
-[node name="CardsOverlapRow" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/CardsContentRow/Col_PlayedCards_Opponent"]
+text = "已打出牌"
+
+[node name="Scroll" type="ScrollContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_Played" unique_id=571720699]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = -28
-[node name="Col_Skills" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/CardsContentRow"]
-custom_minimum_size = Vector2(220, 0)
-theme_override_constants/separation = 4
-[node name="CardsH" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/CardsContentRow/Col_Skills"]
-size_flags_horizontal = 3
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 0
+
+[node name="CardsH" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_Played/Scroll" unique_id=2035609619]
+layout_mode = 2
 theme_override_constants/separation = 8
-[node name="Col_Buffs" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/CardsContentRow"]
-custom_minimum_size = Vector2(220, 0)
+
+[node name="Row_Skills" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections" unique_id=1354264974]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/separation = 4
-[node name="BuffsH" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/CardsContentRow/Col_Buffs"]
+
+[node name="Title" type="Label" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_Skills" unique_id=1138118705]
+layout_mode = 2
+theme_type_variation = &"Gold2"
+theme_override_font_sizes/font_size = 14
+text = "技能与附加牌"
+
+[node name="Scroll" type="ScrollContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_Skills" unique_id=556823229]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 0
+
+[node name="CardsH" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_Skills/Scroll" unique_id=764491744]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Row_CommandSpells" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections" unique_id=2070731553]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_CommandSpells" unique_id=317337965]
+layout_mode = 2
+theme_type_variation = &"Gold2"
+theme_override_font_sizes/font_size = 14
+text = "特殊令咒"
+
+[node name="Scroll" type="ScrollContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_CommandSpells" unique_id=189373952]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 0
+
+[node name="CardsH" type="HBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_CommandSpells/Scroll" unique_id=1084002068]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Row_Buffs" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections" unique_id=1668601604]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_Buffs" unique_id=1131973329]
+layout_mode = 2
+theme_type_variation = &"Gold2"
+theme_override_font_sizes/font_size = 14
+text = "状态"
+
+[node name="Scroll" type="ScrollContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_Buffs" unique_id=452336672]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="Buffs" type="VBoxContainer" parent="ModalLayer/OpponentDrawer/VBox/Sections/Row_Buffs/Scroll" unique_id=157439247]
+layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6
-[node name="BtnOutOfGame" type="Button" parent="ModalLayer/OpponentDrawer/VBox"]
+
+[node name="BtnOutOfGame" type="Button" parent="ModalLayer/OpponentDrawer/VBox" unique_id=1461419026]
 custom_minimum_size = Vector2(180, 32)
+layout_mode = 2
 theme_type_variation = &"GhostButton"
 text = "查看移出游戏区"
-[node name="HoverZoom" type="Panel" parent="ModalLayer"]
+
+[node name="PowerTooltip" type="Panel" parent="ModalLayer" unique_id=2049858495]
+visible = false
+z_index = 120
+layout_mode = 0
+offset_right = 320.0
+offset_bottom = 160.0
+mouse_filter = 2
+theme_type_variation = &"HintBox"
+
+[node name="VBox" type="VBoxContainer" parent="ModalLayer/PowerTooltip" unique_id=1398421918]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = -12.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="ModalLayer/PowerTooltip/VBox" unique_id=374278174]
+layout_mode = 2
+theme_type_variation = &"Gold2"
+theme_override_font_sizes/font_size = 12
+text = "威力构成"
+
+[node name="Desc" type="Label" parent="ModalLayer/PowerTooltip/VBox" unique_id=493652589]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 11
+autowrap_mode = 3
+
+[node name="HoverZoom" type="Panel" parent="." unique_id=1242337259]
 visible = false
 z_index = 150
 layout_mode = 0
-mouse_filter = 0
 theme_type_variation = &"GoldPanel"
-[node name="BigCard" type="TextureRect" parent="ModalLayer/HoverZoom"]
+
+[node name="BigCard" type="TextureRect" parent="HoverZoom" unique_id=159377967]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -2962,9 +3681,10 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
-[node name="Hint" type="HBoxContainer" parent="ModalLayer/HoverZoom"]
+
+[node name="Hint" type="HBoxContainer" parent="HoverZoom" unique_id=764295427]
 layout_mode = 1
-anchors_preset = 0
+anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -20.0
@@ -2976,17 +3696,18 @@ grow_vertical = 0
 mouse_filter = 2
 theme_override_constants/separation = 6
 alignment = 1
-[node name="DefaultHint" type="Label" parent="ModalLayer/HoverZoom/Hint"]
+
+[node name="DefaultHint" type="Label" parent="HoverZoom/Hint" unique_id=1765748275]
 layout_mode = 2
 size_flags_vertical = 0
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.921569, 0.72549, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 12
 text = "右键大图查看文字说明"
 vertical_alignment = 1
-[node name="Icon" type="TextureRect" parent="ModalLayer/HoverZoom/Hint"]
+
+[node name="Icon" type="TextureRect" parent="HoverZoom/Hint" unique_id=1460660772]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_vertical = 4
@@ -2994,24 +3715,25 @@ mouse_filter = 2
 texture = ExtResource("8_rc_hint")
 expand_mode = 1
 stretch_mode = 5
-[node name="Text" type="Label" parent="ModalLayer/HoverZoom/Hint"]
+
+[node name="Text" type="Label" parent="HoverZoom/Hint" unique_id=584400388]
 visible = false
 layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.921569, 0.72549, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 13
 vertical_alignment = 1
-[node name="HoverDesc" type="Panel" parent="ModalLayer" unique_id=1318753316]
+
+[node name="HoverDesc" type="Panel" parent="." unique_id=1318753316]
 visible = false
 z_index = 155
 layout_mode = 0
 offset_right = 440.0
 offset_bottom = 320.0
 theme_type_variation = &"GoldPanel"
-[node name="VBox" type="VBoxContainer" parent="ModalLayer/HoverDesc" unique_id=1706928012]
+
+[node name="VBox" type="VBoxContainer" parent="HoverDesc" unique_id=1706928012]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -3023,21 +3745,25 @@ offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-[node name="Title" type="Label" parent="ModalLayer/HoverDesc/VBox" unique_id=204171431]
+
+[node name="Title" type="Label" parent="HoverDesc/VBox" unique_id=204171431]
 layout_mode = 2
 theme_type_variation = &"Gold2"
 theme_override_font_sizes/font_size = 18
 clip_text = true
-[node name="Body" type="ScrollContainer" parent="ModalLayer/HoverDesc/VBox" unique_id=1276734100]
+
+[node name="Body" type="ScrollContainer" parent="HoverDesc/VBox" unique_id=1276734100]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
-[node name="Desc" type="Label" parent="ModalLayer/HoverDesc/VBox/Body" unique_id=1086580338]
+
+[node name="Desc" type="Label" parent="HoverDesc/VBox/Body" unique_id=1086580338]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 autowrap_mode = 3
-[node name="Close" type="Button" parent="ModalLayer/HoverDesc" unique_id=2144673594]
+
+[node name="Close" type="Button" parent="HoverDesc" unique_id=2144673594]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -3049,36 +3775,7 @@ offset_bottom = 34.0
 grow_horizontal = 0
 theme_type_variation = &"GhostButton"
 text = "×"
-[node name="PowerTooltip" type="Panel" parent="ModalLayer" unique_id=2049858495]
-visible = false
-z_index = 120
-layout_mode = 0
-offset_right = 320.0
-offset_bottom = 160.0
-mouse_filter = 2
-theme_type_variation = &"HintBox"
-[node name="VBox" type="VBoxContainer" parent="ModalLayer/PowerTooltip" unique_id=1398421918]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = 8.0
-offset_right = -12.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-[node name="Title" type="Label" parent="ModalLayer/PowerTooltip/VBox" unique_id=374278174]
-layout_mode = 2
-theme_type_variation = &"Gold2"
-theme_override_font_sizes/font_size = 12
-text = "威力构成"
-[node name="Desc" type="Label" parent="ModalLayer/PowerTooltip/VBox" unique_id=493652589]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 11
-autowrap_mode = 3
+
 [node name="Templates" type="Control" parent="." unique_id=1832404733]
 visible = false
 layout_mode = 1
@@ -3088,39 +3785,47 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
 [node name="PhaseOn" type="PanelContainer" parent="Templates" unique_id=1972003915]
 layout_mode = 0
 mouse_filter = 2
 theme_type_variation = &"PhaseOn"
+
 [node name="Label" type="Label" parent="Templates/PhaseOn" unique_id=1995669088]
 layout_mode = 2
 theme_type_variation = &"Ink"
 theme_override_fonts/font = SubResource("CnB3")
 theme_override_font_sizes/font_size = 13
+
 [node name="PhasePassed" type="PanelContainer" parent="Templates" unique_id=876744474]
 layout_mode = 0
 mouse_filter = 2
 theme_type_variation = &"PhaseOff"
+
 [node name="Label" type="Label" parent="Templates/PhasePassed" unique_id=1484467696]
 layout_mode = 2
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR3")
 theme_override_font_sizes/font_size = 13
+
 [node name="PhasePending" type="PanelContainer" parent="Templates" unique_id=96283599]
 layout_mode = 0
 mouse_filter = 2
 theme_type_variation = &"PhaseOff"
+
 [node name="Label" type="Label" parent="Templates/PhasePending" unique_id=1900382904]
 layout_mode = 2
 theme_type_variation = &"Dim2"
 theme_override_fonts/font = SubResource("CnR3")
 theme_override_font_sizes/font_size = 13
+
 [node name="Dot" type="Panel" parent="Templates" unique_id=390201896]
 custom_minimum_size = Vector2(9, 9)
 layout_mode = 0
 size_flags_vertical = 4
 mouse_filter = 2
 theme_type_variation = &"DotPending"
+
 [node name="Sigil" type="TextureRect" parent="Templates" unique_id=702816664]
 custom_minimum_size = Vector2(14, 14)
 layout_mode = 0
@@ -3128,11 +3833,14 @@ mouse_filter = 2
 texture = ExtResource("6_sigil")
 expand_mode = 1
 stretch_mode = 5
+
 [node name="RivalCard" type="Panel" parent="Templates" unique_id=1684606662]
 custom_minimum_size = Vector2(184, 150)
 layout_mode = 0
+size_flags_vertical = 0
 mouse_filter = 2
 theme_type_variation = &"RivalCard"
+
 [node name="Breath" type="Panel" parent="Templates/RivalCard" unique_id=939656236]
 visible = false
 layout_mode = 1
@@ -3147,6 +3855,33 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"Breath"
+
+[node name="CornerBL" type="TextureRect" parent="Templates/RivalCard" unique_id=465525435]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -42.0
+offset_right = 64.0
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("15_rival_corner")
+expand_mode = 1
+
+[node name="CornerTR" type="TextureRect" parent="Templates/RivalCard" unique_id=981551177]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -64.0
+offset_bottom = 42.0
+grow_horizontal = 0
+mouse_filter = 2
+texture = ExtResource("15_rival_corner")
+expand_mode = 1
+flip_h = true
+flip_v = true
+
 [node name="Order" type="PanelContainer" parent="Templates/RivalCard" unique_id=1841559790]
 custom_minimum_size = Vector2(22, 22)
 layout_mode = 0
@@ -3156,6 +3891,7 @@ offset_right = 21.0
 offset_bottom = 21.0
 mouse_filter = 2
 theme_type_variation = &"BadgeGold"
+
 [node name="Label" type="Label" parent="Templates/RivalCard/Order" unique_id=98593996]
 layout_mode = 2
 theme_type_variation = &"Ink"
@@ -3163,6 +3899,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Avatar" type="Panel" parent="Templates/RivalCard" unique_id=1567620281]
 layout_mode = 0
 offset_left = 10.0
@@ -3171,6 +3908,7 @@ offset_right = 60.0
 offset_bottom = 60.0
 mouse_filter = 2
 theme_type_variation = &"AvatarGold3"
+
 [node name="Img" type="TextureRect" parent="Templates/RivalCard/Avatar" unique_id=1703611409]
 material = SubResource("CircleMask")
 layout_mode = 1
@@ -3186,6 +3924,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Name" type="Label" parent="Templates/RivalCard" unique_id=126944979]
 layout_mode = 0
 offset_left = 70.0
@@ -3195,6 +3934,7 @@ offset_bottom = 30.0
 theme_type_variation = &"Text"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 15
+
 [node name="Class" type="Label" parent="Templates/RivalCard" unique_id=1316286753]
 layout_mode = 0
 offset_left = 70.0
@@ -3204,6 +3944,7 @@ offset_bottom = 46.0
 theme_type_variation = &"Gold"
 theme_override_fonts/font = SubResource("LatR2")
 theme_override_font_sizes/font_size = 10
+
 [node name="Loc" type="Label" parent="Templates/RivalCard" unique_id=2028866681]
 layout_mode = 0
 offset_left = 70.0
@@ -3213,41 +3954,27 @@ offset_bottom = 62.0
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
+
 [node name="MagicTitle" type="Label" parent="Templates/RivalCard" unique_id=987655042]
 layout_mode = 0
 offset_left = 10.0
-offset_top = 68.0
-offset_right = 50.0
-offset_bottom = 84.0
+offset_top = 62.0
+offset_right = 60.0
+offset_bottom = 104.0
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
 text = "魔力"
-[node name="MagicNum" type="Label" parent="Templates/RivalCard" unique_id=1298176914]
-layout_mode = 0
-offset_left = 140.0
-offset_top = 68.0
-offset_right = 174.0
-offset_bottom = 84.0
-theme_type_variation = &"Mana"
-theme_override_fonts/font = SubResource("LatR0")
-theme_override_font_sizes/font_size = 11
-horizontal_alignment = 2
-[node name="MagicBar" type="Panel" parent="Templates/RivalCard" unique_id=1617857104]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 86.0
-offset_right = 174.0
-offset_bottom = 92.0
-mouse_filter = 2
-theme_type_variation = &"Bar"
-[node name="Fill" type="ColorRect" parent="Templates/RivalCard/MagicBar" unique_id=1465914820]
-layout_mode = 1
-anchors_preset = 9
-anchor_bottom = 1.0
-grow_vertical = 2
-mouse_filter = 2
-color = Color(0.2471, 0.8392, 0.9412, 1)
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MagicSigil" parent="Templates/RivalCard" unique_id=650737040 instance=ExtResource("12_mana")]
+anchors_preset = 0
+offset_left = 58.0
+offset_top = 62.0
+offset_right = 100.0
+offset_bottom = 104.0
+
 [node name="Stats" type="HBoxContainer" parent="Templates/RivalCard" unique_id=104650497]
 layout_mode = 0
 offset_left = 10.0
@@ -3256,52 +3983,63 @@ offset_right = 174.0
 offset_bottom = 138.0
 mouse_filter = 2
 theme_override_constants/separation = 10
+
 [node name="PowerStat" type="HBoxContainer" parent="Templates/RivalCard/Stats" unique_id=2068013389]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 3
+
 [node name="K" type="Label" parent="Templates/RivalCard/Stats/PowerStat" unique_id=1896639780]
 layout_mode = 2
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR0")
 theme_override_font_sizes/font_size = 11
 text = "合计威力"
+
 [node name="V" type="Label" parent="Templates/RivalCard/Stats/PowerStat" unique_id=955850966]
 layout_mode = 2
 theme_type_variation = &"Text"
 theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 14
 text = "0"
+
 [node name="ScoreStat" type="HBoxContainer" parent="Templates/RivalCard/Stats" unique_id=257242455]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 3
+
 [node name="K" type="Label" parent="Templates/RivalCard/Stats/ScoreStat" unique_id=1557732336]
 layout_mode = 2
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR0")
 theme_override_font_sizes/font_size = 11
 text = "战果"
+
 [node name="V" type="Label" parent="Templates/RivalCard/Stats/ScoreStat" unique_id=1952469793]
 layout_mode = 2
 theme_type_variation = &"Text"
 theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 14
 text = "0"
+
 [node name="Spacer" type="Control" parent="Templates/RivalCard/Stats" unique_id=1630177864]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
+
 [node name="Spells" type="HBoxContainer" parent="Templates/RivalCard/Stats" unique_id=1200114442]
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 theme_override_constants/separation = 2
+
 [node name="SelfSlot" type="Panel" parent="Templates" unique_id=55557649]
 custom_minimum_size = Vector2(60, 150)
 layout_mode = 0
+size_flags_vertical = 0
 mouse_filter = 2
 theme_type_variation = &"SelfSlot"
+
 [node name="Breath" type="Panel" parent="Templates/SelfSlot" unique_id=939656237]
 visible = false
 layout_mode = 1
@@ -3316,6 +4054,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"Breath"
+
 [node name="Order" type="PanelContainer" parent="Templates/SelfSlot" unique_id=1868585665]
 custom_minimum_size = Vector2(22, 22)
 layout_mode = 0
@@ -3325,6 +4064,7 @@ offset_right = 21.0
 offset_bottom = 21.0
 mouse_filter = 2
 theme_type_variation = &"BadgeGold"
+
 [node name="Label" type="Label" parent="Templates/SelfSlot/Order" unique_id=751820334]
 layout_mode = 2
 theme_type_variation = &"Ink"
@@ -3332,6 +4072,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Label" type="Label" parent="Templates/SelfSlot" unique_id=1542503301]
 layout_mode = 1
 anchors_preset = 15
@@ -3345,10 +4086,12 @@ theme_override_font_sizes/font_size = 13
 text = "我方"
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="RouteNode" type="Control" parent="Templates" unique_id=468353547]
 custom_minimum_size = Vector2(56, 70)
 anchors_preset = 0
 mouse_filter = 2
+
 [node name="Circle" type="Panel" parent="Templates/RouteNode" unique_id=1398182457]
 layout_mode = 0
 offset_left = 15.0
@@ -3357,6 +4100,7 @@ offset_right = 41.0
 offset_bottom = 36.0
 mouse_filter = 2
 theme_type_variation = &"AvatarGold3"
+
 [node name="Img" type="TextureRect" parent="Templates/RouteNode/Circle" unique_id=1703258222]
 material = SubResource("CircleMask")
 layout_mode = 1
@@ -3372,6 +4116,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Name" type="Label" parent="Templates/RouteNode" unique_id=1181460550]
 layout_mode = 0
 offset_left = -10.0
@@ -3382,10 +4127,12 @@ theme_type_variation = &"Text"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
+
 [node name="RouteArrow" type="Control" parent="Templates" unique_id=1893959806]
 anchors_preset = 0
 size_flags_horizontal = 3
 mouse_filter = 2
+
 [node name="Line" type="ColorRect" parent="Templates/RouteArrow" unique_id=2077126123]
 layout_mode = 1
 anchors_preset = 10
@@ -3397,6 +4144,7 @@ offset_bottom = 24.0
 grow_horizontal = 2
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="Head1" type="ColorRect" parent="Templates/RouteArrow" unique_id=260378860]
 layout_mode = 1
 anchors_preset = 1
@@ -3409,6 +4157,7 @@ offset_bottom = 21.0
 grow_horizontal = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="Head2" type="ColorRect" parent="Templates/RouteArrow" unique_id=809835199]
 layout_mode = 1
 anchors_preset = 1
@@ -3421,6 +4170,7 @@ offset_bottom = 27.0
 grow_horizontal = 0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 1)
+
 [node name="Cost" type="Label" parent="Templates/RouteArrow" unique_id=1659935412]
 layout_mode = 1
 anchors_preset = 10
@@ -3432,12 +4182,14 @@ theme_type_variation = &"Mana"
 theme_override_fonts/font = SubResource("CnR0")
 theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
+
 [node name="EventCard" type="Panel" parent="Templates" unique_id=720292902]
 layout_mode = 0
 offset_right = 160.0
 offset_bottom = 224.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Templates/EventCard" unique_id=229098648]
 layout_mode = 1
 anchors_preset = 15
@@ -3452,6 +4204,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="CapBg" type="ColorRect" parent="Templates/EventCard" unique_id=1754972379]
 layout_mode = 1
 anchors_preset = 12
@@ -3466,6 +4219,7 @@ grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
 color = Color(0, 0, 0, 0.75)
+
 [node name="Caption" type="Label" parent="Templates/EventCard" unique_id=1606080287]
 layout_mode = 1
 anchors_preset = 12
@@ -3480,6 +4234,7 @@ theme_type_variation = &"Text"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
+
 [node name="Score" type="PanelContainer" parent="Templates/EventCard" unique_id=555720423]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 1
@@ -3493,6 +4248,7 @@ offset_bottom = 22.0
 grow_horizontal = 0
 mouse_filter = 2
 theme_type_variation = &"BadgeGold"
+
 [node name="Label" type="Label" parent="Templates/EventCard/Score" unique_id=618975405]
 layout_mode = 2
 theme_type_variation = &"Ink"
@@ -3500,15 +4256,18 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 14
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="SeatSlot" type="Control" parent="Templates" unique_id=369958734]
 custom_minimum_size = Vector2(74, 92)
 anchors_preset = 0
 mouse_filter = 2
+
 [node name="Seat" type="Control" parent="Templates/SeatSlot" unique_id=2017952095]
 anchors_preset = 0
 offset_right = 74.0
 offset_bottom = 74.0
 mouse_filter = 2
+
 [node name="Ring" type="Control" parent="Templates/SeatSlot/Seat" unique_id=1746755427]
 layout_mode = 1
 anchors_preset = 15
@@ -3518,6 +4277,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("7_seatring")
+
 [node name="ValueNum" type="Label" parent="Templates/SeatSlot/Seat" unique_id=1475458314]
 layout_mode = 1
 anchors_preset = 15
@@ -3530,6 +4290,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="ValueEmpty" type="Label" parent="Templates/SeatSlot/Seat" unique_id=227170285]
 visible = false
 layout_mode = 1
@@ -3544,6 +4305,7 @@ theme_override_font_sizes/font_size = 11
 text = "空"
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Avatar" type="Panel" parent="Templates/SeatSlot/Seat" unique_id=103732455]
 visible = false
 layout_mode = 1
@@ -3560,6 +4322,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"AvatarGold2"
+
 [node name="Img" type="TextureRect" parent="Templates/SeatSlot/Seat/Avatar" unique_id=2112761976]
 material = SubResource("CircleMask")
 layout_mode = 1
@@ -3575,6 +4338,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Badge" type="PanelContainer" parent="Templates/SeatSlot/Seat" unique_id=1226721032]
 visible = false
 custom_minimum_size = Vector2(22, 22)
@@ -3591,6 +4355,7 @@ grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 2
 theme_type_variation = &"BadgeGold"
+
 [node name="Label" type="Label" parent="Templates/SeatSlot/Seat/Badge" unique_id=1849433896]
 layout_mode = 2
 theme_type_variation = &"Ink"
@@ -3598,6 +4363,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Label" type="Label" parent="Templates/SeatSlot/Seat" unique_id=945459290]
 layout_mode = 1
 anchors_preset = 12
@@ -3614,10 +4380,12 @@ theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
+
 [node name="MeleeSeat" type="Control" parent="Templates" unique_id=1604509877]
 custom_minimum_size = Vector2(74, 92)
 anchors_preset = 0
 mouse_filter = 2
+
 [node name="Avatar" type="Panel" parent="Templates/MeleeSeat" unique_id=1276684955]
 layout_mode = 0
 offset_left = 11.0
@@ -3626,6 +4394,7 @@ offset_right = 63.0
 offset_bottom = 63.0
 mouse_filter = 2
 theme_type_variation = &"AvatarGold2"
+
 [node name="Img" type="TextureRect" parent="Templates/MeleeSeat/Avatar" unique_id=414167996]
 material = SubResource("CircleMask")
 layout_mode = 1
@@ -3641,6 +4410,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Label" type="Label" parent="Templates/MeleeSeat" unique_id=248517159]
 layout_mode = 0
 offset_left = -20.0
@@ -3651,13 +4421,23 @@ theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
+
 [node name="PlayGroup" type="Control" parent="Templates" unique_id=1975017282]
 custom_minimum_size = Vector2(280, 110)
 anchors_preset = 0
 mouse_filter = 2
+metadata/expanded = false
+metadata/stack_step_ratio = 0.12
+metadata/stack_span_ratio = 0.45
+metadata/expanded_columns = 5
+metadata/expanded_visible_rows = 2
+metadata/collapsed_reserve_ratio = 0.1
+
 [node name="Who" type="Control" parent="Templates/PlayGroup" unique_id=1265770363]
 custom_minimum_size = Vector2(70, 130)
+anchors_preset = 0
 mouse_filter = 2
+
 [node name="Avatar" type="Panel" parent="Templates/PlayGroup/Who" unique_id=188133770]
 custom_minimum_size = Vector2(54, 54)
 layout_mode = 1
@@ -3671,6 +4451,7 @@ offset_bottom = 60.0
 grow_horizontal = 2
 mouse_filter = 2
 theme_type_variation = &"AvatarGold3"
+
 [node name="Img" type="TextureRect" parent="Templates/PlayGroup/Who/Avatar" unique_id=60099512]
 material = SubResource("CircleMask")
 layout_mode = 1
@@ -3686,35 +4467,94 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
+[node name="CollapseHint" type="TextureRect" parent="Templates/PlayGroup/Who/Avatar" unique_id=1028591050]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -12.0
+offset_top = 3.0
+offset_right = 12.0
+offset_bottom = 27.0
+grow_horizontal = 2
+mouse_filter = 0
+tooltip_text = "点击头像收起牌堆"
+texture = ExtResource("16_stack_collapse")
+expand_mode = 1
+
 [node name="Total" type="PanelContainer" parent="Templates/PlayGroup/Who" unique_id=658257339]
 layout_mode = 1
-anchors_preset = 0
 offset_right = 22.0
 offset_bottom = 22.0
 mouse_filter = 2
 theme_type_variation = &"BadgeGold"
-[node name="Text" type="Label" parent="Templates/PlayGroup/Who/Total"]
+
+[node name="Text" type="Label" parent="Templates/PlayGroup/Who/Total" unique_id=266875301]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.1216, 0.1019, 0.0706, 1)
 theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.1216, 0.1019, 0.0706, 1)
 text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Cards" type="ScrollContainer" parent="Templates/PlayGroup" unique_id=785662141]
-clip_contents = true
 custom_minimum_size = Vector2(200, 90)
-mouse_filter = 1
+layout_mode = 0
+mouse_force_pass_scroll_events = false
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="Row" type="Control" parent="Templates/PlayGroup/Cards" unique_id=289315018]
+custom_minimum_size = Vector2(200, 90)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="DecoBar" type="Panel" parent="Templates/PlayGroup" unique_id=66500385]
+z_index = -1
+custom_minimum_size = Vector2(280, 8)
+layout_mode = 0
+mouse_filter = 2
+theme_type_variation = &"PlayGroupDeco"
+
+[node name="ResiduePile" type="Control" parent="Templates"]
+layout_mode = 0
+offset_right = 184.0
+offset_bottom = 60.0
+mouse_filter = 2
+z_index = 40
+metadata/residue_pile = true
+metadata/expanded = false
+metadata/card_size = Vector2(42, 58)
+metadata/stack_step_ratio = 0.14
+metadata/card_gap = 4.0
+
+[node name="Collapse" type="TextureButton" parent="Templates/ResiduePile"]
+visible = false
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -24.0
+offset_bottom = 24.0
+tooltip_text = "点击收起残留牌"
+texture_normal = ExtResource("16_stack_collapse")
+
+[node name="Cards" type="ScrollContainer" parent="Templates/ResiduePile"]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_force_pass_scroll_events = false
 horizontal_scroll_mode = 3
 vertical_scroll_mode = 0
-[node name="Row" type="Control" parent="Templates/PlayGroup/Cards"]
-custom_minimum_size = Vector2(200, 90)
+
+[node name="Row" type="Control" parent="Templates/ResiduePile/Cards"]
+layout_mode = 2
 mouse_filter = 2
-[node name="DecoBar" type="Panel" parent="Templates/PlayGroup"]
-custom_minimum_size = Vector2(280, 8)
-mouse_filter = 2
-z_index = -1
-theme_type_variation = &"PlayGroupDeco"
+
 [node name="PlayedCard" type="Panel" parent="Templates" unique_id=1156505383]
 custom_minimum_size = Vector2(54, 75)
 layout_mode = 0
@@ -3722,6 +4562,7 @@ offset_right = 54.0
 offset_bottom = 75.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Templates/PlayedCard" unique_id=1787529015]
 layout_mode = 1
 anchors_preset = 15
@@ -3736,20 +4577,23 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
-[node name="AreaBackdrop" type="TextureRect" parent="Templates"]
+
+[node name="AreaBackdrop" type="TextureRect" parent="Templates" unique_id=1787800152]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Strip" type="Panel" parent="Templates" unique_id=1331832137]
 clip_contents = true
 layout_mode = 0
 offset_right = 72.0
 offset_bottom = 560.0
 theme_type_variation = &"Strip"
+
 [node name="Background" type="TextureRect" parent="Templates/Strip" unique_id=1927039633]
-modulate = Color(1, 1, 1, 0.22)
+modulate = Color(1, 1, 1, 0.42)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -3759,6 +4603,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Atmosphere" type="CPUParticles2D" parent="Templates/Strip" unique_id=2024514717]
 amount = 28
 texture = SubResource("DustTexture")
@@ -3774,12 +4619,14 @@ initial_velocity_max = 20.0
 scale_amount_min = 0.2
 scale_amount_max = 0.45
 color = Color(0.95, 0.82, 0.58, 0.4)
+
 [node name="CapTop" type="Panel" parent="Templates/Strip" unique_id=2007109236]
 layout_mode = 0
 anchor_bottom = 1.0
 offset_right = 6.0
 mouse_filter = 2
 theme_type_variation = &"StripCap"
+
 [node name="CapBottom" type="Panel" parent="Templates/Strip" unique_id=2080616204]
 layout_mode = 0
 anchor_left = 1.0
@@ -3788,10 +4635,12 @@ anchor_bottom = 1.0
 offset_left = -6.0
 mouse_filter = 2
 theme_type_variation = &"StripCap"
+
 [node name="EventIcons" type="Control" parent="Templates/Strip" unique_id=1989124963]
 clip_contents = true
 anchors_preset = 0
 mouse_filter = 2
+
 [node name="Col" type="VBoxContainer" parent="Templates/Strip" unique_id=1683441663]
 layout_mode = 0
 offset_top = 22.0
@@ -3799,6 +4648,7 @@ offset_right = 72.0
 offset_bottom = 492.0
 mouse_filter = 2
 theme_override_constants/separation = 6
+
 [node name="Vertical" type="Label" parent="Templates/Strip/Col" unique_id=1748784233]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -3806,6 +4656,7 @@ theme_type_variation = &"Title"
 theme_override_fonts/font = SubResource("CnR0")
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
+
 [node name="Latin" type="Label" parent="Templates/Strip/Col" unique_id=141396549]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -3813,6 +4664,7 @@ theme_type_variation = &"Gold"
 theme_override_fonts/font = SubResource("LatR1")
 theme_override_font_sizes/font_size = 8
 horizontal_alignment = 1
+
 [node name="Score" type="Panel" parent="Templates/Strip" unique_id=740902637]
 layout_mode = 0
 offset_left = 16.0
@@ -3821,6 +4673,7 @@ offset_right = 56.0
 offset_bottom = 532.0
 mouse_filter = 2
 theme_type_variation = &"ScoreCircle"
+
 [node name="Num" type="Label" parent="Templates/Strip/Score" unique_id=995547101]
 layout_mode = 0
 offset_top = 4.0
@@ -3831,6 +4684,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 15
 text = "0"
 horizontal_alignment = 1
+
 [node name="Lb" type="Label" parent="Templates/Strip/Score" unique_id=1011281233]
 layout_mode = 0
 offset_top = 24.0
@@ -3841,9 +4695,10 @@ theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 9
 text = "战果"
 horizontal_alignment = 1
-[node name="FlowBorder" type="ColorRect" parent="Templates/Strip"]
-material = SubResource("FlowBorderMat")
+
+[node name="FlowBorder" type="ColorRect" parent="Templates/Strip" unique_id=1600407929]
 visible = false
+material = SubResource("FlowBorderMat")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -3851,16 +4706,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
 [node name="StripSeat" type="Control" parent="Templates" unique_id=312336859]
 custom_minimum_size = Vector2(72, 58)
 anchors_preset = 0
 mouse_filter = 2
+
 [node name="Seat" type="Control" parent="Templates/StripSeat" unique_id=1844482313]
 anchors_preset = 0
 offset_left = 13.0
 offset_right = 59.0
 offset_bottom = 46.0
 mouse_filter = 2
+
 [node name="Ring" type="Control" parent="Templates/StripSeat/Seat" unique_id=954109223]
 layout_mode = 1
 anchors_preset = 15
@@ -3870,6 +4728,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("7_seatring")
+
 [node name="ValueNum" type="Label" parent="Templates/StripSeat/Seat" unique_id=614335603]
 layout_mode = 1
 anchors_preset = 15
@@ -3882,6 +4741,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="ValueEmpty" type="Label" parent="Templates/StripSeat/Seat" unique_id=1290765118]
 visible = false
 layout_mode = 1
@@ -3896,6 +4756,7 @@ theme_override_font_sizes/font_size = 9
 text = "空"
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Avatar" type="Panel" parent="Templates/StripSeat/Seat" unique_id=350362046]
 visible = false
 layout_mode = 1
@@ -3908,8 +4769,11 @@ offset_left = -16.1
 offset_top = -16.1
 offset_right = 16.1
 offset_bottom = 16.1
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"AvatarGold2"
+
 [node name="Img" type="TextureRect" parent="Templates/StripSeat/Seat/Avatar" unique_id=1572955000]
 material = SubResource("CircleMask")
 layout_mode = 1
@@ -3925,6 +4789,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Badge" type="PanelContainer" parent="Templates/StripSeat/Seat" unique_id=570436702]
 visible = false
 custom_minimum_size = Vector2(16, 16)
@@ -3937,8 +4802,11 @@ anchor_bottom = 1.0
 offset_left = -20.0
 offset_top = -16.0
 offset_right = -4.0
+grow_horizontal = 0
+grow_vertical = 0
 mouse_filter = 2
 theme_type_variation = &"BadgeGold"
+
 [node name="Label" type="Label" parent="Templates/StripSeat/Seat/Badge" unique_id=1451497662]
 layout_mode = 2
 theme_type_variation = &"Ink"
@@ -3946,6 +4814,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 9
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Melee" type="HBoxContainer" parent="Templates/StripSeat" unique_id=2008907706]
 visible = false
 layout_mode = 0
@@ -3955,6 +4824,7 @@ offset_bottom = 30.0
 mouse_filter = 2
 theme_override_constants/separation = -8
 alignment = 1
+
 [node name="MeleeEmpty" type="Label" parent="Templates/StripSeat" unique_id=1175431005]
 visible = false
 layout_mode = 0
@@ -3966,6 +4836,7 @@ theme_override_fonts/font = SubResource("CnR0")
 theme_override_font_sizes/font_size = 10
 text = "混战"
 horizontal_alignment = 1
+
 [node name="Label" type="Label" parent="Templates/StripSeat" unique_id=595386269]
 layout_mode = 0
 offset_top = 46.0
@@ -3975,11 +4846,13 @@ theme_type_variation = &"Dim2"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 10
 horizontal_alignment = 1
+
 [node name="MiniAvatar" type="Panel" parent="Templates" unique_id=209070082]
 custom_minimum_size = Vector2(22, 22)
 layout_mode = 0
 mouse_filter = 2
 theme_type_variation = &"AvatarThin"
+
 [node name="Img" type="TextureRect" parent="Templates/MiniAvatar" unique_id=1224268591]
 material = SubResource("CircleMask")
 layout_mode = 1
@@ -3995,10 +4868,12 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="StripEvents" type="Control" parent="Templates" unique_id=8046210]
 custom_minimum_size = Vector2(72, 74)
 anchors_preset = 0
 mouse_filter = 2
+
 [node name="Cards" type="Control" parent="Templates/StripEvents" unique_id=942115529]
 layout_mode = 1
 anchors_preset = 15
@@ -4007,6 +4882,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
 [node name="Count" type="PanelContainer" parent="Templates/StripEvents" unique_id=1181331576]
 visible = false
 custom_minimum_size = Vector2(18, 18)
@@ -4017,6 +4893,7 @@ offset_right = 66.0
 offset_bottom = 10.0
 mouse_filter = 2
 theme_type_variation = &"BadgeGold"
+
 [node name="Label" type="Label" parent="Templates/StripEvents/Count" unique_id=1159524572]
 layout_mode = 2
 theme_type_variation = &"Ink"
@@ -4024,6 +4901,7 @@ theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 10
 horizontal_alignment = 1
 vertical_alignment = 1
+
 [node name="Label" type="Label" parent="Templates/StripEvents" unique_id=727030710]
 layout_mode = 0
 offset_top = 58.0
@@ -4034,12 +4912,14 @@ theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 10
 text = "事件"
 horizontal_alignment = 1
+
 [node name="MiniEventCard" type="Panel" parent="Templates" unique_id=1098667198]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 56.0
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Templates/MiniEventCard" unique_id=1528626361]
 layout_mode = 1
 anchors_preset = 15
@@ -4054,13 +4934,15 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="HandCard" type="Control" parent="Templates" unique_id=1160699877]
-script = ExtResource("9_held_hit")
 anchors_preset = 0
 offset_right = 110.0
 offset_bottom = 154.0
 pivot_offset = Vector2(55, 184.8)
 mouse_filter = 2
+script = ExtResource("9_held_hit")
+
 [node name="Frame" type="Panel" parent="Templates/HandCard" unique_id=984026570]
 layout_mode = 1
 anchors_preset = 15
@@ -4070,6 +4952,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Templates/HandCard/Frame" unique_id=844741245]
 layout_mode = 1
 anchors_preset = 15
@@ -4084,8 +4967,8 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Breath" type="Panel" parent="Templates/HandCard" unique_id=94932860]
-theme_override_styles/panel = SubResource("HeldOutline")
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -4099,20 +4982,27 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"Breath"
-[node name="Selected" type="Panel" parent="Templates/HandCard"]
+theme_override_styles/panel = SubResource("HeldOutline")
+
+[node name="Selected" type="Panel" parent="Templates/HandCard" unique_id=879949146]
 visible = false
 layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -4.0
 offset_top = -4.0
 offset_right = 4.0
 offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("SelectedOutline")
-[node name="StackCount" type="Label" parent="Templates/HandCard"]
+
+[node name="StackCount" type="Label" parent="Templates/HandCard" unique_id=146723283]
 visible = false
 layout_mode = 1
+anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -4121,13 +5011,15 @@ offset_left = -48.0
 offset_top = -29.0
 offset_right = -5.0
 offset_bottom = -5.0
-mouse_filter = 2
+grow_horizontal = 0
+grow_vertical = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 2
 vertical_alignment = 1
+
 [node name="Lock" type="PanelContainer" parent="Templates/HandCard" unique_id=2040491839]
 visible = false
 layout_mode = 1
@@ -4138,13 +5030,15 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"Lock"
+
 [node name="ZoneCard" type="Control" parent="Templates" unique_id=1048803063]
-script = ExtResource("9_held_hit")
 anchors_preset = 0
 offset_right = 110.0
 offset_bottom = 154.0
 pivot_offset = Vector2(55, 154)
 mouse_filter = 2
+script = ExtResource("9_held_hit")
+
 [node name="Frame" type="Panel" parent="Templates/ZoneCard" unique_id=1543722815]
 layout_mode = 1
 anchors_preset = 15
@@ -4154,6 +5048,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"Card"
+
 [node name="Img" type="TextureRect" parent="Templates/ZoneCard/Frame" unique_id=698673553]
 layout_mode = 1
 anchors_preset = 15
@@ -4168,8 +5063,8 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
+
 [node name="Breath" type="Panel" parent="Templates/ZoneCard" unique_id=1141489802]
-theme_override_styles/panel = SubResource("HeldOutline")
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -4183,20 +5078,27 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"Breath"
-[node name="Selected" type="Panel" parent="Templates/ZoneCard"]
+theme_override_styles/panel = SubResource("HeldOutline")
+
+[node name="Selected" type="Panel" parent="Templates/ZoneCard" unique_id=1494029372]
 visible = false
 layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -4.0
 offset_top = -4.0
 offset_right = 4.0
 offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("SelectedOutline")
-[node name="StackCount" type="Label" parent="Templates/ZoneCard"]
+
+[node name="StackCount" type="Label" parent="Templates/ZoneCard" unique_id=693349376]
 visible = false
 layout_mode = 1
+anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -4205,13 +5107,15 @@ offset_left = -48.0
 offset_top = -29.0
 offset_right = -5.0
 offset_bottom = -5.0
-mouse_filter = 2
+grow_horizontal = 0
+grow_vertical = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 2
 vertical_alignment = 1
+
 [node name="Lock" type="PanelContainer" parent="Templates/ZoneCard" unique_id=1438741676]
 visible = false
 layout_mode = 1
@@ -4222,19 +5126,39 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"Lock"
+
+[node name="EffectButton" type="Button" parent="Templates" unique_id=570328840]
+visible = false
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 0
+focus_mode = 0
+theme_type_variation = &"GoldButtonV"
+theme_override_font_sizes/font_size = 13
+text = "发动效果"
+metadata/card_gap = 12
+metadata/no_clickable_hint = true
+
+[node name="HoverBridge" type="Control" parent="Templates/EffectButton" unique_id=1946954127]
+anchors_preset = 0
+
+[node name="Effects" type="PopupMenu" parent="Templates/EffectButton" unique_id=205786909]
+
 [node name="BuffRow" type="PanelContainer" parent="Templates" unique_id=1300148575]
 layout_mode = 0
 mouse_filter = 2
 theme_type_variation = &"BuffActive"
+
 [node name="H" type="HBoxContainer" parent="Templates/BuffRow" unique_id=20626385]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 6
+
 [node name="Avatar" type="Panel" parent="Templates/BuffRow/H" unique_id=1678794893]
 custom_minimum_size = Vector2(22, 22)
 layout_mode = 2
 mouse_filter = 2
 theme_type_variation = &"AvatarThin"
+
 [node name="Img" type="TextureRect" parent="Templates/BuffRow/H/Avatar" unique_id=1650233602]
 material = SubResource("CircleMask")
 layout_mode = 1
@@ -4250,6 +5174,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Name" type="Label" parent="Templates/BuffRow/H" unique_id=839145343]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -4257,6 +5182,7 @@ theme_type_variation = &"Text"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 12
 clip_text = true
+
 [node name="Inactive" type="Label" parent="Templates/BuffRow/H" unique_id=639013205]
 visible = false
 layout_mode = 2
@@ -4264,10 +5190,12 @@ theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR0")
 theme_override_font_sizes/font_size = 10
 text = "未激活"
+
 [node name="BoardRow" type="Control" parent="Templates" unique_id=1482969996]
 custom_minimum_size = Vector2(396, 38)
 anchors_preset = 0
 mouse_filter = 2
+
 [node name="Rank" type="Label" parent="Templates/BoardRow" unique_id=1410324014]
 layout_mode = 0
 offset_left = 4.0
@@ -4277,6 +5205,7 @@ offset_bottom = 28.0
 theme_type_variation = &"Text"
 theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 14
+
 [node name="Avatar" type="Panel" parent="Templates/BoardRow" unique_id=588765961]
 layout_mode = 0
 offset_left = 32.0
@@ -4285,6 +5214,7 @@ offset_right = 58.0
 offset_bottom = 30.0
 mouse_filter = 2
 theme_type_variation = &"AvatarGold3"
+
 [node name="Img" type="TextureRect" parent="Templates/BoardRow/Avatar" unique_id=765864293]
 material = SubResource("CircleMask")
 layout_mode = 1
@@ -4300,6 +5230,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
+
 [node name="Name" type="Label" parent="Templates/BoardRow" unique_id=1921627847]
 layout_mode = 0
 offset_left = 68.0
@@ -4309,6 +5240,7 @@ offset_bottom = 28.0
 theme_type_variation = &"Text"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 14
+
 [node name="Class" type="Label" parent="Templates/BoardRow" unique_id=599884439]
 layout_mode = 0
 offset_left = 228.0
@@ -4318,6 +5250,7 @@ offset_bottom = 26.0
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("LatR1")
 theme_override_font_sizes/font_size = 12
+
 [node name="Score" type="Label" parent="Templates/BoardRow" unique_id=638857679]
 layout_mode = 0
 offset_left = 320.0
@@ -4328,6 +5261,7 @@ theme_type_variation = &"Gold2"
 theme_override_fonts/font = SubResource("LatR0")
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 2
+
 [node name="Line" type="ColorRect" parent="Templates/BoardRow" unique_id=1810461081]
 layout_mode = 0
 offset_top = 36.0
@@ -4335,12 +5269,15 @@ offset_right = 396.0
 offset_bottom = 37.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 0.15)
-[node name="SpellCard" type="Panel" parent="Templates" unique_id=26812361]
-custom_minimum_size = Vector2(56, 76)
+
+[node name="SpellCard" type="Panel" parent="Templates" unique_id=716541223]
+custom_minimum_size = Vector2(90, 126)
 layout_mode = 0
-mouse_filter = 2
-theme_type_variation = &"CardClear"
-[node name="Img" type="TextureRect" parent="Templates/SpellCard" unique_id=784001483]
+offset_right = 90.0
+offset_bottom = 126.0
+theme_type_variation = &"Card"
+
+[node name="Img" type="TextureRect" parent="Templates/SpellCard" unique_id=1560086294]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -4353,4 +5290,27 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
+stretch_mode = 6
+
+[node name="SpellSummary" type="HBoxContainer" parent="Templates" unique_id=1554682269]
+layout_mode = 0
+mouse_filter = 2
+theme_override_constants/separation = 4
+metadata/normal_texture = ExtResource("13_spell_small")
+metadata/special_texture = ExtResource("14_special_spell_small")
+
+[node name="Icon" type="TextureRect" parent="Templates/SpellSummary" unique_id=1398754130]
+custom_minimum_size = Vector2(18, 24)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("13_spell_small")
+expand_mode = 1
 stretch_mode = 5
+
+[node name="Count" type="Label" parent="Templates/SpellSummary" unique_id=1814495802]
+layout_mode = 2
+theme_type_variation = &"Gold2"
+theme_override_fonts/font = SubResource("LatR1")
+theme_override_font_sizes/font_size = 14
+text = "×0"
+vertical_alignment = 1

@@ -1,34 +1,34 @@
 [
   {
-    "area": "workshop",
-    "url": "https://static.wikia.nocookie.net/typemoon/images/8/85/FGO_Gilles_Workshop.png/revision/latest",
-    "file": "assets\\images\\game_scene\\v2\\board_alternatives\\workshop.webp",
-    "width": 1024,
-    "height": 626,
-    "sha256": "2b5c230df7dc238ae32818d3c6bff988c09131942ee3a401ad79910e7dec391e",
-    "match": "unverified alternative; not claimed to be exact original"
+	"area": "workshop",
+	"url": "https://static.wikia.nocookie.net/typemoon/images/8/85/FGO_Gilles_Workshop.png/revision/latest",
+	"file": "assets\\images\\game_scene\\v2\\board_alternatives\\workshop.webp",
+	"width": 1024,
+	"height": 626,
+	"sha256": "2b5c230df7dc238ae32818d3c6bff988c09131942ee3a401ad79910e7dec391e",
+	"match": "unverified alternative; not claimed to be exact original"
   },
   {
-    "area": "miyama",
-    "file": "assets\\images\\game_scene\\v2\\background_candidates\\shinto_fuyuki_bridge.webp",
-    "match": "unverified alternative; bridge belongs to Miyama in supplied board"
+	"area": "miyama",
+	"file": "assets\\images\\game_scene\\v2\\background_candidates\\shinto_fuyuki_bridge.webp",
+	"match": "unverified alternative; bridge belongs to Miyama in supplied board"
   },
   {
-    "area": "shinto",
-    "url": "https://static.wikia.nocookie.net/typemoon/images/e/e3/FGO_Fuyuki_Alleyway.png/revision/latest",
-    "file": "assets\\images\\game_scene\\v2\\board_alternatives\\shinto.webp",
-    "width": 1024,
-    "height": 626,
-    "sha256": "f24162c1c54e8c491054e4ec76e4fba54e755e8335137299a467920291099dda",
-    "match": "unverified alternative; not claimed to be exact original"
+	"area": "shinto",
+	"url": "https://static.wikia.nocookie.net/typemoon/images/e/e3/FGO_Fuyuki_Alleyway.png/revision/latest",
+	"file": "assets\\images\\game_scene\\v2\\board_alternatives\\shinto.webp",
+	"width": 1024,
+	"height": 626,
+	"sha256": "f24162c1c54e8c491054e4ec76e4fba54e755e8335137299a467920291099dda",
+	"match": "unverified alternative; not claimed to be exact original"
   },
   {
-    "area": "scout",
-    "url": "https://static.wikia.nocookie.net/typemoon/images/7/77/Fuyuki_church.png/revision/latest",
-    "file": "assets\\images\\game_scene\\v2\\board_alternatives\\scout.webp",
-    "width": 1111,
-    "height": 907,
-    "sha256": "68cdbb45d851972e880c7d134f3c7004fe6f53b3352cba7468064e04272fcd61",
-    "match": "unverified alternative; not claimed to be exact original"
+	"area": "scout",
+	"url": "https://static.wikia.nocookie.net/typemoon/images/7/77/Fuyuki_church.png/revision/latest",
+	"file": "assets\\images\\game_scene\\v2\\board_alternatives\\scout.webp",
+	"width": 1111,
+	"height": 907,
+	"sha256": "68cdbb45d851972e880c7d134f3c7004fe6f53b3352cba7468064e04272fcd61",
+	"match": "unverified alternative; not claimed to be exact original"
   }
 ]
