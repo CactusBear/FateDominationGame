@@ -85,6 +85,174 @@ var _queued_time_point_batches:Array = []
 var _pending_choices:Array = []
 #{选择效果: {run: 暂停的那次执行, queue: 同一步里还没问的选择}}。选择结束后按它接着做
 var _paused_runs:Dictionary = {}
+var _function_frames:Array = []
+var _active_runs:Array = []
+var _runtime_guard = preload("res://scripts/match/rule_budget.gd").new()
+var _guard_run:Dictionary = {}
+var _guard_frames:Array = []
+var _resume_frames:Array = []
+var _guard_continuations:Array = []
+var _draining_guard_continuations:bool = false
+var _guard_transactions:Dictionary = {}
+var _transaction_scope = null
+var _continuation_transactions:Dictionary = {}
+var _batch_transactions:Array = []
+
+func _begin_guard_transaction(effect:BaseEffect) -> void:
+	if not _runtime_guard.enabled or effect == null or _guard_transactions.has(effect):
+		return
+	_guard_transactions[effect] = _transaction_scope if _transaction_scope != null else preload("res://scripts/match/effect_checkpoint.gd").new(effect)
+
+func _inherit_guard_transaction(effect:BaseEffect) -> void:
+	if _transaction_scope != null and not _guard_transactions.has(effect):
+		_guard_transactions[effect] = _transaction_scope
+
+func _release_guard_transactions() -> void:
+	if not is_waiting_for_choice() and _active_runs.is_empty() and activation_pool.is_empty() and decision_queue.is_empty() and _queued_time_point_batches.is_empty() and _guard_continuations.is_empty():
+		_guard_transactions.clear()
+		_continuation_transactions.clear()
+		_batch_transactions.clear()
+
+func can_rollback_runtime_guard() -> bool:
+	var checkpoint = _guard_transactions.get(runtime_guard_effect())
+	return checkpoint != null and checkpoint.ready
+
+
+func runtime_guard_effect():
+	return _guard_run.get("effect") if _runtime_guard.paused else null
+
+func skip_runtime_guard() -> bool:
+	if not can_rollback_runtime_guard() or not _active_runs.is_empty():
+		return false
+	var checkpoint = _guard_transactions[runtime_guard_effect()]
+	var external:Array = []
+	for continuation in _guard_continuations:
+		if not _continuation_transactions.has(continuation): external.append(continuation)
+	if not checkpoint.restore():
+		return false
+	var root:BaseEffect = checkpoint.root
+	# 恢复等待与队列后，只移除事务根效果，不派发成功完成时点。
+	decision_queue.erase(root)
+	activation_pool.erase(root)
+	if waiting_effect == root: waiting_effect = null
+	if waiting_selection == root: waiting_selection = null
+	if waiting_location == root: waiting_location = null
+	if waiting_players == root: waiting_players = null
+	_pending_selection_choice.erase(root)
+	_pending_location_choice.erase(root)
+	_pending_player_choice.erase(root)
+	resolved_effects[root] = "skipped"
+	_guard_run = {}
+	_guard_frames.clear()
+	_resume_frames.clear()
+	_guard_transactions.clear()
+	_transaction_scope = null
+	_continuation_transactions.clear()
+	_batch_transactions.clear()
+	for continuation in external:
+		if not _guard_continuations.has(continuation): _guard_continuations.append(continuation)
+	is_running = false
+	_runtime_guard.begin_slice()
+	run_pipeline(true)
+	return true
+
+func configure_runtime_guard(config:Dictionary) -> bool:
+	if _runtime_guard.paused or not _active_runs.is_empty():
+		return false
+	return _runtime_guard.configure(config)
+
+func runtime_guard_status() -> Dictionary:
+	return _runtime_guard.status()
+
+## 只登记调用方已显式保存的尾部；未暂停时仍由调用方同步执行。
+func defer_until_runtime_guard_complete(continuation:Callable) -> bool:
+	if not _runtime_guard.paused or not continuation.is_valid():
+		return false
+	_guard_continuations.append(continuation)
+	if not _active_runs.is_empty() and _transaction_scope != null:
+		_continuation_transactions[continuation] = _transaction_scope
+	return true
+
+func _drain_guard_continuations() -> void:
+	if _draining_guard_continuations or is_running or not _active_runs.is_empty():
+		return
+	_draining_guard_continuations = true
+	while not _guard_continuations.is_empty() and not is_waiting_for_choice():
+		var pending:Array = _guard_continuations
+		_guard_continuations = []
+		var continuation:Callable = pending.pop_front()
+		if not continuation.is_valid():
+			_guard_continuations.append(continuation)
+			_guard_continuations.append_array(pending)
+			push_error("规则外层续行目标已失效")
+			break
+		continuation.call()
+		if not _draining_guard_continuations:
+			# 回调已重置会话，旧执行片的其余尾部不可写回新会话。
+			break
+		# 新登记的内层尾部先完成，才轮到原队列的剩余外层动作。
+		_guard_continuations.append_array(pending)
+	_draining_guard_continuations = false
+
+func resume_runtime_guard() -> bool:
+	if not _runtime_guard.paused or _guard_run.is_empty():
+		return false
+	var run:Dictionary = _guard_run
+	_resume_frames = _guard_frames
+	_guard_frames = []
+	_guard_run = {}
+	_runtime_guard.begin_slice()
+	#恢复仍属于原结算批次；结束时点不能清空本次新排入的真人待答。
+	var was_running:bool = is_running
+	is_running = true
+	_continue_run(run)
+	is_running = was_running
+	_resume_frames.clear()
+	if not _runtime_guard.paused and not is_running:
+		run_pipeline(true)
+	return true
+
+func runtime_guard_checkpoint(loop_state:Dictionary = {}) -> bool:
+	if not _runtime_guard.enabled or _active_runs.size() != 1:
+		return true
+	if not loop_state.is_empty() and (_function_frames.is_empty() or not is_same(_function_frames.back().get("loop"), loop_state)):
+		# 未拥有独立续行帧的辅助循环只能同步完成，不能借外层游标暂停。
+		return true
+	#before_* 的取消与改写必须同步返回，动作栈没有可恢复调用边界。
+	#遵循原生区间策略：不在其中中断，在外侧可恢复边界检查预算。
+	if not pending_actions.is_empty():
+		return true
+	# 保存的子调用已经跨过本层入口；重建它不是新的规则步骤。
+	var depth := _function_frames.size()
+	if depth < _resume_frames.size() and _resume_frames[depth] != null:
+		return true
+	# 不在未显式记录续行状态的原生方法内部暂停。
+	for frame in _function_frames:
+		if not frame.has("loop") or frame.get("loop_owner") != frame.get("callable", Callable()).get_object():
+			return true
+	if _runtime_guard.checkpoint():
+		return true
+	_guard_frames = _function_frames.duplicate()
+	for index in range(_guard_frames.size(), _resume_frames.size()):
+		if _resume_frames[index] != null:
+			_guard_frames.append(_resume_frames[index])
+	return false
+
+# 原始上下文只供权威端检查，不作为玩家视图广播。
+func execution_context() -> Dictionary:
+	return {"functions": _function_frames, "runs": _active_runs, "suspended_functions": _guard_frames, "suspended_run": _guard_run, "guard_continuations": _guard_continuations}
+
+func record_loop_state(state:Dictionary, owner:Object) -> Dictionary:
+	if not _function_frames.is_empty():
+		var frame:Dictionary = _function_frames.back()
+		# 辅助对象没有独立调用帧，不能覆盖或领取原生调用者的续行游标。
+		if frame.get("callable", Callable()).get_object() != owner:
+			return state
+		if frame.get("resuming", false) and frame.has("loop"):
+			return frame.loop
+		frame["loop_owner"] = owner
+		frame["loop"] = state
+	return state
 
 
 #产生一条提示消息。消息先入队，由界面在刷新时取走展示——
@@ -323,7 +491,17 @@ func player_shown_name(player_id:int) -> String:
 
 #清理本局运行时状态，保留已经加载的游戏资源和效果对象
 func reset_runtime():
+	_guard_transactions.clear()
+	_transaction_scope = null
+	_continuation_transactions.clear()
+	_batch_transactions.clear()
+	_runtime_guard.configure({"enabled": false, "steps": 0, "seconds": 0.0})
+	_guard_run.clear()
+	_guard_frames.clear()
+	_resume_frames.clear()
 	AbilityRestrictions.entries.clear()
+	_guard_continuations.clear()
+	_draining_guard_continuations = false
 	effect_pool.clear()
 	activating_eff = null
 	decision_queue.clear()
@@ -501,6 +679,8 @@ func _option_activation_requirements_met(effect:BaseEffect, selection:Dictionary
 			var passed:bool = called
 			if final_result is BaseNumber:
 				passed = passed and final_result.number != 0
+			elif final_result == null:
+				passed = false
 			else:
 				passed = passed and bool(final_result)
 			if !passed:
@@ -775,12 +955,20 @@ func _queue_time_point_batch(source, event_player_id:int = -1) -> void:
 			"dynamic": (data["dynamic_time_points"] as Array).duplicate()
 		}
 	_queued_time_point_batches.append({"source": source, "players": players, "event_player_id": event_player_id})
+	if _transaction_scope != null:
+		_batch_transactions.append({"batch":_queued_time_point_batches.back(), "transaction":_transaction_scope})
 
 
 func _run_next_queued_time_point() -> void:
 	if is_waiting_for_choice() or _queued_time_point_batches.is_empty():
 		return
 	var batch: Dictionary = _queued_time_point_batches.pop_front()
+	var previous_scope = _transaction_scope
+	for record in _batch_transactions.duplicate():
+		if is_same(record.batch, batch):
+			_transaction_scope = record.transaction
+			_batch_transactions.erase(record)
+			break
 	var players: Dictionary = batch.get("players", {})
 	for id in players.keys():
 		if not GameData.player_data_library.has(id):
@@ -790,6 +978,7 @@ func _run_next_queued_time_point() -> void:
 		data["current_time_points"] = (snapshot.get("current", []) as Array).duplicate()
 		data["dynamic_time_points"] = (snapshot.get("dynamic", []) as Array).duplicate()
 	run_time_point(batch.get("source"), int(batch.get("event_player_id", -1)))
+	_transaction_scope = previous_scope
 
 
 #检查全局效果池，把本时点命中的效果按顺位排进待决定队列
@@ -846,6 +1035,7 @@ func collect_current_effects(source = null, event_player_id:int = -1):
 		effect._trigger_time_points = matched.duplicate()
 		effect._event_player_id = event_player_id
 		newly_matched.append(effect)
+		_inherit_guard_transaction(effect)
 	decision_queue.append_array(newly_matched)
 	sort_by_turn_order(decision_queue)
 
@@ -1014,11 +1204,13 @@ func sort_by_priority(effects:Array):
 
 
 #主流程：先决定(交错)，再按优先级结算。结算中产生的新效果同样先决定再结算
-func run_pipeline():
+func run_pipeline(preserve_budget:bool = false):
+	if not preserve_budget and not is_running and _active_runs.is_empty() and not _runtime_guard.paused:
+		_runtime_guard.begin_slice()
 	is_running = true
 	while true:
 		#等玩家答复或被要求挑牌，由 submit_active_choice / submit_card_selection 继续跑
-		if waiting_effect != null or waiting_selection != null or waiting_location != null or waiting_players != null:
+		if _runtime_guard.paused or waiting_effect != null or waiting_selection != null or waiting_location != null or waiting_players != null:
 			break
 		if !decision_queue.is_empty():
 			drain_decision_queue()
@@ -1037,6 +1229,8 @@ func run_pipeline():
 	_flush_announcements()
 	if not is_waiting_for_choice():
 		_run_next_queued_time_point()
+		_drain_guard_continuations()
+	_release_guard_transactions()
 
 
 #被放弃的选择：不在等待、不在队列、也不在结算池里。找到一个就让它挂着的效果继续，返回是否继续了
@@ -1133,6 +1327,14 @@ func can_pay_effect_cost(effect:BaseEffect) -> bool:
 #扣费复用EditMagic，让魔力变化照常派发MAGIC_DECREASE时点。
 #令咒消耗扣command_spell_count并派发COMMAND_SPELL_USED时点
 func pay_effect_cost(effect:BaseEffect) -> bool:
+	_begin_guard_transaction(effect)
+	var previous_scope = _transaction_scope
+	_transaction_scope = _guard_transactions.get(effect)
+	var accepted:bool = _pay_effect_cost(effect)
+	_transaction_scope = previous_scope
+	return accepted
+
+func _pay_effect_cost(effect:BaseEffect) -> bool:
 	if !can_pay_effect_cost(effect):
 		return false
 	if effect == null or effect._cost == null:
@@ -1378,7 +1580,8 @@ func get_pending_player_selection() -> Dictionary:
 		return {}
 	var spec:Dictionary = waiting_players._options[option_index].get("select_players", {})
 	return {"effect": waiting_players, "spec": spec,
-		"candidates": get_player_selection_candidates(spec, waiting_players)}
+		"candidates": get_player_selection_candidates(spec, waiting_players),
+		"allow_cancel": choice_allows_cancel(waiting_players, option_index)}
 
 
 #提交玩家目标选择，仍在支付前。校验两条：人数落在声明范围内、每个目标都在候选集里。
@@ -1434,7 +1637,7 @@ func get_pending_location_selection() -> Dictionary:
 	var option_index:int = int(pending.get("option", -1))
 	if option_index < 0 or option_index >= waiting_location._options.size():
 		return {}
-	return {"effect": waiting_location, "spec": waiting_location._options[option_index].get("select_location", {})}
+	return {"effect": waiting_location, "spec": waiting_location._options[option_index].get("select_location", {}), "allow_cancel": choice_allows_cancel(waiting_location, option_index)}
 
 
 # 位置选择提交仍在支付前；起点由选项声明的 allowed_origin_areas 校验，目标只要求是地图上的位置。
@@ -1543,8 +1746,45 @@ func _is_card_selection_valid(spec:Dictionary, source:Array, cards:Array, requir
 
 
 
+## 显式取消与“提交合法空选择”不同；取消不支付、不记选项次数。
+func cancel_pending_choice(effect: BaseEffect) -> bool:
+	if effect == null:
+		return false
+	if waiting_effect == effect:
+		return submit_active_choice(effect, false)
+	var option_index := -1
+	if waiting_selection == effect:
+		option_index = _waiting_selection_option
+	elif waiting_players == effect:
+		option_index = int(_pending_player_choice.get(effect, {}).get("option", -1))
+	elif waiting_location == effect:
+		option_index = int(_pending_location_choice.get(effect, {}).get("option", -1))
+	else:
+		return false
+	if not choice_allows_cancel(effect, option_index):
+		return false
+	if waiting_selection == effect:
+		waiting_selection = null
+		_waiting_selection_option = -1
+		_pending_selection_choice.erase(effect)
+	if waiting_players == effect:
+		waiting_players = null
+		_pending_player_choice.erase(effect)
+	if waiting_location == effect:
+		waiting_location = null
+		_pending_location_choice.erase(effect)
+	effect._selected_cards = []
+	effect._selected_players = []
+	effect._selected_player = -1
+	effect._selected_location = null
+	decision_queue.erase(effect)
+	resolved_effects[effect] = "declined"
+	if not is_running:
+		run_pipeline()
+	return true
+
 func is_waiting_for_choice() -> bool:
-	return waiting_effect != null or waiting_selection != null or waiting_location != null or waiting_players != null
+	return _runtime_guard.paused or waiting_effect != null or waiting_selection != null or waiting_location != null or waiting_players != null
 
 
 #玩家此刻能不能主动发动这个手动效果。判据全部复用既有规则：
@@ -1632,6 +1872,8 @@ func submit_active_choice(effect:BaseEffect, should_activate:bool) -> bool:
 		return false
 	if should_activate and effect.has_options() and !choice_allows_cancel(effect) and effect._chosen_selection.is_empty():
 		return false
+	if should_activate:
+		_begin_guard_transaction(effect)
 	decision_queue.erase(effect)
 	waiting_effect = null
 	if !should_activate:
@@ -1675,6 +1917,7 @@ func submit_option_choice(effect:BaseEffect, selection) -> bool:
 	#发动条件先于任何延迟选择、用量记录和资源支付；失败按放弃处理，提示由数据声明。
 	if !_option_activation_requirements_met(effect, selection_dict):
 		return submit_active_choice(effect, false)
+	_begin_guard_transaction(effect)
 	#选玩家必须排在选牌之前：同一个选项可以声明"选玩家 + 选那名玩家的牌"，
 	#选牌要拿 _selected_player 去定位来源区，顺序反了会先停下等选牌却没有目标。
 	#只声明其中一项时另一项判为 -1，顺序调整对既有卡没有影响
@@ -1710,6 +1953,7 @@ func add_to_activation_pool(effect:BaseEffect):
 	if effect == null or activation_pool.has(effect):
 		return
 	activation_pool.append(effect)
+	_inherit_guard_transaction(effect)
 	sort_by_priority(activation_pool)
 
 
@@ -1726,6 +1970,7 @@ func resolve_one():
 		if effect._priority < 0:
 			continue
 		resolved_effects[effect] = time_point_id
+		_begin_guard_transaction(effect)
 		activating_eff = effect
 		activate_effect(effect)
 		activating_eff = null
@@ -1877,6 +2122,21 @@ func check_condition(_func:BaseFunc, effect:BaseEffect) -> bool:
 #而不是直接调callable绕开self_var/number_index/condition。
 #返回[是否真正调用了callable, 调用结果]；未调用时结果为null
 func run_base_func(f:BaseFunc, effect:BaseEffect) -> Array:
+	var frame := {"function": f, "effect": effect, "stage": "condition", "parameters": []}
+	var depth := _function_frames.size()
+	if depth < _resume_frames.size() and _resume_frames[depth] != null:
+		frame = _resume_frames[depth]
+		_resume_frames[depth] = null
+		frame["resuming"] = true
+		f = frame.function
+	_function_frames.append(frame)
+	var outcome: Array = _run_base_func(f, effect, frame)
+	_function_frames.pop_back()
+	return outcome
+
+func _run_base_func(f:BaseFunc, effect:BaseEffect, frame:Dictionary) -> Array:
+	if frame.get("resuming", false):
+		return _invoke_function_frame(f, effect, frame)
 	var raw_params:Array = f._parameters.duplicate()
 	#没真正调用的失败也留一条记录，否则分不清"JSON 没执行"与"条件没满足"。
 	#先落记录再立刻结束，call_id 才连续、父子关系也不断
@@ -1903,6 +2163,7 @@ func run_base_func(f:BaseFunc, effect:BaseEffect) -> Array:
 		return [false, null]
 
 	var paras = f._parameters.duplicate()
+	frame.stage = "parameters"
 	var paras_ready:bool = true
 	for i in paras.size():
 		var resolved = resolve_placeholder(paras[i], effect)
@@ -1917,12 +2178,26 @@ func run_base_func(f:BaseFunc, effect:BaseEffect) -> Array:
 
 	#先落记录再调用：嵌套进来的 func 才会排在本条之后、parent 指向本条
 	var call_id:int = GameLog.begin_func_call(effect, f._name, raw_params, paras)
-	var result = callable.callv(paras)
+	frame.parameters = paras
+	frame["callable"] = callable
+	frame["call_id"] = call_id
+	frame.stage = "call"
+	return _invoke_function_frame(f, effect, frame)
+
+func _invoke_function_frame(f:BaseFunc, effect:BaseEffect, frame:Dictionary) -> Array:
+	if frame.get("resuming", false):
+		frame.call_id = GameLog.begin_func_call(effect, f._name, f._parameters, frame.parameters)
+	var result = frame.callable.callv(frame.parameters)
+	if _runtime_guard.paused:
+		GameLog.end_func_call(frame.call_id, null, "runtime_paused")
+		return [false, null]
+	frame.stage = "result"
+	frame["result"] = result
 	if f._var_index != -1:
 		while effect._self_vars.size() <= f._var_index:
 			effect._self_vars.append(null)
 		effect._self_vars[f._var_index] = result
-	GameLog.end_func_call(call_id, result, "executed")
+	GameLog.end_func_call(frame.call_id, result, "executed")
 	return [true, result]
 
 
@@ -1971,6 +2246,9 @@ func request_choice(choice:BaseEffect) -> void:
 
 
 func activate_effect(effect:BaseEffect):
+	if _runtime_guard.paused:
+		return
+	_begin_guard_transaction(effect)
 	#选择效果与发起它的那条效果共用一张变量表：选项里的步骤能读前面算出的结果，
 	#后面的步骤也能读选项里算出的结果。普通激活都从空白的变量表开始，避免读到上一次激活的残留值
 	var paused = _paused_runs.get(effect)
@@ -1978,7 +2256,10 @@ func activate_effect(effect:BaseEffect):
 	#（信仰的加护"延后他人能力"这类）。被延后/取消的效果不记为触发过、也不派发 effect_end。
 	#选择效果是发起效果的一部分，不单独派发
 	if paused == null and _should_announce_effect_start(effect):
+		var previous_scope = _transaction_scope
+		_transaction_scope = _guard_transactions.get(effect)
 		var action:Dictionary = begin_pending_action(TimePoints.EFFECT_START, effect._trigger_player_id, {"effect": effect}, effect)
+		_transaction_scope = previous_scope
 		if bool(action.get("cancelled", false)):
 			if effect._remove_after_trigger:
 				unregister_effect(effect)
@@ -1996,10 +2277,21 @@ func activate_effect(effect:BaseEffect):
 		"state_before": capture_rule_state() if effect._is_manual else {},
 	}
 	_continue_run(run)
-
+	if not is_running:
+		_release_guard_transactions()
 
 #从 run.index 那一步往下做；某一步提出了选择就停在这里，等选择结束后由 _resume_after_choice 接着做
 func _continue_run(run:Dictionary) -> void:
+	var previous_scope = _transaction_scope
+	_transaction_scope = _guard_transactions.get(run.effect)
+	if not is_running and _active_runs.is_empty() and _resume_frames.is_empty():
+		_runtime_guard.begin_slice()
+	_active_runs.append({"run": run, "previous_effect": activating_eff})
+	_continue_run_body(run)
+	_active_runs.pop_back()
+	_transaction_scope = previous_scope
+
+func _continue_run_body(run:Dictionary) -> void:
 	var effect:BaseEffect = run.effect
 	#一次结算的执行编号：名下所有 func 日志都带同一个 execution_id。
 	#收栈时按编号定位，中途抛错没走到的执行不会留在栈上
@@ -2009,9 +2301,22 @@ func _continue_run(run:Dictionary) -> void:
 	start_effect()
 	var funcs:Array = run.funcs
 	while int(run.index) < funcs.size():
+		if not runtime_guard_checkpoint():
+			_guard_run = run
+			end_effect()
+			GameLog.end_execution(execution_id)
+			activating_eff = previous_effect
+			return
 		var f:BaseFunc = funcs[int(run.index)]
 		run.index = int(run.index) + 1
 		var outcome: Array = run_base_func(f, effect)
+		if _runtime_guard.paused:
+			run.index = int(run.index) - 1
+			_guard_run = run
+			end_effect()
+			GameLog.end_execution(execution_id)
+			activating_eff = previous_effect
+			return
 		if bool(outcome[0]) and f._var_index == -1 and f._name != "do_nothing":
 			run.applied = true
 		if !_pending_choices.is_empty():
@@ -2036,6 +2341,7 @@ func _ask_next_choice(paused:Dictionary) -> void:
 		return
 	var choice:BaseEffect = queue.pop_front()
 	_paused_runs[choice] = paused
+	_inherit_guard_transaction(choice)
 	decision_queue.push_front(choice)
 	#不在结算流程里（直接调 activate_effect 的入口）时自己推动一次，否则选择没人问
 	if !is_running:

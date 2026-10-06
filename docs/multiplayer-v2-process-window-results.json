@@ -1,0 +1,20 @@
+[
+  {
+    "role": "host",
+    "exit": 0,
+    "results": [
+      "PROCESS_FULL_GAME role=host decisions=92 view= error= pending={  }",
+      "RESULT checks=5 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "role": "guest",
+    "exit": 0,
+    "results": [
+      "PROCESS_FULL_GAME role=guest decisions=90 view=<null> error= pending={  }",
+      "RESULT checks=8 failures=[]"
+    ],
+    "errors": []
+  }
+]

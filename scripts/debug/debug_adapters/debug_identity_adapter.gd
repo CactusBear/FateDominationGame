@@ -96,11 +96,10 @@ func set_servant(player_id:int, servant_name:String, occupancy:String = "exclusi
 		# 只向目标玩家发牌，绝不使用 -1 触发全员重发。
 		DealPlayerCards.new().exec(player_id)
 		# 重发只建牌库与技能区；恢复替换前的实际手牌量，不按固定规则上限赠牌。
-		RefillHand.new().exec(player_id, hand_count)
-	SyncPower.new().exec(player_id)
-	if rebind_command_spell:
-		_rebind_command_spell(player_id)
-	return {"ok":true, "changed":true, "player_id":player_id, "object_id":new_servant.get_instance_id(), "value":_summary(new_servant)}
+	var result := {"ok":true, "changed":true, "player_id":player_id, "object_id":new_servant.get_instance_id(), "pending":true}
+	_resume_servant_finish({"players":[player_id], "counts":[hand_count] if dealt_zones == "replace" else [],
+		"index":0, "rebind":rebind_command_spell, "result":result, "servant":new_servant})
+	return result
 
 
 ##交换双方的御主。不走 unequip_master：交换不是"卸下"，
@@ -163,15 +162,29 @@ func _swap_servant(player_id:int, other_id:int, dealt_zones:String, true_name:St
 	if dealt_zones == "replace":
 		DealPlayerCards.new().exec(player_id)
 		DealPlayerCards.new().exec(other_id)
-		RefillHand.new().exec(player_id, hand_count)
-		RefillHand.new().exec(other_id, other_hand_count)
-	SyncPower.new().exec(player_id)
-	SyncPower.new().exec(other_id)
-	if rebind_command_spell:
-		_rebind_command_spell(player_id)
-		_rebind_command_spell(other_id)
-	return {"ok":true, "changed":true, "player_id":player_id, "other_player":other_id,
-		"object_id":theirs.get_instance_id(), "value":_summary(theirs)}
+	var result := {"ok":true, "changed":true, "player_id":player_id, "other_player":other_id,
+		"object_id":theirs.get_instance_id(), "pending":true}
+	_resume_servant_finish({"players":[player_id, other_id], "counts":[hand_count, other_hand_count] if dealt_zones == "replace" else [],
+		"index":0, "rebind":rebind_command_spell, "result":result, "servant":theirs})
+	return result
+
+
+static func _resume_servant_finish(state:Dictionary) -> void:
+	while state.index < state.counts.size():
+		var index:int = state.index
+		state.index += 1
+		RefillHand.new().exec(state.players[index], state.counts[index])
+		if EffectManager.defer_until_runtime_guard_complete(Callable(DebugIdentityAdapter, "_resume_servant_finish").bind(state)):
+			return
+	# 保持原收尾顺序：先补齐所有玩家，再同步所有威力，最后重绑令咒。
+	for id in state.players:
+		SyncPower.new().exec(id)
+	var adapter := DebugIdentityAdapter.new()
+	if state.rebind:
+		for id in state.players:
+			adapter._rebind_command_spell(id)
+	state.result["value"] = adapter._summary(state.servant)
+	state.result.pending = false
 
 
 ##把 from_id 名下、来源是 source 的已发牌整批转给 to_id 的同名牌区。

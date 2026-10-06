@@ -22,8 +22,14 @@ const READERS := {
 	"get_effective_location_benefit": preload("res://scripts/system/operations/GetEffectiveLocationBenefit.gd"),
 	"get_player_location_benefit": preload("res://scripts/system/operations/GetPlayerLocationBenefit.gd"),
 	"get_attack_printed_power": preload("res://scripts/system/operations/GetAttackPrintedPower.gd"),
+	"is_true_name_released": preload("res://scripts/system/operations/IsTrueNameReleased.gd"),
 }
 var variables:Dictionary = {}
+const SPECIAL_DESCRIPTORS := ["foreach_func", "store_value", "get_eff_source_card", "log_exists", "power_contribution", "attack_power_contribution", "card_power_contribution"]
+
+static func supports_descriptor(name: String) -> bool:
+	return READERS.has(name) or SPECIAL_DESCRIPTORS.has(name)
+
 var effect:BaseEffect
 var player_id:int
 var contribution:int = 0
@@ -152,7 +158,7 @@ func evaluate_one(desc:Dictionary):
 		#Malformed legacy foreach slots stay malformed rather than silently changing targets.
 		#Do not call player readers with null/-1: those can create fallback player state.
 		var player_slot:int = 1 if name == "get_rank_by_data_number" else 0
-		if name in ["get_rank_by_data_number", "get_shared_attack_attribute", "get_player_played_cards", "get_player_location_benefit", "get_effective_location_benefit"]:
+		if name in ["get_rank_by_data_number", "get_shared_attack_attribute", "get_player_played_cards", "get_player_location_benefit", "get_effective_location_benefit", "is_true_name_released"]:
 			if params.size() <= player_slot or params[player_slot] == null or int(params[player_slot]) < 0: return
 			if not GameData.player_data_library.has(int(params[player_slot])): return
 		if name == "get_player_played_cards" and int(params[0]) == player_id:

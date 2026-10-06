@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dbh4v18tvckyp"]
 
 [ext_resource type="Script" uid="uid://e1ig44n16qsj" path="res://scripts/main_menu/main_menu.gd" id="1_menu"]
-[ext_resource type="VideoStream" uid="uid://q32uymxj3f6u" path="res://assets/videos/main_menu/knight_idle_hq1080.ogv" id="4_sky"]
+[ext_resource type="VideoStream" path="res://assets/videos/main_menu/menu_background_131009_loop.ogv" id="4_sky"]
 [ext_resource type="Texture2D" uid="uid://bv3dnsb132hw" path="res://assets/images/main_menu/title_fate.svg" id="5_title"]
 [ext_resource type="Texture2D" uid="uid://dktua13oyhui3" path="res://assets/images/main_menu/title_domination.svg" id="6_subtitle"]
 

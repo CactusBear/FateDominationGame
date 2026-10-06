@@ -1,0 +1,12 @@
+[
+  {
+    "role": "host",
+    "exit": 0,
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nCHECK process host listens true\nCHECK host registers local selection true\nPROCESS_HOST_READY\nCHECK separate process receives real match roster true\nCHECK separate process hidden hand filtered true\nCHECK one owned seat in process view true\nCHECK only authority process runs game engine true\nCHECK cross-process handshake selection and match startup completed true\nCHECK cross-process private response resolved by host and acknowledged true\nPROCESS_ROLE host\nRESULT checks=8 failures=[]\n"
+  },
+  {
+    "role": "client",
+    "exit": 0,
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nCHECK process client connects true\nCHECK separate process receives real match roster true\nCHECK separate process hidden hand filtered true\nCHECK one owned seat in process view true\nCHECK only authority process runs game engine true\nCHECK client receives private prompt from host process true\nCHECK cross-process handshake selection and match startup completed true\nCHECK cross-process private response resolved by host and acknowledged true\nPROCESS_ROLE client\nRESULT checks=8 failures=[]\n"
+  }
+]

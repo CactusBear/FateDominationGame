@@ -11,19 +11,33 @@ func exec(player_id:int = -1, limit = 0) -> int:
 	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	var hand = player_data["hand_cards"] as Array
 	var target:int = limit.number if limit is BaseNumber else int(limit)
-	var hand_before:int = hand.size()
-	var deck_before:int = (player_data["deck"] as Array).size()
-	var drawn:int = 0
-	while hand.size() < target:
-		if (player_data["deck"] as Array).is_empty() and !ReshuffleDiscard.new().exec(player_id):
+	var state:Dictionary = {"player": player_id, "data": player_data, "hand": hand, "target": target,
+		"hand_before": hand.size(), "deck_before": player_data.deck.size(), "drawn": 0, "phase": "draw"}
+	state = EffectManager.record_loop_state(state, self)
+	_resume_refill(state)
+	#同步返回当前完成数量；正式回合以补牌完成尾部为推进边界。
+	return state.drawn
+
+
+static func _resume_refill(state:Dictionary) -> void:
+	while true:
+		if state.phase == "after_draw":
+			#抽牌效果完成后才判定是否抽动，避免用尚未结算的牌区状态推进。
+			if state.hand.size() == state.before:
+				break
+			state.drawn += 1
+			state.phase = "draw"
+		if state.hand.size() >= state.target:
 			break
-		var before:int = hand.size()
-		DrawCardFromPlDeckToHand.new().exec(0, player_id)
-		#抽牌入口可能因"不能抽牌"这类状态而拒发，抽不动就停，避免死循环
-		if hand.size() == before:
+		if not EffectManager.runtime_guard_checkpoint(state):
+			return
+		if state.data.deck.is_empty() and not ReshuffleDiscard.new().exec(state.player):
 			break
-		drawn += 1
+		state["before"] = state.hand.size()
+		state.phase = "after_draw"
+		DrawCardFromPlDeckToHand.new().exec(0, state.player)
+		if EffectManager.defer_until_runtime_guard_complete(Callable(RefillHand, "_resume_refill").bind(state)):
+			return
 	#日志：补牌事实（供"这次补了几张""为什么没补"这类历史查询与排查）
-	GameLog.record("refill_hand", player_id, -1, "", null, ["refill_hand"],
-		{"limit": target, "drawn": drawn, "hand_before": hand_before, "deck_before": deck_before})
-	return drawn
+	GameLog.record("refill_hand", state.player, -1, "", null, ["refill_hand"],
+		{"limit": state.target, "drawn": state.drawn, "hand_before": state.hand_before, "deck_before": state.deck_before})

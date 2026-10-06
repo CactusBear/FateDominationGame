@@ -1,0 +1,66 @@
+[
+  {
+    "suite": "net_v2_hand_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=17 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_v2_area_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=13 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_v2_choice_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=13 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_v2_view",
+    "exit": 0,
+    "result": [
+      "RESULT checks=15 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_match",
+    "exit": 0,
+    "result": [
+      "RESULT checks=20 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "match_view",
+    "exit": 0,
+    "result": [
+      "RESULT checks=207 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_target_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=13 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_full_game",
+    "exit": 0,
+    "result": [
+      "RESULT checks=4 failures=[]"
+    ],
+    "errors": []
+  }
+]

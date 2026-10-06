@@ -1,0 +1,214 @@
+{
+  "requested_suites": 23,
+  "executed_suites": 23,
+  "checks": 202,
+  "suites": [
+    {
+      "suite": "rule_guard_choice_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=24 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 24
+    },
+    {
+      "suite": "rule_guard_continuation_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=12 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 12
+    },
+    {
+      "suite": "rule_guard_debug_hand_result_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=10 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 10
+    },
+    {
+      "suite": "rule_guard_debug_identity_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=12 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 12
+    },
+    {
+      "suite": "rule_guard_debug_result_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=11 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 11
+    },
+    {
+      "suite": "rule_guard_event_add_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=7 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 7
+    },
+    {
+      "suite": "rule_guard_event_place_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    },
+    {
+      "suite": "rule_guard_event_reveal_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    },
+    {
+      "suite": "rule_guard_game_start_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    },
+    {
+      "suite": "rule_guard_loop_owner_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=7 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 7
+    },
+    {
+      "suite": "rule_guard_native_event_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=5 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 5
+    },
+    {
+      "suite": "rule_guard_native_refill_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    },
+    {
+      "suite": "rule_guard_pending_atomic_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=8 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 8
+    },
+    {
+      "suite": "rule_guard_phase_start_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    },
+    {
+      "suite": "rule_guard_refill_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=7 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 7
+    },
+    {
+      "suite": "rule_guard_regular_add_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=18 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 18
+    },
+    {
+      "suite": "rule_guard_regular_group_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=9 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 9
+    },
+    {
+      "suite": "rule_guard_round_start_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    },
+    {
+      "suite": "rule_guard_situation_magic_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    },
+    {
+      "suite": "rule_guard_situation_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=7 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 7
+    },
+    {
+      "suite": "rule_guard_time_point_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=8 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 8
+    },
+    {
+      "suite": "rule_guard_true_name_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=9 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 9
+    },
+    {
+      "suite": "rule_guard_zone_notify_test",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "role": "host",
+    "exit": 0,
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nPROCESS_HOST_READY\nCHECK separate process client decisions reach actual game end true\nCHECK client never starts local game engine true\nCHECK this process submitted gameplay decisions true\nPROCESS_FULL_GAME role=host decisions=92 view= error= pending={  }\nRESULT checks=3 failures=[]\n"
+  },
+  {
+    "role": "client",
+    "exit": 0,
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nCHECK separate process client decisions reach actual game end true\nCHECK client never starts local game engine true\nCHECK this process submitted gameplay decisions true\nPROCESS_FULL_GAME role=client decisions=90 view= error=当前不能准备 pending={  }\nRESULT checks=3 failures=[]\n"
+  }
+]

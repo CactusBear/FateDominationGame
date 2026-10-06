@@ -11,38 +11,63 @@ extends RefCounted
 #挂到战场上的是克隆体：效果登记时会写_trigger_player_id，
 #直接挂模板会让同一张牌下次进场时不再被登记
 func place(plan:Array) -> Array:
-	var placed:Array = []
-	for p in plan:
+	var state:Dictionary = {"plan": plan, "index": 0, "placed": []}
+	_resume_place(state)
+	return state.placed
+
+
+static func _resume_place(state:Dictionary) -> void:
+	while state.index < state.plan.size():
+		var p = state.plan[state.index]
+		state.index += 1
 		var area = GetMapAreaByName.new().exec(p["area_name"])
 		if area == null:
 			continue
 		#取牌堆头模板克隆挂载的完整链路在 AddEventFromDeck 里，这里只按计划传参
 		var count:int = AddEventFromDeck.new().exec(area, 1, p.get("concealed", false))
 		if count > 0:
-			placed.append(true)
-	return placed
+			state.placed.append(true)
+		if EffectManager.defer_until_runtime_guard_complete(Callable(EventResolver, "_resume_place").bind(state)):
+			return
 
 
 #规则：行动阶段开始时展示暗置放置的事件牌（基础规则是"展示位于新都的暗置事件牌"）。
 #"该翻哪个战区"沿用本回合的放置计划里 concealed=true 的那几项：
 #不写死战区名，也不会误翻别处碰巧暗置的牌。返回翻开的张数
 func reveal_planned(plan:Array) -> int:
+	return start_reveal(plan).count
+
+
+## 完成状态与数量共用原游标；暂停消费方不读取部分数量作为最终结果。
+func start_reveal(plan:Array) -> Dictionary:
 	var concealed_areas:Array = []
 	for p in plan:
 		if p.get("concealed", false):
 			concealed_areas.append(str(p.get("area_name", "")))
-	var count:int = 0
-	for area:BaseMapArea in MapData.areas:
-		if !concealed_areas.has(area._area_name):
-			continue
-		for event in area._events:
-			if event is BaseEvent and bool(event.get("_is_concealed")):
-				SetCardConcealed.new().exec(event, false)
-				register_entered(event)
-				count += 1
+	var state:Dictionary = {"areas": MapData.areas, "planned": concealed_areas, "area_index": 0, "event_index": 0, "count": 0, "completed": false}
+	_resume_reveal(state)
 	#翻开即亮出：循环里每张翻开的牌各自派发三种卡牌亮出时点（见 TimePoints.CARD_REVEALED），
 	#让布置类效果立刻执行；一张都没翻开就不派发，避免空时点白跑一轮效果检查
-	return count
+	#同步调用返回已完成数量；暂停时，剩余流程由显式尾部完成。
+	return state
+
+
+static func _resume_reveal(state:Dictionary) -> void:
+	while state.area_index < state.areas.size():
+		var area:BaseMapArea = state.areas[state.area_index]
+		if not state.planned.has(area._area_name) or state.event_index >= area._events.size():
+			state.area_index += 1
+			state.event_index = 0
+			continue
+		var event = area._events[state.event_index]
+		state.event_index += 1
+		if event is BaseEvent and event._is_concealed:
+			SetCardConcealed.new().exec(event, false)
+			state.count += 1
+			EventResolver.new().register_entered(event)
+			if EffectManager.defer_until_runtime_guard_complete(Callable(EventResolver, "_resume_reveal").bind(state)):
+				return
+	state.completed = true
 
 
 #明置放置（AddEventFromDeck）与暗置翻开（reveal_planned）共用这一条：

@@ -1,0 +1,59 @@
+{
+  "suites": [
+    {
+      "suite": "rule_guard_debug_result",
+      "exit": 0,
+      "results": [
+        "RESULT checks=11 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 11
+    },
+    {
+      "suite": "rule_guard_situation_magic",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    },
+    {
+      "suite": "rule_guard_event_add",
+      "exit": 0,
+      "results": [
+        "RESULT checks=7 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 7
+    },
+    {
+      "suite": "rule_guard_event_reveal",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    },
+    {
+      "suite": "rule_guard_event_place",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    },
+    {
+      "suite": "rule_guard_situation",
+      "exit": 0,
+      "results": [
+        "RESULT checks=7 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 7
+    }
+  ],
+  "checks": 43
+}

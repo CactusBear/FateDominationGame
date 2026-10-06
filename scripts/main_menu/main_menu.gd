@@ -11,9 +11,16 @@ extends Control
 ## scene：选中后要切换到的场景，为空则提示尚未接入。
 ## planned：true 表示功能预定，中文名后跟「预定」标签且不可进入。
 ## quit：true 表示该项直接退出游戏。
+const GAME_ENTRIES: Array = [
+	{"en": "SINGLE PLAYER", "cn": "单机游戏",
+	 "scene": "res://assets/scenes/main_menu/selection_screen.tscn"},
+	{"en": "MULTIPLAYER", "cn": "联机大厅",
+	 "scene": "res://assets/scenes/main_menu/multiplayer_lobby.tscn"},
+	{"en": "BACK", "cn": "返回", "back": true},
+]
 const ENTRIES: Array = [
 	{"en": "START GAME", "cn": "开始游戏",
-	 "scene": "res://assets/scenes/main_menu/selection_screen.tscn"},
+	 "children": GAME_ENTRIES},
 	{"en": "CARD EDITOR", "cn": "编辑器",
 	 "scene": "res://json_maker/json_maker.tscn"},
 	{"en": "DATABASE", "cn": "数据库", "planned": true},
@@ -56,6 +63,7 @@ var _cn_regular: Font
 var _cn_bold: Font
 
 var _nav_items: Array[Control] = []
+var _entries: Array = ENTRIES
 var _selected := 0
 var _switching := false
 var _rise_tweens: Array[Tween] = []
@@ -82,6 +90,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				_select(_selected - 1)
 			KEY_ENTER, KEY_KP_ENTER:
 				_activate(_selected)
+			KEY_ESCAPE:
+				if _entries != ENTRIES:
+					_show_entries(ENTRIES)
+				else:
+					return
 			_:
 				return
 		get_viewport().set_input_as_handled()
@@ -139,13 +152,13 @@ func _build_nav(root: Control) -> void:
 	nav.name = "Nav"
 	nav.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	nav.position = NAV_RECT.position
-	nav.size = Vector2(NAV_RECT.size.x, NAV_ITEM_HEIGHT * ENTRIES.size() + QUIT_GAP)
+	nav.size = Vector2(NAV_RECT.size.x, NAV_ITEM_HEIGHT * _entries.size() + QUIT_GAP)
 	root.add_child(nav)
 	var y := 0.0
-	for i in ENTRIES.size():
-		if ENTRIES[i].get("quit", false):
+	for i in _entries.size():
+		if _entries[i].get("quit", false):
 			y += QUIT_GAP
-		var item := _make_nav_item(ENTRIES[i], i)
+		var item := _make_nav_item(_entries[i], i)
 		item.position = Vector2(0, y)
 		nav.add_child(item)
 		_nav_items.append(item)
@@ -214,7 +227,7 @@ func _make_nav_item(entry: Dictionary, index: int) -> Control:
 ## ---------- 选择与动作 ----------
 
 func _select(index: int, animate := true) -> void:
-	_selected = posmod(index, ENTRIES.size())
+	_selected = posmod(index, _entries.size())
 	for i in _nav_items.size():
 		var item := _nav_items[i]
 		var selected := i == _selected
@@ -236,8 +249,16 @@ func _select(index: int, animate := true) -> void:
 
 
 func _activate(index: int) -> void:
+	if _switching:
+		return
 	_select(index)
-	var entry: Dictionary = ENTRIES[index]
+	var entry: Dictionary = _entries[_selected]
+	if entry.has("children"):
+		_show_entries(entry.children)
+		return
+	if entry.get("back", false):
+		_show_entries(ENTRIES)
+		return
 	if entry.get("quit", false):
 		get_tree().quit()
 		return
@@ -252,6 +273,20 @@ func _activate(index: int) -> void:
 	if error != OK:
 		_switching = false
 		_show_toast("无法打开场景：" + scene_path)
+
+
+func _show_entries(entries: Array) -> void:
+	for tween in _rise_tweens:
+		if tween.is_valid():
+			tween.kill()
+	_rise_tweens.clear()
+	var old_nav: Control = _content.get_node("Nav")
+	_content.remove_child(old_nav)
+	old_nav.queue_free()
+	_nav_items.clear()
+	_entries = entries
+	_build_nav(_content)
+	_select(0, false)
 
 
 func _show_toast(message: String) -> void:

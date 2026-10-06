@@ -1,0 +1,59 @@
+{
+  "suites": [
+    {
+      "suite": "rule_guard_debug_hand_result_window",
+      "exit": 0,
+      "results": [
+        "RESULT checks=10 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 10
+    },
+    {
+      "suite": "debug_identity_hand",
+      "exit": 0,
+      "results": [
+        "RESULT checks=25 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 25
+    },
+    {
+      "suite": "debug_identity_hand_full_game",
+      "exit": 0,
+      "results": [
+        "RESULT checks=21 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 21
+    },
+    {
+      "suite": "debug_identity_swap",
+      "exit": 0,
+      "results": [
+        "RESULT checks=61 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 61
+    },
+    {
+      "suite": "debug_console",
+      "exit": 0,
+      "results": [
+        "RESULT checks=82 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 82
+    },
+    {
+      "suite": "debug_console_pause",
+      "exit": 0,
+      "results": [
+        "RESULT checks=16 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 16
+    }
+  ],
+  "checks": 215
+}

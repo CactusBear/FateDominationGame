@@ -1,0 +1,47 @@
+[
+  {
+    "scene": "net_options",
+    "exit": 0,
+    "result": [
+      "RESULT checks=6 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK out of range quantity rejected true\r\nCHECK existing maximum use enforced true\r\nCHECK invalid choices leave waiting and quantities untouched true\r\nCHECK valid counted quantity choice accepted true\r\nCHECK existing engine records quantity and use count true\r\nCHECK valid option completes pending choice true\r\nRESULT checks=6 failures=[]"
+  },
+  {
+    "scene": "net_pending",
+    "exit": 0,
+    "result": [
+      "RESULT checks=14 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK real match started true\r\nCHECK actual engine reaches pending effect true\r\nCHECK authority exposes filtered pending prompt true\r\nCHECK other connection receives no private prompt true\r\nCHECK owner receives pending effect identifier true\r\nCHECK prompt does not serialize rule objects true\r\nCHECK session exposes private pending prompt true\r\nCHECK private prompt transmitted through real ENet true\r\nCHECK unassigned host receives no guest prompt true\r\nCHECK unassigned connection cannot answer true\r\nCHECK unauthorized answer preserves pending true\r\nCHECK trigger owner can decline outside their turn true\r\nCHECK accepted answer clears same waiting effect true\r\nCHECK duplicate answer rejected true\r\nRESULT checks=14 failures=[]"
+  },
+  {
+    "scene": "net_full_game",
+    "exit": 0,
+    "result": [
+      "RESULT checks=4 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK full command fixture starts true\r\nCHECK human command gate reaches actual game end true\r\nCHECK commands executed without AI takeover true\r\nCHECK engine records terminal result true\r\nNETWORK_COMMAND_GAME submitted=222 round=11\r\nRESULT checks=4 failures=[]"
+  },
+  {
+    "scene": "net_management_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=10 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK management controls exist true\r\nCHECK real transfer button updates authority true\r\nCHECK former owner loses start permission true\r\nCHECK remote owner derives readiness from authoritative snapshot true\r\nCHECK connected lobby no longer displays connecting true\r\nCHECK spectator checkbox joins without player seat true\r\nCHECK spectator has no ready operation true\r\nCHECK remote owner kicks selected spectator true\r\nCHECK kicked connection actually closes true\r\nCHECK management screenshot saved true\r\nRESULT checks=10 failures=[]"
+  },
+  {
+    "scene": "net_opponent_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=11 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK network choice panel exists true\r\nCHECK queued opponent effect waits for target true\r\nCHECK opponent sees private effect prompt true\r\nCHECK initiator cannot answer target prompt true\r\nCHECK opponent prompt screenshot saved true\r\nCHECK real opponent click answers through network true\r\nCHECK answered prompt closes from authoritative update true\r\nCHECK network panel supports explicit option inputs true\r\nCHECK opponent option screenshot saved true\r\nCHECK opponent quantity entered through UI reaches authority true\r\nCHECK opponent selected branch executed once true\r\nRESULT checks=11 failures=[]"
+  }
+]

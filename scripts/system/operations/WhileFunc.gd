@@ -12,26 +12,33 @@ func exec(body, condition, max_iterations:int = MAX_ITERATIONS):
 	if effect == null:
 		return
 
-	var last_result = null
-	var i = 0
-	while i < max_iterations:
-		var cond_value = condition
-		if condition is Dictionary or condition is BaseFunc:
-			var cond_res = EffectManager.run_func_descriptor(condition, effect)
-			if !cond_res[0]:
+	var state := {"kind": "while", "iteration": 0, "last_result": null, "limit": max_iterations, "phase": "condition"}
+	state = EffectManager.record_loop_state(state, self)
+	while int(state.iteration) < int(state.limit):
+		if not EffectManager.runtime_guard_checkpoint():
+			return state.last_result
+		if state.phase == "condition":
+			var cond_value = condition
+			if condition is Dictionary or condition is BaseFunc:
+				var cond_res = EffectManager.run_func_descriptor(condition, effect)
+				if EffectManager.runtime_guard_status().paused:
+					return state.last_result
+				if !cond_res[0]:
+					break
+				cond_value = cond_res[1]
+			if cond_value is BaseNumber:
+				cond_value = cond_value.number != 0
+			if !bool(cond_value):
 				break
-			cond_value = cond_res[1]
-
-		if cond_value is BaseNumber:
-			cond_value = cond_value.number != 0
-		if !bool(cond_value):
-			break
-
-		GameLog.push_loop(i)
+			state["condition_result"] = cond_value
+			state.phase = "body"
+		GameLog.push_loop(int(state.iteration))
 		var res = EffectManager.run_func_descriptor(body, effect)
 		GameLog.pop_loop()
+		if EffectManager.runtime_guard_status().paused:
+			return state.last_result
 		if res[0]:
-			last_result = res[1]
-		i += 1
-
-	return last_result
+			state.last_result = res[1]
+		state.iteration += 1
+		state.phase = "condition"
+	return state.last_result

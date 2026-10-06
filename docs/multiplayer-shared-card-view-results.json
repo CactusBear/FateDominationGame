@@ -1,0 +1,42 @@
+[
+  {
+    "suite": "net_v2_hand_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=31 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "zoom_and_desc",
+    "exit": 0,
+    "result": [
+      "RESULT checks=84 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "local_spell_restore",
+    "exit": 0,
+    "result": [
+      "RESULT checks=18 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_v2_area_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=14 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "battle_board_v2",
+    "exit": 0,
+    "result": [
+      "RESULT checks=53 failures=[]"
+    ],
+    "errors": []
+  }
+]

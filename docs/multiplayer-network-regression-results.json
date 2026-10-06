@@ -1,0 +1,1366 @@
+{
+  "batch": [
+    {
+      "scene": "angra_fang_window_test",
+      "exit": 1,
+      "checks": null,
+      "failures": null,
+      "result": null,
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "angra_mainyu_editor_test",
+      "exit": 0,
+      "checks": 11,
+      "failures": [],
+      "result": "RESULT checks=11 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "angra_mainyu_test",
+      "exit": 0,
+      "checks": 98,
+      "failures": [],
+      "result": "RESULT checks=98 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "angra_mainyu_window_test",
+      "exit": 1,
+      "checks": null,
+      "failures": null,
+      "result": null,
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "area_lock_window_test",
+      "exit": 0,
+      "checks": 14,
+      "failures": [],
+      "result": "RESULT checks=14 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "array_result_drag_test",
+      "exit": 0,
+      "checks": 12,
+      "failures": [],
+      "result": "RESULT {\"checks\":12,\"failures\":[]}",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "artoria_skills_test",
+      "exit": 0,
+      "checks": 22,
+      "failures": [],
+      "result": "RESULT checks=22 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "ask_player_option_test",
+      "exit": 0,
+      "checks": 10,
+      "failures": [],
+      "result": "RESULT checks=10 failures=0",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "avatar_entrance_test",
+      "exit": 0,
+      "checks": 8,
+      "failures": [],
+      "result": "RESULT checks=8 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "avatar_parallel_test",
+      "exit": 0,
+      "checks": 20,
+      "failures": [],
+      "result": "RESULT checks=20 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "battle_board_v2_font_test",
+      "exit": 0,
+      "checks": 30391,
+      "failures": [],
+      "result": "RESULT {\"checks\":30391,\"failures\":[],\"report\":\"C:/Users/Administrator/AppData/Local/hermes/cache/scratch/fate_v2_font_audit.json\"}",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "battle_board_v2_test",
+      "exit": 0,
+      "checks": 53,
+      "failures": [],
+      "result": "RESULT checks=53 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "battle_broadcast_test",
+      "exit": 0,
+      "checks": 36,
+      "failures": [],
+      "result": "RESULT checks=36 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "battle_event_discard_test",
+      "exit": 0,
+      "checks": 24,
+      "failures": [],
+      "result": "RESULT checks=24 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "battle_log_button_test",
+      "exit": 0,
+      "checks": 10,
+      "failures": [],
+      "result": "RESULT checks=10 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "battle_play_groups_test",
+      "exit": 0,
+      "checks": 43,
+      "failures": [],
+      "result": "RESULT checks=43 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "battle_score_report_test",
+      "exit": 0,
+      "checks": 234,
+      "failures": [],
+      "result": "RESULT checks=234 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "battle_scroll_full_game_test",
+      "exit": 0,
+      "checks": 13,
+      "failures": [],
+      "result": "RESULT checks=13 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "battle_scroll_test",
+      "exit": 1,
+      "checks": 75,
+      "failures": [
+        "\"deployed player defaults to their own battlefield\"",
+        " \"fixture has more than five unseated players\"",
+        " \"overflow row is scrollable without scrollbar\"",
+        " \"wheel scrolls upper player row\"",
+        " \"upper row does not cover another strip\""
+      ],
+      "result": "RESULT checks=75 failures=[\"deployed player defaults to their own battlefield\", \"fixture has more than five unseated players\", \"overflow row is scrollable without scrollbar\", \"wheel scrolls upper player row\", \"upper row does not cover another strip\"]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "battlefield_conceal_test",
+      "exit": 0,
+      "checks": 25,
+      "failures": [],
+      "result": "RESULT checks=25 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "bellerophon_composition_test",
+      "exit": 0,
+      "checks": 8,
+      "failures": [],
+      "result": "RESULT checks=8 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "bellerophon_edges_test",
+      "exit": 0,
+      "checks": 42,
+      "failures": [],
+      "result": "RESULT checks=42 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "bellerophon_rules_test",
+      "exit": 0,
+      "checks": 49,
+      "failures": [],
+      "result": "RESULT checks=49 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "bellerophon_window_test",
+      "exit": 0,
+      "checks": 13,
+      "failures": [],
+      "result": "RESULT checks=13 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "board_presentation_test",
+      "exit": 0,
+      "checks": 11,
+      "failures": [],
+      "result": "RESULT checks=11 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "board_requested_ui_test",
+      "exit": 0,
+      "checks": 33,
+      "failures": [],
+      "result": "RESULT checks=33 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "card_browser_test",
+      "exit": 0,
+      "checks": 4,
+      "failures": [],
+      "result": "RESULT checks=4 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "card_effect_runtime_test",
+      "exit": 0,
+      "checks": 80,
+      "failures": [],
+      "result": "RESULT checks=80 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "card_history_test",
+      "exit": 0,
+      "checks": 26,
+      "failures": [],
+      "result": "RESULT checks=26 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "card_keyword_test",
+      "exit": 0,
+      "checks": 30,
+      "failures": [],
+      "result": "RESULT checks=30 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "card_revealed_test",
+      "exit": 0,
+      "checks": 15,
+      "failures": [],
+      "result": "RESULT checks=15 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "card_selection_mandatory_test",
+      "exit": 0,
+      "checks": 39,
+      "failures": [],
+      "result": "RESULT checks=39 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "card_selection_owner_test",
+      "exit": 0,
+      "checks": 17,
+      "failures": [],
+      "result": "RESULT checks=17 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "card_selection_sources_test",
+      "exit": 0,
+      "checks": 14,
+      "failures": [],
+      "result": "RESULT checks=14 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "card_zone_browser_test",
+      "exit": 0,
+      "checks": 106,
+      "failures": [],
+      "result": "RESULT {\"checks\":106,\"failures\":[]}",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "climax_elimination_test",
+      "exit": 0,
+      "checks": 16,
+      "failures": [],
+      "result": "RESULT checks=16 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "climax_gated_ability_test",
+      "exit": 0,
+      "checks": 11,
+      "failures": [],
+      "result": "RESULT checks=11 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "command_spell_box_test",
+      "exit": 0,
+      "checks": 30,
+      "failures": [],
+      "result": "RESULT checks=30 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "command_spell_test",
+      "exit": 0,
+      "checks": 54,
+      "failures": [],
+      "result": "RESULT checks=54 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "create_card_test",
+      "exit": 0,
+      "checks": 57,
+      "failures": [],
+      "result": "RESULT checks=57 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "current_skill_group_test",
+      "exit": 0,
+      "checks": 16,
+      "failures": [],
+      "result": "RESULT checks=16 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "debug_console_pause_test",
+      "exit": 0,
+      "checks": 15,
+      "failures": [],
+      "result": "RESULT checks=15 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "debug_console_test",
+      "exit": 0,
+      "checks": 80,
+      "failures": [],
+      "result": "RESULT checks=80 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "debug_identity_hand_full_game_test",
+      "exit": "TIMEOUT",
+      "checks": null,
+      "failures": null,
+      "result": null,
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "debug_identity_hand_test",
+      "exit": 0,
+      "checks": 21,
+      "failures": [],
+      "result": "RESULT checks=21 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "debug_identity_swap_test",
+      "exit": 0,
+      "checks": 55,
+      "failures": [],
+      "result": "RESULT checks=55 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "debug_unbounded_number_test",
+      "exit": 0,
+      "checks": 26,
+      "failures": [],
+      "result": "RESULT checks=26 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "deploy_rules_layer_test",
+      "exit": 0,
+      "checks": 22,
+      "failures": [],
+      "result": "RESULT checks=22 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "deploy_rules_test",
+      "exit": 0,
+      "checks": 21,
+      "failures": [],
+      "result": "RESULT checks=21 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "drawer_dismiss_test",
+      "exit": 0,
+      "checks": 1,
+      "failures": [],
+      "result": "RESULT checks=1 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "effect_body_fill2_test",
+      "exit": 0,
+      "checks": 30,
+      "failures": [],
+      "result": "RESULT checks=30 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "effect_body_fill_test",
+      "exit": 0,
+      "checks": 12,
+      "failures": [],
+      "result": "RESULT checks=12 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "engagement_test",
+      "exit": 0,
+      "checks": 19,
+      "failures": [],
+      "result": "RESULT checks=19 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "extra_play_limit_test",
+      "exit": 0,
+      "checks": 22,
+      "failures": [],
+      "result": "RESULT checks=22 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "fd39_operations_test",
+      "exit": 0,
+      "checks": 101,
+      "failures": [],
+      "result": "RESULT checks=101 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "full_game_test",
+      "exit": 0,
+      "checks": 13,
+      "failures": [],
+      "result": "RESULT checks=13 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "hand_fan_arc_test",
+      "exit": 0,
+      "checks": 20,
+      "failures": [],
+      "result": "RESULT checks=20 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "hand_fan_limits_test",
+      "exit": 0,
+      "checks": 0,
+      "failures": [],
+      "result": "RESULT checks=0 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "held_cards_test",
+      "exit": 0,
+      "checks": 58,
+      "failures": [],
+      "result": "RESULT checks=58 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "held_cards_window_test",
+      "exit": 0,
+      "checks": 37,
+      "failures": [],
+      "result": "RESULT checks=37 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "held_skill_input_test",
+      "exit": 0,
+      "checks": 34,
+      "failures": [],
+      "result": "RESULT checks=34 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "ichi_no_tachi_test",
+      "exit": 0,
+      "checks": 40,
+      "failures": [],
+      "result": "RESULT checks=40 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "json_codec_test",
+      "exit": 0,
+      "checks": 14,
+      "failures": [],
+      "result": "RESULT {\"checks\":14,\"failures\":[]}",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "json_maker_clipboard_test",
+      "exit": 0,
+      "checks": 8,
+      "failures": [],
+      "result": "RESULT checks=8 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "json_maker_drag_edge_test",
+      "exit": 0,
+      "checks": 2,
+      "failures": [],
+      "result": "RESULT checks=2 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "json_maker_identity_test",
+      "exit": 0,
+      "checks": 13,
+      "failures": [],
+      "result": "RESULT checks=13 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "json_maker_image_picker_test",
+      "exit": 0,
+      "checks": 29,
+      "failures": [],
+      "result": "RESULT checks=29 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "json_maker_popup_palette_test",
+      "exit": 0,
+      "checks": 13,
+      "failures": [],
+      "result": "RESULT {\"checks\":13,\"failures\":[]}",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "json_maker_six_features_test",
+      "exit": 0,
+      "checks": null,
+      "failures": [],
+      "result": "FEATURE RESULT 0 failures: []",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "json_maker_tutorial_test",
+      "exit": 0,
+      "checks": 278,
+      "failures": [],
+      "result": "RESULT checks=278 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "json_maker_ui_test",
+      "exit": 1,
+      "checks": 134,
+      "failures": [
+        "\"save wrote file\"",
+        "\"saved copy keeps meaning\"",
+        "\"saved copy keeps original indent and line endings\"",
+        "\"saving an untouched card does not rewrite it\"",
+        "\"save as elsewhere carries images beside json\""
+      ],
+      "result": "RESULT {\"checks\":134,\"failures\":[\"save wrote file\",\"saved copy keeps meaning\",\"saved copy keeps original indent and line endings\",\"saving an untouched card does not rewrite it\",\"save as elsewhere carries images beside json\"]}",
+      "error_count": 1,
+      "errors": [
+        "ERROR: SHFileOperation error: 2\r"
+      ]
+    },
+    {
+      "scene": "local_spell_restore_test",
+      "exit": 1,
+      "checks": 17,
+      "failures": [
+        "\"hover expansion has intermediate animated width\"",
+        " \"expanded box exposes at most one special card\"",
+        " \"moving to expanded strip keeps it open\"",
+        " \"half-second refresh preserves hover and same special card node\"",
+        " \"real wheel scrolls hidden-bar special cards\"",
+        " \"real special card click requests its own engine effect\""
+      ],
+      "result": "RESULT checks=17 failures=[\"hover expansion has intermediate animated width\", \"expanded box exposes at most one special card\", \"moving to expanded strip keeps it open\", \"half-second refresh preserves hover and same special card node\", \"real wheel scrolls hidden-bar special cards\", \"real special card click requests its own engine effect\"]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "location_benefit_test",
+      "exit": 0,
+      "checks": 15,
+      "failures": [],
+      "result": "RESULT checks=15 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "magic_limit_test",
+      "exit": 0,
+      "checks": 8,
+      "failures": [],
+      "result": "RESULT checks=8 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "main_menu_test",
+      "exit": 0,
+      "checks": 38,
+      "failures": [],
+      "result": "RESULT checks=38 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "mana_glow_test",
+      "exit": 0,
+      "checks": 4,
+      "failures": [],
+      "result": "RESULT checks=4 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "mana_number_test",
+      "exit": 0,
+      "checks": 63,
+      "failures": [],
+      "result": "RESULT checks=63 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "mana_sigil_test",
+      "exit": 0,
+      "checks": 38,
+      "failures": [],
+      "result": "RESULT checks=38 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "mana_spend_test",
+      "exit": 0,
+      "checks": 45,
+      "failures": [],
+      "result": "RESULT checks=45 failures=[]",
+      "error_count": 1,
+      "errors": [
+        "ERROR: 8 resources still in use at exit (run with --verbose for details).\r"
+      ]
+    },
+    {
+      "scene": "masters_audit_fix_test",
+      "exit": 0,
+      "checks": 44,
+      "failures": [],
+      "result": "RESULT checks=44 failures=[]",
+      "error_count": 1,
+      "errors": [
+        "ERROR: 8 resources still in use at exit (run with --verbose for details).\r"
+      ]
+    },
+    {
+      "scene": "masters_debug_ui_test",
+      "exit": "TIMEOUT",
+      "checks": null,
+      "failures": null,
+      "result": null,
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "match_commands_test",
+      "exit": 0,
+      "checks": 17,
+      "failures": [],
+      "result": "RESULT checks=17 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "match_driver_headless_test",
+      "exit": 0,
+      "checks": 20,
+      "failures": [],
+      "result": "RESULT checks=20 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "match_driver_v2_test",
+      "exit": 0,
+      "checks": 20,
+      "failures": [],
+      "result": "RESULT checks=20 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "match_driver_window_test",
+      "exit": 0,
+      "checks": 0,
+      "failures": [],
+      "result": "RESULT checks=0 failures=[] window_only=true",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "match_journal_test",
+      "exit": 0,
+      "checks": 9,
+      "failures": [],
+      "result": "RESULT checks=9 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "match_replay_pending_test",
+      "exit": 0,
+      "checks": 12,
+      "failures": [],
+      "result": "RESULT checks=12 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "match_replay_test",
+      "exit": "TIMEOUT",
+      "checks": null,
+      "failures": null,
+      "result": null,
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "match_view_test",
+      "exit": 0,
+      "checks": 204,
+      "failures": [],
+      "result": "RESULT checks=204 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "misc_rules_fix_test",
+      "exit": 0,
+      "checks": 71,
+      "failures": [],
+      "result": "RESULT checks=71 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "net_cache_test",
+      "exit": 0,
+      "checks": 10,
+      "failures": [],
+      "result": "RESULT checks=10 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "net_data_catalog_test",
+      "exit": 0,
+      "checks": 78,
+      "failures": [],
+      "result": "RESULT checks=78 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "net_ids_test",
+      "exit": 0,
+      "checks": 5,
+      "failures": [],
+      "result": "RESULT checks=5 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "net_lobby_test",
+      "exit": 0,
+      "checks": 9,
+      "failures": [],
+      "result": "RESULT checks=9 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "net_lobby_window_test",
+      "exit": 0,
+      "checks": 4,
+      "failures": [],
+      "result": "RESULT checks=4 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "net_room_test",
+      "exit": 0,
+      "checks": 16,
+      "failures": [],
+      "result": "RESULT checks=16 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "net_transport_test",
+      "exit": 0,
+      "checks": 11,
+      "failures": [],
+      "result": "RESULT checks=11 failures=[]",
+      "error_count": 1,
+      "errors": [
+        "ERROR: Couldn't create an ENet host.\r"
+      ]
+    },
+    {
+      "scene": "ni_no_tachi_test",
+      "exit": 0,
+      "checks": 14,
+      "failures": [],
+      "result": "RESULT checks=14 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "opening_grail_test",
+      "exit": 0,
+      "checks": null,
+      "failures": [],
+      "result": "RESULT 12/12",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "opening_input_test",
+      "exit": 0,
+      "checks": null,
+      "failures": [],
+      "result": "RESULT 12/12",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "opening_portal_test",
+      "exit": 0,
+      "checks": null,
+      "failures": [],
+      "result": "RESULT 24/24",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "opening_warp_test",
+      "exit": 0,
+      "checks": null,
+      "failures": [],
+      "result": "RESULT 15/15",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "opponent_drawer_test",
+      "exit": 0,
+      "checks": 48,
+      "failures": [],
+      "result": "RESULT checks=48 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "outpost_identity_test",
+      "exit": 0,
+      "checks": 40,
+      "failures": [],
+      "result": "RESULT checks=40 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "overseer_knowledge_test",
+      "exit": 0,
+      "checks": 11,
+      "failures": [],
+      "result": "RESULT overseer_knowledge checks=11 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "overseer_window_test",
+      "exit": "TIMEOUT",
+      "checks": null,
+      "failures": null,
+      "result": null,
+      "error_count": 2,
+      "errors": [
+        "ERROR: Parameter \"t\" is null.\r",
+        "SCRIPT ERROR: Cannot call method 'save_png' on a null value.\r"
+      ]
+    },
+    {
+      "scene": "pending_board_power_test",
+      "exit": 0,
+      "checks": 171,
+      "failures": [],
+      "result": "RESULT {\"checks\":171,\"failures\":[]}",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "phase_window_settlement_test",
+      "exit": 0,
+      "checks": 10,
+      "failures": [],
+      "result": "RESULT checks=10 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "piercing_cost_test",
+      "exit": 0,
+      "checks": 11,
+      "failures": [],
+      "result": "RESULT checks=11 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "played_skill_order_test",
+      "exit": 0,
+      "checks": 5,
+      "failures": [],
+      "result": "RESULT checks=5 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "played_stack_test",
+      "exit": 0,
+      "checks": 442,
+      "failures": [],
+      "result": "RESULT checks=442 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "player_name_test",
+      "exit": 0,
+      "checks": 107,
+      "failures": [],
+      "result": "RESULT checks=107 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "post_battle_choice_test",
+      "exit": 0,
+      "checks": 180,
+      "failures": [],
+      "result": "RESULT checks=180 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "power_breakdown_scroll_test",
+      "exit": 0,
+      "checks": 10,
+      "failures": [],
+      "result": "RESULT checks=10 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "prepare_phase_test",
+      "exit": 0,
+      "checks": 14,
+      "failures": [],
+      "result": "RESULT checks=14 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "private_knowledge_corrosion_test",
+      "exit": 0,
+      "checks": 32,
+      "failures": [],
+      "result": "RESULT private_knowledge_corrosion checks=32 failures=[]",
+      "error_count": 1,
+      "errors": [
+        "ERROR: 7 resources still in use at exit (run with --verbose for details).\r"
+      ]
+    },
+    {
+      "scene": "regular_play_test",
+      "exit": 0,
+      "checks": 54,
+      "failures": [],
+      "result": "RESULT checks=54 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "reported_activation_test",
+      "exit": 0,
+      "checks": 75,
+      "failures": [],
+      "result": "RESULT checks=75 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "reported_board_power_test",
+      "exit": 0,
+      "checks": 47,
+      "failures": [],
+      "result": "RESULT checks=47 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "reported_ui_test",
+      "exit": 0,
+      "checks": 116,
+      "failures": [],
+      "result": "RESULT {\"checks\":116,\"failures\":[]}",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "residue_pile_test",
+      "exit": 0,
+      "checks": 106,
+      "failures": [],
+      "result": "RESULT checks=106 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "roster_live_test",
+      "exit": 0,
+      "checks": 21,
+      "failures": [],
+      "result": "RESULT checks=21 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "round_change_test",
+      "exit": 0,
+      "checks": 13,
+      "failures": [],
+      "result": "RESULT checks=13 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "san_no_tachi_test",
+      "exit": 0,
+      "checks": 14,
+      "failures": [],
+      "result": "RESULT checks=14 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "san_no_tachi_window_test",
+      "exit": 0,
+      "checks": 7,
+      "failures": [],
+      "result": "RESULT checks=7 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "section5_engine_test",
+      "exit": 0,
+      "checks": 56,
+      "failures": [],
+      "result": "RESULT checks=56 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "selection_mode_test",
+      "exit": 0,
+      "checks": 215,
+      "failures": [],
+      "result": "RESULT checks=215 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "servant_optional_avatar_test",
+      "exit": 0,
+      "checks": 9,
+      "failures": [],
+      "result": "RESULT {\"checks\":9,\"failures\":[]}",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "servant_skill_eight_magic_test",
+      "exit": 0,
+      "checks": 26,
+      "failures": [],
+      "result": "RESULT checks=26 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "session_restart_test",
+      "exit": 0,
+      "checks": 27,
+      "failures": [],
+      "result": "RESULT checks=27 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "surveil_window_test",
+      "exit": 0,
+      "checks": 10,
+      "failures": [],
+      "result": "RESULT checks=10 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "switch_performance_test",
+      "exit": 0,
+      "checks": 1,
+      "failures": [],
+      "result": "RESULT checks=1 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "takeoff_refresh_test",
+      "exit": 0,
+      "checks": 8,
+      "failures": [],
+      "result": "RESULT checks=8 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "time_point_label_test",
+      "exit": 0,
+      "checks": 7,
+      "failures": [],
+      "result": "RESULT checks=7 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "turn_order_test",
+      "exit": 0,
+      "checks": 5,
+      "failures": [],
+      "result": "RESULT checks=5 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "turn_transition_test",
+      "exit": 0,
+      "checks": 50,
+      "failures": [],
+      "result": "RESULT checks=50 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "twelve_labors_lifecycle_test",
+      "exit": 0,
+      "checks": 134,
+      "failures": [],
+      "result": "RESULT checks=134 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "ui_mask_alpha_test",
+      "exit": 0,
+      "checks": 0,
+      "failures": [],
+      "result": "RESULT checks=0 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "ui_refresh_cost_test",
+      "exit": 0,
+      "checks": 25,
+      "failures": [],
+      "result": "RESULT checks=25 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "unlimited_blade_activation_test",
+      "exit": 1,
+      "checks": 75,
+      "failures": [
+        "\"rebuild effect requests actual card selection after activation\"",
+        " \"unplayed servant skill is available for rebuild\"",
+        " \"conditional side-zone attack is eligible despite unmet condition\"",
+        " \"extra-play-only card in custom zone is eligible\"",
+        " \"master attached attack is eligible\"",
+        " \"temporarily unavailable skill remains a rebuild candidate\"",
+        " \"original hand is automatically mandatory selected\"",
+        " \"real input cannot unselect mandatory hand\"",
+        " \"real input selects additional played attack\"",
+        " \"real input selects additional deck/discard identity\"",
+        " \"real input selects additional deck/discard identity\"",
+        " \"real input selects additional deck/discard identity\"",
+        " \"real input selects additional deck/discard identity\"",
+        " \"real input selects additional deck/discard identity\"",
+        " \"real input selects additional deck/discard identity\"",
+        " \"selected real attack moves played to hand\"",
+        " \"mandatory hand plus extras respects data limit\"",
+        " \"chosen deck identity actually moves to hand\"",
+        " \"chosen discard identity actually moves to hand\"",
+        " \"unchosen non-hand cards stay in original zones\"",
+        " \"selected servant skill moves to hand from real source zone\"",
+        " \"selected side-zone card moves to hand\"",
+        " \"selected custom-zone card moves to hand\"",
+        " \"selected master attached card moves to hand\"",
+        " \"disabled second submission moves no cards and preserves played count\"",
+        " \"next round permits four regular cards\""
+      ],
+      "result": "RESULT checks=75 failures=[\"rebuild effect requests actual card selection after activation\", \"unplayed servant skill is available for rebuild\", \"conditional side-zone attack is eligible despite unmet condition\", \"extra-play-only card in custom zone is eligible\", \"master attached attack is eligible\", \"temporarily unavailable skill remains a rebuild candidate\", \"original hand is automatically mandatory selected\", \"real input cannot unselect mandatory hand\", \"real input selects additional played attack\", \"real input selects additional deck/discard identity\", \"real input selects additional deck/discard identity\", \"real input selects additional deck/discard identity\", \"real input selects additional deck/discard identity\", \"real input selects additional deck/discard identity\", \"real input selects additional deck/discard identity\", \"selected real attack moves played to hand\", \"mandatory hand plus extras respects data limit\", \"chosen deck identity actually moves to hand\", \"chosen discard identity actually moves to hand\", \"unchosen non-hand cards stay in original zones\", \"selected servant skill moves to hand from real source zone\", \"selected side-zone card moves to hand\", \"selected custom-zone card moves to hand\", \"selected master attached card moves to hand\", \"disabled second submission moves no cards and preserves played count\", \"next round permits four regular cards\"]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "v2_confirmation_drag_test",
+      "exit": 0,
+      "checks": 15,
+      "failures": [],
+      "result": "RESULT checks=15 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "venue_rule_fixes_test",
+      "exit": 0,
+      "checks": 12,
+      "failures": [],
+      "result": "RESULT checks=12 failures=[]",
+      "error_count": 0,
+      "errors": []
+    },
+    {
+      "scene": "zoom_and_desc_test",
+      "exit": 0,
+      "checks": 21,
+      "failures": [],
+      "result": "RESULT checks=21 failures=[]",
+      "error_count": 0,
+      "errors": []
+    }
+  ],
+  "rechecks": {
+    "network-scroll-window": {
+      "result": [
+        "RESULT checks=86 failures=[]"
+      ],
+      "errors": [],
+      "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nCHECK undeployed player defaults to magic workshop true\nCHECK area background replaces original screen texture true\nCHECK area background covers entire screen without stretching true\nCHECK closing all scrolls retains area background true\nCHECK one persistent scroll per area true\nCHECK refresh preserves scroll identity true\nCHECK scroll reuses two seat rows true\nCHECK screenshot closed true\nCHECK mouse motion opens hovered scroll true\nCHECK fullscreen background matches hovered scroll true\nCHECK input does not teleport scroll true\nCHECK opening all frames ordered, in bounds and non-overlapping true\nCHECK opening has intermediate width true\nCHECK scroll opens on both sides of original strip true\nCHECK same icon moves with scroll true\nCHECK screenshot opening true\nCHECK refresh preserves geometry and icon identity mid-animation true\nCHECK opened all frames ordered, in bounds and non-overlapping true\nCHECK screenshot opened true\nCHECK opening reaches target true\nCHECK background expansion reaches full screen true\nCHECK expanded scroll does not duplicate fullscreen image true\nCHECK expanded seats stay inside their scroll true\nCHECK upper row displays five players true\nCHECK unseated players are in the upper row true\nCHECK upper row hides scrollbar true\nCHECK remaining maps line up at screen edge true\nCHECK switching does not instantly replace fullscreen background true\nCHECK switch begins from current geometry true\nCHECK switching all frames ordered, in bounds and non-overlapping true\nCHECK background expands and fades through intermediate frames true\nCHECK previous background fades out smoothly true\nCHECK previous map rolls up progressively true\nCHECK screenshot switching true\nCHECK rapid background reversal preserves geometry and opacity true\nCHECK rapid reversal has no jump true\nCHECK reversed all frames ordered, in bounds and non-overlapping true\nCHECK left event draws above right at 0.0 true\nCHECK right event offsets down at 0.0 true\nCHECK left event draws above right at 0.0 true\nCHECK right event offsets down at 0.0 true\nCHECK topmost drawn event is tested first for input at 0.0 true\nCHECK left event draws above right at 0.5 true\nCHECK right event offsets down at 0.5 true\nCHECK left event draws above right at 0.5 true\nCHECK right event offsets down at 0.5 true\nCHECK topmost drawn event is tested first for input at 0.5 true\nCHECK left event draws above right at 1.0 true\nCHECK right event offsets down at 1.0 true\nCHECK left event draws above right at 1.0 true\nCHECK right event offsets down at 1.0 true\nCHECK topmost drawn event is tested first for input at 1.0 true\nCHECK event stack keeps clear of the melee row (gap 96.0) true\nCHECK scroll base lets background show through true\nCHECK map image remains subtle true\nCHECK scroll edges are translucent true\nCHECK foreground cards keep full opacity true\nCHECK small stack keeps the default top margin (28.0) true\nCHECK a stack tall enough to hit the melee row is pushed up (three=28.0 many=0.0) true\nCHECK pushed-up stack still keeps clear of the melee row (gap 22.0) true\nCHECK screenshot event_stack true\nCHECK empty events have no card or placeholder when open true\nCHECK zero score has no badge or title when open true\nCHECK screenshot empty_open true\nCHECK closing all frames ordered, in bounds and non-overlapping true\nCHECK closing returns to original strip true\nCHECK same icon returns to original position true\nCHECK empty events and score stay hidden when closed true\nCHECK screenshot empty_closed true\nCHECK event visibility restores from data true\nCHECK score visibility restores from data true\nCHECK window_input all frames ordered, in bounds and non-overlapping true\nCHECK pointer leave restores default workshop in window mode true\nCHECK deployed player defaults to their own battlefield true\nCHECK deployed all frames ordered, in bounds and non-overlapping true\nCHECK fixture has more than five unseated players true\nCHECK overflow row is scrollable without scrollbar true\nCHECK wheel scrolls upper player row true\nCHECK refresh preserves upper row scroll offset true\nCHECK upper row stays inside its scroll true\nCHECK upper row does not cover another strip true\nCHECK upper row does not cover another strip true\nCHECK upper row does not cover another strip true\nCHECK screenshot deployed_rows true\nCHECK hover_other all frames ordered, in bounds and non-overlapping true\nCHECK pointer leave restores deployed battlefield true\nRESULT checks=86 failures=[]\n"
+    },
+    "network-replay-recheck": {
+      "result": [
+        "RESULT checks=10 failures=[]"
+      ],
+      "errors": [],
+      "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nCHECK replay session exists true\nCHECK recording starts with archived data true\nREPLAY_RECORD step=25 round=3\nREPLAY_RECORD step=50 round=4\nREPLAY_RECORD step=75 round=6\nREPLAY_RECORD step=100 round=8\nREPLAY_RECORD step=125 round=10\nCHECK recording has no state encoding errors:  true\nCHECK recorded match reaches end true\nREPLAY_FOLDER user://p1-replay-test-1003050\nCHECK replay succeeds 0:  true\nCHECK replay complete state agrees 0 true\nCHECK replay restores game end true\nCHECK replay succeeds 1:  true\nCHECK replay complete state agrees 1 true\nCHECK replay restores game end true\nREPLAY actions=141\nRESULT checks=10 failures=[]\n"
+    }
+  }
+}

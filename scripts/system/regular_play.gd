@@ -310,39 +310,79 @@ static func submit_group(id:int, cards:Array, hidden_flags:Array) -> bool:
 	#整组常规出牌是同时打出：只要本批次有明置的【真名解放】牌，
 	#同批其他牌从费用计算开始就应读取到已解放状态，不受数组先后顺序影响。
 	#这里只提前结算会改变整组条件上下文的词条；其他词条仍在各自进场时结算。
+	var state:Dictionary = {"id": id, "cards": cards.duplicate(), "hidden": hidden_flags.duplicate(), "phase": "extras", "index": 0, "finish": Callable(RegularPlay, "_finish_group").bind(id)}
 	for i in range(cards.size()):
 		var batch_card = cards[i]
 		if not bool(hidden_flags[i]) and batch_card is BaseCard \
 			and batch_card.has_keyword(ApplyCardKeywords.TRUE_NAME_RELEASE):
 			ApplyCardKeywords.new().apply(ApplyCardKeywords.TRUE_NAME_RELEASE, id)
 			break
-	var extra_cards:Array = batch_extra_cards(id, cards, hidden_flags)
-	for i in range(cards.size()):
-		var card:BaseHandCard = cards[i]
-		var hidden:bool = bool(hidden_flags[i])
-		TimePointChecker.dynamic_time_point([TimePoints.CARD_COST_CALCULATED], id, card)
-		var paid:float = 0.0 if hidden else cost(card, d)
-		if not d.is_magic_immune and paid > 0:
-			var before = d.magic.number
-			d.magic.minus(BaseNumber.new(paid))
-			GameLog.record_resource_payment("magic", id, before, d.magic.number, "regular_play", card)
-		card._is_concealed = hidden
-		card._is_activating = not hidden
-		_take_from_source(d, card)
-		d.played_cards.append(card)
-		if CardCountsPower.new().exec(card, id): d.power.add(card._power)
-		GameLog.record("play", id, -1, "", card, ["play"], {"card_name":card._name, "card_type":"attack" if card is BaseAttack else "skill", "extra":extra_cards.has(card), "concealed":hidden})
-		if not hidden:
-			ApplyCardKeywords.new().exec(card, id)
-			#明置卡牌在进入打出区后亮出；暗置卡牌等之后真正翻开时再派发
-			TimePointChecker.card_revealed(card)
-	#打出时点在整批入场、整批 play 日志都写完之后才逐张派发：
-	#卡面「若此牌与一张基础攻击一同打出」这类条件要看得到同批的其他牌，
-	#放在入场循环里会让排在前面的牌漏判排在后面的同批牌（顺序不该影响同时打出的判定）
-	for card in cards:
-		TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, card)
-	GameLog.record("regular_play", id, -1, "", null, [], {"count":played_count(id), "forced":false})
+	if not EffectManager.defer_until_runtime_guard_complete(Callable(RegularPlay, "_resume_group").bind(state)):
+		_resume_group(state)
 	return true
+
+#阶段游标在派发前前移；恢复不重新派发已进入的时点，也不重复扣费入场。
+static func _resume_group(state:Dictionary) -> void:
+	var id:int = state.id
+	var d:Dictionary = GameDataManager.get_player_data(id)
+	var cards:Array = state.cards
+	var hidden_flags:Array = state.hidden
+	while true:
+		match state.phase:
+			"extras":
+				state["extra_cards"] = batch_extra_cards(id, cards, hidden_flags)
+				state.phase = "cost"
+			"cost":
+				if state.index >= cards.size():
+					state.index = 0
+					state.phase = "played"
+					continue
+				state.phase = "enter"
+				TimePointChecker.dynamic_time_point([TimePoints.CARD_COST_CALCULATED], id, cards[state.index])
+			"enter":
+				var card:BaseHandCard = cards[state.index]
+				var hidden:bool = bool(hidden_flags[state.index])
+				var paid:float = 0.0 if hidden else cost(card, d)
+				if not d.is_magic_immune and paid > 0:
+					var before = d.magic.number
+					d.magic.minus(BaseNumber.new(paid))
+					GameLog.record_resource_payment("magic", id, before, d.magic.number, "regular_play", card)
+				card._is_concealed = hidden
+				card._is_activating = not hidden
+				_take_from_source(d, card)
+				d.played_cards.append(card)
+				if CardCountsPower.new().exec(card, id): d.power.add(card._power)
+				GameLog.record("play", id, -1, "", card, ["play"], {"card_name":card._name, "card_type":"attack" if card is BaseAttack else "skill", "extra":state.extra_cards.has(card), "concealed":hidden})
+				if hidden:
+					state.index += 1
+					state.phase = "cost"
+				else:
+					state.phase = "keywords"
+			"keywords":
+				state.phase = "reveal"
+				ApplyCardKeywords.new().exec(cards[state.index], id)
+			"reveal":
+				var card = cards[state.index]
+				state.index += 1
+				state.phase = "cost"
+				TimePointChecker.card_revealed(card)
+			"played":
+				#整批入场及 play 日志完成后才逐张派发，保持同时打出口径。
+				if state.index >= cards.size():
+					state.finish.call()
+					return
+				var card = cards[state.index]
+				state.index += 1
+				TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, card)
+		if EffectManager.defer_until_runtime_guard_complete(Callable(RegularPlay, "_resume_group").bind(state)):
+			return
+
+static func _finish_group(id:int) -> void:
+	GameLog.record("regular_play", id, -1, "", null, [], {"count":played_count(id), "forced":false})
+
+static func _finish_incremental(id:int) -> void:
+	if played_count(id) >= limit(id): finalize(id)
+	elif not has_legal_add(id): finalize(id, true)
 
 
 static func can_finalize(id: int) -> bool:
@@ -366,28 +406,8 @@ static func add(id: int, card, hidden: bool) -> bool:
 	var d: Dictionary = GameDataManager.get_player_data(id)
 	if GameLog.query({"type":"regular_play_start", "actor":id}, 0).is_empty():
 		GameLog.record("regular_play_start", id, -1, "", null, [], {"magic":d.magic.number})
-	var paid: float = 0.0 if hidden else cost(card, d)
-	#费用修正必须在扣费和入场前结算，才能影响本次实际支付。
-	#此时卡尚未入场，但其已登记效果仍可响应费用计算时点。
-	TimePointChecker.dynamic_time_point([TimePoints.CARD_COST_CALCULATED], id, card)
-	paid = 0.0 if hidden else cost(card, d)
-	if not d.is_magic_immune and paid > 0:
-		var before = d.magic.number
-		d.magic.minus(BaseNumber.new(paid))
-		GameLog.record_resource_payment("magic", id, before, d.magic.number, "regular_play", card)
-	card._is_concealed = hidden
-	card._is_activating = not hidden
-	_take_from_source(d, card)
-	d.played_cards.append(card)
-	if CardCountsPower.new().exec(card, id): d.power.add(card._power)
-	GameLog.record("play", id, -1, "", card, ["play"], {"card_name":card._name, "card_type":"attack" if card is BaseAttack else "skill", "extra":false, "concealed":hidden})
-	if not hidden:
-		ApplyCardKeywords.new().exec(card, id)
-		#明置卡牌进入打出区后亮出；暗置卡牌不在这里泄露牌面
-		TimePointChecker.card_revealed(card)
-	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, card)
-	if played_count(id) >= limit(id): finalize(id)
-	elif not has_legal_add(id): finalize(id, true)
+	#增量入口不预结算整组真名解放，也不判定整组额外出牌；完成规则独立传入。
+	_resume_group({"id": id, "cards": [card], "hidden": [hidden], "phase": "cost", "index": 0, "extra_cards": [], "finish": Callable(RegularPlay, "_finish_incremental").bind(id)})
 	return true
 
 # AI：每次只返回当前可立即提交的一张。

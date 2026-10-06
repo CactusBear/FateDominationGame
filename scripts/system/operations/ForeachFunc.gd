@@ -10,10 +10,22 @@ func exec(body, arr:Array, parameter_index:int = 0):
 		return
 
 	var bodies:Array = body if body is Array else [body]
-	var last_result = null
-	for idx in range(arr.size()):
+	var state := {"kind": "foreach", "iteration": 0, "body_index": 0, "last_result": null, "limit": arr.size(), "item": null, "bodies": bodies}
+	state = EffectManager.record_loop_state(state, self)
+	bodies = state.bodies
+	for idx in range(int(state.iteration), int(state.limit)):
+		state.iteration = idx
+		# 空循环体没有内部检查点，仍须按原迭代游标检查协作预算。
+		if bodies.is_empty() and not EffectManager.runtime_guard_checkpoint(state):
+			return state.last_result
+		state["item_present"] = idx < arr.size()
+		state.item = arr[idx] if state.item_present else null
 		GameLog.push_loop(idx)
-		for one in bodies:
+		while int(state.body_index) < bodies.size():
+			if not EffectManager.runtime_guard_checkpoint():
+				GameLog.pop_loop()
+				return state.last_result
+			var one = bodies[int(state.body_index)]
 			var desc = one
 			if one is Dictionary:
 				desc = one.duplicate()
@@ -26,8 +38,13 @@ func exec(body, arr:Array, parameter_index:int = 0):
 				desc["parameters"] = paras
 
 			var res = EffectManager.run_func_descriptor(desc, effect)
+			if EffectManager.runtime_guard_status().paused:
+				GameLog.pop_loop()
+				return state.last_result
 			if res[0]:
-				last_result = res[1]
+				state.last_result = res[1]
+			state.body_index += 1
 		GameLog.pop_loop()
-
-	return last_result
+		state.iteration = idx + 1
+		state.body_index = 0
+	return state.last_result

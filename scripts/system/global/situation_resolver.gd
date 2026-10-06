@@ -19,10 +19,19 @@ func activate():
 		MapData.active_situation = null
 		return
 	MapData.active_situation = situation
+	_resume_activation({"situation": situation, "players": GameDataManager.get_active_player_ids(), "index": 0})
+
+
+static func _resume_activation(state:Dictionary) -> void:
+	var situation:BaseSituation = state.situation
 	#规则：所有玩家获得局势牌上印刷的魔力
 	var magic_gain:int = (situation._magic as BaseNumber).number
-	for id in GameDataManager.get_active_player_ids():
+	while state.index < state.players.size():
+		var id:int = state.players[state.index]
+		state.index += 1
 		EditMagic.new().exec(null, situation._magic, id)
+		if EffectManager.defer_until_runtime_guard_complete(Callable(SituationResolver, "_resume_activation").bind(state)):
+			return
 	#告诉玩家这次魔力是哪来的：资源变化不说明来源，玩家无法核对自己为什么多了魔力。
 	#文案用局势牌自己的显示名，不写死牌名
 	if magic_gain != 0:
@@ -34,6 +43,11 @@ func activate():
 	#表现就是"局势牌效果没结算"。威力加成类仍挂 battle_resolve，不受影响
 	#带 source 派发三种卡牌亮出时点：自身、其他、任意。
 	TimePointChecker.card_revealed(situation)
+	if not EffectManager.defer_until_runtime_guard_complete(Callable(SituationResolver, "_dispatch_activated").bind(situation)):
+		_dispatch_activated(situation)
+
+
+static func _dispatch_activated(situation:BaseSituation) -> void:
 	TimePointChecker.global_time_point([TimePoints.SITUATION_ACTIVATED], situation)
 
 
@@ -69,7 +83,7 @@ func _draw_current():
 
 #把局势牌效果登记进效果池，归属顺位第一的存活玩家作锚点。
 #锚点玩家只当触发器，效果作用对象由效果内部的get_map_area_by_name等决定
-func _register_situation_effects():
+static func _register_situation_effects():
 	var anchor:int = -1
 	for id in GameDataManager.get_active_player_ids():
 		anchor = id

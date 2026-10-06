@@ -96,6 +96,11 @@ static func notify_moved(card, from_info:Dictionary, to_info:Dictionary) -> void
 	var leave := _point_of(LEAVE_POINTS, str(from_info.get("zone", "")))
 	if leave != "" and int(from_info.get("player_id", -1)) >= 0:
 		TimePointChecker.dynamic_time_point([leave], int(from_info.player_id), card)
+	if not EffectManager.defer_until_runtime_guard_complete(Callable(CardZones, "_notify_entered").bind(card, to_info)):
+		_notify_entered(card, to_info)
+
+
+static func _notify_entered(card, to_info:Dictionary) -> void:
 	var enter := _point_of(ENTER_POINTS, str(to_info.get("zone", "")))
 	if enter != "" and int(to_info.get("player_id", -1)) >= 0:
 		TimePointChecker.dynamic_time_point([enter], int(to_info.player_id), card)

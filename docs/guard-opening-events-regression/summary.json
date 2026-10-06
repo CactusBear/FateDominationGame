@@ -1,0 +1,146 @@
+[
+  {
+    "scene": "net_full_game_test",
+    "exit": 0,
+    "checks": 4,
+    "failures": [],
+    "result": "RESULT checks=4 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_runtime_guard_test",
+    "exit": 0,
+    "checks": 15,
+    "failures": [],
+    "result": "RESULT checks=15 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "number_display_test",
+    "exit": 0,
+    "checks": 10,
+    "failures": [],
+    "result": "RESULT checks=10 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "regular_play_test",
+    "exit": 0,
+    "checks": 54,
+    "failures": [],
+    "result": "RESULT checks=54 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "round_change_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT checks=13 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_choice_test",
+    "exit": 0,
+    "checks": 24,
+    "failures": [],
+    "result": "RESULT checks=24 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_continuation_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT checks=12 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_event_place_test",
+    "exit": 0,
+    "checks": 6,
+    "failures": [],
+    "result": "RESULT checks=6 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_event_reveal_test",
+    "exit": 0,
+    "checks": 6,
+    "failures": [],
+    "result": "RESULT checks=6 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_game_start_test",
+    "exit": 0,
+    "checks": 6,
+    "failures": [],
+    "result": "RESULT checks=6 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_phase_start_test",
+    "exit": 0,
+    "checks": 6,
+    "failures": [],
+    "result": "RESULT checks=6 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_regular_add_test",
+    "exit": 0,
+    "checks": 18,
+    "failures": [],
+    "result": "RESULT checks=18 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_regular_group_test",
+    "exit": 0,
+    "checks": 9,
+    "failures": [],
+    "result": "RESULT checks=9 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_round_start_test",
+    "exit": 0,
+    "checks": 6,
+    "failures": [],
+    "result": "RESULT checks=6 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_time_point_test",
+    "exit": 0,
+    "checks": 8,
+    "failures": [],
+    "result": "RESULT checks=8 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_true_name_test",
+    "exit": 0,
+    "checks": 9,
+    "failures": [],
+    "result": "RESULT checks=9 failures=[]",
+    "error_count": 0,
+    "errors": []
+  }
+]

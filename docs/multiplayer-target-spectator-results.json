@@ -1,0 +1,67 @@
+[
+  {
+    "scene": "net_transport",
+    "exit": 0,
+    "result": [
+      "RESULT checks=11 failures=[]"
+    ],
+    "errors": [
+      "ERROR: Couldn't create an ENet host.\r"
+    ],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK ENet transport exists true\r\nCHECK custom port listening true\r\nERROR: Couldn't create an ENet host.\r\n   at: _create (modules/enet/enet_connection.cpp:319)\r\n   GDScript backtrace (most recent call first):\r\n       [0] listen (res://scripts/net/enet_transport.gd:22)\r\n       [1] run (res://tests/net_transport_test.gd:17)\r\nCHECK occupied port fails without fallback true\r\nCHECK loopback connecting true\r\nCHECK real ENet connection established true\r\nCHECK reliable message sent true\r\nCHECK message delivered true\r\nCHECK sender comes from transport not payload true\r\nCHECK integer payload preserved true\r\nCHECK object payload rejected true\r\nCHECK invalid ports rejected true\r\nRESULT checks=11 failures=[]"
+  },
+  {
+    "scene": "net_blob",
+    "exit": 0,
+    "result": [
+      "RESULT checks=41 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK blob receiver exists true\r\nCHECK approved blob registered true\r\nCHECK different sender rejected true\r\nCHECK out of order offset rejected true\r\nCHECK invalid chunks do not advance offset true\r\nCHECK actual transfer transport started true\r\nCHECK transfer client connected true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK actual network payload verified and stored true\r\nCHECK completion releases reservation true\r\nCHECK second transfer approved true\r\nCHECK hash mismatch rejected true\r\nCHECK bad content not cached and reservation released true\r\nCHECK aggregate memory budget enforced true\r\nCHECK bounded transfer allowed true\r\nCHECK disconnect releases partial transfers true\r\nRESULT checks=41 failures=[]"
+  },
+  {
+    "scene": "net_lobby",
+    "exit": 0,
+    "result": [
+      "RESULT checks=30 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK network lobby exists true\r\nCHECK network room created true\r\nCHECK network guest joining true\r\nCHECK room synchronized over actual ENet true\r\nCHECK lobby provides approved content transfer true\r\nCHECK approved content requested true\r\nCHECK room file downloaded and verified true\r\nCHECK missing content request submitted true\r\nCHECK rejected download releases reservation true\r\nCHECK remote readiness reaches authority true\r\nCHECK forged actor cannot alter room true\r\nCHECK permission failure delivered to sender true\r\nCHECK host can register local selection rules true\r\nCHECK selection rules registered locally true\r\nCHECK selection start synchronized true\r\nCHECK remote player receives own master choices true\r\nCHECK network human and AI selection completed true\r\nCHECK selection packets omit servant assignments true\r\nCHECK owner starts selected match true\r\nCHECK client has read-only match mirror true\r\nCHECK filtered match view delivered over ENet true\r\nCHECK network view omits other hands true\r\nCHECK network view omits other hands true\r\nCHECK network command deploys human on authoritative map true\r\nCHECK late spectator receives bound public view true\r\nCHECK late spectator receives no private decisions true\r\nCHECK late spectator has no private hand true\r\nCHECK late spectator has no private hand true\r\nCHECK late spectator has no private hand true\r\nCHECK network disconnect preserved without AI takeover true\r\nRESULT checks=30 failures=[]"
+  },
+  {
+    "scene": "net_full_game",
+    "exit": 0,
+    "result": [
+      "RESULT checks=4 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK full command fixture starts true\r\nCHECK human command gate reaches actual game end true\r\nCHECK commands executed without AI takeover true\r\nCHECK engine records terminal result true\r\nNETWORK_COMMAND_GAME submitted=222 round=11\r\nRESULT checks=4 failures=[]"
+  },
+  {
+    "scene": "net_opponent_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=11 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK network choice panel exists true\r\nCHECK queued opponent effect waits for target true\r\nCHECK opponent sees private effect prompt true\r\nCHECK initiator cannot answer target prompt true\r\nCHECK opponent prompt screenshot saved true\r\nCHECK real opponent click answers through network true\r\nCHECK answered prompt closes from authoritative update true\r\nCHECK network panel supports explicit option inputs true\r\nCHECK opponent option screenshot saved true\r\nCHECK opponent quantity entered through UI reaches authority true\r\nCHECK opponent selected branch executed once true\r\nRESULT checks=11 failures=[]"
+  },
+  {
+    "scene": "net_target_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=11 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK target choice controls exist true\r\nCHECK player prompt shown on client true\r\nCHECK player reply transitions UI to chosen player's cards true\r\nCHECK hidden opponent identity is not guessed true\r\nCHECK target prompt screenshot saved true\r\nCHECK client selection resolves exact card and closes true\r\nCHECK mandatory card preselected true\r\nCHECK real deselect attempt cannot remove mandatory card true\r\nCHECK mandatory UI selection reaches engine true\r\nCHECK location UI uses legal single choice true\r\nCHECK real location choice resolves and closes true\r\nRESULT checks=11 failures=[]"
+  },
+  {
+    "scene": "net_management_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=10 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK management controls exist true\r\nCHECK real transfer button updates authority true\r\nCHECK former owner loses start permission true\r\nCHECK remote owner derives readiness from authoritative snapshot true\r\nCHECK connected lobby no longer displays connecting true\r\nCHECK spectator checkbox joins without player seat true\r\nCHECK spectator has no ready operation true\r\nCHECK remote owner kicks selected spectator true\r\nCHECK kicked connection actually closes true\r\nCHECK management screenshot saved true\r\nRESULT checks=10 failures=[]"
+  }
+]

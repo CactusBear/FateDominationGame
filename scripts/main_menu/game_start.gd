@@ -10,8 +10,10 @@ var _started:bool = false
 
 
 #负责从主菜单进入对局，不负责御主/从者的具体效果绑定。
-func game_start(player_ids:Array = [0, 1], assignments:Dictionary = {}, initial_order:Array = []) -> bool:
+func game_start(player_ids:Array = [0, 1], assignments:Dictionary = {}, initial_order:Array = [], runtime_guard:Dictionary = {}) -> bool:
 	if _started:
+		return false
+	if not runtime_guard.is_empty() and not preload("res://scripts/match/rule_budget.gd").new().configure(runtime_guard):
 		return false
 
 	var ids:Array = player_ids.duplicate()
@@ -39,6 +41,10 @@ func game_start(player_ids:Array = [0, 1], assignments:Dictionary = {}, initial_
 	masters_can_use = get_masters_can_use()
 	servants_can_use = get_servants_can_use()
 	GameData.reset_game_session(ids)
+	# 重置会清除旧预算；新配置须在任何开局规则开始前显式应用。
+	if not runtime_guard.is_empty() and not EffectManager.configure_runtime_guard(runtime_guard):
+		_started = false
+		return false
 
 	#本地玩家的默认组合由 GameData 声明：先把声明的那两个模板从池里取出，
 	#其余玩家再按加载顺序分剩下的。声明为空或找不到模板时退化为纯顺序分配（不猜、不报错）
@@ -130,6 +136,7 @@ func reset():
 #先释放整局对象图（卡牌、效果、玩家数据与各加载器缓存），再复位进度/地图/模板加载器。
 #模板必须重载，因为 release_game_objects 连已加载的御主/从者模板一起释放了
 func end_session() -> void:
+	preload("res://scripts/match/rule_random.gd").stop_tracking()
 	GameData.release_game_objects()
 	GameProgress.reset_progress()
 	MapData.reset_board()

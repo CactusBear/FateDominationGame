@@ -6,10 +6,8 @@ extends HBoxContainer
 ## 卡牌实例、模板、Buff、属性），不写死玩家编号/卡牌名/战区名，也不接受或解析命令行文本。
 ## 执行统一走 DebugSession.execute_action(name, args)，仍经 registry 的既有白名单与校验。
 
-## 提示类按钮退出宿主呼吸金框（与其余控制台按钮同一约定）
-const NO_HINT := "no_clickable_hint"
 
-## 每个命令的界面参数声明。kind 决定控件类型；参数按声明顺序生成，不靠命令名分支。
+## 每个命令的参数绑定声明。控件预置在场景中，kind 决定数据填充与读取方式。
 const COMMAND_FIELDS:Dictionary = {
 	"inspect.player": [],
 	"inspect.card": [{"key":"id", "label":"卡牌", "kind":"card"}],
@@ -238,8 +236,10 @@ var _player_picker:OptionButton
 func initialize(p_session:DebugSession, p_on_result:Callable) -> void:
 	session = p_session
 	_on_result = p_on_result
+	if not session.action_completed.is_connected(_show_action_result):
+		session.action_completed.connect(_show_action_result)
 	_selected_player_id = GameData.player_id
-	_build_static_layout()
+	_bind_scene_nodes()
 	rebuild_form()
 
 
@@ -248,109 +248,35 @@ func refresh_choices() -> void:
 	rebuild_form()
 
 
-func _build_static_layout() -> void:
-	for child in get_children():
-		remove_child(child)
-		child.free()
-	# 重建时必须清掉旧引用：这些节点已被 free，留着它们会让
-	# `_command_buttons` 的遍历与字段读取碰到已释放对象（重复 initialize 就会踩到）。
+func _bind_scene_nodes() -> void:
 	_command_buttons.clear()
 	_field_controls.clear()
 	_field_saved.clear()
 	_field_placeholder.clear()
-	_player_picker = null
-	add_theme_constant_override("separation", 8)
-
-	var left_scroll := ScrollContainer.new()
-	left_scroll.custom_minimum_size = Vector2(268, 0)
-	left_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	left_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	add_child(left_scroll)
-	var left := VBoxContainer.new()
-	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left.add_theme_constant_override("separation", 4)
-	left_scroll.add_child(left)
-
-	for group in COMMAND_GROUPS:
-		var title := Label.new()
-		title.text = str(group.title)
-		title.add_theme_font_size_override("font_size", 15)
-		title.add_theme_color_override("font_color", Color(0.62, 0.78, 1.0))
-		left.add_child(title)
-		for entry in group.commands:
-			var command_name := str(entry.name)
-			if !session.registry.schemas.has(command_name):
-				continue
-			var button := Button.new()
-			button.text = str(entry.label)
-			button.toggle_mode = true
-			button.focus_mode = Control.FOCUS_NONE
-			button.set_meta(NO_HINT, true)
-			button.tooltip_text = command_name
-			button.pressed.connect(_on_command_button_pressed.bind(command_name))
-			left.add_child(button)
-			_command_buttons[command_name] = button
-		left.add_child(HSeparator.new())
-
-	var right := VBoxContainer.new()
-	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right.add_theme_constant_override("separation", 6)
-	add_child(right)
-
-	var player_row := HBoxContainer.new()
-	player_row.add_theme_constant_override("separation", 6)
-	var player_label := Label.new()
-	player_label.text = "目标玩家"
-	player_row.add_child(player_label)
-	var player_picker := OptionButton.new()
-	player_picker.name = "PlayerPicker"
-	player_picker.focus_mode = Control.FOCUS_NONE
-	player_picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	player_picker.item_selected.connect(_on_player_selected.bind(player_picker))
-	player_row.add_child(player_picker)
-	_player_picker = player_picker
-	right.add_child(player_row)
-
-	var body := ScrollContainer.new()
-	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	body.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	right.add_child(body)
-	var body_box := VBoxContainer.new()
-	body_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	body_box.add_theme_constant_override("separation", 6)
-	body.add_child(body_box)
-
-	_command_title = Label.new()
-	_command_title.add_theme_font_size_override("font_size", 15)
-	_command_title.add_theme_color_override("font_color", Color(0.62, 0.78, 1.0))
-	body_box.add_child(_command_title)
-
-	_form_box = VBoxContainer.new()
-	_form_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_form_box.add_theme_constant_override("separation", 6)
-	body_box.add_child(_form_box)
-
-	_run_button = Button.new()
-	_run_button.text = "执行"
-	_run_button.focus_mode = Control.FOCUS_NONE
-	_run_button.set_meta(NO_HINT, true)
-	_run_button.pressed.connect(_on_run_pressed)
-	var refresh_button := Button.new()
-	refresh_button.text = "刷新选项"
-	refresh_button.focus_mode = Control.FOCUS_NONE
-	refresh_button.set_meta(NO_HINT, true)
-	refresh_button.pressed.connect(_on_refresh_pressed)
-	var run_row := HBoxContainer.new()
-	run_row.add_theme_constant_override("separation", 8)
-	run_row.add_child(_run_button)
-	run_row.add_child(refresh_button)
-	body_box.add_child(run_row)
-
-	_status = Label.new()
-	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_status.add_theme_color_override("font_color", Color(0.75, 0.82, 0.9))
-	body_box.add_child(_status)
-
+	_selected_command = ""
+	_form_box = $Editor/Body/Layout/Forms
+	_status = $Editor/Body/Layout/Status
+	_run_button = $Editor/Body/Layout/RunRow/Run
+	_command_title = $Editor/Body/Layout/CommandTitle
+	_player_picker = $Editor/PlayerRow/PlayerPicker
+	for button in $Commands/Groups.get_children():
+		if not button is Button or not button.has_meta("command"):
+			continue
+		var command_name := str(button.get_meta("command"))
+		button.visible = session.registry.schemas.has(command_name)
+		button.button_pressed = false
+		var callback := _on_command_button_pressed.bind(command_name)
+		if not button.pressed.is_connected(callback):
+			button.pressed.connect(callback)
+		_command_buttons[command_name] = button
+	var player_callback := _on_player_selected.bind(_player_picker)
+	if not _player_picker.item_selected.is_connected(player_callback):
+		_player_picker.item_selected.connect(player_callback)
+	if not _run_button.pressed.is_connected(_on_run_pressed):
+		_run_button.pressed.connect(_on_run_pressed)
+	var refresh_button:Button = $Editor/Body/Layout/RunRow/Refresh
+	if not refresh_button.pressed.is_connected(_on_refresh_pressed):
+		refresh_button.pressed.connect(_on_refresh_pressed)
 	_fill_player_picker()
 
 
@@ -402,15 +328,14 @@ func _on_command_button_pressed(command_name:String) -> void:
 	rebuild_form(false)
 
 
-## preserve=true 时先读回当前控件的值再重建，避免同一命令内刷新时清掉玩家已做的选择。
+## preserve=true 时先读回参数再刷新，复用场景节点并保留同一命令内的选择。
 func rebuild_form(preserve:bool = true) -> void:
 	if _form_box == null:
 		return
 	if preserve:
 		_capture_saved_values()
 	for child in _form_box.get_children():
-		_form_box.remove_child(child)
-		child.free()
+		child.visible = str(child.name) == _selected_command
 	_field_controls.clear()
 	_field_placeholder.clear()
 
@@ -423,18 +348,11 @@ func rebuild_form(preserve:bool = true) -> void:
 	_run_button.disabled = false
 
 	var fields:Array = COMMAND_FIELDS.get(_selected_command, [])
-	if _needs_player(_selected_command):
-		var player_hint := Label.new()
-		player_hint.text = "使用上方选定的目标玩家"
-		player_hint.add_theme_color_override("font_color", Color(0.6, 0.68, 0.78))
-		_form_box.add_child(player_hint)
+	var form := _form_box.get_node(NodePath(_selected_command))
+	form.get_node("PlayerHint").visible = _needs_player(_selected_command)
 	for field in fields:
-		_add_field(field)
-	if spec.get("undo_level", "none") == "forbidden" and str(spec.get("scope", "")) != "inspect":
-		var warn := Label.new()
-		warn.text = "该操作不可撤销，执行前请确认"
-		warn.add_theme_color_override("font_color", Color(0.95, 0.7, 0.4))
-		_form_box.add_child(warn)
+		_refresh_field(field)
+	form.get_node("Warning").visible = spec.get("undo_level", "none") == "forbidden" and str(spec.get("scope", "")) != "inspect"
 	if spec.is_empty():
 		_status.text = "该命令未登记"
 	elif !preserve:
@@ -468,109 +386,57 @@ func _capture_saved_values() -> void:
 			_field_saved[key] = value
 
 
-func _add_field(field:Dictionary) -> void:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 6)
+func _refresh_field(field:Dictionary) -> void:
 	var key := str(field.key)
-	var label := Label.new()
-	label.text = str(field.get("label", key))
-	label.custom_minimum_size = Vector2(132, 0)
-	row.add_child(label)
-	var control := _build_control(field)
-	if control == null:
-		return
-	control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_field_controls[key] = control
-	if control is Label:
-		# 占位说明（如“当前没有选牌等待”）：没有可传的值，校验时跳过，让 registry 报出真实原因
-		_field_placeholder[key] = true
-	row.add_child(control)
-	_form_box.add_child(row)
-
-
-func _build_control(field:Dictionary) -> Control:
-	var key := str(field.key)
-	var kind := str(field.get("kind", "text"))
+	var row := _form_box.get_node(NodePath(_selected_command + "/" + key))
+	var control:Control = row.get_node("Control")
+	control.visible = true
+	var placeholder := row.get_node_or_null("Placeholder") as Label
+	if placeholder != null:
+		placeholder.visible = false
+	var kind := str(field.kind)
 	match kind:
 		"choice":
 			var options:Array = field.get("options", [])
 			if field.has("options_source"):
 				options = _options_for_source(str(field.options_source))
-			return _make_choice(options, str(_saved_or(key, field.get("value", ""))))
-		"int":
-			var spin := SpinBox.new()
-			spin.min_value = float(field.get("min", 0))
-			spin.max_value = float(field.get("max", 99))
-			spin.step = 1
-			spin.value = float(_saved_or(key, field.get("value", 0)))
-			return spin
-		"number":
-			var number_spin := SpinBox.new()
-			number_spin.allow_lesser = true
-			number_spin.allow_greater = true
-			number_spin.value = float(_saved_or(key, field.get("value", 0)))
-			return number_spin
-		"optional_int":
+			_fill_choice(control, options, str(_saved_or(key, field.get("value", ""))))
+		"int", "number":
+			control.value = float(_saved_or(key, field.get("value", 0)))
+		"optional_int", "optional_number":
 			var saved:Dictionary = _saved_or(key, {})
-			var holder := HBoxContainer.new()
-			var check := CheckBox.new()
-			check.text = "指定"
-			check.button_pressed = bool(saved.get("enabled", false))
-			check.focus_mode = Control.FOCUS_NONE
-			check.set_meta(NO_HINT, true)
-			holder.add_child(check)
-			var value_spin := SpinBox.new()
-			value_spin.min_value = -1.0
-			value_spin.max_value = 999.0
-			value_spin.value = float(saved.get("value", field.get("value", -1)))
-			value_spin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			holder.add_child(value_spin)
-			holder.set_meta("optional_check", check)
-			holder.set_meta("optional_value", value_spin)
-			return holder
-		"optional_number":
-			var saved:Dictionary = _saved_or(key, {})
-			var number_holder := HBoxContainer.new()
-			var number_check := CheckBox.new()
-			number_check.text = "限制"
-			number_check.button_pressed = bool(saved.get("enabled", false))
-			number_check.focus_mode = Control.FOCUS_NONE
-			number_check.set_meta(NO_HINT, true)
-			number_holder.add_child(number_check)
-			var bound_spin := SpinBox.new()
-			bound_spin.allow_lesser = true
-			bound_spin.allow_greater = true
-			bound_spin.value = float(saved.get("value", field.get("value", 0)))
-			bound_spin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			number_holder.add_child(bound_spin)
-			number_holder.set_meta("optional_check", number_check)
-			number_holder.set_meta("optional_value", bound_spin)
-			return number_holder
+			var enabled:CheckBox = control.get_node("Enabled")
+			var value:SpinBox = control.get_node("Value")
+			enabled.button_pressed = bool(saved.get("enabled", false))
+			value.value = float(saved.get("value", field.get("value", -1 if kind == "optional_int" else 0)))
+			control.set_meta("optional_check", enabled)
+			control.set_meta("optional_value", value)
 		"bool":
-			var box := CheckBox.new()
-			box.text = "是"
-			box.focus_mode = Control.FOCUS_NONE
-			box.set_meta(NO_HINT, true)
-			box.button_pressed = bool(_saved_or(key, field.get("value", false)))
-			return box
-		"card", "cards", "zone", "area", "location", "master", "servant", "template", "buff", "situation", "attrs", "player":
-			return _make_list_control(field)
-		"pending_options":
-			return _make_pending_options()
-		"pending_cards":
-			return _make_pending_cards()
-		"pending_players":
-			return _make_pending_players()
-	return null
+			control.button_pressed = bool(_saved_or(key, field.get("value", false)))
+		"pending_options", "pending_cards", "pending_players":
+			var message := _fill_pending(control, kind)
+			if message != "":
+				control.visible = false
+				placeholder.text = message
+				placeholder.visible = true
+				control = placeholder
+		_:
+			var scope := str(field.get("scope", "any"))
+			if control is ItemList:
+				_populate_list(control, kind, key, scope)
+			else:
+				_populate_options(control, kind, key, scope)
+	_field_controls[key] = control
+	if control is Label:
+		_field_placeholder[key] = true
 
 
 func _saved_or(key:String, fallback):
 	return _field_saved.get(key, fallback)
 
 
-func _make_choice(options:Array, wanted:String) -> OptionButton:
-	var picker := OptionButton.new()
-	picker.focus_mode = Control.FOCUS_NONE
+func _fill_choice(picker:OptionButton, options:Array, wanted:String) -> void:
+	picker.clear()
 	var selected:int = 0
 	for i in range(options.size()):
 		var option:Dictionary = options[i]
@@ -579,8 +445,8 @@ func _make_choice(options:Array, wanted:String) -> OptionButton:
 		picker.set_item_metadata(i, value)
 		if value == wanted:
 			selected = i
-	picker.select(selected)
-	return picker
+	if picker.item_count > 0:
+		picker.select(selected)
 
 
 func _options_for_source(source:String) -> Array:
@@ -618,24 +484,6 @@ func _options_for_source(source:String) -> Array:
 				keys.append({"value":str(key), "label":str(key)})
 			return keys
 	return []
-
-
-func _make_list_control(field:Dictionary) -> Control:
-	var kind := str(field.get("kind", "card"))
-	var key := str(field.key)
-	var scope := str(field.get("scope", "any"))
-	var multiple:bool = kind == "cards" || kind == "attrs"
-	if multiple:
-		var list := ItemList.new()
-		list.custom_minimum_size = Vector2(0, 96)
-		list.select_mode = ItemList.SELECT_MULTI
-		list.allow_reselect = true
-		_populate_list(list, kind, key, scope)
-		return list
-	var picker := OptionButton.new()
-	picker.focus_mode = Control.FOCUS_NONE
-	_populate_options(picker, kind, key, scope)
-	return picker
 
 
 func _populate_list(list:ItemList, kind:String, key:String, scope:String) -> void:
@@ -834,61 +682,39 @@ func _command_spell_templates() -> Array:
 	return pool
 
 
-func _make_pending_options() -> Control:
-	var effect = EffectManager.waiting_effect
-	if effect == null:
-		return _placeholder("当前没有选项等待")
-	var options:Array = effect._options if "_options" in effect else []
-	if options.is_empty():
-		return _placeholder("该效果未声明选项")
-	var list := ItemList.new()
-	list.custom_minimum_size = Vector2(0, 96)
-	list.select_mode = ItemList.SELECT_MULTI if effect.has_method("allows_multi_choice") and effect.allows_multi_choice() else ItemList.SELECT_SINGLE
-	for i in range(options.size()):
-		var option:Dictionary = options[i] if options[i] is Dictionary else {}
-		var shown := str(option.get("shown_option_name", option.get("option_name", "")))
-		if shown == "":
-			shown = "选项 %d" % i
-		list.add_item(shown)
-		list.set_item_metadata(list.item_count - 1, i)
-	return list
-
-
-func _make_pending_cards() -> Control:
-	var pending:Dictionary = EffectManager.get_pending_card_selection()
-	var cards:Array = pending.get("cards", [])
-	if cards.is_empty():
-		return _placeholder("当前没有选牌等待")
-	var list := ItemList.new()
-	list.custom_minimum_size = Vector2(0, 96)
-	list.select_mode = ItemList.SELECT_MULTI
-	for card in cards:
-		if card is BaseCard:
-			list.add_item("%s #%s" % [str(card.get_shown_name()), card.get_instance_id()])
-			list.set_item_metadata(list.item_count - 1, card.get_instance_id())
-	return list
-
-
-func _make_pending_players() -> Control:
-	var pending:Dictionary = EffectManager.get_pending_player_selection()
-	var candidates:Array = pending.get("candidates", [])
-	if candidates.is_empty():
-		return _placeholder("当前没有选玩家等待")
-	var list := ItemList.new()
-	list.custom_minimum_size = Vector2(0, 96)
-	list.select_mode = ItemList.SELECT_MULTI
-	for raw_id in candidates:
-		var id:int = int(raw_id)
-		list.add_item("玩家 %d" % id)
-		list.set_item_metadata(list.item_count - 1, id)
-	return list
-
-
-func _placeholder(text:String) -> Control:
-	var label := Label.new()
-	label.text = text
-	label.add_theme_color_override("font_color", Color(0.8, 0.6, 0.4))
-	return label
+func _fill_pending(list:ItemList, kind:String) -> String:
+	list.clear()
+	match kind:
+		"pending_options":
+			var effect = EffectManager.waiting_effect
+			if effect == null:
+				return "当前没有选项等待"
+			var options:Array = effect._options if "_options" in effect else []
+			if options.is_empty():
+				return "该效果未声明选项"
+			list.select_mode = ItemList.SELECT_MULTI if effect.has_method("allows_multi_choice") and effect.allows_multi_choice() else ItemList.SELECT_SINGLE
+			for i in range(options.size()):
+				var option:Dictionary = options[i] if options[i] is Dictionary else {}
+				var shown := str(option.get("shown_option_name", option.get("option_name", "")))
+				list.add_item(shown if shown != "" else "选项 %d" % i)
+				list.set_item_metadata(list.item_count - 1, i)
+		"pending_cards":
+			var cards:Array = EffectManager.get_pending_card_selection().get("cards", [])
+			if cards.is_empty():
+				return "当前没有选牌等待"
+			for card in cards:
+				if card is BaseCard:
+					list.add_item("%s #%s" % [str(card.get_shown_name()), card.get_instance_id()])
+					list.set_item_metadata(list.item_count - 1, card.get_instance_id())
+		"pending_players":
+			var candidates:Array = EffectManager.get_pending_player_selection().get("candidates", [])
+			if candidates.is_empty():
+				return "当前没有选玩家等待"
+			for raw_id in candidates:
+				var id:int = int(raw_id)
+				list.add_item("玩家 %d" % id)
+				list.set_item_metadata(list.item_count - 1, id)
+	return ""
 
 
 func _on_run_pressed() -> void:
@@ -909,17 +735,26 @@ func _on_run_pressed() -> void:
 	if !_validate_args(args):
 		return
 	var result:Dictionary = session.execute_action(_selected_command, args)
-	var label := "「%s」" % _command_label(_selected_command)
-	if bool(result.get("ok", false)):
-		# 成功但没产生变化时要说清楚，否则玩家会以为按钮没生效
-		_status.text = "已执行：%s" % label if bool(result.get("changed", false)) else "已执行但未产生变化：%s" % label
-	else:
-		var reason := str(result.get("error", "")).strip_edges()
-		_status.text = "被拒绝：%s" % (reason if reason != "" else label)
-	if _on_result.is_valid():
-		_on_result.call(label, result)
+	_show_action_result(_selected_command, result)
 	_field_saved.clear()
 	rebuild_form()
+
+
+func _show_action_result(command_name:String, result:Dictionary) -> void:
+	var label := "「%s」" % _command_label(command_name)
+	var message:String
+	if result.get("pending", false):
+		message = "规则执行已暂停，等待续行：%s" % label
+	elif bool(result.get("ok", false)):
+		# 成功但没产生变化时要说清楚，否则玩家会以为按钮没生效
+		message = "已执行：%s" % label if bool(result.get("changed", false)) else "已执行但未产生变化：%s" % label
+	else:
+		var reason := str(result.get("error", "")).strip_edges()
+		message = "被拒绝：%s" % (reason if reason != "" else label)
+	if command_name == _selected_command:
+		_status.text = message
+	if _on_result.is_valid():
+		_on_result.call(label, result)
 
 
 func _apply_field_value(args:Dictionary, key:String, value, field:Dictionary) -> void:

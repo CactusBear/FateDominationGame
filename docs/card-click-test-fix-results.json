@@ -1,0 +1,63 @@
+{
+  "cause": "旧测试漏掉出牌堆首次点击只展开的交互步骤",
+  "names": {
+    "surveil_window": "急行",
+    "bellerophon_window": "骑英之缰绳"
+  },
+  "runs": [
+    {
+      "scene": "surveil_window",
+      "repeat": 0,
+      "exit": 0,
+      "result": [
+        "RESULT checks=10 failures=[]\r"
+      ],
+      "errors": []
+    },
+    {
+      "scene": "bellerophon_window",
+      "repeat": 0,
+      "exit": 0,
+      "result": [
+        "RESULT checks=13 failures=[]\r"
+      ],
+      "errors": []
+    },
+    {
+      "scene": "surveil_window",
+      "repeat": 1,
+      "exit": 0,
+      "result": [
+        "RESULT checks=10 failures=[]\r"
+      ],
+      "errors": []
+    },
+    {
+      "scene": "bellerophon_window",
+      "repeat": 1,
+      "exit": 0,
+      "result": [
+        "RESULT checks=13 failures=[]\r"
+      ],
+      "errors": []
+    },
+    {
+      "scene": "surveil_window",
+      "repeat": 2,
+      "exit": 0,
+      "result": [
+        "RESULT checks=10 failures=[]\r"
+      ],
+      "errors": []
+    },
+    {
+      "scene": "bellerophon_window",
+      "repeat": 2,
+      "exit": 0,
+      "result": [
+        "RESULT checks=13 failures=[]\r"
+      ],
+      "errors": []
+    }
+  ]
+}

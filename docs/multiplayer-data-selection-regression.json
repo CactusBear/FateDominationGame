@@ -1,0 +1,82 @@
+[
+  {
+    "scene": "net_lobby_window",
+    "exit": 0,
+    "results": [
+      "RESULT checks=13 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "net_lobby_transition",
+    "exit": 0,
+    "results": [
+      "RESULT checks=10 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "net_data_barrier_window",
+    "exit": 0,
+    "results": [
+      "RESULT checks=11 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "net_data_selection_window",
+    "exit": 0,
+    "results": [
+      "RESULT checks=8 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "net_data_validation",
+    "exit": 0,
+    "results": [
+      "RESULT checks=13 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "net_validation_task",
+    "exit": 0,
+    "results": [
+      "RESULT checks=17 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "net_data_plan",
+    "exit": 0,
+    "results": [
+      "RESULT checks=7 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "roster_live",
+    "exit": 0,
+    "results": [
+      "RESULT checks=21 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "pending_board_power",
+    "exit": 0,
+    "results": [
+      "RESULT {\"checks\":171,\"failures\":[]}"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "reported_board_power",
+    "exit": 0,
+    "results": [
+      "RESULT checks=47 failures=[]"
+    ],
+    "errors": []
+  }
+]

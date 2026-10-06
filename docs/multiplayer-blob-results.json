@@ -1,0 +1,38 @@
+[
+  {
+    "scene": "net_blob",
+    "exit": 0,
+    "result": [
+      "RESULT checks=41 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK blob receiver exists true\r\nCHECK approved blob registered true\r\nCHECK different sender rejected true\r\nCHECK out of order offset rejected true\r\nCHECK invalid chunks do not advance offset true\r\nCHECK actual transfer transport started true\r\nCHECK transfer client connected true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK chunk queued true\r\nCHECK actual network payload verified and stored true\r\nCHECK completion releases reservation true\r\nCHECK second transfer approved true\r\nCHECK hash mismatch rejected true\r\nCHECK bad content not cached and reservation released true\r\nCHECK aggregate memory budget enforced true\r\nCHECK bounded transfer allowed true\r\nCHECK disconnect releases partial transfers true\r\nRESULT checks=41 failures=[]"
+  },
+  {
+    "scene": "net_lobby",
+    "exit": 0,
+    "result": [
+      "RESULT checks=14 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK network lobby exists true\r\nCHECK network room created true\r\nCHECK network guest joining true\r\nCHECK room synchronized over actual ENet true\r\nCHECK lobby provides approved content transfer true\r\nCHECK approved content requested true\r\nCHECK room file downloaded and verified true\r\nCHECK missing content request submitted true\r\nCHECK rejected download releases reservation true\r\nCHECK remote readiness reaches authority true\r\nCHECK forged actor cannot alter room true\r\nCHECK permission failure delivered to sender true\r\nCHECK selection start synchronized true\r\nCHECK network disconnect preserved without AI takeover true\r\nRESULT checks=14 failures=[]"
+  },
+  {
+    "scene": "net_cache",
+    "exit": 0,
+    "result": [
+      "RESULT checks=10 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK content cache exists true\r\nCHECK unsafe cache key rejected true\r\nCHECK false digest rejected true\r\nCHECK verified bytes cached true\r\nCHECK cached content read true\r\nCHECK active content protected during cleanup true\r\nCHECK unused content removable true\r\nCHECK removed content becomes cache miss true\r\nCHECK cache can download again true\r\nCHECK corrupted cached data not served true\r\nRESULT checks=10 failures=[]"
+  },
+  {
+    "scene": "net_lobby_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=5 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK create button opens real room true\r\nCHECK actual client joins visible lobby true\r\nCHECK ready button updates authority true\r\nCHECK both members shown true\r\nCHECK lobby screenshot saved true\r\nRESULT checks=5 failures=[]"
+  }
+]

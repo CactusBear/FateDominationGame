@@ -1,0 +1,56 @@
+[
+  {
+    "scene": "load_snapshot_cache_test",
+    "exit": 0,
+    "checks": 9,
+    "failures": [],
+    "result": "RESULT checks=9 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_lobby_transition_test",
+    "exit": 0,
+    "checks": 10,
+    "failures": [],
+    "result": "RESULT checks=10 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_lobby_window_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT checks=12 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_match_test",
+    "exit": 0,
+    "checks": 21,
+    "failures": [],
+    "result": "RESULT checks=21 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_server_cli_test",
+    "exit": 0,
+    "checks": 7,
+    "failures": [],
+    "result": "RESULT checks=7 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_validation_task_test",
+    "exit": 0,
+    "checks": 17,
+    "failures": [],
+    "result": "RESULT checks=17 failures=[]",
+    "error_count": 0,
+    "errors": []
+  }
+]

@@ -12,6 +12,8 @@ var _next_command_id:int = 1
 var _executing:bool = false
 var _template_baseline:Dictionary = {}
 var _undo_records:Array = []
+var _generation:int = 0
+signal action_completed(command_name:String, result:Dictionary)
 
 
 func _init(p_host = null):
@@ -43,6 +45,7 @@ func release_owner_pauses(owner:String = "console") -> int:
 
 
 func shutdown() -> void:
+	_generation += 1
 	_pause_tokens.clear()
 	audit.clear()
 	_undo_records.clear()
@@ -78,12 +81,12 @@ func execute_action(command_name:String, args:Dictionary = {}) -> Dictionary:
 	var result:Dictionary = registry.execute_action(command_name, args)
 	var after := _runtime_snapshot()
 	var validation:Dictionary = {}
-	if bool(result.get("ok", false)) and bool(result.get("changed", false)):
+	if not result.get("pending", false) and bool(result.get("ok", false)) and bool(result.get("changed", false)):
 		validation = DebugValidate.validate_all(_template_baseline)
 		result["validation"] = validation
 	if bool(result.get("changed", false)):
 		refresh_host()
-	if bool(result.get("ok", false)) and bool(result.get("changed", false)) \
+	if not result.get("pending", false) and bool(result.get("ok", false)) and bool(result.get("changed", false)) \
 			and str(spec.get("undo_level", "none")) == "local":
 		_undo_records.append({
 			"command":command_name,
@@ -91,6 +94,7 @@ func execute_action(command_name:String, args:Dictionary = {}) -> Dictionary:
 			"result":result.duplicate(true)
 		})
 	var entry := {
+		"pending": bool(result.get("pending", false)),
 		"command_id": command_id,
 		"command": command_name,
 		"ok": bool(result.get("ok", false)),
@@ -105,8 +109,30 @@ func execute_action(command_name:String, args:Dictionary = {}) -> Dictionary:
 	}
 	audit.append(entry)
 	result["command_id"] = command_id
+	if entry.pending:
+		EffectManager.defer_until_runtime_guard_complete(Callable(DebugSession, "_finish_pending_action").bind(weakref(self), _generation, command_name, result, entry))
 	_executing = false
 	return result
+
+
+static func _finish_pending_action(reference:WeakRef, generation:int, command_name:String, result:Dictionary, entry:Dictionary) -> void:
+	var session:DebugSession = reference.get_ref()
+	if session == null or session._generation != generation or result.get("pending", false):
+		return
+	var validation:Dictionary = {}
+	if bool(result.get("ok", false)) and bool(result.get("changed", false)):
+		validation = DebugValidate.validate_all(session._template_baseline)
+		result["validation"] = validation
+	entry.pending = false
+	entry.ok = bool(result.get("ok", false))
+	entry.changed = bool(result.get("changed", false))
+	entry.reason = str(result.get("error", ""))
+	entry.after = session._runtime_snapshot()
+	entry["result"] = result.duplicate(true)
+	entry.validation = validation.duplicate(true)
+	if entry.changed:
+		session.refresh_host()
+	session.action_completed.emit(command_name, result)
 
 
 func step_action() -> Dictionary:

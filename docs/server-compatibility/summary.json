@@ -1,0 +1,408 @@
+[
+  {
+    "scene": "match_view_test",
+    "exit": 0,
+    "checks": 209,
+    "failures": [],
+    "result": "RESULT checks=209 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_assembly_test",
+    "exit": 0,
+    "checks": 15,
+    "failures": [],
+    "result": "RESULT checks=15 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_blob_test",
+    "exit": 0,
+    "checks": 41,
+    "failures": [],
+    "result": "RESULT checks=41 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_cache_test",
+    "exit": 0,
+    "checks": 10,
+    "failures": [],
+    "result": "RESULT checks=10 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_cancel_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT checks=12 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_cards_test",
+    "exit": 0,
+    "checks": 7,
+    "failures": [],
+    "result": "RESULT checks=7 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_catalog_exchange_test",
+    "exit": 0,
+    "checks": 15,
+    "failures": [],
+    "result": "RESULT checks=15 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_data_barrier_test",
+    "exit": 0,
+    "checks": 21,
+    "failures": [],
+    "result": "RESULT checks=21 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_data_barrier_window_test",
+    "exit": 0,
+    "checks": 0,
+    "failures": [],
+    "result": "RESULT checks=0 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_data_catalog_test",
+    "exit": 0,
+    "checks": 78,
+    "failures": [],
+    "result": "RESULT checks=78 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_data_plan_test",
+    "exit": 0,
+    "checks": 7,
+    "failures": [],
+    "result": "RESULT checks=7 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_data_selection_window_test",
+    "exit": 0,
+    "checks": 0,
+    "failures": [],
+    "result": "RESULT checks=0 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_data_sync_test",
+    "exit": 0,
+    "checks": 8,
+    "failures": [],
+    "result": "RESULT checks=8 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_data_validation_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT checks=13 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_full_game_test",
+    "exit": 0,
+    "checks": 4,
+    "failures": [],
+    "result": "RESULT checks=4 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_group_selection_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT checks=13 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_hand_window_test",
+    "exit": 0,
+    "checks": 0,
+    "failures": [],
+    "result": "RESULT checks=0 failures=[] window_only=true",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_ids_test",
+    "exit": 0,
+    "checks": 5,
+    "failures": [],
+    "result": "RESULT checks=5 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_lobby_test",
+    "exit": 0,
+    "checks": 32,
+    "failures": [],
+    "result": "RESULT checks=32 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_lobby_transition_test",
+    "exit": "TIMEOUT",
+    "checks": null,
+    "failures": null,
+    "result": null,
+    "error_count": 1,
+    "errors": [
+      "SCRIPT ERROR: Invalid access to property or key '_broadcast_registered' on a base object of type 'Control (lobby_screen.gd)'.\r"
+    ]
+  },
+  {
+    "scene": "net_lobby_window_test",
+    "exit": "TIMEOUT",
+    "checks": null,
+    "failures": null,
+    "result": null,
+    "error_count": 1,
+    "errors": [
+      "SCRIPT ERROR: Invalid access to property or key 'choices' on a base object of type 'Dictionary'.\r"
+    ]
+  },
+  {
+    "scene": "net_locations_test",
+    "exit": 0,
+    "checks": 7,
+    "failures": [],
+    "result": "RESULT checks=7 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_management_window_test",
+    "exit": 0,
+    "checks": 0,
+    "failures": [],
+    "result": "RESULT checks=0 failures=[] window_only=true",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_match_test",
+    "exit": 0,
+    "checks": 21,
+    "failures": [],
+    "result": "RESULT checks=21 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_menu_entry_test",
+    "exit": 0,
+    "checks": 9,
+    "failures": [],
+    "result": "RESULT checks=9 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_move_test",
+    "exit": 0,
+    "checks": 11,
+    "failures": [],
+    "result": "RESULT checks=11 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_opponent_window_test",
+    "exit": 0,
+    "checks": 0,
+    "failures": [],
+    "result": "RESULT checks=0 failures=[] window_only=true",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_options_test",
+    "exit": 0,
+    "checks": 6,
+    "failures": [],
+    "result": "RESULT checks=6 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_pending_test",
+    "exit": 0,
+    "checks": 15,
+    "failures": [],
+    "result": "RESULT checks=15 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_play_test",
+    "exit": 0,
+    "checks": 22,
+    "failures": [],
+    "result": "RESULT checks=22 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_process_full_game_test",
+    "exit": 0,
+    "checks": 0,
+    "failures": [],
+    "result": "RESULT checks=0 failures=[] external_pair_only=true",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_process_test",
+    "exit": 0,
+    "checks": 0,
+    "failures": [],
+    "result": "RESULT checks=0 failures=[] external_pair_only=true",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_room_assets_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT checks=12 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_room_assets_window_test",
+    "exit": 0,
+    "checks": 0,
+    "failures": [],
+    "result": "RESULT checks=0 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_room_test",
+    "exit": 0,
+    "checks": 16,
+    "failures": [],
+    "result": "RESULT checks=16 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_selection_test",
+    "exit": 0,
+    "checks": 11,
+    "failures": [],
+    "result": "RESULT checks=11 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_server_cli_test",
+    "exit": 0,
+    "checks": 7,
+    "failures": [],
+    "result": "RESULT checks=7 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_server_gateway_test",
+    "exit": 0,
+    "checks": 10,
+    "failures": [],
+    "result": "RESULT checks=10 failures=[]",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  },
+  {
+    "scene": "net_server_lobby_window_test",
+    "exit": 0,
+    "checks": 0,
+    "failures": [],
+    "result": "RESULT checks=0 failures=[] window_only=true",
+    "error_count": 2,
+    "errors": [
+      "ERROR: Condition \"(uint32_t)buff.size() != len\" is true. Returning: Variant()\r",
+      "SCRIPT ERROR: Invalid cast: could not convert value to 'Array'.\r"
+    ]
+  }
+]

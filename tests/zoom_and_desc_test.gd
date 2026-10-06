@@ -246,9 +246,11 @@ func run() -> void:
 	esc.pressed = true
 	get_tree().root.push_input(esc, true)
 	check(not board._hover_desc.visible, "Escape closes description")
+	check(not board._pause_menu.visible, "Escape consumes standalone description without opening pause menu")
 	await point_at(Vector2(5, 400))
 	await point_at(played_slot.get_global_transform() * (played_slot.size * 0.5))
 	check(board._hover_zoom.visible, "preview active before removal")
+
 	pl.played_cards.erase(played)
 	board.refresh_all_ui()
 	await frames(4)

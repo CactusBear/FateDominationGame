@@ -1,0 +1,23 @@
+[
+  {
+    "seed": 42,
+    "host_exit": 0,
+    "client_exit": 0,
+    "host_log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nPROCESS_HOST_READY\nCHECK separate process client decisions reach actual game end true\nCHECK client never starts local game engine true\nCHECK this process submitted gameplay decisions true\nCHECK other private hands absent throughout entire network match true\nCHECK authoritative game end recorded as actual fact true\nPROCESS_FULL_GAME role=host decisions=88 view= error= pending={  }\nRESULT checks=5 failures=[]\n",
+    "client_log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nCHECK separate process client decisions reach actual game end true\nCHECK client never starts local game engine true\nCHECK this process submitted gameplay decisions true\nCHECK other private hands absent throughout entire network match true\nPROCESS_FULL_GAME role=client decisions=94 view= error= pending={  }\nRESULT checks=4 failures=[]\n"
+  },
+  {
+    "seed": 1978,
+    "host_exit": 0,
+    "client_exit": 0,
+    "host_log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nPROCESS_HOST_READY\nCHECK separate process client decisions reach actual game end true\nCHECK client never starts local game engine true\nCHECK this process submitted gameplay decisions true\nCHECK other private hands absent throughout entire network match true\nCHECK authoritative game end recorded as actual fact true\nPROCESS_FULL_GAME role=host decisions=94 view= error= pending={  }\nRESULT checks=5 failures=[]\n",
+    "client_log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nCHECK separate process client decisions reach actual game end true\nCHECK client never starts local game engine true\nCHECK this process submitted gameplay decisions true\nCHECK other private hands absent throughout entire network match true\nPROCESS_FULL_GAME role=client decisions=88 view= error= pending={  }\nRESULT checks=4 failures=[]\n"
+  },
+  {
+    "seed": 2026,
+    "host_exit": 0,
+    "client_exit": 0,
+    "host_log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nPROCESS_HOST_READY\nCHECK separate process client decisions reach actual game end true\nCHECK client never starts local game engine true\nCHECK this process submitted gameplay decisions true\nCHECK other private hands absent throughout entire network match true\nCHECK authoritative game end recorded as actual fact true\nPROCESS_FULL_GAME role=host decisions=94 view= error= pending={  }\nRESULT checks=5 failures=[]\n",
+    "client_log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\n\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\nCHECK separate process client decisions reach actual game end true\nCHECK client never starts local game engine true\nCHECK this process submitted gameplay decisions true\nCHECK other private hands absent throughout entire network match true\nPROCESS_FULL_GAME role=client decisions=98 view= error= pending={  }\nRESULT checks=4 failures=[]\n"
+  }
+]

@@ -1,6 +1,13 @@
 extends RefCounted
 class_name BaseNumber
 
+## 仅格式化显示，不改变数值和类型，也不截断真实小数。
+static func display_text(value) -> String:
+	if value is BaseNumber:
+		value = value.number
+	var text := str(value)
+	return text.trim_suffix(".0") if value is float else text
+
 func clone_data(_context):
 	var cloned = BaseNumber.new(number, can_change, is_pure_number)
 	cloned.is_float = is_float

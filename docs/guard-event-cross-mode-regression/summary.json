@@ -1,0 +1,95 @@
+{
+  "requested_suites": 8,
+  "executed_suites": 8,
+  "checks": 141,
+  "suites": [
+    {
+      "suite": "rule_execution_state",
+      "window": false,
+      "exit": 0,
+      "checks": 23,
+      "results": [
+        "RESULT checks=23 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_execution_frames",
+      "window": false,
+      "exit": 0,
+      "checks": 25,
+      "results": [
+        "RESULT checks=25 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "match_replay_pending",
+      "window": false,
+      "exit": 0,
+      "checks": 12,
+      "results": [
+        "RESULT checks=12 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_runtime_guard",
+      "window": false,
+      "exit": 0,
+      "checks": 20,
+      "results": [
+        "RESULT checks=20 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_debug_result_window",
+      "window": true,
+      "exit": 0,
+      "checks": 6,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_runtime_guard_window",
+      "window": true,
+      "exit": 0,
+      "checks": 25,
+      "results": [
+        "RESULT checks=25 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_server_match",
+      "window": true,
+      "exit": 0,
+      "checks": 11,
+      "results": [
+        "RESULT checks=11 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_p2p_signal_match",
+      "window": true,
+      "exit": 0,
+      "checks": 19,
+      "results": [
+        "RESULT checks=19 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    }
+  ]
+}

@@ -6,13 +6,13 @@ var servants_path := ""
 var tag_list_path := ""
 var tag_list:Array
 var temp_stored_jsons_arr:Array#[String]
-var _loaded_path = []
 var load_masters_finished:bool = false
-var _servants_loaded_path = []
 var load_servants_finished:bool = false
 var roster_catalog = preload("res://scripts/selection/roster_catalog.gd").new()
 
 func _ready():
+	if OS.get_cmdline_user_args().has("--room-data-validation-worker") or OS.get_cmdline_user_args().has("--server-room-worker") or OS.get_cmdline_user_args().has("--server-gateway"):
+		return
 	load_game()
 	pass
 
@@ -39,8 +39,6 @@ func load_game():
 func reload_game():
 	load_masters_finished = false
 	load_servants_finished = false
-	_loaded_path = []
-	_servants_loaded_path = []
 	tag_list.clear()
 	temp_stored_jsons_arr.clear()
 	load_game()
@@ -173,107 +171,92 @@ func load_tags(need_check:bool = false):
 
 
 func load_masters_from_jsons(load_path:String):
-	var load_dir = DirAccess.open(load_path)
-	if load_dir:
-		load_dir.list_dir_begin()
-		var load_file_name = load_dir.get_next()
-		while !load_masters_finished:
-			if load_file_name == "":
-				var current_path = load_dir.get_current_dir()
-				var rev_path = current_path.reverse()
-				var index = rev_path.find("/")
-				var last_path = current_path.left(current_path.length() - index - 1)
-				var end_path_last = "/data"
-				if last_path.right(end_path_last.length()) == end_path_last:
-					_loaded_path = []
-					load_masters_finished = true
-					return
-				else: 
-					_loaded_path.append(current_path)
-					load_masters_from_jsons(last_path)
-			if load_dir.current_is_dir() and !_loaded_path.has(load_dir.get_current_dir() + "/" + load_file_name):
-				load_masters_from_jsons(load_dir.get_current_dir() + "/" + load_file_name)
-			elif !load_dir.current_is_dir():
-				if load_file_name.right(5) != ".json": 
-					load_file_name = load_dir.get_next()
-					continue
-				GameData.loaded_masters.append(load_master_file(load_dir.get_current_dir(), load_file_name))
-			load_file_name = load_dir.get_next()
-			
-	else:
-		print("尝试访问路径时出错。")
+	var files: Dictionary = {}
+	roster_catalog.error = ""
+	roster_catalog._scan(load_path, files)
+	if not roster_catalog.error.is_empty():
+		push_error(roster_catalog.error)
+		return
+	for path in files:
+		GameData.loaded_masters.append(load_master_file(path.get_base_dir(), path.get_file()))
+	load_masters_finished = true
 
 
 func load_servants_from_jsons(load_path:String):
-	var load_dir = DirAccess.open(load_path)
-	if load_dir:
-		load_dir.list_dir_begin()
-		var load_file_name = load_dir.get_next()
-		while !load_servants_finished:
-			if load_file_name == "":
-				var current_path = load_dir.get_current_dir()
-				var rev_path = current_path.reverse()
-				var index = rev_path.find("/")
-				var last_path = current_path.left(current_path.length() - index - 1)
-				var end_path_last = "/data"
-				if last_path.right(end_path_last.length()) == end_path_last:
-					_servants_loaded_path = []
-					load_servants_finished = true
-					return
-				else:
-					_servants_loaded_path.append(current_path)
-					load_servants_from_jsons(last_path)
-			if load_dir.current_is_dir() and !_servants_loaded_path.has(load_dir.get_current_dir() + "/" + load_file_name):
-				load_servants_from_jsons(load_dir.get_current_dir() + "/" + load_file_name)
-			elif !load_dir.current_is_dir():
-				if load_file_name.right(5) != ".json":
-					load_file_name = load_dir.get_next()
-					continue
-				GameData.loaded_servants.append(load_servant_file(load_dir.get_current_dir(), load_file_name))
-			load_file_name = load_dir.get_next()
-
-	else:
-		print("尝试访问路径时出错。")
+	var files: Dictionary = {}
+	roster_catalog.error = ""
+	roster_catalog._scan(load_path, files)
+	if not roster_catalog.error.is_empty():
+		push_error(roster_catalog.error)
+		return
+	for path in files:
+		GameData.loaded_servants.append(load_servant_file(path.get_base_dir(), path.get_file()))
+	load_servants_finished = true
 
 
 #JSON 内容快照的存放路径。必须是 user://：res:// 导出后是只读的 pck，写不进去。
 #这只是一份"卡数据有没有变过"的缓存，放用户数据目录即可
 const STORED_JSONS_PATH := "user://game_data/stored_jsons.dat"
+var stored_jsons_path: String = STORED_JSONS_PATH
+var max_snapshot_cache_bytes: int = 64 * 1024 * 1024
 
 
 func store_jsons():
-	DirAccess.make_dir_recursive_absolute(STORED_JSONS_PATH.get_base_dir())
-	var stored_jsons = FileAccess.open(STORED_JSONS_PATH, FileAccess.WRITE)
-	if stored_jsons == null:
+	if DirAccess.make_dir_recursive_absolute(stored_jsons_path.get_base_dir()) != OK:
 		push_warning("stored_jsons.dat 写入失败，跳过缓存")
 		return
-	stored_jsons.store_var(temp_stored_jsons_arr)
-	stored_jsons.close()
+	var bytes := JSON.stringify(temp_stored_jsons_arr).to_utf8_buffer()
+	if bytes.size() > max_snapshot_cache_bytes:
+		push_warning("JSON 快照超过缓存预算，跳过缓存")
+		return
+	var temporary := stored_jsons_path + ".%s.tmp" % OS.get_process_id()
+	var file := FileAccess.open(temporary, FileAccess.WRITE)
+	if file == null:
+		push_warning("stored_jsons.dat 写入失败，跳过缓存")
+		return
+	file.store_buffer(bytes)
+	file.flush()
+	var result := file.get_error()
+	file.close()
+	if result != OK or read_json_snapshot(temporary) != temp_stored_jsons_arr:
+		DirAccess.remove_absolute(temporary)
+		push_warning("JSON 快照写入不完整，保留原缓存")
+		return
+	if DirAccess.rename_absolute(temporary, stored_jsons_path) != OK:
+		DirAccess.remove_absolute(temporary)
+		push_warning("JSON 快照替换失败，保留原缓存")
 
+
+func read_json_snapshot(path: String):
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null or file.get_length() <= 0 or file.get_length() > max_snapshot_cache_bytes:
+		return null
+	# 旧二进制是可重建缓存，不调用 get_var 解码损坏或过时的文件。
+	if file.get_8() != 91:
+		file.close()
+		return null
+	file.seek(0)
+	var parser := JSON.new()
+	var result := parser.parse(file.get_as_text())
+	file.close()
+	if result != OK or not parser.data is Array:
+		return null
+	var snapshot: Array = parser.data
+	for entry in snapshot:
+		if not entry is String:
+			return null
+	return snapshot
+
+func same_json_snapshot(previous: Array, current: Array) -> bool:
+	var old := previous.duplicate()
+	var fresh := current.duplicate()
+	old.sort()
+	fresh.sort()
+	return old == fresh
 
 func load_stored_jsons():
-	var stored_jsons = FileAccess.open(STORED_JSONS_PATH, FileAccess.READ)
-	if stored_jsons == null: 
-		load_tags(true)
-		return
-	var stored_jsons_arr = stored_jsons.get_var() as Array
-	
-	var equal:bool
-	if stored_jsons_arr.size() != temp_stored_jsons_arr.size():
-		equal = false
-	else :
-		for str in stored_jsons_arr:
-			for t_str in temp_stored_jsons_arr:
-				if str == t_str:
-					equal = true
-				else :
-					equal = false
-			
-	if !equal:
-		load_tags(true)
-	else :
-		load_tags(false)
-	
+	var previous = read_json_snapshot(stored_jsons_path)
+	load_tags(previous == null or not same_json_snapshot(previous, temp_stored_jsons_arr))
 
 func load_master_file(path:String, master_file_name:String):
 	var master_file = FileAccess.open(path + "/" + master_file_name, FileAccess.READ)

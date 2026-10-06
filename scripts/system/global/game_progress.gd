@@ -133,8 +133,14 @@ func start_game():
 	# 按发牌配置准备牌堆与技能区；技能牌默认明置，特殊朝向仍由配置声明。
 	deal_player_cards()
 	TimePointChecker.set_phase_time_points([TimePoints.GAME])
+	if not EffectManager.defer_until_runtime_guard_complete(Callable(self, "_dispatch_game_start")):
+		_dispatch_game_start()
+
+
+func _dispatch_game_start() -> void:
 	TimePointChecker.global_time_point([TimePoints.GAME_START])
-	start_round()
+	if not EffectManager.defer_until_runtime_guard_complete(Callable(self, "start_round")):
+		start_round()
 
 
 #把进度状态复位到「未开局」：开局前与中途结束对局时共用。
@@ -247,21 +253,51 @@ func start_round():
 	refresh_first_player()
 	#每回合开始时重置本回合类记录字段，并派发ROUND_START_RESET供效果监听
 	EffectManager.reset_round_option_counts()
-	for id in GameDataManager.get_active_player_ids():
-		var player_data = GameDataManager.get_player_data(id) as Dictionary
-		player_data["temp_locations"] = []
-		TimePointChecker.dynamic_time_point([TimePoints.ROUND_START_RESET], id)
-	TimePointChecker.set_phase_time_points([TimePoints.DAY])
-	#规则：准备阶段按回合顺位把自己的手牌补充到手牌上限（已有上限张以上则不抽）。
-	#上限数字来自 GameData 的声明，流程里不写死；牌堆抽空时由 operation 负责把弃牌堆洗回
-	for id in get_ordered_player_ids():
-		RefillHand.new().exec(id, GameData.player_hand_limit(id))
-	#规则：每一回合开始时抽一张局势牌展示，所有玩家获得其魔力
-	SituationResolver.new().activate()
-	TimePointChecker.global_time_point([TimePoints.DAY_START])
-	#规则：每一回合开始时，为深山町抽一张明置事件牌、为新都抽一张暗置事件牌
-	EventResolver.new().place(event_placements)
-	advance_phase()
+	_resume_round_start({"phase": "reset", "players": GameDataManager.get_active_player_ids(), "index": 0})
+
+#回合号和日志边界已建立，尾部只保存原流程的阶段与玩家游标。
+func _resume_round_start(state:Dictionary) -> void:
+	while not is_game_over:
+		match state.phase:
+			"reset":
+				if state.index >= state.players.size():
+					state.phase = "window"
+					continue
+				var id:int = state.players[state.index]
+				state.index += 1
+				var player_data = GameDataManager.get_player_data(id) as Dictionary
+				player_data["temp_locations"] = []
+				TimePointChecker.dynamic_time_point([TimePoints.ROUND_START_RESET], id)
+			"window":
+				state.phase = "refill_setup"
+				TimePointChecker.set_phase_time_points([TimePoints.DAY])
+			"refill_setup":
+				#重置效果可能改变顺位，所以仍在补牌前读取当前顺位。
+				state.players = get_ordered_player_ids()
+				state.index = 0
+				state.phase = "refill"
+			"refill":
+				if state.index >= state.players.size():
+					state.phase = "situation"
+					continue
+				var id:int = state.players[state.index]
+				state.index += 1
+				#上限仍读数据，牌堆处理仍由原补牌 operation 负责。
+				RefillHand.new().exec(id, GameData.player_hand_limit(id))
+			"situation":
+				state.phase = "day_start"
+				SituationResolver.new().activate()
+			"day_start":
+				state.phase = "events"
+				TimePointChecker.global_time_point([TimePoints.DAY_START])
+			"events":
+				state.phase = "advance"
+				EventResolver.new().place(event_placements)
+			"advance":
+				advance_phase()
+				return
+		if EffectManager.defer_until_runtime_guard_complete(Callable(self, "_resume_round_start").bind(state)):
+			return
 
 
 var _round_end_running:bool = false
@@ -381,12 +417,22 @@ func begin_phase():
 	var phase_tps:Array = [TimePoints.DAY, TimePoints.PHASE, phase["mid"]]
 	phase_tps.append(TimePoints.CLIMAX if is_climax_round() else TimePoints.NON_CLIMAX)
 	TimePointChecker.set_phase_time_points(phase_tps)
+	if not EffectManager.defer_until_runtime_guard_complete(Callable(self, "_begin_phase_events").bind(phase)):
+		_begin_phase_events(phase)
+
+#阶段固定窗口完成后才翻计划事件；翻牌完成后才派发阶段开始。
+func _begin_phase_events(phase:Dictionary) -> void:
 	#规则：行动阶段开始时展示暗置放置的事件牌（基础规则写明是"位于新都"的那张）。
 	#翻在派发阶段时点之前：阶段能力跑的时候应该已经看得到这张明置牌
 	if str(phase.get("name", "")) == "action":
 		EventResolver.new().reveal_planned(event_placements)
+	if not EffectManager.defer_until_runtime_guard_complete(Callable(self, "_dispatch_phase_start").bind(phase)):
+		_dispatch_phase_start(phase)
+
+func _dispatch_phase_start(phase:Dictionary) -> void:
 	TimePointChecker.global_time_point([TimePoints.PHASE_START, phase["start"]])
-	next_player_in_phase()
+	if not EffectManager.defer_until_runtime_guard_complete(Callable(self, "next_player_in_phase")):
+		next_player_in_phase()
 
 
 #等待接口已涵盖发动、选牌、选位置及选玩家；执行中的管线也不能被阶段推进打断。
@@ -531,35 +577,34 @@ func end_current_player_action() -> bool:
 		return true
 	if current_player_id == -1:
 		return false
-	#按"视为处于的阶段"判定要履行的义务：被映射到别的阶段做前哨/行动的玩家，
-	#在那一阶段结束时才检查部署与常规出牌；映射成空的阶段没有义务
-	if is_phase_for(current_player_id, "outpost"):
-		#规则：前哨阶段各玩家依次把自己的御主部署到版图上。
-		#这一步不能只由界面负责——不经界面的推进（AI 推演、无界面运行）会全员不部署，
-		#于是没人在版图上、战斗阶段跳过所有人、无人获得战果。
-		#已经在版图上的（界面已替玩家部署过）不重复部署；
-		#没有任何空席位时什么都不做，不阻塞推进
-		var player_data = GameDataManager.get_player_data(current_player_id) as Dictionary
-		if player_data.get("location") == null:
-			#规则：部署是玩家/AI 在自己前哨阶段的动作，引擎不能替他挑席位。
-			#旧实现在这里自动遍历战区替玩家落位——于是还没选地点的玩家一被推进
-			#就"莫名结束前哨"，还白拿了一个没选过的席位收益。
-			EffectManager.push_message("尚未完成前哨部署", current_player_id)
-			return false
+	var completion_block := _action_completion_block_reason(current_player_id)
+	if completion_block != "":
+		EffectManager.push_message(completion_block, current_player_id)
+		return false
 	if is_phase_for(current_player_id, "action"):
-		#行动结束的声明式前置条件（如"第一回合必须使用一枚令咒"）：
-		#判据在规则层，界面与无界面推进共用同一份，不在这里写死具体规则
-		var requirement_block:String = ActionRules.block_reason(current_player_id)
-		if requirement_block != "":
-			EffectManager.push_message(requirement_block, current_player_id)
-			return false
-		if not RegularPlay.can_end(current_player_id):
-			EffectManager.push_message("尚未满足常规出牌最低要求", current_player_id)
-			return false
 		if not RegularPlay.completed(current_player_id):
 			RegularPlay.finalize(current_player_id, true)
 	next_player_in_phase()
 	return true
+
+## 与真实推进入口共用完成条件；仅查询，不记日志、不派发时点或提示。
+func can_end_current_player_action() -> bool:
+	if is_game_over or get_current_phase().is_empty() or _phase_end_running or _effects_block_progress():
+		return false
+	if _phase_end_pending:
+		return true
+	return current_player_id != -1 and _action_completion_block_reason(current_player_id).is_empty()
+
+func _action_completion_block_reason(player_id: int) -> String:
+	if is_phase_for(player_id, "outpost") and GameDataManager.get_player_data(player_id).get("location") == null:
+		return "尚未完成前哨部署"
+	if is_phase_for(player_id, "action"):
+		var reason := ActionRules.block_reason(player_id)
+		if reason != "":
+			return reason
+		if not RegularPlay.can_end(player_id):
+			return "尚未满足常规出牌最低要求"
+	return ""
 
 
 #供UI和各处派发临时时点

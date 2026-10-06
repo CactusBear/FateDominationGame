@@ -1,0 +1,38 @@
+[
+  {
+    "scene": "net_server_cli_p2p_test",
+    "exit": 0,
+    "checks": 9,
+    "failures": [],
+    "result": "RESULT checks=9 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_server_cli_test",
+    "exit": 0,
+    "checks": 7,
+    "failures": [],
+    "result": "RESULT checks=7 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_server_gateway_test",
+    "exit": 0,
+    "checks": 10,
+    "failures": [],
+    "result": "RESULT checks=10 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_server_rooms_test",
+    "exit": 0,
+    "checks": 9,
+    "failures": [],
+    "result": "RESULT checks=9 failures=[]",
+    "error_count": 0,
+    "errors": []
+  }
+]

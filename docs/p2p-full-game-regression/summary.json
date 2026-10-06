@@ -1,0 +1,56 @@
+[
+  {
+    "scene": "net_data_barrier_test",
+    "exit": 0,
+    "checks": 21,
+    "failures": [],
+    "result": "RESULT checks=21 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_full_game_test",
+    "exit": 0,
+    "checks": 4,
+    "failures": [],
+    "result": "RESULT checks=4 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_p2p_invite_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT checks=13 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_p2p_match_test",
+    "exit": 0,
+    "checks": 19,
+    "failures": [],
+    "result": "RESULT checks=19 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_validation_task_test",
+    "exit": 0,
+    "checks": 17,
+    "failures": [],
+    "result": "RESULT checks=17 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_webrtc_transport_test",
+    "exit": 0,
+    "checks": 14,
+    "failures": [],
+    "result": "RESULT checks=14 failures=[]",
+    "error_count": 0,
+    "errors": []
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "suite": "net_transport",
+    "exit_code": 0,
+    "result": [
+      "RESULT checks=11 failures=[]"
+    ],
+    "errors": [
+      "ERROR: Couldn't create an ENet host.\r"
+    ],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK ENet transport exists true\r\nCHECK custom port listening true\r\nERROR: Couldn't create an ENet host.\r\n   at: _create (modules/enet/enet_connection.cpp:319)\r\n   GDScript backtrace (most recent call first):\r\n       [0] listen (res://scripts/net/enet_transport.gd:21)\r\n       [1] run (res://tests/net_transport_test.gd:17)\r\nCHECK occupied port fails without fallback true\r\nCHECK loopback connecting true\r\nCHECK real ENet connection established true\r\nCHECK reliable message sent true\r\nCHECK message delivered true\r\nCHECK sender comes from transport not payload true\r\nCHECK integer payload preserved true\r\nCHECK object payload rejected true\r\nCHECK invalid ports rejected true\r\nRESULT checks=11 failures=[]"
+  },
+  {
+    "suite": "net_room",
+    "exit_code": 0,
+    "result": [
+      "RESULT checks=16 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK room state exists true\r\nCHECK room configured from explicit mode capacity true\r\nCHECK owner joins true\r\nCHECK guest joins true\r\nCHECK guest cannot change settings true\r\nCHECK AI cannot exceed remaining seats true\r\nCHECK both players ready true\r\nCHECK explicit ready roster can start true\r\nCHECK owner starts selection true\r\nCHECK settings freeze after selection true\r\nCHECK disconnect retains human seat true\r\nCHECK disconnect never adds AI true\r\nCHECK disconnected actor cannot act true\r\nCHECK guest cannot kick owner true\r\nCHECK owner can remove member true\r\nCHECK snapshot is isolated true\r\nRESULT checks=16 failures=[]"
+  },
+  {
+    "suite": "net_lobby",
+    "exit_code": 0,
+    "result": [
+      "RESULT checks=9 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK network lobby exists true\r\nCHECK network room created true\r\nCHECK network guest joining true\r\nCHECK room synchronized over actual ENet true\r\nCHECK remote readiness reaches authority true\r\nCHECK forged actor cannot alter room true\r\nCHECK permission failure delivered to sender true\r\nCHECK selection start synchronized true\r\nCHECK network disconnect preserved without AI takeover true\r\nRESULT checks=9 failures=[]"
+  },
+  {
+    "suite": "net_data_catalog",
+    "exit_code": 0,
+    "result": [
+      "RESULT checks=78 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK data catalog exists true\r\nCHECK real project data scanned true\r\nCHECK entry has hashed content masters/emiya_shirou true\r\nCHECK entry has hashed content masters/tohsaka_rin true\r\nCHECK entry has hashed content masters/matou_shinji true\r\nCHECK entry has hashed content masters/matou_sakura true\r\nCHECK entry has hashed content masters/illyasviel_von_einzbern true\r\nCHECK entry has hashed content masters/kotomine_kirei true\r\nCHECK entry has hashed content masters/kuzuki_souichirou true\r\nCHECK entry has hashed content servants/artoria_pendragon true\r\nCHECK entry has hashed content servants/emiya true\r\nCHECK entry has hashed content servants/cu_chulainn true\r\nCHECK entry has hashed content servants/medusa true\r\nCHECK entry has hashed content servants/medea true\r\nCHECK entry has hashed content servants/sasaki_kojirou true\r\nCHECK entry has hashed content servants/heracles true\r\nCHECK entry has hashed content servants/angra_mainyu true\r\nCHECK entry has hashed content attacks/luck true\r\nCHECK entry has hashed content attacks/magic_blast_0_2 true\r\nCHECK entry has hashed content attacks/magic_blast_0_3 true\r\nCHECK entry has hashed content attacks/magic_blast_0_4 true\r\nCHECK entry has hashed content attacks/magic_blast_1_5 true\r\nCHECK entry has hashed content attacks/physical_attack_0_2 true\r\nCHECK entry has hashed content attacks/physical_attack_0_3 true\r\nCHECK entry has hashed content attacks/physical_attack_0_4 true\r\nCHECK entry has hashed content attacks/physical_attack_1_5 true\r\nCHECK entry has hashed content attacks/precision_strike_0_2 true\r\nCHECK entry has hashed content attacks/precision_strike_0_3 true\r\nCHECK entry has hashed content attacks/precision_strike_0_4 true\r\nCHECK entry has hashed content attacks/precision_strike_1_5 true\r\nCHECK entry has hashed content attacks/preparation true\r\nCHECK entry has hashed content attacks/surveil true\r\nCHECK entry has hashed content attacks/avenger_class true\r\nCHECK entry has hashed content attacks/berserker_class_agility_3_7 true\r\nCHECK entry has hashed content attacks/berserker_class_agility_5_9 true\r\nCHECK entry has hashed content attacks/berserker_class_magic_3_7 true\r\nCHECK entry has hashed content attacks/berserker_class_magic_5_9 true\r\nCHECK entry has hashed content attacks/berserker_class_strength_3_7 true\r\nCHECK entry has hashed content attacks/berserker_class_strength_5_9 true\r\nCHECK entry has hashed content attacks/foreigner_class true\r\nCHECK entry has hashed content attacks/mooncancer_class true\r\nCHECK entry has hashed content events/contain_third_party true\r\nCHECK entry has hashed content events/cooperation true\r\nCHECK entry has hashed content events/desperate_measure true\r\nCHECK entry has hashed content events/fate_battle true\r\nCHECK entry has hashed content events/glorious_duel true\r\nCHECK entry has hashed content events/ground_zero true\r\nCHECK entry has hashed content events/holy_ground true\r\nCHECK entry has hashed content events/ley_line true\r\nCHECK entry has hashed content events/occupy_high_ground true\r\nCHECK entry has hashed content events/reality_marble true\r\nCHECK entry has hashed content events/rescue_illya true\r\nCHECK entry has hashed content events/sacrifice_ground true\r\nCHECK entry has hashed content events/sneak_attack true\r\nCHECK entry has hashed content events/strength_test true\r\nCHECK entry has hashed content events/suppressive_fire true\r\nCHECK entry has hashed content events/treacherous_terrain true\r\nCHECK entry has hashed content situations/battle_of_shinto true\r\nCHECK entry has hashed content situations/calm_before_storm true\r\nCHECK entry has hashed content situations/curse_of_angra_mainyu true\r\nCHECK entry has hashed content situations/gate_of_hell true\r\nCHECK entry has hashed content situations/heavens_feel true\r\nCHECK entry has hashed content situations/hope_for_future true\r\nCHECK entry has hashed content situations/killer_in_miyama true\r\nCHECK entry has hashed content situations/night_of_fate true\r\nCHECK entry has hashed content situations/outrage true\r\nCHECK entry has hashed content situations/perfect_flow true\r\nCHECK entry has hashed content situations/shadow_of_angra_mainyu true\r\nCHECK entry has hashed content situations/substance_of_angra_mainyu true\r\nCHECK entry has hashed content situations/turnaround true\r\nCHECK entry has hashed content command_spells/normal_command_spell true\r\nCHECK explicit template identities retained true\r\nCHECK same content deduplicated true\r\nCHECK conflict not silently selected true\r\nCHECK explicit source choice resolves conflict true\r\nCHECK missing declared dependency detected true\r\nCHECK unsafe relative paths rejected true\r\nCHECK normal content path accepted true\r\nRESULT checks=78 failures=[]"
+  },
+  {
+    "suite": "net_cache",
+    "exit_code": 0,
+    "result": [
+      "RESULT checks=10 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK content cache exists true\r\nCHECK unsafe cache key rejected true\r\nCHECK false digest rejected true\r\nCHECK verified bytes cached true\r\nCHECK cached content read true\r\nCHECK active content protected during cleanup true\r\nCHECK unused content removable true\r\nCHECK removed content becomes cache miss true\r\nCHECK cache can download again true\r\nCHECK corrupted cached data not served true\r\nRESULT checks=10 failures=[]"
+  },
+  {
+    "suite": "net_lobby_window",
+    "exit_code": 0,
+    "result": [
+      "RESULT checks=5 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK create button opens real room true\r\nCHECK actual client joins visible lobby true\r\nCHECK ready button updates authority true\r\nCHECK both members shown true\r\nCHECK lobby screenshot saved true\r\nRESULT checks=5 failures=[]"
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "scene": "match_replay_pending_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT checks=12 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_full_game_test",
+    "exit": 0,
+    "checks": 4,
+    "failures": [],
+    "result": "RESULT checks=4 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_validation_task_test",
+    "exit": 0,
+    "checks": 18,
+    "failures": [],
+    "result": "RESULT checks=18 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_loop_analysis_test",
+    "exit": 0,
+    "checks": 11,
+    "failures": [],
+    "result": "RESULT checks=11 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_random_test",
+    "exit": 0,
+    "checks": 10,
+    "failures": [],
+    "result": "RESULT checks=10 failures=[]",
+    "error_count": 0,
+    "errors": []
+  }
+]

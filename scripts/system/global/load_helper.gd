@@ -12,6 +12,9 @@ extends RefCounted
 #data 不进入 pck，由导出插件复制到 exe 旁，玩家可以直接替换 JSON 与图片。
 const DATA_DIR_NAME := "data"
 
+# 录制/恢复会话使用独立副本；空字符串保留原有单机路径。
+static var session_data_dir: String = ""
+
 
 #外部文件的根目录：编辑器里是项目根 res://，导出后是可执行文件所在目录
 static func get_base_dir() -> String:
@@ -36,6 +39,8 @@ static func relative_path(p:String) -> String:
 
 
 static func get_data_dir() -> String:
+	if not session_data_dir.is_empty():
+		return session_data_dir
 	return resolve_path(DATA_DIR_NAME)
 
 

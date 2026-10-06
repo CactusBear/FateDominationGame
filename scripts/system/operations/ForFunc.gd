@@ -12,13 +12,27 @@ func exec(body, count):
 
 	var times = count.number if count is BaseNumber else int(count)
 	var bodies:Array = body if body is Array else [body]
-	var last_result = null
-	for i in range(times):
+	var state := {"kind": "for", "iteration": 0, "body_index": 0, "last_result": null, "limit": times, "bodies": bodies}
+	state = EffectManager.record_loop_state(state, self)
+	bodies = state.bodies
+	while int(state.iteration) < int(state.limit):
+		var i:int = state.iteration
+		# 空循环体没有内部检查点，仍须按原迭代游标检查协作预算。
+		if bodies.is_empty() and not EffectManager.runtime_guard_checkpoint(state):
+			return state.last_result
 		GameLog.push_loop(i)
-		for one in bodies:
-			var res = EffectManager.run_func_descriptor(one, effect)
+		while int(state.body_index) < bodies.size():
+			if not EffectManager.runtime_guard_checkpoint():
+				GameLog.pop_loop()
+				return state.last_result
+			var res = EffectManager.run_func_descriptor(bodies[int(state.body_index)], effect)
+			if EffectManager.runtime_guard_status().paused:
+				GameLog.pop_loop()
+				return state.last_result
 			if res[0]:
-				last_result = res[1]
+				state.last_result = res[1]
+			state.body_index += 1
 		GameLog.pop_loop()
-
-	return last_result
+		state.iteration = i + 1
+		state.body_index = 0
+	return state.last_result

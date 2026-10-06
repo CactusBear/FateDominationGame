@@ -145,7 +145,7 @@ func draw(player_id:int) -> Dictionary:
 	if d.get("deck", []).is_empty():
 		ReshuffleDiscard.new().exec(player_id)
 	DrawCardFromPlDeckToHand.new().exec(0, player_id)
-	return {"ok":true, "changed":d.hand_cards.size() != before, "player_id":player_id, "value":d.hand_cards.size()}
+	return _hand_change_result(player_id, d, before)
 
 
 func refill(player_id:int) -> Dictionary:
@@ -154,7 +154,21 @@ func refill(player_id:int) -> Dictionary:
 		return _fail("玩家不存在")
 	var before:int = d.hand_cards.size()
 	RefillHand.new().exec(player_id, GameData.player_hand_limit(player_id))
-	return {"ok":true, "changed":d.hand_cards.size() != before, "player_id":player_id, "value":d.hand_cards.size()}
+	return _hand_change_result(player_id, d, before)
+
+
+static func _hand_change_result(player_id:int, data:Dictionary, before:int) -> Dictionary:
+	var result := {"ok":true, "changed":data.hand_cards.size() != before, "player_id":player_id, "pending":false}
+	result.pending = EffectManager.defer_until_runtime_guard_complete(Callable(DebugCardAdapter, "_finish_hand_change").bind(result, data, before))
+	if not result.pending:
+		_finish_hand_change(result, data, before)
+	return result
+
+
+static func _finish_hand_change(result:Dictionary, data:Dictionary, before:int) -> void:
+	result.pending = false
+	result.changed = data.hand_cards.size() != before
+	result["value"] = data.hand_cards.size()
 
 
 func shuffle(player_id:int, path:String) -> Dictionary:

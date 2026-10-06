@@ -1,0 +1,56 @@
+[
+  {
+    "scene": "net_cancel",
+    "exit": 0,
+    "result": [
+      "RESULT checks=12 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK explicit pending cancellation exists true\r\nCHECK cancel obeys explicit allow_cancel false true\r\nCHECK cancel preserves mandatory wait false true\r\nCHECK cancel does not activate zero-minimum selection false true\r\nCHECK cancel obeys explicit allow_cancel true true\r\nCHECK cancel preserves mandatory wait true true\r\nCHECK cancel does not activate zero-minimum selection true true\r\nCHECK player target canceled explicitly true\r\nCHECK player cancellation never submits legal empty choice true\r\nCHECK location canceled explicitly true\r\nCHECK location wait cleared true\r\nCHECK duplicate cancellation rejected true\r\nRESULT checks=12 failures=[]"
+  },
+  {
+    "scene": "card_selection_mandatory",
+    "exit": 0,
+    "result": [
+      "RESULT checks=39 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK live mandatory identities count 0 true\r\nCHECK mandatory total 0/1/12 accepted and 13 rejected 0 true\r\nCHECK no truncation or discard at boundary 0 true\r\nCHECK live mandatory identities count 1 true\r\nCHECK mandatory total 0/1/12 accepted and 13 rejected 1 true\r\nCHECK no truncation or discard at boundary 1 true\r\nCHECK live mandatory identities count 12 true\r\nCHECK mandatory total 0/1/12 accepted and 13 rejected 12 true\r\nCHECK no truncation or discard at boundary 12 true\r\nCHECK live mandatory identities count 13 true\r\nCHECK mandatory total 0/1/12 accepted and 13 rejected 13 true\r\nCHECK no truncation or discard at boundary 13 true\r\nCHECK new hand card becomes mandatory live true\r\nCHECK stale missing new mandatory identity rejected true\r\nCHECK removed hand card is no longer mandatory true\r\nCHECK empty current hand accepts empty selection true\r\nCHECK full mandatory hand cannot add a thirteenth true\r\nCHECK overflow rejection moves no identities true\r\nCHECK AI preserves all mandatory hand even when min is zero true\r\nCHECK AI rechecks mandatory hand after queued pending becomes stale true\r\nCHECK mandatory plus foreign object rejected true\r\nCHECK mandatory and duplicate source retain one identity true\r\nCHECK mandatory duplicate submission rejected true\r\nCHECK optional ownership change during selection rejected true\r\nCHECK official deal resolves actual UBW JSON true\r\nCHECK official composition excludes its own played UBW identity true\r\nCHECK official composition rejects source UBW selection true\r\nCHECK official composition accepts non-source identities true\r\nCHECK official ops move selected identities without cloning true\r\nCHECK source UBW stays in played zone true\r\nCHECK source UBW remains active true\r\nCHECK official JSON boundary submit 0 true\r\nCHECK official JSON keeps original identities including over-limit 0 true\r\nCHECK official JSON boundary submit 1 true\r\nCHECK official JSON keeps original identities including over-limit 1 true\r\nCHECK official JSON boundary submit 12 true\r\nCHECK official JSON keeps original identities including over-limit 12 true\r\nCHECK official JSON boundary submit 13 true\r\nCHECK official JSON keeps original identities including over-limit 13 true\r\nRESULT checks=39 failures=[]"
+  },
+  {
+    "scene": "card_selection_owner",
+    "exit": 0,
+    "result": [
+      "RESULT checks=17 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK the ability can be requested true\r\nCHECK the option is accepted true\r\nCHECK it waits for a player target first true\r\nCHECK it does not wait for cards yet true\r\nCHECK the player target is accepted true\r\nCHECK then it waits for cards true\r\nCHECK the candidates come from the chosen player true\r\nCHECK not from the activator true\r\nCHECK a card of the chosen player is accepted true\r\nCHECK the chosen card is recorded true\r\nCHECK the chosen player is recorded true\r\nCHECK a card from the activator is refused for a target-owned selection true\r\nCHECK nothing is recorded after a refused pick true\r\nCHECK a self-owned selection waits for cards directly true\r\nCHECK the candidates are the activator's own cards true\r\nCHECK the other player's cards are not offered true\r\nCHECK a self-owned pick is accepted true\r\nRESULT checks=17 failures=[]"
+  },
+  {
+    "scene": "net_full_game",
+    "exit": 0,
+    "result": [
+      "RESULT checks=4 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK full command fixture starts true\r\nCHECK human command gate reaches actual game end true\r\nCHECK commands executed without AI takeover true\r\nCHECK engine records terminal result true\r\nNETWORK_COMMAND_GAME submitted=222 round=11\r\nRESULT checks=4 failures=[]"
+  },
+  {
+    "scene": "net_target_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=13 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK target choice controls exist true\r\nCHECK player prompt shown on client true\r\nCHECK player reply transitions UI to chosen player's cards true\r\nCHECK hidden opponent identity is not guessed true\r\nCHECK target prompt screenshot saved true\r\nCHECK client selection resolves exact card and closes true\r\nCHECK mandatory card preselected true\r\nCHECK real deselect attempt cannot remove mandatory card true\r\nCHECK mandatory UI selection reaches engine true\r\nCHECK location UI uses legal single choice true\r\nCHECK real location choice resolves and closes true\r\nCHECK optional card choice exposes explicit cancel button true\r\nCHECK real cancel click clears wait without activation true\r\nRESULT checks=13 failures=[]"
+  },
+  {
+    "scene": "net_opponent_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=11 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK network choice panel exists true\r\nCHECK queued opponent effect waits for target true\r\nCHECK opponent sees private effect prompt true\r\nCHECK initiator cannot answer target prompt true\r\nCHECK opponent prompt screenshot saved true\r\nCHECK real opponent click answers through network true\r\nCHECK answered prompt closes from authoritative update true\r\nCHECK network panel supports explicit option inputs true\r\nCHECK opponent option screenshot saved true\r\nCHECK opponent quantity entered through UI reaches authority true\r\nCHECK opponent selected branch executed once true\r\nRESULT checks=11 failures=[]"
+  }
+]

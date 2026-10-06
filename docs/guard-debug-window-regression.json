@@ -1,0 +1,68 @@
+{
+  "suites": [
+    {
+      "suite": "rule_guard_debug_result_window",
+      "exit": 0,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 6
+    },
+    {
+      "suite": "debug_console_scene",
+      "exit": 0,
+      "results": [
+        "RESULT checks=140 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 140
+    },
+    {
+      "suite": "debug_console_pause",
+      "exit": 0,
+      "results": [
+        "RESULT checks=16 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 16
+    },
+    {
+      "suite": "debug_unbounded_number",
+      "exit": 0,
+      "results": [
+        "RESULT checks=26 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 26
+    },
+    {
+      "suite": "debug_console",
+      "exit": 0,
+      "results": [
+        "RESULT checks=81 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 81
+    },
+    {
+      "suite": "masters_debug_ui",
+      "exit": 0,
+      "results": [
+        "RESULT checks=5 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 5
+    },
+    {
+      "suite": "net_runtime_guard_window",
+      "exit": 0,
+      "results": [
+        "RESULT checks=25 failures=[]"
+      ],
+      "errors": 0,
+      "checks": 25
+    }
+  ],
+  "checks": 299
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "suite": "debug_console_scene",
+    "exit": 0,
+    "checks": 140,
+    "failures": "[]",
+    "errors": []
+  },
+  {
+    "suite": "debug_console_pause",
+    "exit": 0,
+    "checks": 16,
+    "failures": "[]",
+    "errors": []
+  },
+  {
+    "suite": "debug_unbounded_number",
+    "exit": 0,
+    "checks": 26,
+    "failures": "[]",
+    "errors": []
+  },
+  {
+    "suite": "debug_console",
+    "exit": 0,
+    "checks": 81,
+    "failures": "[]",
+    "errors": []
+  },
+  {
+    "suite": "masters_debug_ui",
+    "exit": 0,
+    "checks": 5,
+    "failures": "[]",
+    "errors": []
+  }
+]

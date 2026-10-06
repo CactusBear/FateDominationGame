@@ -1,0 +1,52 @@
+[
+  {
+    "suite": "net_v2_hand_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=30 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_v2_area_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=13 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_v2_view",
+    "exit": 0,
+    "result": [
+      "RESULT checks=15 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "match_view",
+    "exit": 0,
+    "result": [
+      "RESULT checks=205 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "card_inspection",
+    "exit": 1,
+    "result": [],
+    "errors": [
+      "ERROR: Cannot open file 'res://tests/card_inspection_test.tscn'.",
+      "ERROR: Failed loading resource: res://tests/card_inspection_test.tscn.",
+      "ERROR: Failed loading scene: res://tests/card_inspection_test.tscn."
+    ]
+  },
+  {
+    "suite": "battle_board_v2",
+    "exit": 0,
+    "result": [
+      "RESULT checks=53 failures=[]"
+    ],
+    "errors": []
+  }
+]

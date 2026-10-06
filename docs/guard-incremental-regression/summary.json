@@ -1,0 +1,47 @@
+[
+  {
+    "scene": "regular_play_test",
+    "exit": 0,
+    "checks": 54,
+    "failures": [],
+    "result": "RESULT checks=54 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_continuation_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT checks=12 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_regular_add_test",
+    "exit": 0,
+    "checks": 18,
+    "failures": [],
+    "result": "RESULT checks=18 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_regular_group_test",
+    "exit": 0,
+    "checks": 9,
+    "failures": [],
+    "result": "RESULT checks=9 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_guard_true_name_test",
+    "exit": 0,
+    "checks": 9,
+    "failures": [],
+    "result": "RESULT checks=9 failures=[]",
+    "error_count": 0,
+    "errors": []
+  }
+]

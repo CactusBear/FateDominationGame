@@ -1,0 +1,304 @@
+{
+  "requested_suites": 27,
+  "executed_suites": 27,
+  "checks": 274,
+  "suites": [
+    {
+      "suite": "rule_guard_choice_test",
+      "window": false,
+      "exit": 0,
+      "checks": 24,
+      "results": [
+        "RESULT checks=24 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_continuation_test",
+      "window": false,
+      "exit": 0,
+      "checks": 12,
+      "results": [
+        "RESULT checks=12 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_debug_hand_result_test",
+      "window": false,
+      "exit": 0,
+      "checks": 10,
+      "results": [
+        "RESULT checks=10 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_debug_identity_test",
+      "window": false,
+      "exit": 0,
+      "checks": 12,
+      "results": [
+        "RESULT checks=12 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_debug_result_test",
+      "window": false,
+      "exit": 0,
+      "checks": 11,
+      "results": [
+        "RESULT checks=11 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_empty_loop_test",
+      "window": false,
+      "exit": 0,
+      "checks": 10,
+      "results": [
+        "RESULT checks=10 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_event_add_test",
+      "window": false,
+      "exit": 0,
+      "checks": 7,
+      "results": [
+        "RESULT checks=7 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_event_place_test",
+      "window": false,
+      "exit": 0,
+      "checks": 6,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_event_reveal_test",
+      "window": false,
+      "exit": 0,
+      "checks": 6,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_game_start_test",
+      "window": false,
+      "exit": 0,
+      "checks": 6,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_loop_owner_test",
+      "window": false,
+      "exit": 0,
+      "checks": 7,
+      "results": [
+        "RESULT checks=7 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_native_event_test",
+      "window": false,
+      "exit": 0,
+      "checks": 5,
+      "results": [
+        "RESULT checks=5 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_native_refill_test",
+      "window": false,
+      "exit": 0,
+      "checks": 6,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_pending_atomic_test",
+      "window": false,
+      "exit": 0,
+      "checks": 8,
+      "results": [
+        "RESULT checks=8 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_phase_start_test",
+      "window": false,
+      "exit": 0,
+      "checks": 6,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_refill_test",
+      "window": false,
+      "exit": 0,
+      "checks": 7,
+      "results": [
+        "RESULT checks=7 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_regular_add_test",
+      "window": false,
+      "exit": 0,
+      "checks": 18,
+      "results": [
+        "RESULT checks=18 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_regular_group_test",
+      "window": false,
+      "exit": 0,
+      "checks": 9,
+      "results": [
+        "RESULT checks=9 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_round_start_test",
+      "window": false,
+      "exit": 0,
+      "checks": 6,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_situation_magic_test",
+      "window": false,
+      "exit": 0,
+      "checks": 6,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_situation_test",
+      "window": false,
+      "exit": 0,
+      "checks": 7,
+      "results": [
+        "RESULT checks=7 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_time_point_test",
+      "window": false,
+      "exit": 0,
+      "checks": 8,
+      "results": [
+        "RESULT checks=8 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_true_name_test",
+      "window": false,
+      "exit": 0,
+      "checks": 9,
+      "results": [
+        "RESULT checks=9 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_guard_zone_notify_test",
+      "window": false,
+      "exit": 0,
+      "checks": 6,
+      "results": [
+        "RESULT checks=6 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "rule_execution_frames_test",
+      "window": false,
+      "exit": 0,
+      "checks": 25,
+      "results": [
+        "RESULT checks=25 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_runtime_guard_window_test",
+      "window": true,
+      "exit": 0,
+      "checks": 25,
+      "results": [
+        "RESULT checks=25 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_server_match_test",
+      "window": true,
+      "exit": 0,
+      "checks": 12,
+      "results": [
+        "RESULT checks=12 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    }
+  ]
+}

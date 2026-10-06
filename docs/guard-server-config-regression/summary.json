@@ -1,0 +1,84 @@
+{
+  "requested_suites": 7,
+  "executed_suites": 7,
+  "checks": 82,
+  "suites": [
+    {
+      "suite": "net_guard_config",
+      "window": false,
+      "exit": 0,
+      "checks": 23,
+      "results": [
+        "RESULT checks=23 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_guard_startup",
+      "window": false,
+      "exit": 0,
+      "checks": 8,
+      "results": [
+        "RESULT checks=8 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_guard_config_window",
+      "window": true,
+      "exit": 0,
+      "checks": 12,
+      "results": [
+        "RESULT checks=12 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_server_rooms",
+      "window": false,
+      "exit": 0,
+      "checks": 10,
+      "results": [
+        "RESULT checks=10 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_server_gateway",
+      "window": false,
+      "exit": 0,
+      "checks": 10,
+      "results": [
+        "RESULT checks=10 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_server_cli",
+      "window": false,
+      "exit": 0,
+      "checks": 7,
+      "results": [
+        "RESULT checks=7 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    },
+    {
+      "suite": "net_server_match",
+      "window": true,
+      "exit": 0,
+      "checks": 12,
+      "results": [
+        "RESULT checks=12 failures=[]"
+      ],
+      "errors": [],
+      "passed": true
+    }
+  ]
+}

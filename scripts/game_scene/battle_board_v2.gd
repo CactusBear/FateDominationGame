@@ -141,7 +141,18 @@ const PLAYED_AREA_TOP := 96.0       ## 标题带下缘（避免压住战区标�
 const BREATH_PERIOD := 1.8
 const BREATH_MIN_ALPHA := 0.6
 
-var _local_player_id: int = -1
+var _seat_controller = preload("res://scripts/match/seat_controller.gd").new()
+var _driver = preload("res://scripts/match/match_driver.gd").new(_seat_controller)
+var _commands = preload("res://scripts/match/match_commands.gd").new()
+## 由大厅在入树前传入；网络显示不进入单机引擎路径。
+var network_session = null
+var _network_presenter = null
+var _network_session_transferred:bool = false
+var _returning_network_lobby:bool = false
+var _local_player_id: int = -1:
+	set(value):
+		_local_player_id = value
+		_seat_controller.set_single_local(value)
 var _main_area_index: int = -1
 
 ## 当前放大卡图对应的展示位：鼠标移到卡图上时用它调出右键说明
@@ -181,9 +192,7 @@ var _hand_drawer_open := 0.0
 @onready var _toast: Control = $Toast
 ## 模块集中开关：以下功能默认关闭，需要打开时手动置 true
 var enable_old_features := false
-var _ai_cooldown := 0.0
-var _ai_acting := false
-var _ai_acting_for_id: int = -1
+
 var _ui_refresh_accum: float = 0.0
 var _ai_play_prompt_player_id: int = -1
 var _ai_play_prompt_card = null
@@ -201,7 +210,7 @@ var _fly_armed := false          ## 首次刷新只登记不飞，避免进界�
 var _fly_queues: Dictionary = {}  ## strip_idx(int) -> Array[Dictionary{slot,card,pid}]
 var _fly_busy: Dictionary = {}    ## strip_idx(int) -> bool（该战场的飞行泵是否在跑）
 var _takeoff_done: Dictionary = {}
-var _debug_console = null
+@onready var _debug_console:DebugConsoleUI = $DebugConsole
 var _debug_console_enabled_on_start := false
 var _hovered_event_card: Control = null
 var _modal_blockers: Array[Control] = []
@@ -282,6 +291,15 @@ const TacticalBoardUI = preload("res://scripts/game_scene/tactical_board_ui.gd")
 
 
 func _ready() -> void:
+	_bind_tactical_confirmation()
+	_bind_card_view_controls()
+	if network_session != null:
+		_network_presenter = preload("res://scripts/net/v2_view_presenter.gd").new(self, network_session)
+		_network_presenter.refresh()
+		return
+	_driver.state_changed.connect(refresh_all_ui)
+	_driver.ai_turn_started.connect(_clear_ai_play_prompt)
+	_driver.ai_played_card.connect(_on_ai_played_card)
 	_local_player_id = GameData.player_id
 	var spell_scroll := _self.get_node("Spells/SpecialScroll") as ScrollContainer
 	spell_scroll.gui_input.connect(_on_hscroll_wheel.bind(spell_scroll))
@@ -319,13 +337,7 @@ func _ready() -> void:
 		(_pause_menu.get_node("Box/BtnMainMenu") as Button).pressed.connect(_return_to_main_menu)
 		(_pause_menu.get_node("Box/BtnQuit") as Button).pressed.connect(get_tree().quit)
 	# ModalLayer 弹窗接线（用旧控制器的同源判据，规则不变）
-	if _tactical_confirm != null:
-		var btn_ok := _tactical_confirm.get_node_or_null("Box/ButtonsRow/BtnConfirmAction") as Button
-		if btn_ok and not btn_ok.pressed.is_connected(_on_tactical_confirm_execute):
-			btn_ok.pressed.connect(_on_tactical_confirm_execute)
-		var btn_cancel := _tactical_confirm.get_node_or_null("Box/ButtonsRow/BtnCancelAction") as Button
-		if btn_cancel and not btn_cancel.pressed.is_connected(_on_tactical_confirm_cancel):
-			btn_cancel.pressed.connect(_on_tactical_confirm_cancel)
+
 	if _effect_modal != null:
 		var btn_conf := _effect_modal.get_node_or_null("Box/ButtonsRow/BtnConfirm") as Button
 		if btn_conf and not btn_conf.pressed.is_connected(_on_effect_modal_confirm):
@@ -348,10 +360,7 @@ func _ready() -> void:
 		var btn_oog := _opponent_drawer.get_node_or_null("VBox/BtnOutOfGame") as Button
 		if btn_oog and not btn_oog.pressed.is_connected(_on_drawer_out_of_game_pressed):
 			btn_oog.pressed.connect(_on_drawer_out_of_game_pressed)
-	if _hover_zoom != null:
-		# 放大卡图自身接收右键显示说明，并按保活窗口决定何时收起
-		_hover_zoom.gui_input.connect(_on_hover_zoom_gui_input)
-	_hover_desc.get_node("Close").pressed.connect(_close_card_desc)
+
 	if _board != null:
 		_board.visible = false
 	# 打牌动画层：满屏、不吃鼠标，压在手牌之上、弹窗之下
@@ -368,6 +377,12 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	if network_session != null:
+		if _network_presenter != null:
+			_network_presenter.release()
+			_network_presenter = null
+		if not _network_session_transferred:
+			network_session.close()
 	if _broadcast_registered:
 		GameProgress.unregister_battle_broadcast_consumer(self)
 		_broadcast_registered = false
@@ -392,11 +407,36 @@ func _open_game_log() -> void:
 
 
 func _default_area_index() -> int:
+	if network_session != null:
+		return _network_presenter.default_area_index()
 	var area := _player_area(_local_player_id)
 	return MapData.areas.find(area if area != null else MapData.magic_workshop)
 
 
+func _return_to_network_lobby() -> void:
+	if not is_inside_tree() or network_session == null:
+		return
+	var lobby = preload("res://assets/scenes/main_menu/multiplayer_lobby.tscn").instantiate()
+	lobby.session = network_session
+	_network_session_transferred = true
+	set_process(false)
+	get_tree().root.add_child(lobby)
+	get_tree().current_scene = lobby
+	queue_free()
+
 func _process(delta: float) -> void:
+	if network_session != null:
+		network_session.poll(delta)
+		if network_session.view.get("phase") == "lobby" and network_session.read_match().is_empty():
+			if not _returning_network_lobby:
+				_returning_network_lobby = true
+				call_deferred("_return_to_network_lobby")
+			return
+		_network_presenter.refresh()
+		_update_held_cards(delta)
+		_update_power_badges()
+		_update_hover_zoom_keepalive(delta)
+		return
 	var _t0 := Time.get_ticks_usec()
 	_update_fly_sizes(delta)
 	#首次运行本帧循环即登记为胜利播报消费者：被动实例化（测试里 set_process(false)）不走到这里，
@@ -465,6 +505,10 @@ func _process(delta: float) -> void:
 
 
 func refresh_all_ui() -> void:
+	if network_session != null:
+		if _network_presenter != null:
+			_network_presenter.refresh()
+		return
 	if !GameData.player_data_library.has(_local_player_id):
 		return
 	var key := [GameProgress.current_round, GameProgress.current_phase_index, GameProgress.current_player_id]
@@ -563,6 +607,25 @@ func _area_score(area: BaseMapArea) -> int:
 			total += _num(ev._score)
 	return total
 
+
+## 网络与单机共用事件堆排序、图片和原有查看入口。
+func _bind_area_event_cards(row: Control, events: Array) -> void:
+	_sync_items(row, "MiniEventCard", events.size())
+	row.visible = not events.is_empty()
+	var slots: Array = row.get_children()
+	slots.sort_custom(func(a, b): return int(a.get_meta("event_index", events.size())) < int(b.get_meta("event_index", events.size())))
+	for index in range(events.size()):
+		var event = events[index]
+		var slot: Control = slots[index]
+		slot.set_meta("event_index", index)
+		row.move_child(slot, 0)
+		var concealed: bool = event.get("concealed", true) if event is Dictionary else event._is_concealed
+		var image: String = (event.get("back_image", "") if concealed else event.get("image", "")) if event is Dictionary else (_back("event") if concealed else str(event._card_img))
+		_bind_card(slot, image)
+		if concealed:
+			_disable_card_zoom(slot)
+		else:
+			bind_zoom_for_card(slot, event)
 
 func _area_events(area: BaseMapArea) -> Array:
 	return area._events.filter(func(e): return e is BaseEvent)
@@ -806,10 +869,7 @@ func _bind_local_spell_box(box: Control, master, servant, count: int) -> void:
 		# 完整卡图的点击只发动它自己的显式效果，不误转发到普通令咒。
 		if not slot.has_meta("spell_effect_bound"):
 			slot.set_meta("spell_effect_bound", true)
-			var button := _spawn("EffectButton", slot) as Button
-			button.name = "EffectButton"
-			button.hide()
-			(button.get_node("Effects") as PopupMenu).id_pressed.connect(_on_held_effect_choice.bind(slot))
+			_bind_effect_button(slot)
 			slot.gui_input.connect(_on_local_special_spell_input.bind(slot))
 	if specials.is_empty():
 		box.set_meta("open", 0.0)
@@ -1529,6 +1589,9 @@ func _bind_seat_rows(area: BaseMapArea, seats: Control) -> void:
 ## 卷轴本体（战区）点击。点击落在这里时消费等待中的位置选择，或走部署/移动
 ## 入口。复用 _on_battlefield_clicked 已写好的判据链：等位置 → 部署 → 移动
 func _on_strip_gui_input(event: InputEvent, strip: Control) -> void:
+	if network_session != null:
+		_network_presenter.area_input(event, strip)
+		return
 	if _is_progress_blocked():
 		return
 	if not event is InputEventMouseButton or not event.pressed:
@@ -1623,6 +1686,13 @@ func _scroll_is_animating() -> bool:
 
 
 func _input(event: InputEvent) -> void:
+	if network_session != null:
+		if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+			_hide_event_zoom()
+			get_viewport().set_input_as_handled()
+		elif event is InputEventMouseMotion:
+			_handle_scroll_hover(event)
+		return
 	# 抽屉分区行没有滚动条：鼠标落在哪一行，滚轮就滚哪一行（卡行横向、状态行纵向）
 	if event is InputEventMouseButton and event.pressed and _opponent_drawer != null \
 			and _opponent_drawer.visible and _opponent_drawer.get_global_rect().has_point(event.position):
@@ -1646,7 +1716,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		# 有浏览层/放大图打开时 ESC 只关它们；全部已关才开合暂停菜单
 		var had_overlay: bool = $EventDiscardMenu.visible or $CardBrowser.visible or $LogBrowser.visible \
-				or (_hover_zoom != null and _hover_zoom.visible)
+				or (_hover_zoom != null and _hover_zoom.visible) or (_hover_desc != null and _hover_desc.visible)
 		$EventDiscardMenu.hide()
 		_close_card_browser()
 		$LogBrowser.hide()
@@ -1676,7 +1746,12 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	# 只响应真实鼠标移动，不响应布局移动引发的 mouse_entered，避免静止连环切图。
+	_handle_scroll_hover(event)
+
+func _handle_scroll_hover(event: InputEvent) -> void:
 	if not event is InputEventMouseMotion or event.relative.is_zero_approx():
+		return
+	if (_pause_menu != null and _pause_menu.visible) or (_debug_console != null and _debug_console.is_panel_open()):
 		return
 	if _board.visible:
 		return
@@ -1695,7 +1770,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _scroll_target(index: int) -> Rect2:
-	var count := MapData.areas.size()
+	var count := _strips.get_child_count() if network_session != null else MapData.areas.size()
 	var narrow := (_tpl.get_node("Strip") as Control).size.x
 	var width := maxf(narrow, size.x - SCROLL_MARGIN * 2 - (count - 1) * STRIP_STEP)
 	var x := (size.x - (count - 1) * STRIP_STEP - narrow) * 0.5 + index * STRIP_STEP
@@ -1707,14 +1782,16 @@ func _scroll_target(index: int) -> Rect2:
 
 
 func _select_scroll(index: int) -> void:
-	if index == _main_area_index or index < -1 or index >= MapData.areas.size():
+	var area_count: int = _strips.get_child_count() if network_session != null else MapData.areas.size()
+	if index == _main_area_index or index < -1 or index >= area_count:
 		return
 
 	_main_area_index = index
 	$AreaTitle.visible = index >= 0
 	if index >= 0:
-		_set_text($AreaTitle, "Name", str(MapData.areas[index]._area_name))
-		_set_text($AreaTitle, "Latin", str(AREA_LATIN.get(str(MapData.areas[index]._area_name), "")))
+		var area_name: String = str(network_session.read_match().areas[index].name) if network_session != null else str(MapData.areas[index]._area_name)
+		_set_text($AreaTitle, "Name", area_name)
+		_set_text($AreaTitle, "Latin", str(AREA_LATIN.get(area_name, "")))
 	_scroll_leave_time = 0.0
 	if _scroll_tween != null:
 		_scroll_tween.kill()
@@ -1743,7 +1820,8 @@ func _select_scroll(index: int) -> void:
 			strip.size = start.size.lerp(target.size, t)
 			_layout_scroll(strip, lerpf(start_open, target_open, t))
 		, 0.0, 1.0, SCROLL_SECONDS)
-	_bind_situation_and_piles()
+	if network_session == null:
+		_bind_situation_and_piles()
 
 
 ## 保留已有子节点，只按真实数据数量增减，不在刷新时重建图标。
@@ -1788,21 +1866,7 @@ func _bind_strips() -> void:
 
 		var ev_items := strip.get_node("EventIcons")
 		var events := _area_events(area)
-		_sync_items(ev_items, "MiniEventCard", events.size())
-		ev_items.visible = not events.is_empty()
-		var event_slots := ev_items.get_children()
-		event_slots.sort_custom(func(a, b): return int(a.get_meta("event_index", events.size())) < int(b.get_meta("event_index", events.size())))
-		for k in range(events.size()):
-			var ev: BaseEvent = events[k]
-			var event_slot := event_slots[k] as Control
-			event_slot.set_meta("event_index", k)
-			# 左牌画在右牌之上，场景树逆序命中也必须一致。
-			ev_items.move_child(event_slot, 0)
-			_bind_card(event_slot, _back("event") if bool(ev.get("_is_concealed")) else str(ev.get("_card_img")))
-			if ev._is_concealed:
-				_disable_card_zoom(event_slot)
-			else:
-				bind_zoom_for_card(event_slot, ev)
+		_bind_area_event_cards(ev_items, events)
 		strip.get_node("Score").visible = _area_score(area) != 0
 		_set_text(strip, "Score/Num", str(_area_score(area)))
 		# 地图战区点击：战区本体接收 gui_input；命中后消费等待中的位置选择 / 部署 / 移动
@@ -1893,7 +1957,7 @@ func _layout_scroll(strip: Control, openness: float) -> void:
 			var who := grp.get_node("Who") as Control
 			_update_avatar_scroll_reveal(who, who.get_node("Avatar") as Control)
 	refs["col"].modulate.a = 1.0 - openness
-	var count: int = MapData.areas[strip.get_index()]._locations.size()
+	var count: int = int(strip.get_meta("location_count", 0)) if network_session != null else MapData.areas[strip.get_index()]._locations.size()
 	var events := refs["events"] as Control
 	var score := refs["score"] as Control
 	var compact_step := minf(64, (strip.size.y - 144 - (64 if events.visible else 0) - (52 if score.visible else 0)) / maxf(1, count))
@@ -2142,9 +2206,8 @@ func _layout_held_group(entries: Array, template: String, left: float, right: fl
 	var groups_by_key: Dictionary = {}
 	for entry: Dictionary in entries:
 		var card = entry.card
-		var key: Array = [entry.kind, card._name, card._card_img, card._card_back_img, card._is_concealed]
-		if card is BaseHandCard:
-			key.append_array([_num(card._cost), _num(card._power)])
+		var visual := _held_visual_data(card)
+		var key: Array = [entry.kind, visual.name, visual.image, visual.back_image, visual.concealed, visual.cost, visual.power]
 		var signature := JSON.stringify(key)
 		if not groups_by_key.has(signature):
 			groups_by_key[signature] = []
@@ -2195,8 +2258,12 @@ func _layout_held_group(entries: Array, template: String, left: float, right: fl
 		slot.set_meta("held_entry", entry)
 		# 未公开与明暗朝向分离：技能真名未解放时，明置也不向他人公开。
 		# 手牌本来只有自己可见，不标未公开遮罩；由调用方声明最终可见性。
-		var unpublished: bool = group == "zone" and (entry.card._is_concealed \
-			or (entry.card is BaseSkill and not ReleaseTrueName.is_released(_local_player_id)))
+		var unpublished: bool
+		if network_session != null:
+			unpublished = group == "zone" and _network_presenter.card_unpublished(entry.card)
+		else:
+			unpublished = group == "zone" and (entry.card._is_concealed \
+				or (entry.card is BaseSkill and not ReleaseTrueName.is_released(_local_player_id)))
 		_bind_hand_card(slot, entry.card, entry.kind, entry.count, true, unpublished)
 		var badge := slot.get_node("StackCount") as Label
 		badge.visible = entry.stack_count > 1
@@ -2206,7 +2273,16 @@ func _layout_held_group(entries: Array, template: String, left: float, right: fl
 ## 占掉 120FPS 预算的一半），不能每帧跑；但也不能只在定时刷新时更新，
 ## 否则阶段/回合/选牌/魔力一变，金色呼吸描边会滞后。这里用这几项做轻量签名，
 ## 只有真的变了才重算，平时零成本
+func _held_visual_data(card) -> Dictionary:
+	if card is Dictionary:
+		return card
+	return {"name": card._name, "image": card._card_img, "back_image": card._card_back_img,
+		"concealed": card._is_concealed, "cost": _num(card._cost) if card is BaseHandCard else 0,
+		"power": _num(card._power) if card is BaseHandCard else 0}
+
 func _held_playable_signature() -> String:
+	if network_session != null:
+		return _network_presenter.playable_signature()
 	var pl := _pl(_local_player_id)
 	return "%d|%d|%d|%d|%d" % [_selected_cards.size(), GameProgress.current_player_id,
 		GameProgress.current_phase_index, GameProgress.current_round, _num(pl.get("magic"))]
@@ -2278,7 +2354,7 @@ func _update_held_cards(delta: float) -> void:
 		var playable: bool = bool(slot.get_meta("held_playable", false)) and _held_input_available()
 		var breath := slot.get_node("Breath") as Control
 		var selected := slot.get_node("Selected") as Control
-		selected.visible = _selected_cards.has(card)
+		selected.visible = _network_presenter.is_selected(card) if network_session != null else _selected_cards.has(card)
 		if selected.visible and not _breathing.has(selected):
 			_breathing.append(selected)
 		breath.visible = playable and not selected.visible
@@ -2319,7 +2395,9 @@ func _update_held_cards(delta: float) -> void:
 ## 技能区牌魔力不足时盖门槛遮罩；不可用则压暗，不依赖当前行动者。
 func _held_slot(card, template: String) -> Control:
 	for slot: Control in _hand.get_children():
-		if _meta_or(slot, "card", null) == card:
+		var existing = _meta_or(slot, "card", null)
+		if existing == card or (card is Dictionary and existing is Dictionary and existing.get("id") == card.get("id")):
+			slot.set_meta("card", card)
 			return slot
 	var slot := _spawn(template, _hand)
 	slot.set_meta("card", card)
@@ -2327,15 +2405,23 @@ func _held_slot(card, template: String) -> Control:
 		child.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	slot.mouse_filter = Control.MOUSE_FILTER_STOP
 	slot.gui_input.connect(_on_held_card_input.bind(slot))
-	var effect_button := _spawn("EffectButton", slot) as Button
-	effect_button.name = "EffectButton"
-	effect_button.hide()
-	effect_button.pressed.connect(_on_held_effect_pressed.bind(slot))
-	(effect_button.get_node("Effects") as PopupMenu).id_pressed.connect(_on_held_effect_choice.bind(slot))
+	_bind_effect_button(slot)
 	return slot
+
+func _bind_effect_button(slot: Control) -> void:
+	if slot.has_node("EffectButton"):
+		return
+	var button := _spawn("EffectButton", slot) as Button
+	button.name = "EffectButton"
+	button.hide()
+	button.pressed.connect(_on_held_effect_pressed.bind(slot))
+	(button.get_node("Effects") as PopupMenu).id_pressed.connect(_on_held_effect_choice.bind(slot))
 
 
 func _on_held_card_input(event: InputEvent, slot: Control) -> void:
+	if network_session != null:
+		_network_presenter.card_input(event, slot)
+		return
 	if not event is InputEventMouseButton or not event.pressed or not _held_input_available():
 		return
 	var card = _meta_or(slot, "card", null)
@@ -2361,7 +2447,7 @@ func _on_held_card_input(event: InputEvent, slot: Control) -> void:
 
 	elif event.button_index == MOUSE_BUTTON_RIGHT:
 		# 朝向编辑与出牌资格分离；暗置技能能否打出仍由提交规则校验。
-		SetCardConcealed.new().exec(card, not card._is_concealed, _local_player_id)
+		_commands.set_card_concealed(card, not card._is_concealed, _local_player_id)
 	else:
 		return
 	slot.accept_event()
@@ -2401,7 +2487,7 @@ func _on_held_effect_pressed(slot: Control) -> void:
 	popup.clear()
 	button.set_meta("choices", effects)
 	for i in range(effects.size()):
-		popup.add_item(_shown(effects[i]), i)
+		popup.add_item(str(effects[i].label) if network_session != null else _shown(effects[i]), i)
 	popup.position = Vector2i(button.global_position + Vector2(0, button.size.y))
 	popup.popup()
 
@@ -2414,15 +2500,20 @@ func _on_held_effect_choice(index: int, slot: Control) -> void:
 		_request_held_effect(effects[index])
 
 
-func _request_held_effect(effect: BaseEffect) -> void:
+func _request_held_effect(effect) -> void:
+	if network_session != null:
+		_network_presenter.request_effect(effect)
+		return
 	# 点击时再次由引擎校验；悬浮期间资源或时机可能已经变化。
-	EffectManager.request_manual_activation(effect, _local_player_id)
+	_commands.request_manual_activation(effect, _local_player_id)
 	refresh_all_ui()
 
 
 ## 返回卡牌及其关联状态上此刻可以主动发动的效果。
 ## 主动能力的可用性完全交给 EffectManager，界面只负责提供点击入口。
 func _manual_effects_of(card) -> Array:
+	if network_session != null:
+		return _network_presenter.manual_effects_of(card) if card is Dictionary else []
 	var result: Array = []
 	if card == null:
 		return result
@@ -2441,6 +2532,8 @@ func _manual_effects_of(card) -> Array:
 
 
 func _held_card_playable(card) -> bool:
+	if network_session != null:
+		return _network_presenter.card_playable(card)
 	if not card is BaseHandCard or not _held_input_available():
 		return false
 	var proposed := _selected_cards.duplicate()
@@ -2517,6 +2610,9 @@ func _finish_card_flip(id: int) -> void:
 
 
 func _bind_hand_card(node: Control, card, kind: String, count: int, mine: bool, show_conceal_mark: bool = true) -> void:
+	if network_session != null:
+		_network_presenter.bind_hand_card(node, card, show_conceal_mark)
+		return
 	var frame := node.get_node("Frame") as Control
 	frame.modulate = Color.WHITE
 	node.get_node("Breath").hide()
@@ -2528,43 +2624,47 @@ func _bind_hand_card(node: Control, card, kind: String, count: int, mine: bool, 
 	# 未觉醒升华技本来就只有卡背（玩家尚未获得这张牌）。
 	var face_img: String = str(card.get("_card_img")) if awakened and not concealed else back
 	var mark: bool = awakened and show_conceal_mark
-	var prev_face: String = str(frame.get_meta("face_img", ""))
-	var prev_mark: bool = bool(frame.get_meta("face_mark", false))
-	frame.set_meta("face_img", face_img)
-	frame.set_meta("face_mark", mark)
-	if prev_face != "" and (prev_face != face_img or prev_mark != mark):
-		# 换面（明置↔暗置、升华技觉醒等）：折到最窄时同时换贴图与遮罩，不让牌面瞬间跳变
-		_play_card_flip(frame, _apply_hand_face.bind(frame.get_instance_id(), face_img, mark))
-	elif not bool(frame.get_meta("card_flipping", false)):
-		# 动画进行中不要提前换面（贴图与遮罩都由动画在中点换）
-		_bind_card(frame, face_img)
-		_sync_overlay(frame, mark, "ConcealOverlay", CONCEAL_COLOR, CONCEAL_ICON)
+	_bind_hand_face(frame, face_img, mark)
 	if kind == "升华技":
 		_set_variation(frame, "CardUpgrade")
 	var playable := awakened and _held_card_playable(card)
 	var manual_effects: Array = _manual_effects_of(card) if awakened and mine else []
-	node.set_meta("manual_effects", manual_effects)
 	var actionable := playable or not manual_effects.is_empty()
-	# 提示随数据绑定更新；逐帧动画不重复执行规则搜索。
-	node.set_meta("held_playable", actionable)
 	var pl := _pl(_local_player_id)
 	var need := _num(GameData.skill_zone_magic_limit)
 	var locked := awakened and mine and not playable and not (pl.get("hand_cards", []) as Array).has(card) \
 		and _num(pl.get("magic")) < need \
 		and not bool(pl.get("ignore_skill_zone_magic_limit", false)) and not bool(pl.get("is_magic_immune", false))
-	if actionable:
-		_breathe(node.get_node("Breath"))
-	elif mine and awakened:
-		frame.modulate = Color(0.55, 0.55, 0.55)
+	_bind_hand_availability(node, manual_effects, actionable, mine and awakened, locked)
 	# 牌面不附说明文字：牌名、属性与底部底条都改由放大卡图与右键说明承担
-	var lock := node.get_node("Lock") as Control
-	lock.visible = locked
+
 	# 放大与右键说明绑在卡位自身：Frame 及其子节点都被设为不接收鼠标，绑在它们上面收不到事件。
 	# 手牌与技能区的右键已被明置/暗置占用，说明改由放大卡图上右键触发（right_action 声明式传入）。
 	if awakened:
 		bind_zoom_for_card(node, card, "", "none")
 	else:
 		_disable_card_zoom(node)
+
+func _bind_hand_availability(node: Control, effects: Array, actionable: bool, dim_unavailable: bool, locked: bool) -> void:
+	node.set_meta("manual_effects", effects)
+	node.set_meta("held_playable", actionable)
+	var frame: Control = node.get_node("Frame")
+	frame.modulate = Color(0.55, 0.55, 0.55) if dim_unavailable and not actionable else Color.WHITE
+	node.get_node("Breath").hide()
+	if actionable:
+		_breathe(node.get_node("Breath"))
+	node.get_node("Lock").visible = locked
+
+func _bind_hand_face(frame: Control, face_img: String, mark: bool) -> void:
+	var prev_face: String = str(frame.get_meta("face_img", ""))
+	var prev_mark: bool = bool(frame.get_meta("face_mark", false))
+	frame.set_meta("face_img", face_img)
+	frame.set_meta("face_mark", mark)
+	if prev_face != "" and (prev_face != face_img or prev_mark != mark):
+		_play_card_flip(frame, _apply_hand_face.bind(frame.get_instance_id(), face_img, mark))
+	elif not bool(frame.get_meta("card_flipping", false)):
+		_bind_card(frame, face_img)
+		_sync_overlay(frame, mark, "ConcealOverlay", CONCEAL_COLOR, CONCEAL_ICON)
 
 func _bind_ops() -> void:
 	var pl := _pl(_local_player_id)
@@ -2666,22 +2766,29 @@ func _selected_cards_power() -> int:
 
 
 func _held_input_available() -> bool:
+	if network_session != null:
+		return _network_presenter.input_available()
 	return not _submitting and not $LogBrowser.visible and not $CardBrowser.visible and not $EventDiscardMenu.visible \
 		and not EffectManager.is_waiting_for_choice() and not EffectManager.is_waiting_for_card_selection()
 
 
 func _can_confirm_held_cards() -> bool:
+	if network_session != null:
+		return _network_presenter.selection.can_confirm()
 	return _held_input_available() and RegularPlay.can_submit_group(_local_player_id, _selected_cards, _held_hidden(_selected_cards))
 
 
 func _confirm_held_cards() -> void:
+	if network_session != null:
+		_network_presenter.selection.confirm()
+		return
 	if not _can_confirm_held_cards():
 		return
 	# 对象与当前明暗状态在确认时一同快照；提交入口仍执行完整规则校验。
 	var cards := _selected_cards.duplicate()
 	var hidden := _held_hidden(cards)
 	_submitting = true
-	var submitted := RegularPlay.submit_group(_local_player_id, cards, hidden)
+	var submitted: bool = _commands.submit_group(_local_player_id, cards, hidden)
 	if submitted:
 		_selected_cards.clear()
 	_submitting = false
@@ -2766,9 +2873,11 @@ func _check_waiting_effects() -> void:
 	if pending == null:
 		return
 	var trigger_id: int = pending._trigger_player_id
-	if trigger_id != _local_player_id and trigger_id >= 0:
-		DummyBot.new().resolve_active_effect(pending, trigger_id)
+	if _seat_controller.is_ai(trigger_id):
+		_driver.answer_effect(pending)
 		refresh_all_ui()
+		return
+	if trigger_id >= 0 and not _seat_controller.is_local(trigger_id):
 		return
 	if pending != _current_waiting_effect:
 		_current_waiting_effect = pending
@@ -2842,7 +2951,7 @@ func _on_command_spell_clicked(event: InputEvent) -> void:
 			continue
 		for e in effs:
 			if EffectManager.can_manual_activate(e, _local_player_id):
-				if EffectManager.request_manual_activation(e, _local_player_id):
+				if _commands.request_manual_activation(e, _local_player_id):
 					refresh_all_ui()
 					return
 
@@ -2860,9 +2969,11 @@ func _check_waiting_card_selection() -> void:
 	if eff == null:
 		return
 	var trigger_id: int = eff._trigger_player_id
-	if trigger_id != _local_player_id and trigger_id >= 0:
-		DummyBot.new().resolve_card_selection(pending)
+	if _seat_controller.is_ai(trigger_id):
+		_driver.answer_card(pending)
 		refresh_all_ui()
+		return
+	if trigger_id >= 0 and not _seat_controller.is_local(trigger_id):
 		return
 	if _card_select_effect != eff or _card_select_panel == null or not _card_select_panel.visible:
 		_card_select_effect = eff
@@ -2885,8 +2996,10 @@ func _check_waiting_player_selection() -> void:
 	if eff == null:
 		return
 	var trigger_id: int = eff._trigger_player_id
-	if trigger_id != _local_player_id and trigger_id >= 0:
-		DummyBot.new().resolve_player_selection(pending)
+	if _seat_controller.is_ai(trigger_id):
+		_driver.answer_player(pending)
+		return
+	if trigger_id >= 0 and not _seat_controller.is_local(trigger_id):
 		return
 	if _player_select_effect != eff or _player_select_panel == null or not _player_select_panel.visible:
 		_show_player_select_panel(pending)
@@ -2901,87 +3014,36 @@ func _check_waiting_location_selection() -> void:
 	if eff == null:
 		return
 	var trigger_id: int = eff._trigger_player_id
-	if trigger_id != _local_player_id and trigger_id >= 0:
-		DummyBot.new().resolve_location_selection(pending, self)
+	if _seat_controller.is_ai(trigger_id):
+		_driver.answer_location(pending)
 
 
 # --- AI 推进 ---
 func _check_and_step_ai(delta: float) -> void:
 	if _broadcast_active or _is_paused():
 		return
-	if GameProgress.is_game_over:
+	if _is_debug_console_blocking_progress():
 		return
 	if _effect_result_modal != null and _effect_result_modal.visible:
 		return
-	if _ai_acting:
-		if GameProgress.current_player_id != _ai_acting_for_id:
-			_ai_acting = false
-		return
-	var curr_id: int = GameProgress.current_player_id
-	if curr_id < 0:
-		return
-	var phase_name: String = str(GameProgress.get_current_phase().get("name", ""))
-	var acts_here: bool = curr_id >= 0 and (GameProgress.is_phase_for(curr_id, "outpost") or GameProgress.is_phase_for(curr_id, "action"))
-	if (phase_name == "battle" or phase_name == "prepare") and not acts_here:
-		if curr_id == _local_player_id:
-			if phase_name == "battle" and EffectManager.has_manual_activation(curr_id):
-				return
-			if phase_name != "battle" and EffectManager.has_manual_activation(curr_id):
-				return
-			GameProgress.end_current_player_action()
-			return
-		if not EffectManager.has_manual_activation(curr_id):
-			GameProgress.end_current_player_action()
-			return
-		_ai_cooldown -= delta
-		if _ai_cooldown > 0.0:
-			return
-		_ai_cooldown = AI_STEP_INTERVAL
-		_ai_acting = true
-		_ai_acting_for_id = curr_id
-		_run_dummy_bot_turn(curr_id)
-		_ai_acting = false
-		return
-	if curr_id == _local_player_id:
-		_ai_cooldown = 0.0
-		return
-	_ai_cooldown -= delta
-	if _ai_cooldown > 0.0:
-		return
-	_ai_cooldown = AI_STEP_INTERVAL
-	_ai_acting = true
-	_ai_acting_for_id = curr_id
-	_run_dummy_bot_turn(curr_id)
-	_ai_acting = false
+	_driver.step_interval = AI_STEP_INTERVAL
+	_driver.step(delta)
 
 
 func _run_dummy_bot_turn(bot_id: int) -> void:
+	_driver.run_bot_turn(bot_id)
+
+
+func _clear_ai_play_prompt(_bot_id: int) -> void:
 	_ai_play_prompt_player_id = -1
 	_ai_play_prompt_card = null
 	_ai_play_prompt_round = -1
 	if is_instance_valid(_ai_play_prompt_node):
 		_ai_play_prompt_node.visible = false
-	DummyBot.new().step(self, bot_id)
 
 
-# --- AI 宿主契约（与 DummyBot 签名一致） ---
-func ai_deploy_areas() -> Array:
-	var areas: Array = []
-	for area: BaseMapArea in MapData.areas:
-		if not DeployRules.open_locations(area).is_empty():
-			areas.append(area)
-	return areas
 
-
-func ai_pick_deploy_location(area: BaseMapArea) -> BaseLocation:
-	return DeployRules.pick_location(area)
-
-
-func ai_apply_deploy_benefit(loc: BaseLocation, bot_id: int) -> void:
-	DeployRules.apply_benefit(loc, bot_id)
-
-
-func ai_record_played_card(bot_id: int, card: BaseCard) -> void:
+func _on_ai_played_card(bot_id: int, card: BaseCard) -> void:
 	if bot_id == _local_player_id:
 		return
 	# 出牌的表现交给卷轴里的入场动画：这里只记下是谁打的，不再弹浮动提示
@@ -2991,16 +3053,6 @@ func ai_record_played_card(bot_id: int, card: BaseCard) -> void:
 	if is_instance_valid(_ai_play_prompt_node):
 		_ai_play_prompt_node.visible = false
 
-
-func ai_pick_effect_location(spec: Dictionary) -> BaseLocation:
-	var forbidden: Array = spec.get("forbidden_target_areas", []) as Array
-	for area: BaseMapArea in MapData.areas:
-		if forbidden.has(str(area._area_name)):
-			continue
-		var target: BaseLocation = TacticalBoardUI._first_effect_location_target(area, spec)
-		if target != null:
-			return target
-	return null
 
 
 # --- 终局展示 ---
@@ -3059,31 +3111,15 @@ func set_debug_console_enabled(enabled: bool) -> void:
 	if enabled:
 		if is_debug_console_enabled():
 			return
-		var scene := ResourceLoader.load(
-			"res://assets/scenes/debug/debug_console.tscn",
-			"PackedScene", ResourceLoader.CACHE_MODE_IGNORE
-		) as PackedScene
-		if scene == null:
-			return
-		_debug_console = scene.instantiate() as DebugConsoleUI
-		if _debug_console == null:
-			return
-		add_child(_debug_console)
-		# CanvasLayer 截断 Control 主题继承，只接主字体，不覆盖控制台原有样式/字号。
-		var console_font_theme := Theme.new()
-		console_font_theme.default_font = theme.default_font
-		(_debug_console.get_node("ConsolePanel") as Control).theme = console_font_theme
 		_debug_console.initialize(self)
 		return
 	if not is_debug_console_enabled():
 		return
 	_debug_console.safe_shutdown()
-	_debug_console.queue_free()
-	_debug_console = null
 
 
 func is_debug_console_enabled() -> bool:
-	return _debug_console != null and is_instance_valid(_debug_console)
+	return _debug_console != null and is_instance_valid(_debug_console) and _debug_console.session != null
 
 
 func discard_debug_console_pending_previews() -> void:
@@ -3111,6 +3147,16 @@ func discard_debug_console_pending_previews() -> void:
 
 
 # --- 弹窗：确认 / 提示 ---
+func _bind_tactical_confirmation() -> void:
+	if _tactical_confirm == null:
+		return
+	var btn_ok := _tactical_confirm.get_node("Box/ButtonsRow/BtnConfirmAction") as Button
+	if not btn_ok.pressed.is_connected(_on_tactical_confirm_execute):
+		btn_ok.pressed.connect(_on_tactical_confirm_execute)
+	var btn_cancel := _tactical_confirm.get_node("Box/ButtonsRow/BtnCancelAction") as Button
+	if not btn_cancel.pressed.is_connected(_on_tactical_confirm_cancel):
+		btn_cancel.pressed.connect(_on_tactical_confirm_cancel)
+
 func _show_tactical_confirm(desc_str: String, is_alert: bool = false) -> void:
 	if _tactical_confirm == null:
 		return
@@ -3136,22 +3182,22 @@ func _on_tactical_confirm_execute() -> void:
 	if _tactical_confirm != null:
 		_tactical_confirm.visible = false
 	var act_type: String = _pending_tactical_action.get("type", "")
+	if network_session != null:
+		_network_presenter.confirm_area(_pending_tactical_action)
+		_pending_tactical_action = {}
+		return
 	if act_type == "deploy":
 		var target_loc = _pending_tactical_action.get("target_loc")
 		if target_loc is BaseLocation:
-			var before_loc = GameDataManager.get_player_data(_local_player_id).get("location")
-			Deploy.new().exec(target_loc, _local_player_id)
-			var after_loc = GameDataManager.get_player_data(_local_player_id).get("location")
-			if after_loc == before_loc:
+			if not _commands.deploy(target_loc, _local_player_id):
 				_show_tactical_confirm("无法部署至目标席位", true)
 			else:
-				DeployRules.apply_benefit(target_loc, _local_player_id)
-				GameProgress.end_current_player_action()
+				_commands.end_current_player_action()
 	elif act_type == "move":
 		var step: int = _pending_tactical_action.get("step_diff", 0)
 		var before_loc = GameDataManager.get_player_data(_local_player_id).get("location")
 		if step > 0:
-			Move.new().exec(BaseNumber.new(step), _local_player_id)
+			_commands.move(step, _local_player_id)
 		var after_loc = GameDataManager.get_player_data(_local_player_id).get("location")
 		if after_loc == before_loc:
 			var target_name: String = str(_pending_tactical_action.get("target_area_name", "目标战区"))
@@ -3284,8 +3330,7 @@ func _on_effect_option_picked_with_quantity(option_index: int, spin: SpinBox) ->
 		_current_waiting_effect = null
 		if _effect_modal != null:
 			_effect_modal.visible = false
-		eff.set_option_quantity(option_index, qty)
-		EffectManager.submit_option_choice(eff, [option_index])
+		_commands.submit_option_choice(eff, [option_index], {option_index: qty})
 		refresh_all_ui()
 
 
@@ -3310,7 +3355,7 @@ func _on_effect_option_picked(option_index: int) -> void:
 		_current_waiting_effect = null
 		if _effect_modal != null:
 			_effect_modal.visible = false
-		EffectManager.submit_option_choice(eff, [option_index])
+		_commands.submit_option_choice(eff, [option_index])
 		refresh_all_ui()
 
 
@@ -3322,6 +3367,7 @@ func _on_effect_modal_confirm() -> void:
 			_effect_modal.visible = false
 		if eff.has_options() and eff.allows_multi_choice():
 			var picked: Array = []
+			var quantities: Dictionary = {}
 			var options_row := _effect_modal.get_node_or_null("Box/OptionsRow") as VBoxContainer
 			if options_row:
 				for i in range(options_row.get_child_count()):
@@ -3333,10 +3379,10 @@ func _on_effect_modal_confirm() -> void:
 						picked.append(i)
 						var spin := row.get_node_or_null("Qty_%d" % i) as SpinBox
 						if spin != null:
-							eff.set_option_quantity(i, int(spin.value))
-			EffectManager.submit_option_choice(eff, picked)
+							quantities[i] = int(spin.value)
+			_commands.submit_option_choice(eff, picked, quantities)
 		else:
-			EffectManager.submit_active_choice(eff, true)
+			_commands.submit_active_choice(eff, true)
 		refresh_all_ui()
 
 
@@ -3348,7 +3394,7 @@ func _on_effect_modal_cancel() -> void:
 		_current_waiting_effect = null
 		if _effect_modal != null:
 			_effect_modal.visible = false
-		EffectManager.submit_active_choice(eff, false)
+		_commands.submit_active_choice(eff, false)
 		refresh_all_ui()
 
 
@@ -3363,8 +3409,8 @@ func _bind_mana_cost_preview(pl: Dictionary) -> void:
 		for card in _selected_cards:
 			if card is BaseHandCard and not card._is_concealed:
 				cost += RegularPlay.cost(card, pl)
-	_set_text(panel, "Box/Cost", "魔力消耗 %s" % str(cost).trim_suffix(".0"))
-	_set_text(panel, "Box/Remaining", "剩余魔力 %s" % str(pl.magic.number - cost).trim_suffix(".0"))
+	_set_text(panel, "Box/Cost", "魔力消耗 %s" % BaseNumber.display_text(cost))
+	_set_text(panel, "Box/Remaining", "剩余魔力 %s" % BaseNumber.display_text(pl.magic.number - cost))
 	var self_rect := _self.get_global_rect()
 	var master_rect := (_master.get_node("Frame") as Control).get_global_rect()
 	var left := self_rect.end.x + HELD_GAP
@@ -3661,7 +3707,7 @@ func _on_card_select_confirmed() -> void:
 	_card_select_picked = []
 	if _card_select_panel != null:
 		_card_select_panel.visible = false
-	EffectManager.submit_card_selection(eff, picks)
+	_commands.submit_card_selection(eff, picks)
 	refresh_all_ui()
 
 
@@ -3681,7 +3727,7 @@ func _on_card_select_cancelled() -> void:
 	if _card_select_panel != null:
 		_card_select_panel.visible = false
 	if eff != null:
-		EffectManager.submit_card_selection(eff, [])
+		_commands.submit_card_selection(eff, [])
 	refresh_all_ui()
 
 
@@ -3721,7 +3767,7 @@ func _on_player_target_picked(player_id: int) -> void:
 	_player_select_effect = null
 	if _player_select_panel != null:
 		_player_select_panel.visible = false
-	EffectManager.submit_player_selection(eff, [player_id])
+	_commands.submit_player_selection(eff, [player_id])
 	refresh_all_ui()
 
 
@@ -3847,13 +3893,13 @@ func _play_broadcast_open(overlay: Control, list: VBoxContainer) -> void:
 	)
 
 
-## 把非本地的在局玩家排进自动确认队列：他们没界面，逐人自动确认。
+## 只有 AI 自动确认；远程真人不能因为不在本机而被代答。
 func _queue_ai_confirmations() -> void:
 	_broadcast_ai_queue = []
 	if GameProgress == null:
 		return
 	for id in GameProgress.battle_broadcast_confirmers():
-		if int(id) != _local_player_id:
+		if _seat_controller.is_ai(int(id)):
 			_broadcast_ai_queue.append(int(id))
 	_broadcast_ai_timer = 0.0
 
@@ -3866,7 +3912,7 @@ func _tick_broadcast_ai_confirm(delta: float) -> void:
 	if _broadcast_ai_timer < BROADCAST_AI_CONFIRM_STEP:
 		return
 	_broadcast_ai_timer = 0.0
-	GameProgress.confirm_battle_broadcast(int(_broadcast_ai_queue.pop_front()))
+	_commands.confirm_battle_broadcast(int(_broadcast_ai_queue.pop_front()))
 
 
 ## 亮起「继续」按钮并实时刷新「已确认 n/7」提示。
@@ -3890,7 +3936,7 @@ func _refresh_broadcast_continue() -> void:
 ## 「继续」按钮：本地玩家确认自己；AI 玩家由上面的逐人自动确认补齐。
 func _on_broadcast_continue_pressed() -> void:
 	if GameProgress != null and GameProgress.is_battle_broadcast_pending():
-		GameProgress.confirm_battle_broadcast(_local_player_id)
+		_commands.confirm_battle_broadcast(_local_player_id)
 
 
 func _hide_broadcast() -> void:
@@ -4210,35 +4256,54 @@ func _disable_card_zoom(node: Control) -> void:
 func bind_zoom_for_card(node: Control, obj, img_field: String = "", right_action: String = "desc") -> void:
 	if node == null:
 		return
+	if obj is Dictionary:
+		if not obj.get("visible", false):
+			_disable_card_zoom(node)
+			return
+		_bind_zoom_data(node, obj, obj.get("zoom_kind", ""), obj.get("back_image", "") if obj.get("concealed", true) else obj.get("image", ""), obj.get("concealed", true), obj.get("name", ""), obj.get("description", ""), right_action)
+		return
 	var kind: String = obj.get_zoom_kind(img_field) if obj != null and obj.has_method("get_zoom_kind") else ""
 	if not kind in [LoadHelper.ZOOM_KIND_CARD, LoadHelper.ZOOM_KIND_AVATAR, LoadHelper.ZOOM_KIND_TOKEN]:
 		_disable_card_zoom(node)
 		return
 	var img = obj.get(img_field) if img_field != "" else obj.get("_card_img")
 	var has_img: bool = img != null and str(img) != "" and LoadHelper.texture_exists(str(img))
-	node.set_meta("zoom_img", str(img) if has_img else "")
-	node.set_meta("zoom_obj", obj)
-	node.set_meta("zoom_disabled", false)
 	var concealed := obj is BaseCard and bool(obj.get("_is_concealed"))
-	if concealed and _desc_source_id == node.get_instance_id():
-		_close_card_desc()
-	node.set_meta("zoom_title", "" if concealed else _object_shown_name(obj))
 	var desc := ""
 	if kind == LoadHelper.ZOOM_KIND_CARD and not concealed:
 		desc = _build_card_desc(obj)
 	elif kind == LoadHelper.ZOOM_KIND_TOKEN and not concealed:
 		desc = TacticalBoardUI._build_token_desc(obj)
-	node.set_meta("zoom_desc", desc)
-	node.set_meta("zoom_right_action", right_action)
-	node.mouse_filter = Control.MOUSE_FILTER_STOP
-	if not node.has_meta("zoom_bound"):
-		node.set_meta("zoom_bound", true)
-		node.gui_input.connect(_on_zoom_target_gui_input.bind(node))
+	_bind_zoom_data(node, obj, kind, str(img) if has_img else "", concealed, _object_shown_name(obj), desc, right_action)
 
 
 ## 悬浮候选：从真实命中控件向上找最近的、声明了放大的展示位。
 ## 用每帧命中判定而不是 mouse_entered 脉冲：子节点抢命中、子像素进出、布局变化引起的
 ## 进入/离开抖动都不会误触发放大。
+func _bind_card_view_controls() -> void:
+	if _hover_zoom != null and not _hover_zoom.gui_input.is_connected(_on_hover_zoom_gui_input):
+		_hover_zoom.gui_input.connect(_on_hover_zoom_gui_input)
+	var close: Button = _hover_desc.get_node("Close")
+	if not close.pressed.is_connected(_close_card_desc):
+		close.pressed.connect(_close_card_desc)
+
+func _bind_zoom_data(node: Control, obj, kind: String, image: String, concealed: bool, title: String, description: String, right_action: String) -> void:
+	if kind not in LoadHelper.ZOOM_KINDS:
+		_disable_card_zoom(node)
+		return
+	node.set_meta("zoom_disabled", false)
+	node.set_meta("zoom_img", image)
+	node.set_meta("zoom_obj", obj)
+	node.set_meta("zoom_title", "" if concealed else title)
+	node.set_meta("zoom_desc", "" if concealed else description)
+	node.set_meta("zoom_right_action", right_action)
+	if concealed and _desc_source_id == node.get_instance_id():
+		_close_card_desc()
+	node.mouse_filter = Control.MOUSE_FILTER_STOP
+	if not node.has_meta("zoom_bound"):
+		node.set_meta("zoom_bound", true)
+		node.gui_input.connect(_on_zoom_target_gui_input.bind(node))
+
 func _zoom_hover_candidate() -> Control:
 	var node := get_viewport().gui_get_hovered_control()
 	while node != null:
@@ -4890,7 +4955,7 @@ func _on_battlefield_clicked(target_area_idx: int) -> void:
 		if selected == null:
 			_show_tactical_confirm("【%s】没有可用的位置" % MapData.areas[target_area_idx]._area_name, true)
 			return
-		EffectManager.submit_location_selection(pending_loc["effect"], selected)
+		_commands.submit_location_selection(pending_loc["effect"], selected)
 		refresh_all_ui()
 		return
 	var blocked: String = _area_action_block_reason(target_area_idx)
@@ -4979,7 +5044,7 @@ func _on_end_phase_pressed() -> void:
 		if block != "":
 			_show_tactical_confirm(block, true)
 			return
-	GameProgress.end_current_player_action()
+	_commands.end_current_player_action()
 	refresh_all_ui()
 
 
@@ -5161,7 +5226,8 @@ func _bind_player_row(grp: Control, pid: int) -> void:
 ## 同一绑定供中央出牌与残留小牌堆复用，朝向、说明和点击权限不分叉。
 func _bind_played_cards_row(cards_row: Control, played: Array, pid: int, animate: bool = false) -> void:
 	for slot in cards_row.get_children():
-		if not played.has(_meta_or(slot, "card", null)):
+		var existing = _meta_or(slot, "card", null)
+		if not played.any(func(card): return _same_card(card, existing)):
 			cards_row.remove_child(slot)
 			slot.queue_free()
 	for k in range(played.size()):
@@ -5169,15 +5235,19 @@ func _bind_played_cards_row(cards_row: Control, played: Array, pid: int, animate
 		var slot := _played_card_slot(cards_row, card)
 		cards_row.move_child(slot, k)
 		# 正反面只读取真实明暗状态；是否未知与闭眼遮罩独立，已出牌不挂闭眼。
-		var concealed := bool(card.get("_is_concealed"))
-		var image := _back("attack" if card is BaseAttack else "skill") if concealed else str(card.get("_card_img"))
+		var concealed: bool = card.get("concealed", true) if card is Dictionary else bool(card.get("_is_concealed"))
+		var image: String
+		if card is Dictionary:
+			image = card.get("image", "") if card.get("visible", false) and not concealed else card.get("back_image", "")
+		else:
+			image = _back("attack" if card is BaseAttack else "skill") if concealed else str(card.get("_card_img"))
 		_bind_card(slot, image)
 		_sync_overlay(slot, false, "ConcealOverlay", CONCEAL_COLOR, CONCEAL_ICON)
 		slot.set_meta("card_object", card)
 		slot.set_meta("card", card)
 		slot.set_meta("card_owner", pid)
 		slot.visible = true
-		if not (card is BaseCard):
+		if not (card is BaseCard or card is Dictionary):
 			_disable_card_zoom(slot)
 		else:
 			bind_zoom_for_card(slot, card)
@@ -5188,9 +5258,15 @@ func _bind_played_cards_row(cards_row: Control, played: Array, pid: int, animate
 
 
 ## 取该卡对象对应的出牌槽位：已有就复用，没有才新建
+func _same_card(card, existing) -> bool:
+	if card is Dictionary and existing is Dictionary:
+		return card.has("id") and existing.has("id") and card.id == existing.id
+	return card == existing
+
 func _played_card_slot(cards_row: Control, card) -> Control:
 	for slot in cards_row.get_children():
-		if _meta_or(slot, "card", null) == card:
+		var existing = _meta_or(slot, "card", null)
+		if _same_card(card, existing):
 			return slot
 	var slot := _spawn("PlayedCard", cards_row)
 	slot.set_meta("card", card)
@@ -5199,10 +5275,7 @@ func _played_card_slot(cards_row: Control, card) -> Control:
 	slot.mouse_filter = Control.MOUSE_FILTER_STOP
 	slot.gui_input.connect(_on_played_card_input.bind(slot))
 	# 与技能栏共用主动效果选择入口；按钮保持隐藏，不改变已出牌布局。
-	var effect_button := _spawn("EffectButton", slot) as Button
-	effect_button.name = "EffectButton"
-	effect_button.hide()
-	(effect_button.get_node("Effects") as PopupMenu).id_pressed.connect(_on_held_effect_choice.bind(slot))
+	_bind_effect_button(slot)
 	return slot
 
 
@@ -5223,6 +5296,11 @@ func _on_played_card_input(event: InputEvent, slot: Control) -> void:
 	if not _held_input_available() or int(slot.get_meta("card_owner", -1)) != _local_player_id:
 		return
 	var card = _meta_or(slot, "card", null)
+	if network_session != null:
+		if _network_presenter.played_card_live(slot):
+			_on_held_effect_pressed(slot)
+			slot.accept_event()
+		return
 	if not (_pl(_local_player_id).get("played_cards", []) as Array).has(card):
 		return
 	_on_held_effect_pressed(slot)

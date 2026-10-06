@@ -736,7 +736,7 @@ func _refresh_leaderboard() -> void:
 				name_lbl.add_theme_color_override("font_color", Color(0.9, 0.9, 0.95))
 		var score_lbl := h.get_node_or_null("ScoreH/Score") as Label
 		if score_lbl:
-			score_lbl.text = str(item["score"])
+			score_lbl.text = BaseNumber.display_text(item["score"])
 		# 底板优先级：当前行动者 > 榜首 > 常规
 		if item["is_current"] and _lb_style_active != null:
 			row.add_theme_stylebox_override("panel", _lb_style_active)
@@ -1861,9 +1861,7 @@ func _card_relation_key(card) -> String:
 
 ## 取数字的显示值：BaseNumber 用 .number，其余原样
 func _number_text(value) -> String:
-	if value is BaseNumber:
-		return str(value.number)
-	return str(value)
+	return BaseNumber.display_text(value)
 
 
 ## 卡位上的数量角标：数量大于 1 才显示（1 张不写量词）。

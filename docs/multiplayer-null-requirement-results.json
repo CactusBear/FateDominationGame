@@ -1,0 +1,38 @@
+[
+  {
+    "scene": "requirement_null",
+    "exit": 0,
+    "result": [
+      "RESULT checks=3 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK missing query result rejects requirement true\r\nCHECK requirement failure restores temporary variables true\r\nCHECK requirement failure restores activating effect true\r\nRESULT checks=3 failures=[]"
+  },
+  {
+    "scene": "net_cancel",
+    "exit": 0,
+    "result": [
+      "RESULT checks=12 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK explicit pending cancellation exists true\r\nCHECK cancel obeys explicit allow_cancel false true\r\nCHECK cancel preserves mandatory wait false true\r\nCHECK cancel does not activate zero-minimum selection false true\r\nCHECK cancel obeys explicit allow_cancel true true\r\nCHECK cancel preserves mandatory wait true true\r\nCHECK cancel does not activate zero-minimum selection true true\r\nCHECK player target canceled explicitly true\r\nCHECK player cancellation never submits legal empty choice true\r\nCHECK location canceled explicitly true\r\nCHECK location wait cleared true\r\nCHECK duplicate cancellation rejected true\r\nRESULT checks=12 failures=[]"
+  },
+  {
+    "scene": "net_full_game",
+    "exit": 0,
+    "result": [
+      "RESULT checks=4 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK full command fixture starts true\r\nCHECK human command gate reaches actual game end true\r\nCHECK commands executed without AI takeover true\r\nCHECK engine records terminal result true\r\nNETWORK_COMMAND_GAME submitted=222 round=11\r\nRESULT checks=4 failures=[]"
+  },
+  {
+    "scene": "battle_scroll_full_game",
+    "exit": 0,
+    "result": [
+      "RESULT checks=13 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK game started at round 1 true\r\nCHECK seven players in play true\r\nCHECK game reaches an end true\r\nCHECK game ends without hitting the step guard true\r\nCHECK an out player never gets another action true\r\nCHECK players were deployed onto the board true\r\nCHECK battles were resolved true\r\nCHECK players were eliminated on the climax days true\r\nelimination rounds=[8, 9, 10] total=5\r\nCHECK elimination continues on more than one climax day true\r\nCHECK eliminations only happen on declared climax rounds true\r\nCHECK eliminated players are off the board true\r\nCHECK battle result carries settlement details true\r\nCHECK game end recorded as a fact true\r\nRESULT checks=13 failures=[]"
+  }
+]

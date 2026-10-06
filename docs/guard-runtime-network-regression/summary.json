@@ -1,0 +1,92 @@
+[
+  {
+    "scene": "match_journal_test",
+    "exit": 0,
+    "checks": 9,
+    "failures": [],
+    "result": "RESULT checks=9 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "match_replay_pending_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT checks=12 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_full_game_test",
+    "exit": 0,
+    "checks": 4,
+    "failures": [],
+    "result": "RESULT checks=4 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_ids_test",
+    "exit": 0,
+    "checks": 5,
+    "failures": [],
+    "result": "RESULT checks=5 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_pending_test",
+    "exit": 0,
+    "checks": 15,
+    "failures": [],
+    "result": "RESULT checks=15 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_runtime_guard_test",
+    "exit": 0,
+    "checks": 15,
+    "failures": [],
+    "result": "RESULT checks=15 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "pending_board_power_test",
+    "exit": 0,
+    "checks": 171,
+    "failures": [],
+    "result": "RESULT {\"checks\":171,\"failures\":[]}",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_execution_frames_test",
+    "exit": 0,
+    "checks": 25,
+    "failures": [],
+    "result": "RESULT checks=25 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_execution_state_test",
+    "exit": 0,
+    "checks": 23,
+    "failures": [],
+    "result": "RESULT checks=23 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "rule_random_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT checks=13 failures=[]",
+    "error_count": 0,
+    "errors": []
+  }
+]

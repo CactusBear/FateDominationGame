@@ -1,6 +1,8 @@
 class_name DummyBot
 extends RefCounted
 
+const RuleRandom = preload("res://scripts/match/rule_random.gd")
+
 #临时测试用 AI：替人类玩家行动的占位决策。放在 system/ai/temp 下表示它是过渡实现，
 #将来换成真 AI 时只替换这个目录里的文件，规则层与界面层都不用改。
 #
@@ -29,7 +31,7 @@ static var _phase_attempted_effect_ids:Dictionary = {}
 ## 只负责从模式提供的合法候选中决策，不在 AI 中重复选人规则。
 func pick_master(selection_mode, player_id: int):
 	var candidates: Array = selection_mode.available_masters(player_id)
-	return null if candidates.is_empty() else candidates.pick_random()
+	return RuleRandom.pick(candidates)
 
 
 #走完该 AI 玩家在当前阶段能做的动作。调用方负责节流与"该不该轮到它"
@@ -113,7 +115,7 @@ func _deploy(host, bot_id: int) -> void:
 	var areas: Array = host.ai_deploy_areas()
 	if areas.is_empty():
 		return
-	areas.shuffle()
+	RuleRandom.shuffle(areas)
 	var target: BaseLocation = host.ai_pick_deploy_location(areas[0])
 	if target == null:
 		return

@@ -13,10 +13,22 @@ func place_event(area_name:String, concealed:bool = false, count:int = 1) -> Dic
 	if area == null:
 		return _fail("战区不存在")
 	var before:int = area._events.size()
-	var added:int = AddEventFromDeck.new().exec(area, count, concealed)
-	return {"ok":added > 0, "changed":added > 0, "object_id":area.get_instance_id(),
-		"before":before, "value":area._events.size(), "added":added,
-		"error":"事件牌堆不足或放置失败" if added <= 0 else ""}
+	var state := AddEventFromDeck.new().start(area, count, concealed)
+	var result := {"ok":true, "changed":state.placed > 0, "object_id":area.get_instance_id(), "before":before, "pending":not state.completed}
+	if not EffectManager.defer_until_runtime_guard_complete(Callable(DebugBoardAdapter, "_finish_place_event").bind(result, state)):
+		_finish_place_event(result, state)
+	return result
+
+
+static func _finish_place_event(result:Dictionary, state:Dictionary) -> void:
+	result.pending = not state.completed
+	if result.pending:
+		return
+	result.ok = state.placed > 0
+	result.changed = state.placed > 0
+	result["value"] = state.area._events.size()
+	result["added"] = state.placed
+	result["error"] = "事件牌堆不足或放置失败" if state.placed <= 0 else ""
 
 
 func clear_events() -> Dictionary:
@@ -28,8 +40,19 @@ func clear_events() -> Dictionary:
 
 
 func reveal_planned() -> Dictionary:
-	var count:int = EventResolver.new().reveal_planned(GameProgress.event_placements)
-	return {"ok":true, "changed":count > 0, "value":count}
+	var state := EventResolver.new().start_reveal(GameProgress.event_placements)
+	var result := {"ok":true, "changed":state.count > 0, "pending":not state.completed}
+	if not EffectManager.defer_until_runtime_guard_complete(Callable(DebugBoardAdapter, "_finish_reveal").bind(result, state)):
+		_finish_reveal(result, state)
+	return result
+
+
+static func _finish_reveal(result:Dictionary, state:Dictionary) -> void:
+	result.pending = not state.completed
+	if result.pending:
+		return
+	result.changed = state.count > 0
+	result["value"] = state.count
 
 
 func activate_situation() -> Dictionary:

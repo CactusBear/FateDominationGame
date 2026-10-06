@@ -1,0 +1,56 @@
+[
+  {
+    "scene": "net_p2p_invite_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT checks=13 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_p2p_signal_client_test",
+    "exit": 0,
+    "checks": 11,
+    "failures": [],
+    "result": "RESULT checks=11 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_p2p_signal_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT checks=12 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_server_cli_p2p_test",
+    "exit": 0,
+    "checks": 9,
+    "failures": [],
+    "result": "RESULT checks=9 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_server_cli_test",
+    "exit": 0,
+    "checks": 7,
+    "failures": [],
+    "result": "RESULT checks=7 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_webrtc_transport_test",
+    "exit": 0,
+    "checks": 14,
+    "failures": [],
+    "result": "RESULT checks=14 failures=[]",
+    "error_count": 0,
+    "errors": []
+  }
+]

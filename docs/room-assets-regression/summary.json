@@ -1,0 +1,92 @@
+[
+  {
+    "scene": "match_view_test",
+    "exit": 0,
+    "checks": 209,
+    "failures": [],
+    "result": "RESULT checks=209 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_cards_test",
+    "exit": 0,
+    "checks": 7,
+    "failures": [],
+    "result": "RESULT checks=7 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_data_barrier_test",
+    "exit": 0,
+    "checks": 21,
+    "failures": [],
+    "result": "RESULT checks=21 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_full_game_test",
+    "exit": 0,
+    "checks": 4,
+    "failures": [],
+    "result": "RESULT checks=4 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_locations_test",
+    "exit": 0,
+    "checks": 7,
+    "failures": [],
+    "result": "RESULT checks=7 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_match_test",
+    "exit": 0,
+    "checks": 21,
+    "failures": [],
+    "result": "RESULT checks=21 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_options_test",
+    "exit": 0,
+    "checks": 6,
+    "failures": [],
+    "result": "RESULT checks=6 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_pending_test",
+    "exit": 0,
+    "checks": 15,
+    "failures": [],
+    "result": "RESULT checks=15 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_room_assets_test",
+    "exit": 0,
+    "checks": 12,
+    "failures": [],
+    "result": "RESULT checks=12 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_targets_test",
+    "exit": 0,
+    "checks": 10,
+    "failures": [],
+    "result": "RESULT checks=10 failures=[]",
+    "error_count": 0,
+    "errors": []
+  }
+]

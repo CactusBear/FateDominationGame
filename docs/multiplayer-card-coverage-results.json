@@ -1,0 +1,42 @@
+[
+  {
+    "scene": "match_view",
+    "exit": 0,
+    "result": [
+      "RESULT checks=206 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "battle_board_v2",
+    "exit": 0,
+    "result": [
+      "RESULT checks=53 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "battle_scroll",
+    "exit": 0,
+    "result": [
+      "RESULT checks=86 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "net_v2_hand_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=31 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "scene": "net_v2_choice_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=13 failures=[]"
+    ],
+    "errors": []
+  }
+]

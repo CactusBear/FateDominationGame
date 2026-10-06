@@ -24,4 +24,9 @@ func exec(from_index = 0, player_id:int = -1):
 		{"card_name": card.get_shown_name() if card.has_method("get_shown_name") else str(card), "from_index": index})
 	#抽牌时点带上这张牌作来源；牌区变化（离开牌库、进入手牌）与其它搬运入口同一套派发
 	TimePointChecker.dynamic_time_point([TimePoints.CARD_DRAWN], player_id, card)
+	if not EffectManager.defer_until_runtime_guard_complete(Callable(DrawCardFromPlDeckToHand, "_notify_moved").bind(card, player_id)):
+		_notify_moved(card, player_id)
+
+
+static func _notify_moved(card:BaseCard, player_id:int) -> void:
 	CardZones.notify_moved(card, {"player_id": player_id, "zone": "deck"}, {"player_id": player_id, "zone": "hand_cards"})

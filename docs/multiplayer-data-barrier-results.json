@@ -1,0 +1,50 @@
+[
+  {
+    "suite": "net_data_barrier",
+    "exit": 0,
+    "result": [
+      "RESULT checks=18 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_data_barrier_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=9 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_data_sync",
+    "exit": 0,
+    "result": [
+      "RESULT checks=8 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_lobby_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=10 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_lobby",
+    "exit": 0,
+    "result": [
+      "RESULT checks=32 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_lobby_transition",
+    "exit": 0,
+    "result": [
+      "RESULT checks=9 failures=[]"
+    ],
+    "errors": []
+  }
+]

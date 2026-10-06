@@ -148,6 +148,2761 @@ scroll_fit_content_height = false
 layout_mode = 2
 script = ExtResource("2_actions")
 
+[node name="Commands" type="ScrollContainer" parent="ConsolePanel/Layout/Body/Tabs/操作"]
+layout_mode = 2
+custom_minimum_size = Vector2(268, 0)
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Groups" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Title0" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "检查"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.62, 0.78, 1, 1)
+
+[node name="inspect.player" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "查看玩家"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "inspect.player"
+metadata/no_clickable_hint = true
+metadata/command = "inspect.player"
+
+[node name="inspect.card" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "查看卡牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "inspect.card"
+metadata/no_clickable_hint = true
+metadata/command = "inspect.card"
+
+[node name="inspect.board" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "查看版图"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "inspect.board"
+metadata/no_clickable_hint = true
+metadata/command = "inspect.board"
+
+[node name="inspect.wait" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "查看等待"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "inspect.wait"
+metadata/no_clickable_hint = true
+metadata/command = "inspect.wait"
+
+[node name="inspect.log" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "查看日志"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "inspect.log"
+metadata/no_clickable_hint = true
+metadata/command = "inspect.log"
+
+[node name="inspect.identity" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "查看身份"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "inspect.identity"
+metadata/no_clickable_hint = true
+metadata/command = "inspect.identity"
+
+[node name="Separator0" type="HSeparator" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+
+
+[node name="Title1" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "资源"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.62, 0.78, 1, 1)
+
+[node name="resource.magic" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "设置/增减魔力"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "resource.magic"
+metadata/no_clickable_hint = true
+metadata/command = "resource.magic"
+
+[node name="resource.score" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "设置/增减战果"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "resource.score"
+metadata/no_clickable_hint = true
+metadata/command = "resource.score"
+
+[node name="resource.power" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "设置/增减合计威力"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "resource.power"
+metadata/no_clickable_hint = true
+metadata/command = "resource.power"
+
+[node name="resource.sync_power" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "按已出牌重算威力"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "resource.sync_power"
+metadata/no_clickable_hint = true
+metadata/command = "resource.sync_power"
+
+[node name="resource.number" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "设置/增减玩家数值"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "resource.number"
+metadata/no_clickable_hint = true
+metadata/command = "resource.number"
+
+[node name="Separator1" type="HSeparator" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+
+
+[node name="Title2" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "牌区"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.62, 0.78, 1, 1)
+
+[node name="zone.move" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "搬运卡牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "zone.move"
+metadata/no_clickable_hint = true
+metadata/command = "zone.move"
+
+[node name="zone.add_clone" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "克隆卡牌入区"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "zone.add_clone"
+metadata/no_clickable_hint = true
+metadata/command = "zone.add_clone"
+
+[node name="zone.draw" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "抽一张牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "zone.draw"
+metadata/no_clickable_hint = true
+metadata/command = "zone.draw"
+
+[node name="zone.refill_hand" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "补牌到手牌上限"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "zone.refill_hand"
+metadata/no_clickable_hint = true
+metadata/command = "zone.refill_hand"
+
+[node name="zone.shuffle" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "洗牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "zone.shuffle"
+metadata/no_clickable_hint = true
+metadata/command = "zone.shuffle"
+
+[node name="card.swap_zones" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "交换两名玩家的牌区"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "card.swap_zones"
+metadata/no_clickable_hint = true
+metadata/command = "card.swap_zones"
+
+[node name="Separator2" type="HSeparator" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+
+
+[node name="Title3" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "卡牌"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.62, 0.78, 1, 1)
+
+[node name="card.cost" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "改卡牌费用"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "card.cost"
+metadata/no_clickable_hint = true
+metadata/command = "card.cost"
+
+[node name="card.power" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "改卡牌威力"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "card.power"
+metadata/no_clickable_hint = true
+metadata/command = "card.power"
+
+[node name="card.attrs" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "改卡牌属性"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "card.attrs"
+metadata/no_clickable_hint = true
+metadata/command = "card.attrs"
+
+[node name="card.conceal" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "明置/暗置卡牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "card.conceal"
+metadata/no_clickable_hint = true
+metadata/command = "card.conceal"
+
+[node name="skill.awaken" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "觉醒升华技"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "skill.awaken"
+metadata/no_clickable_hint = true
+metadata/command = "skill.awaken"
+
+[node name="card.close" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "关闭已打出牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "card.close"
+metadata/no_clickable_hint = true
+metadata/command = "card.close"
+
+[node name="Separator3" type="HSeparator" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+
+
+[node name="Title4" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "地图与行动"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.62, 0.78, 1, 1)
+
+[node name="map.deploy" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "常规部署"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "map.deploy"
+metadata/no_clickable_hint = true
+metadata/command = "map.deploy"
+
+[node name="map.move" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "常规移动"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "map.move"
+metadata/no_clickable_hint = true
+metadata/command = "map.move"
+
+[node name="map.teleport" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "瞬移落位"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "map.teleport"
+metadata/no_clickable_hint = true
+metadata/command = "map.teleport"
+
+[node name="map.leave" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "移出版图"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "map.leave"
+metadata/no_clickable_hint = true
+metadata/command = "map.leave"
+
+[node name="play.regular" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "常规整组出牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "play.regular"
+metadata/no_clickable_hint = true
+metadata/command = "play.regular"
+
+[node name="play.extra_attack" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "追加打出攻击"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "play.extra_attack"
+metadata/no_clickable_hint = true
+metadata/command = "play.extra_attack"
+
+[node name="play.extra_skill" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "追加打出技能"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "play.extra_skill"
+metadata/no_clickable_hint = true
+metadata/command = "play.extra_skill"
+
+[node name="name.release" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "真名解放"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "name.release"
+metadata/no_clickable_hint = true
+metadata/command = "name.release"
+
+[node name="name.hide" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "隐藏真名"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "name.hide"
+metadata/no_clickable_hint = true
+metadata/command = "name.hide"
+
+[node name="out.eliminate" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "淘汰玩家"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "out.eliminate"
+metadata/no_clickable_hint = true
+metadata/command = "out.eliminate"
+
+[node name="out.restore" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "恢复出局标记"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "out.restore"
+metadata/no_clickable_hint = true
+metadata/command = "out.restore"
+
+[node name="Separator4" type="HSeparator" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+
+
+[node name="Title5" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "Buff 与事件局势"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.62, 0.78, 1, 1)
+
+[node name="buff.add" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "添加 Buff"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "buff.add"
+metadata/no_clickable_hint = true
+metadata/command = "buff.add"
+
+[node name="buff.remove" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "移除 Buff"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "buff.remove"
+metadata/no_clickable_hint = true
+metadata/command = "buff.remove"
+
+[node name="buff.defeat" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "标记败北"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "buff.defeat"
+metadata/no_clickable_hint = true
+metadata/command = "buff.defeat"
+
+[node name="buff.undead" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "解除败北"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "buff.undead"
+metadata/no_clickable_hint = true
+metadata/command = "buff.undead"
+
+[node name="event.place" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "放置事件牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "event.place"
+metadata/no_clickable_hint = true
+metadata/command = "event.place"
+
+[node name="event.clear" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "清空场上事件牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "event.clear"
+metadata/no_clickable_hint = true
+metadata/command = "event.clear"
+
+[node name="event.reveal_planned" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "展示计划内暗置事件"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "event.reveal_planned"
+metadata/no_clickable_hint = true
+metadata/command = "event.reveal_planned"
+
+[node name="situation.activate" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "抽取并激活局势牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "situation.activate"
+metadata/no_clickable_hint = true
+metadata/command = "situation.activate"
+
+[node name="situation.clear" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "弃置当前局势牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "situation.clear"
+metadata/no_clickable_hint = true
+metadata/command = "situation.clear"
+
+[node name="situation.replace" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "替换为指定局势牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "situation.replace"
+metadata/no_clickable_hint = true
+metadata/command = "situation.replace"
+
+[node name="Separator5" type="HSeparator" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+
+
+[node name="Title6" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "身份与从者"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.62, 0.78, 1, 1)
+
+[node name="identity.set_master" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "更换御主"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "identity.set_master"
+metadata/no_clickable_hint = true
+metadata/command = "identity.set_master"
+
+[node name="identity.set_servant" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "更换从者"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "identity.set_servant"
+metadata/no_clickable_hint = true
+metadata/command = "identity.set_servant"
+
+[node name="identity.set_pair" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "同时更换御主与从者"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "identity.set_pair"
+metadata/no_clickable_hint = true
+metadata/command = "identity.set_pair"
+
+[node name="identity.unequip_master" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "卸下御主"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "identity.unequip_master"
+metadata/no_clickable_hint = true
+metadata/command = "identity.unequip_master"
+
+[node name="identity.unequip_servant" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "卸下从者"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "identity.unequip_servant"
+metadata/no_clickable_hint = true
+metadata/command = "identity.unequip_servant"
+
+[node name="Separator6" type="HSeparator" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+
+
+[node name="Title7" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "会话与等待"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.62, 0.78, 1, 1)
+
+[node name="session.pause" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "暂停自动推进"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "session.pause"
+metadata/no_clickable_hint = true
+metadata/command = "session.pause"
+
+[node name="session.resume" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "恢复自动推进"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "session.resume"
+metadata/no_clickable_hint = true
+metadata/command = "session.resume"
+
+[node name="session.undo" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "撤销上一处局部编辑"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "session.undo"
+metadata/no_clickable_hint = true
+metadata/command = "session.undo"
+
+[node name="session.step_action" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "单步：结束当前行动"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "session.step_action"
+metadata/no_clickable_hint = true
+metadata/command = "session.step_action"
+
+[node name="session.step_ai" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "单步：推进当前 AI"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "session.step_ai"
+metadata/no_clickable_hint = true
+metadata/command = "session.step_ai"
+
+[node name="wait.yes" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "答复：发动"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "wait.yes"
+metadata/no_clickable_hint = true
+metadata/command = "wait.yes"
+
+[node name="wait.no" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "答复：放弃"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "wait.no"
+metadata/no_clickable_hint = true
+metadata/command = "wait.no"
+
+[node name="wait.option" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "答复：选择选项"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "wait.option"
+metadata/no_clickable_hint = true
+metadata/command = "wait.option"
+
+[node name="wait.cards" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "答复：选择卡牌"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "wait.cards"
+metadata/no_clickable_hint = true
+metadata/command = "wait.cards"
+
+[node name="wait.location" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "答复：选择落点"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "wait.location"
+metadata/no_clickable_hint = true
+metadata/command = "wait.location"
+
+[node name="wait.players" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+text = "答复：选择玩家"
+toggle_mode = true
+focus_mode = 0
+tooltip_text = "wait.players"
+metadata/no_clickable_hint = true
+metadata/command = "wait.players"
+
+[node name="Separator7" type="HSeparator" parent="ConsolePanel/Layout/Body/Tabs/操作/Commands/Groups"]
+layout_mode = 2
+
+
+[node name="Editor" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerRow" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/PlayerRow"]
+layout_mode = 2
+text = "目标玩家"
+
+[node name="PlayerPicker" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/PlayerRow"]
+layout_mode = 2
+focus_mode = 0
+size_flags_horizontal = 3
+
+[node name="Body" type="ScrollContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Layout" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="CommandTitle" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout"]
+layout_mode = 2
+text = "请选择左侧操作"
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.62, 0.78, 1, 1)
+
+[node name="Forms" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="inspect.player" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.player"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.player"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="inspect.card" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.card"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.card"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.card/id"]
+layout_mode = 2
+text = "卡牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.card/id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.card"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="inspect.board" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.board"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.board"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="inspect.wait" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.wait"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.wait"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="inspect.log" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.log"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="limit" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.log"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.log/limit"]
+layout_mode = 2
+text = "最近条数"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.log/limit"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1
+max_value = 500
+step = 1.0
+value = 100
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.log"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="inspect.identity" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.identity"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/inspect.identity"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="resource.magic" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.magic"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="mode" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.magic"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.magic/mode"]
+layout_mode = 2
+text = "方式"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.magic/mode"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="amount" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.magic"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.magic/amount"]
+layout_mode = 2
+text = "数值"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.magic/amount"]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_lesser = true
+allow_greater = true
+value = 1
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.magic"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="resource.score" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.score"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="mode" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.score"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.score/mode"]
+layout_mode = 2
+text = "方式"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.score/mode"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="amount" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.score"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.score/amount"]
+layout_mode = 2
+text = "数值"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.score/amount"]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_lesser = true
+allow_greater = true
+value = 1
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.score"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="resource.power" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.power"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="mode" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.power"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.power/mode"]
+layout_mode = 2
+text = "方式"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.power/mode"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="amount" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.power"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.power/amount"]
+layout_mode = 2
+text = "数值"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.power/amount"]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_lesser = true
+allow_greater = true
+value = 1
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.power"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="resource.sync_power" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.sync_power"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.sync_power"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="resource.number" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="key" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/key"]
+layout_mode = 2
+text = "字段"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/key"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="mode" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/mode"]
+layout_mode = 2
+text = "方式"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/mode"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="amount" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/amount"]
+layout_mode = 2
+text = "数值"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/amount"]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_lesser = true
+allow_greater = true
+value = 1
+
+[node name="min" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/min"]
+layout_mode = 2
+text = "下限"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/min"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Enabled" type="CheckBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/min/Control"]
+layout_mode = 2
+text = "限制"
+focus_mode = 0
+metadata/no_clickable_hint = true
+
+[node name="Value" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/min/Control"]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_lesser = true
+allow_greater = true
+value = 0
+
+[node name="max" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/max"]
+layout_mode = 2
+text = "上限"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/max"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Enabled" type="CheckBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/max/Control"]
+layout_mode = 2
+text = "限制"
+focus_mode = 0
+metadata/no_clickable_hint = true
+
+[node name="Value" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number/max/Control"]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_lesser = true
+allow_greater = true
+value = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/resource.number"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="zone.move" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="card_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move/card_id"]
+layout_mode = 2
+text = "卡牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move/card_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="to" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move/to"]
+layout_mode = 2
+text = "目标牌区"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move/to"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="index" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move/index"]
+layout_mode = 2
+text = "插入位置"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move/index"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Enabled" type="CheckBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move/index/Control"]
+layout_mode = 2
+text = "指定"
+focus_mode = 0
+metadata/no_clickable_hint = true
+
+[node name="Value" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move/index/Control"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -1.0
+max_value = 999.0
+value = -1
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.move"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="zone.add_clone" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.add_clone"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="source_name" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.add_clone"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.add_clone/source_name"]
+layout_mode = 2
+text = "模板"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.add_clone/source_name"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="to" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.add_clone"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.add_clone/to"]
+layout_mode = 2
+text = "目标牌区"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.add_clone/to"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.add_clone"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="zone.draw" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.draw"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.draw"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="zone.refill_hand" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.refill_hand"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.refill_hand"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="zone.shuffle" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.shuffle"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="zone" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.shuffle"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.shuffle/zone"]
+layout_mode = 2
+text = "牌区"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.shuffle/zone"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/zone.shuffle"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="card.swap_zones" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.swap_zones"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="other_player" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.swap_zones"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.swap_zones/other_player"]
+layout_mode = 2
+text = "对方玩家"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.swap_zones/other_player"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="from_zone" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.swap_zones"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.swap_zones/from_zone"]
+layout_mode = 2
+text = "本玩家牌区"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.swap_zones/from_zone"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="to_zone" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.swap_zones"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.swap_zones/to_zone"]
+layout_mode = 2
+text = "对方牌区"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.swap_zones/to_zone"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.swap_zones"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="card.cost" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.cost"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="card_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.cost"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.cost/card_id"]
+layout_mode = 2
+text = "卡牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.cost/card_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="mode" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.cost"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.cost/mode"]
+layout_mode = 2
+text = "方式"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.cost/mode"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="amount" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.cost"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.cost/amount"]
+layout_mode = 2
+text = "数值"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.cost/amount"]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_lesser = true
+allow_greater = true
+value = 1
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.cost"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="card.power" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.power"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="card_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.power"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.power/card_id"]
+layout_mode = 2
+text = "卡牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.power/card_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="mode" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.power"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.power/mode"]
+layout_mode = 2
+text = "方式"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.power/mode"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="amount" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.power"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.power/amount"]
+layout_mode = 2
+text = "数值"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.power/amount"]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_lesser = true
+allow_greater = true
+value = 1
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.power"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="card.attrs" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.attrs"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="card_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.attrs"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.attrs/card_id"]
+layout_mode = 2
+text = "卡牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.attrs/card_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="add" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.attrs"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.attrs/add"]
+layout_mode = 2
+text = "新增属性"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="ItemList" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.attrs/add"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 96)
+select_mode = 1
+allow_reselect = true
+
+[node name="remove" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.attrs"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.attrs/remove"]
+layout_mode = 2
+text = "移除属性"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="ItemList" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.attrs/remove"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 96)
+select_mode = 1
+allow_reselect = true
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.attrs"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="card.conceal" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.conceal"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="card_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.conceal"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.conceal/card_id"]
+layout_mode = 2
+text = "卡牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.conceal/card_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="bool" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.conceal"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.conceal/bool"]
+layout_mode = 2
+text = "暗置"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="CheckBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.conceal/bool"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "是"
+focus_mode = 0
+metadata/no_clickable_hint = true
+button_pressed = true
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.conceal"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="skill.awaken" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/skill.awaken"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="card_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/skill.awaken"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/skill.awaken/card_id"]
+layout_mode = 2
+text = "升华技"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/skill.awaken/card_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/skill.awaken"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="card.close" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.close"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="card_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.close"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.close/card_id"]
+layout_mode = 2
+text = "已打出的牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.close/card_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/card.close"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="map.deploy" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.deploy"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="area" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.deploy"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.deploy/area"]
+layout_mode = 2
+text = "战区"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.deploy/area"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.deploy"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="map.move" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.move"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="steps" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.move"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.move/steps"]
+layout_mode = 2
+text = "步数"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.move/steps"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1
+max_value = 3
+step = 1.0
+value = 1
+
+[node name="ignore_limit" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.move"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.move/ignore_limit"]
+layout_mode = 2
+text = "忽略落点上限"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="CheckBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.move/ignore_limit"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "是"
+focus_mode = 0
+metadata/no_clickable_hint = true
+button_pressed = false
+
+[node name="ignore_battle" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.move"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.move/ignore_battle"]
+layout_mode = 2
+text = "忽略交战"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="CheckBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.move/ignore_battle"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "是"
+focus_mode = 0
+metadata/no_clickable_hint = true
+button_pressed = false
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.move"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="map.teleport" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.teleport"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="location_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.teleport"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.teleport/location_id"]
+layout_mode = 2
+text = "落点"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.teleport/location_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.teleport"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="map.leave" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.leave"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/map.leave"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="play.regular" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.regular"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="faceup" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.regular"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.regular/faceup"]
+layout_mode = 2
+text = "明置卡牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="ItemList" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.regular/faceup"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 96)
+select_mode = 1
+allow_reselect = true
+
+[node name="hidden" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.regular"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.regular/hidden"]
+layout_mode = 2
+text = "暗置卡牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="ItemList" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.regular/hidden"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 96)
+select_mode = 1
+allow_reselect = true
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.regular"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="play.extra_attack" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.extra_attack"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="card_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.extra_attack"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.extra_attack/card_id"]
+layout_mode = 2
+text = "攻击牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.extra_attack/card_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.extra_attack"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="play.extra_skill" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.extra_skill"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="card_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.extra_skill"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.extra_skill/card_id"]
+layout_mode = 2
+text = "技能牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.extra_skill/card_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/play.extra_skill"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="name.release" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/name.release"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/name.release"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="name.hide" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/name.hide"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/name.hide"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="out.eliminate" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/out.eliminate"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/out.eliminate"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="out.restore" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/out.restore"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/out.restore"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="buff.add" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.add"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="buff_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.add"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.add/buff_id"]
+layout_mode = 2
+text = "Buff 模板"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.add/buff_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.add"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="buff.remove" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.remove"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="buff_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.remove"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.remove/buff_id"]
+layout_mode = 2
+text = "目标持有的 Buff"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.remove/buff_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.remove"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="buff.defeat" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.defeat"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.defeat"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="buff.undead" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.undead"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/buff.undead"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="event.place" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.place"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="area" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.place"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.place/area"]
+layout_mode = 2
+text = "战区"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.place/area"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="concealed" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.place"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.place/concealed"]
+layout_mode = 2
+text = "暗置放置"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="CheckBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.place/concealed"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "是"
+focus_mode = 0
+metadata/no_clickable_hint = true
+button_pressed = false
+
+[node name="count" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.place"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.place/count"]
+layout_mode = 2
+text = "张数"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="SpinBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.place/count"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1
+max_value = 4
+step = 1.0
+value = 1
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.place"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="event.clear" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.clear"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.clear"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="event.reveal_planned" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.reveal_planned"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/event.reveal_planned"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="situation.activate" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.activate"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.activate"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="situation.clear" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.clear"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.clear"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="situation.replace" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.replace"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="source_name" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.replace"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.replace/source_name"]
+layout_mode = 2
+text = "局势模板"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.replace/source_name"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="grant_printed_magic" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.replace"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.replace/grant_printed_magic"]
+layout_mode = 2
+text = "发放印刷魔力"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="CheckBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.replace/grant_printed_magic"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "是"
+focus_mode = 0
+metadata/no_clickable_hint = true
+button_pressed = false
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/situation.replace"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="identity.set_master" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="master_name" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master/master_name"]
+layout_mode = 2
+text = "御主"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master/master_name"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="occupancy" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master/occupancy"]
+layout_mode = 2
+text = "占用政策"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master/occupancy"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="rebind_command_spell" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master/rebind_command_spell"]
+layout_mode = 2
+text = "重绑令咒"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="CheckBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master/rebind_command_spell"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "是"
+focus_mode = 0
+metadata/no_clickable_hint = true
+button_pressed = true
+
+[node name="master_zone" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master/master_zone"]
+layout_mode = 2
+text = "卸下时御主技能区"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master/master_zone"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_master"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="identity.set_servant" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="servant_name" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant/servant_name"]
+layout_mode = 2
+text = "从者"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant/servant_name"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="occupancy" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant/occupancy"]
+layout_mode = 2
+text = "占用政策"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant/occupancy"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="dealt_zones" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant/dealt_zones"]
+layout_mode = 2
+text = "已发牌区"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant/dealt_zones"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="true_name" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant/true_name"]
+layout_mode = 2
+text = "真名政策"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant/true_name"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="rebind_command_spell" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant/rebind_command_spell"]
+layout_mode = 2
+text = "重绑令咒"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="CheckBox" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant/rebind_command_spell"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "是"
+focus_mode = 0
+metadata/no_clickable_hint = true
+button_pressed = true
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_servant"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="identity.set_pair" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="master_name" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair/master_name"]
+layout_mode = 2
+text = "御主"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair/master_name"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="servant_name" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair/servant_name"]
+layout_mode = 2
+text = "从者"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair/servant_name"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="occupancy" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair/occupancy"]
+layout_mode = 2
+text = "占用政策"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair/occupancy"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="order" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair/order"]
+layout_mode = 2
+text = "更换顺序"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair/order"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.set_pair"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="identity.unequip_master" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_master"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="master_zone" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_master"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_master/master_zone"]
+layout_mode = 2
+text = "御主技能区"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_master/master_zone"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_master"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="identity.unequip_servant" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_servant"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="dealt_zones" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_servant"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_servant/dealt_zones"]
+layout_mode = 2
+text = "已发牌区"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_servant/dealt_zones"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="true_name" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_servant"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_servant/true_name"]
+layout_mode = 2
+text = "真名政策"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_servant/true_name"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/identity.unequip_servant"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="session.pause" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/session.pause"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/session.pause"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="session.resume" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/session.resume"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/session.resume"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="session.undo" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/session.undo"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/session.undo"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="session.step_action" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/session.step_action"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/session.step_action"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="session.step_ai" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/session.step_ai"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/session.step_ai"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="wait.yes" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.yes"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.yes"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="wait.no" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.no"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.no"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="wait.option" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.option"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="selection" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.option"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.option/selection"]
+layout_mode = 2
+text = "选项"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="ItemList" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.option/selection"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 96)
+select_mode = 1
+allow_reselect = true
+
+[node name="Placeholder" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.option/selection"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.6, 0.4, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.option"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="wait.cards" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.cards"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="cards" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.cards"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.cards/cards"]
+layout_mode = 2
+text = "卡牌"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="ItemList" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.cards/cards"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 96)
+select_mode = 1
+allow_reselect = true
+
+[node name="Placeholder" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.cards/cards"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.6, 0.4, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.cards"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="wait.location" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.location"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="location_id" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.location"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.location/location_id"]
+layout_mode = 2
+text = "落点"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="OptionButton" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.location/location_id"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.location"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="wait.players" type="VBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerHint" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.players"]
+layout_mode = 2
+text = "使用上方选定的目标玩家"
+theme_override_colors/font_color = Color(0.6, 0.68, 0.78, 1)
+
+[node name="players" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.players"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.players/players"]
+layout_mode = 2
+text = "玩家"
+custom_minimum_size = Vector2(132, 0)
+
+[node name="Control" type="ItemList" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.players/players"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 96)
+select_mode = 1
+allow_reselect = true
+
+[node name="Placeholder" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.players/players"]
+layout_mode = 2
+visible = false
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.6, 0.4, 1)
+
+[node name="Warning" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/Forms/wait.players"]
+layout_mode = 2
+text = "该操作不可撤销，执行前请确认"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.4, 1)
+
+[node name="RunRow" type="HBoxContainer" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Run" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/RunRow"]
+layout_mode = 2
+text = "执行"
+focus_mode = 0
+metadata/no_clickable_hint = true
+
+[node name="Refresh" type="Button" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout/RunRow"]
+layout_mode = 2
+text = "刷新选项"
+focus_mode = 0
+metadata/no_clickable_hint = true
+
+[node name="Status" type="Label" parent="ConsolePanel/Layout/Body/Tabs/操作/Editor/Body/Layout"]
+layout_mode = 2
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.75, 0.82, 0.9, 1)
+
 [node name="OutputLabel" type="Label" parent="ConsolePanel/Layout"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.57, 0.68, 0.8, 1)

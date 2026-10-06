@@ -1,0 +1,29 @@
+[
+  {
+    "suite": "zoom_and_desc",
+    "exit": 1,
+    "result": [
+      "RESULT checks=81 failures=[\"watchdog timeout\"]"
+    ],
+    "errors": [
+      "ERROR: Node not found: \"PauseMenu\" (relative to \"/root/BattleBoardV2\").",
+      "SCRIPT ERROR: Invalid access to property or key 'visible' on a base object of type 'null instance'."
+    ]
+  },
+  {
+    "suite": "net_v2_area_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=14 failures=[]"
+    ],
+    "errors": []
+  },
+  {
+    "suite": "net_v2_hand_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=30 failures=[]"
+    ],
+    "errors": []
+  }
+]

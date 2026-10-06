@@ -1,0 +1,56 @@
+[
+  {
+    "scene": "net_data_barrier_test",
+    "exit": 0,
+    "checks": 21,
+    "failures": [],
+    "result": "RESULT checks=21 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_lobby_test",
+    "exit": 0,
+    "checks": 32,
+    "failures": [],
+    "result": "RESULT checks=32 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_p2p_invite_test",
+    "exit": 0,
+    "checks": 13,
+    "failures": [],
+    "result": "RESULT checks=13 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_server_cli_test",
+    "exit": 0,
+    "checks": 7,
+    "failures": [],
+    "result": "RESULT checks=7 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_server_gateway_test",
+    "exit": 0,
+    "checks": 10,
+    "failures": [],
+    "result": "RESULT checks=10 failures=[]",
+    "error_count": 0,
+    "errors": []
+  },
+  {
+    "scene": "net_webrtc_transport_test",
+    "exit": 0,
+    "checks": 14,
+    "failures": [],
+    "result": "RESULT checks=14 failures=[]",
+    "error_count": 0,
+    "errors": []
+  }
+]

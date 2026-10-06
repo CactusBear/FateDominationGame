@@ -15,6 +15,8 @@
 [ext_resource type="Texture2D" uid="uid://cs0frjtjia2m5" path="res://assets/images/game_scene/v2/ui/special_command_spell_small.svg" id="14_special_spell_small"]
 [ext_resource type="Texture2D" uid="uid://bbm3axnihupdq" path="res://assets/images/game_scene/v2/ui/rival_corner.svg" id="15_rival_corner"]
 [ext_resource type="Texture2D" uid="uid://chggdegl646nq" path="res://assets/images/game_scene/v2/ui/played_stack_collapse.svg" id="16_stack_collapse"]
+[ext_resource type="PackedScene" path="res://assets/scenes/game_scene/network_choice_panel.tscn" id="17_network_choice"]
+[ext_resource type="PackedScene" path="res://assets/scenes/debug/debug_console.tscn" id="18_debug_console"]
 
 [sub_resource type="StyleBoxFlat" id="SB_AvBlood"]
 bg_color = Color(0.0235, 0.0314, 0.051, 1)
@@ -498,9 +500,7 @@ corner_radius_bottom_left = 2
 [sub_resource type="StyleBoxFlat" id="SB_Strip"]
 bg_color = Color(0.051, 0.0706, 0.1098, 0.55)
 border_width_left = 1
-border_width_top = 0
 border_width_right = 1
-border_width_bottom = 0
 border_color = Color(0.7882, 0.6431, 0.3608, 0.24)
 
 [sub_resource type="StyleBoxFlat" id="SB_StripCap"]
@@ -877,6 +877,9 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="ThemeConsoleFont"]
+default_font = SubResource("CnR2")
 
 [node name="BattleBoardV2" type="Control" unique_id=1889712621]
 layout_mode = 3
@@ -2724,6 +2727,86 @@ offset_bottom = 1066.0
 mouse_filter = 2
 color = Color(0.7882, 0.6431, 0.3608, 0.55)
 
+[node name="NetworkChoices" type="CanvasLayer" parent="." unique_id=1824770516]
+layer = 90
+
+[node name="Panel" parent="NetworkChoices" unique_id=487264412 instance=ExtResource("17_network_choice")]
+
+[node name="Guard" type="PanelContainer" parent="NetworkChoices" unique_id=603832241]
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -420.0
+offset_top = 320.0
+offset_right = 420.0
+offset_bottom = 600.0
+grow_horizontal = 2
+theme = SubResource("Theme")
+theme_type_variation = &"Toast"
+
+[node name="Margin" type="MarginContainer" parent="NetworkChoices/Guard" unique_id=1499340809]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="Row" type="VBoxContainer" parent="NetworkChoices/Guard/Margin" unique_id=1304775817]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Message" type="Label" parent="NetworkChoices/Guard/Margin/Row" unique_id=600517582]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = "规则执行已暂停"
+autowrap_mode = 2
+
+[node name="Waiting" type="Label" parent="NetworkChoices/Guard/Margin/Row" unique_id=1529219501]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "等待房主处理"
+
+[node name="Actions" type="HBoxContainer" parent="NetworkChoices/Guard/Margin/Row"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Skip" type="Button" parent="NetworkChoices/Guard/Margin/Row/Actions"]
+custom_minimum_size = Vector2(160, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "跳过"
+
+[node name="Restart" type="Button" parent="NetworkChoices/Guard/Margin/Row/Actions"]
+custom_minimum_size = Vector2(160, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "重开"
+
+[node name="RestartChoices" type="HBoxContainer" parent="NetworkChoices/Guard/Margin/Row"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Current" type="Button" parent="NetworkChoices/Guard/Margin/Row/RestartChoices"]
+custom_minimum_size = Vector2(240, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "当前阵容重开"
+
+[node name="Lobby" type="Button" parent="NetworkChoices/Guard/Margin/Row/RestartChoices"]
+custom_minimum_size = Vector2(280, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "返回大厅重新选人"
+
+[node name="Cancel" type="Button" parent="NetworkChoices/Guard/Margin/Row/RestartChoices"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "取消"
+
 [node name="Hand" type="Control" parent="." unique_id=1525987025]
 layout_mode = 1
 anchors_preset = 15
@@ -3116,7 +3199,7 @@ theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 18
 text = "取消"
 
-[node name="PauseMenu" type="Panel" parent="ModalLayer"]
+[node name="PauseMenu" type="Panel" parent="ModalLayer" unique_id=665294929]
 visible = false
 z_index = 90
 layout_mode = 0
@@ -3126,7 +3209,7 @@ offset_right = 1160.0
 offset_bottom = 600.0
 theme_type_variation = &"GoldPanel"
 
-[node name="Box" type="VBoxContainer" parent="ModalLayer/PauseMenu"]
+[node name="Box" type="VBoxContainer" parent="ModalLayer/PauseMenu" unique_id=160728172]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -3139,7 +3222,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="ModalLayer/PauseMenu/Box"]
+[node name="Title" type="Label" parent="ModalLayer/PauseMenu/Box" unique_id=1909445684]
 layout_mode = 2
 theme_type_variation = &"Gold"
 theme_override_fonts/font = SubResource("CnR2")
@@ -3147,7 +3230,7 @@ theme_override_font_sizes/font_size = 22
 text = "暂停"
 horizontal_alignment = 1
 
-[node name="Hint" type="Label" parent="ModalLayer/PauseMenu/Box"]
+[node name="Hint" type="Label" parent="ModalLayer/PauseMenu/Box" unique_id=1641416402]
 layout_mode = 2
 theme_type_variation = &"Gold2"
 theme_override_fonts/font = SubResource("CnR2")
@@ -3156,7 +3239,7 @@ text = "返回主菜单会作废本局全部进度"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="BtnResume" type="Button" parent="ModalLayer/PauseMenu/Box"]
+[node name="BtnResume" type="Button" parent="ModalLayer/PauseMenu/Box" unique_id=459518980]
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 theme_type_variation = &"GoldButtonV"
@@ -3164,7 +3247,7 @@ theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 18
 text = "继续"
 
-[node name="BtnMainMenu" type="Button" parent="ModalLayer/PauseMenu/Box"]
+[node name="BtnMainMenu" type="Button" parent="ModalLayer/PauseMenu/Box" unique_id=134029911]
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 theme_type_variation = &"GhostButton"
@@ -3172,7 +3255,7 @@ theme_override_fonts/font = SubResource("CnR2")
 theme_override_font_sizes/font_size = 18
 text = "返回主菜单"
 
-[node name="BtnQuit" type="Button" parent="ModalLayer/PauseMenu/Box"]
+[node name="BtnQuit" type="Button" parent="ModalLayer/PauseMenu/Box" unique_id=1817592829]
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 theme_type_variation = &"GhostButton"
@@ -4481,8 +4564,9 @@ offset_top = 3.0
 offset_right = 12.0
 offset_bottom = 27.0
 grow_horizontal = 2
-mouse_filter = 0
+grow_vertical = 0
 tooltip_text = "点击头像收起牌堆"
+mouse_filter = 0
 texture = ExtResource("16_stack_collapse")
 expand_mode = 1
 
@@ -4521,21 +4605,22 @@ layout_mode = 0
 mouse_filter = 2
 theme_type_variation = &"PlayGroupDeco"
 
-[node name="ResiduePile" type="Control" parent="Templates"]
-layout_mode = 0
+[node name="ResiduePile" type="Control" parent="Templates" unique_id=88167322]
+z_index = 40
+anchors_preset = 0
 offset_right = 184.0
 offset_bottom = 60.0
 mouse_filter = 2
-z_index = 40
 metadata/residue_pile = true
 metadata/expanded = false
 metadata/card_size = Vector2(42, 58)
 metadata/stack_step_ratio = 0.14
 metadata/card_gap = 4.0
 
-[node name="Collapse" type="TextureButton" parent="Templates/ResiduePile"]
+[node name="Collapse" type="TextureButton" parent="Templates/ResiduePile" unique_id=974553350]
 visible = false
 layout_mode = 1
+anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -24.0
@@ -4543,15 +4628,16 @@ offset_bottom = 24.0
 tooltip_text = "点击收起残留牌"
 texture_normal = ExtResource("16_stack_collapse")
 
-[node name="Cards" type="ScrollContainer" parent="Templates/ResiduePile"]
+[node name="Cards" type="ScrollContainer" parent="Templates/ResiduePile" unique_id=609787926]
 layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_force_pass_scroll_events = false
 horizontal_scroll_mode = 3
 vertical_scroll_mode = 0
 
-[node name="Row" type="Control" parent="Templates/ResiduePile/Cards"]
+[node name="Row" type="Control" parent="Templates/ResiduePile/Cards" unique_id=1838088494]
 layout_mode = 2
 mouse_filter = 2
 
@@ -5314,3 +5400,10 @@ theme_override_fonts/font = SubResource("LatR1")
 theme_override_font_sizes/font_size = 14
 text = "×0"
 vertical_alignment = 1
+
+[node name="DebugConsole" parent="." instance=ExtResource("18_debug_console")]
+
+[node name="ConsolePanel" parent="DebugConsole" index="1"]
+theme = SubResource("ThemeConsoleFont")
+
+[editable path="DebugConsole"]

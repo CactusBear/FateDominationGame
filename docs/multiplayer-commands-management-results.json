@@ -1,0 +1,121 @@
+[
+  {
+    "scene": "net_play",
+    "exit": 0,
+    "result": [
+      "RESULT checks=8 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK nonboolean orientation rejected true\r\nCHECK duplicate card rejected true\r\nCHECK foreign card rejected true\r\nCHECK bad requests have no costs or played cards true\r\nCHECK legal group accepted by network authority true\r\nCHECK existing rules deduct cost and place cards true\r\nCHECK replayed successful request rejected true\r\nCHECK replay does not double charge true\r\nRESULT checks=8 failures=[]"
+  },
+  {
+    "scene": "net_pending",
+    "exit": 0,
+    "result": [
+      "RESULT checks=14 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK real match started true\r\nCHECK actual engine reaches pending effect true\r\nCHECK authority exposes filtered pending prompt true\r\nCHECK other connection receives no private prompt true\r\nCHECK owner receives pending effect identifier true\r\nCHECK prompt does not serialize rule objects true\r\nCHECK session exposes private pending prompt true\r\nCHECK private prompt transmitted through real ENet true\r\nCHECK unassigned host receives no guest prompt true\r\nCHECK unassigned connection cannot answer true\r\nCHECK unauthorized answer preserves pending true\r\nCHECK trigger owner can decline outside their turn true\r\nCHECK accepted answer clears same waiting effect true\r\nCHECK duplicate answer rejected true\r\nRESULT checks=14 failures=[]"
+  },
+  {
+    "scene": "net_options",
+    "exit": 0,
+    "result": [
+      "RESULT checks=6 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK out of range quantity rejected true\r\nCHECK existing maximum use enforced true\r\nCHECK invalid choices leave waiting and quantities untouched true\r\nCHECK valid counted quantity choice accepted true\r\nCHECK existing engine records quantity and use count true\r\nCHECK valid option completes pending choice true\r\nRESULT checks=6 failures=[]"
+  },
+  {
+    "scene": "net_cards",
+    "exit": 0,
+    "result": [
+      "RESULT checks=7 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK missing mandatory card rejected true\r\nCHECK foreign choice rejected true\r\nCHECK invalid network selection preserves pending true\r\nCHECK owner receives mandatory identity prompt true\r\nCHECK other player cannot inspect selection candidates true\r\nCHECK valid mandatory selection accepted true\r\nCHECK existing engine receives exact card identities true\r\nRESULT checks=7 failures=[]"
+  },
+  {
+    "scene": "net_targets",
+    "exit": 0,
+    "result": [
+      "RESULT checks=10 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK network intent activates real manual effect true\r\nCHECK network option opens player target wait true\r\nCHECK player candidate prompt exposed true\r\nCHECK noncandidate rejected without canceling true\r\nCHECK invalid player target preserves wait true\r\nCHECK valid player target accepted true\r\nCHECK player selection leads to target card identities true\r\nCHECK target player cannot inspect activator prompt true\r\nCHECK target card selected through same command gate true\r\nCHECK original engine retains both selections true\r\nRESULT checks=10 failures=[]"
+  },
+  {
+    "scene": "net_locations",
+    "exit": 0,
+    "result": [
+      "RESULT checks=7 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK location fixture deployed true\r\nCHECK forbidden area rejected true\r\nCHECK invalid area does not cancel waiting true\r\nCHECK legal area choices exposed true\r\nCHECK forbidden area not offered true\r\nCHECK valid area uses shared location query true\r\nCHECK original engine stores resolved location true\r\nRESULT checks=7 failures=[]"
+  },
+  {
+    "scene": "net_full_game",
+    "exit": 0,
+    "result": [
+      "RESULT checks=4 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK full command fixture starts true\r\nCHECK human command gate reaches actual game end true\r\nCHECK commands executed without AI takeover true\r\nCHECK engine records terminal result true\r\nNETWORK_COMMAND_GAME submitted=222 round=11\r\nRESULT checks=4 failures=[]"
+  },
+  {
+    "scene": "net_lobby",
+    "exit": 0,
+    "result": [
+      "RESULT checks=25 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK network lobby exists true\r\nCHECK network room created true\r\nCHECK network guest joining true\r\nCHECK room synchronized over actual ENet true\r\nCHECK lobby provides approved content transfer true\r\nCHECK approved content requested true\r\nCHECK room file downloaded and verified true\r\nCHECK missing content request submitted true\r\nCHECK rejected download releases reservation true\r\nCHECK remote readiness reaches authority true\r\nCHECK forged actor cannot alter room true\r\nCHECK permission failure delivered to sender true\r\nCHECK host can register local selection rules true\r\nCHECK selection rules registered locally true\r\nCHECK selection start synchronized true\r\nCHECK remote player receives own master choices true\r\nCHECK network human and AI selection completed true\r\nCHECK selection packets omit servant assignments true\r\nCHECK owner starts selected match true\r\nCHECK client has read-only match mirror true\r\nCHECK filtered match view delivered over ENet true\r\nCHECK network view omits other hands true\r\nCHECK network view omits other hands true\r\nCHECK network command deploys human on authoritative map true\r\nCHECK network disconnect preserved without AI takeover true\r\nRESULT checks=25 failures=[]"
+  },
+  {
+    "scene": "net_match",
+    "exit": 0,
+    "result": [
+      "RESULT checks=21 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK network match authority exists true\r\nCHECK selection prepared true\r\nCHECK human selection completed true\r\nCHECK human selection completed true\r\nCHECK selected roster starts on authority true\r\nCHECK second start cannot reset live game true\r\nCHECK connection mapped to correct observer true\r\nCHECK unseated viewer is public true\r\nCHECK public hand omitted true\r\nCHECK public hand omitted true\r\nCHECK public hand omitted true\r\nCHECK explicit network and AI control true\r\nCHECK spectator cannot mutate match true\r\nCHECK stale view rejected true\r\nCHECK unknown command rejected true\r\nCHECK human deployment branch reached true\r\nCHECK human deploy intent executes existing rules true\r\nCHECK deployment changes authoritative state true\r\nCHECK repeat deployment denied without double reward true\r\nCHECK human ends deployed action through authority true\r\nCHECK human not automatically driven true\r\nRESULT checks=21 failures=[]"
+  },
+  {
+    "scene": "net_room",
+    "exit": 0,
+    "result": [
+      "RESULT checks=16 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK room state exists true\r\nCHECK room configured from explicit mode capacity true\r\nCHECK owner joins true\r\nCHECK guest joins true\r\nCHECK guest cannot change settings true\r\nCHECK AI cannot exceed remaining seats true\r\nCHECK both players ready true\r\nCHECK explicit ready roster can start true\r\nCHECK owner starts selection true\r\nCHECK settings freeze after selection true\r\nCHECK disconnect retains human seat true\r\nCHECK disconnect never adds AI true\r\nCHECK disconnected actor cannot act true\r\nCHECK guest cannot kick owner true\r\nCHECK owner can remove member true\r\nCHECK snapshot is isolated true\r\nRESULT checks=16 failures=[]"
+  },
+  {
+    "scene": "net_transport",
+    "exit": 0,
+    "result": [
+      "RESULT checks=11 failures=[]"
+    ],
+    "errors": [
+      "ERROR: Couldn't create an ENet host.\r"
+    ],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK ENet transport exists true\r\nCHECK custom port listening true\r\nERROR: Couldn't create an ENet host.\r\n   at: _create (modules/enet/enet_connection.cpp:319)\r\n   GDScript backtrace (most recent call first):\r\n       [0] listen (res://scripts/net/enet_transport.gd:21)\r\n       [1] run (res://tests/net_transport_test.gd:17)\r\nCHECK occupied port fails without fallback true\r\nCHECK loopback connecting true\r\nCHECK real ENet connection established true\r\nCHECK reliable message sent true\r\nCHECK message delivered true\r\nCHECK sender comes from transport not payload true\r\nCHECK integer payload preserved true\r\nCHECK object payload rejected true\r\nCHECK invalid ports rejected true\r\nRESULT checks=11 failures=[]"
+  },
+  {
+    "scene": "net_lobby_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=10 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK create button opens real room true\r\nCHECK actual client joins visible lobby true\r\nCHECK ready button updates authority true\r\nCHECK both members shown true\r\nCHECK lobby exposes selection start true\r\nCHECK real start click enters selection true\r\nCHECK master choices displayed true\r\nCHECK real master click replicated true\r\nCHECK window selection completes with remote choice true\r\nCHECK lobby screenshot saved true\r\nRESULT checks=10 failures=[]"
+  },
+  {
+    "scene": "net_management_window",
+    "exit": 0,
+    "result": [
+      "RESULT checks=10 failures=[]"
+    ],
+    "errors": [],
+    "log": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org\r\nVulkan 1.4.351 - Forward Mobile - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5070 Ti\r\n\r\n[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)\r\nCHECK management controls exist true\r\nCHECK real transfer button updates authority true\r\nCHECK former owner loses start permission true\r\nCHECK remote owner derives readiness from authoritative snapshot true\r\nCHECK connected lobby no longer displays connecting true\r\nCHECK spectator checkbox joins without player seat true\r\nCHECK spectator has no ready operation true\r\nCHECK remote owner kicks selected spectator true\r\nCHECK kicked connection actually closes true\r\nCHECK management screenshot saved true\r\nRESULT checks=10 failures=[]"
+  }
+]
