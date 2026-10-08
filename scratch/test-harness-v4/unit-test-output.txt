@@ -1,0 +1,22 @@
+test_disk_discovery_does_not_hide_ignored_scenes (test_reconcile.DiscoveryTests.test_disk_discovery_does_not_hide_ignored_scenes) ... ok
+test_new_ignored_nested_test_is_discovered (test_reconcile.DiscoveryTests.test_new_ignored_nested_test_is_discovered) ... ok
+test_arrays_and_clean_result (test_reconcile.LogTests.test_arrays_and_clean_result) ... ok
+test_missing_or_ambiguous_result_is_not_green (test_reconcile.LogTests.test_missing_or_ambiguous_result_is_not_green) ... ok
+test_numeric_failures_and_errors_are_independent (test_reconcile.LogTests.test_numeric_failures_and_errors_are_independent) ... ok
+test_window_needs_real_branch_evidence (test_reconcile.LogTests.test_window_needs_real_branch_evidence) ... ok
+test_window_skip_is_not_run (test_reconcile.LogTests.test_window_skip_is_not_run) ... ok
+test_zero_exit_does_not_hide_script_or_shader_error (test_reconcile.LogTests.test_zero_exit_does_not_hide_script_or_shader_error) ... ok
+test_bad_receipt_fields_fail_closed (test_reconcile.ReceiptTests.test_bad_receipt_fields_fail_closed) ... ok
+test_complete_receipt_and_missing_receipt (test_reconcile.ReceiptTests.test_complete_receipt_and_missing_receipt) ... ok
+test_data_namespace_outside_fixed_root_rejected (test_reconcile.ReceiptTests.test_data_namespace_outside_fixed_root_rejected) ... ok
+test_json_input_duplicate_keys_or_nonfinite_values_rejected (test_reconcile.ReceiptTests.test_json_input_duplicate_keys_or_nonfinite_values_rejected) ... ok
+test_latest_red_cannot_be_overwritten_by_old_green (test_reconcile.ReceiptTests.test_latest_red_cannot_be_overwritten_by_old_green) ... ok
+test_overlapping_runs_are_rejected (test_reconcile.ReceiptTests.test_overlapping_runs_are_rejected) ... ok
+test_per_suite_reports_and_refuse_overwrite_or_escape (test_reconcile.ReceiptTests.test_per_suite_reports_and_refuse_overwrite_or_escape) ... ok
+test_unknown_duplicate_drift_and_hash_block_green (test_reconcile.ReceiptTests.test_unknown_duplicate_drift_and_hash_block_green) ... ok
+test_window_native_review_and_command_are_required (test_reconcile.ReceiptTests.test_window_native_review_and_command_are_required) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 9.754s
+
+OK

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "state": "NOT_EXPORTED_NOT_RUNTIME_TESTED",
+  "release_id": null,
+  "project_version": "0.0.1",
+  "source_git_head": null,
+  "source_dirty": null,
+  "source_tree_sha256": null,
+  "godot_version": null,
+  "export_template_version": null,
+  "export_preset": null,
+  "platform_arch": null,
+  "exported_at_utc": null,
+  "configuration_template": {"path": "assets/config/server.cfg", "sha256": null},
+  "artifacts": [],
+  "external_data": {"root": "data", "manifest": "data-manifest.json", "sha256": null, "import_metadata_separated": true},
+  "runtime_evidence": [],
+  "limitations": ["静态预检不证明引擎解析、原生库 ABI、stdin、跨平台联机或恢复成功"]
+}

@@ -22,7 +22,7 @@ func exec(body, arr:Array, parameter_index:int = 0):
 		state.item = arr[idx] if state.item_present else null
 		GameLog.push_loop(idx)
 		while int(state.body_index) < bodies.size():
-			if not EffectManager.runtime_guard_checkpoint():
+			if not EffectManager.runtime_guard_checkpoint(state):
 				GameLog.pop_loop()
 				return state.last_result
 			var one = bodies[int(state.body_index)]

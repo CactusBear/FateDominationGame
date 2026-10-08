@@ -1,0 +1,207 @@
+{
+  "scope": "STATIC_ONLY",
+  "contracts": {
+    "host_mode_before_local_create": true,
+    "manager_creates_worker": true,
+    "ready_full_binding": true,
+    "worker_publishes_full_binding": true,
+    "ready_and_owner_before_foreign_join": true,
+    "pending_join_copied": true,
+    "close_does_not_explicitly_kill": true,
+    "close_instance_response_and_heartbeat": true,
+    "save_before_close": true,
+    "receipt_persisted_before_shutdown": true,
+    "signal_closed_preserves_direct_transport": true,
+    "session_delegates_both_modes": true
+  },
+  "mutation_detection": {
+    "host_mode_before_local_create": true,
+    "manager_creates_worker": true,
+    "ready_full_binding": true,
+    "worker_publishes_full_binding": true,
+    "ready_and_owner_before_foreign_join": true,
+    "pending_join_copied": true,
+    "close_instance_response_and_heartbeat": true,
+    "save_before_close": true,
+    "receipt_persisted_before_shutdown": true,
+    "session_delegates_both_modes": true,
+    "close_does_not_explicitly_kill": true,
+    "signal_closed_preserves_direct_transport": true
+  },
+  "parsed": [
+    "scripts/net/authority_host_client.gd",
+    "scripts/net/server_room_manager.gd",
+    "scripts/net/server_room_worker.gd",
+    "scripts/net/server_room_control.gd",
+    "scripts/net/lobby_session.gd",
+    "scripts/net/p2p_signal_client.gd",
+    "scripts/net/server_gateway.gd",
+    "tests/authority_worker_acceptance_v4/ready_contract_test.gd"
+  ],
+  "parse_errors": [],
+  "process_verifier_assignments": [],
+  "sources_sha256": {
+    "authority_host_client": "affef879d6041cd837186414ac9332aea0f914b1fc46c36d961a6868974d3a36",
+    "server_room_manager": "190fac8cc27d817baabf5cd8a8305801b102fe0e76f25a7d4a2d1583d680124a",
+    "server_room_worker": "3a31368177dee1d7c35db344695f4fb90f49db8f00a121601c0012c1bc61fdd2",
+    "server_room_control": "9a29b99a308247aacbbb84d1b34e6f4b86aedaee73592c9ffd6b487d40dae39b",
+    "lobby_session": "e5a3a4a1254f65cb392bb44d45b616027b17ecd327120ca9c40a6ed64523b274",
+    "p2p_signal_client": "ef664495302a1dacbffee8e331201afd07f5851b2c2f208e30aa878617038390",
+    "server_gateway": "a7c16c235293b49a22fda3ad319fcb67caee26464838d989392da3b4722008b9"
+  },
+  "runtime_matrix": [
+    {
+      "id": "lan:CREATE",
+      "title": "房主本机创建隔离 worker",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "真实 UI 建房；抓本机父子 PID/命令行/主机标识，规则执行仅发生在 worker；UI 回环连接；客机机器无 worker。",
+      "evidence": []
+    },
+    {
+      "id": "lan:READY",
+      "title": "ready 完整绑定",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "新实例日志；依次替换 ready 的 room_id/pid/instance_id/authority_host_mode，拒绝路由；真实 OS 句柄验证，不用 PID 存活替代。",
+      "evidence": []
+    },
+    {
+      "id": "lan:JOIN",
+      "title": "外来 join 在 ready 和房主快照后放行",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "客机抢先入房；ready 前无 route，ready 后且 owner 尚未绑定仍无 route；房主 owner 快照后客机加入，转让房主后新客机仍可加入。",
+      "evidence": []
+    },
+    {
+      "id": "lan:CLOSE_OK",
+      "title": "保存回执后正常退出",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "开录制并推进实际对局；close request/response 匹配实例与请求 ID；验证日志 flush、恢复文件、最后 state_hash 和真实退出；无强杀。",
+      "evidence": []
+    },
+    {
+      "id": "lan:CLOSE_DENIED",
+      "title": "保存失败保留 worker",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "未录制的运行中对局及隔离存储的写失败；ok=false 回执，持续心跳超过主管预算，worker 存活、原档保留，UI 不宣称关闭成功。",
+      "evidence": []
+    },
+    {
+      "id": "lan:STALE_CLOSE",
+      "title": "旧实例关闭回执无效",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "仅隔离测试目录注入旧 PID/instance 回执，不得改变新 worker；保存原请求及两实例日志。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_manual:CREATE",
+      "title": "房主本机创建隔离 worker",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "真实 UI 建房；抓本机父子 PID/命令行/主机标识，规则执行仅发生在 worker；UI 回环连接；客机机器无 worker。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_manual:READY",
+      "title": "ready 完整绑定",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "新实例日志；依次替换 ready 的 room_id/pid/instance_id/authority_host_mode，拒绝路由；真实 OS 句柄验证，不用 PID 存活替代。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_manual:JOIN",
+      "title": "外来 join 在 ready 和房主快照后放行",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "客机抢先入房；ready 前无 route，ready 后且 owner 尚未绑定仍无 route；房主 owner 快照后客机加入，转让房主后新客机仍可加入。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_manual:CLOSE_OK",
+      "title": "保存回执后正常退出",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "开录制并推进实际对局；close request/response 匹配实例与请求 ID；验证日志 flush、恢复文件、最后 state_hash 和真实退出；无强杀。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_manual:CLOSE_DENIED",
+      "title": "保存失败保留 worker",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "未录制的运行中对局及隔离存储的写失败；ok=false 回执，持续心跳超过主管预算，worker 存活、原档保留，UI 不宣称关闭成功。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_manual:STALE_CLOSE",
+      "title": "旧实例关闭回执无效",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "仅隔离测试目录注入旧 PID/instance 回执，不得改变新 worker；保存原请求及两实例日志。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_signal:CREATE",
+      "title": "房主本机创建隔离 worker",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "真实 UI 建房；抓本机父子 PID/命令行/主机标识，规则执行仅发生在 worker；UI 回环连接；客机机器无 worker。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_signal:READY",
+      "title": "ready 完整绑定",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "新实例日志；依次替换 ready 的 room_id/pid/instance_id/authority_host_mode，拒绝路由；真实 OS 句柄验证，不用 PID 存活替代。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_signal:JOIN",
+      "title": "外来 join 在 ready 和房主快照后放行",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "客机抢先入房；ready 前无 route，ready 后且 owner 尚未绑定仍无 route；房主 owner 快照后客机加入，转让房主后新客机仍可加入。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_signal:CLOSE_OK",
+      "title": "保存回执后正常退出",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "开录制并推进实际对局；close request/response 匹配实例与请求 ID；验证日志 flush、恢复文件、最后 state_hash 和真实退出；无强杀。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_signal:CLOSE_DENIED",
+      "title": "保存失败保留 worker",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "未录制的运行中对局及隔离存储的写失败；ok=false 回执，持续心跳超过主管预算，worker 存活、原档保留，UI 不宣称关闭成功。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_signal:STALE_CLOSE",
+      "title": "旧实例关闭回执无效",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "仅隔离测试目录注入旧 PID/instance 回执，不得改变新 worker；保存原请求及两实例日志。",
+      "evidence": []
+    },
+    {
+      "id": "p2p_signal:SIGNAL_DROP",
+      "title": "信令断开已建立直连仍可玩",
+      "status": "NOT_RUN",
+      "reason": "本批禁止运行 Godot，静态结果不能替代动态",
+      "steps": "直连建立并推进实际对局后仅断信令；继续提交合法动作并接收权威新 revision，抓包证明游戏流量走直连；新增/恢复握手另验失败。",
+      "evidence": []
+    }
+  ],
+  "godot_unit_status": "NOT_RUN"
+}

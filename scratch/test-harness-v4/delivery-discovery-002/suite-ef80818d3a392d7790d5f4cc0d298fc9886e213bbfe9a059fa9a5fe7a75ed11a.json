@@ -1,0 +1,24 @@
+{
+  "id": "tests/player_name_test.tscn:headless",
+  "scene": "tests/player_name_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "stage_hint": "ui_headless",
+  "scripts": [
+    "res://tests/player_name_test.gd"
+  ],
+  "environment_names": [],
+  "command_template_NOT_EXECUTED": [
+    "<GODOT_CONSOLE_EXE>",
+    "--headless",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\Projects\\Godot\\FateDominationGame-master",
+    "--scene",
+    "res://tests/player_name_test.tscn"
+  ],
+  "timeout_sec": null,
+  "status": "NOT_RUN",
+  "window_requires_branch_marker": false
+}

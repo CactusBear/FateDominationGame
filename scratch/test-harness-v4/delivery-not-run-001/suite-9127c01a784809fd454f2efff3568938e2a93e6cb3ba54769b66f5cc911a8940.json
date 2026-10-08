@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/debug_console_pause_test.tscn:headless",
+  "scene": "tests/debug_console_pause_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

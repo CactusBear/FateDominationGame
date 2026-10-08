@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/json_codec_test.tscn:headless",
+  "scene": "tests/json_codec_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

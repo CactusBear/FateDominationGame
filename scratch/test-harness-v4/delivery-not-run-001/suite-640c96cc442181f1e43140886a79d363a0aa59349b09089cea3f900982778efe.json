@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/command_spell_test.tscn:headless",
+  "scene": "tests/command_spell_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

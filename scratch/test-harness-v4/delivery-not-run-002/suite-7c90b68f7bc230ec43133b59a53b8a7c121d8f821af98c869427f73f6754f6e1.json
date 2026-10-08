@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/pending_board_power_test.tscn:headless",
+  "scene": "tests/pending_board_power_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://chggdegl646nq" path="res://assets/images/game_scene/v2/ui/played_stack_collapse.svg" id="16_stack_collapse"]
 [ext_resource type="PackedScene" path="res://assets/scenes/game_scene/network_choice_panel.tscn" id="17_network_choice"]
 [ext_resource type="PackedScene" path="res://assets/scenes/debug/debug_console.tscn" id="18_debug_console"]
+[ext_resource type="PackedScene" path="res://assets/scenes/main_menu/identity_inheritance_panel.tscn" id="19_identity_inheritance"]
 
 [sub_resource type="StyleBoxFlat" id="SB_AvBlood"]
 bg_color = Color(0.0235, 0.0314, 0.051, 1)
@@ -2731,6 +2732,61 @@ color = Color(0.7882, 0.6431, 0.3608, 0.55)
 layer = 90
 
 [node name="Panel" parent="NetworkChoices" unique_id=487264412 instance=ExtResource("17_network_choice")]
+theme = SubResource("Theme")
+
+[node name="ConnectionWait" type="PanelContainer" parent="NetworkChoices"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -112.0
+offset_right = 380.0
+offset_bottom = 112.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme")
+theme_type_variation = &"Toast"
+
+[node name="Margin" type="MarginContainer" parent="NetworkChoices/ConnectionWait"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="Row" type="VBoxContainer" parent="NetworkChoices/ConnectionWait/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Message" type="Label" parent="NetworkChoices/ConnectionWait/Margin/Row"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 22
+text = "对局已暂停\n等待重新连接"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Reconnect" type="Button" parent="NetworkChoices/ConnectionWait/Margin/Row"]
+visible = false
+custom_minimum_size = Vector2(180, 42)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "重新连接"
+
+[node name="InheritanceTarget" type="OptionButton" parent="NetworkChoices/ConnectionWait/Margin/Row"]
+visible = false
+layout_mode = 2
+
+[node name="InheritIdentity" type="Button" parent="NetworkChoices/ConnectionWait/Margin/Row"]
+visible = false
+layout_mode = 2
+text = "指定身份继承者"
+
+[node name="IdentityInheritancePanel" parent="." instance=ExtResource("19_identity_inheritance")]
 
 [node name="Guard" type="PanelContainer" parent="NetworkChoices" unique_id=603832241]
 visible = false

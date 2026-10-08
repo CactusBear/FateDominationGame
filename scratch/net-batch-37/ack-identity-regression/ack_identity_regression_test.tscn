@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource path="res://scratch/net-batch-37/ack-identity-regression/ack_identity_regression_test.gd" type="Script" id="1"]
+
+[node name="AckIdentityRegressionTest" type="Node"]
+script = ExtResource("1")

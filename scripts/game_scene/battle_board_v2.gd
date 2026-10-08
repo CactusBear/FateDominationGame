@@ -293,18 +293,22 @@ const TacticalBoardUI = preload("res://scripts/game_scene/tactical_board_ui.gd")
 func _ready() -> void:
 	_bind_tactical_confirmation()
 	_bind_card_view_controls()
+	_bind_pause_menu_controls()
+	_bind_fly_layer()
+	$CardBrowser/Panel/Close.pressed.connect(_close_card_browser)
+	$LogBrowser/Panel/Close.pressed.connect(func() -> void: $LogBrowser.hide())
+	var drawer_box := _opponent_drawer.get_node("VBox") as Control
+	drawer_box.set_meta("layout_insets", Vector4(drawer_box.offset_left, drawer_box.offset_top, drawer_box.offset_right, drawer_box.offset_bottom))
+	var spell_scroll := _self.get_node("Spells/SpecialScroll") as ScrollContainer
+	spell_scroll.gui_input.connect(_on_hscroll_wheel.bind(spell_scroll))
 	if network_session != null:
-		_network_presenter = preload("res://scripts/net/v2_view_presenter.gd").new(self, network_session)
+		_network_presenter = preload("res://scripts/net/ui/v2_view_presenter.gd").new(self, network_session)
 		_network_presenter.refresh()
 		return
 	_driver.state_changed.connect(refresh_all_ui)
 	_driver.ai_turn_started.connect(_clear_ai_play_prompt)
 	_driver.ai_played_card.connect(_on_ai_played_card)
 	_local_player_id = GameData.player_id
-	var spell_scroll := _self.get_node("Spells/SpecialScroll") as ScrollContainer
-	spell_scroll.gui_input.connect(_on_hscroll_wheel.bind(spell_scroll))
-	var drawer_box := _opponent_drawer.get_node("VBox") as Control
-	drawer_box.set_meta("layout_insets", Vector4(drawer_box.offset_left, drawer_box.offset_top, drawer_box.offset_right, drawer_box.offset_bottom))
 	if !GameStart._started:
 		GameStart.game_start([0, 1, 2, 3, 4, 5, 6])
 	# 原主图作为各卷轴的内容模板；所有地图初始收起。
@@ -324,18 +328,11 @@ func _ready() -> void:
 	_ops.get_node("EndButton").pressed.connect(_on_end_phase_pressed)
 	_ops.get_node("PlayButton").pressed.connect(_confirm_held_cards)
 	_top.get_node("LogButton").pressed.connect(_open_game_log)
-	$LogBrowser/Panel/Close.pressed.connect(func() -> void: $LogBrowser.hide())
 	_piles.get_node("EventPile/Open").pressed.connect(func() -> void:
 		$EventDiscardMenu.visible = not $EventDiscardMenu.visible
 	)
 	for entry in [["Shinto", "新都", MapData.shinto], ["Miyama", "深山町", MapData.miyama], ["Other", "其他", null]]:
 		$EventDiscardMenu.get_node("Choices/" + entry[0]).pressed.connect(_open_event_discard.bind(entry[1], entry[2]))
-	$CardBrowser/Panel/Close.pressed.connect(_close_card_browser)
-	# 暂停菜单：ESC 开合；三个按钮各自单一职责
-	if _pause_menu != null:
-		(_pause_menu.get_node("Box/BtnResume") as Button).pressed.connect(_close_pause_menu)
-		(_pause_menu.get_node("Box/BtnMainMenu") as Button).pressed.connect(_return_to_main_menu)
-		(_pause_menu.get_node("Box/BtnQuit") as Button).pressed.connect(get_tree().quit)
 	# ModalLayer 弹窗接线（用旧控制器的同源判据，规则不变）
 
 	if _effect_modal != null:
@@ -363,6 +360,12 @@ func _ready() -> void:
 
 	if _board != null:
 		_board.visible = false
+	set_debug_console_enabled(_debug_console_enabled_on_start)
+	refresh_all_ui()
+	_select_scroll(_default_area_index())
+
+
+func _bind_fly_layer() -> void:
 	# 打牌动画层：满屏、不吃鼠标，压在手牌之上、弹窗之下
 	_fly_layer = Control.new()
 	_fly_layer.name = "FlyLayer"
@@ -370,9 +373,6 @@ func _ready() -> void:
 	_fly_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_fly_layer)
 	move_child(_fly_layer, _hand.get_index() + 1)
-	set_debug_console_enabled(_debug_console_enabled_on_start)
-	refresh_all_ui()
-	_select_scroll(_default_area_index())
 
 
 
@@ -433,9 +433,12 @@ func _process(delta: float) -> void:
 				call_deferred("_return_to_network_lobby")
 			return
 		_network_presenter.refresh()
+		_update_fly_sizes(delta)
 		_update_held_cards(delta)
 		_update_power_badges()
 		_update_hover_zoom_keepalive(delta)
+		_update_event_fan(delta, get_global_mouse_position())
+		_update_local_spell_box(delta)
 		return
 	var _t0 := Time.get_ticks_usec()
 	_update_fly_sizes(delta)
@@ -1507,7 +1510,8 @@ func _show_card_browser(title: String, cards: Array) -> void:
 		var slot := _spawn("MiniEventCard", row)
 		slot.custom_minimum_size = (_tpl.get_node("EventCard") as Control).size
 		slot.set_meta("card", card)
-		_bind_card(slot, str(card.get("_card_img")))
+		var image: String = str(card.get("image", "")) if card is Dictionary and card.get("visible", false) and not card.get("concealed", true) else (str(card.get("back_image", "")) if card is Dictionary else str(card.get("_card_img")))
+		_bind_card(slot, image)
 		bind_zoom_for_card(slot, card)
 	panel.get_node("CardScroll").scroll_horizontal = 0
 	$CardBrowser.show()
@@ -1687,9 +1691,10 @@ func _scroll_is_animating() -> bool:
 
 func _input(event: InputEvent) -> void:
 	if network_session != null:
+		if _network_presenter.browse_input(event):
+			return
 		if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-			_hide_event_zoom()
-			get_viewport().set_input_as_handled()
+			_handle_escape()
 		elif event is InputEventMouseMotion:
 			_handle_scroll_hover(event)
 		return
@@ -1714,16 +1719,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		# 有浏览层/放大图打开时 ESC 只关它们；全部已关才开合暂停菜单
-		var had_overlay: bool = $EventDiscardMenu.visible or $CardBrowser.visible or $LogBrowser.visible \
-				or (_hover_zoom != null and _hover_zoom.visible) or (_hover_desc != null and _hover_desc.visible)
-		$EventDiscardMenu.hide()
-		_close_card_browser()
-		$LogBrowser.hide()
-		_hide_event_zoom()
-		if not had_overlay:
-			_toggle_pause_menu()
-		get_viewport().set_input_as_handled()
+		_handle_escape()
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if not $EventDiscardMenu.get_global_rect().has_point(event.position) and not _piles.get_node("EventPile/Open").get_global_rect().has_point(event.position):
@@ -1785,11 +1781,18 @@ func _select_scroll(index: int) -> void:
 	var area_count: int = _strips.get_child_count() if network_session != null else MapData.areas.size()
 	if index == _main_area_index or index < -1 or index >= area_count:
 		return
+	var area_name:String = ""
+	if index >= 0:
+		if network_session != null:
+			var areas:Array = network_session.read_match().get("areas", [])
+			if index >= areas.size(): return
+			area_name = str(areas[index].name)
+		else:
+			area_name = str(MapData.areas[index]._area_name)
 
 	_main_area_index = index
 	$AreaTitle.visible = index >= 0
 	if index >= 0:
-		var area_name: String = str(network_session.read_match().areas[index].name) if network_session != null else str(MapData.areas[index]._area_name)
 		_set_text($AreaTitle, "Name", area_name)
 		_set_text($AreaTitle, "Latin", str(AREA_LATIN.get(area_name, "")))
 	_scroll_leave_time = 0.0
@@ -2774,13 +2777,14 @@ func _held_input_available() -> bool:
 
 func _can_confirm_held_cards() -> bool:
 	if network_session != null:
-		return _network_presenter.selection.can_confirm()
+		return _held_input_available() and _network_presenter.selection.can_confirm()
 	return _held_input_available() and RegularPlay.can_submit_group(_local_player_id, _selected_cards, _held_hidden(_selected_cards))
 
 
 func _confirm_held_cards() -> void:
 	if network_session != null:
-		_network_presenter.selection.confirm()
+		if _can_confirm_held_cards():
+			_network_presenter.selection.confirm()
 		return
 	if not _can_confirm_held_cards():
 		return
@@ -3082,6 +3086,25 @@ func _is_progress_blocked() -> bool:
 
 
 # --- 暂停菜单 ---
+## 纯展示接线，单机与网络初始化均调用；不暂停权威规则进程。
+func _bind_pause_menu_controls() -> void:
+	if _pause_menu == null:
+		return
+	(_pause_menu.get_node("Box/BtnResume") as Button).pressed.connect(_close_pause_menu)
+	(_pause_menu.get_node("Box/BtnMainMenu") as Button).pressed.connect(_return_to_main_menu)
+	(_pause_menu.get_node("Box/BtnQuit") as Button).pressed.connect(get_tree().quit)
+
+func _handle_escape() -> void:
+	var had_overlay: bool = $EventDiscardMenu.visible or $CardBrowser.visible or $LogBrowser.visible \
+			or (_hover_zoom != null and _hover_zoom.visible) or (_hover_desc != null and _hover_desc.visible)
+	$EventDiscardMenu.hide()
+	_close_card_browser()
+	$LogBrowser.hide()
+	_hide_event_zoom()
+	if not had_overlay:
+		_toggle_pause_menu()
+	get_viewport().set_input_as_handled()
+
 func _is_paused() -> bool:
 	return _pause_menu != null and _pause_menu.visible
 
@@ -3103,7 +3126,10 @@ func _close_pause_menu() -> void:
 func _return_to_main_menu() -> void:
 	set_process(false)
 	_close_pause_menu()
-	GameStart.end_session()
+	if network_session != null:
+		network_session.close()
+	else:
+		GameStart.end_session()
 	get_tree().change_scene_to_file(GameStart.MAIN_MENU_SCENE)
 
 
@@ -4120,6 +4146,13 @@ func _broadcast_names_text(ids: Array) -> String:
 func _render_card_face(node: TextureRect, obj, owned: bool, fallback_type: String = "skill", show_conceal_mark: bool = true, concealed_override = null) -> void:
 	if node == null or obj == null:
 		return
+	if obj is Dictionary:
+		var disclosed: bool = obj.get("visible", false) and not obj.get("concealed", true)
+		node.texture = LoadHelper.load_texture(obj.get("image", "") if disclosed else obj.get("back_image", ""))
+		_sync_overlay(node, owned and show_conceal_mark and obj.get("concealed", true), "ConcealOverlay", CONCEAL_COLOR, CONCEAL_ICON)
+		_sync_overlay(node, false, "InactiveOverlay", INACTIVE_COLOR)
+		bind_zoom_for_card(node, obj)
+		return
 	var concealed: bool = bool(concealed_override) if concealed_override != null else (obj is BaseCard and bool(obj.get("_is_concealed")))
 	if obj is BaseSkill and not bool(obj.get("_is_awakened")):
 		node.texture = LoadHelper.load_texture(LoadHelper.resolve_card_back("", "", "upgrade_skill"))
@@ -4491,6 +4524,9 @@ func _on_close_opponent_drawer_pressed() -> void:
 
 
 func _update_drawer_visuals(opponent_card: Control) -> void:
+	if network_session != null:
+		_network_presenter.update_drawer(opponent_card)
+		return
 	if _opponent_drawer == null:
 		return
 	var bot_id: int = _selected_opponent_id
@@ -4897,6 +4933,7 @@ func _fill_card_row_from_list(row: Control, cards: Array, clickable: bool, owned
 	if row == null:
 		return
 	for child in row.get_children():
+		row.remove_child(child)
 		child.queue_free()
 	var list: Array = _group_repeated_cards(cards) if merge_repeated else cards.map(func(c): return {"card": c, "count": 1})
 	for entry in list:
@@ -5374,7 +5411,7 @@ func _slot_battlefield_open(slot: Control) -> bool:
 ## 不再等待该牌所属战场展开——牌打出即入队，其战场的飞行泵独立计时并行推进；
 ## 其他战场的牌照常在后台飞，切换过去时时间到的牌已经落位。
 func _note_played_card_takeoff(slot: Control, card, pid: int) -> void:
-	var cid: int = card.get_instance_id()
+	var cid: int = int(card.id) if card is Dictionary else card.get_instance_id()
 	if _takeoff_done.has(cid):
 		return
 	if not is_instance_valid(slot) or not slot.is_inside_tree() or slot.is_queued_for_deletion():
@@ -5635,7 +5672,7 @@ func _play_takeoff(slot: Control, card, pid: int, strip_idx: int) -> void:
 func _takeoff_origin(pid: int, card) -> Vector2:
 	if pid == _local_player_id:
 		for slot in _hand.get_children():
-			if _meta_or(slot as Control, "card", null) == card:
+			if _same_card(_meta_or(slot as Control, "card", null), card):
 				return (slot as Control).get_global_rect().get_center()
 		return (_master as Control).get_global_rect().get_center()
 	for rival in _rivals.get_children():

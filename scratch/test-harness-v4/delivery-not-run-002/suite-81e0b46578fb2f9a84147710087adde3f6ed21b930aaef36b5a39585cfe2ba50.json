@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/json_maker_six_features_test.tscn:headless",
+  "scene": "tests/json_maker_six_features_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

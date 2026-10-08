@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scratch/rejected-correlation-merge/rejected_request_correlation_test.gd" id="1"]
+
+[node name="RejectedRequestCorrelationTest" type="Node"]
+script = ExtResource("1")

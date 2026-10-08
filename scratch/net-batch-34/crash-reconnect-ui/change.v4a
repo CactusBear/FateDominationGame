@@ -1,0 +1,43 @@
+*** Begin Patch
+*** Update File: scripts/net/session/lobby_session.gd
+@@
+ func reconnect() -> Error:
+ 	if not can_reconnect(): return ERR_UNAVAILABLE
+ 	if connection_driver != null and connection_driver.has_method("reconnect"):
+ 		var driver = connection_driver
+ 		return driver.reconnect(self)
+ 	_prepare_reconnect()
+ 	if not server_room_id.is_empty():
+ 		_server_request = {"kind":"server_join","args":{"room":server_room_id, "resume":_resume_ticket.duplicate(true)}}
+ 		_server_sent = false
+ 		_server_peer_id = 0
+ 	var result:Error = transport.connect_to(_join_endpoint.address,_join_endpoint.port)
+ 	changed.emit()
+ 	return result
++
++## 重连 UI 的唯一恢复入口：仅当前本机权威明确等待 worker 崩溃时恢复。
++## recover_worker() 负责原有实例、认证密钥与恢复进度校验；这里不接管认领。
++func reconnect_after_worker_crash() -> Error:
++	if authority_host != null and authority_host.has_method("diagnostics"):
++		var diagnostic:Dictionary = authority_host.diagnostics()
++		if diagnostic.get("worker_crash_waiting", false):
++			if not authority_host.has_method("recover_worker") or not authority_host.recover_worker():
++				error = "本机权威恢复未获批准"
++				return ERR_UNAUTHORIZED
++			error = ""
++	return reconnect()
+*** Update File: scripts/net/ui/lobby_screen.gd
+@@
+ func _reconnect() -> void:
+-	var result:Error = session.reconnect()
++	var result:Error = session.reconnect_after_worker_crash()
+ 	if result != OK: session.error = "无法重新连接：" + error_string(result)
+ 	_refresh_reconnect()
+*** Update File: scripts/net/ui/v2_view_presenter.gd
+@@
+ func _reconnect() -> void:
+-	var result:Error = session.reconnect()
++	var result:Error = session.reconnect_after_worker_crash()
+ 	if result != OK: session.error = "无法重新连接：" + error_string(result)
+ 	_refresh_connection_wait()
+*** End Patch

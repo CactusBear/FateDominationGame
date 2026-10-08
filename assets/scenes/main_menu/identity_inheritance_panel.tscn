@@ -1,0 +1,59 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/net/identity/identity_inheritance_panel.gd" id="1"]
+
+[node name="IdentityInheritancePanel" type="Window"]
+title = "房主指定身份继承"
+size = Vector2i(680, 480)
+min_size = Vector2i(480, 360)
+visible = false
+exclusive = true
+wrap_controls = false
+script = ExtResource("1")
+
+[node name="Content" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+theme_override_constants/separation = 12
+
+[node name="Help" type="Label" parent="Content"]
+layout_mode = 2
+autowrap_mode = 2
+text = "身份不符的恢复请求会被拒绝。只有当前认证房主可为掉线成员指定继承者。新用户须先以观战身份加入，昵称重名时由服务端附用户名。"
+
+[node name="Target" type="Label" parent="Content"]
+layout_mode = 2
+autowrap_mode = 2
+
+[node name="Candidates" type="ItemList" parent="Content"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 160)
+size_flags_vertical = 3
+allow_reselect = true
+
+[node name="Feedback" type="Label" parent="Content"]
+layout_mode = 2
+autowrap_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 12
+
+[node name="Refresh" type="Button" parent="Content/Buttons"]
+layout_mode = 2
+text = "刷新候选"
+
+[node name="Confirm" type="Button" parent="Content/Buttons"]
+layout_mode = 2
+text = "确认指定继承"
+disabled = true
+
+[node name="Close" type="Button" parent="Content/Buttons"]
+layout_mode = 2
+text = "关闭"

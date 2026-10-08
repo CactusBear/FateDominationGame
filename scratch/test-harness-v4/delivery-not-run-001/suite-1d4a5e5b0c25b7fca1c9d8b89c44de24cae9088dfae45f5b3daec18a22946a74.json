@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/ui_refresh_cost_test.tscn:headless",
+  "scene": "tests/ui_refresh_cost_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

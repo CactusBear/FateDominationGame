@@ -1,0 +1,11 @@
+{
+  "command": "PYTHONDONTWRITEBYTECODE=1 FATE_STATIC_PROJECT=E:/Projects/Godot/FateDominationGame-master python tests/server_signal_fixture_static_test.py",
+  "exit_code": 1,
+  "kind": "static_mock_only",
+  "tests": 10,
+  "passed": 8,
+  "failures": 1,
+  "errors": 1,
+  "godot_started": false,
+  "real_signal_sent": false
+}

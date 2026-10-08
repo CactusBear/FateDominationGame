@@ -1,0 +1,2707 @@
+[
+  {
+    "source": "addons/fate_server_signals/fate_server_signals.gdextension",
+    "line": 7,
+    "target": "res://addons/fate_server_signals/bin/libfate_server_signals.windows.x86_64.dll"
+  },
+  {
+    "source": "addons/fate_server_signals/fate_server_signals.gdextension",
+    "line": 8,
+    "target": "res://addons/fate_server_signals/bin/libfate_server_signals.linux.x86_64.so"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 19,
+    "target": "res://addons/godot_ai/clients/_base.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 20,
+    "target": "res://addons/godot_ai/clients/_registry.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 21,
+    "target": "res://addons/godot_ai/clients/_json_strategy.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 22,
+    "target": "res://addons/godot_ai/clients/_toml_strategy.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 23,
+    "target": "res://addons/godot_ai/clients/_yaml_strategy.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 24,
+    "target": "res://addons/godot_ai/clients/_dsh_strategy.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 25,
+    "target": "res://addons/godot_ai/clients/_cli_strategy.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 26,
+    "target": "res://addons/godot_ai/clients/_manual_command.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 27,
+    "target": "res://addons/godot_ai/clients/_cli_finder.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 28,
+    "target": "res://addons/godot_ai/utils/client_mutation_lock.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 29,
+    "target": "res://addons/godot_ai/utils/windows_port_reservation.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 30,
+    "target": "res://addons/godot_ai/utils/port_resolver.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 31,
+    "target": "res://addons/godot_ai/utils/uv_resolution_policy.gd"
+  },
+  {
+    "source": "addons/godot_ai/client_configurator.gd",
+    "line": 1296,
+    "target": "res://addons/godot_ai/plugin.cfg"
+  },
+  {
+    "source": "addons/godot_ai/clients/_cli_exec.gd",
+    "line": 44,
+    "target": "res://addons/godot_ai/utils/port_resolver.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_cli_exec.gd",
+    "line": 45,
+    "target": "res://addons/godot_ai/utils/uv_resolution_policy.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_cli_strategy.gd",
+    "line": 24,
+    "target": "res://addons/godot_ai/utils/client_mutation_lock.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 16,
+    "target": "res://addons/godot_ai/clients/claude_code.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 17,
+    "target": "res://addons/godot_ai/clients/claude_desktop.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 18,
+    "target": "res://addons/godot_ai/clients/codex.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 19,
+    "target": "res://addons/godot_ai/clients/codebuddy.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 20,
+    "target": "res://addons/godot_ai/clients/grok.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 21,
+    "target": "res://addons/godot_ai/clients/antigravity.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 22,
+    "target": "res://addons/godot_ai/clients/cursor.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 23,
+    "target": "res://addons/godot_ai/clients/windsurf.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 24,
+    "target": "res://addons/godot_ai/clients/vscode.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 25,
+    "target": "res://addons/godot_ai/clients/vscode_insiders.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 26,
+    "target": "res://addons/godot_ai/clients/zed.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 27,
+    "target": "res://addons/godot_ai/clients/gemini_cli.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 28,
+    "target": "res://addons/godot_ai/clients/cline.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 29,
+    "target": "res://addons/godot_ai/clients/kilo_code.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 30,
+    "target": "res://addons/godot_ai/clients/roo_code.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 31,
+    "target": "res://addons/godot_ai/clients/zoo_code.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 32,
+    "target": "res://addons/godot_ai/clients/kiro.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 33,
+    "target": "res://addons/godot_ai/clients/trae.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 34,
+    "target": "res://addons/godot_ai/clients/opencode.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 35,
+    "target": "res://addons/godot_ai/clients/qwen_code.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 36,
+    "target": "res://addons/godot_ai/clients/kimi_code.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 37,
+    "target": "res://addons/godot_ai/clients/hermes.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 38,
+    "target": "res://addons/godot_ai/clients/pi.gd"
+  },
+  {
+    "source": "addons/godot_ai/clients/_registry.gd",
+    "line": 39,
+    "target": "res://addons/godot_ai/clients/deepseek_harness.gd"
+  },
+  {
+    "source": "addons/godot_ai/connection.gd",
+    "line": 32,
+    "target": "res://addons/godot_ai/client_configurator.gd"
+  },
+  {
+    "source": "addons/godot_ai/connection.gd",
+    "line": 33,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/custom_tools/custom_tool_wrapper.gd",
+    "line": 6,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/custom_tools/mcp_custom_tool_spec.gd",
+    "line": 22,
+    "target": "res://addons/.../handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/custom_tools/mcp_custom_tool_spec.gd",
+    "line": 26,
+    "target": "res://addons/gdunit4_mcp/plugin.cfg"
+  },
+  {
+    "source": "addons/godot_ai/custom_tools/mcp_tool_registry.gd",
+    "line": 121,
+    "target": "res://addons/godot_ai/custom_tools/custom_tool_wrapper.gd"
+  },
+  {
+    "source": "addons/godot_ai/debugger/mcp_debugger_plugin.gd",
+    "line": 5,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/debugger/mcp_debugger_plugin.gd",
+    "line": 6,
+    "target": "res://addons/godot_ai/utils/script_work.gd"
+  },
+  {
+    "source": "addons/godot_ai/debugger/mcp_debugger_plugin.gd",
+    "line": 75,
+    "target": "res://addons/godot_ai/vision_routing.gd"
+  },
+  {
+    "source": "addons/godot_ai/dispatcher.gd",
+    "line": 52,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/dispatcher.gd",
+    "line": 53,
+    "target": "res://addons/godot_ai/utils/fuzzy_suggestions.gd"
+  },
+  {
+    "source": "addons/godot_ai/dispatcher.gd",
+    "line": 54,
+    "target": "res://addons/godot_ai/utils/plugin_reload.gd"
+  },
+  {
+    "source": "addons/godot_ai/dispatcher.gd",
+    "line": 103,
+    "target": "res://addons/godot_ai/utils/script_work.gd"
+  },
+  {
+    "source": "addons/godot_ai/dock_panels/log_viewer.gd",
+    "line": 14,
+    "target": "res://addons/godot_ai/mcp_dock.gd"
+  },
+  {
+    "source": "addons/godot_ai/dock_panels/log_viewer.gd",
+    "line": 15,
+    "target": "res://addons/godot_ai/utils/settings.gd"
+  },
+  {
+    "source": "addons/godot_ai/dock_panels/port_picker_panel.gd",
+    "line": 17,
+    "target": "res://addons/godot_ai/client_configurator.gd"
+  },
+  {
+    "source": "addons/godot_ai/dock_panels/port_picker_panel.gd",
+    "line": 18,
+    "target": "res://addons/godot_ai/utils/port_resolver.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/_node_validator.gd",
+    "line": 19,
+    "target": "res://addons/godot_ai/utils/scene_path.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/_node_validator.gd",
+    "line": 20,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/_param_validators.gd",
+    "line": 5,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/animation_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/animation_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/animation_handler.gd",
+    "line": 21,
+    "target": "res://addons/godot_ai/handlers/animation_presets.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/animation_handler.gd",
+    "line": 22,
+    "target": "res://addons/godot_ai/handlers/animation_values.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/animation_presets.gd",
+    "line": 19,
+    "target": "res://addons/godot_ai/handlers/animation_values.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/animation_presets.gd",
+    "line": 20,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/animation_presets.gd",
+    "line": 21,
+    "target": "res://addons/godot_ai/utils/scene_path.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/animation_values.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/variant_serializer.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/animation_values.gd",
+    "line": 22,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/animation_values.gd",
+    "line": 23,
+    "target": "res://addons/godot_ai/handlers/_property_errors.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/api_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/api_handler.gd",
+    "line": 6,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/api_handler.gd",
+    "line": 7,
+    "target": "res://addons/godot_ai/utils/class_introspection.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/api_handler.gd",
+    "line": 8,
+    "target": "res://addons/godot_ai/utils/fuzzy_suggestions.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/audio_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/audio_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/autoload_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/autoload_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/batch_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/batch_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/camera_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/camera_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/camera_handler.gd",
+    "line": 13,
+    "target": "res://addons/godot_ai/handlers/camera_values.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/camera_handler.gd",
+    "line": 14,
+    "target": "res://addons/godot_ai/handlers/camera_presets.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/client_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/client_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/command_handler.gd",
+    "line": 9,
+    "target": "res://addons/godot_ai/utils/script_work.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/control_draw_recipe_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/control_draw_recipe_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/control_draw_recipe_handler.gd",
+    "line": 12,
+    "target": "res://addons/godot_ai/runtime/draw_recipe.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/control_draw_recipe_handler.gd",
+    "line": 13,
+    "target": "res://addons/godot_ai/handlers/ui_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/csg_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/csg_handler.gd",
+    "line": 13,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/curve_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/curve_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/curve_handler.gd",
+    "line": 13,
+    "target": "res://addons/godot_ai/handlers/node_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/editor_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/editor_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/editor_handler.gd",
+    "line": 5,
+    "target": "res://addons/godot_ai/telemetry.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/editor_handler.gd",
+    "line": 6,
+    "target": "res://addons/godot_ai/utils/plugin_reload.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/editor_handler.gd",
+    "line": 7,
+    "target": "res://addons/godot_ai/vision_routing.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/editor_handler.gd",
+    "line": 489,
+    "target": "res://main.tscn\\"
+  },
+  {
+    "source": "addons/godot_ai/handlers/environment_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/environment_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/environment_handler.gd",
+    "line": 10,
+    "target": "res://addons/godot_ai/handlers/resource_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/filesystem_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/filesystem_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/filesystem_handler.gd",
+    "line": 5,
+    "target": "res://addons/godot_ai/handlers/script_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/gridmap_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/gridmap_handler.gd",
+    "line": 11,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/input_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/input_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/material_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/material_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/material_handler.gd",
+    "line": 13,
+    "target": "res://addons/godot_ai/handlers/material_values.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/material_handler.gd",
+    "line": 14,
+    "target": "res://addons/godot_ai/handlers/material_presets.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/material_handler.gd",
+    "line": 482,
+    "target": "res://materials/metal.tres"
+  },
+  {
+    "source": "addons/godot_ai/handlers/node_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/node_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/node_handler.gd",
+    "line": 5,
+    "target": "res://addons/godot_ai/utils/variant_serializer.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/node_handler.gd",
+    "line": 9,
+    "target": "res://addons/godot_ai/handlers/resource_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/particle_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/particle_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/particle_handler.gd",
+    "line": 12,
+    "target": "res://addons/godot_ai/handlers/particle_values.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/particle_handler.gd",
+    "line": 13,
+    "target": "res://addons/godot_ai/handlers/particle_presets.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/particle_values.gd",
+    "line": 6,
+    "target": "res://addons/godot_ai/handlers/material_values.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/physics_shape_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/physics_shape_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/project_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/project_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/project_handler.gd",
+    "line": 8,
+    "target": "res://addons/godot_ai/handlers/node_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/project_handler.gd",
+    "line": 18,
+    "target": "res://../../evil.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/resource_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/resource_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/resource_handler.gd",
+    "line": 5,
+    "target": "res://addons/godot_ai/utils/class_introspection.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/resource_handler.gd",
+    "line": 9,
+    "target": "res://addons/godot_ai/handlers/node_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/scene_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/scene_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/script_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/script_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/script_handler.gd",
+    "line": 5,
+    "target": "res://addons/godot_ai/utils/diagnostics_capture.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/script_handler.gd",
+    "line": 6,
+    "target": "res://addons/godot_ai/runtime/validation_logger.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/signal_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/signal_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/test_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/test_handler.gd",
+    "line": 15,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/texture_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/texture_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/texture_handler.gd",
+    "line": 10,
+    "target": "res://addons/godot_ai/handlers/node_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/theme_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/theme_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/tilemap_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/tilemap_handler.gd",
+    "line": 10,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/tileset_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/tileset_handler.gd",
+    "line": 6,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/ui_handler.gd",
+    "line": 2,
+    "target": "res://addons/godot_ai/handlers/command_handler.gd"
+  },
+  {
+    "source": "addons/godot_ai/handlers/ui_handler.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/mcp_dock.gd",
+    "line": 24,
+    "target": "res://addons/godot_ai/utils/mcp_server_state.gd"
+  },
+  {
+    "source": "addons/godot_ai/mcp_dock.gd",
+    "line": 25,
+    "target": "res://addons/godot_ai/utils/mcp_client_refresh_state.gd"
+  },
+  {
+    "source": "addons/godot_ai/mcp_dock.gd",
+    "line": 26,
+    "target": "res://addons/godot_ai/clients/_base.gd"
+  },
+  {
+    "source": "addons/godot_ai/mcp_dock.gd",
+    "line": 27,
+    "target": "res://addons/godot_ai/client_configurator.gd"
+  },
+  {
+    "source": "addons/godot_ai/mcp_dock.gd",
+    "line": 28,
+    "target": "res://addons/godot_ai/clients/_registry.gd"
+  },
+  {
+    "source": "addons/godot_ai/mcp_dock.gd",
+    "line": 29,
+    "target": "res://addons/godot_ai/tool_catalog.gd"
+  },
+  {
+    "source": "addons/godot_ai/mcp_dock.gd",
+    "line": 30,
+    "target": "res://addons/godot_ai/dock_panels/log_viewer.gd"
+  },
+  {
+    "source": "addons/godot_ai/mcp_dock.gd",
+    "line": 31,
+    "target": "res://addons/godot_ai/dock_panels/port_picker_panel.gd"
+  },
+  {
+    "source": "addons/godot_ai/mcp_dock.gd",
+    "line": 32,
+    "target": "res://addons/godot_ai/vision_routing.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 5,
+    "target": "res://addons/godot_ai/runtime/game_helper.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 10,
+    "target": "res://addons/godot_ai/runtime/editor_logger.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 12,
+    "target": "res://addons/godot_ai/utils/plugin_reload.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 13,
+    "target": "res://addons/godot_ai/utils/release_verifier.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 14,
+    "target": "res://addons/godot_ai/utils/update_installer.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 16,
+    "target": "res://addons/godot_ai/plugin.cfg"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 25,
+    "target": "res://addons/godot_ai/utils/server_lifecycle.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 26,
+    "target": "res://addons/godot_ai/utils/port_resolver.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 27,
+    "target": "res://addons/godot_ai/utils/mcp_server_state.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 28,
+    "target": "res://addons/godot_ai/utils/transport_capability.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 35,
+    "target": "res://addons/godot_ai/connection.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 36,
+    "target": "res://addons/godot_ai/dispatcher.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 37,
+    "target": "res://addons/godot_ai/telemetry.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 38,
+    "target": "res://addons/godot_ai/utils/log_buffer.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 39,
+    "target": "res://addons/godot_ai/utils/game_log_buffer.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 40,
+    "target": "res://addons/godot_ai/utils/editor_log_buffer.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 41,
+    "target": "res://addons/godot_ai/utils/surfaced_error_tracker.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 42,
+    "target": "res://addons/godot_ai/mcp_dock.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 43,
+    "target": "res://addons/godot_ai/debugger/mcp_debugger_plugin.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 44,
+    "target": "res://addons/godot_ai/vision_routing.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 45,
+    "target": "res://addons/godot_ai/export/mcp_export_plugin.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 46,
+    "target": "res://addons/godot_ai/client_configurator.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 47,
+    "target": "res://addons/godot_ai/clients/_cli_exec.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 48,
+    "target": "res://addons/godot_ai/utils/client_job_owner.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 49,
+    "target": "res://addons/godot_ai/utils/update_manager.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 50,
+    "target": "res://addons/godot_ai/utils/windows_port_reservation.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 51,
+    "target": "res://addons/godot_ai/custom_tools/mcp_tool_registry.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 52,
+    "target": "res://addons/godot_ai/custom_tools/mcp_service_locator.gd"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 1061,
+    "target": "res://addons/godot_ai/plugin.cfg"
+  },
+  {
+    "source": "addons/godot_ai/plugin.gd",
+    "line": 1661,
+    "target": "res://addons/godot_ai/utils/update_activation_runner.gd"
+  },
+  {
+    "source": "addons/godot_ai/runtime/editor_logger.gd",
+    "line": 33,
+    "target": "res://addons/godot_ai/utils/log_backtrace.gd"
+  },
+  {
+    "source": "addons/godot_ai/runtime/game_helper.gd",
+    "line": 57,
+    "target": "res://addons/godot_ai/runtime/game_logger.gd"
+  },
+  {
+    "source": "addons/godot_ai/runtime/game_helper.gd",
+    "line": 58,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/runtime/game_helper.gd",
+    "line": 62,
+    "target": "res://addons/godot_ai/utils/screenshot_encode.gd"
+  },
+  {
+    "source": "addons/godot_ai/runtime/game_logger.gd",
+    "line": 24,
+    "target": "res://addons/godot_ai/utils/log_backtrace.gd"
+  },
+  {
+    "source": "addons/godot_ai/runtime/validation_logger.gd",
+    "line": 12,
+    "target": "res://addons/godot_ai/utils/log_backtrace.gd"
+  },
+  {
+    "source": "addons/godot_ai/testing/test_runner.gd",
+    "line": 8,
+    "target": "res://addons/godot_ai/testing/script_error_capture.gd"
+  },
+  {
+    "source": "addons/godot_ai/testing/test_suite.gd",
+    "line": 109,
+    "target": "res://game/arena.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/class_introspection.gd",
+    "line": 6,
+    "target": "res://addons/godot_ai/utils/variant_serializer.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/client_job_owner.gd",
+    "line": 13,
+    "target": "res://addons/godot_ai/clients/_base.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/client_job_owner.gd",
+    "line": 14,
+    "target": "res://addons/godot_ai/client_configurator.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/client_job_owner.gd",
+    "line": 15,
+    "target": "res://addons/godot_ai/clients/_registry.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/client_job_owner.gd",
+    "line": 16,
+    "target": "res://addons/godot_ai/clients/_json_strategy.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/client_job_owner.gd",
+    "line": 17,
+    "target": "res://addons/godot_ai/clients/_toml_strategy.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/client_job_owner.gd",
+    "line": 18,
+    "target": "res://addons/godot_ai/clients/_dsh_strategy.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/client_job_owner.gd",
+    "line": 19,
+    "target": "res://addons/godot_ai/clients/_cli_strategy.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/client_job_owner.gd",
+    "line": 20,
+    "target": "res://addons/godot_ai/utils/mcp_client_refresh_state.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/client_job_owner.gd",
+    "line": 21,
+    "target": "res://addons/godot_ai/utils/client_mutation_lock.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/path_validator.gd",
+    "line": 5,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/path_validator.gd",
+    "line": 178,
+    "target": "res://override.cfg"
+  },
+  {
+    "source": "addons/godot_ai/utils/plugin_reload.gd",
+    "line": 6,
+    "target": "res://addons/godot_ai/plugin.cfg"
+  },
+  {
+    "source": "addons/godot_ai/utils/plugin_reload.gd",
+    "line": 7,
+    "target": "res://addons/godot_ai/utils/script_work.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/port_resolver.gd",
+    "line": 16,
+    "target": "res://addons/godot_ai/utils/windows_port_reservation.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/resource_io.gd",
+    "line": 5,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/resource_io.gd",
+    "line": 245,
+    "target": "res://addons/godot_ai/utils/script_work.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/scene_path.gd",
+    "line": 5,
+    "target": "res://addons/godot_ai/utils/error_codes.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/scene_path.gd",
+    "line": 99,
+    "target": "res://main.tscn\\"
+  },
+  {
+    "source": "addons/godot_ai/utils/server_authority.gd",
+    "line": 4,
+    "target": "res://addons/godot_ai/utils/transport_capability.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/server_lifecycle.gd",
+    "line": 12,
+    "target": "res://addons/godot_ai/utils/server_authority.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/server_lifecycle.gd",
+    "line": 13,
+    "target": "res://addons/godot_ai/client_configurator.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/server_lifecycle.gd",
+    "line": 14,
+    "target": "res://addons/godot_ai/utils/port_resolver.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/server_lifecycle.gd",
+    "line": 15,
+    "target": "res://addons/godot_ai/utils/mcp_server_state.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/server_lifecycle.gd",
+    "line": 16,
+    "target": "res://addons/godot_ai/utils/server_version_check.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/server_lifecycle.gd",
+    "line": 17,
+    "target": "res://addons/godot_ai/utils/transport_capability.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/server_lifecycle.gd",
+    "line": 18,
+    "target": "res://addons/godot_ai/utils/uv_resolution_policy.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/update_installer.gd",
+    "line": 32,
+    "target": "res://addons/godot_ai/utils/port_resolver.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/update_installer.gd",
+    "line": 33,
+    "target": "res://addons/godot_ai/utils/release_verifier.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/update_manager.gd",
+    "line": 42,
+    "target": "res://addons/godot_ai/client_configurator.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/update_manager.gd",
+    "line": 43,
+    "target": "res://addons/godot_ai/utils/transport_capability.gd"
+  },
+  {
+    "source": "addons/godot_ai/utils/uv_resolution_policy.gd",
+    "line": 10,
+    "target": "res://addons/godot_ai/clients/_path_template.gd"
+  },
+  {
+    "source": "assets/scenes/debug/debug_console.tscn",
+    "line": 3,
+    "target": "res://scripts/debug/debug_console_ui.gd"
+  },
+  {
+    "source": "assets/scenes/debug/debug_console.tscn",
+    "line": 4,
+    "target": "res://scripts/debug/debug_action_panel.gd"
+  },
+  {
+    "source": "assets/scenes/game_scene/battle_board_v2.tscn",
+    "line": 3,
+    "target": "res://scripts/game_scene/battle_board_v2.gd"
+  },
+  {
+    "source": "assets/scenes/game_scene/battle_board_v2.tscn",
+    "line": 8,
+    "target": "res://scripts/game_scene/seat_ring.gd"
+  },
+  {
+    "source": "assets/scenes/game_scene/battle_board_v2.tscn",
+    "line": 10,
+    "target": "res://scripts/game_scene/held_card_hit_area.gd"
+  },
+  {
+    "source": "assets/scenes/game_scene/battle_board_v2.tscn",
+    "line": 13,
+    "target": "res://assets/scenes/game_scene/mana_sigil.tscn"
+  },
+  {
+    "source": "assets/scenes/game_scene/battle_board_v2.tscn",
+    "line": 18,
+    "target": "res://assets/scenes/game_scene/network_choice_panel.tscn"
+  },
+  {
+    "source": "assets/scenes/game_scene/battle_board_v2.tscn",
+    "line": 19,
+    "target": "res://assets/scenes/debug/debug_console.tscn"
+  },
+  {
+    "source": "assets/scenes/game_scene/game_scene.tscn",
+    "line": 6,
+    "target": "res://scripts/game_scene/PlayerPad.gd"
+  },
+  {
+    "source": "assets/scenes/game_scene/game_scene.tscn",
+    "line": 15,
+    "target": "res://assets/scenes/ui/header_turn.tscn"
+  },
+  {
+    "source": "assets/scenes/game_scene/mana_sigil.tscn",
+    "line": 3,
+    "target": "res://scripts/game_scene/mana_sigil.gd"
+  },
+  {
+    "source": "assets/scenes/game_scene/network_choice_panel.tscn",
+    "line": 2,
+    "target": "res://scripts/net/ui/network_choice_panel.gd"
+  },
+  {
+    "source": "assets/scenes/game_scene/network_hand_strip.tscn",
+    "line": 2,
+    "target": "res://scripts/net/ui/legacy/network_hand_strip.gd"
+  },
+  {
+    "source": "assets/scenes/game_scene/tactical_board_ui.tscn",
+    "line": 28,
+    "target": "res://scripts/game_scene/tactical_board_ui.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/identity_inheritance_panel.tscn",
+    "line": 3,
+    "target": "res://scripts/net/identity/identity_inheritance_panel.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/main_menu.tscn",
+    "line": 3,
+    "target": "res://scripts/main_menu/main_menu.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/multiplayer_lobby.tscn",
+    "line": 3,
+    "target": "res://scripts/net/ui/lobby_screen.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/multiplayer_lobby.tscn",
+    "line": 4,
+    "target": "res://assets/scenes/main_menu/room_data_panel.tscn"
+  },
+  {
+    "source": "assets/scenes/main_menu/multiplayer_lobby.tscn",
+    "line": 5,
+    "target": "res://assets/scenes/main_menu/identity_inheritance_panel.tscn"
+  },
+  {
+    "source": "assets/scenes/main_menu/opening_background.tscn",
+    "line": 7,
+    "target": "res://scripts/main_menu/opening_warp.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/opening_background.tscn",
+    "line": 11,
+    "target": "res://scripts/main_menu/viewport_fit.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/opening_background.tscn",
+    "line": 431,
+    "target": "res://assets/scenes/main_menu/main_menu.tscn"
+  },
+  {
+    "source": "assets/scenes/main_menu/room_data_panel.tscn",
+    "line": 3,
+    "target": "res://scripts/net/ui/room_data_panel.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/room_data_validation_worker.tscn",
+    "line": 3,
+    "target": "res://scripts/net/validation/room_data_validation_worker.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/selection_screen.tscn",
+    "line": 3,
+    "target": "res://scripts/selection/selection_screen.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/server_bootstrap.tscn",
+    "line": 2,
+    "target": "res://scripts/net/server/server_bootstrap.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/server_cli.tscn",
+    "line": 3,
+    "target": "res://scripts/net/server/server_cli.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/server_console.tscn",
+    "line": 2,
+    "target": "res://scripts/net/server/server_console.gd"
+  },
+  {
+    "source": "assets/scenes/main_menu/server_room_worker.tscn",
+    "line": 3,
+    "target": "res://scripts/net/server/server_room_worker.gd"
+  },
+  {
+    "source": "assets/scenes/ui/header_turn.tscn",
+    "line": 4,
+    "target": "res://scripts/ui/header_turn.gd"
+  },
+  {
+    "source": "json_maker/json_maker.gd",
+    "line": 1389,
+    "target": "res://scripts/system/global/all_operations.gd"
+  },
+  {
+    "source": "json_maker/json_maker.gd",
+    "line": 1591,
+    "target": "res://scripts/system/time_points.gd"
+  },
+  {
+    "source": "json_maker/json_maker.tscn",
+    "line": 3,
+    "target": "res://json_maker/json_theme.tres"
+  },
+  {
+    "source": "json_maker/json_maker.tscn",
+    "line": 4,
+    "target": "res://json_maker/json_maker_ui.gd"
+  },
+  {
+    "source": "json_maker/json_maker_backup.tscn",
+    "line": 3,
+    "target": "res://json_maker/json_maker_ui.gd"
+  },
+  {
+    "source": "json_maker/json_maker_ui.gd",
+    "line": 7,
+    "target": "res://json_maker/json_codec.gd"
+  },
+  {
+    "source": "json_maker/json_maker_ui.gd",
+    "line": 8,
+    "target": "res://json_maker/json_style.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 20,
+    "target": "res://assets/scenes/main_menu/opening_background.tscn"
+  },
+  {
+    "source": "project.godot",
+    "line": 25,
+    "target": "res://assets/scenes/main_menu/server_bootstrap.tscn"
+  },
+  {
+    "source": "project.godot",
+    "line": 30,
+    "target": "res://scripts/system/global/cursor_replace.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 31,
+    "target": "res://scripts/system/global/game_data.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 32,
+    "target": "res://scripts/main_menu/game_start.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 33,
+    "target": "res://scripts/system/global/master_manager.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 34,
+    "target": "res://scripts/system/global/servant_manager.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 35,
+    "target": "res://scripts/system/global/game_data_manager.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 36,
+    "target": "res://scripts/system/global/time_point_checker.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 37,
+    "target": "res://scripts/system/global/load_game.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 38,
+    "target": "res://scripts/system/map_data.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 39,
+    "target": "res://scripts/system/global/game_progress.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 40,
+    "target": "res://scripts/system/global/effect_manager.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 41,
+    "target": "res://addons/godot_ai/runtime/game_helper.gd"
+  },
+  {
+    "source": "project.godot",
+    "line": 60,
+    "target": "res://addons/godot_ai/plugin.cfg"
+  },
+  {
+    "source": "scripts/game_scene/battle_board_v2.gd",
+    "line": 144,
+    "target": "res://scripts/match/seat_controller.gd"
+  },
+  {
+    "source": "scripts/game_scene/battle_board_v2.gd",
+    "line": 145,
+    "target": "res://scripts/match/match_driver.gd"
+  },
+  {
+    "source": "scripts/game_scene/battle_board_v2.gd",
+    "line": 146,
+    "target": "res://scripts/match/match_commands.gd"
+  },
+  {
+    "source": "scripts/game_scene/battle_board_v2.gd",
+    "line": 279,
+    "target": "res://scripts/game_scene/tactical_board_ui.gd"
+  },
+  {
+    "source": "scripts/game_scene/battle_board_v2.gd",
+    "line": 305,
+    "target": "res://scripts/net/ui/v2_view_presenter.gd"
+  },
+  {
+    "source": "scripts/game_scene/battle_board_v2.gd",
+    "line": 419,
+    "target": "res://assets/scenes/main_menu/multiplayer_lobby.tscn"
+  },
+  {
+    "source": "scripts/game_scene/battle_board_v2.gd",
+    "line": 4974,
+    "target": "res://scripts/game_scene/tactical_board_ui.gd"
+  },
+  {
+    "source": "scripts/game_scene/tactical_board_ui.gd",
+    "line": 3566,
+    "target": "res://assets/scenes/debug/debug_console.tscn"
+  },
+  {
+    "source": "scripts/main_menu/game_start.gd",
+    "line": 5,
+    "target": "res://assets/scenes/main_menu/main_menu.tscn"
+  },
+  {
+    "source": "scripts/main_menu/game_start.gd",
+    "line": 16,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/main_menu/game_start.gd",
+    "line": 139,
+    "target": "res://scripts/match/rule_random.gd"
+  },
+  {
+    "source": "scripts/main_menu/main_menu.gd",
+    "line": 16,
+    "target": "res://assets/scenes/main_menu/selection_screen.tscn"
+  },
+  {
+    "source": "scripts/main_menu/main_menu.gd",
+    "line": 18,
+    "target": "res://assets/scenes/main_menu/multiplayer_lobby.tscn"
+  },
+  {
+    "source": "scripts/main_menu/main_menu.gd",
+    "line": 25,
+    "target": "res://json_maker/json_maker.tscn"
+  },
+  {
+    "source": "scripts/match/effect_checkpoint.gd",
+    "line": 1,
+    "target": "res://scripts/match/rule_checkpoint.gd"
+  },
+  {
+    "source": "scripts/match/effect_checkpoint.gd",
+    "line": 3,
+    "target": "res://scripts/match/rule_random.gd"
+  },
+  {
+    "source": "scripts/match/match_driver.gd",
+    "line": 5,
+    "target": "res://scripts/match/seat_controller.gd"
+  },
+  {
+    "source": "scripts/match/match_driver.gd",
+    "line": 6,
+    "target": "res://scripts/game_scene/tactical_board_ui.gd"
+  },
+  {
+    "source": "scripts/match/match_replay.gd",
+    "line": 5,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/match/match_replay.gd",
+    "line": 6,
+    "target": "res://scripts/match/net_ids.gd"
+  },
+  {
+    "source": "scripts/match/match_replay.gd",
+    "line": 7,
+    "target": "res://scripts/match/match_driver.gd"
+  },
+  {
+    "source": "scripts/match/match_replay.gd",
+    "line": 8,
+    "target": "res://scripts/match/match_commands.gd"
+  },
+  {
+    "source": "scripts/match/match_replay.gd",
+    "line": 9,
+    "target": "res://scripts/match/rule_random.gd"
+  },
+  {
+    "source": "scripts/match/match_replay.gd",
+    "line": 10,
+    "target": "res://scripts/match/rule_state.gd"
+  },
+  {
+    "source": "scripts/match/match_replay.gd",
+    "line": 33,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/match/match_replay.gd",
+    "line": 452,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/match/match_replay.gd",
+    "line": 537,
+    "target": "res://scripts/main_menu/game_start.gd"
+  },
+  {
+    "source": "scripts/match/rule_checkpoint.gd",
+    "line": 4,
+    "target": "res://scripts/match/net_ids.gd"
+  },
+  {
+    "source": "scripts/match/rule_state.gd",
+    "line": 4,
+    "target": "res://scripts/match/net_ids.gd"
+  },
+  {
+    "source": "scripts/match/rule_state.gd",
+    "line": 28,
+    "target": "res://scripts/match/rule_random.gd"
+  },
+  {
+    "source": "scripts/match/view_builder.gd",
+    "line": 4,
+    "target": "res://scripts/game_scene/tactical_board_ui.gd"
+  },
+  {
+    "source": "scripts/match/view_builder.gd",
+    "line": 7,
+    "target": "res://scripts/match/net_ids.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 4,
+    "target": "res://scripts/match/match_driver.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 5,
+    "target": "res://scripts/match/view_builder.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 6,
+    "target": "res://scripts/match/match_commands.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 23,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 25,
+    "target": "res://scripts/match/rule_random.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 46,
+    "target": "res://scripts/match/match_replay.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 53,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 86,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 307,
+    "target": "res://scripts/match/match_driver.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 314,
+    "target": "res://scripts/match/rule_random.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 317,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 348,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 364,
+    "target": "res://scripts/match/match_driver.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 371,
+    "target": "res://scripts/match/rule_random.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 421,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 434,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 443,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 471,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 483,
+    "target": "res://scripts/match/match_replay.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 484,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/authority/match_authority.gd",
+    "line": 493,
+    "target": "res://scripts/match/view_builder.gd"
+  },
+  {
+    "source": "scripts/net/authority/selection_authority.gd",
+    "line": 11,
+    "target": "res://scripts/selection/selection_mode.gd"
+  },
+  {
+    "source": "scripts/net/content/blob_receiver.gd",
+    "line": 6,
+    "target": "res://scripts/net/content/content_cache.gd"
+  },
+  {
+    "source": "scripts/net/content/data_catalog.gd",
+    "line": 19,
+    "target": "res://scripts/net/content/room_data_assembler.gd"
+  },
+  {
+    "source": "scripts/net/content/data_catalog.gd",
+    "line": 20,
+    "target": "res://scripts/net/content/content_cache.gd"
+  },
+  {
+    "source": "scripts/net/content/room_assets.gd",
+    "line": 4,
+    "target": "res://scripts/net/content/data_catalog.gd"
+  },
+  {
+    "source": "scripts/net/content/room_assets.gd",
+    "line": 5,
+    "target": "res://scripts/net/content/room_data_assembler.gd"
+  },
+  {
+    "source": "scripts/net/content/room_assets.gd",
+    "line": 6,
+    "target": "res://scripts/net/content/content_cache.gd"
+  },
+  {
+    "source": "scripts/net/content/room_data_assembler.gd",
+    "line": 4,
+    "target": "res://scripts/net/content/data_catalog.gd"
+  },
+  {
+    "source": "scripts/net/content/room_data_assembler.gd",
+    "line": 5,
+    "target": "res://scripts/net/content/content_cache.gd"
+  },
+  {
+    "source": "scripts/net/content/room_data_plan.gd",
+    "line": 6,
+    "target": "res://scripts/net/content/data_catalog.gd"
+  },
+  {
+    "source": "scripts/net/content/room_data_plan.gd",
+    "line": 35,
+    "target": "res://scripts/net/content/room_data_assembler.gd"
+  },
+  {
+    "source": "scripts/net/content/room_data_plan.gd",
+    "line": 36,
+    "target": "res://scripts/net/content/content_cache.gd"
+  },
+  {
+    "source": "scripts/net/content/room_data_sync.gd",
+    "line": 10,
+    "target": "res://scripts/net/content/room_data_assembler.gd"
+  },
+  {
+    "source": "scripts/net/identity/identity_inheritance_input.gd",
+    "line": 4,
+    "target": "res://scripts/net/identity/member_identity_bindings.gd"
+  },
+  {
+    "source": "scripts/net/identity/identity_inheritance_panel.gd",
+    "line": 4,
+    "target": "res://scripts/net/identity/identity_inheritance_input.gd"
+  },
+  {
+    "source": "scripts/net/identity/legacy_identity_migration.gd",
+    "line": 4,
+    "target": "res://scripts/net/identity/member_identity_bindings.gd"
+  },
+  {
+    "source": "scripts/net/identity/member_identity_bindings.gd",
+    "line": 3,
+    "target": "res://scripts/net/identity/player_registry.gd"
+  },
+  {
+    "source": "scripts/net/identity/member_identity_bindings.gd",
+    "line": 84,
+    "target": "res://scripts/net/server/server_console_channel.gd"
+  },
+  {
+    "source": "scripts/net/identity/player_registry.gd",
+    "line": 3,
+    "target": "res://scripts/net/identity/player_name_rules.gd"
+  },
+  {
+    "source": "scripts/net/identity/player_registry.gd",
+    "line": 4,
+    "target": "res://scripts/net/server/server_console_channel.gd"
+  },
+  {
+    "source": "scripts/net/p2p/p2p_invite.gd",
+    "line": 5,
+    "target": "res://scripts/net/transport/webrtc_link.gd"
+  },
+  {
+    "source": "scripts/net/p2p/p2p_signal_client.gd",
+    "line": 6,
+    "target": "res://scripts/net/p2p/p2p_invite.gd"
+  },
+  {
+    "source": "scripts/net/p2p/p2p_signal_server.gd",
+    "line": 18,
+    "target": "res://scripts/net/p2p/p2p_invite.gd"
+  },
+  {
+    "source": "scripts/net/server/server_bootstrap.gd",
+    "line": 76,
+    "target": "res://assets/scenes/main_menu/server_console.tscn"
+  },
+  {
+    "source": "scripts/net/server/server_bootstrap.gd",
+    "line": 77,
+    "target": "res://assets/scenes/main_menu/server_room_worker.tscn"
+  },
+  {
+    "source": "scripts/net/server/server_bootstrap.gd",
+    "line": 78,
+    "target": "res://assets/scenes/main_menu/room_data_validation_worker.tscn"
+  },
+  {
+    "source": "scripts/net/server/server_bootstrap.gd",
+    "line": 79,
+    "target": "res://assets/scenes/main_menu/server_cli.tscn"
+  },
+  {
+    "source": "scripts/net/server/server_bootstrap.gd",
+    "line": 126,
+    "target": "res://scripts/net/server/server_process_signals.gd"
+  },
+  {
+    "source": "scripts/net/server/server_bootstrap.gd",
+    "line": 130,
+    "target": "res://scripts/net/p2p/p2p_signal_server.gd"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 7,
+    "target": "res://scripts/net/p2p/p2p_signal_server.gd"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 9,
+    "target": "res://scripts/net/server/server_console_channel.gd"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 12,
+    "target": "res://scripts/net/server/server_shutdown.gd"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 33,
+    "target": "res://scripts/net/server/server_bootstrap.gd"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 50,
+    "target": "res://scripts/net/server/server_gateway.gd"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 61,
+    "target": "res://scripts/net/session/room_state.gd"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 90,
+    "target": "res://scripts/net/server/server_policy_config.gd"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 162,
+    "target": "res://scripts/net/server/server_process_signals.gd"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 205,
+    "target": "res://scripts/net/p2p/p2p_signal_server.gd"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 215,
+    "target": "res://scripts/net/server/server_bootstrap.gd"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 219,
+    "target": "res://assets/config/server.cfg"
+  },
+  {
+    "source": "scripts/net/server/server_cli.gd",
+    "line": 236,
+    "target": "res://scripts/net/server/server_bootstrap.gd"
+  },
+  {
+    "source": "scripts/net/server/server_console.gd",
+    "line": 3,
+    "target": "res://scripts/net/server/server_console_channel.gd"
+  },
+  {
+    "source": "scripts/net/server/server_console_channel.gd",
+    "line": 63,
+    "target": "res://scripts/net/server/server_command_line.gd"
+  },
+  {
+    "source": "scripts/net/server/server_console_channel.gd",
+    "line": 190,
+    "target": "res://scripts/net/session/room_state.gd"
+  },
+  {
+    "source": "scripts/net/server/server_console_channel.gd",
+    "line": 223,
+    "target": "res://scripts/net/identity/legacy_identity_migration.gd"
+  },
+  {
+    "source": "scripts/net/server/server_data_approval.gd",
+    "line": 19,
+    "target": "res://scripts/net/validation/room_data_preparation.gd"
+  },
+  {
+    "source": "scripts/net/server/server_gateway.gd",
+    "line": 4,
+    "target": "res://scripts/net/transport/enet_transport.gd"
+  },
+  {
+    "source": "scripts/net/server/server_gateway.gd",
+    "line": 5,
+    "target": "res://scripts/net/server/server_room_manager.gd"
+  },
+  {
+    "source": "scripts/net/server/server_gateway.gd",
+    "line": 16,
+    "target": "res://scripts/net/identity/player_registry.gd"
+  },
+  {
+    "source": "scripts/net/server/server_gateway.gd",
+    "line": 273,
+    "target": "res://scripts/net/identity/member_identity_bindings.gd"
+  },
+  {
+    "source": "scripts/net/server/server_gateway.gd",
+    "line": 289,
+    "target": "res://scripts/net/transport/enet_transport.gd"
+  },
+  {
+    "source": "scripts/net/server/server_gateway.gd",
+    "line": 461,
+    "target": "res://scripts/net/identity/player_name_rules.gd"
+  },
+  {
+    "source": "scripts/net/server/server_gateway.gd",
+    "line": 488,
+    "target": "res://scripts/net/identity/player_identity.gd"
+  },
+  {
+    "source": "scripts/net/server/server_gateway.gd",
+    "line": 521,
+    "target": "res://scripts/net/identity/legacy_identity_migration.gd"
+  },
+  {
+    "source": "scripts/net/server/server_process_signals.gd",
+    "line": 6,
+    "target": "res://addons/fate_server_signals/fate_server_signals.gdextension"
+  },
+  {
+    "source": "scripts/net/server/server_room_control.gd",
+    "line": 3,
+    "target": "res://scripts/net/server/server_console_channel.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_manager.gd",
+    "line": 19,
+    "target": "res://scripts/net/server/recovery_path_safety.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_manager.gd",
+    "line": 136,
+    "target": "res://scripts/net/session/room_state.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_manager.gd",
+    "line": 168,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_manager.gd",
+    "line": 172,
+    "target": "res://assets/scenes/main_menu/server_room_worker.tscn"
+  },
+  {
+    "source": "scripts/net/server/server_room_manager.gd",
+    "line": 173,
+    "target": "res://scripts/net/server/server_bootstrap.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_manager.gd",
+    "line": 251,
+    "target": "res://scripts/net/session/lobby_session.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_manager.gd",
+    "line": 320,
+    "target": "res://assets/scenes/main_menu/server_room_worker.tscn"
+  },
+  {
+    "source": "scripts/net/server/server_room_manager.gd",
+    "line": 321,
+    "target": "res://scripts/net/server/server_bootstrap.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 5,
+    "target": "res://scripts/net/session/lobby_session.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 6,
+    "target": "res://scripts/net/server/server_data_approval.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 7,
+    "target": "res://scripts/net/server/server_room_control.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 16,
+    "target": "res://scripts/net/server/recovery_path_safety.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 23,
+    "target": "res://scripts/net/server/server_process_signals.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 41,
+    "target": "res://scripts/net/server/server_room_manager.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 48,
+    "target": "res://scripts/net/server/server_room_manager.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 48,
+    "target": "res://scripts/net/server/server_room_manager.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 66,
+    "target": "res://scripts/net/session/room_state.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 104,
+    "target": "res://scripts/net/content/data_catalog.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 114,
+    "target": "res://scripts/net/content/room_data_plan.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 131,
+    "target": "res://scripts/net/content/room_data_assembler.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 132,
+    "target": "res://scripts/net/validation/room_data_validator.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 187,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 292,
+    "target": "res://scripts/net/content/content_cache.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 303,
+    "target": "res://scripts/net/content/content_cache.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 323,
+    "target": "res://scripts/system/global/game_log.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 324,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/server/server_room_worker.gd",
+    "line": 343,
+    "target": "res://scripts/match/match_journal.gd"
+  },
+  {
+    "source": "scripts/net/session/authority_host_client.gd",
+    "line": 4,
+    "target": "res://scripts/net/server/server_gateway.gd"
+  },
+  {
+    "source": "scripts/net/session/authority_host_client.gd",
+    "line": 128,
+    "target": "res://scripts/net/server/server_console_channel.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 4,
+    "target": "res://scripts/net/transport/enet_transport.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 5,
+    "target": "res://scripts/net/session/room_state.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 20,
+    "target": "res://scripts/net/session/authority_host_client.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 31,
+    "target": "res://scripts/net/session/authority_host_client.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 39,
+    "target": "res://scripts/net/content/blob_receiver.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 45,
+    "target": "res://scripts/net/authority/selection_authority.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 47,
+    "target": "res://scripts/net/authority/match_authority.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 48,
+    "target": "res://scripts/match/view_mirror.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 64,
+    "target": "res://scripts/net/transport/room_manifest_transfer.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 65,
+    "target": "res://scripts/net/transport/catalog_message_transfer.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 71,
+    "target": "res://scripts/net/content/room_assets.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 88,
+    "target": "res://scripts/net/identity/room_password.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 89,
+    "target": "res://scripts/net/identity/player_identity.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 266,
+    "target": "res://scripts/net/identity/player_registry.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 317,
+    "target": "res://scripts/net/identity/member_identity_bindings.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 344,
+    "target": "res://scripts/net/identity/player_name_rules.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 424,
+    "target": "res://scripts/net/authority/selection_authority.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 426,
+    "target": "res://scripts/net/authority/match_authority.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 545,
+    "target": "res://scripts/net/identity/identity_inheritance_input.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 551,
+    "target": "res://scripts/net/identity/player_registry.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 701,
+    "target": "res://scripts/net/identity/member_identity_bindings.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 712,
+    "target": "res://scripts/net/identity/player_registry.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 751,
+    "target": "res://scripts/net/content/data_catalog.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 808,
+    "target": "res://scripts/net/authority/selection_authority.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 901,
+    "target": "res://scripts/net/content/data_catalog.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 926,
+    "target": "res://scripts/net/content/data_catalog.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 950,
+    "target": "res://scripts/net/content/data_catalog.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 992,
+    "target": "res://scripts/net/content/room_assets.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 996,
+    "target": "res://scripts/net/content/room_data_assembler.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 1150,
+    "target": "res://scripts/net/validation/room_data_validator.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 1154,
+    "target": "res://scripts/net/content/room_assets.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 1282,
+    "target": "res://scripts/net/identity/room_password.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 1292,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 1293,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 1310,
+    "target": "res://scripts/net/identity/member_identity_bindings.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 1358,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 1375,
+    "target": "res://scripts/net/authority/match_authority.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 1400,
+    "target": "res://scripts/net/content/room_assets.gd"
+  },
+  {
+    "source": "scripts/net/session/lobby_session.gd",
+    "line": 1416,
+    "target": "res://scripts/net/authority/selection_authority.gd"
+  },
+  {
+    "source": "scripts/net/session/room_state.gd",
+    "line": 153,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/session/room_state.gd",
+    "line": 154,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/session/room_state.gd",
+    "line": 170,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/transport/catalog_message_transfer.gd",
+    "line": 4,
+    "target": "res://scripts/net/transport/enet_transport.gd"
+  },
+  {
+    "source": "scripts/net/transport/catalog_message_transfer.gd",
+    "line": 5,
+    "target": "res://scripts/net/transport/packet_fragments.gd"
+  },
+  {
+    "source": "scripts/net/transport/enet_transport.gd",
+    "line": 19,
+    "target": "res://scripts/net/transport/packet_fragments.gd"
+  },
+  {
+    "source": "scripts/net/transport/room_manifest_transfer.gd",
+    "line": 5,
+    "target": "res://scripts/net/content/room_data_assembler.gd"
+  },
+  {
+    "source": "scripts/net/ui/legacy/network_hand_strip.gd",
+    "line": 3,
+    "target": "res://scripts/net/ui/group_selection.gd"
+  },
+  {
+    "source": "scripts/net/ui/lobby_screen.gd",
+    "line": 3,
+    "target": "res://scripts/net/session/lobby_session.gd"
+  },
+  {
+    "source": "scripts/net/ui/lobby_screen.gd",
+    "line": 6,
+    "target": "res://scripts/net/content/room_data_sync.gd"
+  },
+  {
+    "source": "scripts/net/ui/lobby_screen.gd",
+    "line": 18,
+    "target": "res://scripts/net/p2p/p2p_invite.gd"
+  },
+  {
+    "source": "scripts/net/ui/lobby_screen.gd",
+    "line": 19,
+    "target": "res://scripts/net/p2p/p2p_signal_client.gd"
+  },
+  {
+    "source": "scripts/net/ui/lobby_screen.gd",
+    "line": 262,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/ui/lobby_screen.gd",
+    "line": 318,
+    "target": "res://scripts/net/identity/player_name_rules.gd"
+  },
+  {
+    "source": "scripts/net/ui/lobby_screen.gd",
+    "line": 465,
+    "target": "res://scripts/net/server/server_console_channel.gd"
+  },
+  {
+    "source": "scripts/net/ui/lobby_screen.gd",
+    "line": 564,
+    "target": "res://assets/scenes/game_scene/battle_board_v2.tscn"
+  },
+  {
+    "source": "scripts/net/ui/room_data_panel.gd",
+    "line": 10,
+    "target": "res://scripts/net/validation/room_data_preparation.gd"
+  },
+  {
+    "source": "scripts/net/ui/room_data_panel.gd",
+    "line": 61,
+    "target": "res://scripts/net/content/data_catalog.gd"
+  },
+  {
+    "source": "scripts/net/ui/room_data_panel.gd",
+    "line": 152,
+    "target": "res://scripts/net/content/data_catalog.gd"
+  },
+  {
+    "source": "scripts/net/ui/v2_view_presenter.gd",
+    "line": 7,
+    "target": "res://scripts/net/ui/group_selection.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_preparation.gd",
+    "line": 12,
+    "target": "res://scripts/net/validation/room_validation_task.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_preparation.gd",
+    "line": 28,
+    "target": "res://scripts/net/content/room_data_plan.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_preparation.gd",
+    "line": 33,
+    "target": "res://scripts/net/validation/rule_random_simulation.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_preparation.gd",
+    "line": 88,
+    "target": "res://scripts/net/content/data_catalog.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_preparation.gd",
+    "line": 93,
+    "target": "res://scripts/net/content/room_data_assembler.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_preparation.gd",
+    "line": 109,
+    "target": "res://scripts/net/validation/rule_random_simulation.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_validation_worker.gd",
+    "line": 11,
+    "target": "res://scripts/net/validation/room_data_validator.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_validation_worker.gd",
+    "line": 21,
+    "target": "res://scripts/net/content/content_cache.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_validation_worker.gd",
+    "line": 45,
+    "target": "res://scripts/net/validation/rule_loop_analysis.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_validation_worker.gd",
+    "line": 50,
+    "target": "res://scripts/net/content/room_data_assembler.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_validation_worker.gd",
+    "line": 97,
+    "target": "res://scripts/net/validation/rule_random_simulation.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_validation_worker.gd",
+    "line": 105,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_data_validator.gd",
+    "line": 24,
+    "target": "res://scripts/net/content/room_data_assembler.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_validation_task.gd",
+    "line": 35,
+    "target": "res://scripts/net/validation/room_data_validator.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_validation_task.gd",
+    "line": 36,
+    "target": "res://scripts/net/content/room_data_assembler.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_validation_task.gd",
+    "line": 50,
+    "target": "res://assets/scenes/main_menu/room_data_validation_worker.tscn"
+  },
+  {
+    "source": "scripts/net/validation/room_validation_task.gd",
+    "line": 54,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_validation_task.gd",
+    "line": 57,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/validation/room_validation_task.gd",
+    "line": 76,
+    "target": "res://scripts/net/server/server_bootstrap.gd"
+  },
+  {
+    "source": "scripts/net/validation/rule_random_simulation.gd",
+    "line": 19,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/net/validation/rule_random_simulation.gd",
+    "line": 26,
+    "target": "res://scripts/selection/selection_mode.gd"
+  },
+  {
+    "source": "scripts/net/validation/rule_random_simulation.gd",
+    "line": 43,
+    "target": "res://scripts/match/rule_random.gd"
+  },
+  {
+    "source": "scripts/net/validation/rule_random_simulation.gd",
+    "line": 47,
+    "target": "res://scripts/net/authority/selection_authority.gd"
+  },
+  {
+    "source": "scripts/net/validation/rule_random_simulation.gd",
+    "line": 51,
+    "target": "res://scripts/net/authority/match_authority.gd"
+  },
+  {
+    "source": "scripts/selection/class_pool_selection.gd",
+    "line": 1,
+    "target": "res://scripts/selection/selection_mode.gd"
+  },
+  {
+    "source": "scripts/selection/selection_screen.gd",
+    "line": 3,
+    "target": "res://scripts/selection/selection_mode.gd"
+  },
+  {
+    "source": "scripts/selection/selection_screen.gd",
+    "line": 4,
+    "target": "res://assets/scenes/game_scene/battle_board_v2.tscn"
+  },
+  {
+    "source": "scripts/system/ai/temp/dummy_bot.gd",
+    "line": 4,
+    "target": "res://scripts/match/rule_random.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 8,
+    "target": "res://scripts/system/operations/GetProperty.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 9,
+    "target": "res://scripts/system/operations/GetMapAreaByName.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 10,
+    "target": "res://scripts/system/operations/GetPlayersInMapArea.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 11,
+    "target": "res://scripts/system/operations/MergeArrays.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 12,
+    "target": "res://scripts/system/operations/CalculateNumber.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 13,
+    "target": "res://scripts/system/operations/MatchFunc.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 14,
+    "target": "res://scripts/system/operations/IfFunc.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 15,
+    "target": "res://scripts/system/operations/IfElseFunc.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 16,
+    "target": "res://scripts/system/operations/IsNull.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 17,
+    "target": "res://scripts/system/operations/NotFunc.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 18,
+    "target": "res://scripts/system/operations/AndFunc.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 19,
+    "target": "res://scripts/system/operations/GetRankByDataNumber.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 20,
+    "target": "res://scripts/system/operations/GetSharedAttackAttribute.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 21,
+    "target": "res://scripts/system/operations/GetPlayerPlayedCards.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 22,
+    "target": "res://scripts/system/operations/GetEffectiveLocationBenefit.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 23,
+    "target": "res://scripts/system/operations/GetPlayerLocationBenefit.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 24,
+    "target": "res://scripts/system/operations/GetAttackPrintedPower.gd"
+  },
+  {
+    "source": "scripts/system/global/board_power_query.gd",
+    "line": 25,
+    "target": "res://scripts/system/operations/IsTrueNameReleased.gd"
+  },
+  {
+    "source": "scripts/system/global/effect_manager.gd",
+    "line": 90,
+    "target": "res://scripts/match/rule_budget.gd"
+  },
+  {
+    "source": "scripts/system/global/effect_manager.gd",
+    "line": 154,
+    "target": "res://scripts/match/effect_checkpoint.gd"
+  },
+  {
+    "source": "scripts/system/global/game_log.gd",
+    "line": 20,
+    "target": "res://scripts/system/global/fact_delivery.gd"
+  },
+  {
+    "source": "scripts/system/global/load_game.gd",
+    "line": 11,
+    "target": "res://scripts/selection/roster_catalog.gd"
+  },
+  {
+    "source": "scripts/system/operations/RandomFloat.gd",
+    "line": 4,
+    "target": "res://scripts/match/rule_random.gd"
+  },
+  {
+    "source": "scripts/system/operations/RandomInt.gd",
+    "line": 4,
+    "target": "res://scripts/match/rule_random.gd"
+  },
+  {
+    "source": "scripts/system/operations/ShuffleArray.gd",
+    "line": 4,
+    "target": "res://scripts/match/rule_random.gd"
+  }
+]

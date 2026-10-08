@@ -1,0 +1,39 @@
+{
+  "id": "tests/net_server_linux_create_test.tscn:window",
+  "scene": "tests/net_server_linux_create_test.tscn",
+  "mode": "window",
+  "required": true,
+  "stage_hint": "release_linux",
+  "scripts": [
+    "res://tests/match_journal_test.gd",
+    "res://tests/net_server_archive_match_test.gd",
+    "res://tests/net_server_linux_create_test.gd",
+    "res://tests/net_server_linux_recovery_test.gd",
+    "res://tests/net_server_linux_save_recovery_test.gd",
+    "res://tests/net_server_match_test.gd",
+    "res://tests/net_server_recovery_match_test.gd",
+    "res://tests/net_server_recovery_midmatch_test.gd"
+  ],
+  "environment_names": [
+    "FATE_TEST_LINUX_CONSOLE_ROOT",
+    "FATE_TEST_LINUX_ROOM_ROOT",
+    "FATE_TEST_SERVER_ADDRESS",
+    "FATE_TEST_SERVER_PORT"
+  ],
+  "command_template_NOT_EXECUTED": [
+    "<GODOT_CONSOLE_EXE>",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\Projects\\Godot\\FateDominationGame-master",
+    "--scene",
+    "res://tests/net_server_linux_create_test.tscn",
+    "--resolution",
+    "1920x1080",
+    "--",
+    "window"
+  ],
+  "timeout_sec": null,
+  "status": "NOT_RUN",
+  "window_requires_branch_marker": true
+}

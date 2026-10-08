@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/san_no_tachi_window_test.tscn:window",
+  "scene": "tests/san_no_tachi_window_test.tscn",
+  "mode": "window",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://scripts/net/room_data_panel.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/net/ui/room_data_panel.gd" id="1"]
 
 [node name="RoomDataPanel" type="PopupPanel"]
 size = Vector2i(1000, 720)
@@ -76,8 +76,13 @@ text = "校验并应用"
 layout_mode = 2
 text = "关闭"
 
+[node name="ServerSources" type="Button" parent="Margin/Content/Actions"]
+visible = false
+layout_mode = 2
+text = "切换到服务端批准"
+
 [node name="RiskConfirmation" type="ConfirmationDialog" parent="."]
-title = "静态风险预检"
+title = "规则风险预检"
 ok_button_text = "确认使用所选数据"
 cancel_button_text = "返回选择"
 

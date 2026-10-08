@@ -1,0 +1,18 @@
+from SCons.Script import ARGUMENTS, Default, Glob, SConscript
+
+# godot-cpp 为构建依赖，路径由构建者显式传入，不包含在发行包中。
+cpp_dir = ARGUMENTS.get("godot_cpp_dir")
+if not cpp_dir:
+    raise RuntimeError("Specify godot_cpp_dir pointing to godot-cpp godot-4.4-stable")
+env = SConscript(cpp_dir + "/SConstruct")
+env.Append(CPPPATH=["src"])
+if env["platform"] == "windows":
+    env.Append(LIBS=["bcrypt"])
+    if env.get("use_mingw", False):
+        env.Append(CPPDEFINES=[("_WIN32_WINNT", "0x0A000002")])
+        env.Append(LINKFLAGS=["-static-libgcc", "-static-libstdc++", "-static"])
+target_suffix = "." + env["target"] if env["platform"] == "windows" else ""
+name = "bin/libfate_server_signals." + env["platform"] + target_suffix + "." + env["arch"] + env["SHLIBSUFFIX"]
+library = env.SharedLibrary(name, source=Glob("src/*.cpp"))
+env.NoCache(library)
+Default(library)

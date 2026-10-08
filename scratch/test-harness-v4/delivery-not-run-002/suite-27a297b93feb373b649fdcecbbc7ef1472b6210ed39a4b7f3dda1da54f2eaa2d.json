@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/card_selection_sources_test.tscn:headless",
+  "scene": "tests/card_selection_sources_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

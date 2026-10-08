@@ -1,0 +1,90 @@
+--- a/scripts/net/server/server_room_manager.gd
++++ b/scripts/net/server/server_room_manager.gd
+@@ -52,6 +52,13 @@
+ 
+ ## 只接受生命周期所有者提供的 OS 句柄验证，不以 PID 存活/ready 字符串替代。
+ var process_identity_verifier:Callable
++const PROCESS_OWNERSHIP_UNAVAILABLE:String = "原生工作进程所有权验证不可用；禁止启动、恢复或操作未验证的进程，原目录保留"
++
++## 当前扩展仅支持信号保护，未提供原子 spawn + 私有 OS 句柄生命周期。
++## 这是显式部署阻断，不可通过设置 Callable、ready 字符串或 PID 存活绕过。
++## 只有原生所有者接管 spawn/verify/exit/terminate/release 后才可开放此接口。
++func process_ownership_available() -> bool:
++	return false
+ 
+ func instance_binding(id:String) -> Dictionary:
+ 	if not rooms.has(id): return {}
+@@ -68,6 +75,9 @@
+ 	return room.get("ready",false) and binding.pid > 0 and process_identity_verified(binding)
+ 
+ func process_identity_verified(binding:Dictionary) -> bool:
++	if not process_ownership_available():
++		error = PROCESS_OWNERSHIP_UNAVAILABLE
++		return false
+ 	if not binding_matches(binding) or binding.pid <= 0 or not process_identity_verifier.is_valid(): return false
+ 	# 必须为严格 bool true；错误码、字典或非零整数不构成验证成功。
+ 	var verified:Variant = process_identity_verifier.call(binding.duplicate(true))
+@@ -100,6 +110,9 @@
+ 
+ func create_room(name: String, settings: Dictionary, data_root: String) -> String:
+ 	error = ""
++	if not process_ownership_available():
++		error = PROCESS_OWNERSHIP_UNAVAILABLE
++		return ""
+ 	if not RecoveryPaths.checked(data_root, data_root) or not RecoveryPaths.tree(data_root, data_root, [20000]):
+ 		error = "批准数据根必须是无链接的规范本机目录"
+ 		return ""
+@@ -165,6 +178,12 @@
+ 	return id
+ 
+ func poll() -> void:
++	if not process_ownership_available():
++		error = PROCESS_OWNERSHIP_UNAVAILABLE
++		for room in rooms.values():
++			room.ready = false
++			room.error = PROCESS_OWNERSHIP_UNAVAILABLE
++		return
+ 	if Time.get_ticks_msec() - _pulse_msec >= 1000:
+ 		_pulse_msec = Time.get_ticks_msec()
+ 		_pulse_version += 1
+@@ -249,6 +268,9 @@
+ ## 对局状态恢复由房间工作进程的恢复入口负责，本方法不伪造恢复成功。
+ func recover_room(id:String, expected_pid:int = -2, expected_instance_id:String = "") -> bool:
+ 	error = ""
++	if not process_ownership_available():
++		error = PROCESS_OWNERSHIP_UNAVAILABLE
++		return false
+ 	if not rooms.has(id):
+ 		error = "房间不存在"
+ 		return false
+@@ -333,6 +355,9 @@
+ 		error = "房间进程实例已更换，拒绝过期停止请求"
+ 		return false
+ 	var pid: int = rooms[id].pid
++	if pid > 0 and not process_ownership_available():
++		error = PROCESS_OWNERSHIP_UNAVAILABLE
++		return false
+ 	if pid > 0 and OS.is_process_running(pid) and OS.kill(pid) != OK:
+ 		error = "无法停止自己的房间进程"
+ 		return false
+@@ -345,6 +370,7 @@
+ 
+ func _notification(what: int) -> void:
+ 	if what == NOTIFICATION_PREDELETE:
++		if not process_ownership_available(): return
+ 		for room in rooms.values():
+ 			if room.pid > 0 and OS.is_process_running(room.pid):
+ 				OS.kill(room.pid)
+--- a/scripts/net/session/authority_host_client.gd
++++ b/scripts/net/session/authority_host_client.gd
+@@ -22,6 +22,10 @@
+ func start(session:RefCounted, name:String, settings:Dictionary, host_mode:String, port:int = 0, bind_address:String = "*", peer:MultiplayerPeer = null) -> Error:
+ 	if host_mode not in ["lan", "p2p"] or name.strip_edges().is_empty(): return ERR_INVALID_PARAMETER
+ 	if host_mode == "p2p" and (peer == null or peer.get_unique_id() != 1): return ERR_INVALID_PARAMETER
++	# 不开启注定无法完成 OS 所有权验证的监听，也不接管外部 P2P peer。
++	if not gateway.manager.process_ownership_available():
++		error = gateway.manager.PROCESS_OWNERSHIP_UNAVAILABLE
++		return ERR_UNAVAILABLE
+ 	_name = name
+ 	_session = weakref(session)
+ 	gateway.manager.authority_host_mode = host_mode

@@ -1,0 +1,473 @@
+{
+  "schema": 1,
+  "generated_at": "2026-10-07T12:52:59.618471+00:00",
+  "root": "E:\\Projects\\Godot\\FateDominationGame-master",
+  "scope": "静态快照；未导出、未启动 Godot、未验证 ABI/协议/完整对局",
+  "version": "0.0.1",
+  "git_head": "8b46af0e4064cfcbe465bd8c06e87bc1428bf058",
+  "dirty": true,
+  "source_tree_sha256": "e9149d8c07d4ac170851f40911140b34c672f2eeab95c5c5c2c90fbd7e79f95c",
+  "manifest_files": 1693,
+  "resource_reference_count": 541,
+  "checks": [
+    {
+      "name": "服务端 feature 入口",
+      "status": "PASS",
+      "detail": "\"res://assets/scenes/main_menu/server_bootstrap.tscn\""
+    },
+    {
+      "name": "服务端即时 stdout",
+      "status": "PASS",
+      "detail": "true"
+    },
+    {
+      "name": "新 net 目录引用无旧平铺路径",
+      "status": "PASS",
+      "detail": []
+    },
+    {
+      "name": "生产字面量资源引用可定位",
+      "status": "REVIEW",
+      "detail": [
+        {
+          "source": "addons/godot_ai/custom_tools/mcp_custom_tool_spec.gd",
+          "line": 22,
+          "target": "res://addons/.../handler.gd"
+        },
+        {
+          "source": "addons/godot_ai/custom_tools/mcp_custom_tool_spec.gd",
+          "line": 26,
+          "target": "res://addons/gdunit4_mcp/plugin.cfg"
+        },
+        {
+          "source": "addons/godot_ai/handlers/editor_handler.gd",
+          "line": 489,
+          "target": "res://main.tscn\\"
+        },
+        {
+          "source": "addons/godot_ai/handlers/material_handler.gd",
+          "line": 482,
+          "target": "res://materials/metal.tres"
+        },
+        {
+          "source": "addons/godot_ai/handlers/project_handler.gd",
+          "line": 18,
+          "target": "res://../../evil.gd"
+        },
+        {
+          "source": "addons/godot_ai/testing/test_suite.gd",
+          "line": 109,
+          "target": "res://game/arena.gd"
+        },
+        {
+          "source": "addons/godot_ai/utils/path_validator.gd",
+          "line": 178,
+          "target": "res://override.cfg"
+        },
+        {
+          "source": "addons/godot_ai/utils/scene_path.gd",
+          "line": 99,
+          "target": "res://main.tscn\\"
+        }
+      ]
+    },
+    {
+      "name": "net 目录 authority",
+      "status": "PASS",
+      "detail": "authority"
+    },
+    {
+      "name": "net 目录 content",
+      "status": "PASS",
+      "detail": "content"
+    },
+    {
+      "name": "net 目录 identity",
+      "status": "PASS",
+      "detail": "identity"
+    },
+    {
+      "name": "net 目录 p2p",
+      "status": "PASS",
+      "detail": "p2p"
+    },
+    {
+      "name": "net 目录 server",
+      "status": "PASS",
+      "detail": "server"
+    },
+    {
+      "name": "net 目录 session",
+      "status": "PASS",
+      "detail": "session"
+    },
+    {
+      "name": "net 目录 transport",
+      "status": "PASS",
+      "detail": "transport"
+    },
+    {
+      "name": "net 目录 ui",
+      "status": "PASS",
+      "detail": "ui"
+    },
+    {
+      "name": "net 目录 validation",
+      "status": "PASS",
+      "detail": "validation"
+    },
+    {
+      "name": "FateDomination_demo_v1 外置 data 排除",
+      "status": "PASS",
+      "detail": [
+        "data/*"
+      ]
+    },
+    {
+      "name": "Linux 外置 data 排除",
+      "status": "PASS",
+      "detail": [
+        "data/*"
+      ]
+    },
+    {
+      "name": "FateServer Linux 外置 data 排除",
+      "status": "PASS",
+      "detail": [
+        "data/*",
+        "tests/*",
+        "reports/*",
+        "docs/*",
+        "addons/godot-git-plugin/*"
+      ]
+    },
+    {
+      "name": "FateServer Linux feature",
+      "status": "PASS",
+      "detail": "\"fate_server\""
+    },
+    {
+      "name": "FateServer Linux 配置模板包含",
+      "status": "PASS",
+      "detail": "\"assets/config/*.cfg\""
+    },
+    {
+      "name": "FateServer Linux editor Git 插件排除",
+      "status": "PASS",
+      "detail": [
+        "data/*",
+        "tests/*",
+        "reports/*",
+        "docs/*",
+        "addons/godot-git-plugin/*"
+      ]
+    },
+    {
+      "name": "FateServer Linux scratch 资源排除",
+      "status": "BLOCK",
+      "detail": [
+        "scratch/identity-inheritance-ui/identity_inheritance_ui_window_test.tscn",
+        "scratch/rejected-correlation-merge/rejected_request_correlation_test.tscn",
+        "scratch/transaction-return-consumers/transaction_return_consumers_test.tscn",
+        "scratch/authority-worker-v2/signaling-project/assets/scenes/main_menu/server_bootstrap.tscn"
+      ]
+    },
+    {
+      "name": "FateServer Windows 外置 data 排除",
+      "status": "PASS",
+      "detail": [
+        "data/*",
+        "tests/*",
+        "reports/*",
+        "docs/*",
+        "addons/godot-git-plugin/*"
+      ]
+    },
+    {
+      "name": "FateServer Windows feature",
+      "status": "PASS",
+      "detail": "\"fate_server\""
+    },
+    {
+      "name": "FateServer Windows 配置模板包含",
+      "status": "PASS",
+      "detail": "\"assets/config/*.cfg\""
+    },
+    {
+      "name": "FateServer Windows editor Git 插件排除",
+      "status": "PASS",
+      "detail": [
+        "data/*",
+        "tests/*",
+        "reports/*",
+        "docs/*",
+        "addons/godot-git-plugin/*"
+      ]
+    },
+    {
+      "name": "FateServer Windows scratch 资源排除",
+      "status": "BLOCK",
+      "detail": [
+        "scratch/identity-inheritance-ui/identity_inheritance_ui_window_test.tscn",
+        "scratch/rejected-correlation-merge/rejected_request_correlation_test.tscn",
+        "scratch/transaction-return-consumers/transaction_return_consumers_test.tscn",
+        "scratch/authority-worker-v2/signaling-project/assets/scenes/main_menu/server_bootstrap.tscn"
+      ]
+    },
+    {
+      "name": "FateServer Windows release console wrapper",
+      "status": "PASS",
+      "detail": "2"
+    },
+    {
+      "name": "双平台服务端预设",
+      "status": "PASS",
+      "detail": [
+        "\"Linux\"",
+        "\"Windows Desktop\""
+      ]
+    },
+    {
+      "name": "信号扩展 windows.x86_64",
+      "status": "PASS",
+      "detail": {
+        "binary": "addons/fate_server_signals/bin/libfate_server_signals.windows.x86_64.dll",
+        "kind": "PE-x86_64",
+        "sha256": "a3cd98205851c93914aa05f534e3547c414230903899e2e96f5f9094afe7e43f"
+      }
+    },
+    {
+      "name": "信号扩展 linux.x86_64",
+      "status": "PASS",
+      "detail": {
+        "binary": "addons/fate_server_signals/bin/libfate_server_signals.linux.x86_64.so",
+        "kind": "ELF-x86_64",
+        "sha256": "9edf007f0e2327226e8a31f601bf8ad68a4f13b5beeb9f963a936d8154ad78fe"
+      }
+    },
+    {
+      "name": "WebRTC release linux.release.x86_64",
+      "status": "PASS",
+      "detail": "addons/webrtc_native/lib/libwebrtc_native.linux.template_release.x86_64.so"
+    },
+    {
+      "name": "WebRTC release windows.release.x86_64",
+      "status": "PASS",
+      "detail": "addons/webrtc_native/lib/libwebrtc_native.windows.template_release.x86_64.dll"
+    },
+    {
+      "name": "信号扩展双平台声明",
+      "status": "PASS",
+      "detail": [
+        "linux.x86_64",
+        "windows.x86_64"
+      ]
+    },
+    {
+      "name": "模板策略 authority_host_mode",
+      "status": "PASS",
+      "detail": "\"dedicated\""
+    },
+    {
+      "name": "模板策略 transaction_log",
+      "status": "PASS",
+      "detail": "true"
+    },
+    {
+      "name": "模板策略 recovery_key_mismatch",
+      "status": "PASS",
+      "detail": "\"reject\""
+    },
+    {
+      "name": "模板策略 recovery_inheritance",
+      "status": "PASS",
+      "detail": "\"host_select\""
+    },
+    {
+      "name": "模板策略 roles",
+      "status": "PASS",
+      "detail": "[\"game\"]"
+    },
+    {
+      "name": "模拟开关与预算分开声明",
+      "status": "PASS",
+      "detail": {
+        "random_sim_enabled": "true",
+        "random_sim_budget_sec": "60.0"
+      }
+    },
+    {
+      "name": "外置 data 复制入口静态存在",
+      "status": "PASS",
+      "detail": "静态存在不证明插件实际被调用；目标目录不会清理源中已删除的旧文件，必须用新空目录"
+    },
+    {
+      "name": "导出插件启用",
+      "status": "PASS",
+      "detail": {
+        "enabled": "PackedStringArray(\"res://addons/godot_ai/plugin.cfg\")"
+      }
+    }
+  ],
+  "extensions": [
+    {
+      "extension": "addons/fate_server_signals/fate_server_signals.gdextension",
+      "feature": "windows.x86_64",
+      "path": "addons/fate_server_signals/bin/libfate_server_signals.windows.x86_64.dll",
+      "exists": true
+    },
+    {
+      "extension": "addons/fate_server_signals/fate_server_signals.gdextension",
+      "feature": "linux.x86_64",
+      "path": "addons/fate_server_signals/bin/libfate_server_signals.linux.x86_64.so",
+      "exists": true
+    },
+    {
+      "extension": "addons/godot-git-plugin/git_plugin.gdextension",
+      "feature": "windows.editor.x86_64",
+      "path": "addons/godot-git-plugin/win64/libgit_plugin.windows.editor.x86_64.dll",
+      "exists": true
+    },
+    {
+      "extension": "addons/godot-git-plugin/git_plugin.gdextension",
+      "feature": "linux.editor.x86_64",
+      "path": "addons/godot-git-plugin/linux/libgit_plugin.linux.editor.x86_64.so",
+      "exists": true
+    },
+    {
+      "extension": "addons/godot-git-plugin/git_plugin.gdextension",
+      "feature": "linux.editor.arm64",
+      "path": "addons/godot-git-plugin/linux/libgit_plugin.linux.editor.arm64.so",
+      "exists": false
+    },
+    {
+      "extension": "addons/godot-git-plugin/git_plugin.gdextension",
+      "feature": "linux.editor.rv64",
+      "path": "addons/godot-git-plugin",
+      "exists": false
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "linux.debug.x86_64",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.linux.template_debug.x86_64.so",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "linux.debug.x86_32",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.linux.template_debug.x86_32.so",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "linux.debug.arm64",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.linux.template_debug.arm64.so",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "linux.debug.arm32",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.linux.template_debug.arm32.so",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "windows.debug.x86_64",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.windows.template_debug.x86_64.dll",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "windows.debug.x86_32",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.windows.template_debug.x86_32.dll",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "windows.debug.arm64",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.windows.template_debug.arm64.dll",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "linux.release.x86_64",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.linux.template_release.x86_64.so",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "linux.release.x86_32",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.linux.template_release.x86_32.so",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "linux.release.arm64",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.linux.template_release.arm64.so",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "linux.release.arm32",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.linux.template_release.arm32.so",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "windows.release.x86_64",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.windows.template_release.x86_64.dll",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "windows.release.x86_32",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.windows.template_release.x86_32.dll",
+      "exists": true
+    },
+    {
+      "extension": "addons/webrtc_native/webrtc_native.gdextension",
+      "feature": "windows.release.arm64",
+      "path": "addons/webrtc_native/lib/libwebrtc_native.windows.template_release.arm64.dll",
+      "exists": true
+    }
+  ],
+  "server_presets": [
+    {
+      "name": "FateServer Linux",
+      "platform": "\"Linux\"",
+      "path": "\"../FateDomination/test/server-dist/linux/FateServer.x86_64\"",
+      "options": {
+        "debug/export_console_wrapper": "2",
+        "binary_format/embed_pck": "false",
+        "binary_format/architecture": "\"x86_64\"",
+        "texture_format/s3tc_bptc": "true",
+        "texture_format/etc2_astc": "false"
+      }
+    },
+    {
+      "name": "FateServer Windows",
+      "platform": "\"Windows Desktop\"",
+      "path": "\"../FateDomination/test/server-dist/windows/FateServer.exe\"",
+      "options": {
+        "binary_format/embed_pck": "false",
+        "binary_format/architecture": "\"x86_64\"",
+        "debug/export_console_wrapper": "2",
+        "codesign/enable": "false",
+        "application/modify_resources": "false",
+        "texture_format/s3tc_bptc": "true",
+        "texture_format/etc2_astc": "false"
+      }
+    }
+  ],
+  "counts": {
+    "PASS": 37,
+    "BLOCK": 2,
+    "REVIEW": 1
+  },
+  "limitations": [
+    "CFG 仅单行静态提取，不是 Godot 语法解析",
+    "字面量扫描含注释；动态路径、uid:// 和 PCK 内容须另验",
+    "并行写入时哈希不是冻结快照；全部写入者结束后必须复跑",
+    "E 盘测试数据与 user:// 日志位置仅文档约定，未创建/迁移/读取用户数据"
+  ]
+}

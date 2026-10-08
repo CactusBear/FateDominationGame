@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/phase_window_settlement_test.tscn:headless",
+  "scene": "tests/phase_window_settlement_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

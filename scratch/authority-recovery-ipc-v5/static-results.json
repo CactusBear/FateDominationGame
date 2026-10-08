@@ -1,0 +1,42 @@
+{
+  "scope": "LAN/P2P安全阻断；非恢复IPC实现；非Godot运行验收",
+  "checks": {
+    "client_restore_always_refuses_without_io_or_room_mutation": true,
+    "worker_blocks_existing_lan_p2p_recovery_before_host_publish": true,
+    "worker_blocks_auto_restore_before_scan_copy_and_replay": true,
+    "ui_routes_to_refusal_and_returns_before_shared_restore": true,
+    "diagnostics_do_not_advertise_restore": true,
+    "management_whitelist_unchanged_no_restore_action": true,
+    "ordinary_network_disallows_arbitrary_server_management": true
+  },
+  "negative_mutations_detected": {
+    "client_forged_success": true,
+    "worker_startup_bypass": true,
+    "worker_auto_restore_bypass": true,
+    "ui_shared_restore_fallthrough": true
+  },
+  "gdtoolkit_parse": {
+    "scripts/net/session/authority_host_client.gd": {
+      "ok": true
+    },
+    "scripts/net/server/server_room_worker.gd": {
+      "ok": true
+    },
+    "scripts/net/ui/lobby_screen.gd": {
+      "ok": true
+    },
+    "scripts/net/server/server_room_control.gd": {
+      "ok": true
+    }
+  },
+  "check_count": 7,
+  "negative_count": 4,
+  "all_passed": true,
+  "not_executed": [
+    "Godot",
+    "runtime IPC",
+    "engine failure injection",
+    "credentials",
+    "git commit"
+  ]
+}

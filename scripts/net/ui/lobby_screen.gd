@@ -1,0 +1,671 @@
+extends Control
+
+const Session = preload("res://scripts/net/session/lobby_session.gd")
+var session = Session.new()
+var cache = session.blobs.cache
+var _data_sync = preload("res://scripts/net/content/room_data_sync.gd").new()
+var _sync_revision: int = 0
+var _synced_revision: int = 0
+var room_data_directory: String = ""
+var _local_data_root: String = ""
+var modes: Array = []
+var _local_modes:Array = []
+var _ready_state := false
+var _owner := false
+var _selected_member: int = 0
+var _entering_match: bool = false
+var _session_transferred: bool = false
+var _p2p = preload("res://scripts/net/p2p/p2p_invite.gd").new()
+var _signal = preload("res://scripts/net/p2p/p2p_signal_client.gd").new()
+var _invite_target: int = 0
+var _shown_guard_config: Dictionary = {}
+var _shown_simulation_config:Dictionary = {}
+var _selected_archive:String = ""
+var identity_key_path:String = "user://net_identity/private.pem"
+var identity_profile_path:String = "user://net_identity/profile.json"
+var _saved_identity_profile:Dictionary = {}
+@onready var content: VBoxContainer = $Margin/Content
+@onready var status: Label = $Margin/Content/Status
+@onready var mode: OptionButton = $Margin/Content/Settings/Mode
+@onready var ai: SpinBox = $Margin/Content/Settings/AI
+
+func _ready() -> void:
+	if FileAccess.file_exists(identity_profile_path):
+		var profile = JSON.parse_string(FileAccess.get_file_as_string(identity_profile_path))
+		if profile is Dictionary and profile.get("username") is String and profile.get("nickname") is String and username_error(profile.username).is_empty():
+			$Margin/Content/Identity/Username.text = profile.username
+			$Margin/Content/Connection/Name.text = profile.nickname
+			_saved_identity_profile = profile.duplicate(true)
+	$Margin/Content/Identity/Username.text_changed.connect(_username_changed)
+	$Margin/Content/ServerAdmin/Send.pressed.connect(func(): session.request("server_admin_command",{"command":$Margin/Content/ServerAdmin/Command.text}))
+	session.server_admin_result_received.connect(func(response:Dictionary): status.text = JSON.stringify(response))
+	$Margin/Content/Identity/Apply.pressed.connect(func():
+		if _prepare_identity(): status.text = "正在登记身份资料" if session.transport.is_connected_to_host() else "身份资料已准备，连接服务端后登记"
+	)
+	$Margin/Content/RoomPassword/Apply.pressed.connect(func():
+		session.request("room_password",{"password":$Margin/Content/RoomPassword/Input.text})
+	)
+	_signal.room_created.connect(_on_signal_created)
+	_signal.rejected.connect(_on_rejected)
+	session.changed.connect(_refresh)
+	session.rejected.connect(_on_rejected)
+	session.inheritance_ticket_received.connect(_on_inheritance_ticket_received)
+	$Margin/Content/Actions/InheritIdentity.pressed.connect(_show_identity_inheritance)
+	session.server_notice_received.connect(func(text:String): status.text = "服务器通知：" + text)
+	$Margin/Content/Connection/Host.pressed.connect(_host)
+	$Margin/Content/Connection/Join.pressed.connect(_join)
+	$Margin/Content/Reconnect.pressed.connect(_reconnect)
+	$Margin/Content/Actions/Ready.pressed.connect(_ready_clicked)
+	$Margin/Content/Actions/Leave.pressed.connect(_leave)
+	$Margin/Content/Actions/ClearCache.pressed.connect(_clear_cache)
+	$Margin/Content/Actions/Sync.pressed.connect(_sync_data)
+	$Margin/Content/Actions/Data.pressed.connect(_show_room_data)
+	session.record_matches = $Margin/Content/Archives/Record.button_pressed
+	$Margin/Content/Archives/Record.toggled.connect(func(enabled:bool): session.record_matches = enabled)
+	$Margin/Content/Archives/Restore.pressed.connect(func():
+		$ArchivePicker.current_dir = ProjectSettings.globalize_path(session.archive_root)
+		$ArchivePicker.popup_centered()
+	)
+	$ArchivePicker.file_selected.connect(func(path:String):
+		if path.get_file() != "match.log":
+			status.text = "请选择存档目录中的 match.log"
+			return
+		_selected_archive = path.get_base_dir()
+		$ArchiveConfirm.popup_centered()
+	)
+	$ArchiveConfirm.confirmed.connect(_prepare_archive_restore)
+	$RestoreSeatPanel.restore_selected.connect(_restore_archive)
+	$RoomDataPanel.applied.connect(func(directory):
+		room_data_directory = directory
+		_refresh()
+	)
+	$Margin/Content/Actions/Start.pressed.connect(func(): session.request("start", {}))
+	$Margin/Content/Actions/BeginMatch.pressed.connect(func(): session.request("begin_match", {}))
+	$Margin/Content/Selection/Choose.pressed.connect(_choose_master)
+	$Margin/Content/Members.item_selected.connect(_select_member)
+	$Margin/Content/Actions/Transfer.pressed.connect(func(): session.request("transfer", {"target": _selected_member}))
+	$Margin/Content/Actions/Kick.pressed.connect(func(): session.request("kick", {"target": _selected_member}))
+	mode.item_selected.connect(_mode_changed)
+	ai.value_changed.connect(_ai_changed)
+	$Margin/Content/Guard/Fields/Apply.pressed.connect(_apply_guard_config)
+	$Margin/Content/Simulation/Apply.pressed.connect(_apply_simulation_config)
+	$Margin/Content/Protocol/NetworkMode.item_selected.connect(_network_mode_changed)
+	$Margin/Content/P2P/Buttons/Invite.pressed.connect(_new_invite)
+	$Margin/Content/P2P/Buttons/Apply.pressed.connect(_apply_answer)
+	$Margin/Content/P2P/Buttons/Copy.pressed.connect(func():
+		if not $Margin/Content/P2P/Output.text.is_empty():
+			DisplayServer.clipboard_set($Margin/Content/P2P/Output.text)
+	)
+	var file := FileAccess.open(LoadHelper.get_data_dir().path_join("selection_modes.json"), FileAccess.READ)
+	if file == null:
+		status.text = "无法读取选人模式"
+		return
+	var declared = JSON.parse_string(file.get_as_text())
+	if not declared is Dictionary or not declared.get("modes") is Array:
+		status.text = "选人模式数据无效"
+		return
+	modes = declared.modes
+	_local_modes = modes.duplicate(true)
+	for item in modes:
+		mode.add_item(str(item.get("name", "")))
+	_mode_changed(0)
+	_network_mode_changed(0)
+	if not session.view.is_empty():
+		_refresh()
+
+func _process(delta: float) -> void:
+	session.poll(delta)
+	$IdentityInheritancePanel.refresh_context()
+	$RestoreSeatPanel.refresh_context()
+	$Margin/Content/Actions/InheritIdentity.disabled = not $IdentityInheritancePanel.can_manage(session, _selected_member)
+	_refresh_reconnect()
+	if session.connection_driver != _p2p:
+		_p2p.poll()
+	if _invite_target != 0 and $Margin/Content/P2P/Output.text.is_empty():
+		var code: String = _p2p.export_code(_invite_target)
+		if not code.is_empty():
+			$Margin/Content/P2P/Output.text = code
+		elif not _p2p.error.is_empty():
+			status.text = _p2p.error
+	if _data_sync.running:
+		_data_sync.poll()
+		status.text = "正在同步房间数据：%d / %d" % [_data_sync.completed_files, session.room_files.size()]
+		if not _data_sync.running:
+			if _data_sync.complete and _sync_revision == session.data_revision and session.install_room_assets(room_data_directory):
+				_synced_revision = _sync_revision
+				session.request("data_ack", {"revision": _sync_revision})
+				status.text = "房间数据同步完成"
+			else:
+				status.text = _data_sync.error
+			_refresh()
+	_refresh_signal_status()
+
+func _sync_data() -> void:
+	if session._host or session.data_revision <= 0 or _data_sync.running:
+		return
+	_sync_revision = session.data_revision
+	room_data_directory = "user://rooms/%s/data" % str(Time.get_ticks_usec())
+	if not _data_sync.begin(session, session.room_files, room_data_directory):
+		status.text = _data_sync.error
+	_refresh()
+
+func _capacity() -> int:
+	if not session.view.is_empty(): return int(session.view.get("settings", {}).get("capacity", 0))
+	if mode.selected < 0 or mode.selected >= modes.size():
+		return 0
+	var declared: Dictionary = modes[mode.selected]
+	var rules = load(str(declared.script)).new()
+	return rules.capacity(GameStart.get_masters_can_use(), GameStart.get_servants_can_use(), declared)
+
+func _network_mode_changed(index: int) -> void:
+	var server := index == 1
+	var p2p := index in [2, 3]
+	var signaling := index == 3
+	$Margin/Content/Protocol/RoomName.visible = server
+	$Margin/Content/Protocol/RoomID.visible = server
+	$Margin/Content/Settings/BindLabel.visible = not server and not p2p
+	$Margin/Content/Settings/BindAddress.visible = not server and not p2p
+	$Margin/Content/Connection/Address.visible = not p2p
+	$Margin/Content/Connection/Port.visible = not p2p
+	$Margin/Content/P2P.visible = p2p
+	$Margin/Content/P2P/Signaling.visible = signaling
+	$Margin/Content/P2P/Output.visible = not signaling
+	$Margin/Content/P2P/Input.visible = not signaling
+	$Margin/Content/P2P/Buttons.visible = not signaling
+	$Margin/Content/P2P/Help.text = "服务只交换握手信令，对局始终直连。房主将房间码发送给客机，无法直连时明确失败。" if signaling else "房主发送邀请码，客机回传应答码。每位客机使用独立邀请码，对局流量只走直连。"
+	$Margin/Content/Connection/Host.text = "创建 P2P 房间" if p2p else ("在服务端创建房间" if server else "创建局域网房间")
+
+func _on_rejected(reason: String) -> void:
+	status.text = reason
+	$IdentityInheritancePanel.request_failed()
+
+func _reconnect() -> void:
+	var result:Error = session.reconnect_after_worker_crash()
+	if result != OK: session.error = "无法重新连接：" + error_string(result)
+	_refresh_reconnect()
+
+func _on_inheritance_ticket_received(_member:int) -> void:
+	if session.transport.is_connected_to_host() or session.transport.is_connecting():
+		status.text = "身份继承已授权，正在切换连接"
+		session.transport.close()
+	call_deferred("_activate_inheritance_ticket")
+
+func _activate_inheritance_ticket() -> void:
+	if not session.activate_inheritance_ticket():
+		status.text = "身份继承凭据尚未可以安全启用"
+		return
+	var result:Error = session.reconnect()
+	if result != OK:
+		session.error = "身份继承重连失败：" + error_string(result)
+		status.text = session.error
+		return
+	status.text = "正在恢复原有房间席位"
+	_refresh_reconnect()
+
+func _refresh_reconnect() -> void:
+	var lost:bool = session.has_resume_identity() and not session.transport.is_connected_to_host()
+	$Margin/Content/Reconnect.visible = lost and session.reconnect_available()
+	$Margin/Content/Reconnect.disabled = not session.can_reconnect()
+	if not lost: return
+	status.text = "正在重新连接" if session.is_reconnecting() or session.transport.is_connecting() else "与房主连接中断"
+	if not session.error.is_empty(): status.text += "\n" + session.error
+	for action in ["Data","Sync","Start","Ready","Transfer","Kick","BeginMatch"]:
+		get_node("Margin/Content/Actions/"+action).disabled = true
+	$Margin/Content/Selection/Choose.disabled = true
+
+func _on_signal_created(code: String) -> void:
+	$Margin/Content/P2P/Signaling/Room.text = code
+	status.text = "信令房间已创建，请复制房间码给客机"
+
+func _refresh_signal_status() -> void:
+	# 回环权威席位不等于信令注册；最后覆盖普通大厅刷新，保留首个失败。
+	if $Margin/Content/Protocol/NetworkMode.selected != 3 or session.connection_driver != _signal:
+		return
+	if not _signal.error.is_empty():
+		status.text = "信令连接失败：" + _signal.error
+	elif _signal.room_code.is_empty():
+		var diagnostic: Dictionary = _signal.diagnostics()
+		status.text = "正在等待信令建房回执" if diagnostic.request_sent else "正在连接信令服务，尚未取得房间码"
+
+func _ice_configuration() -> Dictionary:
+	var servers: Array = []
+	for value in $Margin/Content/P2P/STUN.text.split(",", false):
+		var address: String = value.strip_edges()
+		if not address.is_empty():
+			servers.append({"urls": address})
+	return {"iceServers": servers}
+
+func _new_invite() -> void:
+	if session.authority_host == null or session.connection_driver != _p2p:
+		return
+	if not _p2p.configure_timeout(_signal.handshake_seconds):
+		status.text = _p2p.error
+		return
+	_invite_target = _p2p.offer()
+	$Margin/Content/P2P/Output.text = ""
+	status.text = "正在收集直连地址" if _invite_target > 1 else "无法创建邀请码"
+
+func _apply_answer() -> void:
+	if session.authority_host == null or session.connection_driver != _p2p:
+		return
+	status.text = "正在建立 P2P 直连" if _p2p.accept_answer($Margin/Content/P2P/Input.text.strip_edges()) else "应答码无效、已使用或不属于此房间"
+
+func _initialize_local_owner() -> void:
+	_local_data_root = LoadHelper.get_data_dir()
+	# worker 自行配置选人并发布过滤快照；UI 不再执行或发布权威状态。
+	_owner = true
+
+func _mode_changed(_index: int) -> void:
+	ai.max_value = maxi(0, _capacity() - 1)
+
+func _read_guard_config() -> Dictionary:
+	var step_text:String = $Margin/Content/Guard/Fields/Steps.text.strip_edges()
+	if not step_text.is_valid_int():
+		return {"ok":false, "error":"步骤预算必须是整数"}
+	var normalized := step_text.trim_prefix("+").trim_prefix("-").lstrip("0")
+	if normalized.is_empty():
+		normalized = "0"
+	if step_text.begins_with("-") and normalized != "0":
+		return {"ok":false, "error":"步骤预算不能为负数"}
+	# 先检查十进制边界，不能先转换再让整数溢出被截断。
+	if normalized.length() > 19 or (normalized.length() == 19 and normalized > "9223372036854775807"):
+		return {"ok":false, "error":"步骤预算超出整数范围"}
+	var seconds_text:String = $Margin/Content/Guard/Fields/Seconds.text.strip_edges()
+	if not seconds_text.is_valid_float():
+		return {"ok":false, "error":"时间预算必须是有限非负数"}
+	var config := {"enabled":$Margin/Content/Guard/Fields/Enabled.button_pressed,
+		"steps":normalized.to_int(), "seconds":seconds_text.to_float()}
+	if not preload("res://scripts/match/rule_budget.gd").new().configure(config):
+		return {"ok":false, "error":"时间预算必须是有限非负数"}
+	return {"ok":true, "config":config}
+
+func _apply_guard_config() -> void:
+	var result := _read_guard_config()
+	if not result.ok:
+		status.text = result.error
+		return
+	session.request("settings", {"changes":{"runtime_guard":result.config}})
+
+func _read_simulation_config() -> Dictionary:
+	var text:String = $Margin/Content/Simulation/Seconds.text.strip_edges()
+	if not text.is_valid_float() or not is_finite(text.to_float()) or text.to_float() < 0 or text.to_float() >= 9223372036854775.0:
+		return {"ok":false,"error":"模拟时间必须是有限非负数"}
+	return {"ok":true,"config":{"random_sim_enabled":$Margin/Content/Simulation/Enabled.button_pressed,"random_sim_budget_sec":text.to_float()}}
+
+func _apply_simulation_config() -> void:
+	var result:Dictionary = _read_simulation_config()
+	if not result.ok:
+		status.text = result.error
+		return
+	session.request("settings", {"changes":result.config})
+
+func _refresh_guard_config(view:Dictionary) -> void:
+	var fields := $Margin/Content/Guard/Fields
+	var editable:bool = view.is_empty() or (_owner and view.get("phase") == "lobby")
+	var simulation := $Margin/Content/Simulation
+	simulation.get_node("Enabled").disabled = not editable
+	simulation.get_node("Seconds").editable = editable
+	simulation.get_node("Apply").disabled = view.is_empty() or not editable
+	if view.is_empty():
+		_shown_simulation_config.clear()
+	else:
+		var simulation_config:Dictionary = {"random_sim_enabled":view.settings.get("random_sim_enabled", false),"random_sim_budget_sec":view.settings.get("random_sim_budget_sec", 0.0)}
+		if simulation_config != _shown_simulation_config:
+			_shown_simulation_config = simulation_config.duplicate(true)
+			simulation.get_node("Enabled").set_pressed_no_signal(simulation_config.random_sim_enabled)
+			simulation.get_node("Seconds").text = BaseNumber.display_text(simulation_config.random_sim_budget_sec)
+	fields.get_node("Enabled").disabled = not editable
+	fields.get_node("Steps").editable = editable
+	fields.get_node("Seconds").editable = editable
+	fields.get_node("Apply").disabled = view.is_empty() or not editable
+	if view.is_empty():
+		_shown_guard_config.clear()
+		return
+	var config:Dictionary = view.get("settings", {}).get("runtime_guard", {"enabled":false, "steps":0, "seconds":0.0})
+	# 成员准备等无关更新不能覆盖尚未应用的输入。
+	if config == _shown_guard_config:
+		return
+	_shown_guard_config = config.duplicate(true)
+	fields.get_node("Enabled").set_pressed_no_signal(config.enabled)
+	fields.get_node("Steps").text = str(config.steps)
+	fields.get_node("Seconds").text = BaseNumber.display_text(config.seconds)
+
+static func username_error(value:String) -> String:
+	return preload("res://scripts/net/identity/player_name_rules.gd").username_error(value)
+
+func _prepare_identity() -> bool:
+	if not _validate_username(): return false
+	if not session.configure_identity(identity_key_path,$Margin/Content/Identity/Username.text,$Margin/Content/Connection/Name.text):
+		status.text = session.error
+		return false
+	return true
+
+func _username_changed(value:String) -> void:
+	var reason:String = username_error(value)
+	$Margin/Content/Identity/Hint.text = reason if not reason.is_empty() else "格式正确，用户名区分大小写，是否重复须由服务端核对"
+
+func _validate_username() -> bool:
+	var reason:String = username_error($Margin/Content/Identity/Username.text)
+	if not reason.is_empty():
+		status.text = reason
+		$Margin/Content/Identity/Username.grab_focus()
+		return false
+	return true
+
+func _host() -> void:
+	if not _validate_username(): return
+	if not _prepare_identity(): return
+	var budget := _read_guard_config()
+	if not budget.ok:
+		status.text = budget.error
+		return
+	var simulation:Dictionary = _read_simulation_config()
+	if not simulation.ok:
+		status.text = simulation.error
+		return
+	_reset_data_sync()
+	var capacity := _capacity()
+	if capacity <= 0:
+		status.text = "当前数据无法创建房间"
+		return
+	var settings := {"capacity": capacity, "minimum": 1, "selection_mode": str(modes[mode.selected].id), "ai_count": int(ai.value), "spectator_limit": capacity}
+	settings["runtime_guard"] = budget.config
+	settings.merge(simulation.config)
+	if $Margin/Content/Protocol/NetworkMode.selected == 3:
+		var result: Error = _signal.host($Margin/Content/P2P/Signaling/Server.text.strip_edges(), session, $Margin/Content/Connection/Name.text, settings, _ice_configuration())
+		if result == OK:
+			_initialize_local_owner()
+			status.text = "正在连接信令服务"
+			_refresh()
+		else:
+			status.text = "信令创建失败：" + error_string(result)
+		return
+	if $Margin/Content/Protocol/NetworkMode.selected == 2:
+		session.close()
+		_p2p.close()
+		var p2p_result: Error = _p2p.link.open(1, _ice_configuration())
+		if p2p_result == OK:
+			p2p_result = session.host_authority_peer(_p2p.link.peer, $Margin/Content/Connection/Name.text, settings)
+		if p2p_result != OK:
+			status.text = "P2P 创建失败：" + error_string(p2p_result)
+			return
+		session.connection_driver = _p2p
+		_initialize_local_owner()
+		_new_invite()
+		_refresh()
+		return
+	if $Margin/Content/Protocol/NetworkMode.selected == 1:
+		var server_result: Error = session.join_server($Margin/Content/Connection/Address.text, int($Margin/Content/Connection/Port.value), $Margin/Content/Connection/Name.text, "", $Margin/Content/Protocol/RoomName.text, settings)
+		status.text = "正在服务端创建房间" if server_result == OK else "服务端连接失败：" + error_string(server_result)
+		return
+	var result: Error = session.host_authority(int($Margin/Content/Connection/Port.value), $Margin/Content/Connection/Name.text, settings, $Margin/Content/Settings/BindAddress.text)
+	_owner = result == OK
+	if _owner:
+		_initialize_local_owner()
+	status.text = "房间已创建" if result == OK else "无法监听端口：" + error_string(result)
+	_refresh()
+
+func _show_room_data() -> void:
+	if session.view.get("phase") != "lobby" or (session._host and not _owner):
+		return
+	if not $RoomDataPanel._preparing and not $RoomDataPanel._validation.running:
+		$RoomDataPanel.configure(session, _local_data_root if session._host else LoadHelper.get_data_dir(), modes[mode.selected])
+	$RoomDataPanel.popup_centered()
+
+func _prepare_archive_restore() -> void:
+	if _selected_archive.is_empty(): return
+	var source:String = _selected_archive
+	_selected_archive = ""
+	var reason:String = $RestoreSeatPanel.open_archive(session, source)
+	if not reason.is_empty(): status.text = reason
+
+func _restore_archive(source:String, selected:Dictionary, metadata_source:String) -> void:
+	if $RoomDataPanel._preparing or $RoomDataPanel._validation.running or _data_sync.running:
+		status.text = "请先完成或取消当前数据准备"
+		$RestoreSeatPanel.restore_finished()
+		return
+	if not $RestoreSeatPanel.can_restore(session) or selected.is_empty():
+		status.text = "恢复权限或座位映射已失效，请重新选择存档"
+		$RestoreSeatPanel.restore_finished()
+		return
+	status.text = "正在校验存档并等待权威恢复回执"
+	var restored:bool = await session.authority_host.restore_local_match(source, selected, metadata_source)
+	status.text = "存档已恢复并另存，等待客机完成数据同步" if restored else session.error
+	$RestoreSeatPanel.restore_finished()
+
+func _join() -> void:
+	if not _validate_username(): return
+	if not _prepare_identity(): return
+	session.join_password = $Margin/Content/RoomPassword/Input.text
+	_reset_data_sync()
+	_owner = false
+	if $Margin/Content/Protocol/NetworkMode.selected == 3:
+		var result: Error = _signal.join($Margin/Content/P2P/Signaling/Server.text.strip_edges(), $Margin/Content/P2P/Signaling/Room.text.strip_edges(), session, $Margin/Content/Connection/Name.text, $Margin/Content/Connection/Spectator.button_pressed, _ice_configuration())
+		status.text = "正在自动建立 P2P 直连" if result == OK else "信令加入失败：" + error_string(result)
+		return
+	if $Margin/Content/Protocol/NetworkMode.selected == 2:
+		session.close()
+		_p2p.close()
+		if not _p2p.configure_timeout(_signal.handshake_seconds):
+			status.text = _p2p.error
+			return
+		if not _p2p.accept_offer($Margin/Content/P2P/Input.text.strip_edges(), _ice_configuration()):
+			status.text = "邀请码或 STUN 配置无效"
+			return
+		var p2p_result: Error = session.join_peer(_p2p.link.peer, $Margin/Content/Connection/Name.text, $Margin/Content/Connection/Spectator.button_pressed)
+		if p2p_result != OK:
+			status.text = "P2P 加入失败：" + error_string(p2p_result)
+			return
+		session.connection_driver = _p2p
+		_invite_target = 1
+		$Margin/Content/P2P/Output.text = ""
+		status.text = "正在生成应答码，生成后请发回房主"
+		return
+	var result: Error
+	if $Margin/Content/Protocol/NetworkMode.selected == 1:
+		var id: String = $Margin/Content/Protocol/RoomID.text
+		if id.is_empty():
+			status.text = "请填入服务端房间 ID"
+			return
+		result = session.join_server($Margin/Content/Connection/Address.text, int($Margin/Content/Connection/Port.value), $Margin/Content/Connection/Name.text, id, "", {}, $Margin/Content/Connection/Spectator.button_pressed)
+	else:
+		result = session.join($Margin/Content/Connection/Address.text, int($Margin/Content/Connection/Port.value), $Margin/Content/Connection/Name.text, $Margin/Content/Connection/Spectator.button_pressed)
+	status.text = "正在连接" if result == OK else "连接失败：" + error_string(result)
+
+func _ready_clicked() -> void:
+	_ready_state = not _ready_state
+	session.request("ready", {"ready": _ready_state})
+
+func _ai_changed(value: float) -> void:
+	if _owner:
+		session.request("settings", {"changes": {"ai_count": int(value)}})
+
+func _refresh() -> void:
+	$Margin/Content/ServerAdmin.visible = session.identity_authenticated and session.identity_is_admin
+	if session.identity_authenticated:
+		var profile:Dictionary = {"username":session.identity_profile.username,"nickname":session.identity_profile.nickname}
+		if profile != _saved_identity_profile and preload("res://scripts/net/server/server_console_channel.gd").write_json(identity_profile_path,profile) == OK:
+			_saved_identity_profile = profile
+	var server_lines:PackedStringArray = []
+	for key in ["server_name","motd"]:
+		var text:String = session.server_info.get(key, "")
+		if not text.is_empty(): server_lines.append(text)
+	$Margin/Content/ServerInfo.text = "\n".join(server_lines)
+	$Margin/Content/ServerInfo.tooltip_text = $Margin/Content/ServerInfo.text
+	$Margin/Content/ServerInfo.visible = not server_lines.is_empty()
+	var p2p_host: bool = session.authority_host != null and session.connection_driver == _p2p
+	$Margin/Content/P2P/Buttons/Invite.disabled = not p2p_host
+	$Margin/Content/P2P/Buttons/Apply.disabled = not p2p_host
+	if _data_sync.running and _sync_revision != session.data_revision:
+		_data_sync.cancel()
+	$Margin/Content/Actions/Sync.disabled = session.view.is_empty() or session._host or session.data_revision <= 0 or _data_sync.running or _synced_revision == session.data_revision
+	var members: ItemList = $Margin/Content/Members
+	members.clear()
+	var view: Dictionary = session.view
+	var authority_mode:String = str(view.get("authority_host_mode", ""))
+	var is_dedicated_authority:bool = authority_mode == "dedicated"
+	var displayed:Array = session.server_data.get("modes", []) if is_dedicated_authority else _local_modes
+	if not displayed.is_empty() and modes != displayed:
+		modes = displayed.duplicate(true)
+		mode.clear()
+		for declaration in modes: mode.add_item(declaration.name)
+	if not view.is_empty():
+		for index in range(modes.size()):
+			if modes[index].id == view.get("settings", {}).get("selection_mode"): mode.select(index)
+		ai.max_value = maxi(0, _capacity() - 1)
+	if is_dedicated_authority and $Margin/Content/Protocol/NetworkMode.selected != 1:
+		$Margin/Content/Protocol/NetworkMode.select(1)
+		_network_mode_changed(1)
+	_owner = not view.is_empty() and view.get("owner") == session.peer_id()
+	$Margin/Content/RoomPassword/Apply.disabled = not _owner or view.get("phase") != "lobby"
+	$Margin/Content/RoomPassword/State.text = "已设置密码" if view.get("password_required",false) else "无密码"
+	$Margin/Content/Archives.visible = view.is_empty() or session._host
+	$Margin/Content/Archives/Record.disabled = not view.is_empty() and (not _owner or view.get("phase") != "lobby")
+	$Margin/Content/Archives/Restore.disabled = not session._host or not _owner or view.get("phase") != "lobby" or $RoomDataPanel._preparing or $RoomDataPanel._validation.running or _data_sync.running
+	$Margin/Content/Archives/Path.tooltip_text = ProjectSettings.globalize_path(session.archive_root)
+	if not session.server_room_id.is_empty():
+		$Margin/Content/Protocol/RoomID.text = session.server_room_id
+	$Margin/Content/Actions/Data.disabled = view.get("phase") != "lobby" or (session._host and not _owner)
+	$Margin/Content/Actions/Data.text = "房间数据" if session._host or (is_dedicated_authority and _owner) else "共享条目"
+	var local_can_ready := false
+	for member in view.get("members", []):
+		var state := "已准备" if member.ready else "未准备"
+		if not member.connected:
+			state = "已掉线"
+		var role: String = "观战" if member.spectator else "玩家"
+		if member.id == view.owner:
+			role = "房主"
+		members.add_item("%s  %s  %s" % [member.name, role, state])
+		members.set_item_metadata(members.item_count - 1, member.id)
+		if member.id == _selected_member:
+			members.select(members.item_count - 1)
+		if member.id == session.peer_id():
+			_ready_state = member.ready
+			local_can_ready = member.connected and not member.spectator
+	var count: int = int(view.get("settings", {}).get("ai_count", 0))
+	for i in range(count):
+		members.add_item("AI %d" % (i + 1))
+		members.set_item_metadata(members.item_count - 1, 0)
+	$Margin/Content/Actions/Ready.disabled = not local_can_ready or view.get("phase") != "lobby"
+	$Margin/Content/Actions/Ready.text = "取消准备" if _ready_state else "准备"
+	mode.disabled = not view.is_empty()
+	ai.editable = view.is_empty() or (_owner and view.get("phase") == "lobby")
+	if not view.is_empty():
+		ai.set_value_no_signal(count)
+	_refresh_guard_config(view)
+	$Margin/Content/Actions/Start.disabled = not _owner or not view.get("can_start", false)
+	if view.get("phase") == "lobby":
+		status.text = "已连接房间 · 你拥有房间管理权" if _owner else "已连接房间 · 等待房主开始选人"
+		if session._host and session.require_room_data and session._rules_revision != session.data_revision:
+			status.text = "请打开房间数据，选择条目并校验应用"
+		elif session._host and session.require_room_data and session.data_revision == 0:
+			status.text = "请打开房间数据，选择条目并校验应用"
+	_update_management()
+	var selection: Dictionary = session.selection_view
+	$Margin/Content/Selection.visible = not selection.is_empty()
+	var picker: OptionButton = $Margin/Content/Selection/Master
+	picker.clear()
+	for item in selection.get("choices", []):
+		picker.add_item(item.label)
+		picker.set_item_metadata(picker.item_count - 1, item)
+	$Margin/Content/Selection/Choose.disabled = picker.item_count == 0
+	if selection.get("complete", false):
+		status.text = "御主选择完成，从者已抽取。抽取结果不公示。"
+	if _data_sync.running:
+		status.text = "正在同步房间数据：%d / %d" % [_data_sync.completed_files, session.room_files.size()]
+	elif session.data_revision > 0 and not session._host:
+		status.text = "房间数据同步完成" if _synced_revision == session.data_revision else "房间数据已更新，请同步后继续"
+	$Margin/Content/Actions/BeginMatch.disabled = not _owner or not selection.get("complete", false) or view.get("phase") != "selecting" or not view.get("data_ready", true)
+	_refresh_reconnect()
+	_refresh_signal_status()
+	if not _entering_match and not session.read_match().is_empty():
+		_entering_match = true
+		call_deferred("_enter_match")
+
+func _enter_match() -> void:
+	if not is_inside_tree() or session.read_match().is_empty():
+		_entering_match = false
+		return
+	var scene := load("res://assets/scenes/game_scene/battle_board_v2.tscn") as PackedScene
+	if scene == null:
+		_entering_match = false
+		status.text = "无法加载对局场景"
+		return
+	var board = scene.instantiate()
+	board.network_session = session
+	_session_transferred = true
+	set_process(false)
+	session.changed.disconnect(_refresh)
+	get_tree().root.add_child(board)
+	get_tree().current_scene = board
+	queue_free()
+
+func _choose_master() -> void:
+	var picker: OptionButton = $Margin/Content/Selection/Master
+	if picker.selected < 0:
+		return
+	var choice: Dictionary = picker.get_item_metadata(picker.selected)
+	session.request("choose_master", {"seat": choice.seat, "name": choice.name})
+
+func _select_member(index: int) -> void:
+	_selected_member = int($Margin/Content/Members.get_item_metadata(index))
+	_update_management()
+
+func _update_management() -> void:
+	var target: Dictionary = {}
+	for member in session.view.get("members", []):
+		if member.id == _selected_member:
+			target = member
+	var allowed: bool = _owner and not target.is_empty() and _selected_member != session.view.get("owner", 0)
+	$Margin/Content/Actions/Kick.disabled = not allowed
+	$Margin/Content/Actions/Transfer.disabled = not allowed or not target.get("connected", false) or target.get("spectator", true)
+	$Margin/Content/Actions/InheritIdentity.disabled = not $IdentityInheritancePanel.can_manage(session, _selected_member)
+	$IdentityInheritancePanel.refresh_context()
+
+func _show_identity_inheritance() -> void:
+	if not $IdentityInheritancePanel.can_manage(session, _selected_member):
+		return
+	for member in session.view.get("members", []):
+		if member.id == _selected_member:
+			$IdentityInheritancePanel.open_for(session, _selected_member, str(member.name))
+			return
+
+func _leave() -> void:
+	_reset_data_sync()
+	session.close()
+	_signal.close()
+	_p2p.close()
+	_invite_target = 0
+	$Margin/Content/P2P/Output.text = ""
+	_owner = false
+	_ready_state = false
+	status.text = "已离开房间"
+	_refresh()
+
+func _reset_data_sync() -> void:
+	$IdentityInheritancePanel.close_panel()
+	$RestoreSeatPanel.close_panel()
+	$RoomDataPanel.reset_selection()
+	$RoomDataPanel.hide()
+	_data_sync.cancel()
+	_sync_revision = 0
+	_synced_revision = 0
+	room_data_directory = ""
+
+func _exit_tree() -> void:
+	_data_sync.cancel()
+	if _signal.room_created.is_connected(_on_signal_created):
+		_signal.room_created.disconnect(_on_signal_created)
+	if _signal.rejected.is_connected(_on_rejected):
+		_signal.rejected.disconnect(_on_rejected)
+	if session.rejected.is_connected(_on_rejected):
+		session.rejected.disconnect(_on_rejected)
+	if not _session_transferred:
+		session.close()
+		_signal.close()
+		_p2p.close()
+
+func _clear_cache() -> void:
+	var removed: int = cache.clear_unused()
+	var usage: Dictionary = cache.usage()
+	status.text = "已清理缓存 %d，保留使用中 %d" % [removed, usage.pinned]

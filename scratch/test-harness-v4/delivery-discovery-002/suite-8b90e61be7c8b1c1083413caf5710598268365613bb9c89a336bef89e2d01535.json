@@ -1,0 +1,28 @@
+{
+  "id": "tests/avatar_entrance_test.tscn:window",
+  "scene": "tests/avatar_entrance_test.tscn",
+  "mode": "window",
+  "required": true,
+  "stage_hint": "ui_headless",
+  "scripts": [
+    "res://tests/_probe_head_fade.gd",
+    "res://tests/avatar_entrance_test.gd"
+  ],
+  "environment_names": [],
+  "command_template_NOT_EXECUTED": [
+    "<GODOT_CONSOLE_EXE>",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\Projects\\Godot\\FateDominationGame-master",
+    "--scene",
+    "res://tests/avatar_entrance_test.tscn",
+    "--resolution",
+    "1920x1080",
+    "--",
+    "window"
+  ],
+  "timeout_sec": null,
+  "status": "NOT_RUN",
+  "window_requires_branch_marker": true
+}

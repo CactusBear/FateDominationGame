@@ -1,0 +1,12 @@
+{
+  "targets": [
+    "scripts/net/ui/lobby_screen.gd",
+    "assets/scenes/main_menu/multiplayer_lobby.tscn",
+    "scripts/net/session/authority_host_client.gd",
+    "scripts/net/identity/restore_seat_panel.gd",
+    "assets/scenes/main_menu/restore_seat_panel.tscn"
+  ],
+  "v4a_in_memory_apply": "PASS",
+  "baseline_readonly": "PASS",
+  "production_writes": 0
+}

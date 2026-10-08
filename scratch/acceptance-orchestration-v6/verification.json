@@ -1,0 +1,25 @@
+[
+  {
+    "command": [
+      "python",
+      "-B",
+      "E:\\Projects\\Godot\\FateDominationGame-master\\scratch\\acceptance-orchestration-v6\\test_strict_gate.py"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_ledger_guard (__main__.GateTests.test_ledger_guard) ... ok\ntest_log_fixtures (__main__.GateTests.test_log_fixtures) ... ok\ntest_manifest_dependencies (__main__.GateTests.test_manifest_dependencies) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.008s\n\nOK\n"
+  },
+  {
+    "command": [
+      "python",
+      "-B",
+      "E:\\Projects\\Godot\\FateDominationGame-master\\scratch\\acceptance-orchestration-v6\\strict_gate.py",
+      "E:\\Projects\\Godot\\FateDominationGame-master\\scratch\\acceptance-orchestration-v6\\manifest.json",
+      "E:\\Projects\\Godot\\FateDominationGame-master\\scratch\\acceptance-orchestration-v6\\ledger-template.json",
+      "E:\\Projects\\Godot\\FateDominationGame-master\\scratch\\acceptance-orchestration-v6"
+    ],
+    "exit_code": 2,
+    "stdout": "{\n  \"overall\": \"INCOMPLETE\",\n  \"expected\": 65,\n  \"counts\": {\n    \"BLOCKED\": 0,\n    \"FAIL\": 0,\n    \"INCOMPLETE\": 0,\n    \"NOT_RUN\": 65,\n    \"PASS\": 0,\n    \"RUNNING\": 0\n  },\n  \"errors\": [],\n  \"note\": \"结构校验通过不代替审核证据内容；只读，不自动改状态。\"\n}\n",
+    "stderr": ""
+  }
+]

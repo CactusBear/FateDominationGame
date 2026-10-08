@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/battlefield_conceal_test.tscn:headless",
+  "scene": "tests/battlefield_conceal_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

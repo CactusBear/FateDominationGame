@@ -1,0 +1,699 @@
+--- a/scripts/net/server_room_manager.gd
++++ b/scripts/net/server_room_manager.gd
+@@ -5,49 +5,96 @@
+ var error: String = ""
+ var max_rooms: int = 16
+ var internal_port_base: int = 52000
++var internal_port_count:int = 128
+ var startup_seconds: float = 30.0
+ var storage_root: String = "user://server_rooms"
++## 本机部署职责，不接受公开 settings 覆盖；LAN/P2P 由房主机器创建此管理器。
++var authority_host_mode:String = "dedicated"
++const AUTHORITY_HOST_MODES = ["lan", "p2p", "dedicated"]
++var record_matches:bool = false
++
++static func valid_instance_id(value:Variant) -> bool:
++	if not value is String or value.length() != 32: return false
++	for character in value:
++		if character not in "0123456789abcdef": return false
++	return true
++
++static func matches_instance(room:Dictionary, pid:int, instance_id:String) -> bool:
++	return room.get("pid") == pid and room.get("instance_id") == instance_id and valid_instance_id(instance_id)
++
++static func valid_ready_report(room:Dictionary, report:Variant) -> bool:
++	if not report is Dictionary: return false
++	if not report.get("capabilities") is Dictionary: return false
++	for key in ["root_transaction_rollback", "can_rollback_now", "execution_trace", "root_transaction_audit", "transaction_audit_persistence_enabled", "match_recording_enabled", "process_restart_is_rollback"]:
++		if not report.capabilities.get(key) is bool: return false
++	if report.capabilities.process_restart_is_rollback: return false
++	return report.get("ok") == true and report.get("room_id") == room.id and report.get("id") == room.id and report.get("port") == room.port and report.get("pid") == room.pid and report.get("instance_id") == room.instance_id and valid_instance_id(report.instance_id) and report.get("instance") == room.instance_id and report.get("authority_host_mode") == room.authority_host_mode
++
++static func write_configuration(path:String, config:Dictionary) -> bool:
++	var temporary:String = path + ".%d.tmp" % OS.get_process_id()
++	var file := FileAccess.open(temporary, FileAccess.WRITE)
++	if file == null: return false
++	file.store_string(JSON.stringify(config))
++	file.flush()
++	var result:Error = file.get_error()
++	file.close()
++	if result == OK and DirAccess.rename_absolute(temporary, path) == OK: return true
++	DirAccess.remove_absolute(temporary)
++	return false
++var data_settings:Dictionary = {}
+ var supervisor_timeout_seconds: float = 5.0
+ var _pulse_msec: int = 0
+ var _pulse_version: int = 0
+ 
+ func create_room(name: String, settings: Dictionary, data_root: String) -> String:
+ 	error = ""
+-	if name.strip_edges().is_empty() or rooms.size() >= max_rooms or not is_finite(startup_seconds) or startup_seconds <= 0 or not is_finite(supervisor_timeout_seconds) or supervisor_timeout_seconds <= 1 or internal_port_base <= 0 or internal_port_base + max_rooms > 65536:
++	if authority_host_mode not in AUTHORITY_HOST_MODES:
++		error = "权威位置必须显式声明为 lan、p2p 或 dedicated"
++		return ""
++	if name.strip_edges().is_empty() or rooms.size() >= max_rooms or not is_finite(startup_seconds) or startup_seconds <= 0 or not is_finite(supervisor_timeout_seconds) or supervisor_timeout_seconds <= 1 or internal_port_base <= 0 or internal_port_base > 65535 or internal_port_count <= 0 or internal_port_count > 65536 - internal_port_base:
+ 		error = "房间名称或服务端资源预算无效"
+ 		return ""
+ 	var state = preload("res://scripts/net/room_state.gd").new()
++	settings = settings.duplicate(true)
++	for key in data_settings:
++		if key not in ["random_sim_enabled", "random_sim_budget_sec"]:
++			error = "服务端数据策略字段无效"
++			return ""
++		if not settings.has(key): settings[key] = data_settings[key]
+ 	if not state.configure(1, settings):
+ 		error = state.error
+ 		return ""
+ 	var port := -1
+-	for candidate in range(internal_port_base, internal_port_base + max_rooms):
++	for candidate in range(internal_port_base, internal_port_base + internal_port_count):
+ 		if not rooms.values().any(func(room): return room.port == candidate):
+-			port = candidate
+-			break
++			var probe := PacketPeerUDP.new()
++			var result:Error = probe.bind(candidate, "127.0.0.1")
++			probe.close()
++			if result == OK:
++				port = candidate
++				break
+ 	if port < 0:
+-		error = "内部房间端口预算已用尽"
++		error = "配置的内部端口范围内无可绑定端口"
+ 		return ""
+ 	var id: String = Crypto.new().generate_random_bytes(16).hex_encode()
+ 	var directory := storage_root.path_join(id)
+ 	if DirAccess.dir_exists_absolute(directory) or DirAccess.make_dir_recursive_absolute(directory) != OK:
+ 		error = "无法建立房间专属目录"
+ 		return ""
+-	var config := FileAccess.open(directory.path_join("config.json"), FileAccess.WRITE)
+-	if config == null:
+-		error = "无法写入房间启动配置"
+-		return ""
++	var instance_id:String = Crypto.new().generate_random_bytes(16).hex_encode()
++	var log_file:String = directory.path_join("engine.%s.log" % instance_id)
+ 	var stored_settings := settings.duplicate(true)
+ 	if stored_settings.has("runtime_guard"):
+ 		stored_settings.runtime_guard = preload("res://scripts/match/rule_budget.gd").encode_json_config(stored_settings.runtime_guard)
+-	config.store_string(JSON.stringify({"id": id, "name": name, "settings": stored_settings, "data_root": ProjectSettings.globalize_path(data_root), "directory": ProjectSettings.globalize_path(directory), "port": port, "supervisor_timeout_seconds": supervisor_timeout_seconds}))
+-	config.close()
+-	var arguments := PackedStringArray(["--headless", "--audio-driver", "Dummy", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(directory.path_join("engine.log")), "--scene", "res://assets/scenes/main_menu/server_room_worker.tscn", "--", "--server-room-worker", ProjectSettings.globalize_path(directory.path_join("config.json"))])
+-	var pid := OS.create_process(OS.get_executable_path(), arguments)
++	if not write_configuration(directory.path_join("config.json"), {"id": id, "name": name, "settings": stored_settings, "data_root": ProjectSettings.globalize_path(data_root), "directory": ProjectSettings.globalize_path(directory), "port": port, "supervisor_timeout_seconds": supervisor_timeout_seconds, "record_matches":record_matches, "authority_host_mode":authority_host_mode, "instance_id":instance_id}):
++		error = "无法写入房间启动配置"
++		return ""
++	var arguments := PackedStringArray(["--headless", "--audio-driver", "Dummy", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(log_file), "--scene", "res://assets/scenes/main_menu/server_room_worker.tscn", "--", "--server-room-worker", ProjectSettings.globalize_path(directory.path_join("config.json"))])
++	var pid := OS.create_process(OS.get_executable_path(), preload("res://scripts/net/server_bootstrap.gd").process_arguments(arguments))
+ 	if pid < 0:
+ 		error = "无法启动房间子进程"
+ 		return ""
+-	rooms[id] = {"id": id, "name": name, "port": port, "pid": pid, "directory": directory, "ready": false, "error": "", "deadline": Time.get_ticks_msec() + int(startup_seconds * 1000.0)}
++	rooms[id] = {"id": id, "name": name, "port": port, "pid": pid, "instance_id":instance_id, "authority_host_mode":authority_host_mode, "directory": directory, "log_file": log_file, "ready": false, "error": "", "deadline": Time.get_ticks_msec() + int(startup_seconds * 1000.0)}
+ 	return id
+ 
+ func poll() -> void:
+@@ -55,12 +102,9 @@
+ 		_pulse_msec = Time.get_ticks_msec()
+ 		_pulse_version += 1
+ 		for room in rooms.values():
+-			var heartbeat := FileAccess.open(room.directory.path_join("supervisor.json"), FileAccess.WRITE)
+-			if heartbeat != null:
+-				heartbeat.store_string(JSON.stringify({"id": room.id, "version": _pulse_version}))
+-				heartbeat.close()
++			if room.pid > 0: _write_supervisor(room)
+ 	for room in rooms.values():
+-		if not OS.is_process_running(room.pid):
++		if room.pid <= 0 or not OS.is_process_running(room.pid):
+ 			room.ready = false
+ 			if room.error.is_empty():
+ 				room.error = "房间进程已经退出"
+@@ -70,27 +114,138 @@
+ 		var path: String = room.directory.path_join("ready.json")
+ 		if FileAccess.file_exists(path):
+ 			var report = JSON.parse_string(FileAccess.get_file_as_string(path))
+-			if not report is Dictionary or report.get("id") != room.id or report.get("port") != room.port or report.get("pid") != room.pid or report.get("ok") != true:
++			if not valid_ready_report(room, report):
+ 				room.error = "房间就绪报告无效"
+ 			else:
+-				var logs := FileAccess.get_file_as_string(room.directory.path_join("engine.log"))
+-				if "ERROR:" in logs or "SCRIPT ERROR" in logs:
+-					room.error = "房间启动出现引擎错误"
+-				else:
+-					room.ready = true
++				# 日志供审计读取，不同步扫描完整日志阻塞路由；就绪由实例报告确认。
++				room.capabilities = report.capabilities.duplicate(true)
++				room.ready = true
+ 		if not room.ready and Time.get_ticks_msec() >= room.deadline:
+ 			room.error = "房间启动超时"
+ 		if not room.error.is_empty():
+ 			OS.kill(room.pid)
+ 
++func discover_rooms() -> Dictionary:
++	var result:Dictionary = {"registered":[],"errors":{}}
++	if not DirAccess.dir_exists_absolute(storage_root): return result
++	var storage := DirAccess.open(storage_root)
++	for id in DirAccess.get_directories_at(storage_root):
++		if rooms.has(id): continue
++		if storage.is_link(id):
++			result.errors[id] = "不从链接目录恢复房间"
++			continue
++		var directory:String = storage_root.path_join(id)
++		var recovery:String = directory.path_join("recovery.json")
++		if not FileAccess.file_exists(recovery): continue
++		var parser := JSON.new()
++		var path:String = directory.path_join("config.json")
++		if not FileAccess.file_exists(path) or parser.parse(FileAccess.get_file_as_string(path)) != OK or not parser.data is Dictionary:
++			result.errors[id] = "房间配置不可读"
++			continue
++		var config:Dictionary = parser.data
++		if config.get("authority_host_mode") not in AUTHORITY_HOST_MODES or not valid_instance_id(config.get("instance_id")):
++			result.errors[id] = "旧房间缺少显式权威位置或实例标识，需管理员迁移；原目录保留"
++			continue
++		var port_value = config.get("port")
++		if config.get("id") != id or not config.get("name") is String or typeof(port_value) not in [TYPE_INT,TYPE_FLOAT] or not is_finite(float(port_value)) or floor(float(port_value)) != port_value or port_value < 1 or port_value > 65535 or config.get("directory") != ProjectSettings.globalize_path(directory):
++			result.errors[id] = "房间配置身份、路径或端口无效"
++			continue
++		var validation = preload("res://scripts/net/lobby_session.gd").new()
++		var valid:bool = validation.load_recovery_state(recovery)
++		validation.close()
++		if not valid:
++			result.errors[id] = "恢复状态无效"
++			continue
++		if rooms.values().any(func(room): return room.port == int(port_value)):
++			result.errors[id] = "内部端口与已有登记冲突"
++			continue
++		rooms[id] = {"id":id,"name":config.name,"port":int(port_value),"pid":-1,"instance_id":config.instance_id,"authority_host_mode":config.authority_host_mode,"directory":directory,"log_file":directory.path_join("engine.%s.log" % config.instance_id),"ready":false,"error":"等待原成员恢复","deadline":0}
++		result.registered.append(id)
++	return result
++
+ func is_ready(id: String) -> bool:
+ 	return rooms.has(id) and rooms[id].ready
+ 
+-func stop_room(id: String) -> bool:
++## 仅重启已经落盘的房间子进程；不删除房间目录、配置或既有存档。
++## 对局状态恢复由房间工作进程的恢复入口负责，本方法不伪造恢复成功。
++func recover_room(id:String, expected_pid:int = -2, expected_instance_id:String = "") -> bool:
++	error = ""
+ 	if not rooms.has(id):
++		error = "房间不存在"
++		return false
++	var room:Dictionary = rooms[id]
++	if expected_pid != -2 and not matches_instance(room, expected_pid, expected_instance_id):
++		error = "房间进程实例已更换，拒绝过期恢复请求"
++		return false
++	if room.ready or (int(room.pid) > 0 and OS.is_process_running(int(room.pid))):
++		error = "房间仍在运行"
++		return false
++	var config_path:String = str(room.directory).path_join("config.json")
++	if not FileAccess.file_exists(config_path):
++		error = "房间启动配置不存在"
++		return false
++	var config = JSON.parse_string(FileAccess.get_file_as_string(config_path))
++	if not config is Dictionary or config.get("id") != id or config.get("port") != room.port or config.get("instance_id") != room.instance_id or config.get("authority_host_mode") != room.authority_host_mode:
++		error = "房间启动配置与登记信息不一致"
++		return false
++	var probe:=PacketPeerUDP.new()
++	if probe.bind(int(room.port), "127.0.0.1") != OK:
++		probe.close()
++		error = "房间原内部端口仍被占用"
++		return false
++	probe.close()
++	var instance_id:String = Crypto.new().generate_random_bytes(16).hex_encode()
++	config.instance_id = instance_id
++	if not write_configuration(config_path, config):
++		error = "恢复启动配置发布失败；原存档保留"
++		return false
++	# 必须在创建进程之前删除旧报告，避免删掉新进程已发布的 ready。
++	var ready_path:String = str(room.directory).path_join("ready.json")
++	if FileAccess.file_exists(ready_path) and DirAccess.remove_absolute(ready_path) != OK:
++		config.instance_id = room.instance_id
++		write_configuration(config_path, config)
++		error = "无法清除过期就绪报告"
++		return false
++	var log_file:String = str(room.directory).path_join("engine.%s.log" % instance_id)
++	var arguments:=PackedStringArray(["--headless", "--audio-driver", "Dummy", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(log_file), "--scene", "res://assets/scenes/main_menu/server_room_worker.tscn", "--", "--server-room-worker", ProjectSettings.globalize_path(config_path)])
++	var pid:=OS.create_process(OS.get_executable_path(), preload("res://scripts/net/server_bootstrap.gd").process_arguments(arguments))
++	if pid < 0:
++		config.instance_id = room.instance_id
++		write_configuration(config_path, config)
++		error = "无法重启房间子进程"
++		return false
++	room.pid = pid
++	room.instance_id = instance_id
++	room.log_file = log_file
++	room.ready = false
++	room.error = ""
++	room.deadline = Time.get_ticks_msec() + int(startup_seconds * 1000.0)
++	rooms[id] = room
++	return true
++
++func _write_supervisor(room:Dictionary) -> void:
++	var path:String = room.directory.path_join("supervisor.json")
++	var temporary:String = path + ".%d.tmp" % OS.get_process_id()
++	var heartbeat := FileAccess.open(temporary, FileAccess.WRITE)
++	if heartbeat == null:
++		error = "无法写入房间主管心跳"
++		return
++	heartbeat.store_string(JSON.stringify({"id":room.id, "pid":room.pid, "instance_id":room.instance_id, "version":_pulse_version}))
++	heartbeat.flush()
++	var result:Error = heartbeat.get_error()
++	heartbeat.close()
++	if result != OK or DirAccess.rename_absolute(temporary, path) != OK:
++		DirAccess.remove_absolute(temporary)
++		error = "无法完整发布房间主管心跳"
++
++func stop_room(id: String, expected_pid:int = -2, expected_instance_id:String = "") -> bool:
++	if not rooms.has(id):
++		return false
++	if expected_pid != -2 and not matches_instance(rooms[id], expected_pid, expected_instance_id):
++		error = "房间进程实例已更换，拒绝过期停止请求"
+ 		return false
+ 	var pid: int = rooms[id].pid
+-	if OS.is_process_running(pid) and OS.kill(pid) != OK:
++	if pid > 0 and OS.is_process_running(pid) and OS.kill(pid) != OK:
+ 		error = "无法停止自己的房间进程"
+ 		return false
+ 	rooms.erase(id)
+@@ -103,5 +258,5 @@
+ func _notification(what: int) -> void:
+ 	if what == NOTIFICATION_PREDELETE:
+ 		for room in rooms.values():
+-			if OS.is_process_running(room.pid):
++			if room.pid > 0 and OS.is_process_running(room.pid):
+ 				OS.kill(room.pid)
+--- a/scripts/net/server_room_worker.gd
++++ b/scripts/net/server_room_worker.gd
+@@ -1,14 +1,25 @@
+ extends Node
+ 
++var _system_signals
++
+ var session = preload("res://scripts/net/lobby_session.gd").new()
++var _data_approval = preload("res://scripts/net/server_data_approval.gd").new()
++var _control = preload("res://scripts/net/server_room_control.gd").new()
+ var _directory: String = ""
+ var _room_id: String = ""
++var _authority_host_mode:String = ""
+ var _supervisor_timeout_msec: int = 0
+ var _supervisor_seen_msec: int = 0
+ var _supervisor_version: int = -1
++var _recovery_attempted: bool = false
++var _audit_journal
+ 
+ 
+ func _ready() -> void:
++	_system_signals = preload("res://scripts/net/server_process_signals.gd").create()
++	if _system_signals == null or not _system_signals.protect_worker():
++		_fail("房间子进程信号保护不可用")
++		return
+ 	var arguments := OS.get_cmdline_user_args()
+ 	arguments.erase("--server-room-worker")
+ 	if arguments.size() != 1:
+@@ -16,30 +27,41 @@
+ 		get_tree().quit(2)
+ 		return
+ 	var config = JSON.parse_string(FileAccess.get_file_as_string(arguments[0]))
+-	if not config is Dictionary or not config.get("data_root") is String or not config.get("directory") is String or not config.get("settings") is Dictionary or not config.get("id") is String or not config.get("port") is float:
++	if not config is Dictionary or not config.get("data_root") is String or not config.get("directory") is String or not config.get("settings") is Dictionary or not config.get("id") is String or not _valid_integer(config.get("port"), 1, 65535):
+ 		_fail("房间启动配置无效")
+ 		return
+-	for key in ["capacity", "minimum", "ai_count", "spectator_limit"]:
+-		if config.settings.has(key):
+-			var number = config.settings[key]
+-			if not number is float or not is_finite(number) or number < 0 or number > 2147483647 or floor(number) != number:
+-				_fail("房间数值配置无效")
+-				return
+-			config.settings[key] = int(number)
+-	if config.settings.has("runtime_guard"):
+-		if not config.settings.runtime_guard is Dictionary:
+-			_fail("规则执行预算编码无效")
+-			return
+-		var budget:Dictionary = preload("res://scripts/match/rule_budget.gd").decode_json_config(config.settings.runtime_guard)
+-		if budget.is_empty() or not preload("res://scripts/match/rule_budget.gd").new().configure(budget):
+-			_fail("规则执行预算编码无效")
+-			return
+-		config.settings.runtime_guard = budget
++	if config.get("authority_host_mode") not in preload("res://scripts/net/server_room_manager.gd").AUTHORITY_HOST_MODES or not preload("res://scripts/net/server_room_manager.gd").valid_instance_id(config.get("instance_id")):
++		_fail("权威位置或进程实例未显式声明")
++		return
++	_authority_host_mode = config.authority_host_mode
++	# 复用管理通道的随机实例，不另建一套管理凭据。
++	_control.instance_id = config.instance_id
++	# 本机配置中的专用策略由网关覆盖写入，不进入公开房间设置。
++	var identity_required = config.settings.get("_gateway_identity_required",false)
++	if not identity_required is bool:
++		_fail("房间身份策略无效")
++		return
++	config.settings.erase("_gateway_identity_required")
++	var decoded:Dictionary = preload("res://scripts/net/room_state.gd").decode_json_settings(config.settings)
++	if not decoded.ok:
++		_fail(decoded.error)
++		return
++	config.settings = decoded.settings
+ 	var root: String = config.data_root
+-	if not config.get("supervisor_timeout_seconds") is float or not is_finite(config.supervisor_timeout_seconds) or config.supervisor_timeout_seconds <= 1:
++	if typeof(config.get("supervisor_timeout_seconds")) not in [TYPE_INT,TYPE_FLOAT] or not is_finite(float(config.supervisor_timeout_seconds)) or config.supervisor_timeout_seconds <= 1:
+ 		_fail("主管心跳预算无效")
+ 		return
+ 	_directory = config.directory
++	_control.directory = _directory.path_join("control")
++	_control.session = session
++	_control.shutdown_ready.connect(_shutdown_after_control)
++	if not config.get("record_matches", false) is bool:
++		_fail("存档开关必须显式声明为布尔值")
++		return
++	session.record_matches = config.get("record_matches", false)
++	session.archive_root = config.directory.path_join("matches")
++	var recovery_state_path:String = config.directory.path_join("recovery.json")
++	var has_recovery_state:bool = FileAccess.file_exists(recovery_state_path)
+ 	_room_id = config.id
+ 	_supervisor_timeout_msec = int(config.supervisor_timeout_seconds * 1000.0)
+ 	var modes = JSON.parse_string(FileAccess.get_file_as_string(root.path_join("selection_modes.json")))
+@@ -75,10 +97,16 @@
+ 			return
+ 	var isolated: String = config.directory.path_join("data")
+ 	var assembler = preload("res://scripts/net/room_data_assembler.gd").new()
+-	if not assembler.assemble(isolated, plan.files, session.blobs.cache):
+-		_fail(assembler.error)
+-		return
+ 	var validator = preload("res://scripts/net/room_data_validator.gd").new()
++	if DirAccess.dir_exists_absolute(isolated):
++		# 重启只复用逐文件校验仍完整的目录；不覆盖或删除未知残留。
++		if not validator.validate(isolated, plan.files):
++			_fail("房间已有数据目录不完整，拒绝覆盖恢复：" + "\n".join(validator.errors))
++			return
++	else:
++		if not assembler.assemble(isolated, plan.files, session.blobs.cache):
++			_fail(assembler.error)
++			return
+ 	if not validator.validate(isolated, plan.files):
+ 		_fail("\n".join(validator.errors))
+ 		return
+@@ -96,25 +124,46 @@
+ 		_fail(session.error)
+ 		return
+ 	session.dedicated = true
+-	session.room.members.erase(1)
+-	session.room.owner = 0
++	session._identity_binding_required = identity_required
++	var recovered_state:bool = has_recovery_state and session.load_recovery_state(recovery_state_path)
++	if has_recovery_state and not recovered_state:
++		_fail("房间恢复文件无效，拒绝覆盖既有状态")
++		return
++	if not recovered_state: session.recovery_state_path = recovery_state_path
++	session.dedicated = true
++	session.selection_modes = modes.modes.duplicate(true)
++	if not recovered_state:
++		session.room.members.erase(1)
++		session.room.owner = 0
+ 	session.configure_selection(mode, masters, servants)
+ 	for file in plan.files:
+ 		if session.publish_blob(session.blobs.cache.fetch(file.hash)) != file.hash:
+ 			_fail("无法发布批准内容")
+ 			return
+-	if not session.set_room_files(plan.files) or not session.install_room_assets(isolated):
+-		_fail(session.error)
+-		return
++	# 显式启用预检配置的房间，初始目录仅作为候选；恢复也不能绕过批准。
++	if not session.room.settings.has("random_sim_enabled"):
++		if not session.set_room_files(plan.files) or not session.install_room_assets(isolated):
++			_fail(session.error)
++			return
+ 	session.require_room_data = true
+ 	session._rules_revision = session.data_revision
++	_data_approval.configure(session, root, entries, base)
++	# 对局录制和事务审计不是同一个开关。关闭对局录制仍保存完整事务审计。
++	# 开启录制时由 MatchReplay 创建/恢复其 transactions.log，不重复占用全局写入器。
++	if not session.record_matches:
++		_audit_journal = preload("res://scripts/match/match_journal.gd").begin_audit(_directory.path_join("transactions.%s.log" % _control.instance_id))
++		if _audit_journal == null:
++			_fail("权威事务审计文件建立失败")
++			return
+ 	var report := FileAccess.open(config.directory.path_join("ready.json.tmp"), FileAccess.WRITE)
+ 	if report == null:
+ 		_fail("无法写出房间就绪报告")
+ 		return
+-	report.store_string(JSON.stringify({"ok": true, "id": config.id, "pid": OS.get_process_id(), "port": int(config.port)}))
++	report.store_string(JSON.stringify({"ok": true, "id": config.id, "room_id":config.id, "pid": OS.get_process_id(), "port": int(config.port), "instance":_control.instance_id, "instance_id":_control.instance_id, "authority_host_mode":_authority_host_mode, "capabilities":_capabilities()}))
++	report.flush()
++	var report_error:Error = report.get_error()
+ 	report.close()
+-	if DirAccess.rename_absolute(config.directory.path_join("ready.json.tmp"), config.directory.path_join("ready.json")) != OK:
++	if report_error != OK or DirAccess.rename_absolute(config.directory.path_join("ready.json.tmp"), config.directory.path_join("ready.json")) != OK:
+ 		_fail("无法发布房间就绪报告")
+ 		return
+ 	print("SERVER_ROOM_READY ", config.id)
+@@ -123,8 +172,10 @@
+ func _process(delta: float) -> void:
+ 	if not _directory.is_empty() and _supervisor_seen_msec > 0:
+ 		var path := _directory.path_join("supervisor.json")
+-		var pulse = JSON.parse_string(FileAccess.get_file_as_string(path)) if FileAccess.file_exists(path) else null
+-		if pulse is Dictionary and pulse.get("id") == _room_id and pulse.get("version") is float and pulse.version > _supervisor_version:
++		var parser := JSON.new()
++		var pulse = null
++		if FileAccess.file_exists(path) and parser.parse(FileAccess.get_file_as_string(path)) == OK: pulse = parser.data
++		if pulse is Dictionary and pulse.get("id") == _room_id and pulse.get("pid") == OS.get_process_id() and pulse.get("instance_id") == _control.instance_id and _valid_integer(pulse.get("version"), 0, 9007199254740991) and pulse.version > _supervisor_version:
+ 			_supervisor_version = int(pulse.version)
+ 			_supervisor_seen_msec = Time.get_ticks_msec()
+ 		if Time.get_ticks_msec() - _supervisor_seen_msec > _supervisor_timeout_msec:
+@@ -133,13 +184,67 @@
+ 			return
+ 	if session.transport.is_connected_to_host():
+ 		session.poll(delta)
++		_data_approval.poll()
++	_control.poll()
++	if not _recovery_attempted and session.room.phase == "restoring" and not session.match_authority.started:
++		_try_restore_match()
++
++func _try_restore_match() -> void:
++	_recovery_attempted = true
++	for player_id in session._recovery_bindings:
++		var member_id:int = int(session._recovery_bindings[player_id])
++		if member_id > 0 and (not session.room.members.has(member_id) or not session.room.members[member_id].connected):
++			_recovery_attempted = false
++			return
++	var folders:Array = Array(DirAccess.get_directories_at(session.archive_root))
++	folders = folders.filter(func(folder): return FileAccess.file_exists(session.archive_root.path_join(folder).path_join("match.log")))
++	if folders.is_empty():
++		push_error("存档恢复缺少可读对局日志")
++		return
++	folders.sort()
++	var source:String = session.archive_root.path_join(folders.back())
++	var ok:bool = await session.restore_local_match(source)
++	if not ok: push_error("存档恢复失败：" + session.error)
++
++func _shutdown_after_control() -> void:
++	set_process(false)
++	get_tree().quit(0)
++
++static func _valid_integer(value:Variant, minimum:int, maximum:int) -> bool:
++	return typeof(value) in [TYPE_INT,TYPE_FLOAT] and is_finite(float(value)) and floor(float(value)) == value and value >= minimum and value <= maximum
++
++func _capabilities() -> Dictionary:
++	# 接口能力不等于当前存在完整检查点，ready 不伪造某次跳过/恢复成功。
++	return {"root_transaction_rollback":EffectManager.has_method("runtime_guard_root_effect") and EffectManager.has_method("skip_runtime_guard"),
++		"can_rollback_now":EffectManager.can_rollback_runtime_guard(),
++		"execution_trace":_script_has_method(preload("res://scripts/system/global/game_log.gd"), "all_func_calls"),
++		"root_transaction_audit":_script_has_method(preload("res://scripts/match/match_journal.gd"), "audit_event"),
++		"transaction_audit_persistence_enabled":session.record_matches or _audit_journal != null,
++		"match_recording_enabled":session.record_matches,
++		"process_restart_is_rollback":false}
++
++static func _script_has_method(script:GDScript, method_name:String) -> bool:
++	for method in script.get_script_method_list():
++		if method.get("name") == method_name: return true
++	return false
+ 
+ func _fail(reason: String) -> void:
+ 	push_error(reason)
++	_data_approval.close()
+ 	session.close()
+ 	get_tree().quit(1)
+ 
+ func _exit_tree() -> void:
++	preload("res://scripts/match/match_journal.gd").end_audit(_audit_journal)
++	_audit_journal = null
++	if _system_signals != null:
++		_system_signals.disable()
++		_system_signals = null
++	_data_approval.close()
+ 	session.close()
+ 	if not _directory.is_empty():
+-		DirAccess.remove_absolute(_directory.path_join("ready.json"))
++		# 只移除本实例报告；旧进程晚退出不能删掉新进程的 ready。
++		var path:String = _directory.path_join("ready.json")
++		var report = JSON.parse_string(FileAccess.get_file_as_string(path)) if FileAccess.file_exists(path) else null
++		if report is Dictionary and report.get("pid") == OS.get_process_id() and report.get("instance_id") == _control.instance_id:
++			DirAccess.remove_absolute(path)
+--- /dev/null
++++ b/scripts/net/server_bootstrap.gd
+@@ -0,0 +1,106 @@
++extends Node
++
++var _signaling
++var _signals
++
++static func process_arguments(arguments:PackedStringArray) -> PackedStringArray:
++	if not OS.has_feature("fate_server"): return arguments
++	var result:PackedStringArray = []
++	var index:int = 0
++	while index < arguments.size():
++		if arguments[index] == "--":
++			result.append_array(arguments.slice(index))
++			break
++		if arguments[index] in ["--path","--scene"]:
++			index += 2
++			continue
++		result.append(arguments[index])
++		index += 1
++	return result
++
++## Release 导出统一入口；子进程身份由本机启动参数显式声明。
++func _ready() -> void:
++	var args:PackedStringArray = OS.get_cmdline_user_args()
++	var routes:Dictionary = {
++		"--server-signaling":"signaling-only",
++		"--server-console":"res://assets/scenes/main_menu/server_console.tscn",
++		"--server-room-worker":"res://assets/scenes/main_menu/server_room_worker.tscn",
++		"--room-data-validation-worker":"res://assets/scenes/main_menu/room_data_validation_worker.tscn",
++		"--server-gateway":"res://assets/scenes/main_menu/server_cli.tscn"
++	}
++	var selected:String = ""
++	for flag in routes:
++		if args.has(flag):
++			if not selected.is_empty():
++				push_error("服务端进程只能声明一种职责")
++				get_tree().quit(2)
++				return
++			selected = routes[flag]
++	if selected.is_empty(): selected = routes["--server-gateway"]
++	if selected == "signaling-only":
++		_start_signaling(args)
++		return
++	get_tree().change_scene_to_file.call_deferred(selected)
++
++## 独立信令职责：不实例化 gateway、room manager、session 或规则 authority。
++## 配置兼容 server.cfg，但 roles 必须仅 relay；此入口不提供游戏/房间管理。
++func _start_signaling(args:PackedStringArray) -> void:
++	args = args.duplicate()
++	args.erase("--server-signaling")
++	if args.size() != 2 or args[0] != "--config":
++		_signal_fail("信令启动方式：--server-signaling --config 本机配置")
++		return
++	var configuration:Variant
++	if args[1].get_extension().to_lower() == "cfg":
++		var file := ConfigFile.new()
++		if file.load(args[1]) != OK or not file.has_section("server"):
++			_signal_fail("信令配置不可读")
++			return
++		configuration = {}
++		for key in file.get_section_keys("server"): configuration[key] = file.get_value("server",key)
++		configuration["relay"] = {}
++		if file.has_section("relay"):
++			for key in file.get_section_keys("relay"): configuration.relay[key] = file.get_value("relay",key)
++	else:
++		configuration = JSON.parse_string(FileAccess.get_file_as_string(args[1]))
++	if not configuration is Dictionary or configuration.get("roles") != ["relay"] or not configuration.get("bind_address", "*") is String or not configuration.get("relay", {}) is Dictionary:
++		_signal_fail("纯信令入口需显式 roles=[relay]，不能启动权威规则")
++		return
++	var port = configuration.get("port")
++	var clients = configuration.get("max_clients",96)
++	var rooms = configuration.get("max_rooms",16)
++	if configuration.has("p2p_signaling") and configuration.p2p_signaling != true:
++		_signal_fail("纯信令入口不能声明 p2p_signaling=false")
++		return
++	if not _positive_integer(port,65535) or not _positive_integer(clients,2147483647) or not _positive_integer(rooms,2147483647):
++		_signal_fail("信令端口或连接预算无效")
++		return
++	_signals = load("res://scripts/net/server_process_signals.gd").create()
++	if _signals == null or not _signals.enable():
++		_signal_fail("信令进程信号保护不可用")
++		return
++	_signaling = load("res://scripts/net/p2p_signal_server.gd").new()
++	_signaling.max_clients = int(clients)
++	_signaling.max_rooms = int(rooms)
++	if not _signaling.configure(configuration.get("relay",{})) or _signaling.listen(int(port),configuration.get("bind_address","*")) != OK:
++		_signal_fail("信令监听失败：" + _signaling.error)
++		return
++	print("SERVER_SIGNALING_READY ",JSON.stringify({"ok":true,"pid":OS.get_process_id(),"port":int(port),"roles":["relay"],"rules_authority_started":false}))
++
++static func _positive_integer(value:Variant, maximum:int) -> bool:
++	return typeof(value) in [TYPE_INT,TYPE_FLOAT] and is_finite(float(value)) and floor(float(value)) == value and value >= 1 and value <= maximum
++
++func _signal_fail(reason:String) -> void:
++	push_error(reason)
++	get_tree().quit(2)
++
++func _process(_delta:float) -> void:
++	if _signaling == null: return
++	if _signals != null and _signals.take_request() != 0:
++		get_tree().quit(0)
++		return
++	_signaling.poll()
++
++func _exit_tree() -> void:
++	if _signaling != null: _signaling.close()
++	if _signals != null: _signals.disable()
+--- /dev/null
++++ b/tests/authority_worker_lifecycle_contract_test.gd
+@@ -0,0 +1,52 @@
++extends Node
++
++const Manager = preload("res://scripts/net/server_room_manager.gd")
++const Worker = preload("res://scripts/net/server_room_worker.gd")
++const Bootstrap = preload("res://scripts/net/server_bootstrap.gd")
++var checks:int = 0
++var failures:int = 0
++
++func check(value:bool, label:String) -> void:
++	checks += 1
++	if not value:
++		failures += 1
++		push_error(label)
++
++func _ready() -> void:
++	var instance:String = "0123456789abcdef0123456789abcdef"
++	var room:Dictionary = {"id":"room", "pid":42, "port":52000, "instance_id":instance, "authority_host_mode":"lan"}
++	var report:Dictionary = {"ok":true, "id":"room", "room_id":"room", "pid":42, "port":52000, "instance":instance, "instance_id":instance, "authority_host_mode":"lan", "capabilities":{"root_transaction_rollback":true, "can_rollback_now":false, "execution_trace":true, "root_transaction_audit":true, "transaction_audit_persistence_enabled":true, "match_recording_enabled":false, "process_restart_is_rollback":false}}
++	for mode in Manager.AUTHORITY_HOST_MODES:
++		room.authority_host_mode = mode
++		report.authority_host_mode = mode
++		check(Manager.valid_ready_report(room,report), "显式权威位置就绪：" + mode)
++	for key in ["pid", "port", "id", "room_id", "instance", "instance_id", "authority_host_mode"]:
++		var stale:Dictionary = report.duplicate(true)
++		stale[key] = 0 if key in ["pid", "port"] else "obsolete"
++		check(not Manager.valid_ready_report(room, stale), "拒绝过期就绪字段：" + key)
++	var missing:Dictionary = report.duplicate(true)
++	missing.capabilities = {}
++	check(not Manager.valid_ready_report(room,missing), "缺少能力声明不能就绪")
++	missing = report.duplicate(true)
++	missing.capabilities.process_restart_is_rollback = true
++	check(not Manager.valid_ready_report(room,missing), "杀进程不能冒充根事务回滚")
++	check(Manager.matches_instance(room,42,instance), "PID 与随机实例同时绑定")
++	check(not Manager.matches_instance(room,42,"ffffffffffffffffffffffffffffffff"), "相同 PID 不能冒充新实例")
++	check(not Manager.matches_instance(room,43,instance), "相同实例不能冒充其他 PID")
++	check(not Manager.valid_instance_id("../bad"), "实例标识拒绝路径文本")
++	check(Worker._valid_integer(52000,1,65535), "端口接受整数")
++	check(Worker._valid_integer(52000.0,1,65535), "JSON 整数浮点有效")
++	check(not Worker._valid_integer(52000.5,1,65535), "不截断损坏端口")
++	check(not Worker._valid_integer(INF,1,65535), "无穷端口无效")
++	check(not Worker._valid_integer(true,1,65535), "布尔端口无效")
++	check(Bootstrap._positive_integer(1.0,65535), "信令端口支持 JSON 数值")
++	check(not Bootstrap._positive_integer(0,65535), "信令端口拒绝零")
++	var manager = Manager.new()
++	manager.authority_host_mode = "relay"
++	check(manager.create_room("not-created",{},"res://data").is_empty(), "relay 不得创建规则进程")
++	manager.rooms["room"] = room.duplicate(true)
++	check(not manager.recover_room("room",42,"ffffffffffffffffffffffffffffffff"), "过期恢复请求在任何启动前拒绝")
++	check(not manager.stop_room("room",43,instance), "过期停止请求在任何 kill 前拒绝")
++	manager.rooms.clear() # 夹具 PID 不得进入析构停止。
++	print("RESULT authority_worker_lifecycle_contract checks=", checks, " failures=", failures)
++	get_tree().quit(1 if failures > 0 else 0)
+--- /dev/null
++++ b/tests/authority_worker_lifecycle_contract_test.tscn
+@@ -0,0 +1,6 @@
++[gd_scene load_steps=2 format=3]
++
++[ext_resource type="Script" path="res://tests/authority_worker_lifecycle_contract_test.gd" id="1"]
++
++[node name="AuthorityWorkerLifecycleContractTest" type="Node"]
++script = ExtResource("1")

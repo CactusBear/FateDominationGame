@@ -16,21 +16,41 @@ static var max_rounds:int = 0
 
 static var _journal := EventJournal.new()
 static var _trace := ExecutionTrace.new()
+# 展示票据独立于 _journal 的规则对象图；回滚不能复活已 abort 的 generation。
+static var _fact_delivery = preload("res://scripts/system/global/fact_delivery.gd").new()
 
 #当前上下文，由 GameProgress 推进回合/阶段时设置
 static var current_round:int = 0
 static var current_phase:String = ""
 
 
-#只订阅新事实，不回放历史；延迟通知使展示层不进入规则调用栈。
+#只订阅新事实，不回放历史；延迟调度先检查事务资格，再调用展示消费者。
 static func observe_facts(listener:Callable) -> void:
-	if !_journal.recorded.is_connected(listener):
-		_journal.recorded.connect(listener, CONNECT_DEFERRED)
+	var enqueue:Callable = _fact_delivery.enqueue
+	if not _journal.recorded.is_connected(enqueue):
+		_journal.recorded.connect(enqueue)
+	_fact_delivery.observe(listener)
 
 
 static func unobserve_facts(listener:Callable) -> void:
-	if _journal.recorded.is_connected(listener):
-		_journal.recorded.disconnect(listener)
+	_fact_delivery.unobserve(listener)
+
+
+static func begin_fact_transaction(transaction_id:int) -> void:
+	_fact_delivery.begin(transaction_id)
+
+
+static func commit_fact_transaction(transaction_id:int) -> void:
+	_fact_delivery.commit(transaction_id)
+
+
+static func abort_fact_transaction(transaction_id:int) -> void:
+	_fact_delivery.abort(transaction_id)
+
+
+# EffectManager.reset_runtime 也会调用；不重置规则历史或展示订阅。
+static func reset_fact_delivery() -> void:
+	_fact_delivery.reset()
 
 
 static func set_context(round_num:int, phase_name:String) -> void:
@@ -94,6 +114,7 @@ static func begin_round() -> void:
 
 
 static func reset() -> void:
+	reset_fact_delivery()
 	_journal.reset()
 	_trace.reset()
 	current_round = 0

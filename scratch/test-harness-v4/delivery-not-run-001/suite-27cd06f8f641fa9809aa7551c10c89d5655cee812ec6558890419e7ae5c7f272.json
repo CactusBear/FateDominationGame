@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/residue_pile_test.tscn:window",
+  "scene": "tests/residue_pile_test.tscn",
+  "mode": "window",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

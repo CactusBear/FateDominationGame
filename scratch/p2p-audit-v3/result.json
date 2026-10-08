@@ -1,0 +1,108 @@
+{
+  "kind": "source-and-python-counterexample-audit-not-runtime-acceptance",
+  "public_network_acceptance": "unverified",
+  "godot_executed": false,
+  "tests_run": 16,
+  "failures": 0,
+  "errors": 0,
+  "audited_source_unchanged_during_run": true,
+  "source_sha256": {
+    "scripts/net/p2p_signal_client.gd": "ef664495302a1dacbffee8e331201afd07f5851b2c2f208e30aa878617038390",
+    "scripts/net/p2p_signal_server.gd": "50df01a45cbbf22fc327e21f9373d25253f372e07e9431aeb782cb3ca5a623d9",
+    "scripts/net/p2p_invite.gd": "1dee14c38ac133c3b32fe9662780ecd2845d33f3eade0c7739113d2c455d97ba",
+    "scripts/net/webrtc_link.gd": "0dda042895351e334eb8e4b14543a3eb08cbd1e22790885e64d4f7eef59682ad",
+    "scripts/net/lobby_session.gd": "e5a3a4a1254f65cb392bb44d45b616027b17ecd327120ca9c40a6ed64523b274",
+    "scripts/net/server_bootstrap.gd": "7d1a72b969c5000a88a28ce8e8ce85ab8c7b747d98687db4b3011861d088cf8e",
+    "scripts/net/authority_host_client.gd": "affef879d6041cd837186414ac9332aea0f914b1fc46c36d961a6868974d3a36",
+    "scripts/net/server_gateway.gd": "37de017cbe94268ee2927f56c22daa26a59fe764d82874fc58f06fb3966c1c5a"
+  },
+  "observations": [
+    {
+      "case": "wss",
+      "scope": "源码",
+      "detail": "客户端接受 wss；本服务器直接接受 TCP，未见 TLS 终结。公网 WSS 依赖独立可信 TLS 反向代理或另行实现。"
+    },
+    {
+      "case": "stun",
+      "scope": "源码+谓词镜像",
+      "detail": "只接受 stun:；空 iceServers 数组可走 host candidates。前缀校验不证明 URL 有效、STUN 可达或跨 NAT 可连。"
+    },
+    {
+      "case": "relay_candidate",
+      "scope": "源码",
+      "detail": "候选类型白名单和 SDP relay 文本拒绝存在；不替代底层 ICE selected-pair/抓包验证。"
+    },
+    {
+      "case": "no_forwarding",
+      "scope": "源码",
+      "detail": "没有游戏消息分支；仅转送握手邀请码，不启动规则。不能仅靠 diagnostics.game_forwarding=false 证明线上无转发。"
+    },
+    {
+      "case": "closed_pending",
+      "scope": "源码+控制流切片",
+      "detail": "断信令仍先 poll invite，不主动关闭既有直连；但 CLOSED 返回跳过 pending 超时清理，未完成 peer/预算可能残留到显式 close。"
+    },
+    {
+      "case": "create_send_failure",
+      "scope": "源码+控制流切片",
+      "detail": "created 发送失败后房间已登记、host expires=0；默认 TTL=0 时直到连接移除才回收，重发 create 被拒。实际 send_text 故障需 Godot 故障注入。"
+    },
+    {
+      "case": "join_send_failure",
+      "scope": "源码",
+      "detail": "join_request 发送失败仍登记客机房间；重复 join 被拒，需等超时/重新连接，无自动重试。"
+    },
+    {
+      "case": "duplicates",
+      "scope": "源码",
+      "detail": "created/offer/answer 有分层重放拒绝；nonce 为握手关联值，不是玩家签名或身份凭证。"
+    },
+    {
+      "case": "auth",
+      "scope": "源码",
+      "detail": "信令 create/join 未认证玩家；房间码是邀请能力。WSS 保护到信令端的链路，不阻止受信令端控制的 SDP/fingerprint 替换；未见端到端玩家签名绑定。"
+    },
+    {
+      "case": "resume_auth",
+      "scope": "源码",
+      "detail": "P2P权威已接房主本机gateway/worker，但本机房主required=false；客机上下文由gateway重建，密钥认证取决于非空registry。普通P2P启动未配置registry，不能把独服可选认证称为P2P已认证。恢复仍校验私有bearer token与房间成员。"
+    },
+    {
+      "case": "rate_boundary",
+      "scope": "源码+谓词镜像",
+      "detail": "32/s 固定窗口允许边界两次 poll 共64包/1ms；这是固定窗口局限，不是任意速率无限绕过，socket 缓冲仍有上限。"
+    },
+    {
+      "case": "ip_quota",
+      "scope": "源码",
+      "detail": "配额来自真实 TCP 地址，但仅限制主持房间，不是每IP连接数。TLS反向代理可能把多个玩家合并为代理IP；需现场部署验证，不能信任客户端自报IP补救。"
+    },
+    {
+      "case": "public_template",
+      "scope": "现有Python验证器真实执行",
+      "detail": {
+        "evidence_complete": false,
+        "errors": [
+          "公网验收尚未确认",
+          "权威进程不在已声明房主机器",
+          "公网位置验收需独立信令机器标签",
+          "缺实际权威进程 PID",
+          "缺异地独立网络记录",
+          "未证实：signaling_shutdown_observed",
+          "未证实：host_received_guest_business_after_shutdown",
+          "未证实：guest_received_host_business_after_shutdown",
+          "未证实信令不转发游戏字节",
+          "未证实无 TURN 且客机不运行规则",
+          "缺非 relay selected candidate 现场证据",
+          "缺房主/客机/信令/流量取证日志"
+        ],
+        "note": "仅完整性检查，不认证日志来源或人工现场断言"
+      }
+    }
+  ],
+  "limitations": [
+    "Python 切片不执行 GDScript 或 ICE",
+    "源码证据不证明公网、selected-pair、DataChannel存活、玩家认证",
+    "哈希只保护完整性，不认证日志来源"
+  ]
+}

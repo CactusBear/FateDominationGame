@@ -1,0 +1,143 @@
+flowchart TD
+  FREEZE["FREEZE 冻结代码/测试/资源/构建清单"]
+  STATIC["STATIC 静态入口、权限和数据屏障"]
+  FREEZE --> STATIC
+  WINDOW["WINDOW 真实窗口单机多进程入口"]
+  STATIC --> WINDOW
+  RW01["RW01 真实窗口与隔离"]
+  WINDOW --> RW01
+  RW02["RW02 身份合法输入与边界"]
+  RW01 --> RW02
+  RW03["RW03 重复昵称与用户名唯一"]
+  RW02 --> RW03
+  RW04["RW04 建房加入与观战角色"]
+  RW01 --> RW04
+  RW05["RW05 房间密码正反例"]
+  RW04 --> RW05
+  RW06["RW06 数据选择与同步屏障"]
+  RW04 --> RW06
+  RW07["RW07 同名数据冲突与缓存"]
+  RW06 --> RW07
+  RW08["RW08 选人权限与隐私"]
+  RW06 --> RW08
+  RW09["RW09 开局顺位与归属"]
+  RW08 --> RW09
+  RW10["RW10 真人对局输入与权威"]
+  RW09 --> RW10
+  RW11["RW11 非当前行动者亲自答复"]
+  RW10 --> RW11
+  RW12["RW12 观战隐私与中途加入"]
+  RW10 --> RW12
+  RW13["RW13 客机掉线与原进程重连"]
+  RW11 --> RW13
+  RW14["RW14 客机进程退出后恢复"]
+  RW13 --> RW14
+  RW15["RW15 大厅房主转移"]
+  RW04 --> RW15
+  RW16["RW16 房主窗口/权威崩溃边界"]
+  RW10 --> RW16
+  RW17["RW17 服务端工作进程恢复原局"]
+  LINUX_MATCH --> RW17
+  RW18["RW18 身份继承成功与受限失败"]
+  LINUX_MATCH --> RW18
+  RW03 --> RW18
+  RW19["RW19 继承拒绝与旧档失败关闭"]
+  RW18 --> RW19
+  RW20["RW20 预算配置与异常提示"]
+  RW04 --> RW20
+  RW21["RW21 异常跳过完整回退"]
+  RW20 --> RW21
+  RW22["RW22 当前阵容重开与回大厅重选"]
+  RW20 --> RW22
+  RW23["RW23 保存、正常关闭与恢复"]
+  LINUX_MATCH --> RW23
+  RW24["RW24 保存失败与失败现场收集"]
+  LINUX_MATCH --> RW24
+  LAN_01["LAN-01 手填同网段 IP 与端口"]
+  WINDOW --> LAN_01
+  LAN_02["LAN-02 主客交换与第二端口"]
+  LAN_01 --> LAN_02
+  LAN_03["LAN-03 错误地址端口及 UDP 占用"]
+  LAN_01 --> LAN_03
+  LAN_04["LAN-04 最小防火墙允许与阻断"]
+  LAN_01 --> LAN_04
+  LAN_05["LAN-05 房间密码正反例"]
+  LAN_01 --> LAN_05
+  LAN_06["LAN-06 真实规则文件卡图同步与屏障"]
+  LAN_01 --> LAN_06
+  LAN_07["LAN-07 按玩家条目选取与同名冲突"]
+  LAN_06 --> LAN_07
+  LAN_08["LAN-08 缓存与中断同步"]
+  LAN_06 --> LAN_08
+  LAN_09["LAN-09 三机同时观战及中途入局"]
+  LAN_06 --> LAN_09
+  LAN_10["LAN-10 房主管理权转让非权威迁移"]
+  LAN_06 --> LAN_10
+  LAN_11["LAN-11 真人客机物理断网暂停"]
+  LAN_06 --> LAN_11
+  LAN_12["LAN-12 同一身份重连与拒绝冒领"]
+  LAN_11 --> LAN_12
+  LAN_13["LAN-13 观战物理断网不阻塞真人"]
+  LAN_09 --> LAN_13
+  LAN_14["LAN-14 权威进程存活时主机断网恢复"]
+  LAN_06 --> LAN_14
+  LAN_15["LAN-15 四机并发上传与多人重连"]
+  LAN_06 --> LAN_15
+  LAN_12 --> LAN_15
+  LAN_09 --> LAN_15
+  LAN_16["LAN-16 三机正式 UI 真人完整局"]
+  LAN_06 --> LAN_16
+  LAN_09 --> LAN_16
+  LAN_10 --> LAN_16
+  LAN_12 --> LAN_16
+  LAN_13 --> LAN_16
+  LAN_14 --> LAN_16
+  CN01["CN01 different_public_egress_baseline"]
+  LAN_01 --> CN01
+  P2P_BUILD --> CN01
+  CN02["CN02 home_router_to_home_router"]
+  CN01 --> CN02
+  CN03["CN03 home_router_to_mobile_hotspot"]
+  CN01 --> CN03
+  CN04["CN04 independent_mobile_hotspots"]
+  CN01 --> CN04
+  CN05["CN05 evidenced_cgnat_double_nat_or_endpoint_dependent_mapping"]
+  CN01 --> CN05
+  CN06["CN06 ipv4_ipv6_address_family_compatibility"]
+  CN01 --> CN06
+  CN07["CN07 stun_reachable_one_side_blocked_both_blocked_dns_failure"]
+  CN01 --> CN07
+  CN08["CN08 signaling_disconnect_after_direct_business_ready"]
+  CN01 --> CN08
+  CN09["CN09 signaling_wrong_port_or_unreachable_before_handshake"]
+  CN01 --> CN09
+  CN10["CN10 peer_udp_ports_blocked_or_ice_timeout"]
+  CN01 --> CN10
+  CN11["CN11 guest_network_disconnect_and_reconnect"]
+  CN01 --> CN11
+  CN12["CN12 turn_url_and_relay_candidate_rejection"]
+  CN01 --> CN12
+  P2P_BUILD["P2P-BUILD WebRTC扩展与信令包前置"]
+  STATIC --> P2P_BUILD
+  LINUX_PREFLIGHT["LINUX-PREFLIGHT Linux导出包/依赖/帮助/存储"]
+  STATIC --> LINUX_PREFLIGHT
+  LINUX_MATCH["LINUX-MATCH 独立网关+房间工作进程+远端真人完整局"]
+  LINUX_PREFLIGHT --> LINUX_MATCH
+  RW10 --> LINUX_MATCH
+  LINUX_WORKER_RESTART["LINUX-WORKER-RESTART 仅子进程重新就绪"]
+  LINUX_MATCH --> LINUX_WORKER_RESTART
+  LINUX_LOBBY_RECOVERY["LINUX-LOBBY-RECOVERY 大厅登记与数据恢复"]
+  LINUX_WORKER_RESTART --> LINUX_LOBBY_RECOVERY
+  LINUX_MATCH_RECOVERY["LINUX-MATCH-RECOVERY 原局恢复"]
+  LINUX_LOBBY_RECOVERY --> LINUX_MATCH_RECOVERY
+  RW17 --> LINUX_MATCH_RECOVERY
+  LINUX_SIGNALS["LINUX-SIGNALS SIGINT/SIGTERM保存关闭"]
+  LINUX_MATCH --> LINUX_SIGNALS
+  LINUX_SAVE_FAIL["LINUX-SAVE-FAIL 保存失败保留旧档"]
+  LINUX_MATCH --> LINUX_SAVE_FAIL
+  RW24 --> LINUX_SAVE_FAIL
+  LINUX_GATEWAY_RESTART["LINUX-GATEWAY-RESTART 网关异常恢复独立验证"]
+  LINUX_MATCH_RECOVERY --> LINUX_GATEWAY_RESTART
+  LINUX_LOAD["LINUX-LOAD 多房间并发与故障隔离"]
+  LINUX_MATCH_RECOVERY --> LINUX_LOAD
+  LINUX_SIGNALS --> LINUX_LOAD

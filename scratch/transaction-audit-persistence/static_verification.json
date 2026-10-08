@@ -1,0 +1,28 @@
+{
+  "parsed_files": [
+    "scripts/match/match_journal.gd",
+    "scripts/match/match_replay.gd",
+    "scripts/net/match_authority.gd",
+    "scratch/transaction-audit-persistence/audit_persistence_test.gd"
+  ],
+  "static_contracts": [
+    "namespace",
+    "capacity",
+    "reason",
+    "lease",
+    "idempotency",
+    "full_audit_copy",
+    "rollback_gate"
+  ],
+  "negative_controls_detected": [
+    "namespace",
+    "capacity",
+    "reason",
+    "lease",
+    "idempotency",
+    "full_audit_copy",
+    "rollback_gate"
+  ],
+  "godot_executed": false,
+  "behavioral_red_green_verified": false
+}

@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/servant_skill_eight_magic_test.tscn:headless",
+  "scene": "tests/servant_skill_eight_magic_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

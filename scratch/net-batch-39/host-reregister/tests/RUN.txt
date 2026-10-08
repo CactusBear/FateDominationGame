@@ -1,0 +1,1 @@
+仅在主代理获准后，于隔离项目复制候选 gd.txt 为 .gd，复制生产 Identity/Client/Invite 及它们依赖；用 --headless --path <isolated-project> --script res://tests/signal_host_registration_draft_test.gd。不要用 --scene：测试继承 SceneTree。本轮没有执行该命令。

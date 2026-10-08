@@ -1,0 +1,10 @@
+; 独立纯信令项目模板：复制到新目录命名为 project.godot；不是根项目覆盖文件。
+config_version=5
+
+[application]
+config/name="Fate Signaling"
+run/main_scene="res://assets/scenes/main_menu/server_bootstrap.tscn"
+run/flush_stdout_on_print=true
+
+[rendering]
+renderer/rendering_method="gl_compatibility"

@@ -37,6 +37,9 @@ var _entering := false
 
 
 func _ready() -> void:
+	# worker 已由 LoadGame deferred 路由到 server_bootstrap；不能进入开场的 await 生命周期。
+	if LoadGame.is_server_worker_process():
+		return
 	var hidden: Array[CanvasItem] = []
 	for n in warm_up_nodes:
 		if n != null and not n.visible:

@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/card_browser_test.tscn:window",
+  "scene": "tests/card_browser_test.tscn",
+  "mode": "window",
+  "required": true,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

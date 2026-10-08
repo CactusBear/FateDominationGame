@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/round_change_test.tscn:headless",
+  "scene": "tests/round_change_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

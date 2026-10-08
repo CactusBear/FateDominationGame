@@ -1,0 +1,5 @@
+{
+  "checks": 18,
+  "failed": 0,
+  "scope": "Node有限语法转译真实候选GDScript交互与接线断言，非Godot运行/画面验收"
+}

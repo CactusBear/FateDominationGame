@@ -1,0 +1,37 @@
+*** Begin Patch
+*** Update File: scripts/net/session/lobby_session.gd
+@@
+ func reconnect() -> Error:
+ 	if not can_reconnect(): return ERR_UNAVAILABLE
+@@
+ 	changed.emit()
+ 	return result
++
++## 崩溃恢复已由 authority_host_client 完成原 worker 校验、换代和 _prepare_reconnect。
++## 成功后必须等待 authority_host.poll() 接入新 loopback，不能再次调用 reconnect()。
++func reconnect_after_worker_crash() -> Error:
++	if authority_host != null and authority_host.has_method("diagnostics"):
++		var diagnostic:Dictionary = authority_host.diagnostics()
++		if diagnostic.get("worker_crash_waiting", false):
++			if not authority_host.has_method("recover_worker") or not authority_host.recover_worker():
++				error = "本机权威恢复未获批准"
++				return ERR_UNAUTHORIZED
++			error = ""
++		changed.emit()
++		return OK
++	return reconnect()
+*** Update File: scripts/net/ui/lobby_screen.gd
+@@
+ func _reconnect() -> void:
+-	var result:Error = session.reconnect()
++	var result:Error = session.reconnect_after_worker_crash()
+ 	if result != OK: session.error = "无法重新连接：" + error_string(result)
+ 	_refresh_reconnect()
+*** Update File: scripts/net/ui/v2_view_presenter.gd
+@@
+ func _reconnect() -> void:
+-	var result:Error = session.reconnect()
++	var result:Error = session.reconnect_after_worker_crash()
+ 	if result != OK: session.error = "无法重新连接：" + error_string(result)
+ 	_refresh_connection_wait()
+*** End Patch

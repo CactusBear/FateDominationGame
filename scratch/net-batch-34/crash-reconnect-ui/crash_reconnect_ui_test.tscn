@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scratch/net-batch-34/crash-reconnect-ui/crash_reconnect_ui_test.gd" id="1_test"]
+
+[node name="CrashReconnectUiTest" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_test")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Content" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+
+[node name="Status" type="Label" parent="Margin/Content"]
+layout_mode = 2
+
+[node name="Reconnect" type="Button" parent="Margin/Content"]
+layout_mode = 2
+text = "重新连接"

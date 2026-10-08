@@ -1,0 +1,260 @@
+{
+  "schema": "export-audit-v6",
+  "scope": "第二轮发行包静态审计；只读源码/配置；未启动Godot、未导出、未运行服务端",
+  "repo": "E:\\Projects\\Godot\\FateDominationGame-master",
+  "checks": [
+    {
+      "id": "bootstrap-entry",
+      "status": "PASS",
+      "evidence": "\"res://assets/scenes/main_menu/server_bootstrap.tscn\""
+    },
+    {
+      "id": "stdout-flush",
+      "status": "PASS",
+      "evidence": "true"
+    },
+    {
+      "id": "newnet-layout",
+      "status": "PASS",
+      "evidence": {
+        "missing": [],
+        "legacy_root_files": []
+      }
+    },
+    {
+      "id": "legacy-net-references",
+      "status": "PASS",
+      "evidence": []
+    },
+    {
+      "id": "FateServer Linux-dedicated-exclusions",
+      "status": "PASS",
+      "evidence": {
+        "exclude_filter": [
+          "data/*",
+          "tests/*",
+          "reports/*",
+          "docs/*",
+          "scratch/*",
+          "addons/godot-git-plugin/*"
+        ],
+        "missing_required": []
+      }
+    },
+    {
+      "id": "FateServer Linux-feature",
+      "status": "PASS",
+      "evidence": "\"fate_server\""
+    },
+    {
+      "id": "FateServer Linux-config-template",
+      "status": "PASS",
+      "evidence": "\"assets/config/*.cfg\""
+    },
+    {
+      "id": "FateServer Windows-dedicated-exclusions",
+      "status": "PASS",
+      "evidence": {
+        "exclude_filter": [
+          "data/*",
+          "tests/*",
+          "reports/*",
+          "docs/*",
+          "scratch/*",
+          "addons/godot-git-plugin/*"
+        ],
+        "missing_required": []
+      }
+    },
+    {
+      "id": "FateServer Windows-feature",
+      "status": "PASS",
+      "evidence": "\"fate_server\""
+    },
+    {
+      "id": "FateServer Windows-config-template",
+      "status": "PASS",
+      "evidence": "\"assets/config/*.cfg\""
+    },
+    {
+      "id": "server-platform-pair",
+      "status": "PASS",
+      "evidence": [
+        {
+          "name": "FateServer Linux",
+          "platform": "\"Linux\"",
+          "exclude_filter": [
+            "data/*",
+            "tests/*",
+            "reports/*",
+            "docs/*",
+            "scratch/*",
+            "addons/godot-git-plugin/*"
+          ],
+          "include_filter": "\"assets/config/*.cfg\"",
+          "export_path": "\"../FateDomination/test/server-dist/linux/FateServer.x86_64\""
+        },
+        {
+          "name": "FateServer Windows",
+          "platform": "\"Windows Desktop\"",
+          "exclude_filter": [
+            "data/*",
+            "tests/*",
+            "reports/*",
+            "docs/*",
+            "scratch/*",
+            "addons/godot-git-plugin/*"
+          ],
+          "include_filter": "\"assets/config/*.cfg\"",
+          "export_path": "\"../FateDomination/test/server-dist/windows/FateServer.exe\""
+        }
+      ]
+    },
+    {
+      "id": "signal-extension-platforms",
+      "status": "PASS",
+      "evidence": [
+        {
+          "platform": "windows.x86_64",
+          "path": "res://addons/fate_server_signals/bin/libfate_server_signals.windows.x86_64.dll",
+          "exists": true,
+          "kind": "PE-x86_64",
+          "sha256": "a3cd98205851c93914aa05f534e3547c414230903899e2e96f5f9094afe7e43f"
+        },
+        {
+          "platform": "linux.x86_64",
+          "path": "res://addons/fate_server_signals/bin/libfate_server_signals.linux.x86_64.so",
+          "exists": true,
+          "kind": "ELF-x86_64",
+          "sha256": "9edf007f0e2327226e8a31f601bf8ad68a4f13b5beeb9f963a936d8154ad78fe"
+        }
+      ]
+    },
+    {
+      "id": "signal-bin-extras",
+      "status": "REVIEW",
+      "evidence": [
+        "libfate_server_signals.linux.x86_64",
+        "libfate_server_signals.windows.x86_64"
+      ]
+    },
+    {
+      "id": "config-template-policy",
+      "status": "PASS",
+      "evidence": {
+        "authority_host_mode": "\"dedicated\"",
+        "transaction_log": "true",
+        "recovery_key_mismatch": "\"reject\"",
+        "recovery_inheritance": "\"host_select\"",
+        "roles": "[\"game\"]"
+      }
+    },
+    {
+      "id": "config-simulation-fields",
+      "status": "PASS",
+      "evidence": {
+        "random_sim_enabled": "true",
+        "random_sim_budget_sec": "60.0"
+      }
+    },
+    {
+      "id": "bootstrap-routes",
+      "status": "PASS",
+      "evidence": true
+    },
+    {
+      "id": "bootstrap-conflict-reject",
+      "status": "PASS",
+      "evidence": true
+    },
+    {
+      "id": "signaling-autoload-guard",
+      "status": "PASS",
+      "evidence": true
+    },
+    {
+      "id": "signaling-relay-only",
+      "status": "PASS",
+      "evidence": true
+    },
+    {
+      "id": "arg-strip",
+      "status": "PASS",
+      "evidence": true
+    },
+    {
+      "id": "scratch-resource-risk",
+      "status": "PASS",
+      "evidence": [
+        "scratch/authority-worker-v2/signaling-project/assets/scenes/main_menu/server_bootstrap.tscn",
+        "scratch/identity-inheritance-ui/identity_inheritance_ui_window_test.tscn",
+        "scratch/native-process-ownership-v6/deps/godot-cpp-714c9e2c165db2dcb7e6ea57e62a04204d3cfbfa/test/project/main.tscn",
+        "scratch/rejected-correlation-merge/rejected_request_correlation_test.tscn",
+        "scratch/transaction-return-consumers/transaction_return_consumers_test.tscn"
+      ]
+    }
+  ],
+  "counts": {
+    "PASS": 20,
+    "BLOCK": 0,
+    "REVIEW": 1
+  },
+  "native_libraries": [
+    {
+      "platform": "windows.x86_64",
+      "path": "res://addons/fate_server_signals/bin/libfate_server_signals.windows.x86_64.dll",
+      "exists": true,
+      "kind": "PE-x86_64",
+      "sha256": "a3cd98205851c93914aa05f534e3547c414230903899e2e96f5f9094afe7e43f"
+    },
+    {
+      "platform": "linux.x86_64",
+      "path": "res://addons/fate_server_signals/bin/libfate_server_signals.linux.x86_64.so",
+      "exists": true,
+      "kind": "ELF-x86_64",
+      "sha256": "9edf007f0e2327226e8a31f601bf8ad68a4f13b5beeb9f963a936d8154ad78fe"
+    }
+  ],
+  "server_presets": [
+    {
+      "name": "FateServer Linux",
+      "platform": "\"Linux\"",
+      "exclude_filter": [
+        "data/*",
+        "tests/*",
+        "reports/*",
+        "docs/*",
+        "scratch/*",
+        "addons/godot-git-plugin/*"
+      ],
+      "include_filter": "\"assets/config/*.cfg\"",
+      "export_path": "\"../FateDomination/test/server-dist/linux/FateServer.x86_64\""
+    },
+    {
+      "name": "FateServer Windows",
+      "platform": "\"Windows Desktop\"",
+      "exclude_filter": [
+        "data/*",
+        "tests/*",
+        "reports/*",
+        "docs/*",
+        "scratch/*",
+        "addons/godot-git-plugin/*"
+      ],
+      "include_filter": "\"assets/config/*.cfg\"",
+      "export_path": "\"../FateDomination/test/server-dist/windows/FateServer.exe\""
+    }
+  ],
+  "scratch_scenes": [
+    "scratch/authority-worker-v2/signaling-project/assets/scenes/main_menu/server_bootstrap.tscn",
+    "scratch/identity-inheritance-ui/identity_inheritance_ui_window_test.tscn",
+    "scratch/native-process-ownership-v6/deps/godot-cpp-714c9e2c165db2dcb7e6ea57e62a04204d3cfbfa/test/project/main.tscn",
+    "scratch/rejected-correlation-merge/rejected_request_correlation_test.tscn",
+    "scratch/transaction-return-consumers/transaction_return_consumers_test.tscn"
+  ],
+  "limitations": [
+    "静态检查不能证明Godot导出解析、PCK内容、GDExtension ABI/依赖、真实启动、信号、网络或完整对局。",
+    "all_resources下是否实际带入未排除资源须在导出后索引PCK确认；本轮按静态泄漏风险阻断。",
+    "工作树含其他未提交改动；本报告不是冻结版本哈希或实际发行包证明。"
+  ]
+}

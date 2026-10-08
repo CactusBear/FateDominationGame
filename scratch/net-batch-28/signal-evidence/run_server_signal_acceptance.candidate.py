@@ -1,0 +1,303 @@
+"""隔离启动真实服务端及窗口客机，核对系统信号保存和拒绝分支。"""
+import argparse
+import ctypes
+import json
+import os
+from pathlib import Path
+import socket
+import subprocess
+import sys
+import time
+
+from server_signal_probe import windows_handle, verify_windows_descendant
+
+PROJECT = Path("E:/Projects/Godot/FateDominationGame-master")
+GODOT = "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe"
+DIST = Path("E:/Projects/Godot/FateDomination/test/server-dist")
+
+
+def publish(path, value):
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(json.dumps(value), encoding="utf-8")
+    temporary.replace(path)
+
+
+def available_port():
+    for _ in range(128):
+        with socket.socket() as tcp, socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as udp:
+            tcp.bind(("127.0.0.1", 0))
+            port = tcp.getsockname()[1]
+            try:
+                udp.bind(("127.0.0.1", port))
+            except OSError:
+                continue
+            return port
+    raise RuntimeError("no available test UDP/TCP port")
+
+
+def available_internal_range(count=32, excluded=()):
+    # 不复用拒绝分支保留的 worker 端口，不碰任何既有进程。
+    for base in range(48000, 64000, count):
+        if any(base <= port < base + count for port in excluded):
+            continue
+        held = []
+        try:
+            for port in range(base, base + count):
+                udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                held.append(udp)
+                udp.bind(("127.0.0.1", port))
+            return base
+        except OSError:
+            continue
+        finally:
+            for udp in held:
+                udp.close()
+    raise RuntimeError("no isolated worker port range available")
+
+
+def verify_shutdown_log(text, reject):
+    assert "SERVER_SYSTEM_STOP_REQUEST" in text, "system signal was not consumed"
+    assert "ERROR:" not in text and "SCRIPT ERROR" not in text, text
+    if reject:
+        assert "SERVER_STOP_FAILED" in text and "SERVER_STOP_COMPLETE" not in text, "save rejection was not confirmed"
+        assert "未启用录制" in text, "expected unrecorded-match rejection, not an unrelated failure or timeout"
+    else:
+        assert "SERVER_STOP_COMPLETE" in text and "SERVER_STOP_FAILED" not in text, "safe shutdown was not confirmed"
+
+
+def observe_windows_process(kernel, handle):
+    """读取真实进程句柄；不使用 launcher 的 Popen 状态替代。"""
+    wait_state = kernel.WaitForSingleObject(handle, 0)
+    if wait_state not in (0, 258):
+        return {"alive": None, "exit_code": None, "exit_code_observable": False, "wait_state": wait_state, "error": "cannot determine real process state"}
+    code = ctypes.c_uint32()
+    alive = wait_state == 258
+    if not kernel.GetExitCodeProcess(handle, ctypes.byref(code)):
+        return {"alive": alive, "exit_code": None, "exit_code_observable": False, "error": "cannot read real process exit code"}
+    return {"alive": alive, "exit_code": None if alive else code.value, "exit_code_observable": True}
+
+
+def available_linux_internal_range(args, excluded):
+    code = """import socket
+for base in range(48000,64000,32):
+ if base <= EXCLUDED < base+32: continue
+ held=[]
+ try:
+  for port in range(base,base+32):
+   sock=socket.socket(socket.AF_INET,socket.SOCK_DGRAM); held.append(sock); sock.bind(('0.0.0.0',port))
+  print(base); break
+ except OSError: pass
+ finally:
+  for sock in held: sock.close()
+else: raise RuntimeError('no isolated Linux worker port range')
+""".replace("EXCLUDED",str(excluded))
+    return int(subprocess.check_output(["wsl.exe","-d",args.distro,"--exec","python3","-c",code], timeout=10).decode().strip())
+
+
+def verify_linux_target(args, pid, config):
+    if not isinstance(pid, int) or pid <= 0:
+        raise ValueError("invalid Linux PID")
+    command = ["wsl.exe", "-d", args.distro, "--exec"]
+    argv = subprocess.check_output(command + ["/bin/cat", f"/proc/{pid}/cmdline"], timeout=10).decode().split("\0")
+    assert "--config" in argv and argv[argv.index("--config") + 1] == config, "refuse unrelated Linux process configuration"
+    exe = subprocess.check_output(command + ["/usr/bin/readlink", "-f", f"/proc/{pid}/exe"], timeout=10).decode().strip()
+    expected = subprocess.check_output(command + ["/usr/bin/readlink", "-f", args.linux_exe], timeout=10).decode().strip()
+    assert exe and exe == expected, "refuse unrelated Linux executable"
+
+
+def run(args):
+    allowed = {"windows": ("break",), "linux": ("int", "term")}
+    if args.signal not in allowed[args.platform]:
+        raise ValueError("unsupported signal for platform: " + args.signal)
+    if args.platform == "linux" and not args.release:
+        raise ValueError("Linux fixture uses a release binary; pass --release explicitly")
+    global PROJECT, GODOT, DIST
+    PROJECT = Path(args.project).resolve()
+    GODOT = args.godot
+    DIST = Path(args.dist).resolve()
+    stamp = str(time.time_ns())
+    root = Path(args.output_root).resolve() / ("signal-match-" + args.platform + "-" + stamp)
+    root.mkdir(parents=True)
+    ready = root / "ready.json"
+    config = root / "server.json"
+    linux_root = args.linux_storage_base.rstrip("/") + "/signal-" + stamp + "/rooms"
+    prefix = args.linux_output_base.rstrip("/") + "/" + root.name
+    port = available_port()
+    configuration = {"roles": ["game"], "port": port, "bind_address": "127.0.0.1" if args.platform == "windows" else "*", "data_root": (PROJECT / "data").as_posix(), "storage_root": (root / "rooms").as_posix(), "status_file": ready.as_posix(), "console_dir": "", "identity_registry": "", "record_matches": not args.reject, "data": {"random_sim_enabled": False, "random_sim_budget_sec": 0.0}, "authority_host_mode": "dedicated", "transaction_log": True, "recovery_key_mismatch": "reject", "recovery_inheritance": "host_select", "max_rooms": 2, "max_clients": 8, "internal_port_base": available_internal_range(excluded=(port,)) if args.platform == "windows" else available_linux_internal_range(args, port), "internal_port_count": 32, "startup_seconds": 30.0, "shutdown_seconds": 30.0}
+    if args.platform == "linux":
+        configuration.update(data_root="data", storage_root=linux_root, status_file=prefix + "/ready.json")
+        service_args = ["wsl.exe", "-d", args.distro, "--exec", args.linux_exe, "--headless", "--log-file", prefix + "/engine.log", "--", "--config", prefix + "/server.json"]
+        creationflags = 0
+    else:
+        binary = str(DIST / "windows/FateServer.console.exe") if args.release else GODOT
+        service_args = [binary, "--headless", "--audio-driver", "Dummy", "--log-file", str(root / "engine.log")]
+        if not args.release:
+            service_args += ["--path", str(PROJECT), "--scene", "res://assets/scenes/main_menu/server_cli.tscn"]
+        else:
+            configuration["data_root"] = "data"
+        service_args += ["--", "--config", str(config)]
+        creationflags = subprocess.CREATE_NEW_CONSOLE
+    config.write_text(json.dumps(configuration, ensure_ascii=False), encoding="utf-8")
+    pid = None
+    handle = None
+    kernel = None
+    client = None
+    worker_handles = []
+    worker_pids = []
+    signal_sent = False
+    with (root / "server-stdout.log").open("wb") as output:
+        server = subprocess.Popen(service_args, stdout=output, stderr=subprocess.STDOUT, creationflags=creationflags)
+        try:
+            deadline = time.monotonic() + 30
+            while not ready.exists() and server.poll() is None and time.monotonic() < deadline:
+                time.sleep(0.1)
+            assert ready.exists(), "signal service did not become ready"
+            report = json.loads(ready.read_text(encoding="utf-8"))
+            assert report.get("ok") is True and report.get("port") == port and report.get("roles") == ["game"], "readiness report does not match this isolated launch"
+            pid = report["pid"]
+            assert isinstance(pid, int) and not isinstance(pid, bool) and pid > 0, "invalid reported process identity"
+            if args.platform == "windows":
+                verify_windows_descendant(pid, server.pid)
+                kernel, handle = windows_handle(pid)
+                address = "127.0.0.1"
+                room_root = str(root / "rooms")
+            else:
+                address = subprocess.check_output(["wsl.exe", "-d", args.distro, "--exec", "hostname", "-I"]).decode().split()[0]
+                room_root = "//wsl.localhost/" + args.distro + linux_root
+            environment = os.environ.copy()
+            environment.update(FATE_TEST_SERVER_ADDRESS=address, FATE_TEST_SERVER_PORT=str(port), FATE_SIGNAL_ROOT=str(root), FATE_SIGNAL_ROOM_ROOT=room_root, FATE_SIGNAL_EXPECT_FAILURE="1" if args.reject else "0")
+            with (root / "client.log").open("wb") as client_output:
+                client = subprocess.Popen([GODOT, "--audio-driver", "Dummy", "--fixed-fps", "60", "--resolution", "1920x1080", "--path", str(PROJECT), "--scene", "res://tests/net_server_signal_window_test.tscn", "--", "window"], env=environment, stdout=client_output, stderr=subprocess.STDOUT)
+                deadline = time.monotonic() + 660
+                request = root / "signal-request.json"
+                result_path = root / "signal-result.json"
+                while client.poll() is None and time.monotonic() < deadline:
+                    if request.exists() and not result_path.exists():
+                        worker_pids = []
+                        requested = json.loads(request.read_text(encoding="utf-8"))
+                        room = requested.get("room", "")
+                        assert isinstance(room, str) and len(room) == 32 and all(c in "0123456789abcdef" for c in room), "invalid requested room identity"
+                        for worker_report in [Path(room_root) / room / "ready.json"]:
+                            worker = json.loads(worker_report.read_text(encoding="utf-8"))
+                            config_report = json.loads((worker_report.parent / "config.json").read_text(encoding="utf-8"))
+                            assert worker.get("ok") is True and worker.get("id") == room
+                            assert worker.get("instance_id") == config_report.get("instance_id") and isinstance(worker.get("instance_id"),str) and len(worker["instance_id"]) == 32
+                            assert worker.get("authority_host_mode") == config_report.get("authority_host_mode") == "dedicated"
+                            worker_pids.append(int(worker["pid"]))
+                        assert worker_pids, "no authoritative worker exists before signal"
+                        if args.platform == "windows":
+                            for worker_pid in worker_pids:
+                                verify_windows_descendant(worker_pid, pid)
+                                worker_handles.append(windows_handle(worker_pid))
+                        if args.platform == "windows":
+                            sender_arguments = [sys.executable, str(PROJECT / "tests/server_signal_probe.py"), "--owned-root-pid", str(server.pid), "--send", str(pid), "--signal", args.signal, "--allowed-pid", str(server.pid), "--allowed-pid", str(pid)]
+                            for worker_pid in worker_pids:
+                                sender_arguments += ["--allowed-pid", str(worker_pid)]
+                            sender = subprocess.run(sender_arguments, creationflags=subprocess.CREATE_NO_WINDOW, capture_output=True, timeout=10)
+                            assert sender.returncode == 0, sender.stderr.decode(errors="replace")
+                        else:
+                            verify_linux_target(args, pid, prefix + "/server.json")
+                            signum = "-TERM" if args.signal == "term" else "-INT"
+                            subprocess.run(["wsl.exe", "-d", args.distro, "--exec", "/bin/kill", signum, str(pid)], check=True, capture_output=True, timeout=10)
+                        signal_sent = True
+                        stop_deadline = time.monotonic() + 35
+                        while time.monotonic() < stop_deadline:
+                            if args.reject:
+                                text = (root / "engine.log").read_text(encoding="utf-8", errors="replace")
+                                if "SERVER_STOP_FAILED" in text:
+                                    break
+                            elif not ready.exists():
+                                break
+                            time.sleep(0.1)
+                        if args.platform == "windows":
+                            if not args.reject and not ready.exists():
+                                kernel.WaitForSingleObject(handle, 10000)
+                            engine = observe_windows_process(kernel, handle)
+                            alive = engine["alive"]
+                            exit_code = engine["exit_code"]
+                            workers_evidence = []
+                            for worker_pid in worker_pids:
+                                worker_kernel, worker_handle = worker_handles[worker_pids.index(worker_pid)]
+                                worker_evidence = observe_windows_process(worker_kernel, worker_handle)
+                                worker_evidence["pid"] = worker_pid
+                                workers_evidence.append(worker_evidence)
+                        else:
+                            workers_evidence = []
+                            alive = subprocess.run(["wsl.exe", "-d", args.distro, "--exec", "/bin/kill", "-0", str(pid)], capture_output=True, timeout=10).returncode == 0
+                            # WSL launcher 不是 Linux engine 的父句柄；不能把 launcher 的退出码冒充 engine。
+                            exit_code = None
+                        # 先保存真实 engine/worker 状态，再断言日志；launcher 状态不参与这里的判定。
+                        process_evidence = {"engine": {"pid": pid, **engine} if args.platform == "windows" else {"pid": pid, "alive": alive, "exit_code": exit_code, "exit_code_observable": False}, "workers": workers_evidence}
+                        publish(root / "process-evidence.json", process_evidence)
+                        if args.platform == "windows":
+                            assert not engine.get("error"), engine.get("error")
+                            assert all(not worker.get("error") for worker in workers_evidence), "worker process observation failed"
+                        verify_shutdown_log((root / "engine.log").read_text(encoding="utf-8", errors="replace"), args.reject)
+                        assert alive == args.reject, "service liveness contradicts shutdown result"
+                        assert ready.exists() == args.reject, "ready marker contradicts shutdown result"
+                        if not args.reject and args.platform == "windows":
+                            assert exit_code == 0, "service did not exit normally"
+                        for worker_pid in worker_pids:
+                            if args.platform == "windows":
+                                worker_evidence = workers_evidence[worker_pids.index(worker_pid)]
+                                assert worker_evidence["alive"] == args.reject, "worker liveness contradicts shutdown result"
+                            else:
+                                worker_alive = subprocess.run(["wsl.exe", "-d", args.distro, "--exec", "/bin/kill", "-0", str(worker_pid)], capture_output=True, timeout=10).returncode == 0
+                                assert worker_alive == args.reject, "worker liveness contradicts shutdown result"
+                        publish(result_path, {"ok": True, "sent": True, "alive": alive, "closed": not alive, "exit_code": exit_code, "process_evidence": process_evidence})
+                    time.sleep(0.05)
+                assert client.poll() is not None, "signal client test timed out"
+            text = (root / "client.log").read_text(encoding="utf-8", errors="replace")
+            print(text, flush=True)
+            assert client.returncode == 0 and "RESULT" in text and "failures=[]" in text and "ERROR:" not in text and "SCRIPT ERROR" not in text, "signal acceptance failed"
+            engine_text = (root / "engine.log").read_text(encoding="utf-8", errors="replace")
+            verify_shutdown_log(engine_text, args.reject)
+            summary = {"ok": True, "platform": args.platform, "release": args.release, "signal": args.signal, "save_rejection": args.reject, "root": str(root), "client_exit": client.returncode,"owned_launcher_pid":server.pid,"reported_pid":pid,"worker_pids":worker_pids,"service_preserved":args.reject, "process_evidence": json.loads((root / "process-evidence.json").read_text(encoding="utf-8"))}
+            publish(root / "summary.json", summary)
+            print(json.dumps(summary, ensure_ascii=False), flush=True)
+        except Exception as error:
+            publish(root / "signal-result.json", {"ok":False,"sent":signal_sent,"error":str(error)})
+            publish(root / "summary.json", {"ok":False,"error":str(error),"root":str(root),"owned_launcher_pid":server.pid,"reported_pid":pid})
+            if client is not None and client.poll() is None:
+                try:
+                    client.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    pass
+            raise
+        finally:
+            # 所有存活实例均保留；不强杀客机、launcher、engine 或 worker。
+            # 服务/worker 仅持有查询句柄：保存拒绝或夹具异常时保留实例及日志。
+            # 不按 ready PID 或裸 Linux PID 强杀，也不终止用户进程。
+            final_process_evidence = {"engine": {"pid": pid, "alive": None, "exit_code": None, "exit_code_observable": False}, "workers": []}
+            if handle:
+                final_process_evidence["engine"] = {"pid": pid, **observe_windows_process(kernel, handle)}
+            for index, (worker_kernel, worker_handle) in enumerate(worker_handles):
+                worker_pid = worker_pids[index] if index < len(worker_pids) else None
+                final_process_evidence["workers"].append({"pid": worker_pid, **observe_windows_process(worker_kernel, worker_handle)})
+            publish(root / "finally-process.json", {"real_processes": final_process_evidence, "launcher": {"pid": server.pid, "exit_code": server.poll()}})
+            if handle:
+                kernel.CloseHandle(handle)
+            for worker_kernel, worker_handle in worker_handles:
+                worker_kernel.CloseHandle(worker_handle)
+            if server.poll() is None:
+                print("OWNED_SERVICE_PRESERVED", server.pid, pid, str(root), flush=True)
+            else:
+                print("LAUNCHER_EXITED", server.pid, server.returncode, flush=True)
+
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--platform", choices=["windows", "linux"], default="windows")
+    parser.add_argument("--distro", default="FateLinux")
+    parser.add_argument("--linux-storage-base", default="/home/fate")
+    parser.add_argument("--linux-exe", default="/mnt/e/Projects/Godot/FateDomination/test/server-dist/linux/FateServer.x86_64")
+    parser.add_argument("--release", action="store_true")
+    parser.add_argument("--reject", action="store_true")
+    parser.add_argument("--signal", choices=["int", "break", "term"], default="break")
+    parser.add_argument("--project", default=str(PROJECT))
+    parser.add_argument("--godot", default=GODOT)
+    parser.add_argument("--dist", default=str(DIST))
+    parser.add_argument("--output-root", default="E:/Projects/Godot/FateDomination/test")
+    parser.add_argument("--linux-output-base", default="/mnt/e/Projects/Godot/FateDomination/test")
+    run(parser.parse_args())

@@ -1,0 +1,31 @@
+{
+  "scope": "tooling/static artifacts only; no dynamic tests",
+  "files": {
+    "tests/final_verification_v3/freeze.py": "4a5d657805876f7e749d16e20db4920ba5aa7c157d3a1786169c5f02aaacb62c",
+    "tests/final_verification_v3/gates.json": "0c5acd0245a6679bbdcfb62ad73f745202d5cc3d84e12cffce58c6869e3f12e4",
+    "tests/final_verification_v3/README.zh-CN.md": "e778aba73dc78d9f9720268e12ad9a4b9d1ac7812f81632e0940857563685422",
+    "tests/final_verification_v3/test_freeze.py": "04042d3305fbcc51fa782d53afa1dfe9b107766fa55579c7be0eeec2f06767e5",
+    "scratch/final-freeze-v3/bridge-red.log": "cb9cfaffbae3926c76a6eed7fede379982e5e82ec84d9ce2ae8aa1c97771fb9c",
+    "scratch/final-freeze-v3/diff-check.log": "2095d5302e465922147e220c0389f7a923ea0c1509a23097f04b3c220798aef8",
+    "scratch/final-freeze-v3/empty-receipts.json": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f",
+    "scratch/final-freeze-v3/inspect-final-command.log": "671aad35fc04eb41e574d89e3463efc27721bf21ed7a1425117855b135304046",
+    "scratch/final-freeze-v3/inspect-final.json": "559927bae1c8a35c533f03f5486521205953362c64b476c57232144c21258d5e",
+    "scratch/final-freeze-v3/inspect-final.log": "8f87faa33cf9a757f0a3bd4792316bb89bf8157ba9f9b33a9951af1070c574f2",
+    "scratch/final-freeze-v3/inspect-final.log.sha256": "ccb6da2268068cad5276413d97f0b259fdd4a21d0e2289ea59e79439593c958b",
+    "scratch/final-freeze-v3/inspect-final.sha256": "3fe9b032bffcffda471aee1745935f94ba7e66ab3f2e315bec8250b0f41b1da5",
+    "scratch/final-freeze-v3/inspect-initial.json": "6b7af9d348593c894ea8d475b66b96b5cdd30d4ea87cc6a2cd14ad375b29b14d",
+    "scratch/final-freeze-v3/inspect-initial.log": "68545f9f6d49a868b2a66f3e9f68b1057f3207e78265eca00c09ac2d14d4b972",
+    "scratch/final-freeze-v3/inspect-initial.sha256": "ca5476384a02f73572c3a1a8a48a10fcb0de014b6384ebf858e4a62798dcdf40",
+    "scratch/final-freeze-v3/reject-unapproved.log": "e4551b876dc1ce0ffbf7ff2684a371e97a874737d83e15ff9558653fffe56db5",
+    "scratch/final-freeze-v3/REPORT.zh-CN.md": "ff50bae6e05fd05d93ab284b1b3d95a7d567195b5658585cef964007aa8028f1",
+    "scratch/final-freeze-v3/static-ledger.json": "c37a0ce9c09a214b0b09a0324e25917fde8d7f75a83a89b8e44ed55a4ef67a3a",
+    "scratch/final-freeze-v3/static-ledger.sha256": "f235966c0353e1994b2f0a93895a071fc229a3bc825e9f726f861ceca3090f8e",
+    "scratch/final-freeze-v3/tool-gates-red.log": "63ebd9be141638f3186c10419905b78d07d14759f9be5d4f3de3511b9ed96801",
+    "scratch/final-freeze-v3/tool-green-initial.log": "cadff65b91cf8872db6d60ba0c0f235940efd3fd001a191f3dac44fdc41f66ea",
+    "scratch/final-freeze-v3/tool-red.log": "88d57938faf9397e1b56d49bfb210d8d20277f157cc9f896662c50c37bdf1992",
+    "scratch/final-freeze-v3/tool-unit-tests-final.log": "a8a145f69f3ba60ed9d01590f4bd27aa206d26deb771601aac3b011d035d7bab",
+    "scratch/final-freeze-v3/tool-unit-tests.log": "26dd3b771d43c9571ff80b145806bae44c84649249692551a003dfed67357371"
+  },
+  "static_ledger_rows": 481,
+  "gates": 10
+}

@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/net_p2p_resume_identity_test.tscn:window",
+  "scene": "tests/net_p2p_resume_identity_test.tscn",
+  "mode": "window",
+  "required": true,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

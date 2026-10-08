@@ -35,15 +35,15 @@ static func breakdown(player_id:int = -1, preview_power:int = 0, preview_cards:A
 	var pl_data = GameDataManager.get_player_data(id) as Dictionary
 	if pl_data == null:
 		return empty
-	var base_power:int = (pl_data["power"] as BaseNumber).number
+	var base_power = (pl_data["power"] as BaseNumber).number
 	#合计威力加成只在比较胜负时叠加、不写回 power 本身，避免 power 被重复累加
-	var bonus:int = (pl_data["total_power_bonus"] as BaseNumber).number
+	var bonus = (pl_data["total_power_bonus"] as BaseNumber).number
 	#场上明置的事件牌与局势牌声明的威力加成（协同、占领高地、对未来的憧憬等）。
 	#单独一项而不并进 power：并进去的话战报只会显示一个变大的"出牌威力"，
 	#玩家看不出这几点是哪张场上牌给的，也无法核对
-	var board:int = BoardPowerQuery.total(id, preview_cards, preview_hidden)
+	var board = BoardPowerQuery.total(id, preview_cards, preview_hidden)
 	#地利的两条例外（战区声明不提供地利、只有部署到该位置才算）都在这个查询里处理
-	var benefit:int = GetEffectiveLocationBenefit.new().exec(id)
+	var benefit = GetEffectiveLocationBenefit.new().exec(id)
 	return {
 		"power": base_power,
 		"bonus": bonus,

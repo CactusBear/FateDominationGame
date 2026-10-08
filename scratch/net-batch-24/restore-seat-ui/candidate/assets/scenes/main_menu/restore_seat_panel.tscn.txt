@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/scenes/main_menu/identity_inheritance_panel.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/net/identity/restore_seat_panel.gd" id="2"]
+
+[node name="RestoreSeatPanel" instance=ExtResource("1")]
+title = "房主手选恢复座位"
+script = ExtResource("2")
+
+[node name="Help" parent="Content" index="0"]
+text = "仅使用本机选中档的认证座位元数据。逐座手选当前在线玩家，不按认证信息自动认领。AI 保留存档绑定；身份不符由权威拒绝。"
+
+[node name="Seats" type="OptionButton" parent="Content" index="2"]
+layout_mode = 2
+
+[node name="Refresh" parent="Content/Buttons" index="0"]
+text = "刷新并清空映射"
+
+[node name="Confirm" parent="Content/Buttons" index="1"]
+text = "确认指定恢复"

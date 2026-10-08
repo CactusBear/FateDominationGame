@@ -1,0 +1,7 @@
+{
+  "scope": "source assertions only; no Godot/network execution",
+  "tests": 11,
+  "failures": 1,
+  "errors": 0,
+  "successful": false
+}

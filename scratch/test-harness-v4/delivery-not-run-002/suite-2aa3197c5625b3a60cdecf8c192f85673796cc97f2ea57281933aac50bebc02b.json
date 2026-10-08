@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/net_server_cli_test.tscn:headless",
+  "scene": "tests/net_server_cli_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

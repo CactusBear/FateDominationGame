@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/acceptance_root_transaction_test.tscn:headless",
+  "scene": "tests/acceptance_root_transaction_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

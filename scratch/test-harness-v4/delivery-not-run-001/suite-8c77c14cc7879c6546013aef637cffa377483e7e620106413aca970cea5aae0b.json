@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/main_menu_test.tscn:window",
+  "scene": "tests/main_menu_test.tscn",
+  "mode": "window",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

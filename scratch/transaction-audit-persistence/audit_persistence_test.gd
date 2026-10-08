@@ -1,0 +1,57 @@
+extends SceneTree
+const Journal = preload("res://scripts/match/match_journal.gd")
+var failures:Array = []
+func check(value:bool, label:String) -> void:
+	if not value: failures.append(label)
+func _initialize() -> void:
+	var folder:String = "user://audit_persistence_" + Crypto.new().generate_random_bytes(16).hex_encode()
+	var path:String = folder.path_join("transactions.log")
+	var writer = Journal.begin_audit(path)
+	check(writer != null, "创建")
+	check(Journal.audit_event("start", {"root_id":1, "reason":"hidden_card token fingerprint"}), "原因脱敏")
+	var revision:int = Journal.audit_revision
+	check(Journal.audit_event("start", {"root_id":1, "reason":"hidden_card token fingerprint"}), "重复成功")
+	check(Journal.audit_revision == revision, "重复不追加")
+	var parsed:Dictionary = Journal.new().read_all(path)
+	check(Journal.audit_chain(parsed.records).ok, "完整链")
+	check(writer.append(parsed.records[1]), "底层 append 重复幂等")
+	check(Journal.new().read_all(path).records.size() == parsed.records.size(), "底层重复不增帧")
+	var first_thread:Thread = Thread.new()
+	var second_thread:Thread = Thread.new()
+	first_thread.start(func(): return Journal.audit_event("start", {"reason":"hidden_card token fingerprint", "root_id":1}))
+	second_thread.start(func(): return Journal.audit_event("start", {"root_id":1, "reason":"hidden_card token fingerprint"}))
+	check(bool(first_thread.wait_to_finish()) and bool(second_thread.wait_to_finish()), "并发重复成功")
+	check(Journal.audit_revision == revision, "并发重复不增序号")
+	var corrupt:Array = parsed.records.duplicate(true)
+	corrupt[1].reason = "secret card token"
+	var unsigned:Dictionary = corrupt[1].duplicate()
+	unsigned.erase("hash")
+	corrupt[1].hash = Journal._digest(var_to_bytes(unsigned)).hex_encode()
+	check(not Journal.audit_chain(corrupt).ok, "合法哈希不能夹带秘密原因")
+	check(parsed.records[1].get("transaction_id", "").length() > 64, "跨进程根身份")
+	check(parsed.records[1].get("reason") == "redacted", "隐藏原因不落盘")
+	check(not parsed.records[1].has("random_digest"), "随机指纹不落盘")
+	check(Journal.consume_tail(10, 1), "尾部首消费")
+	revision = Journal.audit_revision
+	check(not Journal.consume_tail(10, 1), "尾部不能二次执行")
+	check(Journal.audit_revision == revision, "重复消费无记录")
+	Journal.end_audit(writer)
+	check(Journal.resume_audit(path) != null, "恢复")
+	writer = Journal.audit_writer
+	revision = Journal.audit_revision
+	check(Journal.audit_event("start", {"root_id":1, "reason":"other secret"}), "恢复后幂等")
+	check(Journal.audit_revision == revision, "恢复不重复")
+	Journal.end_audit(writer)
+	var lease:String = ProjectSettings.globalize_path(path + ".writer-lock")
+	check(DirAccess.make_dir_absolute(lease) == OK, "测试占租约")
+	check(Journal.resume_audit(path) == null, "租约冲突拒绝")
+	DirAccess.remove_absolute(lease)
+	writer = Journal.resume_audit(path)
+	check(writer != null, "租约释放恢复")
+	if writer != null:
+		writer.max_total_bytes = writer._file.get_length()
+		check(not Journal.audit_event("rollback_intent", {"root_id":1, "reason":"host_skip"}), "容量拒绝")
+		check(not Journal.flush_audit(), "失败可消费")
+		Journal.end_audit(writer)
+	print("RESULT audit_persistence failures=", failures)
+	quit(0 if failures.is_empty() else 1)

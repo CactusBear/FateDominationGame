@@ -1,0 +1,10 @@
+{
+  "roles": [
+    "relay"
+  ],
+  "port": 53000,
+  "bind_address": "127.0.0.1",
+  "max_clients": 96,
+  "max_rooms": 16,
+  "relay": {}
+}

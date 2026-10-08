@@ -1,0 +1,18 @@
+extends "res://scripts/net/session/lobby_session.gd"
+
+# 仅注入 Host.start 已支持的本机存储参数与预探测端口。
+# 自动信令客户端、WebRTC、身份桥、worker 和全部规则均为原生产对象。
+var isolated_host:RefCounted
+var isolated_storage:String = ""
+
+func host_authority_peer(peer:MultiplayerPeer, name:String, settings:Dictionary) -> Error:
+	if _restore_failed_closed or _restore_in_progress: return ERR_UNAVAILABLE
+	close()
+	if isolated_host == null or isolated_storage.is_empty(): return ERR_INVALID_PARAMETER
+	var result:Error = isolated_host.start(self,name,settings,"p2p",0,"*",peer,isolated_storage)
+	if result != OK:
+		error = isolated_host.error
+		isolated_host.close()
+		return result
+	authority_host = isolated_host
+	return OK

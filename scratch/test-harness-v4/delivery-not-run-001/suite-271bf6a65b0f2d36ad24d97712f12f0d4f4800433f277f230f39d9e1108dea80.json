@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/unlimited_blade_activation_test.tscn:window",
+  "scene": "tests/unlimited_blade_activation_test.tscn",
+  "mode": "window",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

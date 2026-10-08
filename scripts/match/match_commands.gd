@@ -22,6 +22,9 @@ func deploy(location: BaseLocation, player_id: int) -> bool:
 func move(step: int, player_id: int) -> void:
 	Move.new().exec(BaseNumber.new(step), player_id)
 
+func deploy_to_area(area: BaseMapArea, player_id: int) -> bool:
+	return DeployRules.deploy_to_area(area, player_id) != null
+
 func submit_option_choice(effect: BaseEffect, selection, quantities: Dictionary = {}) -> bool:
 	if effect != null:
 		for index in quantities:

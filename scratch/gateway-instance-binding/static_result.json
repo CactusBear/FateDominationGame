@@ -1,0 +1,65 @@
+{
+  "scope": "source contracts and gdtoolkit syntax only; no Godot execution",
+  "contracts": [
+    {
+      "contract": "实例四元组",
+      "current": "PASS",
+      "removed_guard": "RED detected"
+    },
+    {
+      "contract": "权威模式比较",
+      "current": "PASS",
+      "removed_guard": "RED detected"
+    },
+    {
+      "contract": "可信句柄缺失拒绝",
+      "current": "PASS",
+      "removed_guard": "RED detected"
+    },
+    {
+      "contract": "严格 bool 验证",
+      "current": "PASS",
+      "removed_guard": "RED detected"
+    },
+    {
+      "contract": "回调路由 link 比较",
+      "current": "PASS",
+      "removed_guard": "RED detected"
+    },
+    {
+      "contract": "旧回复拒绝",
+      "current": "PASS",
+      "removed_guard": "RED detected"
+    },
+    {
+      "contract": "旧断线拒绝",
+      "current": "PASS",
+      "removed_guard": "RED detected"
+    },
+    {
+      "contract": "排队回收身份",
+      "current": "PASS",
+      "removed_guard": "RED detected"
+    },
+    {
+      "contract": "先撤销后关闭",
+      "current": "PASS",
+      "removed_guard": "RED detected"
+    },
+    {
+      "contract": "停止绑定旧实例",
+      "current": "PASS",
+      "removed_guard": "RED detected"
+    },
+    {
+      "contract": "pending 捕获绑定",
+      "current": "PASS",
+      "removed_guard": "RED detected"
+    }
+  ],
+  "parsed": [
+    "server_gateway.gd",
+    "server_room_manager.gd",
+    "gateway_instance_binding_test.gd"
+  ]
+}

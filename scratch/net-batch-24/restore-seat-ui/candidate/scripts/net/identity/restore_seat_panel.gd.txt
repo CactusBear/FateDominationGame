@@ -1,0 +1,140 @@
+extends "res://scripts/net/identity/identity_inheritance_panel.gd"
+
+signal restore_selected(source:String, selected:Dictionary, metadata_source:String)
+const Archive = preload("res://scripts/net/server/lan_archive_restore.gd")
+const Paths = preload("res://scripts/net/server/recovery_path_safety.gd")
+const Decode = preload("res://scripts/net/session/recovery_seat_json.gd")
+var _source:String = ""
+var _metadata_source:String = ""
+var _saved_bindings:Dictionary = {}
+var _selected:Dictionary = {}
+var _context:Dictionary = {}
+@onready var seats:OptionButton = $Content/Seats
+
+func _ready() -> void:
+	super._ready()
+	seats.item_selected.connect(_seat_selected)
+
+static func can_restore(active_session) -> bool:
+	if active_session == null or active_session.authority_host == null or not active_session.identity_authenticated or not active_session.transport.is_connected_to_host(): return false
+	var view:Dictionary = active_session.view
+	if view.get("owner") != active_session.peer_id() or view.get("phase") != "lobby": return false
+	for member in view.get("members", []):
+		if member.id == view.owner:
+			return member.get("connected") == true and member.get("spectator") == false
+	return false
+
+func open_archive(active_session, source:String) -> String:
+	close_panel()
+	if not can_restore(active_session): return "只有本机当前认证房主可在大厅手选恢复"
+	var local:String = ProjectSettings.globalize_path(source)
+	var metadata:String = local.path_join("restore-identity.json")
+	if not Paths.tree(local.get_base_dir(), local, [20000]) or not Paths.checked(local, metadata) or not Paths.checked(local, local.path_join("match.log")):
+		return "选中档缺少本机 restore-identity.json 或日志，或路径不安全；拒绝恢复，不从其他房间补元数据"
+	var saved:Dictionary = Archive.read_metadata(metadata)
+	if not InputModel.Rules.valid_state(saved, true): return "选中档认证座位元数据缺失或无效；拒绝恢复"
+	var decoded:Dictionary = Decode.decode(saved)
+	if not decoded.ok or decoded.bindings.is_empty(): return "选中档座位声明无效或为空；拒绝恢复"
+	_session = active_session
+	_source = local
+	_metadata_source = metadata
+	_saved_bindings = saved.bindings.duplicate()
+	_context = _session.view.duplicate(true)
+	_revision = int(_context.get("revision", -1))
+	for player in _saved_bindings:
+		var member:int = int(_saved_bindings[player])
+		if member == 0:
+			_selected[player] = 0
+		else:
+			seats.add_item("座位 %s" % player)
+			seats.set_item_metadata(seats.item_count - 1, player)
+	_query_candidates()
+	if seats.item_count > 0: _seat_selected(0)
+	popup_centered()
+	return ""
+
+func close_panel() -> void:
+	super.close_panel()
+	_source = ""
+	_metadata_source = ""
+	_saved_bindings.clear()
+	_selected.clear()
+	_context.clear()
+	if is_node_ready(): seats.clear()
+
+func refresh_context() -> void:
+	if _session == null or not visible: return
+	if not can_restore(_session):
+		close_panel()
+		return
+	if _session.view != _context:
+		_context = _session.view.duplicate(true)
+		_revision = int(_context.get("revision", -1))
+		_query_candidates()
+		feedback.text = "房间状态已改变，已清空真人映射，请重新逐座选择"
+
+func _query_candidates() -> void:
+	if _session == null or _submit_pending: return
+	_context = _session.view.duplicate(true)
+	_revision = int(_context.get("revision", -1))
+	_clear_candidates()
+	_selected.clear()
+	for index in range(seats.item_count):
+		seats.set_item_text(index, "座位 " + str(seats.get_item_metadata(index)) + " · 待指定")
+	for player in _saved_bindings:
+		if int(_saved_bindings[player]) == 0: _selected[player] = 0
+	# 复用本机认证桥的公开投影，只接收标签与成员号，不接收身份键。
+	var rows:Array = _session.authority_host.restore_member_candidates()
+	if not _input.accept({"revision":_revision, "request_floor":0, "candidates":rows}):
+		feedback.text = "当前房间公开成员列表无效，拒绝恢复"
+		return
+	for row in _input.candidates:
+		candidates.add_item(row.label)
+		candidates.set_item_metadata(candidates.item_count - 1, row.member_id)
+	$Content/Buttons/Refresh.disabled = false
+	$Content/Buttons/Confirm.disabled = not _complete()
+	feedback.text = "逐个座位选择在线玩家；刷新会清空真人映射，密钥校验由权威执行"
+
+func _seat_selected(_index:int) -> void:
+	candidates.deselect_all()
+	if seats.selected < 0: return
+	var player:String = str(seats.get_item_metadata(seats.selected))
+	$Content/Target.text = seats.get_item_text(seats.selected)
+	feedback.text = "此座位已指定，可重新选择" if _selected.has(player) else "此座位尚未指定，请点击候选玩家"
+
+func _select_candidate(index:int) -> void:
+	if _session == null or _session.view != _context:
+		refresh_context()
+		return
+	refresh_context()
+	if _session == null or _submit_pending or index < 0 or index >= candidates.item_count or seats.selected < 0: return
+	var player:String = str(seats.get_item_metadata(seats.selected))
+	var member:int = int(candidates.get_item_metadata(index))
+	for other in _selected:
+		if other != player and _selected[other] == member:
+			feedback.text = "该玩家已被指定到其他座位，不能重复占座"
+			return
+	if not _input.select_member(member): return
+	_selected[player] = member
+	seats.set_item_text(seats.selected, "座位 " + player + " · " + candidates.get_item_text(index))
+	$Content/Target.text = seats.get_item_text(seats.selected)
+	feedback.text = "已指定：" + candidates.get_item_text(index)
+	$Content/Buttons/Confirm.disabled = not _complete()
+
+func _complete() -> bool:
+	return _input.revision == _revision and not _saved_bindings.is_empty() and _selected.size() == _saved_bindings.size()
+
+func _submit() -> void:
+	if _session == null or _session.view != _context:
+		refresh_context()
+		return
+	refresh_context()
+	if _session == null or _submit_pending or not _complete(): return
+	_submit_pending = true
+	$Content/Buttons/Confirm.disabled = true
+	$Content/Buttons/Refresh.disabled = true
+	feedback.text = "正在等待权威恢复回执；发送成功不代表恢复完成"
+	restore_selected.emit(_source, _selected.duplicate(), _metadata_source)
+
+func restore_finished() -> void:
+	close_panel()

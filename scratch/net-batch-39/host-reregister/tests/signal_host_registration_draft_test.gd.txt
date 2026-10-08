@@ -1,0 +1,105 @@
+extends SceneTree
+
+const Registration = preload("res://scripts/net/p2p/signal_host_registration.gd")
+const Locator = preload("res://scripts/net/p2p/signal_room_locator.gd")
+const Identity = preload("res://scripts/net/identity/player_identity.gd")
+const Client = preload("res://scripts/net/p2p/p2p_signal_client.gd")
+var checks: int = 0
+var failures: int = 0
+
+class FakeTransport extends RefCounted:
+	var closed: bool = false
+	func is_connected_to_host() -> bool: return true
+	func close() -> void: closed = true
+
+class FakeSession extends RefCounted:
+	var transport = FakeTransport.new()
+	var authority_host = RefCounted.new()
+	var closed: bool = false
+	func close() -> void: closed = true
+
+class FakeInvite extends RefCounted:
+	var cancelled: Array = []
+	var closed: bool = false
+	var link = RefCounted.new()
+	func cancel_offer(peer: int) -> void: cancelled.append(peer)
+	func close() -> void: closed = true
+
+func check(condition: bool, label: String) -> void:
+	checks += 1
+	if not condition:
+		failures += 1
+		push_error(label)
+
+func identity():
+	var value = Identity.new()
+	value._key = Crypto.new().generate_rsa(Identity.KEY_BITS)
+	return value
+
+func proof(core, ticket: Dictionary, challenge: Dictionary, host) -> Dictionary:
+	return {"boot": challenge.boot, "request": challenge.request, "signature": host.sign_challenge(challenge.challenge, core.proof_context(ticket, challenge))}
+
+func _initialize() -> void:
+	# 测试只创建内存临时 RSA fixture，不读取用户密钥、不给密钥落盘。
+	var issuer = identity()
+	var host = identity()
+	var attacker = identity()
+	var core = Registration.new()
+	core.trusted_issuer = issuer.public_key()
+	core.boot_id = "a".repeat(32)
+	var claims := {"session": "host-session", "host_key": host.public_key(), "authority_instance": "worker-instance", "audience": "relay-service", "expires": 2000}
+	var ticket: Dictionary = core.issue(claims, issuer, "relay-service", 1000)
+	check(core.verify_capability(ticket, "relay-service", 1000), "valid grant")
+	check(not core.verify_capability(ticket, "other-relay", 1000), "audience fence")
+	check(not core.verify_capability(ticket, "relay-service", 2000), "expiry fence")
+	var forged := ticket.duplicate(true)
+	forged.claims.host_key = attacker.public_key()
+	check(not core.verify_capability(forged, "relay-service", 1000), "self-reported key rejected")
+	var challenge: Dictionary = core.begin(2, ticket, "relay-service", 1000, 0)
+	var response: Dictionary = proof(core, ticket, challenge, host)
+	check(core.prove(3, response, "relay-service", 1000, 1).is_empty(), "socket fence")
+	check(not core.prove(2, response, "relay-service", 1000, 1).is_empty(), "host proof")
+	check(core.prove(2, response, "relay-service", 1000, 2).is_empty(), "one shot proof")
+	challenge = core.begin(2, ticket, "relay-service", 1000, 3)
+	check(core.prove(2, proof(core, ticket, challenge, attacker), "relay-service", 1000, 4).is_empty(), "stolen capability no key")
+	challenge = core.begin(2, ticket, "relay-service", 1000, 5)
+	check(core.prove(2, proof(core, ticket, challenge, host), "relay-service", 1000, 30005).is_empty(), "challenge deadline")
+	challenge = core.begin(2, ticket, "relay-service", 1000, 6)
+	response = proof(core, ticket, challenge, host)
+	# 新对象模拟全部内存丢失；只注入同一可信公钥，不搬旧挑战。
+	var restarted = Registration.new()
+	restarted.trusted_issuer = issuer.public_key()
+	restarted.boot_id = "b".repeat(32)
+	check(restarted.prove(2, response, "relay-service", 1000, 7).is_empty(), "old instance proof rejected")
+	challenge = restarted.begin(2, ticket, "relay-service", 1000, 8)
+	check(not restarted.prove(2, proof(restarted, ticket, challenge, host), "relay-service", 1000, 9).is_empty(), "fresh instance host proof")
+	var untrusted = Registration.new()
+	untrusted.boot_id = "c".repeat(32)
+	check(untrusted.begin(2, ticket, "relay-service", 1000, 1).is_empty(), "missing durable trust fails closed")
+	var locator = Locator.new()
+	check(locator.bind("host-session", "worker-instance"), "pin session")
+	var update := {"kind": "signal_room_update", "session": "host-session", "authority_instance": "worker-instance", "boot": "b".repeat(32), "revision": 2, "room": "abcdef", "url": "wss://relay.example.test"}
+	check(not locator.accept(2, 1, update), "guest cannot publish locator")
+	check(locator.accept(1, 1, update), "host locator accepted")
+	check(not locator.accept(1, 1, update), "duplicate/replay locator rejected")
+	var wrong := update.duplicate(true)
+	wrong.revision = 3
+	wrong.authority_instance = "replacement-worker"
+	check(not locator.accept(1, 1, wrong), "locator cannot change authority instance")
+	# 直接调用真实生产 client；只替换网络/进程边界，验证失败清理不关闭既有资源。
+	var client = Client.new()
+	var session = FakeSession.new()
+	var invite = FakeInvite.new()
+	client.invite = invite
+	client._session = weakref(session)
+	client._role = "host"
+	client._pending[10] = {"peer_id": 7}
+	client._joined_clients[11] = 8
+	var worker = session.authority_host
+	var link = invite.link
+	client._fail_signaling("fixture signaling restart")
+	check(not session.closed and not session.transport.closed and not invite.closed, "signaling failure preserves data and authority")
+	check(session.authority_host == worker and invite.link == link, "resource object identity unchanged")
+	check(client._joined_clients == {11: 8} and client._pending.is_empty() and invite.cancelled == [7], "only incomplete offers cancelled")
+	print("RESULT signal_host_registration_draft checks=%d failures=%d" % [checks, failures])
+	quit(0 if failures == 0 else 1)

@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/net_full_game_test.tscn:headless",
+  "scene": "tests/net_full_game_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

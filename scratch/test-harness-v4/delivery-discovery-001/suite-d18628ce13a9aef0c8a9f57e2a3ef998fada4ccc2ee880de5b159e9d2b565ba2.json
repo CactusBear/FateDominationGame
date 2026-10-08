@@ -1,0 +1,28 @@
+{
+  "id": "tests/net_process_full_game_test.tscn:window",
+  "scene": "tests/net_process_full_game_test.tscn",
+  "mode": "window",
+  "required": true,
+  "stage_hint": "transport",
+  "scripts": [
+    "res://tests/match_journal_test.gd",
+    "res://tests/net_process_full_game_test.gd"
+  ],
+  "environment_names": [],
+  "command_template_NOT_EXECUTED": [
+    "<GODOT_CONSOLE_EXE>",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\Projects\\Godot\\FateDominationGame-master",
+    "--scene",
+    "res://tests/net_process_full_game_test.tscn",
+    "--resolution",
+    "1920x1080",
+    "--",
+    "window"
+  ],
+  "timeout_sec": null,
+  "status": "NOT_RUN",
+  "window_requires_branch_marker": true
+}

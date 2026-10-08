@@ -1,0 +1,64 @@
+extends RefCounted
+
+# 候选协议核心：可信根由部署方注入。不能把客户端提交的签发钥作为可信根。
+const Identity = preload("res://scripts/net/identity/player_identity.gd")
+var trusted_issuer: String = ""
+var boot_id: String = ""
+var challenges: Dictionary = {}
+var challenge_ttl_ms: int = 30000
+
+func claims_context(claims: Dictionary) -> String:
+	return JSON.stringify(["signal-host-capability-v1", claims.session, claims.host_key, claims.authority_instance, claims.audience, claims.expires])
+
+func valid_claims(claims: Dictionary, audience: String, now_unix: int) -> bool:
+	var keys := claims.keys()
+	keys.sort()
+	if keys != ["audience", "authority_instance", "expires", "host_key", "session"]: return false
+	for field in ["session", "authority_instance", "audience"]:
+		if not claims[field] is String or claims[field].is_empty() or claims[field].length() > 256: return false
+	if not claims.host_key is String or Identity.fingerprint(claims.host_key).is_empty(): return false
+	# JSON 整数在传输层归一化之后进入本核心；不接受任意 float 身份/时限。
+	return claims.expires is int and claims.expires > now_unix and claims.audience == audience
+
+func issue(claims: Dictionary, issuer, audience: String, now_unix: int) -> Dictionary:
+	if not valid_claims(claims, audience, now_unix): return {}
+	var nonce := Crypto.new().generate_random_bytes(32)
+	var signature: PackedByteArray = issuer.sign_challenge(nonce, claims_context(claims))
+	if signature.size() != Identity.KEY_BITS / 8: return {}
+	return {"claims": claims.duplicate(true), "nonce": nonce, "signature": signature}
+
+func verify_capability(ticket: Dictionary, audience: String, now_unix: int) -> bool:
+	var keys := ticket.keys()
+	keys.sort()
+	if keys != ["claims", "nonce", "signature"] or not ticket.claims is Dictionary: return false
+	if not ticket.nonce is PackedByteArray or not ticket.signature is PackedByteArray: return false
+	if trusted_issuer.is_empty() or not valid_claims(ticket.claims, audience, now_unix): return false
+	return Identity.verify_challenge(trusted_issuer, ticket.nonce, ticket.signature, claims_context(ticket.claims))
+
+func begin(connection: int, ticket: Dictionary, audience: String, now_unix: int, now_ms: int) -> Dictionary:
+	if connection <= 0 or boot_id.is_empty() or challenge_ttl_ms <= 0: return {}
+	if not verify_capability(ticket, audience, now_unix): return {}
+	var challenge := Crypto.new().generate_random_bytes(32)
+	var request := Crypto.new().generate_random_bytes(16).hex_encode()
+	challenges[connection] = {"ticket": ticket.duplicate(true), "challenge": challenge, "request": request, "deadline": now_ms + challenge_ttl_ms}
+	return {"boot": boot_id, "request": request, "challenge": challenge}
+
+func proof_context(ticket: Dictionary, challenge_reply: Dictionary) -> String:
+	return JSON.stringify(["signal-host-register-v1", claims_context(ticket.claims), ticket.nonce.hex_encode(), ticket.signature.hex_encode(), challenge_reply.boot, challenge_reply.request])
+
+func prove(connection: int, reply: Dictionary, audience: String, now_unix: int, now_ms: int) -> Dictionary:
+	var keys := reply.keys()
+	keys.sort()
+	if keys != ["boot", "request", "signature"] or not reply.signature is PackedByteArray: return {}
+	if not challenges.has(connection): return {}
+	var pending: Dictionary = challenges[connection]
+	# 一次性挑战：错误证明也消耗本次请求；客户端重新申请，不能无限猜测。
+	challenges.erase(connection)
+	if reply.boot != boot_id or reply.request != pending.request or now_ms >= pending.deadline: return {}
+	if not verify_capability(pending.ticket, audience, now_unix): return {}
+	var context := {"boot": boot_id, "request": pending.request}
+	if not Identity.verify_challenge(pending.ticket.claims.host_key, pending.challenge, reply.signature, proof_context(pending.ticket, context)): return {}
+	return pending.ticket.claims.duplicate(true)
+
+func forget(connection: int) -> void:
+	challenges.erase(connection)

@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/load_snapshot_cache_test.tscn:headless",
+  "scene": "tests/load_snapshot_cache_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

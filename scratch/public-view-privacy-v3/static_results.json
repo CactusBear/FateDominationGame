@@ -1,0 +1,33 @@
+{
+  "mode": "static-only",
+  "parsed_files": [
+    "scripts/match/view_builder.gd",
+    "scripts/match/view_mirror.gd",
+    "scripts/net/server_gateway.gd",
+    "scratch/public-view-privacy-v3/negative_cases.gd"
+  ],
+  "checks": {
+    "all_player_zones_use_shared_filter": true,
+    "source_visibility_not_zone_visibility": true,
+    "source_release_gate": true,
+    "hidden_back_path_removed": true,
+    "public_description_no_internal_effect_fallback": true,
+    "effect_ids_private_only": true,
+    "log_no_raw_entry_copy": true,
+    "mirror_unreleased_identity_rejected": true,
+    "mirror_private_card_context": true,
+    "mirror_public_back_rejected": true,
+    "mirror_public_effect_ids_rejected": true,
+    "gateway_filter_before_trusted_context": true,
+    "gateway_join_identity_not_forwarded": true,
+    "gateway_fixed_failure_audit_only": true
+  },
+  "negative_controls": {
+    "source_gate_removed": true,
+    "back_gate_removed": true,
+    "identity_gate_removed": true
+  },
+  "godot_executed": false,
+  "runtime_assertions_executed": false,
+  "credentials_logged": false
+}

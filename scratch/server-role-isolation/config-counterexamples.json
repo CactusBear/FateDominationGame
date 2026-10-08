@@ -1,0 +1,17 @@
+[
+  {"name":"unknown_json_field","configuration":{"roles":["relay"],"port":24680,"typo":true},"reject":"unknown_field"},
+  {"name":"game_data_in_relay","configuration":{"roles":["relay"],"port":24680,"data_root":"data"},"reject":"game_field"},
+  {"name":"authority_in_relay","configuration":{"roles":["relay"],"port":24680,"authority_host_mode":"dedicated"},"reject":"game_field"},
+  {"name":"data_section_in_relay","configuration":{"roles":["relay"],"port":24680,"data":{}},"reject":"game_field"},
+  {"name":"conflicting_legacy_flag","configuration":{"roles":["relay"],"port":24680,"p2p_signaling":false},"reject":"roles"},
+  {"name":"legacy_flag_wrong_type","configuration":{"roles":["relay"],"port":24680,"p2p_signaling":1},"reject":"roles"},
+  {"name":"empty_roles","configuration":{"roles":[],"port":24680},"reject":"roles"},
+  {"name":"duplicate_roles","configuration":{"roles":["relay","relay"],"port":24680},"reject":"roles"},
+  {"name":"unknown_roles","configuration":{"roles":["turn"],"port":24680},"reject":"roles"},
+  {"name":"string_roles","configuration":{"roles":"relay","port":24680},"reject":"roles"},
+  {"name":"implicit_roles","configuration":{"port":24680},"reject":"roles"},
+  {"name":"game_role_on_signal_entry","configuration":{"roles":["game","relay"],"port":24680},"reject":"roles"},
+  {"name":"unknown_cfg_section","cfg":"[server]\nroles=[\"relay\"]\nport=24680\n[typo]\nvalue=true\n","reject":"cfg_section"},
+  {"name":"cfg_nested_override","cfg":"[server]\nroles=[\"relay\"]\nport=24680\nrelay={}\n[relay]\nsignal_rate_limit=32\n","reject":"cfg_override"},
+  {"name":"unknown_cfg_field","cfg":"[server]\nroles=[\"relay\"]\nport=24680\ntypo=true\n","reject":"unknown_field"}
+]

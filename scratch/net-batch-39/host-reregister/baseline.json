@@ -1,0 +1,8 @@
+{
+  "scripts/net/p2p/p2p_signal_client.gd": "ae41173a6531c02fe65174e2d4b7888d3c22d9778a3b4f8038ca8aac2ab0a1d1",
+  "scripts/net/p2p/p2p_signal_server.gd": "cb15315c33b5010b4589e1ce78b4c6cb5796ac6a33459a37981a6573b2fa72be",
+  "scripts/net/session/authority_host_client.gd": "668cd4e6e39ecf8630b63f040aaf4bdc533b58613464f41c6a1652d91fd41b66",
+  "scripts/net/session/lobby_session.gd": "f93b1d04e04dec12f1a9f6ff7cfed8e52340c470b3d8b30a36a2f2a293a23fac",
+  "scripts/net/ui/lobby_screen.gd": "91b949bf3137e500fd0e2e7eea2f76df2c0199905c71df8252fe3aefe633ff21",
+  "scripts/net/server/server_bootstrap.gd": "73517629db6b57c52e3464bc1c1ce2ef2e062e3a0783e6fc0eaafe8344700f7e"
+}

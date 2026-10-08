@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/p2p_signal_worker_crash_live_test.gd" id="1"]
+
+[node name="P2PSignalWorkerCrashLiveTest" type="Node"]
+script = ExtResource("1")

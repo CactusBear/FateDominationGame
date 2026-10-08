@@ -1,0 +1,142 @@
+[
+  {
+    "id": "freeze",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "windows_export",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "linux_export",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "first_cfg",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "windows_runtime",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "windows_identity",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "reload_create_target_adaptation",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "role_contract_adaptation",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "stdin_windows",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "stdin_linux",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "linux_preflight",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "linux_match_window",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "linux_save_recovery_window",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "authenticated_recovery",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "gateway_restart",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "signals_windows",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "signals_linux",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "signaling_release",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "cross_machine_nat",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  },
+  {
+    "id": "physical_linux_load",
+    "status": "NOT_RUN",
+    "exit_code": null,
+    "checks": null,
+    "error_count": null
+  }
+]

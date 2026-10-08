@@ -1,0 +1,28 @@
+{
+  "id": "tests/bellerophon_window_test.tscn:window",
+  "scene": "tests/bellerophon_window_test.tscn",
+  "mode": "window",
+  "required": true,
+  "stage_hint": "window",
+  "scripts": [
+    "res://tests/bellerophon_rules_test.gd",
+    "res://tests/bellerophon_window_test.gd"
+  ],
+  "environment_names": [],
+  "command_template_NOT_EXECUTED": [
+    "<GODOT_CONSOLE_EXE>",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\Projects\\Godot\\FateDominationGame-master",
+    "--scene",
+    "res://tests/bellerophon_window_test.tscn",
+    "--resolution",
+    "1920x1080",
+    "--",
+    "window"
+  ],
+  "timeout_sec": null,
+  "status": "NOT_RUN",
+  "window_requires_branch_marker": true
+}

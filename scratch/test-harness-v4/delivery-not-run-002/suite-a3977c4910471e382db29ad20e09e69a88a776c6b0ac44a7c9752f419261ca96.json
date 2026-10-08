@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/debug_identity_hand_full_game_test.tscn:window",
+  "scene": "tests/debug_identity_hand_full_game_test.tscn",
+  "mode": "window",
+  "required": true,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

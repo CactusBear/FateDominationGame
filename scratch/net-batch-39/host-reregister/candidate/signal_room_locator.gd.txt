@@ -1,0 +1,31 @@
+extends RefCounted
+
+# 保留在信令 driver；不属于规则快照、恢复席位凭据或信令 server。
+var session_id: String = ""
+var authority_instance: String = ""
+var revision: int = 0
+var locator: Dictionary = {}
+
+func bind(session: String, instance: String) -> bool:
+	if session.is_empty() or instance.is_empty() or not session_id.is_empty(): return false
+	session_id = session
+	authority_instance = instance
+	return true
+
+func accept(sender: int, authenticated_host_peer: int, message: Dictionary) -> bool:
+	if sender != authenticated_host_peer or authenticated_host_peer != 1 or session_id.is_empty(): return false
+	var keys := message.keys()
+	keys.sort()
+	if keys != ["authority_instance", "boot", "kind", "revision", "room", "session", "url"]: return false
+	if message.kind != "signal_room_update" or message.session != session_id or message.authority_instance != authority_instance: return false
+	if not message.revision is int or message.revision <= revision: return false
+	if not message.url is String or not message.url.begins_with("wss://"): return false
+	if not message.boot is String or message.boot.length() != 32: return false
+	if not message.room is String or message.room.is_empty() or message.room.length() > 256: return false
+	for character in message.room:
+		if character not in "0123456789abcdef": return false
+	for character in message.boot:
+		if character not in "0123456789abcdef": return false
+	revision = message.revision
+	locator = message.duplicate(true)
+	return true

@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/net_manifest_parts_test.tscn:headless",
+  "scene": "tests/net_manifest_parts_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

@@ -1,0 +1,139 @@
+extends "res://tests/lan_worker_crash_live_test.gd"
+
+# 本机真实 TCP/WebSocket 自动信令 -> WebRTC 数据面 -> 房主独立规则 worker。
+# 不继承旧 net_p2p_signal_match，不调用 host_peer/本机规则或手动邀请码。
+const SignalClient = preload("res://scripts/net/p2p/p2p_signal_client.gd")
+const SignalServer = preload("res://scripts/net/p2p/p2p_signal_server.gd")
+const IsolatedLobby = preload("res://tests/helpers/p2p_signal_isolated_lobby.gd")
+var signal_server = SignalServer.new()
+var owner_signal = SignalClient.new()
+var guest_signal = SignalClient.new()
+var extra_signals:Array = []
+var signal_url:String = ""
+var full_signal_outage:bool = false
+var resume_started:bool = false
+
+func _process(delta:float) -> void:
+	signal_server.poll()
+	# Lobby.poll 负责 connection_driver.poll；不要额外重复 poll 同一客户端。
+	super._process(delta)
+
+func open_round(label:String) -> bool:
+	round_name = label
+	host_client = Host.new()
+	manager = host_client.gateway.manager
+	if not require_stage(manager.process_ownership_available(),"自动信令 lane 必须具备真实原生 worker 所有权"):
+		return false
+	var base:int = preload("res://tests/net_port_fixture.gd").available_range(54000,58000,2)
+	if not require_stage(base > 0,"实际探测回环 worker UDP 端口"):
+		return false
+	manager.internal_port_base = base
+	manager.internal_port_count = 2
+	test_owner = IsolatedLobby.new()
+	test_owner.isolated_host = host_client
+	test_owner.isolated_storage = root.path_join(label+"/workers")
+	guest = Lobby.new()
+	test_owner.player_identity._key = owner_key
+	guest.player_identity._key = guest_key
+	test_owner.identity_profile = {"public_key":test_owner.player_identity.public_key(),"username":"SignalLiveOwner_38","nickname":"信令房主"}
+	guest.identity_profile = {"public_key":guest.player_identity.public_key(),"username":"SignalLiveGuest_38","nickname":"信令客机"}
+	test_owner.record_matches = true
+	for index in range(2):
+		var agent = Agent.new()
+		agent.session = test_owner if index == 0 else guest
+		agent.group = preload("res://scripts/net/ui/group_selection.gd").new()
+		agent.session.blobs.cache.root = root.path_join(label+"/cache-%d" % index)
+		agents.append(agent)
+	var modes:Dictionary = JSON.parse_string(FileAccess.get_file_as_string(LoadHelper.get_data_dir().path_join("selection_modes.json")))
+	var settings:Dictionary = {"capacity":2,"minimum":2,"ai_count":0,"selection_mode":modes.default_mode,"spectator_limit":1,"runtime_guard":{"enabled":true,"steps":9223372036854775807,"seconds":0.0}}
+	if not require_stage(signal_server.listen(0,"127.0.0.1") == OK and signal_server.port > 0,"生产信令服务实际监听临时 TCP 端口"):
+		return false
+	signal_url = "ws://127.0.0.1:%d" % signal_server.port
+	if not require_stage(owner_signal.host(signal_url,test_owner,"自动信令真实worker",settings,{"iceServers":[]}) == OK,"生产 SignalClient.host 创建 WebRTC peer 和真实 P2P 权威 worker"):
+		return false
+	if not require_stage(await wait_until(func(): return not owner_signal.room_code.is_empty() and manager.is_ready(host_client.room_id) and test_owner.view.get("owner") == test_owner.peer_id() and host_client._identity_bridge.confirmed,45000),"WebSocket 创建房间码及独立 worker 房主认证 IPC 均就绪"):
+		return false
+	if not require_stage(guest_signal.join(signal_url,owner_signal.room_code,guest,"不授权名称",false,{"iceServers":[]}) == OK,"生产 SignalClient.join 自动交换 SDP/ICE，无手工 export/accept"):
+		return false
+	if not require_stage(await wait_until(func(): return guest.identity_authenticated and guest.view.get("members",[]).size() == 2 and test_owner.view.get("members",[]).size() == 2 and not guest.room_files.is_empty(),30000),"自动 WebRTC 数据面完成 RSA 认证、worker 入房与数据清单"):
+		return false
+	var binding:Dictionary = manager.instance_binding(host_client.room_id)
+	if not require_stage(manager.binding_matches(binding,true) and manager.process_state_for_binding(binding) == 1 and binding.authority_host_mode == "p2p","原生句柄核实房主机器上的 P2P worker，不由 relay 计算规则"):
+		return false
+	if not require_stage(guest.view.get("owner") == test_owner.peer_id() and guest.view.members.any(func(member): return member.id == guest.peer_id() and member.name == "信令客机" and member.connected),"认证资料决定昵称和房主，信令/客户端名称不能授权"):
+		return false
+	var saved:Dictionary = JSON.parse_string(FileAccess.get_file_as_string(str(manager.rooms[host_client.room_id].directory).path_join("recovery.json")))
+	if not require_stage(saved.get("identity_binding_required") == true and saved.get("member_identities",{}).get(str(guest.peer_id())) == guest.player_identity.fingerprint(guest.identity_profile.public_key),"实际恢复状态读回客机密钥绑定，不伪造认证成功"):
+		return false
+	return require_stage(owner_signal.diagnostics().signaling_open and guest_signal.diagnostics().signaling_open and signal_server.diagnostics().answered_handshakes == 1 and signal_server.diagnostics().authority_host_mode == "disabled_on_relay" and signal_server.diagnostics().game_forwarding == false,"真实生产信令完成握手且 relay 明确无权威和游戏转发")
+
+func freeze_source() -> bool:
+	# 中局暂停存档、双观察者及资产冻结完全复用真实 worker 父类。
+	if not await super.freeze_source(): return false
+	var member:int = guest.peer_id()
+	var before:Dictionary = position(guest.read_match())
+	if not require_stage(guest_signal._socket != null and guest_signal.diagnostics().signaling_open,"断信令前客机真实 WebSocket 已建立"):
+		return false
+	# 故障注入仅关闭信令 socket；绝不调用 driver.close（它会关闭直连）。
+	guest_signal._socket.close()
+	if not require_stage(await wait_until(func(): return guest_signal._socket == null and not guest_signal.error.is_empty(),15000),"真实客机信令关闭被生产 poll 识别，保留连接驱动恢复元数据"):
+		return false
+	var deadline:int = Time.get_ticks_msec() + 800
+	var preserved:bool = true
+	while Time.get_ticks_msec() < deadline:
+		if not (guest.transport.is_connected_to_host() and guest.peer_id() == member and position(guest.read_match()) == before and not has_error()):
+			preserved = false
+			break
+		await get_tree().process_frame
+	if not require_stage(preserved,"信令断开后已建直连及原私有中局镜像在墙钟观察区间保持"):
+		return false
+	return require_stage(owner_signal.diagnostics().signaling_open and signal_server.diagnostics().signaling_rooms == 1 and guest_signal.can_reconnect_session(guest),"房主信令房间保留，客机已断信令仍具有公开恢复入口")
+
+func connect_intruder(intruder) -> bool:
+	var driver = SignalClient.new()
+	extra_signals.append(driver)
+	if not require_stage(driver.join(signal_url,owner_signal.room_code,intruder,"无授权名称",false,{"iceServers":[]}) == OK,"盗票反例也经真实自动信令与新 WebRTC/RSA 握手"):
+		return false
+	# 必须等待生产 offer -> join_peer 完成再让父类注入票据；否则
+	# 异步 join_peer 的 close/reset 会清掉父类刚写入的 _hello.resume。
+	# 此段只泵生产 driver，不泵 intruder Lobby，防止未注票据就发送身份/hello。
+	var deadline:int = Time.get_ticks_msec() + 30000
+	while not driver._received_offer and driver.error.is_empty() and Time.get_ticks_msec() < deadline:
+		driver.poll()
+		await get_tree().process_frame
+	return require_stage(driver._received_offer and driver.error.is_empty(),"盗票连接完成自动 offer 接入后才交还父类注票据并认证")
+
+func reconnect_original_guest() -> bool:
+	if not require_stage(guest.connection_driver == guest_signal and not guest.transport.is_connected_to_host() and guest.can_reconnect(),"崩溃恢复保留生产信令驱动及原稳定成员票据"):
+		return false
+	resume_started = true
+	return require_stage(guest.reconnect() == OK,"公开 Lobby.reconnect 委派 SignalClient.reconnect 自动新 SDP/ICE 和 RSA")
+
+func management(action:String) -> Dictionary:
+	if action == "resume" and not full_signal_outage:
+		if not require_stage(resume_started and guest.identity_authenticated and test_owner.view.get("phase") == "playing" and guest.view.get("phase") == "playing" and not guest.read_match().is_empty(),"完整恢复及全部 ACK 通过后才注入全信令服务停机"):
+			return {}
+		if not require_stage(guest_signal.diagnostics().signaling_open and signal_server.diagnostics().answered_handshakes >= 1,"公开 reconnect 已实际重建信令及 WebRTC 握手，不沿用旧直连"):
+			return {}
+		signal_server.close()
+		full_signal_outage = true
+		if not require_stage(await wait_until(func(): return owner_signal._socket == null and guest_signal._socket == null and not owner_signal.error.is_empty() and not guest_signal.error.is_empty(),15000),"整个真实信令服务停机且两端观察到断开"):
+			return {}
+		if not require_stage(signal_server.port == 0 and signal_server.diagnostics().signaling_rooms == 0 and guest.transport.is_connected_to_host() and host_client.gateway.transport.is_connected_to_host(),"无信令监听/房间时已建 WebRTC 数据面与房主路由继续存活"):
+			return {}
+	var response:Dictionary = await super.management(action)
+	if action == "save" and full_signal_outage:
+		check(response.get("ok",false) and agents.all(func(agent): return agent.session.read_match().get("game_over",false)) and not owner_signal.diagnostics().signaling_open and not guest_signal.diagnostics().signaling_open,"整个信令离线期间两原真人真实规则续行至终局并由 worker 存档")
+	return response
+
+func close_round() -> void:
+	# 先按原链收回本轮 worker，再断开信令对象及注入子类额外持有引用。
+	var old_owner = test_owner
+	await super.close_round()
+	if old_owner != null: old_owner.isolated_host = null
+	for driver in extra_signals: driver.close()
+	extra_signals.clear()
+	guest_signal.close()
+	owner_signal.close()
+	signal_server.close()
+	print("P2P_SIGNAL_WORKER_LIVE_RESULT checks=",checks," failures=",failures)

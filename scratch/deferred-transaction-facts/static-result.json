@@ -1,0 +1,126 @@
+{
+  "kind": "source_static_only",
+  "godot_started": false,
+  "checks": 28,
+  "failures": [],
+  "results": [
+    {
+      "name": "gdtoolkit parse: scripts/system/global/fact_delivery.gd",
+      "passed": true
+    },
+    {
+      "name": "gdtoolkit parse: scripts/system/global/game_log.gd",
+      "passed": true
+    },
+    {
+      "name": "gdtoolkit parse: scripts/system/global/event_journal.gd",
+      "passed": true
+    },
+    {
+      "name": "gdtoolkit parse: scripts/system/global/effect_manager.gd",
+      "passed": true
+    },
+    {
+      "name": "gdtoolkit parse: tests/deferred_transaction_facts_test.gd",
+      "passed": true
+    },
+    {
+      "name": "展示订阅不把消费者直接排入延迟信号",
+      "passed": true
+    },
+    {
+      "name": "规则事实仍立即保存与发信号",
+      "passed": true
+    },
+    {
+      "name": "GameLog.record 仍直接返回即时规则事实",
+      "passed": true
+    },
+    {
+      "name": "建立根事务推进发布边界",
+      "passed": true
+    },
+    {
+      "name": "_settle_idle_guard_transactions 审计成功后才 commit 展示",
+      "passed": true
+    },
+    {
+      "name": "_release_guard_transactions 审计成功后才 commit 展示",
+      "passed": true
+    },
+    {
+      "name": "成功恢复后立即 abort，早于完成回执",
+      "passed": true
+    },
+    {
+      "name": "两种会话清理入口均失效旧票据",
+      "passed": true
+    },
+    {
+      "name": "generation 单调增加而不在 reset 复用",
+      "passed": true
+    },
+    {
+      "name": "订阅重连使用独立身份",
+      "passed": true
+    },
+    {
+      "name": "排队保存根 token 引用而非状态副本",
+      "passed": true
+    },
+    {
+      "name": "旧 drain 在修改 scheduled 前拒绝",
+      "passed": true
+    },
+    {
+      "name": "票据先出队后调用，重入不会重复",
+      "passed": true
+    },
+    {
+      "name": "票据/消费者/重入后均检查会话",
+      "passed": true
+    },
+    {
+      "name": "pending 不每帧自旋",
+      "passed": true
+    },
+    {
+      "name": "发布原语不纳入规则检查点 statics",
+      "passed": true
+    },
+    {
+      "name": "专项源码覆盖 same_frame_skip",
+      "passed": true
+    },
+    {
+      "name": "专项源码覆盖 pending_answer_skip",
+      "passed": true
+    },
+    {
+      "name": "专项源码覆盖 resume_commit_once",
+      "passed": true
+    },
+    {
+      "name": "专项源码覆盖 generations_and_subscription",
+      "passed": true
+    },
+    {
+      "name": "专项源码覆盖 reentrant_reset",
+      "passed": true
+    },
+    {
+      "name": "专项使用真实 skip/resume 与排队时点",
+      "passed": true
+    },
+    {
+      "name": "专项场景接线到测试源码",
+      "passed": true
+    }
+  ],
+  "not_verified": [
+    "Godot 类型检查",
+    "运行时同帧/跨帧信号行为",
+    "真实恢复/连锁回归",
+    "RED/GREEN"
+  ]
+}

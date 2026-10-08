@@ -1,0 +1,24 @@
+{
+  "id": "tests/mana_sigil_test.tscn:headless",
+  "scene": "tests/mana_sigil_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "stage_hint": "ui_headless",
+  "scripts": [
+    "res://tests/mana_sigil_test.gd"
+  ],
+  "environment_names": [],
+  "command_template_NOT_EXECUTED": [
+    "<GODOT_CONSOLE_EXE>",
+    "--headless",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\Projects\\Godot\\FateDominationGame-master",
+    "--scene",
+    "res://tests/mana_sigil_test.tscn"
+  ],
+  "timeout_sec": null,
+  "status": "NOT_RUN",
+  "window_requires_branch_marker": false
+}

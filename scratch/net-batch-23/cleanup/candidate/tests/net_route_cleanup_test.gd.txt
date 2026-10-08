@@ -1,0 +1,60 @@
+extends "res://tests/match_journal_test.gd"
+
+const Gateway = preload("res://scripts/net/server/server_gateway.gd")
+const Host = preload("res://scripts/net/session/authority_host_client.gd")
+const Transport = preload("res://scripts/net/transport/enet_transport.gd")
+
+# 与 _attach 相同的捕获形状，不创建网络或进程；走真实退出入口。
+func _captured_route() -> Dictionary:
+	var link = Transport.new()
+	var route:Dictionary = {"link":link,"room":"cleanup-fixture","pid":-1,
+		"instance_id":"1".repeat(32),"authority_host_mode":"dedicated"}
+	link.message_received.connect(func(_sender:int, _message:Dictionary): route.get("room"))
+	link.packet_rejected.connect(func(_sender:int, _reason:String): route.get("pid"))
+	link.peer_disconnected.connect(func(_peer:int): route.get("instance_id"))
+	return route
+
+func _failed_attach_probe() -> WeakRef:
+	var gateway = Gateway.new()
+	var route:Dictionary = _captured_route()
+	var reference:WeakRef = weakref(route.link)
+	gateway._close_route_link(route.link)
+	gateway._close_route_link(route.link)
+	check(route.link.message_received.get_connections().is_empty()
+		and route.link.packet_rejected.get_connections().is_empty()
+		and route.link.peer_disconnected.get_connections().is_empty(),
+		"未登记路由也断开全部捕获闭包，重复清理幂等")
+	return reference
+
+func _gateway_probe() -> Array:
+	var gateway = Gateway.new()
+	var route:Dictionary = _captured_route()
+	var references:Array = [weakref(gateway),weakref(route.link)]
+	gateway.routes[2] = route
+	gateway.close()
+	check(gateway.routes.is_empty(),"gateway.close 撤销路由登记")
+	return references
+
+func _host_probe() -> Array:
+	var host = Host.new()
+	var route:Dictionary = _captured_route()
+	var references:Array = [weakref(host),weakref(host.gateway),weakref(route.link)]
+	host.gateway.routes[2] = route
+	host._pending_joins[2] = {"kind":"join"}
+	host.gateway.transport.peer_disconnected.emit(2)
+	check(not host._pending_joins.has(2),"命名断线回调保留待入房清理行为")
+	host.close()
+	check(host.gateway.routes.is_empty() and host._closing_target.is_empty(),
+		"无 worker 的 host.close 撤销路由且不伪造异步关闭")
+	return references
+
+func run() -> void:
+	var failed_attach:WeakRef = _failed_attach_probe()
+	check(failed_attach.get_ref() == null,"连接失败的 route/link 闭包环自然释放")
+	var gateway_refs:Array = _gateway_probe()
+	check(gateway_refs.all(func(reference): return reference.get_ref() == null),
+		"gateway 及撤销的内部 link 自然释放")
+	var host_refs:Array = _host_probe()
+	check(host_refs.all(func(reference): return reference.get_ref() == null),
+		"LAN host/gateway/link 不由已关闭信号保留")
+	finish()

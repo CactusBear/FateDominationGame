@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/rule_guard_round_start_test.tscn:headless",
+  "scene": "tests/rule_guard_round_start_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

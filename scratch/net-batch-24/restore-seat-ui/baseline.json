@@ -1,0 +1,5 @@
+{
+  "scripts/net/ui/lobby_screen.gd": "1506f7796903348c24e30e54e100451a6eb29989dd570dc47831523d76d0dcdd",
+  "assets/scenes/main_menu/multiplayer_lobby.tscn": "4f452eda1992bc6e750ce1a2f7466691c10a41e0c2aba1e5dd80cb28e502d94b",
+  "scripts/net/session/authority_host_client.gd": "eb0ace071c540e5f695c0b46cd1580cdac0362a439cab7ff3509609a5ffb1349"
+}

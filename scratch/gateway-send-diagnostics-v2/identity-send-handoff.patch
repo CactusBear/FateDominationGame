@@ -1,0 +1,19 @@
+# 身份代理合并候选；本代理未直接修改这些区块。
+# 锚点以函数名和原 send 调用为准；先核对身份代理最新状态再应用。
+--- a/scripts/net/server_gateway.gd
++++ b/scripts/net/server_gateway.gd
+@@
+ 		if _identity_admin_flags.get(peer) != admin:
+-			_identity_admin_flags[peer] = admin
+-			transport.send(peer,{"kind":"server_identity_permissions","admin":admin})
++			if _send_client(peer,{"kind":"server_identity_permissions","admin":admin},0,"identity_permissions") == OK:
++				_identity_admin_flags[peer] = admin
+@@
+-		transport.send(peer,{"kind":"server_identity_challenge","challenge":challenge})
++		if _send_client(peer,{"kind":"server_identity_challenge","challenge":challenge},0,"identity_challenge") != OK:
++			_identity_challenges.erase(peer)
++			_fail(peer,"身份挑战发送失败，请重新认证")
+@@
+-	transport.send(peer,{"kind":"server_identity_ready","identity":id,"username":profile.username,"nickname":profile.nickname})
++	if _send_client(peer,{"kind":"server_identity_ready","identity":id,"username":profile.username,"nickname":profile.nickname},0,"identity_ready") != OK:
++		_fail(peer,"身份认证结果发送失败，请重新连接确认")

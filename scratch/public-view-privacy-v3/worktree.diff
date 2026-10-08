@@ -1,0 +1,867 @@
+diff --git a/scripts/match/view_builder.gd b/scripts/match/view_builder.gd
+index e9f387f..7348811 100644
+--- a/scripts/match/view_builder.gd
++++ b/scripts/match/view_builder.gd
+@@ -7,6 +7,7 @@ const CardText := preload("res://scripts/game_scene/tactical_board_ui.gd")
+ const Ids = preload("res://scripts/match/net_ids.gd")
+ var ids = Ids.new()
+ var sequence: int = 0
++var _held_origins: Dictionary = {}
+ 
+ func build(observer: int = -1) -> Dictionary:
+ 	sequence += 1
+@@ -25,9 +26,9 @@ func build(observer: int = -1) -> Dictionary:
+ 		var master = data.get("master")
+ 		player["avatar"] = str(master.get("_header_img")) if master != null else ""
+ 		player["total_power"] = int(GetPlayerTotalPower.breakdown(pid).get("total", 0))
+-		player["master"] = identity(master, "_master_card_img")
++		player["master"] = identity(master, "_master_card_img", own)
+ 		var servant = data.get("servant")
+-		player["servant"] = identity(servant, "_servant_card_img") if own or released else {}
++		player["servant"] = identity(servant, "_servant_card_img", own) if own or released else {}
+ 		player["servant_class"] = str(servant._servant_class) if servant != null and (own or GameDataManager.can_see_servant_class(observer, pid)) else ""
+ 		player["deck_count"] = data.get("deck", []).size()
+ 		player["hand_count"] = data.get("hand_cards", []).size()
+@@ -35,6 +36,7 @@ func build(observer: int = -1) -> Dictionary:
+ 		player["command_spells"] = cards(data.get("out_of_game", {}).get("command_spell", []), true) if own else []
+ 		player["discard"] = cards(data.get("discard", []), own)
+ 		player["played_cards"] = cards(data.get("played_cards", []), own)
++		player["held_cards"] = held_cards(data, pid) if own else []
+ 		player["master_skills"] = cards(data.get("master_skills", []), own)
+ 		player["servant_skills"] = cards(data.get("servant_skills", []), own) if own or released else []
+ 		var loc = data.get("location")
+@@ -46,7 +48,78 @@ func build(observer: int = -1) -> Dictionary:
+ 		for loc in area._locations:
+ 			locations.append({"id": ids.id_for(loc), "magic": number(loc._magic), "benefit": GetEffectiveLocationBenefit.current_benefit(loc), "capacity": loc._pl_num_limit, "players": loc._players.duplicate()})
+ 		areas.append({"id": ids.id_for(area), "name": str(area._area_name), "locations": locations, "events": cards(area._events, false)})
+-	return {"v": 1, "seq": sequence, "observer": observer, "round": GameProgress.current_round, "phase": str(GameProgress.get_current_phase().get("name", "")), "current_player": GameProgress.current_player_id, "game_over": GameProgress.is_game_over, "players": players, "areas": areas, "situation": card_view(MapData.active_situation, false)}
++	return {"v": 1, "seq": sequence, "observer": observer, "round": GameProgress.current_round, "phase": str(GameProgress.get_current_phase().get("name", "")), "current_player": GameProgress.current_player_id, "game_over": GameProgress.is_game_over, "players": players, "areas": areas, "situation": card_view(MapData.active_situation, false), "public_log": public_log(), "event_discard": cards(MapData.event_discard, false)}
++
++## 持有展示来源由权威显式声明；不将升华技混入普通出牌卡位。
++func held_cards(data: Dictionary, pid: int) -> Array:
++	var result: Array = []
++	var seen: Array = []
++	var master = data.get("master")
++	var upgrades: Array = master._upgrade_skill if master != null else []
++	var played: Array = data.get("played_cards", [])
++	var play_zone: Array = RegularPlay.play_zone_cards(data)
++	var push := func(source: Array, group: String, label: String):
++		for card in source:
++			if not card is BaseHandCard or seen.has(card) or upgrades.has(card):
++				continue
++			if (data.get("deck", []).has(card) or data.get("discard", []).has(card)) and not play_zone.has(card):
++				continue
++			if played.has(card) and not card is BaseSkill:
++				continue
++			var view: Dictionary = card_view(card, true)
++			if not view.get("visible", false):
++				continue
++			seen.append(card)
++			if not _held_origins.has(view.id):
++				_held_origins[view.id] = {"group": group, "label": label, "order": _held_origins.size()}
++			var origin: Dictionary = _held_origins[view.id]
++			result.append({"card": view, "group": origin.group if played.has(card) else group, "label": origin.label if played.has(card) else label, "played": played.has(card), "unpublished": bool(card._is_concealed) or (card is BaseSkill and not ReleaseTrueName.is_released(pid))})
++	push.call(data.get("servant_skills", []), "servant", "从者技能")
++	push.call(data.get("master_skills", []), "master", "御主牌")
++	for card in data.get("side", {}).get("skills", []):
++		var source = card.get_from() if card is BaseCard else null
++		push.call([card], "servant" if source != null and source == data.get("servant") else "master", "从者技能" if source != null and source == data.get("servant") else ("御主牌" if source != null and source == master else "技能牌"))
++	if master != null:
++		for key in ["SKILLS", "ATTACKS"]:
++			push.call(master._specials.get(key, []), "master", "御主牌")
++	push.call(data.get("hand_cards", []), "hand", "手牌")
++	push.call(play_zone, "hand", "手牌")
++	# 出牌会从来源数组移除技能，但原规则对象与来源身份仍有效。
++	for card in played:
++		if card is BaseSkill:
++			var source = card.get_from()
++			push.call([card], "servant" if source != null and source == data.get("servant") else "master", "从者技能" if source != null and source == data.get("servant") else ("御主牌" if source != null and source == master else "技能牌"))
++	result.sort_custom(func(a, b): return _held_origins[a.card.id].order < _held_origins[b.card.id].order)
++	return result
++
++## 只输出公开事实的格式化文本；效果/选项/来源参数不进入公共快照。
++func public_log() -> Array:
++	var result: Array = []
++	var allowed := ["deploy", "move", "command_spell_used", "draw", "refill_hand", "reshuffle_discard", "magic_add", "magic_decrease", "score_add", "score_decrease", "eliminated", "true_name_release", "true_name_hidden", "game_end", "play", "regular_play", "battle"]
++	for entry in GameLog.query({}, null, -1):
++		if not entry is Dictionary or entry.get("type", "") not in allowed or entry.get("tags", []).has("secret_choice"):
++			continue
++		var public_entry := {"type": entry.type, "round": int(entry.get("round", 0)), "phase": str(entry.get("phase", "")), "actor": int(entry.get("actor", -1)), "place": str(entry.get("place", "")), "tags": [], "object": null, "data": {}}
++		var facts = entry.get("data", {})
++		if facts is Dictionary:
++			if entry.get("tags", []).has("magic_spend"):
++				public_entry.tags.append("magic_spend")
++			if facts.get("purpose") in ["regular_play", "effect_attack", "effect_skill", "move", "effect_cost"]:
++				public_entry.data["purpose"] = facts.purpose
++			for field in ["delta", "count"]:
++				if typeof(facts.get(field)) in [TYPE_INT, TYPE_FLOAT] and is_finite(float(facts[field])):
++					public_entry.data[field] = facts[field]
++			if entry.type == "game_end" and facts.get("winners") is Array:
++				public_entry.data["winners"] = []
++				for winner in facts.winners:
++					if winner is int and GameData.player_data_library.has(winner): public_entry.data.winners.append(winner)
++		if entry.get("type") == "play":
++			public_entry["object"] = null
++			public_entry["data"] = {"concealed": bool(entry.get("data", {}).get("concealed", false))}
++		var line: String = CardText._format_game_log_line(public_entry)
++		if not line.is_empty():
++			result.append(line)
++	return result
+ 
+ func cards(source: Array, own: bool) -> Array:
+ 	var result: Array = []
+@@ -59,14 +132,15 @@ func card_view(card, own: bool) -> Dictionary:
+ 	if card == null:
+ 		return {}
+ 	var concealed: bool = card._is_concealed
+-	var visible: bool = own or not concealed
++	var visible: bool = own or (not concealed and publicly_identifiable(card))
+ 	if card is BaseSkill and not card._is_awakened:
+ 		visible = false
+-	var result := {"id": ids.id_for(card), "concealed": concealed, "visible": visible, "back_image": str(card._card_back_img)}
++	# 隐藏牌不携带专属卡背路径（其中可能包含从者名/职阶/来源目录）。
++	var result := {"id": ids.id_for(card), "concealed": concealed, "visible": visible, "back_image": str(card._card_back_img) if visible or own else ""}
+ 	if visible:
+ 		result["name"] = card.get_shown_name()
+ 		result["zoom_kind"] = card.get_zoom_kind()
+-		result["description"] = CardText._build_card_desc(card)
++		result["description"] = CardText._build_card_desc(card) if own else public_description(card)
+ 		result["image"] = str(card._card_img)
+ 		result["kind"] = "skill" if card is BaseSkill else ("attack" if card is BaseAttack else "card")
+ 		result["cost"] = number(card.get("_cost"))
+@@ -78,14 +152,64 @@ func card_view(card, own: bool) -> Dictionary:
+ 			holders.append(related)
+ 		for holder in holders:
+ 			for effect in holder._effects:
+-				if effect is BaseEffect:
++				if own and effect is BaseEffect:
+ 					result.effects.append(ids.id_for(effect))
+ 	return result
+ 
+-func identity(object, image_field: String) -> Dictionary:
++func identity(object, image_field: String, own: bool = false) -> Dictionary:
+ 	if object == null:
+ 		return {}
+-	return {"name": object.get_shown_name(), "image": str(object.get(image_field)), "visible": true, "concealed": false, "zoom_kind": object.get_zoom_kind(image_field), "description": CardText._build_card_desc(object)}
++	return {"name": object.get_shown_name(), "image": str(object.get(image_field)), "visible": true, "concealed": false, "zoom_kind": object.get_zoom_kind(image_field), "description": CardText._build_card_desc(object) if own else public_description(object)}
++
++## 按原规则对象来源判定，不依赖当前位置；转到出牌/弃牌区不能公开真名。
++func publicly_identifiable(card) -> bool:
++	var source = card
++	var seen: Array = []
++	var master_source: bool = false
++	while source is BaseObject and not seen.has(source):
++		seen.append(source)
++		for pid in GameData.player_data_library:
++			var data: Dictionary = GameData.player_data_library[pid]
++			if source == data.get("servant") or (card is BaseSkill and data.get("servant_skills", []).has(card)):
++				return ReleaseTrueName.is_released(pid)
++			if source == data.get("master") or (card is BaseSkill and data.get("master_skills", []).has(card)):
++				master_source = true
++		source = source.get_from()
++	# 未登记的从者来源不能按“查不到”视为公开。
++	for object in seen:
++		if object is BaseServant:
++			return false
++	return not card is BaseSkill or master_source
++
++## 公共说明只读取声明的卡面字段，绝不回退到内部效果名/诊断数据。
++static func public_description(object) -> String:
++	var lines: Array[String] = []
++	for field in ["_cost", "_power"]:
++		var value = object.get(field)
++		if value is BaseNumber:
++			lines.append("%s：%s" % ["费用" if field == "_cost" else "威力", BaseNumber.display_text(value.number)])
++	var attributes = object.get("_attributes")
++	if attributes is Array and not attributes.is_empty():
++		lines.append("属性：" + "、".join(Attributes.get_shown_attributes(attributes)))
++	var category = object.get("_category")
++	if category is String and not category.is_empty():
++		lines.append("类别：" + str(CardText.ATTACK_CATEGORY_LABELS.get(category, category)))
++	var notes = object.get("_shown_notes")
++	if notes is Array:
++		for note in notes:
++			if note is String and not note.is_empty(): lines.append(note)
++	var requirements = object.get("_play_requirements")
++	if requirements is Array:
++		for requirement in requirements:
++			if requirement is Dictionary and requirement.get("shown_note") is String and not requirement.shown_note.is_empty(): lines.append(requirement.shown_note)
++	var effects = object.get("_effects")
++	if effects is Array:
++		for effect in effects:
++			if not effect is BaseEffect: continue
++			if not effect._shown_name.is_empty(): lines.append(effect._shown_name)
++			for option in effect._options:
++				if option is Dictionary and option.get("shown_option_name") is String and not option.shown_option_name.is_empty(): lines.append(option.shown_option_name)
++	return "\n".join(lines)
+ 
+ static func number(value) -> float:
+ 	return float(value.number) if value is BaseNumber else 0.0
+diff --git a/scripts/match/view_mirror.gd b/scripts/match/view_mirror.gd
+index 29f41d5..2f7e5b4 100644
+--- a/scripts/match/view_mirror.gd
++++ b/scripts/match/view_mirror.gd
+@@ -5,8 +5,8 @@ extends RefCounted
+ var error: String = ""
+ var _view: Dictionary = {}
+ var _observer: int = -1
+-const ROOT := ["v", "seq", "observer", "round", "phase", "current_player", "game_over", "players", "areas", "situation"]
+-const PLAYER := ["id", "controller", "player_name", "avatar", "own", "magic", "magic_limit", "score", "lives", "power", "total_power", "order", "command_spell_count", "command_spells", "is_out", "is_battle", "is_victory", "master", "servant", "servant_class", "servant_released", "deck_count", "hand_count", "hand_cards", "discard", "played_cards", "master_skills", "servant_skills", "location"]
++const ROOT := ["v", "seq", "observer", "round", "phase", "current_player", "game_over", "players", "areas", "situation", "public_log", "event_discard"]
++const PLAYER := ["id", "controller", "player_name", "avatar", "own", "magic", "magic_limit", "score", "lives", "power", "total_power", "order", "command_spell_count", "command_spells", "is_out", "is_battle", "is_victory", "master", "servant", "servant_class", "servant_released", "deck_count", "hand_count", "hand_cards", "discard", "played_cards", "master_skills", "servant_skills", "held_cards", "location"]
+ const ROOT_TYPES := {"v": TYPE_INT, "seq": TYPE_INT, "observer": TYPE_INT, "round": TYPE_INT, "phase": TYPE_STRING, "current_player": TYPE_INT, "game_over": TYPE_BOOL, "players": TYPE_ARRAY, "areas": TYPE_ARRAY, "situation": TYPE_DICTIONARY}
+ const PLAYER_TYPES := {"id": TYPE_INT, "controller": TYPE_INT, "player_name": TYPE_STRING, "avatar": TYPE_STRING, "total_power": TYPE_INT, "own": TYPE_BOOL, "is_out": TYPE_BOOL, "is_battle": TYPE_BOOL, "is_victory": TYPE_BOOL, "servant_class": TYPE_STRING, "deck_count": TYPE_INT, "hand_count": TYPE_INT, "location": TYPE_INT}
+ 
+@@ -46,12 +46,22 @@ func accept(view: Dictionary) -> bool:
+ 				if not _types(player[key], {"visible": TYPE_BOOL, "concealed": TYPE_BOOL, "zoom_kind": TYPE_STRING, "description": TYPE_STRING}) or not player[key].visible or player[key].concealed:
+ 					return reject("身份查看声明无效")
+ 		for key in ["hand_cards", "discard", "played_cards", "master_skills", "servant_skills"]:
+-			if not _cards(player.get(key)):
++			if not _cards(player.get(key), own):
+ 				return reject("牌区视图无效")
++		if not own and not player.get("servant_released", false):
++			if not player.servant.is_empty() or not player.servant_skills.is_empty():
++				return reject("视图泄露未公开从者")
++		if player.has("held_cards"):
++			if not _held_cards(player.held_cards) or (not own and not player.held_cards.is_empty()):
++				return reject("持有展示视图无效或泄露")
++			for entry in player.held_cards:
++				var is_played: bool = player.played_cards.any(func(card): return card.get("id") == entry.card.id)
++				if entry.played != is_played or (entry.played and entry.card.get("kind") != "skill"):
++					return reject("持有展示出牌身份不匹配")
+ 		if not own and not player.hand_cards.is_empty():
+ 			return reject("视图泄露他人手牌")
+ 		if player.has("command_spells"):
+-			if not _cards(player.command_spells) or (not own and not player.command_spells.is_empty()):
++			if not _cards(player.command_spells, own) or (not own and not player.command_spells.is_empty()):
+ 				return reject("令咒卡视图无效或泄露")
+ 	var map_ids: Array = []
+ 	for area in view.areas:
+@@ -76,6 +86,14 @@ func accept(view: Dictionary) -> bool:
+ 					return reject("位置占据者无效")
+ 	if not _card(view.get("situation")):
+ 		return reject("局势视图无效")
++	if view.has("event_discard") and not _cards(view.event_discard):
++		return reject("事件弃牌视图无效")
++	if view.has("public_log"):
++		if not view.public_log is Array:
++			return reject("公共日志视图无效")
++		for line in view.public_log:
++			if not line is String:
++				return reject("公共日志类型无效")
+ 	_view = view.duplicate(true)
+ 	return true
+ 
+@@ -92,15 +110,29 @@ static func _keys(value: Dictionary, allowed: Array) -> bool:
+ 			return false
+ 	return true
+ 
+-static func _cards(value) -> bool:
++static func _held_cards(value) -> bool:
++	if not value is Array:
++		return false
++	var seen: Array = []
++	for entry in value:
++		if not entry is Dictionary or not _keys(entry, ["card", "group", "label", "played", "unpublished"]) or not _types(entry, {"card": TYPE_DICTIONARY, "group": TYPE_STRING, "label": TYPE_STRING, "played": TYPE_BOOL, "unpublished": TYPE_BOOL}):
++			return false
++		if entry.group not in ["hand", "master", "servant"] or not _card(entry.card, true) or not entry.card.has_all(["id", "kind", "cost", "power", "back_image", "zoom_kind", "description"]) or not entry.card.get("visible", false):
++			return false
++		if seen.has(entry.card.id):
++			return false
++		seen.append(entry.card.id)
++	return true
++
++static func _cards(value, private_view: bool = false) -> bool:
+ 	if not value is Array:
+ 		return false
+ 	for card in value:
+-		if not _card(card):
++		if not _card(card, private_view):
+ 			return false
+ 	return true
+ 
+-static func _card(value) -> bool:
++static func _card(value, private_view: bool = false) -> bool:
+ 	if not value is Dictionary or not _keys(value, ["id", "concealed", "visible", "name", "image", "back_image", "kind", "cost", "power", "effects", "zoom_kind", "description"]):
+ 		return false
+ 	if value.is_empty():
+@@ -109,7 +141,14 @@ static func _card(value) -> bool:
+ 		return false
+ 	if value.has("back_image") and not value.back_image is String:
+ 		return false
++	if not private_view:
++		if value.concealed and value.visible:
++			return false
++		if value.has("effects") and (not value.effects is Array or not value.effects.is_empty()):
++			return false
+ 	if not value.visible:
++		if not private_view and value.get("back_image", "") != "":
++			return false
+ 		for field in ["name", "image", "kind", "cost", "power", "effects", "zoom_kind", "description"]:
+ 			if value.has(field):
+ 				return false
+diff --git a/scripts/net/server_gateway.gd b/scripts/net/server_gateway.gd
+index 02cfead..ef9ba48 100644
+--- a/scripts/net/server_gateway.gd
++++ b/scripts/net/server_gateway.gd
+@@ -5,10 +5,28 @@ var transport = preload("res://scripts/net/enet_transport.gd").new()
+ var manager = preload("res://scripts/net/server_room_manager.gd").new()
+ var routes: Dictionary = {}
+ var error: String = ""
++## 本地诊断只含固定阶段和错误码，绝不包含消息载荷。
++signal send_failed(diagnostic: Dictionary)
++var last_send_failure: Dictionary = {}
+ var max_clients: int = 96
++var accepting_rooms:bool = true
+ var data_root: String = ""
++var server_name:String = ""
++var motd:String = ""
++var identity_registry = preload("res://scripts/net/player_registry.gd").new()
++var authenticated_identities:Dictionary = {}
++var _identity_challenges:Dictionary = {}
++var identity_timeout_seconds:float = 30.0
++var identity_attempts_per_second:int = 16
++var identity_profile_max_bytes:int = 16384
++var _identity_window_msec:int = 0
++var _identity_attempts:int = 0
++var admin_console
++var _admin_sequences:Dictionary = {}
++var _identity_admin_flags:Dictionary = {}
+ var _pending: Dictionary = {}
+ var _creators: Dictionary = {}
++var _disconnected_routes: Array[Dictionary] = []
+ 
+ func _init() -> void:
+ 	transport.message_received.connect(_receive)
+@@ -24,39 +42,94 @@ func listen(port: int, address: String, root: String) -> Error:
+ 
+ func poll() -> void:
+ 	transport.poll()
++	for peer in authenticated_identities.keys():
++		var id:String = authenticated_identities[peer]
++		var admin:bool = identity_registry.users.get(id,{}).get("admin",false) and identity_registry.can_access(id)
++		if _identity_admin_flags.get(peer) != admin:
++			_identity_admin_flags[peer] = admin
++			transport.send(peer,{"kind":"server_identity_permissions","admin":admin})
++		if (routes.has(peer) or _pending.has(peer)) and not identity_registry.can_access(id): kick_connection(peer)
++	for peer in _identity_challenges.keys():
++		if Time.get_ticks_msec() > _identity_challenges[peer].deadline:
++			_identity_challenges.erase(peer)
++			_fail(peer,"身份认证超时")
+ 	manager.poll()
+ 	for peer in _pending.keys():
+-		var id: String = _pending[peer]
+-		if not manager.rooms.has(id) or not manager.rooms[id].error.is_empty():
+-			_fail(peer, "所选房间启动失败")
++		var binding:Dictionary = _pending[peer]
++		if not manager.binding_matches(binding) or not manager.rooms[binding.room].error.is_empty():
++			_fail(peer, "所选房间实例已停止或更换，请重新连接")
+ 			_pending.erase(peer)
+-		elif manager.is_ready(id):
+-			_attach(peer, id)
++			_release_creator(peer,binding)
++		elif manager.rooms[binding.room].ready and not manager.process_identity_verified(binding):
++			_fail(peer,"房间缺少可信 OS 进程句柄验证，拒绝连接")
+ 			_pending.erase(peer)
++			_release_creator(peer,binding)
++		elif manager.binding_matches(binding,true):
++			_attach(peer, binding.room, binding)
++			_pending.erase(peer)
++			if not routes.has(peer): _release_creator(peer,binding)
+ 	for peer in routes.keys():
+ 		if not routes.has(peer):
+ 			continue
+ 		var route: Dictionary = routes[peer]
+-		if not manager.is_ready(route.room):
+-			_fail(peer, "所选房间已经停止")
+-			_detach(peer)
++		if not _route_is_current(peer,route):
++			_fail(peer, "所选房间已经停止或实例校验失败")
++			_detach_route(peer,route)
+ 			continue
+ 		route.link.poll()
++		# poll 可能同步触发旧回调或清理；后续不得再操作失效路由。
++		if not _route_is_current(peer,route): continue
+ 		if not route.attached and route.link.is_connected_to_host():
+-			route.attached = true
+-			transport.send(peer, {"kind": "server_attached", "room": route.room, "peer_id": route.link.peer_id()})
++			if _send_client(peer, {"kind": "server_attached", "room": route.room, "peer_id": route.link.peer_id()}, 0, "attach_notice") == OK:
++				route.attached = true
++			else:
++				_fail(peer, "房间绑定通知发送失败，请重新连接")
++				_queue_route_disconnect(peer,route)
+ 		elif not route.attached and Time.get_ticks_msec() > route.deadline:
+ 			_fail(peer, "内部房间连接超时")
+-			_detach(peer)
++			_detach_route(peer,route)
++	var disconnected:Array[Dictionary] = _disconnected_routes.duplicate()
++	_disconnected_routes.clear()
++	for callback in disconnected:
++		_detach_route(callback.peer,callback.route)
+ 
+ func _receive(peer: int, message: Dictionary) -> void:
+ 	var kind = message.get("kind")
++	if kind in ["server_identity_begin","server_identity_proof"]:
++		_receive_identity(peer,message)
++		return
++	if not identity_registry.path.is_empty() and kind != "server_list" and not authenticated_identities.has(peer):
++		_fail(peer,"请先完成密钥身份认证")
++		return
++	if not identity_registry.path.is_empty() and kind != "server_list" and not identity_registry.can_access(authenticated_identities.get(peer,"")):
++		_fail(peer,"该密钥身份已被封禁或未获白名单授权")
++		return
+ 	if not kind is String:
+ 		_fail(peer, "服务端请求格式无效")
+ 		return
+-	if not kind.begins_with("server_"):
+-		if routes.has(peer) and routes[peer].attached:
+-			routes[peer].link.send(1, message, _channel(kind))
++	if kind == "server_admin_command":
++		_receive_admin_command(peer,message)
++		return
++	if kind not in ["server_list", "server_create", "server_join"]:
++		# 仅协议信封允许的字段可转发；可信上下文只能在下方由网关添加。
++		message = _public_room_request(message)
++		if message.is_empty():
++			_fail(peer, "房间请求字段无效")
++			return
++		if kind in ["identity_candidates","identity_inherit"]:
++			message["gateway_inheritance"] = _room_inheritance_context(peer)
++			if message.gateway_inheritance.is_empty():
++				_fail(peer,"身份继承要求已认证房间连接")
++				return
++		if routes.has(peer) and routes[peer].attached and _route_is_current(peer,routes[peer]):
++			if kind == "join":
++				message = _room_join_message(peer,message)
++				if message.is_empty(): return
++			var channel:int = _channel(kind)
++			var result:Error = routes[peer].link.send(1, message, channel)
++			if result != OK:
++				_record_send_failure(peer, channel, "room_request", result)
++				_fail(peer, "请求未能完整入队到权威房间；执行状态未确认，请先刷新状态")
+ 		else:
+ 			_fail(peer, "尚未加入服务器房间")
+ 		return
+@@ -67,68 +140,399 @@ func _receive(peer: int, message: Dictionary) -> void:
+ 	if kind == "server_list":
+ 		var visible: Array = []
+ 		for room in manager.rooms.values():
+-			visible.append({"id": room.id, "name": room.name, "ready": room.ready, "failed": not room.error.is_empty()})
+-		transport.send(peer, {"kind": "server_rooms", "rooms": visible})
++			visible.append({"id": room.id, "name": room.name, "ready": manager.is_ready(room.id), "failed": not room.error.is_empty()})
++		if _send_client(peer, {"kind": "server_rooms", "rooms": visible, "server_name":server_name, "motd":motd}, 0, "room_list") != OK:
++			_fail(peer, "房间列表发送失败")
+ 		return
+ 	if routes.has(peer) or _pending.has(peer):
+ 		_fail(peer, "连接已经绑定房间")
+ 		return
+ 	if kind == "server_create":
++		if not accepting_rooms:
++			_fail(peer,"服务端正在关闭，不再创建房间")
++			return
+ 		if not args.get("name") is String or args.name.length() > 64 or not args.get("settings") is Dictionary:
+ 			_fail(peer, "房间创建参数无效")
+ 			return
+-		var id: String = manager.create_room(args.name, args.settings, data_root)
++		# 内部策略由网关覆盖，不能接受创建者自报的认证开关。
++		var settings:Dictionary = args.settings.duplicate(true)
++		settings["_gateway_identity_required"] = not identity_registry.path.is_empty()
++		var id: String = manager.create_room(args.name, settings, data_root)
+ 		if id.is_empty():
+ 			_fail(peer, manager.error)
+ 		else:
+-			_creators[id] = peer
+-			_pending[peer] = id
++			var binding:Dictionary = manager.instance_binding(id)
++			var creator:Dictionary = binding.duplicate(true)
++			creator["peer"] = peer
++			_creators[id] = creator
++			_pending[peer] = binding
+ 	elif kind == "server_join":
+-		if not args.get("room") is String or not manager.is_ready(args.room):
++		if not accepting_rooms:
++			_fail(peer,"服务端正在关闭，不再接受加入")
++			return
++		manager.poll()
++		if not args.get("room") is String or not manager.rooms.has(args.room):
+ 			_fail(peer, "所选房间不存在或尚未就绪")
+ 			return
++		if _creators.has(args.room) and not manager.binding_matches(_creators[args.room]):
++			_creators.erase(args.room)
+ 		if _creators.has(args.room):
+ 			_fail(peer, "房间创建者尚未完成连接")
+ 			return
+-		_attach(peer, args.room)
++		var binding:Dictionary = manager.instance_binding(args.room)
++		if binding.is_empty():
++			_fail(peer,"房间实例绑定无效")
++			return
++		if not manager.binding_matches(binding,true):
++			if not _valid_room_resume(args.room, args.get("resume"),peer):
++				_fail(peer, "未就绪房间只能由原成员凭据恢复")
++				return
++			# 生命周期 poll 负责确认退出并登记 pid=-1，不能靠裸 PID 存活决定恢复。
++			if binding.pid <= 0 and not manager.recover_room(args.room,binding.pid,binding.instance_id):
++				_fail(peer, manager.error)
++				return
++			_pending[peer] = manager.instance_binding(args.room)
++		else:
++			_attach(peer, args.room,binding)
+ 	else:
+ 		_fail(peer, "未知服务端请求")
+ 
+-func _attach(peer: int, id: String) -> void:
++## 客户端信封白名单；args 仍由各业务入口验证，join 的认证字段不透传。
++static func _public_room_request(source: Dictionary) -> Dictionary:
++	var result: Dictionary = {}
++	var kind = source.get("kind")
++	if not kind is String: return {}
++	var fields: Array = ["v", "kind", "seq", "args"]
++	if kind in ["catalog_part", "server_data_catalog_part"]:
++		fields = ["kind", "bytes"]
++	elif kind == "blob_chunk":
++		fields = ["kind", "key", "offset", "bytes"]
++	elif kind == "provider_blob_error":
++		fields = ["kind", "key"]
++	for field in fields:
++		if source.has(field): result[field] = source[field]
++	result = result.duplicate(true)
++	if fields.has("args"):
++		if not source.get("args") is Dictionary: return {}
++		var allowed_args: Array = []
++		match kind:
++			"join": allowed_args = ["name", "spectator", "password", "resume"]
++			"identity_inherit": allowed_args = ["target_member", "successor_member", "revision"]
++			"room_password": allowed_args = ["password"]
++			"identity_ack": allowed_args = ["token"]
++			"catalog": allowed_args = ["entries"]
++			"data_ack": allowed_args = ["revision"]
++			"preview_group": allowed_args = ["request_id", "view_seq", "cards", "hidden"]
++			"match_command": allowed_args = ["view_seq", "command", "params"]
++			"guard_continue", "guard_skip", "guard_restart", "guard_lobby": allowed_args = ["view_seq"]
++			"blob_request": allowed_args = ["key", "offset"]
++			"ready": allowed_args = ["ready"]
++			"settings": allowed_args = ["changes"]
++			"choose_master": allowed_args = ["seat", "name"]
++			"transfer", "kick": allowed_args = ["target"]
++			"server_data_prepare": allowed_args = ["catalog_revision", "selected"]
++			"server_data_commit", "server_data_cancel": allowed_args = ["request_id"]
++			"identity_candidates", "server_data_catalog", "begin_match", "start": pass
++			_: return {}
++		result["args"] = {}
++		for field in allowed_args:
++			if source.args.has(field): result.args[field] = source.args[field]
++	return result.duplicate(true)
++
++func _room_inheritance_context(peer:int) -> Dictionary:
++	if identity_registry.path.is_empty() or not routes.has(peer) or not routes[peer].attached or not _route_is_current(peer,routes[peer]):
++		return {}
++	var actor_key:String = authenticated_identities.get(peer,"")
++	if not identity_registry.can_access(actor_key):
++		return {}
++	var profiles:Dictionary = {}
++	for connection in routes:
++		if routes[connection].room != routes[peer].room or not routes[connection].attached or not _route_is_current(connection,routes[connection]):
++			continue
++		var key:String = authenticated_identities.get(connection,"")
++		if not identity_registry.can_access(key):
++			continue
++		var record:Dictionary = identity_registry.users[key]
++		profiles[key] = {"username":record.username,"nickname":record.nickname}
++	return {"actor_key":actor_key,"profiles":profiles}
++
++func _valid_room_resume(id:String,ticket:Variant,peer:int = 0) -> bool:
++	if not manager.rooms.has(id): return false
++	if not ticket is Dictionary or not ticket.get("member") is int or ticket.member <= 0 or not ticket.get("token") is String or ticket.token.length() != 64: return false
++	for character in ticket.token:
++		if character not in "0123456789abcdef": return false
++	var path:String = str(manager.rooms[id].directory).path_join("recovery.json")
++	if not FileAccess.file_exists(path): return false
++	var state = JSON.parse_string(FileAccess.get_file_as_string(path))
++	if not state is Dictionary or not state.get("resume_hashes") is Dictionary or not state.get("resume_previous", {}) is Dictionary: return false
++	var member:String = str(ticket.member)
++	if not preload("res://scripts/net/member_identity_bindings.gd").valid_state(state,not identity_registry.path.is_empty()): return false
++	if not identity_registry.path.is_empty() or state.get("identity_binding_required",false):
++		var identity:String = authenticated_identities.get(peer,"")
++		if identity_registry.path.is_empty() or not identity_registry.can_access(identity) or not state.get("member_identities") is Dictionary or state.member_identities.get(member) != identity: return false
++	var proof:String = ticket.token.sha256_text()
++	return proof == state.resume_hashes.get(member, "") or proof == state.get("resume_previous", {}).get(member, "")
++
++func _attach(peer: int, id: String, binding:Dictionary = {}) -> void:
++	# 创建/恢复等待期间权限可能被撤销，实际建立回环路由前再次验证。
++	if not identity_registry.path.is_empty() and not identity_registry.can_access(authenticated_identities.get(peer,"")):
++		_fail(peer,"该密钥身份已被封禁或未获白名单授权")
++		return
++	if binding.is_empty(): binding = manager.instance_binding(id)
++	if binding.get("room") != id or not manager.binding_matches(binding,true):
++		_fail(peer,"房间实例已更换或缺少可信进程句柄验证")
++		return
+ 	var link = preload("res://scripts/net/enet_transport.gd").new()
++	var route:Dictionary = binding.duplicate(true)
++	route.merge({"link":link,"attached":false,"deadline":Time.get_ticks_msec()+10000})
+ 	link.message_received.connect(func(sender: int, message: Dictionary):
+-		if sender == 1 and routes.has(peer):
+-			if message.get("kind") == "room" and _creators.get(id) == peer and not message.get("state", {}).get("members", []).is_empty():
+-				_creators.erase(id)
+-			transport.send(peer, message, _channel(str(message.get("kind", "")))))
++		_room_response(peer,route,sender,message))
+ 	link.peer_disconnected.connect(func(_id: int):
+-		_fail(peer, "房间连接已断开")
+-		_detach(peer))
++		_room_disconnected(peer,route))
+ 	if link.connect_to("127.0.0.1", manager.rooms[id].port) != OK:
+ 		_fail(peer, "无法连接内部房间")
++		link.close()
+ 		return
+-	routes[peer] = {"room": id, "link": link, "attached": false, "deadline": Time.get_ticks_msec() + 10000}
++	if not manager.binding_matches(binding,true):
++		link.close()
++		_fail(peer,"连接期间房间实例已更换")
++		return
++	routes[peer] = route
++
++func _same_route(peer:int,route:Dictionary) -> bool:
++	if not routes.has(peer) or not route.has("link"): return false
++	var current:Dictionary = routes[peer]
++	return is_same(current.get("link"),route.link) and current.get("room") == route.get("room") and current.get("pid") == route.get("pid") and current.get("instance_id") == route.get("instance_id") and current.get("authority_host_mode") == route.get("authority_host_mode")
++
++func _route_is_current(peer:int,route:Dictionary) -> bool:
++	return _same_route(peer,route) and manager.binding_matches(route,true)
++
++func _room_response(peer:int,route:Dictionary,sender:int,message:Dictionary) -> void:
++	if sender != 1 or not _route_is_current(peer,route): return
++	var creator:Dictionary = _creators.get(route.room,{})
++	if message.get("kind") == "room" and creator.get("peer") == peer and manager.binding_matches(creator,true) and not message.get("state",{}).get("members",[]).is_empty():
++		_creators.erase(route.room)
++	if _send_client(peer,message,_channel(str(message.get("kind",""))),"room_response") != OK:
++		_fail(peer,"权威房间回复发送失败；执行状态未确认，请先刷新状态")
++
++func _room_disconnected(peer:int,route:Dictionary) -> void:
++	if not _route_is_current(peer,route): return
++	_fail(peer,"房间连接已断开")
++	_queue_route_disconnect(peer,route)
+ 
+-func _detach(peer: int) -> void:
++func _queue_route_disconnect(peer:int,route:Dictionary) -> void:
++	if not _same_route(peer,route): return
++	for callback in _disconnected_routes:
++		if callback.peer == peer and is_same(callback.route.link,route.link): return
++	_disconnected_routes.append({"peer":peer,"route":route.duplicate()})
++
++func _release_creator(peer:int,binding:Dictionary) -> void:
++	var id:String = binding.get("room","")
++	var creator:Dictionary = _creators.get(id,{})
++	if creator.get("peer") == peer and creator.get("pid") == binding.get("pid") and creator.get("instance_id") == binding.get("instance_id") and creator.get("authority_host_mode") == binding.get("authority_host_mode"):
++		_creators.erase(id)
++
++func _detach_route(peer:int,route:Dictionary) -> void:
++	# 管理器可能已登记新 worker：只撤销旧 link，不停止新实例或清公网认证。
++	if not _same_route(peer,route): return
++	routes.erase(peer)
++	_release_creator(peer,route)
++	route.link.close()
++
++func _detach(peer: int, stop_owned_room: bool = true) -> void:
++	_identity_admin_flags.erase(peer)
++	_admin_sequences.erase(peer)
++	_identity_challenges.erase(peer)
++	authenticated_identities.erase(peer)
+ 	_pending.erase(peer)
+-	if routes.has(peer):
+-		routes[peer].link.close()
+-		routes.erase(peer)
++	# 先取创建者再撤销路由，以免同步 close 回调改变清理目标。
++	var owned:Array[Dictionary] = []
+ 	for id in _creators.keys():
+-		if _creators[id] == peer:
+-			manager.stop_room(id)
++		if _creators[id].get("peer") == peer:
++			owned.append(_creators[id])
+ 			_creators.erase(id)
++	if routes.has(peer): _detach_route(peer,routes[peer])
++	for binding in owned:
++		if stop_owned_room and manager.binding_matches(binding) and manager.process_identity_verified(binding):
++			manager.stop_room(binding.room,binding.pid,binding.instance_id)
++
++## OK 仅证明本机发送入队；不证明客机收到或业务执行完成。
++func _send_client(peer:int, message:Dictionary, channel:int = 0, stage:String = "client_response") -> Error:
++	var result:Error = transport.send(peer, message, channel)
++	if result != OK: _record_send_failure(peer, channel, stage, result)
++	return result
++
++func _record_send_failure(peer:int, channel:int, stage:String, result:Error) -> void:
++	last_send_failure = {"connection":peer,"channel":channel,"stage":stage,"error_code":int(result),"queued":false}
++	send_failed.emit(last_send_failure.duplicate(true))
+ 
+ func _fail(peer: int, reason: String) -> void:
+-	transport.send(peer, {"kind": "error", "reason": reason})
++	# 错误回执失败不可递归产生新的错误回执。
++	_send_client(peer, {"kind": "error", "reason": reason}, 0, "error_receipt")
++
++func kick_connection(peer:int) -> Dictionary:
++	if not transport._connected_peers.has(peer): return {"ok":false,"error":"连接不存在"}
++	var notice_result:Error = _send_client(peer,{"kind":"server_notice","text":"管理员已断开你的服务端连接"},0,"kick_notice")
++	_detach(peer,false)
++	transport.disconnect_peer(peer)
++	return {"ok":true,"result":{"connection":peer,"disconnect_requested":true,"notice_queued":notice_result == OK,"notice_error_code":int(notice_result)}}
++
++func broadcast_notice(text:String) -> Dictionary:
++	var message:Dictionary = {"kind":"server_notice","text":text}
++	if text.strip_edges().is_empty() or var_to_bytes(message).size() > transport.max_packet_bytes:
++		return {"ok":false,"error":"通知为空或超过消息预算"}
++	var queued:int = 0
++	var failed:int = 0
++	for peer in transport._connected_peers:
++		if _send_client(peer,message,0,"broadcast_notice") == OK: queued += 1
++		else: failed += 1
++	return {"ok":failed == 0,"result":{"queued":queued,"failed":failed}}
+ 
+ func _channel(kind: String) -> int:
+-	return 2 if kind in ["blob_request", "blob_chunk", "blob_error", "provider_blob_request", "provider_blob_error"] else 0
++	return 2 if kind in ["room_files", "room_files_part", "blob_request", "blob_chunk", "blob_error", "provider_blob_request", "provider_blob_error", "server_data_catalog", "server_data_catalog_part", "server_data_status"] else 0
+ 
+ func close() -> void:
++	admin_console = null
++	_identity_admin_flags.clear()
++	_admin_sequences.clear()
++	_identity_challenges.clear()
++	_identity_window_msec = 0
++	_identity_attempts = 0
++	authenticated_identities.clear()
+ 	for peer in routes.keys():
+ 		_detach(peer)
+ 	_pending.clear()
+ 	_creators.clear()
++	_disconnected_routes.clear()
+ 	transport.close()
+ 	manager.close()
++
++func _receive_identity(peer:int,message:Dictionary) -> void:
++	if identity_registry.path.is_empty() or message.get("v") != 1 or not message.get("args") is Dictionary:
++		_fail(peer,"身份认证配置或请求无效")
++		return
++	var args:Dictionary = message.args
++	if message.kind == "server_identity_begin":
++		if _identity_challenges.has(peer):
++			_fail(peer,"身份认证正在进行")
++			return
++		if args.size() != 3 or not args.get("public_key") is String or not args.get("username") is String or not args.get("nickname") is String:
++			_fail(peer,"身份登记字段无效")
++			return
++		var reason:String = preload("res://scripts/net/player_name_rules.gd").username_error(args.username)
++		if not reason.is_empty(): _fail(peer,reason);return
++		if args.public_key.to_utf8_buffer().size() > 4096 or var_to_bytes(args).size() > mini(identity_profile_max_bytes,transport.max_packet_bytes):
++			_fail(peer,"身份登记超过消息预算")
++			return
++		var now:int = Time.get_ticks_msec()
++		if now - _identity_window_msec >= 1000:
++			_identity_window_msec = now
++			_identity_attempts = 0
++		if _identity_attempts >= identity_attempts_per_second:
++			_fail(peer,"身份认证请求超过速率预算，请稍后重试")
++			return
++		_identity_attempts += 1
++		var challenge:PackedByteArray = Crypto.new().generate_random_bytes(32)
++		if challenge.size() != 32: _fail(peer,"无法创建认证挑战");return
++		_identity_challenges[peer] = {"challenge":challenge,"profile":args.duplicate(true),"deadline":Time.get_ticks_msec()+int(identity_timeout_seconds*1000)}
++		transport.send(peer,{"kind":"server_identity_challenge","challenge":challenge})
++		return
++	if not _identity_challenges.has(peer) or not args.get("signature") is PackedByteArray:
++		_fail(peer,"没有可用的身份挑战")
++		return
++	var pending:Dictionary = _identity_challenges[peer]
++	_identity_challenges.erase(peer)
++	var profile:Dictionary = pending.profile
++	var context:String = JSON.stringify([profile.public_key,profile.username,profile.nickname])
++	var identity = preload("res://scripts/net/player_identity.gd")
++	if Time.get_ticks_msec() > pending.deadline or not identity.verify_challenge(profile.public_key,pending.challenge,args.signature,context):
++		_fail(peer,"密钥身份认证失败")
++		return
++	var id:String = identity.fingerprint(profile.public_key)
++	if authenticated_identities.has(peer) and authenticated_identities[peer] != id:
++		_fail(peer,"连接不能替换已有密钥身份")
++		return
++	var result:Dictionary = identity_registry.register_authenticated(id,profile.username,profile.nickname)
++	if not result.ok: _fail(peer,result.error);return
++	authenticated_identities[peer] = id
++	transport.send(peer,{"kind":"server_identity_ready","identity":id,"username":profile.username,"nickname":profile.nickname})
++
++## 唯一身份注入点；普通客户端的同名字段始终被覆盖。
++func _room_join_message(peer:int,message:Dictionary) -> Dictionary:
++	if not message.get("args") is Dictionary:
++		_fail(peer,"房间加入参数无效")
++		return {}
++	var result:Dictionary = message.duplicate(true)
++	var required:bool = not identity_registry.path.is_empty()
++	var identity:String = authenticated_identities.get(peer,"") if required else ""
++	if required and not identity_registry.can_access(identity):
++		_fail(peer,"该密钥身份已被封禁或未获白名单授权")
++		return {}
++	result.args["gateway_identity"] = {"required":required,"key":identity}
++	if required: result.args.name = identity_registry.users[identity].nickname
++	return result
++
++## 旧档管理区：只由本机白名单命令调用，公网管理员执行路径被显式隔离。
++func console_legacy_migration(room_id:String, pid:int, instance_id:String, legacy_approved:bool, selected:Dictionary) -> Dictionary:
++	var migration = preload("res://scripts/net/legacy_identity_migration.gd")
++	if not manager.rooms.has(room_id): return migration.failure("房间不存在")
++	var room:Dictionary = manager.rooms[room_id]
++	if not manager.matches_instance(room,pid,instance_id): return migration.failure("房间 PID 或 instance_id 已改变")
++	if pid > 0 and OS.is_process_running(pid): return migration.failure("必须先停止房间工作进程，迁移不得并发覆盖")
++	var parser := JSON.new()
++	if parser.parse(FileAccess.get_file_as_string(str(room.directory).path_join("config.json"))) != OK or not parser.data is Dictionary:
++		return migration.failure("房间配置不可读")
++	if parser.data.get("id") != room_id or parser.data.get("instance_id") != instance_id or parser.data.get("authority_host_mode") != room.get("authority_host_mode"):
++		return migration.failure("房间磁盘配置与实例登记不一致")
++	var path:String = str(room.directory).path_join("recovery.json")
++	var loaded:Dictionary = migration.read_legacy(path)
++	if not loaded.ok: return loaded
++	var members:Array = loaded.state.room.members.keys()
++	if not legacy_approved:
++		# 拒绝不会改变旧档或启动恢复，审计不含身份或票据。
++		print("LEGACY_MIGRATION action=reject operator=local-console members=",members)
++		return {"ok":true,"result":{"status":"rejected","members":members,"operator":"local-console"}}
++	if identity_registry.path.is_empty() or selected.size() != members.size(): return migration.failure("必须显式绑定全部旧成员并启用认证登记")
++	var approved:Dictionary = {}
++	var profiles:Dictionary = {}
++	var used_connections:Dictionary = {}
++	var used_keys:Dictionary = {}
++	for member in members:
++		var connection = selected.get(member)
++		if not connection is int or connection <= 1 or used_connections.has(connection): return migration.failure("旧成员绑定缺失或认证连接重复")
++		if routes.has(connection) and routes[connection].room != room_id: return migration.failure("认证连接属于其他房间")
++		if _pending.has(connection) and _pending[connection].room != room_id: return migration.failure("认证连接正在加入其他房间")
++		var key:String = authenticated_identities.get(connection,"")
++		if not identity_registry.can_access(key) or used_keys.has(key): return migration.failure("身份未认证、已禁用或重复绑定")
++		approved[member] = key
++		profiles[key] = {} # 只需认证资格，不向审计复制档案。
++		used_connections[connection] = true
++		used_keys[key] = true
++	var prepared:Dictionary = migration.prepare(loaded.state,approved,profiles)
++	if not prepared.ok: return prepared
++	var committed:Dictionary = migration.commit(path,loaded.bytes,prepared.state)
++	if not committed.ok: return committed
++	print("LEGACY_MIGRATION action=approve operator=local-console members=",members)
++	var failed:int = 0
++	for member in members:
++		var connection:int = selected[member]
++		# 落盘后再检查身份，绝不广播或在管理回执中返回票据。
++		if authenticated_identities.get(connection) != approved[member] or not identity_registry.can_access(approved[member]):
++			failed += 1
++		elif _send_client(connection,prepared.private_tickets[member],0,"legacy_ticket") != OK:
++			failed += 1
++	return {"ok":failed == 0,"result":{"status":"migrated","persisted":true,"members":members,"operator":"local-console","delivery_failed":failed,"delivery_confirmed":false}}
++
++func _receive_admin_command(peer:int,message:Dictionary) -> void:
++	var id:String = authenticated_identities.get(peer,"")
++	if identity_registry.path.is_empty() or not identity_registry.can_access(id) or not identity_registry.users.get(id,{}).get("admin",false):
++		_fail(peer,"当前密钥身份没有管理员权限")
++		return
++	if admin_console == null or message.get("v") != 1 or not message.get("seq") is int or message.seq <= int(_admin_sequences.get(peer,0)) or not message.get("args") is Dictionary or not message.args.get("command") is String:
++		_fail(peer,"管理员命令无效或重复")
++		return
++	_admin_sequences[peer] = message.seq
++	var response:Dictionary = admin_console.execute(message.args.command,false)
++	if _send_client(peer,{"kind":"server_admin_result","request_seq":message.seq,"response":response},0,"admin_result") != OK:
++		# 命令已经执行过，不能因回执失败重执行；保留原请求序号供客户端关联。
++		_send_client(peer,{"kind":"server_admin_result","request_seq":message.seq,"response":{"ok":false,"error":"管理员命令已返回，但完整结果发送失败；请查询实际状态，不要重复提交写命令","result":{"execution_returned":true,"result_available":false}}},0,"admin_result_fallback")

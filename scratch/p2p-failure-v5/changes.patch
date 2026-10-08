@@ -1,0 +1,316 @@
+--- before/p2p_signal_client.gd
++++ scripts/net/p2p/p2p_signal_client.gd
+@@ -18,6 +18,7 @@
+ var _sent_answer: bool = false
+ var _deadline: int = 0
+ var _pending: Dictionary = {}
++var _joined_clients: Dictionary = {}
+ var _url:String = ""
+ var _resuming:bool = false
+ var _received_offer:bool = false
+@@ -103,6 +104,9 @@
+ 
+ func poll() -> void:
+ 	invite.poll()
++	for client in _joined_clients.keys():
++		if not invite.link._connections.has(_joined_clients[client]):
++			_joined_clients.erase(client)
+ 	if _socket == null:
+ 		return
+ 	_socket.poll()
+@@ -113,33 +117,33 @@
+ 	if _role == "guest" and session.transport.is_connected_to_host():
+ 		_deadline = 0
+ 	if _socket.get_ready_state() == WebSocketPeer.STATE_CLOSED:
+-		if error.is_empty():
+-			_warn("信令已断开，已建立的对局直连不受影响" if session.transport.is_connected_to_host() else "信令服务不可用，无法建立或恢复直连；未使用转发兜底")
++		_fail_signaling("信令已断开，已建立的对局直连不受影响" if session.transport.is_connected_to_host() else "信令服务不可用，无法建立或恢复直连；未使用转发兜底")
+ 		return
+ 	if _deadline > 0 and Time.get_ticks_msec() >= _deadline:
+-		_warn("信令或直连握手超时，未使用转发兜底")
+-		_socket.close()
+-		if _role == "guest" and not session.transport.is_connected_to_host():
+-			session.transport.close()
+-			invite.close()
++		_fail_signaling("信令或直连握手超时，未使用转发兜底")
+ 		return
+ 	if _socket.get_ready_state() != WebSocketPeer.STATE_OPEN:
+ 		return
+ 	if not _sent_request:
+ 		if _send({"kind": "create"} if _role == "host" else {"kind": "join", "room": room_code}) != OK:
++			_fail_signaling("信令请求发送失败，未建立房间或加入握手")
+ 			return
+ 		_sent_request = true
+ 	while _socket.get_available_packet_count() > 0:
+ 		var bytes := _socket.get_packet()
+ 		var parser := JSON.new()
+ 		if not _socket.was_string_packet() or bytes.size() > max_packet_bytes or parser.parse(bytes.get_string_from_utf8()) != OK or not parser.data is Dictionary:
+-			_warn("信令服务返回无效消息")
+-			_socket.close()
++			_fail_signaling("信令服务返回无效消息")
+ 			return
+ 		_receive(parser.data, session)
++		if _socket == null:
++			return
+ 	for client in _pending.keys():
+ 		var pending: Dictionary = _pending[client]
+-		if Time.get_ticks_msec() >= pending.deadline:
++		if invite.is_connected(pending.peer_id):
++			_joined_clients[client] = pending.peer_id
++			_pending.erase(client)
++		elif Time.get_ticks_msec() >= pending.deadline:
+ 			invite.cancel_offer(pending.peer_id)
+ 			_pending.erase(client)
+ 			_warn("一个客机的直连握手超时")
+@@ -148,15 +152,21 @@
+ 			if not code.is_empty():
+ 				if _send({"kind": "offer", "client": client, "code": code}) == OK:
+ 					pending.sent = true
++				else:
++					_fail_signaling("直连邀请发送失败")
++					return
+ 	if _role == "guest" and invite.link.peer != null and not _sent_answer:
+ 		var code: String = invite.export_code(1)
+ 		if not code.is_empty():
+ 			if _send({"kind": "answer", "code": code}) == OK:
+ 				_sent_answer = true
++			else:
++				_fail_signaling("直连应答发送失败")
++				return
+ 
+ func _receive(message: Dictionary, session: RefCounted) -> void:
+ 	if not _valid_signal_reply(message):
+-		_warn("信令服务返回无效字段或游戏消息；信令不转发游戏流量")
++		_fail_signaling("信令服务返回无效字段或游戏消息；信令不转发游戏流量")
+ 		return
+ 	match message.get("kind"):
+ 		"created":
+@@ -167,34 +177,38 @@
+ 			_deadline = 0
+ 			room_created.emit(room_code)
+ 		"join_request":
+-			if _role != "host" or not invite._id(message.get("client")) or _pending.has(int(message.client)):
++			if _role != "host" or not invite._id(message.get("client")) or _pending.has(int(message.client)) or _joined_clients.has(int(message.client)):
+ 				return
+ 			var id: int = invite.offer()
+ 			if id > 1:
+-				_pending[int(message.client)] = {"peer_id": id, "sent": false, "deadline": Time.get_ticks_msec() + int(handshake_seconds * 1000)}
++				_pending[int(message.client)] = {"peer_id": id, "sent": false, "answered": false, "deadline": Time.get_ticks_msec() + int(handshake_seconds * 1000)}
+ 			else:
+ 				_warn("客机连接超过直连预算")
+ 		"offer":
+-			if _role != "guest" or _received_offer or not invite.accept_offer(message.code, _configuration):
+-				_warn("信令邀请或直连配置无效")
++			if _role != "guest" or _received_offer:
++				return
++			if not invite.accept_offer(message.code, _configuration):
++				_fail_signaling("信令邀请或直连配置无效")
+ 				return
+ 			session.connection_driver = null
+ 			var result: Error = session.resume_peer(invite.link.peer) if _resuming else session.join_peer(invite.link.peer, _name, _spectator)
+ 			session.connection_driver = self
+ 			if result != OK:
+-				_warn("无法接入直连会话")
++				_fail_signaling("无法接入直连会话")
+ 			else:
+ 				_received_offer = true
+ 		"answer":
+ 			if _role != "host" or not invite._id(message.get("client")) or not _pending.has(int(message.client)) or not message.get("code") is String:
+ 				return
++			if _pending[int(message.client)].answered:
++				return
+ 			var data: Dictionary = invite._read(message.code)
+ 			if not data.is_empty() and data.from == _pending[int(message.client)].peer_id and invite.accept_answer(message.code):
+-				_pending.erase(int(message.client))
++				_pending[int(message.client)].answered = true
+ 			else:
+ 				_warn("客机直连应答无效")
+ 		"error", "room_closed":
+-			_warn(str(message.get("reason", "信令房间已关闭，已建立的直连不受影响")))
++			_fail_signaling(str(message.get("reason", "信令房间已关闭，已建立的直连不受影响")))
+ 		_:
+ 			_warn("信令服务返回未知消息")
+ 
+@@ -222,13 +236,25 @@
+ 		_warn("信令发送失败：" + error_string(result))
+ 	return result
+ 
++func _fail_signaling(reason: String) -> void:
++	# 不调用 close()：它会关闭房主所有链路，误杀已连通对局。
++	if _socket != null:
++		_socket.close()
++	_socket = null
++	_deadline = 0
++	for pending in _pending.values():
++		invite.cancel_offer(pending.peer_id)
++	_pending.clear()
++	var session = _session.get_ref() if _session != null else null
++	if _role == "guest" and session != null and not session.transport.is_connected_to_host():
++		session.transport.close()
++		invite.close()
++		if _resuming:
++			session.fail_reconnect(reason)
++	_warn(reason)
++
+ func _warn(reason: String) -> void:
+ 	error = reason
+-	var session = _session.get_ref() if _session != null else null
+-	if _resuming and session != null and not session.transport.is_connected_to_host():
+-		invite.close()
+-		_deadline = 0
+-		session.fail_reconnect(reason)
+ 	rejected.emit(reason)
+ 
+ func _valid_room_code(code:Variant) -> bool:
+@@ -249,6 +275,7 @@
+ 	_role = ""
+ 	_pending.clear()
+ 	_sent_request = false
++	_joined_clients.clear()
+ 	_sent_answer = false
+ 	_received_offer = false
+ 	_deadline = 0
+--- before/p2p_signal_server.gd
++++ scripts/net/p2p/p2p_signal_server.gd
+@@ -92,7 +92,7 @@
+ 			stream.disconnect_from_host()
+ 			continue
+ 		_next_client += 1
+-		_clients[_next_client] = {"peer": peer, "address":stream.get_connected_host(), "room": "", "host": false, "expires": Time.get_ticks_msec() + int(handshake_seconds * 1000), "second": 0, "messages": 0, "expected": {}, "answered": false}
++		_clients[_next_client] = {"peer": peer, "address":stream.get_connected_host(), "room": "", "host": false, "expires": Time.get_ticks_msec() + int(handshake_seconds * 1000), "timestamps": [], "expected": {}, "answered": false}
+ 	for id in _clients.keys():
+ 		if not _clients.has(id):
+ 			continue
+@@ -106,12 +106,7 @@
+ 		while peer.get_available_packet_count() > 0 and processed < max_messages_per_second:
+ 			processed += 1
+ 			var bytes := peer.get_packet()
+-			var second: int = Time.get_ticks_msec() / 1000
+-			if second != client.second:
+-				client.second = second
+-				client.messages = 0
+-			client.messages += 1
+-			if not peer.was_string_packet() or bytes.size() > max_packet_bytes or client.messages > max_messages_per_second:
++			if not peer.was_string_packet() or bytes.size() > max_packet_bytes or not _allow_message(client, Time.get_ticks_msec()):
+ 				_remove(id)
+ 				break
+ 			var parser := JSON.new()
+@@ -119,6 +114,19 @@
+ 				_remove(id)
+ 				break
+ 			_handle(id, parser.data)
++			if not _clients.has(id):
++				break
++
++func _allow_message(client: Dictionary, now: int) -> bool:
++	# 任意滚动一秒内最多 N 条，整秒边界不会重新赠送 N 条额度。
++	var timestamps: Array = client.timestamps
++	var cutoff: int = now - 1000
++	while not timestamps.is_empty() and int(timestamps[0]) <= cutoff:
++		timestamps.pop_front()
++	if timestamps.size() >= max_messages_per_second:
++		return false
++	timestamps.append(now)
++	return true
+ 
+ func _handle(id: int, message: Dictionary) -> void:
+ 	var client: Dictionary = _clients[id]
+@@ -142,18 +150,23 @@
+ 			if code.is_empty():
+ 				_reject(id,"房间码空间已用完")
+ 				return
++			if _send(id, {"kind": "created", "room": code}) != OK:
++				_remove(id)
++				return
+ 			_rooms[code] = {"host": id, "peer_ids": {}, "expires":Time.get_ticks_msec()+int(room_code_ttl_sec*1000) if room_code_ttl_sec > 0 else 0}
+ 			client.room = code
+ 			client.host = true
+ 			client.expires = 0
+-			_send(id, {"kind": "created", "room": code})
++
+ 		"join":
+ 			if keys != ["kind", "room"] or not message.room is String or not client.room.is_empty() or not _rooms.has(message.room):
+ 				_reject(id, "信令房间不存在或连接已加入房间")
+ 				return
++			if _send(_rooms[message.room].host, {"kind": "join_request", "client": id}) != OK:
++				_remove(id)
++				return
+ 			client.room = message.room
+ 			client.expires = Time.get_ticks_msec() + int(handshake_seconds * 1000)
+-			_send(_rooms[client.room].host, {"kind": "join_request", "client": id})
+ 		"offer":
+ 			if keys != ["client", "code", "kind"] or not client.host or not _codec._id(message.get("client")) or not message.code is String:
+ 				_reject(id, "无权发送握手邀请")
+@@ -227,6 +240,7 @@
+ 				_send(other, {"kind": "room_closed"})
+ 				_clients[other].room = ""
+ 				_clients[other].expected = {}
++				_clients[other].answered = false
+ 				_clients[other].expires = Time.get_ticks_msec() + int(handshake_seconds * 1000)
+ 	elif _rooms.has(client.room):
+ 		var peers: Dictionary = _rooms[client.room].peer_ids
+--- before/p2p_invite.gd
++++ scripts/net/p2p/p2p_invite.gd
+@@ -24,10 +24,11 @@
+ 		return 0
+ 	var crypto := Crypto.new()
+ 	var id: int = 2 + crypto.generate_random_bytes(4).decode_u32(0) % 2147483646
+-	while _pending.has(id):
++	while _pending.has(id) or link._connections.has(id):
+ 		id = 2 + crypto.generate_random_bytes(4).decode_u32(0) % 2147483646
+ 	_pending[id] = {"nonce": crypto.generate_random_bytes(16).hex_encode(), "candidates": [], "type": "", "sdp": "", "consumed": false}
+ 	if link.offer(id) != OK:
++		link.remove_peer(id)
+ 		_pending.erase(id)
+ 		return 0
+ 	return id
+@@ -86,7 +87,7 @@
+ 	if not data.nonce is String or not data.sdp is String or not data.type is String or data.type not in ["offer", "answer"]:
+ 		return {}
+ 	valid.compile("^[0-9a-f]{32}$")
+-	if valid.search(data.nonce) == null or data.sdp.is_empty() or data.sdp.length() > link.max_description_bytes or "typ relay" in data.sdp:
++	if valid.search(data.nonce) == null or not _direct_description(data.sdp):
+ 		return {}
+ 	if not data.candidates is Array or data.candidates.size() > link.max_candidates_per_peer:
+ 		return {}
+@@ -99,6 +100,16 @@
+ 		if item.media.length() > 128 or not _id(index + 1) or not link._direct_candidate(item.sdp):
+ 			return {}
+ 	return data
++
++func _direct_description(sdp: String) -> bool:
++	if sdp.is_empty() or sdp.to_utf8_buffer().size() > link.max_description_bytes:
++		return false
++	# 不仅检查独立候选列表：SDP 内嵌候选也必须是直连类型。
++	for line in sdp.replace("\r", "\n").split("\n", false):
++		var normalized: String = line.strip_edges().replace(String.chr(9), " ")
++		if normalized.begins_with("a=candidate:") and not link._direct_candidate(normalized.substr(2)):
++			return false
++	return true
+ 
+ func accept_offer(code: String, configuration: Dictionary) -> bool:
+ 	var data := _read(code)
+@@ -121,6 +132,9 @@
+ 	if item.nonce != data.nonce or item.consumed:
+ 		return false
+ 	if not _accept(data):
++		# 远端描述可能已设置；半应用应答不能留给下一次重放。
++		link.remove_peer(int(data.from))
++		_pending.erase(int(data.from))
+ 		return false
+ 	item.consumed = true
+ 	return true
+@@ -148,8 +162,12 @@
+ func poll() -> void:
+ 	link.poll()
+ 
++func is_connected(id: int) -> bool:
++	return link._connections.has(id) and link._connections[id].get_connection_state() == WebRTCPeerConnection.STATE_CONNECTED
++
+ func cancel_offer(id: int) -> bool:
+-	if link.peer == null or link.peer.get_unique_id() != 1 or not _pending.has(id) or _pending[id].consumed:
++	# 应答被消费不等于 ICE 已连通；只保护已经连通的对局链路。
++	if link.peer == null or link.peer.get_unique_id() != 1 or not _pending.has(id) or is_connected(id):
+ 		return false
+ 	link.remove_peer(id)
+ 	_pending.erase(id)

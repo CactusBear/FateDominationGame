@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/reported_activation_test.tscn:headless",
+  "scene": "tests/reported_activation_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

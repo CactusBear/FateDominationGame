@@ -22,7 +22,7 @@ func exec(body, count):
 			return state.last_result
 		GameLog.push_loop(i)
 		while int(state.body_index) < bodies.size():
-			if not EffectManager.runtime_guard_checkpoint():
+			if not EffectManager.runtime_guard_checkpoint(state):
 				GameLog.pop_loop()
 				return state.last_result
 			var res = EffectManager.run_func_descriptor(bodies[int(state.body_index)], effect)

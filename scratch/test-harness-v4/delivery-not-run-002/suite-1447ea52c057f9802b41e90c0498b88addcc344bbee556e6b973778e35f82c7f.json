@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/held_cards_test.tscn:headless",
+  "scene": "tests/held_cards_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

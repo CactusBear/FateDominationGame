@@ -1,0 +1,8 @@
+{
+  "manager_fixed_false": true,
+  "validation_pid_kill": true,
+  "v2_no_ticket_consumer": true,
+  "critical_changed_since_snapshot": [],
+  "dynamic_status": "NOT_RUN",
+  "production_edits_by_this_audit": false
+}

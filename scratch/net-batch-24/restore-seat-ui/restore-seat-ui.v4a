@@ -1,0 +1,287 @@
+*** Begin Patch
+*** Update File: scripts/net/ui/lobby_screen.gd
+@@
+ 		_selected_archive = path.get_base_dir()
+ 		$ArchiveConfirm.popup_centered()
+ 	)
+-	$ArchiveConfirm.confirmed.connect(_restore_archive)
++	$ArchiveConfirm.confirmed.connect(_prepare_archive_restore)
++	$RestoreSeatPanel.restore_selected.connect(_restore_archive)
+ 	$RoomDataPanel.applied.connect(func(directory):
+ 		room_data_directory = directory
+ 		_refresh()
+@@
+ func _process(delta: float) -> void:
+ 	session.poll(delta)
+ 	$IdentityInheritancePanel.refresh_context()
++	$RestoreSeatPanel.refresh_context()
+ 	$Margin/Content/Actions/InheritIdentity.disabled = not $IdentityInheritancePanel.can_manage(session, _selected_member)
+ 	_refresh_reconnect()
+ 	if session.connection_driver != _p2p:
+@@
+ 		$RoomDataPanel.configure(session, _local_data_root if session._host else LoadHelper.get_data_dir(), modes[mode.selected])
+ 	$RoomDataPanel.popup_centered()
+ 
+-func _restore_archive() -> void:
++func _prepare_archive_restore() -> void:
+ 	if _selected_archive.is_empty(): return
++	var source:String = _selected_archive
++	_selected_archive = ""
++	var reason:String = $RestoreSeatPanel.open_archive(session, source)
++	if not reason.is_empty(): status.text = reason
++
++func _restore_archive(source:String, selected:Dictionary, metadata_source:String) -> void:
+ 	if $RoomDataPanel._preparing or $RoomDataPanel._validation.running or _data_sync.running:
+ 		status.text = "请先完成或取消当前数据准备"
+-		return
+-	var source:String = _selected_archive
+-	_selected_archive = ""
+-	if session.authority_host != null:
+-		status.text = "正在校验存档并等待权威恢复回执"
+-		var restored:bool = await session.authority_host.restore_local_match(source)
+-		status.text = "存档已恢复并另存，等待客机完成数据同步" if restored else session.error
+-		return
+-	status.text = "正在校验存档并重放可信记录"
+-	if not await session.restore_local_match(source):
+-		status.text = session.error
+-	else:
+-		status.text = "存档已恢复并另存，等待客机完成数据同步"
++		$RestoreSeatPanel.restore_finished()
++		return
++	if not $RestoreSeatPanel.can_restore(session) or selected.is_empty():
++		status.text = "恢复权限或座位映射已失效，请重新选择存档"
++		$RestoreSeatPanel.restore_finished()
++		return
++	status.text = "正在校验存档并等待权威恢复回执"
++	var restored:bool = await session.authority_host.restore_local_match(source, selected, metadata_source)
++	status.text = "存档已恢复并另存，等待客机完成数据同步" if restored else session.error
++	$RestoreSeatPanel.restore_finished()
+ 
+ func _join() -> void:
+ 	if not _validate_username(): return
+@@
+ 
+ func _reset_data_sync() -> void:
+ 	$IdentityInheritancePanel.close_panel()
++	$RestoreSeatPanel.close_panel()
+ 	$RoomDataPanel.reset_selection()
+ 	$RoomDataPanel.hide()
+ 	_data_sync.cancel()
+*** Update File: assets/scenes/main_menu/multiplayer_lobby.tscn
+@@
+-[gd_scene load_steps=4 format=3]
++[gd_scene load_steps=5 format=3]
+ 
+ [ext_resource type="Script" path="res://scripts/net/ui/lobby_screen.gd" id="1"]
+ [ext_resource type="PackedScene" path="res://assets/scenes/main_menu/room_data_panel.tscn" id="2"]
+ [ext_resource type="PackedScene" path="res://assets/scenes/main_menu/identity_inheritance_panel.tscn" id="3"]
++
++[ext_resource type="PackedScene" path="res://assets/scenes/main_menu/restore_seat_panel.tscn" id="4"]
+ 
+ [node name="MultiplayerLobby" type="Control"]
+ layout_mode = 3
+@@
+ 
+ [node name="IdentityInheritancePanel" parent="." instance=ExtResource("3")]
+ 
++[node name="RestoreSeatPanel" parent="." instance=ExtResource("4")]
++
+ [node name="ArchivePicker" type="FileDialog" parent="."]
+ title = "选择主机存档 match.log"
+ size = Vector2i(1100, 760)
+@@
+ [node name="ArchiveConfirm" type="ConfirmationDialog" parent="."]
+ title = "恢复主机存档"
+ size = Vector2i(760, 280)
+-ok_button_text = "恢复并另存续写"
++ok_button_text = "下一步：指定座位"
+ cancel_button_text = "取消"
+-dialog_text = "恢复将使用原御主、从者与顺位，替换本房间批准数据。\n请先让原来的真人加入，真人与 AI 座位类型必须一致。\n原存档不会被覆盖，客机完成数据同步后进入对局。"
++dialog_text = "恢复将使用原御主、从者与顺位，替换本房间批准数据。\n下一步逐座手选在线玩家；必须具有选中档本机认证座位元数据。\n原存档不会被覆盖，客机完成数据同步后进入对局。"
+*** Update File: scripts/net/session/authority_host_client.gd
+@@
+ 	var metadata:String = ProjectSettings.globalize_path(metadata_source) if not metadata_source.is_empty() else ""
+ 	return await _archive_restore.submit(self,session,ProjectSettings.globalize_path(source),selected,metadata)
+ 
++## 仅本机UI公开候选投影；不选择恢复座位，不返回身份键或恢复凭据。
++func restore_member_candidates() -> Array:
++	var session = _session.get_ref() if _session != null else null
++	if session == null or not session.identity_authenticated or not _identity_bridge.confirmed: return []
++	var target:Dictionary = gateway.manager.instance_binding(room_id)
++	var snapshot:Dictionary = _identity_bridge.snapshot_for(gateway, target, session)
++	if snapshot.is_empty(): return []
++	var members:Dictionary = {}
++	for member in session.view.get("members", []):
++		if member.get("connected") == true and member.get("spectator") == false:
++			members[int(member.id)] = {"name":member.name}
++	var identities:Dictionary = {}
++	for connection in snapshot.connections.values():
++		if members.has(connection.member): identities[str(connection.member)] = connection.key
++	return preload("res://scripts/net/identity/player_registry.gd").public_member_labels(members, identities, snapshot.profiles)
++
+ func diagnostics() -> Dictionary:
+ 	var target:Dictionary = gateway.manager.rooms.get(room_id, {})
+ 	return {"room_id":room_id,"pid":target.get("pid", -1),"instance_id":target.get("instance_id", ""),
+*** Add File: scripts/net/identity/restore_seat_panel.gd
++extends "res://scripts/net/identity/identity_inheritance_panel.gd"
++
++signal restore_selected(source:String, selected:Dictionary, metadata_source:String)
++const Archive = preload("res://scripts/net/server/lan_archive_restore.gd")
++const Paths = preload("res://scripts/net/server/recovery_path_safety.gd")
++const Decode = preload("res://scripts/net/session/recovery_seat_json.gd")
++var _source:String = ""
++var _metadata_source:String = ""
++var _saved_bindings:Dictionary = {}
++var _selected:Dictionary = {}
++var _context:Dictionary = {}
++@onready var seats:OptionButton = $Content/Seats
++
++func _ready() -> void:
++	super._ready()
++	seats.item_selected.connect(_seat_selected)
++
++static func can_restore(active_session) -> bool:
++	if active_session == null or active_session.authority_host == null or not active_session.identity_authenticated or not active_session.transport.is_connected_to_host(): return false
++	var view:Dictionary = active_session.view
++	if view.get("owner") != active_session.peer_id() or view.get("phase") != "lobby": return false
++	for member in view.get("members", []):
++		if member.id == view.owner:
++			return member.get("connected") == true and member.get("spectator") == false
++	return false
++
++func open_archive(active_session, source:String) -> String:
++	close_panel()
++	if not can_restore(active_session): return "只有本机当前认证房主可在大厅手选恢复"
++	var local:String = ProjectSettings.globalize_path(source)
++	var metadata:String = local.path_join("restore-identity.json")
++	if not Paths.tree(local.get_base_dir(), local, [20000]) or not Paths.checked(local, metadata) or not Paths.checked(local, local.path_join("match.log")):
++		return "选中档缺少本机 restore-identity.json 或日志，或路径不安全；拒绝恢复，不从其他房间补元数据"
++	var saved:Dictionary = Archive.read_metadata(metadata)
++	if not InputModel.Rules.valid_state(saved, true): return "选中档认证座位元数据缺失或无效；拒绝恢复"
++	var decoded:Dictionary = Decode.decode(saved)
++	if not decoded.ok or decoded.bindings.is_empty(): return "选中档座位声明无效或为空；拒绝恢复"
++	_session = active_session
++	_source = local
++	_metadata_source = metadata
++	_saved_bindings = saved.bindings.duplicate()
++	_context = _session.view.duplicate(true)
++	_revision = int(_context.get("revision", -1))
++	for player in _saved_bindings:
++		var member:int = int(_saved_bindings[player])
++		if member == 0:
++			_selected[player] = 0
++		else:
++			seats.add_item("座位 %s" % player)
++			seats.set_item_metadata(seats.item_count - 1, player)
++	_query_candidates()
++	if seats.item_count > 0: _seat_selected(0)
++	popup_centered()
++	return ""
++
++func close_panel() -> void:
++	super.close_panel()
++	_source = ""
++	_metadata_source = ""
++	_saved_bindings.clear()
++	_selected.clear()
++	_context.clear()
++	if is_node_ready(): seats.clear()
++
++func refresh_context() -> void:
++	if _session == null or not visible: return
++	if not can_restore(_session):
++		close_panel()
++		return
++	if _session.view != _context:
++		_context = _session.view.duplicate(true)
++		_revision = int(_context.get("revision", -1))
++		_query_candidates()
++		feedback.text = "房间状态已改变，已清空真人映射，请重新逐座选择"
++
++func _query_candidates() -> void:
++	if _session == null or _submit_pending: return
++	_context = _session.view.duplicate(true)
++	_revision = int(_context.get("revision", -1))
++	_clear_candidates()
++	_selected.clear()
++	for index in range(seats.item_count):
++		seats.set_item_text(index, "座位 " + str(seats.get_item_metadata(index)) + " · 待指定")
++	for player in _saved_bindings:
++		if int(_saved_bindings[player]) == 0: _selected[player] = 0
++	# 复用本机认证桥的公开投影，只接收标签与成员号，不接收身份键。
++	var rows:Array = _session.authority_host.restore_member_candidates()
++	if not _input.accept({"revision":_revision, "request_floor":0, "candidates":rows}):
++		feedback.text = "当前房间公开成员列表无效，拒绝恢复"
++		return
++	for row in _input.candidates:
++		candidates.add_item(row.label)
++		candidates.set_item_metadata(candidates.item_count - 1, row.member_id)
++	$Content/Buttons/Refresh.disabled = false
++	$Content/Buttons/Confirm.disabled = not _complete()
++	feedback.text = "逐个座位选择在线玩家；刷新会清空真人映射，密钥校验由权威执行"
++
++func _seat_selected(_index:int) -> void:
++	candidates.deselect_all()
++	if seats.selected < 0: return
++	var player:String = str(seats.get_item_metadata(seats.selected))
++	$Content/Target.text = seats.get_item_text(seats.selected)
++	feedback.text = "此座位已指定，可重新选择" if _selected.has(player) else "此座位尚未指定，请点击候选玩家"
++
++func _select_candidate(index:int) -> void:
++	if _session == null or _session.view != _context:
++		refresh_context()
++		return
++	refresh_context()
++	if _session == null or _submit_pending or index < 0 or index >= candidates.item_count or seats.selected < 0: return
++	var player:String = str(seats.get_item_metadata(seats.selected))
++	var member:int = int(candidates.get_item_metadata(index))
++	for other in _selected:
++		if other != player and _selected[other] == member:
++			feedback.text = "该玩家已被指定到其他座位，不能重复占座"
++			return
++	if not _input.select_member(member): return
++	_selected[player] = member
++	seats.set_item_text(seats.selected, "座位 " + player + " · " + candidates.get_item_text(index))
++	$Content/Target.text = seats.get_item_text(seats.selected)
++	feedback.text = "已指定：" + candidates.get_item_text(index)
++	$Content/Buttons/Confirm.disabled = not _complete()
++
++func _complete() -> bool:
++	return _input.revision == _revision and not _saved_bindings.is_empty() and _selected.size() == _saved_bindings.size()
++
++func _submit() -> void:
++	if _session == null or _session.view != _context:
++		refresh_context()
++		return
++	refresh_context()
++	if _session == null or _submit_pending or not _complete(): return
++	_submit_pending = true
++	$Content/Buttons/Confirm.disabled = true
++	$Content/Buttons/Refresh.disabled = true
++	feedback.text = "正在等待权威恢复回执；发送成功不代表恢复完成"
++	restore_selected.emit(_source, _selected.duplicate(), _metadata_source)
++
++func restore_finished() -> void:
++	close_panel()
+*** Add File: assets/scenes/main_menu/restore_seat_panel.tscn
++[gd_scene load_steps=3 format=3]
++
++[ext_resource type="PackedScene" path="res://assets/scenes/main_menu/identity_inheritance_panel.tscn" id="1"]
++[ext_resource type="Script" path="res://scripts/net/identity/restore_seat_panel.gd" id="2"]
++
++[node name="RestoreSeatPanel" instance=ExtResource("1")]
++title = "房主手选恢复座位"
++script = ExtResource("2")
++
++[node name="Help" parent="Content" index="0"]
++text = "仅使用本机选中档的认证座位元数据。逐座手选当前在线玩家，不按认证信息自动认领。AI 保留存档绑定；身份不符由权威拒绝。"
++
++[node name="Seats" type="OptionButton" parent="Content" index="2"]
++layout_mode = 2
++
++[node name="Refresh" parent="Content/Buttons" index="0"]
++text = "刷新并清空映射"
++
++[node name="Confirm" parent="Content/Buttons" index="1"]
++text = "确认指定恢复"
+*** End Patch

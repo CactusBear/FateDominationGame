@@ -1,0 +1,33 @@
+{
+  "id": "tests/rule_guard_debug_result_window_test.tscn:window",
+  "scene": "tests/rule_guard_debug_result_window_test.tscn",
+  "mode": "window",
+  "required": true,
+  "stage_hint": "window",
+  "scripts": [
+    "res://tests/guard_native_boundary_probe.gd",
+    "res://tests/match_journal_test.gd",
+    "res://tests/rule_guard_continuation_test.gd",
+    "res://tests/rule_guard_debug_result_window_test.gd",
+    "res://tests/rule_guard_event_add_test.gd",
+    "res://tests/rule_guard_event_place_test.gd",
+    "res://tests/rule_guard_event_reveal_test.gd"
+  ],
+  "environment_names": [],
+  "command_template_NOT_EXECUTED": [
+    "<GODOT_CONSOLE_EXE>",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\Projects\\Godot\\FateDominationGame-master",
+    "--scene",
+    "res://tests/rule_guard_debug_result_window_test.tscn",
+    "--resolution",
+    "1920x1080",
+    "--",
+    "window"
+  ],
+  "timeout_sec": null,
+  "status": "NOT_RUN",
+  "window_requires_branch_marker": true
+}

@@ -1,0 +1,11 @@
+; 独立信令部署项目配置：复制必要的 scripts/net、bootstrap 场景和原生信号扩展到独立目录。
+; 此文件应在该独立目录命名 project.godot；禁止覆盖游戏主项目配置。
+; 无 [autoload]，因此不会装载 GameData、EffectManager 等游戏规则单例。
+config_version=5
+
+[application]
+config/name="Fate Signaling"
+run/main_scene="res://assets/scenes/main_menu/server_bootstrap.tscn"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"

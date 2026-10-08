@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/net_server_linux_recovery_test.tscn:window",
+  "scene": "tests/net_server_linux_recovery_test.tscn",
+  "mode": "window",
+  "required": true,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

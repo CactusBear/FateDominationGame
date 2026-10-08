@@ -1,0 +1,376 @@
+class_name ScratchServerRoomManagerBaseline
+extends RefCounted
+
+var rooms: Dictionary = {}
+var error: String = ""
+var max_rooms: int = 16
+var internal_port_base: int = 52000
+var internal_port_count:int = 128
+var startup_seconds: float = 30.0
+var storage_root: String = "user://server_rooms"
+## 本机部署职责，不接受公开 settings 覆盖；LAN/P2P 由房主机器创建此管理器。
+var authority_host_mode:String = "dedicated"
+const AUTHORITY_HOST_MODES = ["lan", "p2p", "dedicated"]
+var record_matches:bool = false
+var transaction_log:bool = true
+var recovery_key_mismatch:String = "reject"
+var recovery_inheritance:String = "host_select"
+var identity_binding_required:bool = false
+const RecoveryPaths = preload("res://scripts/net/server/recovery_path_safety.gd")
+## 只由本机主管设置；绝不从恢复配置接受新的批准根。
+var approved_data_root:String = ""
+
+func _approved_root() -> String:
+	return approved_data_root if not approved_data_root.is_empty() else LoadHelper.resolve_path(LoadHelper.DATA_DIR_NAME)
+
+func _safe_recovery_config(id:String, directory:String, config:Dictionary) -> bool:
+	return valid_instance_id(id) and RecoveryPaths.same(directory, storage_root.path_join(id)) and RecoveryPaths.checked(storage_root, directory) and config.get("directory") is String and RecoveryPaths.same(config.directory, directory) and config.get("data_root") is String and RecoveryPaths.checked(_approved_root(), config.data_root) and RecoveryPaths.tree(_approved_root(), config.data_root, [20000]) and RecoveryPaths.checked(directory, directory.path_join("config.json")) and RecoveryPaths.checked(directory, directory.path_join("recovery.json"), true) and RecoveryPaths.checked(directory, directory.path_join("matches"), true)
+
+func configure_server_policy(policy:Dictionary) -> bool:
+	error = ""
+	# 管理器再次逐字段校验，避免非 CLI 入口绕过约束。
+	if not policy.get("authority_host_mode") is String or policy.authority_host_mode not in AUTHORITY_HOST_MODES:
+		error = "权威位置策略无效"
+		return false
+	if not policy.get("transaction_log") is bool or not policy.get("recovery_key_mismatch") is String or policy.recovery_key_mismatch != "reject" or not policy.get("recovery_inheritance") is String or policy.recovery_inheritance != "host_select":
+		error = "服务端策略字段无效"
+		return false
+	authority_host_mode = policy.authority_host_mode
+	transaction_log = policy.transaction_log
+	recovery_key_mismatch = policy.recovery_key_mismatch
+	recovery_inheritance = policy.recovery_inheritance
+	return true
+
+static func valid_instance_id(value:Variant) -> bool:
+	if not value is String or value.length() != 32: return false
+	for character in value:
+		if character not in "0123456789abcdef": return false
+	return true
+
+static func matches_instance(room:Dictionary, pid:int, instance_id:String) -> bool:
+	return room.get("pid") == pid and room.get("instance_id") == instance_id and valid_instance_id(instance_id)
+
+## 只接受生命周期所有者提供的 OS 句柄验证，不以 PID 存活/ready 字符串替代。
+var process_identity_verifier:Callable
+const PROCESS_OWNERSHIP_UNAVAILABLE:String = "原生工作进程所有权验证不可用；禁止启动、恢复或操作未验证的进程，原目录保留"
+
+## 当前扩展仅支持信号保护，未提供原子 spawn + 私有 OS 句柄生命周期。
+## 这是显式部署阻断，不可通过设置 Callable、ready 字符串或 PID 存活绕过。
+## 只有原生所有者接管 spawn/verify/exit/terminate/release 后才可开放此接口。
+func process_ownership_available() -> bool:
+	return false
+
+func instance_binding(id:String) -> Dictionary:
+	if not rooms.has(id): return {}
+	var room:Dictionary = rooms[id]
+	if not valid_instance_id(room.get("instance_id")) or room.get("authority_host_mode") not in AUTHORITY_HOST_MODES: return {}
+	return {"room":id,"pid":room.pid,"instance_id":room.instance_id,"authority_host_mode":room.authority_host_mode}
+
+func binding_matches(binding:Dictionary, require_ready:bool = false) -> bool:
+	if not binding.get("room") is String or not rooms.has(binding.room): return false
+	var room:Dictionary = rooms[binding.room]
+	if not binding.get("pid") is int or not binding.get("instance_id") is String or room.get("id") != binding.room or binding.get("authority_host_mode") not in AUTHORITY_HOST_MODES: return false
+	if not matches_instance(room,binding.pid,binding.instance_id) or binding.get("authority_host_mode") != room.get("authority_host_mode"): return false
+	if not require_ready: return true
+	return room.get("ready",false) and binding.pid > 0 and process_identity_verified(binding)
+
+func process_identity_verified(binding:Dictionary) -> bool:
+	if not process_ownership_available():
+		error = PROCESS_OWNERSHIP_UNAVAILABLE
+		return false
+	if not binding_matches(binding) or binding.pid <= 0 or not process_identity_verifier.is_valid(): return false
+	# 必须为严格 bool true；错误码、字典或非零整数不构成验证成功。
+	var verified:Variant = process_identity_verifier.call(binding.duplicate(true))
+	return verified is bool and verified
+
+static func valid_ready_report(room:Dictionary, report:Variant) -> bool:
+	if not report is Dictionary: return false
+	if not report.get("capabilities") is Dictionary: return false
+	for key in ["root_transaction_rollback", "can_rollback_now", "execution_trace", "root_transaction_audit", "transaction_audit_persistence_enabled", "match_recording_enabled", "process_restart_is_rollback"]:
+		if not report.capabilities.get(key) is bool: return false
+	if report.capabilities.process_restart_is_rollback: return false
+	return report.get("ok") == true and report.get("room_id") == room.id and report.get("id") == room.id and report.get("port") == room.port and report.get("pid") == room.pid and report.get("instance_id") == room.instance_id and valid_instance_id(report.instance_id) and report.get("instance") == room.instance_id and report.get("authority_host_mode") == room.authority_host_mode
+
+static func write_configuration(path:String, config:Dictionary) -> bool:
+	var temporary:String = path + ".%d.tmp" % OS.get_process_id()
+	if not RecoveryPaths.checked(path.get_base_dir(), path, true) or not RecoveryPaths.checked(path.get_base_dir(), temporary, true): return false
+	var file := FileAccess.open(temporary, FileAccess.WRITE)
+	if file == null: return false
+	file.store_string(JSON.stringify(config))
+	file.flush()
+	var result:Error = file.get_error()
+	file.close()
+	if result == OK and RecoveryPaths.checked(path.get_base_dir(), temporary) and RecoveryPaths.checked(path.get_base_dir(), path, true) and DirAccess.rename_absolute(temporary, path) == OK: return true
+	if RecoveryPaths.checked(path.get_base_dir(), temporary): DirAccess.remove_absolute(temporary)
+	return false
+var data_settings:Dictionary = {}
+var supervisor_timeout_seconds: float = 5.0
+var _pulse_msec: int = 0
+var _pulse_version: int = 0
+
+func create_room(name: String, settings: Dictionary, data_root: String) -> String:
+	error = ""
+	if not process_ownership_available():
+		error = PROCESS_OWNERSHIP_UNAVAILABLE
+		return ""
+	if not RecoveryPaths.checked(data_root, data_root) or not RecoveryPaths.tree(data_root, data_root, [20000]):
+		error = "批准数据根必须是无链接的规范本机目录"
+		return ""
+	if approved_data_root.is_empty(): approved_data_root = data_root
+	if not RecoveryPaths.checked(_approved_root(), data_root):
+		error = "数据根不在本机批准范围"
+		return ""
+	if not DirAccess.dir_exists_absolute(storage_root):
+		if not RecoveryPaths.checked(RecoveryPaths.absolute(storage_root).get_base_dir(), storage_root, true) or DirAccess.make_dir_recursive_absolute(storage_root) != OK:
+			error = "房间存储根不可安全建立"
+			return ""
+	if not RecoveryPaths.checked(storage_root, storage_root):
+		error = "房间存储根包含链接或非规范路径"
+		return ""
+	if authority_host_mode not in AUTHORITY_HOST_MODES:
+		error = "权威位置必须显式声明为 lan、p2p 或 dedicated"
+		return ""
+	if name.strip_edges().is_empty() or rooms.size() >= max_rooms or not is_finite(startup_seconds) or startup_seconds <= 0 or not is_finite(supervisor_timeout_seconds) or supervisor_timeout_seconds <= 1 or internal_port_base <= 0 or internal_port_base > 65535 or internal_port_count <= 0 or internal_port_count > 65536 - internal_port_base:
+		error = "房间名称或服务端资源预算无效"
+		return ""
+	var state = preload("res://scripts/net/session/room_state.gd").new()
+	settings = settings.duplicate(true)
+	for key in data_settings:
+		if key not in ["random_sim_enabled", "random_sim_budget_sec"]:
+			error = "服务端数据策略字段无效"
+			return ""
+		if not settings.has(key): settings[key] = data_settings[key]
+	if not state.configure(1, settings):
+		error = state.error
+		return ""
+	var port := -1
+	for candidate in range(internal_port_base, internal_port_base + internal_port_count):
+		if not rooms.values().any(func(room): return room.port == candidate):
+			var probe := PacketPeerUDP.new()
+			var result:Error = probe.bind(candidate, "127.0.0.1")
+			probe.close()
+			if result == OK:
+				port = candidate
+				break
+	if port < 0:
+		error = "配置的内部端口范围内无可绑定端口"
+		return ""
+	var id: String = Crypto.new().generate_random_bytes(16).hex_encode()
+	var directory := storage_root.path_join(id)
+	if DirAccess.dir_exists_absolute(directory) or DirAccess.make_dir_recursive_absolute(directory) != OK:
+		error = "无法建立房间专属目录"
+		return ""
+	var instance_id:String = Crypto.new().generate_random_bytes(16).hex_encode()
+	var log_file:String = directory.path_join("engine.%s.log" % instance_id)
+	var stored_settings := settings.duplicate(true)
+	stored_settings["_gateway_identity_required"] = identity_binding_required
+	if stored_settings.has("runtime_guard"):
+		stored_settings.runtime_guard = preload("res://scripts/match/rule_budget.gd").encode_json_config(stored_settings.runtime_guard)
+	if not write_configuration(directory.path_join("config.json"), {"id": id, "name": name, "settings": stored_settings, "data_root": ProjectSettings.globalize_path(data_root), "directory": ProjectSettings.globalize_path(directory), "port": port, "supervisor_timeout_seconds": supervisor_timeout_seconds, "record_matches":record_matches, "transaction_log":transaction_log, "recovery_key_mismatch":recovery_key_mismatch, "recovery_inheritance":recovery_inheritance, "authority_host_mode":authority_host_mode, "instance_id":instance_id}):
+		error = "无法写入房间启动配置"
+		return ""
+	var arguments := PackedStringArray(["--headless", "--audio-driver", "Dummy", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(log_file), "--scene", "res://assets/scenes/main_menu/server_room_worker.tscn", "--", "--server-room-worker", ProjectSettings.globalize_path(directory.path_join("config.json")), ProjectSettings.globalize_path(_approved_root()), ProjectSettings.globalize_path(storage_root)])
+	var pid := OS.create_process(OS.get_executable_path(), preload("res://scripts/net/server/server_bootstrap.gd").process_arguments(arguments))
+	if pid < 0:
+		error = "无法启动房间子进程"
+		return ""
+	rooms[id] = {"id": id, "name": name, "port": port, "pid": pid, "instance_id":instance_id, "authority_host_mode":authority_host_mode, "directory": directory, "log_file": log_file, "ready": false, "error": "", "deadline": Time.get_ticks_msec() + int(startup_seconds * 1000.0)}
+	return id
+
+func poll() -> void:
+	if not process_ownership_available():
+		error = PROCESS_OWNERSHIP_UNAVAILABLE
+		for room in rooms.values():
+			room.ready = false
+			room.error = PROCESS_OWNERSHIP_UNAVAILABLE
+		return
+	if Time.get_ticks_msec() - _pulse_msec >= 1000:
+		_pulse_msec = Time.get_ticks_msec()
+		_pulse_version += 1
+		for room in rooms.values():
+			if room.pid > 0: _write_supervisor(room)
+	for room in rooms.values():
+		if room.pid <= 0 or not OS.is_process_running(room.pid):
+			room.ready = false
+			if room.error.is_empty():
+				room.error = "房间进程已经退出"
+			continue
+		if room.ready or not room.error.is_empty():
+			continue
+		var path: String = room.directory.path_join("ready.json")
+		if FileAccess.file_exists(path):
+			var report = JSON.parse_string(FileAccess.get_file_as_string(path))
+			if not valid_ready_report(room, report):
+				room.error = "房间就绪报告无效"
+			else:
+				# 日志供审计读取，不同步扫描完整日志阻塞路由；就绪由实例报告确认。
+				room.capabilities = report.capabilities.duplicate(true)
+				room.ready = true
+		if not room.ready and Time.get_ticks_msec() >= room.deadline:
+			room.error = "房间启动超时"
+		if not room.error.is_empty():
+			OS.kill(room.pid)
+
+func discover_rooms() -> Dictionary:
+	var result:Dictionary = {"registered":[],"errors":{}}
+	if not DirAccess.dir_exists_absolute(storage_root): return result
+	if not RecoveryPaths.checked(storage_root, storage_root):
+		result.errors["storage_root"] = "存储根不安全；原目录保留"
+		return result
+	var storage := DirAccess.open(storage_root)
+	for id in DirAccess.get_directories_at(storage_root):
+		if rooms.has(id): continue
+		if storage.is_link(id):
+			result.errors[id] = "不从链接目录恢复房间"
+			continue
+		var directory:String = storage_root.path_join(id)
+		if not valid_instance_id(id) or not RecoveryPaths.checked(storage_root, directory):
+			result.errors[id] = "房间目录名称或路径无效；原目录保留"
+			continue
+		var recovery:String = directory.path_join("recovery.json")
+		if not FileAccess.file_exists(recovery): continue
+		if not RecoveryPaths.checked(directory, recovery) or not RecoveryPaths.checked(directory, directory.path_join("config.json")):
+			result.errors[id] = "恢复文件或配置为链接；原目录保留"
+			continue
+		var parser := JSON.new()
+		var path:String = directory.path_join("config.json")
+		if not FileAccess.file_exists(path) or parser.parse(FileAccess.get_file_as_string(path)) != OK or not parser.data is Dictionary:
+			result.errors[id] = "房间配置不可读"
+			continue
+		var config:Dictionary = parser.data
+		if not _safe_recovery_config(id, directory, config):
+			result.errors[id] = "恢复配置越过批准路径或包含链接；原目录保留"
+			continue
+		if config.get("authority_host_mode") not in AUTHORITY_HOST_MODES or not valid_instance_id(config.get("instance_id")):
+			result.errors[id] = "旧房间缺少显式权威位置或实例标识，需管理员迁移；原目录保留"
+			continue
+		var port_value = config.get("port")
+		if config.get("id") != id or not config.get("name") is String or typeof(port_value) not in [TYPE_INT,TYPE_FLOAT] or not is_finite(float(port_value)) or floor(float(port_value)) != port_value or port_value < 1 or port_value > 65535:
+			result.errors[id] = "房间配置身份、路径或端口无效"
+			continue
+		var validation = preload("res://scripts/net/session/lobby_session.gd").new()
+		var valid:bool = validation.load_recovery_state(recovery)
+		validation.close()
+		if not valid:
+			result.errors[id] = "恢复状态无效"
+			continue
+		if rooms.values().any(func(room): return room.port == int(port_value)):
+			result.errors[id] = "内部端口与已有登记冲突"
+			continue
+		rooms[id] = {"id":id,"name":config.name,"port":int(port_value),"pid":-1,"instance_id":config.instance_id,"authority_host_mode":config.authority_host_mode,"directory":directory,"log_file":directory.path_join("engine.%s.log" % config.instance_id),"ready":false,"error":"等待原成员恢复","deadline":0}
+		result.registered.append(id)
+	return result
+
+func is_ready(id: String) -> bool:
+	return binding_matches(instance_binding(id),true)
+
+## 仅重启已经落盘的房间子进程；不删除房间目录、配置或既有存档。
+## 对局状态恢复由房间工作进程的恢复入口负责，本方法不伪造恢复成功。
+func recover_room(id:String, expected_pid:int = -2, expected_instance_id:String = "") -> bool:
+	error = ""
+	if not process_ownership_available():
+		error = PROCESS_OWNERSHIP_UNAVAILABLE
+		return false
+	if not rooms.has(id):
+		error = "房间不存在"
+		return false
+	var room:Dictionary = rooms[id]
+	if expected_pid != -2 and not matches_instance(room, expected_pid, expected_instance_id):
+		error = "房间进程实例已更换，拒绝过期恢复请求"
+		return false
+	if room.ready or (int(room.pid) > 0 and OS.is_process_running(int(room.pid))):
+		error = "房间仍在运行"
+		return false
+	var config_path:String = str(room.directory).path_join("config.json")
+	if not RecoveryPaths.checked(storage_root, config_path):
+		error = "恢复配置路径不安全；原存档保留"
+		return false
+	if not FileAccess.file_exists(config_path):
+		error = "房间启动配置不存在"
+		return false
+	var config = JSON.parse_string(FileAccess.get_file_as_string(config_path))
+	if not config is Dictionary or not _safe_recovery_config(id, str(room.directory), config):
+		error = "恢复配置越过批准路径或包含链接；原存档保留"
+		return false
+	if not config is Dictionary or config.get("id") != id or config.get("port") != room.port or config.get("instance_id") != room.instance_id or config.get("authority_host_mode") != room.authority_host_mode:
+		error = "房间启动配置与登记信息不一致"
+		return false
+	var probe:=PacketPeerUDP.new()
+	if probe.bind(int(room.port), "127.0.0.1") != OK:
+		probe.close()
+		error = "房间原内部端口仍被占用"
+		return false
+	probe.close()
+	var instance_id:String = Crypto.new().generate_random_bytes(16).hex_encode()
+	config.instance_id = instance_id
+	if not _safe_recovery_config(id, str(room.directory), config):
+		error = "恢复路径在发布配置前失效；原存档保留"
+		return false
+	if not write_configuration(config_path, config):
+		error = "恢复启动配置发布失败；原存档保留"
+		return false
+	# 必须在创建进程之前删除旧报告，避免删掉新进程已发布的 ready。
+	var ready_path:String = str(room.directory).path_join("ready.json")
+	if FileAccess.file_exists(ready_path) and DirAccess.remove_absolute(ready_path) != OK:
+		config.instance_id = room.instance_id
+		write_configuration(config_path, config)
+		error = "无法清除过期就绪报告"
+		return false
+	var log_file:String = str(room.directory).path_join("engine.%s.log" % instance_id)
+	var arguments:=PackedStringArray(["--headless", "--audio-driver", "Dummy", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(log_file), "--scene", "res://assets/scenes/main_menu/server_room_worker.tscn", "--", "--server-room-worker", ProjectSettings.globalize_path(config_path), ProjectSettings.globalize_path(_approved_root()), ProjectSettings.globalize_path(storage_root)])
+	var pid:=OS.create_process(OS.get_executable_path(), preload("res://scripts/net/server/server_bootstrap.gd").process_arguments(arguments))
+	if pid < 0:
+		config.instance_id = room.instance_id
+		write_configuration(config_path, config)
+		error = "无法重启房间子进程"
+		return false
+	room.pid = pid
+	room.instance_id = instance_id
+	room.log_file = log_file
+	room.ready = false
+	room.error = ""
+	room.deadline = Time.get_ticks_msec() + int(startup_seconds * 1000.0)
+	rooms[id] = room
+	return true
+
+func _write_supervisor(room:Dictionary) -> void:
+	var path:String = room.directory.path_join("supervisor.json")
+	var temporary:String = path + ".%d.tmp" % OS.get_process_id()
+	var heartbeat := FileAccess.open(temporary, FileAccess.WRITE)
+	if heartbeat == null:
+		error = "无法写入房间主管心跳"
+		return
+	heartbeat.store_string(JSON.stringify({"id":room.id, "pid":room.pid, "instance_id":room.instance_id, "version":_pulse_version}))
+	heartbeat.flush()
+	var result:Error = heartbeat.get_error()
+	heartbeat.close()
+	if result != OK or DirAccess.rename_absolute(temporary, path) != OK:
+		DirAccess.remove_absolute(temporary)
+		error = "无法完整发布房间主管心跳"
+
+func stop_room(id: String, expected_pid:int = -2, expected_instance_id:String = "") -> bool:
+	if not rooms.has(id):
+		return false
+	if expected_pid != -2 and not matches_instance(rooms[id], expected_pid, expected_instance_id):
+		error = "房间进程实例已更换，拒绝过期停止请求"
+		return false
+	var pid: int = rooms[id].pid
+	if pid > 0 and not process_ownership_available():
+		error = PROCESS_OWNERSHIP_UNAVAILABLE
+		return false
+	if pid > 0 and OS.is_process_running(pid) and OS.kill(pid) != OK:
+		error = "无法停止自己的房间进程"
+		return false
+	rooms.erase(id)
+	return true
+
+func close() -> void:
+	for id in rooms.keys():
+		stop_room(id)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE:
+		if not process_ownership_available(): return
+		for room in rooms.values():
+			if room.pid > 0 and OS.is_process_running(room.pid):
+				OS.kill(room.pid)

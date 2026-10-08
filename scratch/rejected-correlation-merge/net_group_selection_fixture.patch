@@ -1,0 +1,28 @@
+--- a/tests/net_group_selection_test.gd
++++ b/tests/net_group_selection_test.gd
+@@ -4,12 +4,16 @@
+ 	signal changed
+ 	signal group_preview_received(request_id: int, result: Dictionary)
+ 	signal rejected(reason: String)
++	signal request_rejected(sequence: int, reason: String)
++	var request_seq: int = 0
+ 	var sent: Array = []
+ 	var seq := 1
+ 	var observer := 0
+ 	func read_match() -> Dictionary:
+ 		return {"seq": seq, "observer": observer}
+-	func request(kind: String, args: Dictionary) -> Error:
++	func request(kind: String, args: Dictionary, registered: Callable = Callable()) -> Error:
++		request_seq += 1
++		if registered.is_valid(): registered.call(request_seq)
+ 		sent.append([kind, args.duplicate(true)])
+ 		return OK
+ 
+@@ -43,6 +47,7 @@
+ 	check(selection.confirm(), "confirmed preview emits match command")
+ 	check(session.sent.back()[0] == "match_command" and session.sent.back()[1].params.cards == [10], "exact selected identities sent")
+ 	check(not selection.confirm(), "double confirm suppressed")
++	session.request_rejected.emit(session.request_seq, "权威拒绝，规则未改变")
+ 	session.rejected.emit("权威拒绝，规则未改变")
+ 	check(not selection.snapshot().submitted and selection.snapshot().cards == [10], "rejection without new view unlocks submission and preserves selection")
+ 	check(selection.confirm(), "explicit confirmation can retry after authority rejection")

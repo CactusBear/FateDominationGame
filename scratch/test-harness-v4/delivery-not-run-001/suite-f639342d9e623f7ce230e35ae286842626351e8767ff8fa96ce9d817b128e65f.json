@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/match_driver_window_test.tscn:headless",
+  "scene": "tests/match_driver_window_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

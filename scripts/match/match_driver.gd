@@ -19,27 +19,36 @@ func _init(seat_table = null) -> void:
 		seats = seat_table
 
 func step(delta: float) -> bool:
+	var action:String = prepare_step(delta)
+	if action == "end_current_player_action":
+		return GameProgress.end_current_player_action()
+	if action == "ai_turn":
+		run_bot_turn(GameProgress.current_player_id)
+		return true
+	return false
+
+## 只判断推进时机及更新表现节奏；返回动作名，由调用方执行或录制。
+func prepare_step(delta: float) -> String:
 	if _acting or GameProgress.is_game_over or EffectManager.is_waiting_for_choice():
-		return false
+		return ""
 	var id: int = GameProgress.current_player_id
 	if id < 0 or (not seats.is_ai(id) and not seats.is_local(id)):
-		return false
+		return ""
 	var phase_name: String = str(GameProgress.get_current_phase().get("name", ""))
 	var acts_here: bool = GameProgress.is_phase_for(id, "outpost") or GameProgress.is_phase_for(id, "action")
 	if (phase_name == "battle" or phase_name == "prepare") and not acts_here:
 		if not EffectManager.has_manual_activation(id):
-			return GameProgress.end_current_player_action()
+			return "end_current_player_action"
 		if seats.is_local(id):
-			return false
+			return ""
 	elif seats.is_local(id):
 		_cooldown = 0.0
-		return false
+		return ""
 	_cooldown -= delta
 	if _cooldown > 0.0:
-		return false
+		return ""
 	_cooldown = step_interval
-	run_bot_turn(id)
-	return true
+	return "ai_turn"
 
 ## 保留手动 AI 单步入口；正常自动推进必须先通过座位类型判断。
 func run_bot_turn(player_id: int) -> void:

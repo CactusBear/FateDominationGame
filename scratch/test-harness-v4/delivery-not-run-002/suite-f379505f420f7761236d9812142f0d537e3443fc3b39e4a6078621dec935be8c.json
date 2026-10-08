@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/zoom_and_desc_test.tscn:headless",
+  "scene": "tests/zoom_and_desc_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

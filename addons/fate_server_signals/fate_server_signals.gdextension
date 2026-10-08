@@ -1,0 +1,8 @@
+[configuration]
+entry_symbol = "fate_server_signals_init"
+compatibility_minimum = "4.4"
+reloadable = false
+
+[libraries]
+windows.x86_64 = "res://addons/fate_server_signals/bin/libfate_server_signals.windows.template_release.x86_64.dll"
+linux.x86_64 = "res://addons/fate_server_signals/bin/libfate_server_signals.linux.x86_64.so"

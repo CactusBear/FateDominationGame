@@ -1,0 +1,35 @@
+{
+  "parser": "gdtoolkit",
+  "files": [
+    {
+      "path": "scripts/net/lobby_session.gd",
+      "parsed": true,
+      "sha256": "573007de0b7548780e823c983d99b4d68b9cad651f33a53d924ffa2ab952726a"
+    },
+    {
+      "path": "scripts/net/group_selection.gd",
+      "parsed": true,
+      "sha256": "b819e9ef9e9b985666efec298f14a283699d5795dfe029a5977103ef4ad36c48"
+    },
+    {
+      "path": "scripts/net/v2_view_presenter.gd",
+      "parsed": true,
+      "sha256": "e79267a7e377c60fec5c88351ecb3c4e19899343915385f02fa6129691d929e4"
+    },
+    {
+      "path": "scripts/net/network_choice_panel.gd",
+      "parsed": true,
+      "sha256": "a4a9d2d7eed723dd55043ac70335c1075bee63a2a7b3fd9cb75ade87351c260c"
+    },
+    {
+      "path": "scratch/rejected-correlation-merge/rejected_request_correlation_test.gd",
+      "parsed": true,
+      "sha256": "93b03f5e1284ba4db8dcb0e856008cbdd8818a594e4e1ad6acd50b54fdfe7a45"
+    }
+  ],
+  "patch_forward_check": true,
+  "patch_reverse_check": true,
+  "diff_check": true,
+  "godot_executed": false,
+  "test_runtime_executed": false
+}

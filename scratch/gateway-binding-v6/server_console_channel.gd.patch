@@ -1,0 +1,53 @@
+--- a/scripts/net/server/server_console_channel.gd
++++ b/scripts/net/server/server_console_channel.gd
+@@ -244,15 +244,11 @@
+ 	return _room_request(args[0],"resume")
+ 
+ func _room_request(room_id:String,action:String) -> Dictionary:
+-	if not gateway.manager.rooms.has(room_id) or not gateway.manager.is_ready(room_id): return {"ok":false,"error":"房间不存在或未就绪"}
++	if not gateway.manager.rooms.has(room_id): return {"ok":false,"error":"房间不存在"}
++	var binding:Dictionary = gateway.manager.instance_binding(room_id)
++	# 管理请求必须消费同一份四元组绑定，并通过真实 OS 句柄验证；ready.json/PID 存活不是所有权证明。
++	if binding.is_empty() or not gateway.manager.binding_matches(binding,true): return {"ok":false,"error":"房间不存在、未就绪或缺少可信进程句柄验证"}
+ 	var room:Dictionary = gateway.manager.rooms[room_id]
+-	var parser := JSON.new()
+-	var ready_path:String = str(room.directory).path_join("ready.json")
+-	if not FileAccess.file_exists(ready_path) or parser.parse(FileAccess.get_file_as_string(ready_path)) != OK or not parser.data is Dictionary:
+-		return {"ok":false,"error":"房间就绪报告不可读"}
+-	if parser.data.get("id") != room_id or parser.data.get("pid") != room.pid or not valid_id(str(parser.data.get("instance",""))):
+-		return {"ok":false,"error":"房间实例不匹配，不提交管理请求"}
+-	var instance:String = parser.data.instance
+ 	var root:String = str(room.directory).path_join("control")
+ 	if DirAccess.make_dir_recursive_absolute(root) != OK: return {"ok":false,"error":"无法建立房间管理目录"}
+ 	var requests:Dictionary = {}
+@@ -263,21 +259,26 @@
+ 				if valid_id(existing): requests[existing] = true
+ 	if requests.size() >= max_room_requests: return {"ok":false,"error":"房间管理请求已达预算，请先清理已完成回执"}
+ 	var id:String = Crypto.new().generate_random_bytes(16).hex_encode()
+-	if write_json(root.path_join(id+".request.json"),{"pid":room.pid,"instance":instance,"action":action}) != OK: return {"ok":false,"error":"无法提交房间管理请求"}
++	var request:Dictionary = {"room":binding.room,"pid":binding.pid,"instance":binding.instance_id,"authority_host_mode":binding.authority_host_mode,"action":action}
++	if write_json(root.path_join(id+".request.json"),request) != OK: return {"ok":false,"error":"无法提交房间管理请求"}
+ 	var result:Dictionary = {"status":"pending","request_id":id}
+ 	if action == "save": result["saved"] = false
+ 	return {"ok":true,"result":result}
+ 
+ func _room_result(args:PackedStringArray) -> Dictionary:
+ 	if not gateway.manager.rooms.has(args[0]) or not valid_id(args[1]): return {"ok":false,"error":"房间或请求编号无效"}
++	var binding:Dictionary = gateway.manager.instance_binding(args[0])
++	if binding.is_empty() or not gateway.manager.binding_matches(binding,true): return {"ok":false,"error":"房间实例未通过可信句柄验证，未确认操作成功"}
+ 	var root:String = str(gateway.manager.rooms[args[0]].directory).path_join("control")
+ 	var path:String = root.path_join(args[1]+".response.json")
+ 	if not FileAccess.file_exists(path):
+-		if int(gateway.manager.rooms[args[0]].pid) <= 0 or not OS.is_process_running(int(gateway.manager.rooms[args[0]].pid)): return {"ok":false,"error":"房间进程已退出，未确认操作成功"}
+-		return {"ok":true,"result":{"status":"pending"}} if FileAccess.file_exists(root.path_join(args[1]+".request.json")) else {"ok":false,"error":"房间管理请求不存在"}
++		return {"ok":true,"result":{"status":"pending"}} if FileAccess.file_exists(root.path_join(args[1]+".request.json")) else {"ok":false,"error":"房间管理请求不存在或未确认"}
+ 	var parser := JSON.new()
+ 	if parser.parse(FileAccess.get_file_as_string(path)) != OK or not parser.data is Dictionary or parser.data.get("request_id") != args[1]: return {"ok":false,"error":"房间保存回执无效"}
+-	return parser.data
++	var response:Dictionary = parser.data
++	if response.get("room") != binding.room or response.get("pid") != binding.pid or response.get("instance") != binding.instance_id or response.get("authority_host_mode") != binding.authority_host_mode:
++		return {"ok":false,"error":"房间管理回执实例不匹配，拒绝消费"}
++	return response
+ 
+ func _room_forget(args:PackedStringArray) -> Dictionary:
+ 	if not gateway.manager.rooms.has(args[0]) or not valid_id(args[1]): return {"ok":false,"error":"房间或请求编号无效"}

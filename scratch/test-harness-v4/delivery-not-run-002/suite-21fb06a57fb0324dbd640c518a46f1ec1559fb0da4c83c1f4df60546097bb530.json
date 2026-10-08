@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/net_identity_password_window_test.tscn:window",
+  "scene": "tests/net_identity_password_window_test.tscn",
+  "mode": "window",
+  "required": true,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

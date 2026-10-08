@@ -91,6 +91,13 @@ var _runtime_guard = preload("res://scripts/match/rule_budget.gd").new()
 var _guard_run:Dictionary = {}
 var _guard_frames:Array = []
 var _resume_frames:Array = []
+# 每次登记拥有独立身份；相等 Callable 也不能共享事务归属。
+class GuardContinuation extends RefCounted:
+	var continuation:Callable
+	var ticket_id:int = MatchJournal.next_audit_identity()
+	func _init(callback:Callable) -> void:
+		continuation = callback
+
 var _guard_continuations:Array = []
 var _draining_guard_continuations:bool = false
 var _guard_transactions:Dictionary = {}
@@ -98,38 +105,121 @@ var _transaction_scope = null
 var _continuation_transactions:Dictionary = {}
 var _batch_transactions:Array = []
 
-func _begin_guard_transaction(effect:BaseEffect) -> void:
-	if not _runtime_guard.enabled or effect == null or _guard_transactions.has(effect):
-		return
-	_guard_transactions[effect] = _transaction_scope if _transaction_scope != null else preload("res://scripts/match/effect_checkpoint.gd").new(effect)
+func _settle_idle_guard_transactions() -> void:
+	var busy:Array = []
+	var candidates:Array = decision_queue + activation_pool + _pending_choices + _paused_runs.keys()
+	candidates.append_array([waiting_effect, waiting_selection, waiting_location, waiting_players])
+	for active in _active_runs: candidates.append(active.run.effect)
+	for effect in candidates:
+		var owner = _guard_transactions.get(effect)
+		if owner != null and not busy.has(owner): busy.append(owner)
+	for owner in _continuation_transactions.values():
+		if not busy.has(owner): busy.append(owner)
+	for batch in _batch_transactions:
+		if not busy.has(batch.transaction): busy.append(batch.transaction)
+	if _transaction_scope != null and not busy.has(_transaction_scope): busy.append(_transaction_scope)
+	var idle:Array = []
+	for owner in _guard_transactions.values():
+		if not busy.has(owner) and not idle.has(owner): idle.append(owner)
+	for owner in idle:
+		if not owner.settled and not owner.audit("commit"):
+			_runtime_guard.paused = true
+			_runtime_guard.reason = "audit_write_failed"
+			_guard_run = {"effect":owner.root}
+			return
+		owner.settled = true
+		GameLog.commit_fact_transaction(owner.transaction_id)
+		for effect in _guard_transactions.keys():
+			if _guard_transactions[effect] == owner: _guard_transactions.erase(effect)
 
-func _inherit_guard_transaction(effect:BaseEffect) -> void:
+# 只处理审计故障，不执行规则恢复，也不提交或重新激活展示事实。
+func _guard_audit_failed(effect:BaseEffect) -> bool:
+	_runtime_guard.paused = true
+	_runtime_guard.reason = "audit_write_failed"
+	if _guard_run.is_empty(): _guard_run = {"effect":effect}
+	return false
+
+func _guard_audit_confirmed(effect:BaseEffect) -> bool:
+	if not MatchJournal.flush_audit(): return _guard_audit_failed(effect)
+	return true
+
+func _begin_guard_transaction(effect:BaseEffect) -> bool:
+	if not MatchJournal.audit_error.is_empty(): return _guard_audit_failed(effect)
+	if (not _runtime_guard.enabled and MatchJournal.audit_writer == null and not MatchJournal.audit_replaying) or effect == null or _guard_transactions.has(effect):
+		return true
+	if _transaction_scope != null:
+		return _inherit_guard_transaction(effect)
+	_settle_idle_guard_transactions()
+	if not MatchJournal.audit_error.is_empty(): return _guard_audit_failed(effect)
+	var checkpoint = preload("res://scripts/match/effect_checkpoint.gd").new(effect, _runtime_guard.enabled)
+	# 独立根交错支付/待答没有可原子分离的对象图前态，必须失败关闭。
+	for owner in _guard_transactions.values():
+		owner.ready = false
+		owner.error = "独立根事务交错，不能证明完整独立回滚"
+		checkpoint.ready = false
+		checkpoint.error = owner.error
+	_guard_transactions[effect] = checkpoint
+	GameLog.begin_fact_transaction(checkpoint.transaction_id)
+	if not checkpoint.audit("start", effect, checkpoint.error): return _guard_audit_failed(effect)
+	return true
+
+func _inherit_guard_transaction(effect:BaseEffect) -> bool:
+	if not MatchJournal.audit_error.is_empty(): return _guard_audit_failed(effect)
 	if _transaction_scope != null and not _guard_transactions.has(effect):
 		_guard_transactions[effect] = _transaction_scope
+		var parent:BaseEffect = _active_runs.back().run.effect if not _active_runs.is_empty() else activating_eff
+		if not _transaction_scope.audit("child", effect, "", parent): return _guard_audit_failed(effect)
+	return true
 
 func _release_guard_transactions() -> void:
-	if not is_waiting_for_choice() and _active_runs.is_empty() and activation_pool.is_empty() and decision_queue.is_empty() and _queued_time_point_batches.is_empty() and _guard_continuations.is_empty():
+	if _transaction_scope == null and not _draining_guard_continuations and not is_waiting_for_choice() and _active_runs.is_empty() and activation_pool.is_empty() and decision_queue.is_empty() and _queued_time_point_batches.is_empty() and _guard_continuations.is_empty():
+		var roots:Array = []
+		for checkpoint in _guard_transactions.values():
+			if not roots.has(checkpoint): roots.append(checkpoint)
+		for checkpoint in roots:
+			if not checkpoint.settled:
+				if not checkpoint.audit("commit"):
+					_runtime_guard.paused = true
+					_runtime_guard.reason = "audit_write_failed"
+					_guard_run = {"effect":checkpoint.root}
+					return
+				checkpoint.settled = true
+			GameLog.commit_fact_transaction(checkpoint.transaction_id)
 		_guard_transactions.clear()
 		_continuation_transactions.clear()
 		_batch_transactions.clear()
 
 func can_rollback_runtime_guard() -> bool:
 	var checkpoint = _guard_transactions.get(runtime_guard_effect())
-	return checkpoint != null and checkpoint.ready
+	return checkpoint != null and checkpoint.ready and MatchJournal.audit_error.is_empty()
 
 
 func runtime_guard_effect():
 	return _guard_run.get("effect") if _runtime_guard.paused else null
+
+func runtime_guard_root_effect():
+	var effect = runtime_guard_effect()
+	var checkpoint = _guard_transactions.get(effect)
+	return checkpoint.root if checkpoint != null else effect
 
 func skip_runtime_guard() -> bool:
 	if not can_rollback_runtime_guard() or not _active_runs.is_empty():
 		return false
 	var checkpoint = _guard_transactions[runtime_guard_effect()]
 	var external:Array = []
-	for continuation in _guard_continuations:
-		if not _continuation_transactions.has(continuation): external.append(continuation)
-	if not checkpoint.restore():
+	var external_owners:Dictionary = {}
+	for registration in _guard_continuations:
+		var owner = _continuation_transactions.get(registration)
+		if owner != checkpoint:
+			external.append(registration)
+			if owner != null: external_owners[registration] = owner
+	if not checkpoint.audit("rollback_intent", null, "host_skip") or not checkpoint.restore():
 		return false
+	# 恢复已撤销规则事实，即使完成回执写盘失败，也不能再广播旧事实。
+	GameLog.abort_fact_transaction(checkpoint.transaction_id)
+	if not checkpoint.audit("rollback", null, "host_skip"):
+		return false
+	checkpoint.settled = true
 	var root:BaseEffect = checkpoint.root
 	# 恢复等待与队列后，只移除事务根效果，不派发成功完成时点。
 	decision_queue.erase(root)
@@ -145,15 +235,16 @@ func skip_runtime_guard() -> bool:
 	_guard_run = {}
 	_guard_frames.clear()
 	_resume_frames.clear()
-	_guard_transactions.clear()
+	# 其他根事务和批次归属已由检查点恢复，不能整表清空。
 	_transaction_scope = null
-	_continuation_transactions.clear()
-	_batch_transactions.clear()
-	for continuation in external:
-		if not _guard_continuations.has(continuation): _guard_continuations.append(continuation)
+	# 检查点恢复的同一票据不能重播；相等 Callable 的新票据必须保留。
+	for registration in external:
+		if not _guard_continuations.has(registration): _guard_continuations.append(registration)
+		if external_owners.has(registration): _continuation_transactions[registration] = external_owners[registration]
 	is_running = false
 	_runtime_guard.begin_slice()
 	run_pipeline(true)
+	if not MatchJournal.flush_audit(): return _guard_audit_failed(root)
 	return true
 
 func configure_runtime_guard(config:Dictionary) -> bool:
@@ -168,9 +259,14 @@ func runtime_guard_status() -> Dictionary:
 func defer_until_runtime_guard_complete(continuation:Callable) -> bool:
 	if not _runtime_guard.paused or not continuation.is_valid():
 		return false
-	_guard_continuations.append(continuation)
-	if not _active_runs.is_empty() and _transaction_scope != null:
-		_continuation_transactions[continuation] = _transaction_scope
+	var registration := GuardContinuation.new(continuation)
+	if not MatchJournal.audit_event("tail_registered", {"ticket_id":registration.ticket_id, "root_id":_transaction_scope.transaction_id if _transaction_scope != null else 0}):
+		# true 只表示调用方不能同步执行尾部，不是审计成功回执。
+		# 保留尾部并失败关闭；consume_tail 会拒绝审计故障下的执行。
+		_guard_audit_failed(runtime_guard_effect())
+	_guard_continuations.append(registration)
+	if _transaction_scope != null:
+		_continuation_transactions[registration] = _transaction_scope
 	return true
 
 func _drain_guard_continuations() -> void:
@@ -180,22 +276,36 @@ func _drain_guard_continuations() -> void:
 	while not _guard_continuations.is_empty() and not is_waiting_for_choice():
 		var pending:Array = _guard_continuations
 		_guard_continuations = []
-		var continuation:Callable = pending.pop_front()
+		var registration:GuardContinuation = pending.pop_front()
+		var continuation:Callable = registration.continuation
 		if not continuation.is_valid():
-			_guard_continuations.append(continuation)
+			_guard_continuations.append(registration)
 			_guard_continuations.append_array(pending)
 			push_error("规则外层续行目标已失效")
 			break
+		var previous_scope = _transaction_scope
+		_transaction_scope = _continuation_transactions.get(registration)
+		if not MatchJournal.consume_tail(registration.ticket_id, _transaction_scope.transaction_id if _transaction_scope != null else 0):
+			_transaction_scope = previous_scope
+			_guard_continuations.append(registration)
+			_guard_continuations.append_array(pending)
+			_guard_audit_failed(runtime_guard_effect())
+			break
+		_continuation_transactions.erase(registration)
 		continuation.call()
 		if not _draining_guard_continuations:
 			# 回调已重置会话，旧执行片的其余尾部不可写回新会话。
 			break
+		_transaction_scope = previous_scope
 		# 新登记的内层尾部先完成，才轮到原队列的剩余外层动作。
 		_guard_continuations.append_array(pending)
 	_draining_guard_continuations = false
 
 func resume_runtime_guard() -> bool:
 	if not _runtime_guard.paused or _guard_run.is_empty():
+		return false
+	var checkpoint = _guard_transactions.get(runtime_guard_effect())
+	if not MatchJournal.audit_error.is_empty() or (checkpoint != null and not checkpoint.audit("resume")):
 		return false
 	var run:Dictionary = _guard_run
 	_resume_frames = _guard_frames
@@ -210,6 +320,7 @@ func resume_runtime_guard() -> bool:
 	_resume_frames.clear()
 	if not _runtime_guard.paused and not is_running:
 		run_pipeline(true)
+	if not MatchJournal.flush_audit(): return _guard_audit_failed(run.effect)
 	return true
 
 func runtime_guard_checkpoint(loop_state:Dictionary = {}) -> bool:
@@ -230,7 +341,10 @@ func runtime_guard_checkpoint(loop_state:Dictionary = {}) -> bool:
 	for frame in _function_frames:
 		if not frame.has("loop") or frame.get("loop_owner") != frame.get("callable", Callable()).get_object():
 			return true
-	if _runtime_guard.checkpoint():
+	if not MatchJournal.audit_error.is_empty():
+		_runtime_guard.paused = true
+		_runtime_guard.reason = "audit_write_failed"
+	elif _runtime_guard.checkpoint():
 		return true
 	_guard_frames = _function_frames.duplicate()
 	for index in range(_guard_frames.size(), _resume_frames.size()):
@@ -491,6 +605,7 @@ func player_shown_name(player_id:int) -> String:
 
 #清理本局运行时状态，保留已经加载的游戏资源和效果对象
 func reset_runtime():
+	GameLog.reset_fact_delivery()
 	_guard_transactions.clear()
 	_transaction_scope = null
 	_continuation_transactions.clear()
@@ -775,6 +890,7 @@ func get_player_order_index(player_id:int) -> int:
 func register_effect(effect:BaseEffect, player_id:int = -1):
 	if effect == null:
 		return
+	if not _inherit_guard_transaction(effect): return
 	if player_id != -1:
 		effect._trigger_player_id = player_id
 	if !effect_pool.has(effect):
@@ -1035,7 +1151,7 @@ func collect_current_effects(source = null, event_player_id:int = -1):
 		effect._trigger_time_points = matched.duplicate()
 		effect._event_player_id = event_player_id
 		newly_matched.append(effect)
-		_inherit_guard_transaction(effect)
+		if not _inherit_guard_transaction(effect): return
 	decision_queue.append_array(newly_matched)
 	sort_by_turn_order(decision_queue)
 
@@ -1249,6 +1365,7 @@ func _resume_abandoned_choice() -> bool:
 func drain_decision_queue():
 	while !decision_queue.is_empty():
 		var effect = decision_queue[0] as BaseEffect
+		if not effect._is_pure_passive and not _begin_guard_transaction(effect): return
 		if is_pruned(effect):
 			decision_queue.pop_front()
 			continue
@@ -1261,6 +1378,9 @@ func drain_decision_queue():
 			decision_queue.pop_front()
 			continue
 		waiting_effect = effect
+		var checkpoint = _guard_transactions.get(effect)
+		if checkpoint != null and not checkpoint.audit("pause", effect, "player_choice"):
+			_guard_audit_failed(effect)
 		return
 
 
@@ -1327,12 +1447,12 @@ func can_pay_effect_cost(effect:BaseEffect) -> bool:
 #扣费复用EditMagic，让魔力变化照常派发MAGIC_DECREASE时点。
 #令咒消耗扣command_spell_count并派发COMMAND_SPELL_USED时点
 func pay_effect_cost(effect:BaseEffect) -> bool:
-	_begin_guard_transaction(effect)
+	if not _begin_guard_transaction(effect): return false
 	var previous_scope = _transaction_scope
 	_transaction_scope = _guard_transactions.get(effect)
 	var accepted:bool = _pay_effect_cost(effect)
 	_transaction_scope = previous_scope
-	return accepted
+	return accepted and _guard_audit_confirmed(effect)
 
 func _pay_effect_cost(effect:BaseEffect) -> bool:
 	if !can_pay_effect_cost(effect):
@@ -1627,7 +1747,7 @@ func submit_player_selection(effect:BaseEffect, players:Array) -> bool:
 	record_selection_usage(effect, selection)
 	add_to_activation_pool(effect)
 	if !is_running: run_pipeline()
-	return true
+	return _guard_audit_confirmed(effect)
 
 
 func get_pending_location_selection() -> Dictionary:
@@ -1685,7 +1805,7 @@ func submit_location_selection(effect:BaseEffect, location:BaseLocation) -> bool
 	record_selection_usage(effect, selection)
 	add_to_activation_pool(effect)
 	if !is_running: run_pipeline()
-	return true
+	return _guard_audit_confirmed(effect)
 
 
 #玩家为选牌提交了具体牌张。张数或来源不合法时整体视为放弃：
@@ -1721,7 +1841,7 @@ func submit_card_selection(effect:BaseEffect, cards:Array) -> bool:
 	add_to_activation_pool(effect)
 	if !is_running:
 		run_pipeline()
-	return true
+	return _guard_audit_confirmed(effect)
 
 
 #spec 与 source 都由调用方先取好再传进来：这个判断本身不读等待状态，
@@ -1781,7 +1901,7 @@ func cancel_pending_choice(effect: BaseEffect) -> bool:
 	resolved_effects[effect] = "declined"
 	if not is_running:
 		run_pipeline()
-	return true
+	return _guard_audit_confirmed(effect)
 
 func is_waiting_for_choice() -> bool:
 	return _runtime_guard.paused or waiting_effect != null or waiting_selection != null or waiting_location != null or waiting_players != null
@@ -1839,6 +1959,7 @@ func manual_activations(player_id:int) -> Array:
 func request_manual_activation(effect:BaseEffect, player_id:int) -> bool:
 	if !can_manual_activate(effect, player_id):
 		return false
+	if not _begin_guard_transaction(effect): return false
 	matched_time_points[effect] = get_matched_time_points(effect)
 	effect._trigger_time_points = matched_time_points[effect].duplicate()
 	#新的一次主动请求不是同一批次里的自动重触发。
@@ -1848,7 +1969,7 @@ func request_manual_activation(effect:BaseEffect, player_id:int) -> bool:
 		sort_by_turn_order(decision_queue)
 	if !is_running:
 		run_pipeline()
-	return true
+	return _guard_audit_confirmed(effect)
 
 
 # 选择取消权限来自选项数据；未声明时保留既有可取消行为。
@@ -1873,7 +1994,7 @@ func submit_active_choice(effect:BaseEffect, should_activate:bool) -> bool:
 	if should_activate and effect.has_options() and !choice_allows_cancel(effect) and effect._chosen_selection.is_empty():
 		return false
 	if should_activate:
-		_begin_guard_transaction(effect)
+		if not _begin_guard_transaction(effect): return false
 	decision_queue.erase(effect)
 	waiting_effect = null
 	if !should_activate:
@@ -1892,7 +2013,7 @@ func submit_active_choice(effect:BaseEffect, should_activate:bool) -> bool:
 		add_to_activation_pool(effect)
 	if !is_running:
 		run_pipeline()
-	return true
+	return _guard_audit_confirmed(effect)
 
 
 #选项类效果的玩家答复。selection可以是：
@@ -1917,7 +2038,7 @@ func submit_option_choice(effect:BaseEffect, selection) -> bool:
 	#发动条件先于任何延迟选择、用量记录和资源支付；失败按放弃处理，提示由数据声明。
 	if !_option_activation_requirements_met(effect, selection_dict):
 		return submit_active_choice(effect, false)
-	_begin_guard_transaction(effect)
+	if not _begin_guard_transaction(effect): return false
 	#选玩家必须排在选牌之前：同一个选项可以声明"选玩家 + 选那名玩家的牌"，
 	#选牌要拿 _selected_player 去定位来源区，顺序反了会先停下等选牌却没有目标。
 	#只声明其中一项时另一项判为 -1，顺序调整对既有卡没有影响
@@ -1952,8 +2073,8 @@ func submit_option_choice(effect:BaseEffect, selection) -> bool:
 func add_to_activation_pool(effect:BaseEffect):
 	if effect == null or activation_pool.has(effect):
 		return
+	if not _inherit_guard_transaction(effect): return
 	activation_pool.append(effect)
-	_inherit_guard_transaction(effect)
 	sort_by_priority(activation_pool)
 
 
@@ -1961,6 +2082,7 @@ func add_to_activation_pool(effect:BaseEffect):
 #这样它关闭时点或反制其他效果的结果能立刻影响后面还没结算的效果
 func resolve_one():
 	while !activation_pool.is_empty():
+		if not _begin_guard_transaction(activation_pool[0] as BaseEffect): return
 		var effect = activation_pool.pop_front() as BaseEffect
 		if is_pruned(effect):
 			continue
@@ -1969,8 +2091,8 @@ func resolve_one():
 		#优先级为-1是未填写的占位符，跳过不结算
 		if effect._priority < 0:
 			continue
+		if not _begin_guard_transaction(effect): return
 		resolved_effects[effect] = time_point_id
-		_begin_guard_transaction(effect)
 		activating_eff = effect
 		activate_effect(effect)
 		activating_eff = null
@@ -2242,13 +2364,14 @@ func run_func_descriptor(desc, effect:BaseEffect) -> Array:
 #同一步里提出多个选择时按提出顺序依次问
 func request_choice(choice:BaseEffect) -> void:
 	if choice != null:
+		if not _inherit_guard_transaction(choice): return
 		_pending_choices.append(choice)
 
 
 func activate_effect(effect:BaseEffect):
 	if _runtime_guard.paused:
 		return
-	_begin_guard_transaction(effect)
+	if not _begin_guard_transaction(effect): return
 	#选择效果与发起它的那条效果共用一张变量表：选项里的步骤能读前面算出的结果，
 	#后面的步骤也能读选项里算出的结果。普通激活都从空白的变量表开始，避免读到上一次激活的残留值
 	var paused = _paused_runs.get(effect)
@@ -2303,6 +2426,8 @@ func _continue_run_body(run:Dictionary) -> void:
 	while int(run.index) < funcs.size():
 		if not runtime_guard_checkpoint():
 			_guard_run = run
+			if _transaction_scope != null and not _transaction_scope.audit("pause", effect, _runtime_guard.reason):
+				_guard_audit_failed(effect)
 			end_effect()
 			GameLog.end_execution(execution_id)
 			activating_eff = previous_effect
@@ -2313,6 +2438,8 @@ func _continue_run_body(run:Dictionary) -> void:
 		if _runtime_guard.paused:
 			run.index = int(run.index) - 1
 			_guard_run = run
+			if _transaction_scope != null and not _transaction_scope.audit("pause", effect, _runtime_guard.reason):
+				_guard_audit_failed(effect)
 			end_effect()
 			GameLog.end_execution(execution_id)
 			activating_eff = previous_effect
@@ -2341,7 +2468,7 @@ func _ask_next_choice(paused:Dictionary) -> void:
 		return
 	var choice:BaseEffect = queue.pop_front()
 	_paused_runs[choice] = paused
-	_inherit_guard_transaction(choice)
+	if not _inherit_guard_transaction(choice): return
 	decision_queue.push_front(choice)
 	#不在结算流程里（直接调 activate_effect 的入口）时自己推动一次，否则选择没人问
 	if !is_running:

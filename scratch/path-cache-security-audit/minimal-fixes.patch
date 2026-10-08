@@ -1,0 +1,16 @@
+# 最小修复建议（审计补丁草案；未应用生产）
+# 1) server_room_manager.gd
+# discover_rooms/recover_room 在接受 config 前：
+#   - 解析 approved_data_root（来自服务端当前配置，而非房间 JSON）
+#   - canonicalize candidate data_root；拒绝不存在、link/junction、越界、大小写/分隔符不一致
+#   - 比较 data_root_fingerprint；不匹配则保留原目录并拒绝启动
+# 2) lobby_session.gd + match_authority.gd
+# restore 两层均调用同一 validate_archive_source(source, archive_root)：
+#   - canonical path 必须是 archive_root 的直接子目录
+#   - 目录及父目录不得为 link/junction
+#   - 必须存在合法 match.log，禁止 source.path_join 穿越
+# 3) content_cache.gd / room_data_preparation.gd / room_data_assembler.gd
+#   - preparation/assembler 为每个 plan hash 建立 owner-scoped pin
+#   - 下载完成时把 receiver pin 转交 preparation，再由 preparation finally 释放
+#   - clear_unused_locked 只删无 pin 的有效 blob，并清理过期 .part/损坏 blob
+#   - 所有失败/取消/会话关闭路径释放 pin

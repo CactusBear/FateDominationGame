@@ -1,0 +1,119 @@
+*** Begin Patch
+*** Update File: tests/run_server_signal_acceptance.py
+@@
+         assert "未启用录制" in text, "expected unrecorded-match rejection, not an unrelated failure or timeout"
+     else:
+         assert "SERVER_STOP_COMPLETE" in text and "SERVER_STOP_FAILED" not in text, "safe shutdown was not confirmed"
++
++
++def observe_windows_process(kernel, handle):
++    """读取真实进程句柄；不使用 launcher 的 Popen 状态替代。"""
++    wait_state = kernel.WaitForSingleObject(handle, 0)
++    if wait_state not in (0, 258):
++        return {"alive": None, "exit_code": None, "exit_code_observable": False, "wait_state": wait_state, "error": "cannot determine real process state"}
++    code = ctypes.c_uint32()
++    alive = wait_state == 258
++    if not kernel.GetExitCodeProcess(handle, ctypes.byref(code)):
++        return {"alive": alive, "exit_code": None, "exit_code_observable": False, "error": "cannot read real process exit code"}
++    return {"alive": alive, "exit_code": None if alive else code.value, "exit_code_observable": True}
+ 
+ 
+ def available_linux_internal_range(args, excluded):
+@@
+                             elif not ready.exists():
+                                 break
+                             time.sleep(0.1)
+-                        verify_shutdown_log((root / "engine.log").read_text(encoding="utf-8", errors="replace"), args.reject)
+                         if args.platform == "windows":
+                             if not args.reject and not ready.exists():
+-                                assert kernel.WaitForSingleObject(handle, 10000) == 0, "ready marker removed but real service process has not exited"
+-                            wait_state = kernel.WaitForSingleObject(handle, 0)
+-                            assert wait_state in (0, 258), "cannot determine service process state"
+-                            alive = wait_state == 258
+-                            code = ctypes.c_uint32()
+-                            assert kernel.GetExitCodeProcess(handle, ctypes.byref(code)), "cannot read service exit code"
+-                            exit_code = code.value
++                                kernel.WaitForSingleObject(handle, 10000)
++                            engine = observe_windows_process(kernel, handle)
++                            alive = engine["alive"]
++                            exit_code = engine["exit_code"]
++                            workers_evidence = []
++                            for worker_pid in worker_pids:
++                                worker_kernel, worker_handle = worker_handles[worker_pids.index(worker_pid)]
++                                worker_evidence = observe_windows_process(worker_kernel, worker_handle)
++                                worker_evidence["pid"] = worker_pid
++                                workers_evidence.append(worker_evidence)
+                         else:
++                            workers_evidence = []
+                             alive = subprocess.run(["wsl.exe", "-d", args.distro, "--exec", "/bin/kill", "-0", str(pid)], capture_output=True, timeout=10).returncode == 0
+-                            exit_code = server.poll() if not alive else -1
+-                            if not alive:
+-                                exit_code = server.wait(timeout=10)
++                            # WSL launcher 不是 Linux engine 的父句柄；不能把 launcher 的退出码冒充 engine。
++                            exit_code = None
++                        # 先保存真实 engine/worker 状态，再断言日志；launcher 状态不参与这里的判定。
++                        process_evidence = {"engine": {"pid": pid, **engine} if args.platform == "windows" else {"pid": pid, "alive": alive, "exit_code": exit_code, "exit_code_observable": False}, "workers": workers_evidence}
++                        publish(root / "process-evidence.json", process_evidence)
++                        if args.platform == "windows":
++                            assert not engine.get("error"), engine.get("error")
++                            assert all(not worker.get("error") for worker in workers_evidence), "worker process observation failed"
++                        verify_shutdown_log((root / "engine.log").read_text(encoding="utf-8", errors="replace"), args.reject)
+                         assert alive == args.reject, "service liveness contradicts shutdown result"
+                         assert ready.exists() == args.reject, "ready marker contradicts shutdown result"
+-                        if not args.reject:
++                        if not args.reject and args.platform == "windows":
+                             assert exit_code == 0, "service did not exit normally"
+                         for worker_pid in worker_pids:
+                             if args.platform == "windows":
+-                                # PID 来自本次房间实例报告；不接受无法区分的 API 失败。
+-                                worker_kernel, worker_handle = worker_handles[worker_pids.index(worker_pid)]
+-                                assert worker_kernel.WaitForSingleObject(worker_handle, 0) == (258 if args.reject else 0), "worker liveness contradicts shutdown result"
++                                worker_evidence = workers_evidence[worker_pids.index(worker_pid)]
++                                assert worker_evidence["alive"] == args.reject, "worker liveness contradicts shutdown result"
+                             else:
+                                 worker_alive = subprocess.run(["wsl.exe", "-d", args.distro, "--exec", "/bin/kill", "-0", str(worker_pid)], capture_output=True, timeout=10).returncode == 0
+                                 assert worker_alive == args.reject, "worker liveness contradicts shutdown result"
+-                        publish(result_path, {"ok": True, "sent": True, "alive": alive, "closed": not alive, "exit_code": exit_code})
++                        publish(result_path, {"ok": True, "sent": True, "alive": alive, "closed": not alive, "exit_code": exit_code, "process_evidence": process_evidence})
+                     time.sleep(0.05)
+                 assert client.poll() is not None, "signal client test timed out"
+             text = (root / "client.log").read_text(encoding="utf-8", errors="replace")
+@@
+             assert client.returncode == 0 and "RESULT" in text and "failures=[]" in text and "ERROR:" not in text and "SCRIPT ERROR" not in text, "signal acceptance failed"
+             engine_text = (root / "engine.log").read_text(encoding="utf-8", errors="replace")
+             verify_shutdown_log(engine_text, args.reject)
+-            summary = {"ok": True, "platform": args.platform, "release": args.release, "signal": args.signal, "save_rejection": args.reject, "root": str(root), "client_exit": client.returncode,"owned_launcher_pid":server.pid,"reported_pid":pid,"worker_pids":worker_pids,"service_preserved":args.reject}
++            summary = {"ok": True, "platform": args.platform, "release": args.release, "signal": args.signal, "save_rejection": args.reject, "root": str(root), "client_exit": client.returncode,"owned_launcher_pid":server.pid,"reported_pid":pid,"worker_pids":worker_pids,"service_preserved":args.reject, "process_evidence": json.loads((root / "process-evidence.json").read_text(encoding="utf-8"))}
+             publish(root / "summary.json", summary)
+             print(json.dumps(summary, ensure_ascii=False), flush=True)
+         except Exception as error:
+@@
+                     pass
+             raise
+         finally:
+-            if client is not None and client.poll() is None:
+-                client.kill()
+-                client.wait(timeout=10)
++            # 所有存活实例均保留；不强杀客机、launcher、engine 或 worker。
+             # 服务/worker 仅持有查询句柄：保存拒绝或夹具异常时保留实例及日志。
+             # 不按 ready PID 或裸 Linux PID 强杀，也不终止用户进程。
++            final_process_evidence = {"engine": {"pid": pid, "alive": None, "exit_code": None, "exit_code_observable": False}, "workers": []}
++            if handle:
++                final_process_evidence["engine"] = {"pid": pid, **observe_windows_process(kernel, handle)}
++            for index, (worker_kernel, worker_handle) in enumerate(worker_handles):
++                worker_pid = worker_pids[index] if index < len(worker_pids) else None
++                final_process_evidence["workers"].append({"pid": worker_pid, **observe_windows_process(worker_kernel, worker_handle)})
++            publish(root / "finally-process.json", {"real_processes": final_process_evidence, "launcher": {"pid": server.pid, "exit_code": server.poll()}})
+             if handle:
+                 kernel.CloseHandle(handle)
+             for worker_kernel, worker_handle in worker_handles:
+@@
+             if server.poll() is None:
+                 print("OWNED_SERVICE_PRESERVED", server.pid, pid, str(root), flush=True)
+             else:
+-                server.wait(timeout=15)
++                print("LAUNCHER_EXITED", server.pid, server.returncode, flush=True)
+ 
+ 
+ 
+*** End Patch

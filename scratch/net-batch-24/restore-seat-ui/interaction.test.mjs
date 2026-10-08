@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+const root = process.cwd();
+const out = path.join(root, 'scratch/net-batch-24/restore-seat-ui');
+const candidate = path.join(out, 'candidate');
+const lobbyPath = 'scripts/net/ui/lobby_screen.gd';
+const lobby = fs.readFileSync(fs.existsSync(path.join(candidate,lobbyPath+'.txt')) ? path.join(candidate,lobbyPath+'.txt') : path.join(root,lobbyPath),'utf8');
+assert.match(lobby, /restore_local_match\(source, selected, metadata_source\)/, '恢复真实入口必须传完整显式映射与本机元数据路径');
+console.log('PASS explicit restore entry');

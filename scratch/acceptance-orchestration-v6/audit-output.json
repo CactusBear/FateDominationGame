@@ -1,0 +1,53 @@
+{
+  "scope": "STATIC_AND_SYNTHETIC_ONLY",
+  "runner": "C:\\Users\\Administrator\\AppData\\Local\\hermes\\skills\\software-development\\fate-domination-engine\\scripts\\run_all_tests.py",
+  "fixtures": [
+    {
+      "synthetic_not_runtime": true,
+      "input": "RESULT checks=2 failures=1 [bad]",
+      "legacy_accepts": true
+    },
+    {
+      "synthetic_not_runtime": true,
+      "input": "RESULT checks=2",
+      "legacy_accepts": true
+    },
+    {
+      "synthetic_not_runtime": true,
+      "input": "RESULT checks=0 failures=[] window_only=true",
+      "legacy_accepts": true
+    },
+    {
+      "synthetic_not_runtime": true,
+      "input": "RESULT {\"checks\":2,\"failures\":1}",
+      "legacy_accepts": true
+    },
+    {
+      "synthetic_not_runtime": true,
+      "input": "RESULT checks=1 failures=[bad]\nRESULT checks=1 failures=[]",
+      "legacy_accepts": true
+    },
+    {
+      "synthetic_not_runtime": true,
+      "input": "RESULT arbitrary",
+      "legacy_accepts": true
+    }
+  ],
+  "top_level_scene_count": 340,
+  "nested_scenes_excluded_by_runner": [
+    "tests\\authority_worker_acceptance_v4\\ready_contract_test.tscn",
+    "tests\\server_signal_acceptance_v3\\signal_window_test.tscn"
+  ],
+  "lan_matrix.json": {
+    "count": 16,
+    "statuses": {
+      "pending_user_test": 16
+    }
+  },
+  "cross_network_matrix.json": {
+    "count": 12,
+    "statuses": {
+      "pending_user_test": 12
+    }
+  }
+}

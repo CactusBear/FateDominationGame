@@ -1,0 +1,11 @@
+{
+  "scripts/net/server_bootstrap.gd": "40364b7ef75681b4c2a0e0b8c0854f67306b9b50008f2455e0ebed269ae69aec",
+  "scripts/net/server_process_signals.gd": "354918be4b757882fe2f671e1a2bb02f1d32bad6b80cfac763c3dd6f192a373f",
+  "scripts/net/p2p_signal_server.gd": "50df01a45cbbf22fc327e21f9373d25253f372e07e9431aeb782cb3ca5a623d9",
+  "scripts/net/p2p_invite.gd": "1dee14c38ac133c3b32fe9662780ecd2845d33f3eade0c7739113d2c455d97ba",
+  "scripts/net/webrtc_link.gd": "0dda042895351e334eb8e4b14543a3eb08cbd1e22790885e64d4f7eef59682ad",
+  "assets/scenes/main_menu/server_bootstrap.tscn": "749def658a997f100ea173da06601aa23fc5ff922b1107c729d166f2731fe735",
+  "addons/fate_server_signals/fate_server_signals.gdextension": "64fa13f8308b29f28c440ad06ea08eb6bf9e42508c4d2a1efbba49873d5be96d",
+  "addons/fate_server_signals/bin/libfate_server_signals.windows.x86_64.dll": "a3cd98205851c93914aa05f534e3547c414230903899e2e96f5f9094afe7e43f",
+  "addons/fate_server_signals/bin/libfate_server_signals.linux.x86_64.so": "9edf007f0e2327226e8a31f601bf8ad68a4f13b5beeb9f963a936d8154ad78fe"
+}

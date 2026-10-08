@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/server_signal_acceptance_v3/signal_window_test.tscn:headless",
+  "scene": "tests/server_signal_acceptance_v3/signal_window_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

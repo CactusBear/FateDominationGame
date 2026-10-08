@@ -1,0 +1,205 @@
+*** Begin Patch
+*** Add File: scripts/net/p2p/signal_host_registration.gd
++extends RefCounted
++
++# 候选协议核心：可信根由部署方注入。不能把客户端提交的签发钥作为可信根。
++const Identity = preload("res://scripts/net/identity/player_identity.gd")
++var trusted_issuer: String = ""
++var boot_id: String = ""
++var challenges: Dictionary = {}
++var challenge_ttl_ms: int = 30000
++
++func claims_context(claims: Dictionary) -> String:
++	return JSON.stringify(["signal-host-capability-v1", claims.session, claims.host_key, claims.authority_instance, claims.audience, claims.expires])
++
++func valid_claims(claims: Dictionary, audience: String, now_unix: int) -> bool:
++	var keys := claims.keys()
++	keys.sort()
++	if keys != ["audience", "authority_instance", "expires", "host_key", "session"]: return false
++	for field in ["session", "authority_instance", "audience"]:
++		if not claims[field] is String or claims[field].is_empty() or claims[field].length() > 256: return false
++	if not claims.host_key is String or Identity.fingerprint(claims.host_key).is_empty(): return false
++	# JSON 整数在传输层归一化之后进入本核心；不接受任意 float 身份/时限。
++	return claims.expires is int and claims.expires > now_unix and claims.audience == audience
++
++func issue(claims: Dictionary, issuer, audience: String, now_unix: int) -> Dictionary:
++	if not valid_claims(claims, audience, now_unix): return {}
++	var nonce := Crypto.new().generate_random_bytes(32)
++	var signature: PackedByteArray = issuer.sign_challenge(nonce, claims_context(claims))
++	if signature.size() != Identity.KEY_BITS / 8: return {}
++	return {"claims": claims.duplicate(true), "nonce": nonce, "signature": signature}
++
++func verify_capability(ticket: Dictionary, audience: String, now_unix: int) -> bool:
++	var keys := ticket.keys()
++	keys.sort()
++	if keys != ["claims", "nonce", "signature"] or not ticket.claims is Dictionary: return false
++	if not ticket.nonce is PackedByteArray or not ticket.signature is PackedByteArray: return false
++	if trusted_issuer.is_empty() or not valid_claims(ticket.claims, audience, now_unix): return false
++	return Identity.verify_challenge(trusted_issuer, ticket.nonce, ticket.signature, claims_context(ticket.claims))
++
++func begin(connection: int, ticket: Dictionary, audience: String, now_unix: int, now_ms: int) -> Dictionary:
++	if connection <= 0 or boot_id.is_empty() or challenge_ttl_ms <= 0: return {}
++	if not verify_capability(ticket, audience, now_unix): return {}
++	var challenge := Crypto.new().generate_random_bytes(32)
++	var request := Crypto.new().generate_random_bytes(16).hex_encode()
++	challenges[connection] = {"ticket": ticket.duplicate(true), "challenge": challenge, "request": request, "deadline": now_ms + challenge_ttl_ms}
++	return {"boot": boot_id, "request": request, "challenge": challenge}
++
++func proof_context(ticket: Dictionary, challenge_reply: Dictionary) -> String:
++	return JSON.stringify(["signal-host-register-v1", claims_context(ticket.claims), ticket.nonce.hex_encode(), ticket.signature.hex_encode(), challenge_reply.boot, challenge_reply.request])
++
++func prove(connection: int, reply: Dictionary, audience: String, now_unix: int, now_ms: int) -> Dictionary:
++	var keys := reply.keys()
++	keys.sort()
++	if keys != ["boot", "request", "signature"] or not reply.signature is PackedByteArray: return {}
++	if not challenges.has(connection): return {}
++	var pending: Dictionary = challenges[connection]
++	# 一次性挑战：错误证明也消耗本次请求；客户端重新申请，不能无限猜测。
++	challenges.erase(connection)
++	if reply.boot != boot_id or reply.request != pending.request or now_ms >= pending.deadline: return {}
++	if not verify_capability(pending.ticket, audience, now_unix): return {}
++	var context := {"boot": boot_id, "request": pending.request}
++	if not Identity.verify_challenge(pending.ticket.claims.host_key, pending.challenge, reply.signature, proof_context(pending.ticket, context)): return {}
++	return pending.ticket.claims.duplicate(true)
++
++func forget(connection: int) -> void:
++	challenges.erase(connection)
+*** Add File: scripts/net/p2p/signal_room_locator.gd
++extends RefCounted
++
++# 保留在信令 driver；不属于规则快照、恢复席位凭据或信令 server。
++var session_id: String = ""
++var authority_instance: String = ""
++var revision: int = 0
++var locator: Dictionary = {}
++
++func bind(session: String, instance: String) -> bool:
++	if session.is_empty() or instance.is_empty() or not session_id.is_empty(): return false
++	session_id = session
++	authority_instance = instance
++	return true
++
++func accept(sender: int, authenticated_host_peer: int, message: Dictionary) -> bool:
++	if sender != authenticated_host_peer or authenticated_host_peer != 1 or session_id.is_empty(): return false
++	var keys := message.keys()
++	keys.sort()
++	if keys != ["authority_instance", "boot", "kind", "revision", "room", "session", "url"]: return false
++	if message.kind != "signal_room_update" or message.session != session_id or message.authority_instance != authority_instance: return false
++	if not message.revision is int or message.revision <= revision: return false
++	if not message.url is String or not message.url.begins_with("wss://"): return false
++	if not message.boot is String or message.boot.length() != 32: return false
++	if not message.room is String or message.room.is_empty() or message.room.length() > 256: return false
++	for character in message.room:
++		if character not in "0123456789abcdef": return false
++	for character in message.boot:
++		if character not in "0123456789abcdef": return false
++	revision = message.revision
++	locator = message.duplicate(true)
++	return true
+*** Add File: tests/signal_host_registration_draft_test.gd
++extends SceneTree
++
++const Registration = preload("res://scripts/net/p2p/signal_host_registration.gd")
++const Locator = preload("res://scripts/net/p2p/signal_room_locator.gd")
++const Identity = preload("res://scripts/net/identity/player_identity.gd")
++const Client = preload("res://scripts/net/p2p/p2p_signal_client.gd")
++var checks: int = 0
++var failures: int = 0
++
++class FakeTransport extends RefCounted:
++	var closed: bool = false
++	func is_connected_to_host() -> bool: return true
++	func close() -> void: closed = true
++
++class FakeSession extends RefCounted:
++	var transport = FakeTransport.new()
++	var authority_host = RefCounted.new()
++	var closed: bool = false
++	func close() -> void: closed = true
++
++class FakeInvite extends RefCounted:
++	var cancelled: Array = []
++	var closed: bool = false
++	var link = RefCounted.new()
++	func cancel_offer(peer: int) -> void: cancelled.append(peer)
++	func close() -> void: closed = true
++
++func check(condition: bool, label: String) -> void:
++	checks += 1
++	if not condition:
++		failures += 1
++		push_error(label)
++
++func identity():
++	var value = Identity.new()
++	value._key = Crypto.new().generate_rsa(Identity.KEY_BITS)
++	return value
++
++func proof(core, ticket: Dictionary, challenge: Dictionary, host) -> Dictionary:
++	return {"boot": challenge.boot, "request": challenge.request, "signature": host.sign_challenge(challenge.challenge, core.proof_context(ticket, challenge))}
++
++func _initialize() -> void:
++	# 测试只创建内存临时 RSA fixture，不读取用户密钥、不给密钥落盘。
++	var issuer = identity()
++	var host = identity()
++	var attacker = identity()
++	var core = Registration.new()
++	core.trusted_issuer = issuer.public_key()
++	core.boot_id = "a".repeat(32)
++	var claims := {"session": "host-session", "host_key": host.public_key(), "authority_instance": "worker-instance", "audience": "relay-service", "expires": 2000}
++	var ticket: Dictionary = core.issue(claims, issuer, "relay-service", 1000)
++	check(core.verify_capability(ticket, "relay-service", 1000), "valid grant")
++	check(not core.verify_capability(ticket, "other-relay", 1000), "audience fence")
++	check(not core.verify_capability(ticket, "relay-service", 2000), "expiry fence")
++	var forged := ticket.duplicate(true)
++	forged.claims.host_key = attacker.public_key()
++	check(not core.verify_capability(forged, "relay-service", 1000), "self-reported key rejected")
++	var challenge: Dictionary = core.begin(2, ticket, "relay-service", 1000, 0)
++	var response: Dictionary = proof(core, ticket, challenge, host)
++	check(core.prove(3, response, "relay-service", 1000, 1).is_empty(), "socket fence")
++	check(not core.prove(2, response, "relay-service", 1000, 1).is_empty(), "host proof")
++	check(core.prove(2, response, "relay-service", 1000, 2).is_empty(), "one shot proof")
++	challenge = core.begin(2, ticket, "relay-service", 1000, 3)
++	check(core.prove(2, proof(core, ticket, challenge, attacker), "relay-service", 1000, 4).is_empty(), "stolen capability no key")
++	challenge = core.begin(2, ticket, "relay-service", 1000, 5)
++	check(core.prove(2, proof(core, ticket, challenge, host), "relay-service", 1000, 30005).is_empty(), "challenge deadline")
++	challenge = core.begin(2, ticket, "relay-service", 1000, 6)
++	response = proof(core, ticket, challenge, host)
++	# 新对象模拟全部内存丢失；只注入同一可信公钥，不搬旧挑战。
++	var restarted = Registration.new()
++	restarted.trusted_issuer = issuer.public_key()
++	restarted.boot_id = "b".repeat(32)
++	check(restarted.prove(2, response, "relay-service", 1000, 7).is_empty(), "old instance proof rejected")
++	challenge = restarted.begin(2, ticket, "relay-service", 1000, 8)
++	check(not restarted.prove(2, proof(restarted, ticket, challenge, host), "relay-service", 1000, 9).is_empty(), "fresh instance host proof")
++	var untrusted = Registration.new()
++	untrusted.boot_id = "c".repeat(32)
++	check(untrusted.begin(2, ticket, "relay-service", 1000, 1).is_empty(), "missing durable trust fails closed")
++	var locator = Locator.new()
++	check(locator.bind("host-session", "worker-instance"), "pin session")
++	var update := {"kind": "signal_room_update", "session": "host-session", "authority_instance": "worker-instance", "boot": "b".repeat(32), "revision": 2, "room": "abcdef", "url": "wss://relay.example.test"}
++	check(not locator.accept(2, 1, update), "guest cannot publish locator")
++	check(locator.accept(1, 1, update), "host locator accepted")
++	check(not locator.accept(1, 1, update), "duplicate/replay locator rejected")
++	var wrong := update.duplicate(true)
++	wrong.revision = 3
++	wrong.authority_instance = "replacement-worker"
++	check(not locator.accept(1, 1, wrong), "locator cannot change authority instance")
++	# 直接调用真实生产 client；只替换网络/进程边界，验证失败清理不关闭既有资源。
++	var client = Client.new()
++	var session = FakeSession.new()
++	var invite = FakeInvite.new()
++	client.invite = invite
++	client._session = weakref(session)
++	client._role = "host"
++	client._pending[10] = {"peer_id": 7}
++	client._joined_clients[11] = 8
++	var worker = session.authority_host
++	var link = invite.link
++	client._fail_signaling("fixture signaling restart")
++	check(not session.closed and not session.transport.closed and not invite.closed, "signaling failure preserves data and authority")
++	check(session.authority_host == worker and invite.link == link, "resource object identity unchanged")
++	check(client._joined_clients == {11: 8} and client._pending.is_empty() and invite.cancelled == [7], "only incomplete offers cancelled")
++	print("RESULT signal_host_registration_draft checks=%d failures=%d" % [checks, failures])
++	quit(0 if failures == 0 else 1)
+*** End Patch

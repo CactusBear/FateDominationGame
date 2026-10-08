@@ -1,0 +1,20 @@
+[
+  {
+    "file": "p2p_signal_client.gd",
+    "added_lines": 50,
+    "removed_lines": 23,
+    "added_line_whitespace_clean": true
+  },
+  {
+    "file": "p2p_signal_server.gd",
+    "added_lines": 23,
+    "removed_lines": 9,
+    "added_line_whitespace_clean": true
+  },
+  {
+    "file": "p2p_invite.gd",
+    "added_lines": 21,
+    "removed_lines": 3,
+    "added_line_whitespace_clean": true
+  }
+]

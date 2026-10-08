@@ -1,0 +1,50 @@
+{
+  "scope": "Static source contracts and in-memory mutations; no Godot/native runtime execution",
+  "checks": {
+    "no_native_backend_no_bool_callback_bypass": true,
+    "ownership_gate_before_verifier": true,
+    "verifier_strict_bool": true,
+    "no_pid_or_ready_as_os_proof": true,
+    "create_room_reject_before_side_effects": true,
+    "recover_room_reject_before_side_effects": true,
+    "poll_reject_before_heartbeat_ready_or_kill": true,
+    "stop_no_unverified_pid_kill": true,
+    "destructor_no_unverified_pid_kill": true,
+    "lan_p2p_reject_before_listener_and_peer_takeover": true,
+    "error_is_explicit": true
+  },
+  "checks_passed": 11,
+  "checks_total": 11,
+  "mutations_rejected": {
+    "fake_true_callback_or_capability": [
+      "no_native_backend_no_bool_callback_bypass"
+    ],
+    "pid_liveness_as_proof": [
+      "verifier_strict_bool",
+      "no_pid_or_ready_as_os_proof"
+    ],
+    "ready_self_report_as_proof": [
+      "verifier_strict_bool",
+      "no_pid_or_ready_as_os_proof"
+    ],
+    "non_bool_verifier_success": [
+      "verifier_strict_bool"
+    ],
+    "create_without_capability_gate": [
+      "create_room_reject_before_side_effects"
+    ],
+    "recover_without_capability_gate": [
+      "recover_room_reject_before_side_effects"
+    ],
+    "poll_fake_green": [
+      "poll_reject_before_heartbeat_ready_or_kill"
+    ],
+    "destructor_pid_kill": [
+      "destructor_no_unverified_pid_kill"
+    ],
+    "host_infinite_wait": [
+      "lan_p2p_reject_before_listener_and_peer_takeover"
+    ]
+  },
+  "mutation_count": 9
+}

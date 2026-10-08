@@ -10,8 +10,18 @@ var load_masters_finished:bool = false
 var load_servants_finished:bool = false
 var roster_catalog = preload("res://scripts/selection/roster_catalog.gd").new()
 
+static func is_server_worker_process(arguments:PackedStringArray = OS.get_cmdline_user_args()) -> bool:
+	for role in ["--server-console", "--room-data-validation-worker", "--server-room-worker", "--server-gateway", "--server-signaling"]:
+		if arguments.has(role):
+			return true
+	return false
+
 func _ready():
-	if OS.get_cmdline_user_args().has("--room-data-validation-worker") or OS.get_cmdline_user_args().has("--server-room-worker") or OS.get_cmdline_user_args().has("--server-gateway"):
+	# 正式客户端也会复用自身可执行文件启动后台职责，路由复用统一入口。
+	if not OS.has_feature("editor") and not OS.has_feature("fate_server") and is_server_worker_process():
+		get_tree().change_scene_to_file.call_deferred("res://assets/scenes/main_menu/server_bootstrap.tscn")
+		return
+	if OS.has_feature("fate_server") or OS.get_cmdline_user_args().has("--server-console") or OS.get_cmdline_user_args().has("--room-data-validation-worker") or OS.get_cmdline_user_args().has("--server-room-worker") or OS.get_cmdline_user_args().has("--server-gateway"):
 		return
 	load_game()
 	pass

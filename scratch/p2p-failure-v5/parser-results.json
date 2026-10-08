@@ -1,0 +1,17 @@
+{
+  "scope": "gdtoolkit syntax only; no Godot type/API validation",
+  "results": [
+    {
+      "file": "scripts/net/p2p/p2p_signal_client.gd",
+      "parsed": true
+    },
+    {
+      "file": "scripts/net/p2p/p2p_signal_server.gd",
+      "parsed": true
+    },
+    {
+      "file": "scripts/net/p2p/p2p_invite.gd",
+      "parsed": true
+    }
+  ]
+}

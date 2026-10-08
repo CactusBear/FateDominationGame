@@ -1,0 +1,1062 @@
+{
+  "schema_version": 6,
+  "scope": "PLAN_ONLY_NOT_RUNTIME_RESULTS",
+  "cases": [
+    {
+      "id": "FREEZE",
+      "layer": "static",
+      "title": "冻结代码/测试/资源/构建清单",
+      "depends_on": [],
+      "assertions": [
+        "source_and_tests_frozen",
+        "ignored_tests_in_manifest",
+        "build_hashes_recorded"
+      ]
+    },
+    {
+      "id": "STATIC",
+      "layer": "static",
+      "title": "静态入口、权限和数据屏障",
+      "depends_on": [
+        "FREEZE"
+      ],
+      "assertions": [
+        "parse_and_resource_checks",
+        "all_transport_entrypoints_reviewed",
+        "no_runtime_claim"
+      ]
+    },
+    {
+      "id": "WINDOW",
+      "layer": "window",
+      "title": "真实窗口单机多进程入口",
+      "depends_on": [
+        "STATIC"
+      ],
+      "assertions": [
+        "isolated_users_and_caches",
+        "formal_ui_human_inputs",
+        "authority_on_host",
+        "actual_window_branches_executed"
+      ]
+    },
+    {
+      "id": "RW01",
+      "layer": "window",
+      "title": "真实窗口与隔离",
+      "depends_on": [
+        "WINDOW"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "四个独立进程、身份和缓存目录；真人能用鼠标键盘操作；主菜单入口可达。",
+      "steps": "运行准备脚本；分别打开 H/G/S/X 四个真实窗口，H 从默认开场经主菜单进入联机，G/S 可直接大厅；检查窗口、PID、日志和用户目录。"
+    },
+    {
+      "id": "RW02",
+      "layer": "window",
+      "title": "身份合法输入与边界",
+      "depends_on": [
+        "RW01"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "合法为英文字母/下划线/数字、首字符非数字、最多32字符；非法不得连接；33字符截断或拒绝行为明确记录，不能产生超长身份。",
+      "steps": "H/G/S 输入各自测试用户名和昵称；依次测试空、数字开头、中文、空格、短横线，再测试32字符与粘贴33字符；独立服务端登记合法身份。"
+    },
+    {
+      "id": "RW03",
+      "layer": "window",
+      "title": "重复昵称与用户名唯一",
+      "depends_on": [
+        "RW02"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "昵称可重复且以用户名消歧；重复用户名拒绝；用户名区分大小写；UI 不显示密钥、指纹或票据。",
+      "steps": "G/S 设同一昵称、不同用户名加入；X 用自己的新身份登记 G 的用户名；再测试仅大小写不同用户名。"
+    },
+    {
+      "id": "RW04",
+      "layer": "window",
+      "title": "建房加入与观战角色",
+      "depends_on": [
+        "RW01"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "三端同一房间；H房主、G玩家、S观战；观战不占玩家席位、不参与准备门槛；规则权威在房主机器。",
+      "steps": "H 选局域网、监听127.0.0.1、端口24680、AI=0创建；G 以玩家加入；S 勾观战加入；选模式时记录真人席位容量。"
+    },
+    {
+      "id": "RW05",
+      "layer": "window",
+      "title": "房间密码正反例",
+      "depends_on": [
+        "RW04"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "默认无密码；错误拒绝且成员列表不增加；正确可加入；仅房主大厅可修改；清空取消；密码字段掩码。",
+      "steps": "新房默认无密码加入一次；H大厅设置测试密码，X空密码/错误密码/正确密码分别加入；G尝试修改；H清空后X再加入；重新设密码用于后续。"
+    },
+    {
+      "id": "RW06",
+      "layer": "window",
+      "title": "数据选择与同步屏障",
+      "depends_on": [
+        "RW04"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "只有明确批准的条目及声明依赖进入房间；权威清单一致；未确认当前数据修订的成员不能越过屏障；观战也同步公开资产。",
+      "steps": "H点房间数据，按玩家与条目选择H/G来源、保留一项、排除一项，确认依赖；G/S点同步数据；同步中尝试准备和开始；完成后再准备。"
+    },
+    {
+      "id": "RW07",
+      "layer": "window",
+      "title": "同名数据冲突与缓存",
+      "depends_on": [
+        "RW06"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "冲突由房主明确处理而非客户端覆盖；缓存默认开启、可清理；修订变化旧确认失效；牌图与条目来自房间数据而非本机同名模板。",
+      "steps": "在独立测试副本数据中准备同名不同内容条目（保留原件及哈希）；H明确选择来源后同步；再次加入检查缓存；G用清缓存按钮后重同步；H改批准清单。"
+    },
+    {
+      "id": "RW08",
+      "layer": "window",
+      "title": "选人权限与隐私",
+      "depends_on": [
+        "RW06"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "模式规则由数据决定；已占用项不可重复；观战不能选人或开始；随机从者姓名和职阶不在共用选人名单公开，只提示分配完成。",
+      "steps": "全员同步准备；H开始选人；H/G分别按模式选择未占用御主，G尝试已占用项；S尝试选人/开始；用随机分配模式再跑一局。"
+    },
+    {
+      "id": "RW09",
+      "layer": "window",
+      "title": "开局顺位与归属",
+      "depends_on": [
+        "RW08"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "进入对局沿用选人完成生成的顺位，不重抽、不改ID/归属；下一回合顺位顺时针后移一位；本地占位显示我方。",
+      "steps": "选人完成记录顺位；H进入对局；三窗核对公开顺位、御主归属及玩家ID；推进回合结束。"
+    },
+    {
+      "id": "RW10",
+      "layer": "window",
+      "title": "真人对局输入与权威",
+      "depends_on": [
+        "RW09"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "输入到权威提交、扣费、入场、日志、三端公开刷新闭环；预览取消不改变状态；不重复扣费；S不能发游戏意图。",
+      "steps": "H/G各从真实卡位悬浮、查看说明、选牌、确认出牌、取消再选、发动一项可用技能、移动并结束行动，至少完成一整回合；S点击相同区域。"
+    },
+    {
+      "id": "RW11",
+      "layer": "window",
+      "title": "非当前行动者亲自答复",
+      "depends_on": [
+        "RW10"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "等待由实际待答者授权，而非当前行动者；G私有提示可见；H不能代答，S不能答；答复后权威仅续行一次。",
+      "steps": "选择已有需要目标玩家答复的合法牌/效果；H发动指向G；G在自己窗口选择同意/拒绝或选项；分别测试两次；S尝试答复。"
+    },
+    {
+      "id": "RW12",
+      "layer": "window",
+      "title": "观战隐私与中途加入",
+      "depends_on": [
+        "RW10"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "仅看到允许公开的数据；隐藏手牌/未公开真名等不得经说明或日志泄露；公开后正常更新；中途观战不改变顺位/资源/归属。",
+      "steps": "S查看每个玩家头像、手牌/技能、说明、战局日志、抽屉；X以观战身份在进行中加入；公开一张牌后重新检查。"
+    },
+    {
+      "id": "RW13",
+      "layer": "window",
+      "title": "客机掉线与原进程重连",
+      "depends_on": [
+        "RW11"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "真人掉线不交给AI；权威暂停/等待合法答复而不代答；同原进程恢复原席位，公开状态一致，动作不重复；主动离开不算断线。",
+      "steps": "在G待答或行动时记录检查点；按确认的G PID终止该窗口，或在保留进程的本机连接上制造断线；本用例优先保留进程并使用重新连接按钮；H/S观察。"
+    },
+    {
+      "id": "RW14",
+      "layer": "window",
+      "title": "客机进程退出后恢复",
+      "depends_on": [
+        "RW13"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "恢复凭据及认证匹配时回到原member_id/player_id/角色；不存在持久恢复入口则BLOCKED，禁止假设按钮可跨进程恢复。",
+      "steps": "用新房在完整行动后保留原G用户目录；关闭/终止G进程；从同一G副本重新启动，走实际恢复入口。"
+    },
+    {
+      "id": "RW15",
+      "layer": "window",
+      "title": "大厅房主转移",
+      "depends_on": [
+        "RW04"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "房主管理权按已选稳定成员转移，旧房主失权；非法目标明确拒绝；不暗示计算权威或机器随房主管理身份自动迁移。",
+      "steps": "大厅H选中G点移交房主；G改一项设置；H再试修改；查看观战S能否被误选为普通房主。"
+    },
+    {
+      "id": "RW16",
+      "layer": "window",
+      "title": "房主窗口/权威崩溃边界",
+      "depends_on": [
+        "RW10"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "界面退出与权威退出分别记录；连接明确中断，真人不转AI；无已实现权威迁移则不能自动宣称恢复；原存档保留。",
+      "steps": "保存完整检查点；先关闭H界面观察权威PID，再单独在新轮终止已确认权威工作PID；G/S保持窗口。"
+    },
+    {
+      "id": "RW17",
+      "layer": "window",
+      "title": "服务端工作进程恢复原局",
+      "depends_on": [
+        "LINUX-MATCH"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "房间登记保留；先读旧档和校验已有数据再持久化；playing重启进入restoring；所有原真人身份密钥匹配重连并过数据屏障后才恢复playing；资源/顺位/待答与档一致。",
+      "steps": "先完成一回合并保存；记录room_id/instance_id/权威PID/存档；只终止该房间工作进程，保留网关；管理员用help确认的房间恢复入口重启；H/G以原认证身份重连；S随后观战。"
+    },
+    {
+      "id": "RW18",
+      "layer": "window",
+      "title": "身份继承成功与受限失败",
+      "depends_on": [
+        "LINUX-MATCH",
+        "RW03"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "只有认证房主可授权；继承绑定当前房间修订和请求序号、写审计；S恢复G原席位与归属而非新增玩家；旧凭据不能再抢占；UI无公钥/指纹/票据。",
+      "steps": "G掉线保留原席位；S保持已认证观战；当前已认证房主打开身份继承面板，按昵称/用户名选择稳定S成员，确认继承G；S完成旧观战连接关闭再重连；G再试旧恢复身份。"
+    },
+    {
+      "id": "RW19",
+      "layer": "window",
+      "title": "继承拒绝与旧档失败关闭",
+      "depends_on": [
+        "RW18"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "非房主/过期上下文拒绝；认证密钥不匹配先拒绝；旧档缺绑定失败关闭并保留原目录/配置/存档，不让首个持票者认领。",
+      "steps": "G/X/非房主S尝试打开继承入口；房主打开面板后让成员或房间修订改变再提交；在隔离复制的恢复档缺失成员认证绑定后尝试恢复（不得改正式档）；观察持票但不同认证身份恢复是否被拒。"
+    },
+    {
+      "id": "RW20",
+      "layer": "window",
+      "title": "预算配置与异常提示",
+      "depends_on": [
+        "RW04"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "0秒效果等同关闭但开关独立；计算后台进行；超限称疑似异常，弹窗含所属玩家、来源牌、具体效果；不常驻预算原因/步数；原生不可暂停区间不承诺硬时限。",
+      "steps": "大厅分别测随机模拟关闭、开启0秒、开启小正预算；协作执行预算独立开关；在测试副本批准的已知异常效果触发预算超限，三窗观察且在预算中移动鼠标。"
+    },
+    {
+      "id": "RW21",
+      "layer": "window",
+      "title": "异常跳过完整回退",
+      "depends_on": [
+        "RW20"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "仅授权者处理；整个效果及连锁回到发动前，资源/位置/牌区/标记/次数/待答/历史一致；缺完整可验证检查点不得伪称跳过成功，只暂停并提供安全恢复/重开/回大厅。",
+      "steps": "准备带前置扣费、移动、标记或连锁变化的受控异常；记录发动前完整检查点；触发后房主选择跳过，客机/观战尝试代选。"
+    },
+    {
+      "id": "RW22",
+      "layer": "window",
+      "title": "当前阵容重开与回大厅重选",
+      "depends_on": [
+        "RW20"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "重开保留规定阵容与归属、不继承部分扣费/残局；回大厅允许重选；大厅预算设置保留；新对局状态与旧档隔离；客机观战不能越权。",
+      "steps": "另起异常轮选择按当前阵容重开；再起一轮选择回大厅重选；保存重开前阵容/顺位/身份/预算；G/S尝试处理异常。"
+    },
+    {
+      "id": "RW23",
+      "layer": "window",
+      "title": "保存、正常关闭与恢复",
+      "depends_on": [
+        "LINUX-MATCH"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "权威机器保存完整档；成功保存才关闭；凭据明文不落恢复档；原档不被空状态覆盖；恢复复制原档并验证数据，继续行动不重复扣费；客户端不能冒充权威存档。",
+      "steps": "勾记录对局；完成一回合保存，记match.log目录；H/G/S按正常离开关闭，服务端用实际保存关闭入口；重新启动，H用恢复存档选择match.log并确认，原真人重连同步。"
+    },
+    {
+      "id": "RW24",
+      "layer": "window",
+      "title": "保存失败与失败现场收集",
+      "depends_on": [
+        "LINUX-MATCH"
+      ],
+      "assertions": [
+        "all_declared_branches_observed",
+        "authority_log_and_state_comparison",
+        "all_steps_reviewed"
+      ],
+      "source": "tests/real_world_acceptance_v5/checklist.csv",
+      "expected": "保存失败明确反馈、不能假报成功或覆盖旧档/凭据；旧档保留；证据齐全才PASS；阻塞与未执行不可算通过。",
+      "steps": "仅在隔离测试存储目录通过可恢复权限/只读方式制造保存失败；触发保存关闭/继承保存，观察是否保留旧档；恢复权限后再试；最后整理全部结果。"
+    },
+    {
+      "id": "LAN-01",
+      "layer": "lan",
+      "title": "手填同网段 IP 与端口",
+      "depends_on": [
+        "WINDOW"
+      ],
+      "assertions": [
+        "双方房间快照一致且操作得到权威确认",
+        "不同物理设备的真实网卡存在双向 UDP",
+        "客机未独立执行规则"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-02",
+      "layer": "lan",
+      "title": "主客交换与第二端口",
+      "depends_on": [
+        "LAN-01"
+      ],
+      "assertions": [
+        "新主机实际监听 Q，客机使用 Q",
+        "未隐式回退 P",
+        "记录交换后的防火墙与真实拓扑"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-03",
+      "layer": "lan",
+      "title": "错误地址端口及 UDP 占用",
+      "depends_on": [
+        "LAN-01"
+      ],
+      "assertions": [
+        "三项均明确失败且 UI 可继续操作",
+        "不自动换端口",
+        "原监听房间与其他成员不受影响"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-04",
+      "layer": "lan",
+      "title": "最小防火墙允许与阻断",
+      "depends_on": [
+        "LAN-01"
+      ],
+      "assertions": [
+        "阻断期间建连失败，保存诊断",
+        "恢复规则后成功",
+        "未关闭全局防火墙且本次规则可追踪恢复"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-05",
+      "layer": "lan",
+      "title": "房间密码正反例",
+      "depends_on": [
+        "LAN-01"
+      ],
+      "assertions": [
+        "空/错误密码无成员、席位和私有快照",
+        "正确密码才成功",
+        "共享证据不含密码或恢复票据"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-06",
+      "layer": "lan",
+      "title": "真实规则文件卡图同步与屏障",
+      "depends_on": [
+        "LAN-01"
+      ],
+      "assertions": [
+        "逐文件相对路径/字节量/SHA-256 相同",
+        "加载及依赖校验成功",
+        "未确认当前数据版本时开始被拒",
+        "仅当前批准集合用于本局"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-07",
+      "layer": "lan",
+      "title": "按玩家条目选取与同名冲突",
+      "depends_on": [
+        "LAN-06"
+      ],
+      "assertions": [
+        "未选择条目不进入本局",
+        "不同内容不自动按来源优先级覆盖",
+        "本机原始 data 未修改"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-08",
+      "layer": "lan",
+      "title": "缓存与中断同步",
+      "depends_on": [
+        "LAN-06"
+      ],
+      "assertions": [
+        "坏缓存拒绝或重取并重新校验",
+        "不发布半成品，不误报 data_ready",
+        "当前版本完整确认后才开局",
+        "原始数据及存档不被清理"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-09",
+      "layer": "lan",
+      "title": "三机同时观战及中途入局",
+      "depends_on": [
+        "LAN-06"
+      ],
+      "assertions": [
+        "观战不占真人席位",
+        "无规则操作权限且只见公共状态",
+        "中途入局获当前公共快照与后续更新",
+        "无他人手牌或私有待答泄漏"
+      ],
+      "minimum_devices": 3,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-10",
+      "layer": "lan",
+      "title": "房主管理权转让非权威迁移",
+      "depends_on": [
+        "LAN-06"
+      ],
+      "assertions": [
+        "全端权限与标签刷新",
+        "新房主可管理，旧房主及非房主被拒",
+        "实际计算权威仍在 A，管理转让不当作主机迁移"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-11",
+      "layer": "lan",
+      "title": "真人客机物理断网暂停",
+      "depends_on": [
+        "LAN-06"
+      ],
+      "assertions": [
+        "保留真人席位及同一待答",
+        "需要 B 输入的推进停止",
+        "不交给 AI，无重复费用或动作",
+        "客户端给出可理解的断网反馈"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-12",
+      "layer": "lan",
+      "title": "同一身份重连与拒绝冒领",
+      "depends_on": [
+        "LAN-11"
+      ],
+      "assertions": [
+        "同一合法身份回原席位并收到更新修订",
+        "同名新身份不能冒领",
+        "原待答继续，无重复扣费/发牌/结算",
+        "无恢复票据进入公开证据"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-13",
+      "layer": "lan",
+      "title": "观战物理断网不阻塞真人",
+      "depends_on": [
+        "LAN-09"
+      ],
+      "assertions": [
+        "不产生真人掉线等待",
+        "A/B 对局仍可推进",
+        "C 获当前公共局面且无私有状态"
+      ],
+      "minimum_devices": 3,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-14",
+      "layer": "lan",
+      "title": "权威进程存活时主机断网恢复",
+      "depends_on": [
+        "LAN-06"
+      ],
+      "assertions": [
+        "双方不另起分叉或 AI 托管局",
+        "原进程存活且身份重认证后状态一致",
+        "不把关进程的崩溃恢复混为本例通过"
+      ],
+      "minimum_devices": 2,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-15",
+      "layer": "lan",
+      "title": "四机并发上传与多人重连",
+      "depends_on": [
+        "LAN-06",
+        "LAN-12",
+        "LAN-09"
+      ],
+      "assertions": [
+        "C 来源/偏移/哈希与其他连接不被 B 断网破坏",
+        "只释放失联来源的在途资源",
+        "B/C 各回原席位，不串号或重复结算",
+        "D 公共观战仍正确"
+      ],
+      "minimum_devices": 4,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "LAN-16",
+      "layer": "lan",
+      "title": "三机正式 UI 真人完整局",
+      "depends_on": [
+        "LAN-06",
+        "LAN-09",
+        "LAN-10",
+        "LAN-12",
+        "LAN-13",
+        "LAN-14"
+      ],
+      "assertions": [
+        "终局及关键动作得到主客对应确认",
+        "私有提示仅有权真人能答",
+        "观战全程公共信息",
+        "实际权威仅主机，客机只提交意图"
+      ],
+      "minimum_devices": 3,
+      "source": "tests/real_world_acceptance_v5/lan_matrix.json"
+    },
+    {
+      "id": "CN01",
+      "layer": "p2p",
+      "title": "different_public_egress_baseline",
+      "depends_on": [
+        "LAN-01",
+        "P2P-BUILD"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "manual_p2p",
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": true,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "CN02",
+      "layer": "p2p",
+      "title": "home_router_to_home_router",
+      "depends_on": [
+        "CN01"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "manual_p2p",
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": true,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "CN03",
+      "layer": "p2p",
+      "title": "home_router_to_mobile_hotspot",
+      "depends_on": [
+        "CN01"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "manual_p2p",
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": true,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "CN04",
+      "layer": "p2p",
+      "title": "independent_mobile_hotspots",
+      "depends_on": [
+        "CN01"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "manual_p2p",
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": true,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "CN05",
+      "layer": "p2p",
+      "title": "evidenced_cgnat_double_nat_or_endpoint_dependent_mapping",
+      "depends_on": [
+        "CN01"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "manual_p2p",
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": false,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "CN06",
+      "layer": "p2p",
+      "title": "ipv4_ipv6_address_family_compatibility",
+      "depends_on": [
+        "CN01"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "manual_p2p",
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": false,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "CN07",
+      "layer": "p2p",
+      "title": "stun_reachable_one_side_blocked_both_blocked_dns_failure",
+      "depends_on": [
+        "CN01"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "manual_p2p",
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": false,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "CN08",
+      "layer": "p2p",
+      "title": "signaling_disconnect_after_direct_business_ready",
+      "depends_on": [
+        "CN01"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": true,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "CN09",
+      "layer": "p2p",
+      "title": "signaling_wrong_port_or_unreachable_before_handshake",
+      "depends_on": [
+        "CN01"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": false,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "CN10",
+      "layer": "p2p",
+      "title": "peer_udp_ports_blocked_or_ice_timeout",
+      "depends_on": [
+        "CN01"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "manual_p2p",
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": false,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "CN11",
+      "layer": "p2p",
+      "title": "guest_network_disconnect_and_reconnect",
+      "depends_on": [
+        "CN01"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "manual_p2p",
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": true,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "CN12",
+      "layer": "p2p",
+      "title": "turn_url_and_relay_candidate_rejection",
+      "depends_on": [
+        "CN01"
+      ],
+      "assertions": [
+        "all_modes_directions_and_declared_variants_reviewed",
+        "business_or_expected_rejection_observed",
+        "host_authority_no_ai_takeover",
+        "no_turn_or_game_relay"
+      ],
+      "modes": [
+        "manual_p2p",
+        "signaling_p2p"
+      ],
+      "requires_direct_connection": false,
+      "source": "tests/real_world_acceptance_v5/cross_network_matrix.json"
+    },
+    {
+      "id": "P2P-BUILD",
+      "layer": "static",
+      "title": "WebRTC扩展与信令包前置",
+      "depends_on": [
+        "STATIC"
+      ],
+      "assertions": [
+        "target_extension_exported",
+        "stun_only_config",
+        "signal_server_role_isolated"
+      ]
+    },
+    {
+      "id": "LINUX-PREFLIGHT",
+      "layer": "linux",
+      "title": "Linux导出包/依赖/帮助/存储",
+      "depends_on": [
+        "STATIC"
+      ],
+      "assertions": [
+        "real_linux_process",
+        "native_libraries_loaded",
+        "isolated_storage",
+        "actual_help_commands_recorded"
+      ]
+    },
+    {
+      "id": "LINUX-MATCH",
+      "layer": "linux",
+      "title": "独立网关+房间工作进程+远端真人完整局",
+      "depends_on": [
+        "LINUX-PREFLIGHT",
+        "RW10"
+      ],
+      "assertions": [
+        "authority_on_linux",
+        "gateway_and_worker_id_bound",
+        "real_human_match_and_private_answers",
+        "public_spectator_privacy"
+      ]
+    },
+    {
+      "id": "LINUX-WORKER-RESTART",
+      "layer": "linux",
+      "title": "仅子进程重新就绪",
+      "depends_on": [
+        "LINUX-MATCH"
+      ],
+      "assertions": [
+        "exact_owned_worker_fault",
+        "new_pid_and_instance",
+        "fresh_ready_not_match_recovery"
+      ]
+    },
+    {
+      "id": "LINUX-LOBBY-RECOVERY",
+      "layer": "linux",
+      "title": "大厅登记与数据恢复",
+      "depends_on": [
+        "LINUX-WORKER-RESTART"
+      ],
+      "assertions": [
+        "gateway_keeps_room",
+        "verified_existing_data",
+        "no_empty_state_overwrite"
+      ]
+    },
+    {
+      "id": "LINUX-MATCH-RECOVERY",
+      "layer": "linux",
+      "title": "原局恢复",
+      "depends_on": [
+        "LINUX-LOBBY-RECOVERY",
+        "RW17"
+      ],
+      "assertions": [
+        "save_restart_reconnect_restore_order",
+        "all_original_humans_key_bound",
+        "restoring_before_playing",
+        "state_and_pending_actions_equal"
+      ]
+    },
+    {
+      "id": "LINUX-SIGNALS",
+      "layer": "linux",
+      "title": "SIGINT/SIGTERM保存关闭",
+      "depends_on": [
+        "LINUX-MATCH"
+      ],
+      "assertions": [
+        "request_pid_instance_receipt_bound",
+        "saved_before_exit",
+        "actual_exit_observed",
+        "ready_cleanup",
+        "disk_replay_verified"
+      ]
+    },
+    {
+      "id": "LINUX-SAVE-FAIL",
+      "layer": "linux",
+      "title": "保存失败保留旧档",
+      "depends_on": [
+        "LINUX-MATCH",
+        "RW24"
+      ],
+      "assertions": [
+        "failed_save_not_success",
+        "old_state_retained",
+        "owned_fault_restored"
+      ]
+    },
+    {
+      "id": "LINUX-GATEWAY-RESTART",
+      "layer": "linux",
+      "title": "网关异常恢复独立验证",
+      "depends_on": [
+        "LINUX-MATCH-RECOVERY"
+      ],
+      "assertions": [
+        "gateway_restart_not_worker_restart",
+        "room_registration_restored",
+        "authenticated_clients_reconnect"
+      ]
+    },
+    {
+      "id": "LINUX-LOAD",
+      "layer": "linux",
+      "title": "多房间并发与故障隔离",
+      "depends_on": [
+        "LINUX-MATCH-RECOVERY",
+        "LINUX-SIGNALS"
+      ],
+      "assertions": [
+        "distinct_room_instances",
+        "fault_confined_to_one_room",
+        "remaining_humans_continue",
+        "no_process_leaks"
+      ]
+    }
+  ]
+}

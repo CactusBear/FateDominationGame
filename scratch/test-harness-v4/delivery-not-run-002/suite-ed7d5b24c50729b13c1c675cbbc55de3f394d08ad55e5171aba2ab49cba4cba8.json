@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/held_skill_input_test.tscn:headless",
+  "scene": "tests/held_skill_input_test.tscn",
+  "mode": "headless",
+  "required": false,
+  "status": "NOT_RUN",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

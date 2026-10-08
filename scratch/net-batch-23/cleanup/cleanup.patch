@@ -1,0 +1,60 @@
+--- a/scripts/net/server/server_gateway.gd
++++ b/scripts/net/server/server_gateway.gd
+@@ -308,10 +308,10 @@
+ 		_room_disconnected(peer,route))
+ 	if link.connect_to("127.0.0.1", manager.rooms[id].port) != OK:
+ 		_fail(peer, "无法连接内部房间")
+-		link.close()
++		_close_route_link(link)
+ 		return
+ 	if not manager.binding_matches(binding,true):
+-		link.close()
++		_close_route_link(link)
+ 		_fail(peer,"连接期间房间实例已更换")
+ 		return
+ 	routes[peer] = route
+@@ -363,7 +363,15 @@
+ 	_recovery_route_sample(peer,route,"route_detach")
+ 	routes.erase(peer)
+ 	_release_creator(peer,route)
+-	route.link.close()
++	_close_route_link(route.link)
++
++## 内部 route 独占这三个应用层信号；仅在撤销路由后断开捕获 route 的闭包。
++## transport.close() 必须保留其他调用方的接线，以支持 session/transport 重连。
++func _close_route_link(link) -> void:
++	for route_signal in [link.message_received, link.packet_rejected, link.peer_disconnected]:
++		for connection in route_signal.get_connections():
++			route_signal.disconnect(connection.callable)
++	link.close()
+ 
+ func _detach(peer: int, stop_owned_room: bool = true) -> void:
+ 	_identity_admin_flags.erase(peer)
+--- a/scripts/net/session/authority_host_client.gd
++++ b/scripts/net/session/authority_host_client.gd
+@@ -19,11 +19,13 @@
+ func _init() -> void:
+ 	gateway.transport.message_received.disconnect(gateway._receive)
+ 	gateway.transport.message_received.connect(_receive)
+-	gateway.transport.peer_disconnected.connect(func(peer:int):
+-		_pending_joins.erase(peer)
+-		lan_identity.forget(peer))
++	gateway.transport.peer_disconnected.connect(_peer_disconnected)
+ 	gateway.lan_identity = lan_identity
+ 	gateway.accepting_rooms = false
++
++func _peer_disconnected(peer:int) -> void:
++	_pending_joins.erase(peer)
++	lan_identity.forget(peer)
+ 
+ func start(session:RefCounted, name:String, settings:Dictionary, host_mode:String, port:int = 0, bind_address:String = "*", peer:MultiplayerPeer = null, storage_root:String = "user://authority_rooms") -> Error:
+ 	if host_mode not in ["lan", "p2p"] or name.strip_edges().is_empty(): return ERR_INVALID_PARAMETER
+@@ -191,7 +193,7 @@
+ 		var tree = Engine.get_main_loop() as SceneTree
+ 		if tree != null and not tree.process_frame.is_connected(_drain_close): tree.process_frame.connect(_drain_close)
+ 	gateway.transport.close()
+-	for route in gateway.routes.values(): route.link.close()
++	for route in gateway.routes.values(): gateway._close_route_link(route.link)
+ 	gateway.routes.clear()
+ 	_pending_joins.clear()
+ 	_session = null

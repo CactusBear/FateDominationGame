@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/fd39_operations_test.tscn:headless",
+  "scene": "tests/fd39_operations_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

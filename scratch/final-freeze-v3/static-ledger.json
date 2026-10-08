@@ -1,0 +1,4860 @@
+{
+  "scope": "STATIC_NOT_RUN; no Godot was launched",
+  "freeze_approved": false,
+  "source_manifest_sha256": "76665c05f13cda9254b679ca5e785348509adae8c387dcaf84cb9bd92920da8e",
+  "scene_count": 340,
+  "rows": [
+    {
+      "suite_id": "tests/acceptance_audit_chain_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/acceptance_identity_state_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/acceptance_root_transaction_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/angra_fang_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/angra_fang_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/angra_mainyu_editor_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/angra_mainyu_editor_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/angra_mainyu_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/angra_mainyu_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/angra_mainyu_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/area_lock_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/area_lock_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/array_result_drag_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/array_result_drag_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/artoria_skills_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/ask_player_option_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/authority_worker_lifecycle_contract_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/avatar_entrance_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/avatar_entrance_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/avatar_parallel_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/avatar_parallel_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_board_v2_font_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_board_v2_font_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_board_v2_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_board_v2_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_broadcast_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_broadcast_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_event_discard_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_event_discard_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_log_button_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_log_button_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_play_groups_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_play_groups_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_score_report_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_scroll_full_game_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_scroll_full_game_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_scroll_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battle_scroll_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/battlefield_conceal_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/bellerophon_composition_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/bellerophon_edges_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/bellerophon_rules_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/bellerophon_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/bellerophon_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/board_presentation_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/board_presentation_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/board_requested_ui_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/board_requested_ui_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/card_browser_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/card_browser_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/card_effect_runtime_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/card_history_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/card_keyword_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/card_revealed_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/card_selection_mandatory_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/card_selection_owner_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/card_selection_sources_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/card_zone_browser_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/climax_elimination_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/climax_gated_ability_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/command_spell_box_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/command_spell_box_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/command_spell_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/create_card_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/current_skill_group_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/current_skill_group_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_console_pause_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_console_pause_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_console_scene_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_console_scene_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_console_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_console_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_identity_hand_full_game_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_identity_hand_full_game_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_identity_hand_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_identity_hand_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_identity_swap_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_identity_swap_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_unbounded_number_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/debug_unbounded_number_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/deferred_transaction_facts_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/deploy_rules_layer_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/deploy_rules_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/drawer_dismiss_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/drawer_dismiss_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/effect_body_fill2_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/effect_body_fill_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/engagement_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/extra_play_limit_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/fd39_operations_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/full_game_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/full_game_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/gateway_instance_binding_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/hand_fan_arc_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/hand_fan_arc_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/hand_fan_limits_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/hand_fan_limits_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/held_cards_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/held_cards_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/held_cards_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/held_skill_input_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/held_skill_input_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/ichi_no_tachi_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/identity_inheritance_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_codec_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_clipboard_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_clipboard_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_drag_edge_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_drag_edge_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_identity_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_identity_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_image_picker_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_image_picker_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_popup_palette_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_popup_palette_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_six_features_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_six_features_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_tutorial_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_tutorial_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_ui_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/json_maker_ui_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/load_snapshot_cache_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/local_spell_restore_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/local_spell_restore_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/location_benefit_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/magic_limit_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/main_menu_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/main_menu_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/mana_glow_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/mana_glow_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/mana_number_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/mana_number_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/mana_sigil_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/mana_sigil_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/mana_spend_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/mana_spend_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/masters_audit_fix_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/masters_debug_ui_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/masters_debug_ui_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/match_commands_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/match_driver_headless_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/match_driver_v2_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/match_driver_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/match_driver_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/match_journal_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/match_replay_pending_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/match_replay_recovered_copy_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/match_replay_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/match_replay_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/match_view_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/misc_rules_fix_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_assembly_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_blob_concurrent_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_blob_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_cache_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_cancel_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_cards_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_catalog_exchange_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_catalog_large_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_catalog_message_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_barrier_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_barrier_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_barrier_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_catalog_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_plan_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_selection_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_selection_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_source_disconnect_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_source_missing_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_source_withdraw_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_sync_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_data_validation_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_disconnect_pause_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_disconnect_pause_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_formal_entry_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_formal_entry_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_full_game_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_gateway_identity_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_group_selection_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_guard_config_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_guard_config_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_guard_config_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_guard_rollback_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_guard_rollback_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_guard_startup_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_hand_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_hand_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_identity_admin_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_identity_admin_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_identity_password_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_identity_password_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_identity_security_regression_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_ids_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_lobby_archive_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_lobby_concurrent_upload_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_lobby_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_lobby_transition_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_lobby_transition_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_lobby_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_lobby_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_locations_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_loop_risk_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_loop_risk_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_management_pause_causes_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_management_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_management_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_manifest_parts_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_match_archive_full_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_match_archive_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_match_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_member_identity_binding_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_menu_entry_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_menu_entry_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_move_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_opponent_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_opponent_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_options_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_authority_boundary_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_catalog_large_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_code_length_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_expiry_direct_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_guard_rollback_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_guard_rollback_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_invite_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_lobby_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_lobby_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_manifest_parts_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_match_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_match_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_resume_identity_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_resume_identity_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_short_code_client_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_signal_client_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_signal_expiry_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_signal_ip_limit_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_signal_limits_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_signal_lobby_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_signal_lobby_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_signal_match_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_signal_match_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_p2p_signal_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_packet_fragments_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_pending_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_play_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_player_identity_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_player_registry_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_process_full_game_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_process_full_game_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_process_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_recovery_state_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_resume_identity_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_resume_identity_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_room_assets_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_room_assets_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_room_assets_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_room_control_instance_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_room_json_settings_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_room_password_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_room_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_runtime_guard_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_runtime_guard_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_runtime_guard_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_selection_settings_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_selection_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_archive_match_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_archive_match_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_catalog_large_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_cfg_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_cli_p2p_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_cli_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_command_line_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_console_channel_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_console_close_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_console_close_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_console_create_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_console_create_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_console_save_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_console_save_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_data_approval_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_data_approval_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_data_approval_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_data_click_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_data_click_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_data_disconnect_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_data_risk_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_data_risk_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_data_withdraw_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_discovery_validation_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_export_create_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_export_identity_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_export_reload_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_export_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_gateway_restart_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_gateway_restart_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_gateway_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_identity_cli_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_info_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_info_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_kick_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_kick_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_create_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_create_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_gateway_restart_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_gateway_restart_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_match_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_match_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_pause_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_pause_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_paused_recovery_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_paused_recovery_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_preflight_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_recovery_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_recovery_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_save_recovery_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_linux_save_recovery_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_lobby_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_lobby_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_match_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_match_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_notice_match_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_notice_match_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_notice_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_notice_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_pause_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_pause_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_preflight_recovery_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_preflight_recovery_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_preflight_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_recovery_match_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_recovery_match_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_recovery_midmatch_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_recovery_midmatch_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_relay_cfg_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_reload_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_remote_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_resume_identity_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_resume_identity_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_roles_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_room_kick_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_room_kick_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_rooms_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_shutdown_failure_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_shutdown_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_shutdown_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_signal_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_server_signal_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_simulation_config_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_simulation_config_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_simulation_risk_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_simulation_risk_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_target_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_target_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_targets_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_transfer_boundaries_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_transport_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_v2_area_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_v2_area_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_v2_choice_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_v2_choice_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_v2_hand_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_v2_hand_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_v2_sources_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_v2_sources_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_v2_view_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_v2_view_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_validation_hard_timeout_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_validation_simulation_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_validation_task_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/net_webrtc_transport_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/ni_no_tachi_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/number_display_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/opening_grail_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/opening_grail_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/opening_input_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/opening_input_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/opening_portal_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/opening_portal_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/opening_warp_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/opening_warp_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/opponent_drawer_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/opponent_drawer_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/outpost_identity_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/overseer_knowledge_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/overseer_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/overseer_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/pending_board_power_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/phase_window_settlement_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/phase_window_settlement_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/piercing_cost_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/played_skill_order_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/played_skill_order_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/played_stack_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/played_stack_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/player_name_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/player_name_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/post_battle_choice_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/power_breakdown_scroll_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/power_breakdown_scroll_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/prepare_phase_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/private_knowledge_corrosion_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/recovery_path_safety_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/regular_play_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/reported_activation_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/reported_activation_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/reported_board_power_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/reported_ui_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/reported_ui_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/requirement_null_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/residue_pile_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/residue_pile_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/roster_live_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/roster_live_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/round_change_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/round_change_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_execution_frames_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_execution_state_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_chain_rollback_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_choice_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_continuation_occurrence_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_continuation_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_debug_hand_result_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_debug_hand_result_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_debug_hand_result_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_debug_identity_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_debug_result_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_debug_result_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_debug_result_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_empty_loop_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_event_add_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_event_place_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_event_reveal_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_game_start_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_loop_owner_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_native_event_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_native_refill_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_pending_atomic_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_phase_start_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_refill_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_regular_add_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_regular_group_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_rollback_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_root_transaction_v2_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_round_start_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_situation_magic_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_situation_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_time_point_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_true_name_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_guard_zone_notify_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_loop_analysis_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_random_simulation_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/rule_random_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/san_no_tachi_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/san_no_tachi_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/san_no_tachi_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/section5_engine_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/selection_mode_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/selection_mode_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/servant_optional_avatar_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/servant_skill_eight_magic_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/servant_skill_eight_magic_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/session_restart_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/surveil_window_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/surveil_window_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/switch_performance_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/switch_performance_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/takeoff_refresh_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/time_point_label_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/turn_order_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/turn_transition_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/turn_transition_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/twelve_labors_lifecycle_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/ui_mask_alpha_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/ui_mask_alpha_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/ui_refresh_cost_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/unlimited_blade_activation_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/unlimited_blade_activation_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/v2_confirmation_drag_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/v2_confirmation_drag_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/venue_rule_fixes_test.tscn:headless",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/zoom_and_desc_test.tscn:headless",
+      "required": false,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    },
+    {
+      "suite_id": "tests/zoom_and_desc_test.tscn:window",
+      "required": true,
+      "status": "NOT_RUN",
+      "exit": null,
+      "RESULT": [],
+      "SCRIPT_ERROR": null,
+      "SHADER_ERROR": null,
+      "log_path": null
+    }
+  ],
+  "gates": [
+    {
+      "id": "R1",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "R2",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "R3",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "R4",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "R7",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "R8",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "release_windows",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "release_linux",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "p2p_nat",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "midmatch_restore",
+      "status": "NOT_RUN"
+    }
+  ]
+}

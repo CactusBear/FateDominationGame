@@ -1,5 +1,5 @@
 [gd_scene load_steps=2 format=3]
-[ext_resource type="Script" path="res://scripts/net/network_choice_panel.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/net/ui/network_choice_panel.gd" id="1"]
 [node name="NetworkChoicePanel" type="PanelContainer"]
 visible = false
 anchors_preset = 8

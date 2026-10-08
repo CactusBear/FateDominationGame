@@ -1,16 +1,30 @@
 extends Node
 
 
-# Load the custom images for the mouse cursor.
+# 普通、鼠标按键按下和禁止操作的光标素材。
 var cursor_norm = preload("res://assets/images/ui/cursor/cursor_norm.png")
 var pointing = preload("res://assets/images/ui/cursor/cursor_pointing.png")
 var cursor_disabled = preload("res://assets/images/ui/cursor/cursor_disabled.png")
+var _mouse_pressed := false
 
 
 func _ready():
-	Input.set_custom_mouse_cursor(cursor_norm)
-	Input.set_custom_mouse_cursor(pointing, Input.CURSOR_POINTING_HAND)
-	Input.set_custom_mouse_cursor(cursor_disabled, Input.CURSOR_FORBIDDEN)
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_apply_cursor_images()
+
+
+func _process(_delta: float) -> void:
+	var pressed := get_window().has_focus() and Input.get_mouse_button_mask() != 0
+	if pressed == _mouse_pressed:
+		return
+	_mouse_pressed = pressed
+	_apply_cursor_images()
+
+
+func _apply_cursor_images() -> void:
+	Input.set_custom_mouse_cursor(pointing if _mouse_pressed else cursor_norm)
+	Input.set_custom_mouse_cursor(pointing if _mouse_pressed else cursor_norm, Input.CURSOR_POINTING_HAND)
+	Input.set_custom_mouse_cursor(pointing if _mouse_pressed else cursor_disabled, Input.CURSOR_FORBIDDEN)
 
 
 func _exit_tree():

@@ -22,6 +22,8 @@ config/use_custom_user_dir=true
 config/custom_user_dir_name="FateDomination"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
+run/main_scene.fate_server="res://assets/scenes/main_menu/server_bootstrap.tscn"
+run/flush_stdout_on_print.fate_server=true
 
 [autoload]
 

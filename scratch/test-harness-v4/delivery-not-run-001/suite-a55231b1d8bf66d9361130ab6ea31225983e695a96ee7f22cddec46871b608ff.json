@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/location_benefit_test.tscn:headless",
+  "scene": "tests/location_benefit_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

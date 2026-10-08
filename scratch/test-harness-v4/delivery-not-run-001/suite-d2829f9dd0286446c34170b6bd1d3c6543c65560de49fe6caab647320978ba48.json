@@ -1,0 +1,10 @@
+{
+  "suite_id": "tests/rule_execution_frames_test.tscn:headless",
+  "scene": "tests/rule_execution_frames_test.tscn",
+  "mode": "headless",
+  "required": true,
+  "status": "REJECTED",
+  "latest_attempt_id": null,
+  "issues": [],
+  "attempts": []
+}

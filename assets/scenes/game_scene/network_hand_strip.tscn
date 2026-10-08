@@ -1,5 +1,5 @@
 [gd_scene load_steps=2 format=3]
-[ext_resource type="Script" path="res://scripts/net/network_hand_strip.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/net/ui/legacy/network_hand_strip.gd" id="1"]
 [node name="NetworkHandStrip" type="PanelContainer"]
 anchors_preset = 12
 anchor_top = 1.0

@@ -1,0 +1,930 @@
+{
+  "mode": "static_only",
+  "godot_executed": false,
+  "checks": 229,
+  "passed": 229,
+  "failures": [],
+  "details": [
+    {
+      "name": "gdtoolkit 文法解析 scripts/net/identity_inheritance_panel.gd",
+      "passed": true
+    },
+    {
+      "name": "gdtoolkit 文法解析 scripts/net/lobby_screen.gd",
+      "passed": true
+    },
+    {
+      "name": "gdtoolkit 文法解析 scratch/identity-inheritance-ui/identity_inheritance_ui_window_test.gd",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 .",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 ./Margin",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Title",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Title",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Protocol",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Protocol",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Protocol/NetworkMode",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Protocol/NetworkMode",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Protocol/RoomName",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Protocol/RoomName",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Protocol/RoomID",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Protocol/RoomID",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Identity",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Identity",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Identity/UsernameLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Identity/UsernameLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Identity/Username",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Identity/Username",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Identity/Hint",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Identity/Hint",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Identity/Apply",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Identity/Apply",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Connection",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Connection",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Connection/NicknameLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Connection/NicknameLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Connection/Name",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Connection/Name",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Connection/Address",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Connection/Address",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Connection/Port",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Connection/Port",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Connection/Host",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Connection/Host",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Connection/Join",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Connection/Join",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Connection/Spectator",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Connection/Spectator",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/ServerAdmin",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/ServerAdmin",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/ServerAdmin/Label",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/ServerAdmin/Label",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/ServerAdmin/Command",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/ServerAdmin/Command",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/ServerAdmin/Send",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/ServerAdmin/Send",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/RoomPassword",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/RoomPassword",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/RoomPassword/Label",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/RoomPassword/Label",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/RoomPassword/Input",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/RoomPassword/Input",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/RoomPassword/Apply",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/RoomPassword/Apply",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/RoomPassword/State",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/RoomPassword/State",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Settings",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Settings",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Settings/BindLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Settings/BindLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Settings/BindAddress",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Settings/BindAddress",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Settings/Mode",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Settings/Mode",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Settings/AIText",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Settings/AIText",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Settings/AI",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Settings/AI",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Guard",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Guard",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Guard/Fields",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Guard/Fields",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Guard/Fields/Enabled",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Guard/Fields/Enabled",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Guard/Fields/StepsLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Guard/Fields/StepsLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Guard/Fields/Steps",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Guard/Fields/Steps",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Guard/Fields/SecondsLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Guard/Fields/SecondsLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Guard/Fields/Seconds",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Guard/Fields/Seconds",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Guard/Fields/Apply",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Guard/Fields/Apply",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Guard/Help",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Guard/Help",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Simulation",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Simulation",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Simulation/Enabled",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Simulation/Enabled",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Simulation/BudgetLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Simulation/BudgetLabel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Simulation/Seconds",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Simulation/Seconds",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Simulation/Apply",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Simulation/Apply",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P/Help",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P/Help",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P/STUN",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P/STUN",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P/Signaling",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P/Signaling",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P/Signaling/Server",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P/Signaling/Server",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P/Signaling/Room",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P/Signaling/Room",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P/Output",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P/Output",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P/Input",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P/Input",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P/Buttons",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P/Buttons",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P/Buttons/Invite",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P/Buttons/Invite",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P/Buttons/Copy",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P/Buttons/Copy",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/P2P/Buttons/Apply",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/P2P/Buttons/Apply",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Members",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Members",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/ServerInfo",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/ServerInfo",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Status",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Status",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Reconnect",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Reconnect",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Actions",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Actions",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Archives",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Archives",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Archives/Record",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Archives/Record",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Archives/Restore",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Archives/Restore",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Archives/Path",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Archives/Path",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Actions/Data",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Actions/Data",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Actions/Sync",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Actions/Sync",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Actions/Start",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Actions/Start",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Actions/Ready",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Actions/Ready",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Actions/Leave",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Actions/Leave",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Actions/ClearCache",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Actions/ClearCache",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Actions/Transfer",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Actions/Transfer",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Actions/Kick",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Actions/Kick",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Actions/BeginMatch",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Actions/BeginMatch",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Actions/InheritIdentity",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Actions/InheritIdentity",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Selection",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Selection",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Selection/Master",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Selection/Master",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 Margin/Content/Selection/Choose",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 Margin/Content/Selection/Choose",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 ./RoomDataPanel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 RoomDataPanel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 ./IdentityInheritancePanel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 IdentityInheritancePanel",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 ./ArchivePicker",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 ArchivePicker",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 父节点 ./ArchiveConfirm",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 无重名路径 ArchiveConfirm",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 外部资源 scripts/net/lobby_screen.gd",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 外部资源 assets/scenes/main_menu/room_data_panel.tscn",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn 外部资源 assets/scenes/main_menu/identity_inheritance_panel.tscn",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/multiplayer_lobby.tscn load_steps",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 无重名路径 .",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 父节点 ./Content",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 无重名路径 Content",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 父节点 Content/Help",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 无重名路径 Content/Help",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 父节点 Content/Target",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 无重名路径 Content/Target",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 父节点 Content/Candidates",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 无重名路径 Content/Candidates",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 父节点 Content/Feedback",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 无重名路径 Content/Feedback",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 父节点 Content/Buttons",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 无重名路径 Content/Buttons",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 父节点 Content/Buttons/Refresh",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 无重名路径 Content/Buttons/Refresh",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 父节点 Content/Buttons/Confirm",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 无重名路径 Content/Buttons/Confirm",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 父节点 Content/Buttons/Close",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 无重名路径 Content/Buttons/Close",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn 外部资源 scripts/net/identity_inheritance_panel.gd",
+      "passed": true
+    },
+    {
+      "name": "assets/scenes/main_menu/identity_inheritance_panel.tscn load_steps",
+      "passed": true
+    },
+    {
+      "name": "scratch/identity-inheritance-ui/identity_inheritance_ui_window_test.tscn 无重名路径 .",
+      "passed": true
+    },
+    {
+      "name": "scratch/identity-inheritance-ui/identity_inheritance_ui_window_test.tscn 外部资源 scratch/identity-inheritance-ui/identity_inheritance_ui_window_test.gd",
+      "passed": true
+    },
+    {
+      "name": "scratch/identity-inheritance-ui/identity_inheritance_ui_window_test.tscn load_steps",
+      "passed": true
+    },
+    {
+      "name": "子窗口绑定路径 Content/Candidates",
+      "passed": true
+    },
+    {
+      "name": "子窗口绑定路径 Content/Buttons/Confirm",
+      "passed": true
+    },
+    {
+      "name": "子窗口绑定路径 Content/Target",
+      "passed": true
+    },
+    {
+      "name": "子窗口绑定路径 Content/Feedback",
+      "passed": true
+    },
+    {
+      "name": "子窗口绑定路径 Content/Buttons/Close",
+      "passed": true
+    },
+    {
+      "name": "子窗口绑定路径 Content/Buttons/Refresh",
+      "passed": true
+    },
+    {
+      "name": "正式大厅按钮与窗口实例存在",
+      "passed": true
+    },
+    {
+      "name": "正式按钮真实接线",
+      "passed": true
+    },
+    {
+      "name": "断线每帧检查",
+      "passed": true
+    },
+    {
+      "name": "候选显示仅权威 label",
+      "passed": true
+    },
+    {
+      "name": "候选 metadata 使用 member_id",
+      "passed": true
+    },
+    {
+      "name": "选择读取 metadata",
+      "passed": true
+    },
+    {
+      "name": "复用既有输入模型与 revision 请求",
+      "passed": true
+    },
+    {
+      "name": "空参数候选查询及真实提交",
+      "passed": true
+    },
+    {
+      "name": "不用密钥指纹或票据作显示/选择",
+      "passed": true
+    },
+    {
+      "name": "目标在线/观战与房主权限闸",
+      "passed": true
+    },
+    {
+      "name": "失败回调清理窗口",
+      "passed": true
+    },
+    {
+      "name": "切房清理窗口",
+      "passed": true
+    },
+    {
+      "name": "受影响既有文件 git diff --check",
+      "passed": true
+    },
+    {
+      "name": "新增源码无行尾空白 scripts/net/identity_inheritance_panel.gd",
+      "passed": true
+    },
+    {
+      "name": "新增源码无行尾空白 scratch/identity-inheritance-ui/identity_inheritance_ui_window_test.gd",
+      "passed": true
+    },
+    {
+      "name": "新增源码无行尾空白 assets/scenes/main_menu/identity_inheritance_panel.tscn",
+      "passed": true
+    },
+    {
+      "name": "新增源码无行尾空白 scratch/identity-inheritance-ui/identity_inheritance_ui_window_test.tscn",
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "gdtoolkit 不检查 Godot 静态类型/实际 API",
+    "未执行 Godot 加载、窗口点击、网络与持久化验收",
+    "专项测试仅是窗口夹具源码"
+  ]
+}

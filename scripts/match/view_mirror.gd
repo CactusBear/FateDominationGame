@@ -5,10 +5,10 @@ extends RefCounted
 var error: String = ""
 var _view: Dictionary = {}
 var _observer: int = -1
-const ROOT := ["v", "seq", "observer", "round", "phase", "current_player", "game_over", "players", "areas", "situation"]
-const PLAYER := ["id", "controller", "player_name", "avatar", "own", "magic", "magic_limit", "score", "lives", "power", "total_power", "order", "command_spell_count", "command_spells", "is_out", "is_battle", "is_victory", "master", "servant", "servant_class", "servant_released", "deck_count", "hand_count", "hand_cards", "discard", "played_cards", "master_skills", "servant_skills", "location"]
+const ROOT := ["v", "seq", "observer", "round", "phase", "current_player", "game_over", "players", "areas", "situation", "public_log", "event_discard"]
+const PLAYER := ["id", "controller", "player_name", "avatar", "own", "magic", "magic_limit", "score", "lives", "power", "power_breakdown", "total_power", "order", "command_spell_count", "command_spells", "is_out", "is_battle", "is_victory", "master", "servant", "servant_class", "servant_released", "deck_count", "hand_count", "hand_cards", "discard", "buffs", "out_of_game_cards", "played_cards", "master_skills", "servant_skills", "held_cards", "location"]
 const ROOT_TYPES := {"v": TYPE_INT, "seq": TYPE_INT, "observer": TYPE_INT, "round": TYPE_INT, "phase": TYPE_STRING, "current_player": TYPE_INT, "game_over": TYPE_BOOL, "players": TYPE_ARRAY, "areas": TYPE_ARRAY, "situation": TYPE_DICTIONARY}
-const PLAYER_TYPES := {"id": TYPE_INT, "controller": TYPE_INT, "player_name": TYPE_STRING, "avatar": TYPE_STRING, "total_power": TYPE_INT, "own": TYPE_BOOL, "is_out": TYPE_BOOL, "is_battle": TYPE_BOOL, "is_victory": TYPE_BOOL, "servant_class": TYPE_STRING, "deck_count": TYPE_INT, "hand_count": TYPE_INT, "location": TYPE_INT}
+const PLAYER_TYPES := {"id": TYPE_INT, "controller": TYPE_INT, "player_name": TYPE_STRING, "avatar": TYPE_STRING, "own": TYPE_BOOL, "is_out": TYPE_BOOL, "is_battle": TYPE_BOOL, "is_victory": TYPE_BOOL, "servant_class": TYPE_STRING, "deck_count": TYPE_INT, "hand_count": TYPE_INT, "location": TYPE_INT}
 
 ## 切换房间/观察者只能由本地会话管理调用，不从收到的视图猜身份。
 func reset(observer: int = -1) -> void:
@@ -39,6 +39,14 @@ func accept(view: Dictionary) -> bool:
 		for key in ["magic", "magic_limit", "score", "lives", "power", "order", "command_spell_count"]:
 			if typeof(player.get(key)) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(player[key])):
 				return reject("玩家数值无效")
+		if player.has("total_power") and (typeof(player.total_power) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(player.total_power))):
+			return reject("合计威力无效")
+		if player.has("power_breakdown"):
+			if not player.power_breakdown is Dictionary:
+				return reject("威力明细无效")
+			for key in ["power", "bonus", "board", "location_benefit", "preview", "total"]:
+				if typeof(player.power_breakdown.get(key)) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(player.power_breakdown[key])):
+					return reject("威力明细数值无效")
 		for key in ["master", "servant"]:
 			if not player.get(key) is Dictionary or not _keys(player[key], ["name", "image", "visible", "concealed", "zoom_kind", "description"]) or (not player[key].is_empty() and not _types(player[key], {"name": TYPE_STRING, "image": TYPE_STRING})):
 				return reject("身份视图无效")
@@ -46,12 +54,32 @@ func accept(view: Dictionary) -> bool:
 				if not _types(player[key], {"visible": TYPE_BOOL, "concealed": TYPE_BOOL, "zoom_kind": TYPE_STRING, "description": TYPE_STRING}) or not player[key].visible or player[key].concealed:
 					return reject("身份查看声明无效")
 		for key in ["hand_cards", "discard", "played_cards", "master_skills", "servant_skills"]:
-			if not _cards(player.get(key)):
+			if not _cards(player.get(key), own):
 				return reject("牌区视图无效")
+		if player.has("out_of_game_cards") and not _cards(player.out_of_game_cards, own):
+			return reject("游戏外牌区视图无效")
+		if player.has("buffs"):
+			if not player.buffs is Array:
+				return reject("Buff 视图无效")
+			for buff in player.buffs:
+				if not buff is Dictionary or not _keys(buff, ["card", "active"]):
+					return reject("Buff 字段无效")
+				if not buff.active is bool or not _identity(buff.card):
+					return reject("Buff 内容无效")
+		if not own and not player.get("servant_released", false):
+			if not player.servant.is_empty() or not player.servant_skills.is_empty():
+				return reject("视图泄露未公开从者")
+		if player.has("held_cards"):
+			if not _held_cards(player.held_cards) or (not own and not player.held_cards.is_empty()):
+				return reject("持有展示视图无效或泄露")
+			for entry in player.held_cards:
+				var is_played: bool = player.played_cards.any(func(card): return card.get("id") == entry.card.id)
+				if entry.played != is_played or (entry.played and entry.card.get("kind") != "skill"):
+					return reject("持有展示出牌身份不匹配")
 		if not own and not player.hand_cards.is_empty():
 			return reject("视图泄露他人手牌")
 		if player.has("command_spells"):
-			if not _cards(player.command_spells) or (not own and not player.command_spells.is_empty()):
+			if not _cards(player.command_spells, own) or (not own and not player.command_spells.is_empty()):
 				return reject("令咒卡视图无效或泄露")
 	var map_ids: Array = []
 	for area in view.areas:
@@ -76,6 +104,14 @@ func accept(view: Dictionary) -> bool:
 					return reject("位置占据者无效")
 	if not _card(view.get("situation")):
 		return reject("局势视图无效")
+	if view.has("event_discard") and not _cards(view.event_discard):
+		return reject("事件弃牌视图无效")
+	if view.has("public_log"):
+		if not view.public_log is Array:
+			return reject("公共日志视图无效")
+		for line in view.public_log:
+			if not line is String:
+				return reject("公共日志类型无效")
 	_view = view.duplicate(true)
 	return true
 
@@ -92,15 +128,34 @@ static func _keys(value: Dictionary, allowed: Array) -> bool:
 			return false
 	return true
 
-static func _cards(value) -> bool:
+static func _held_cards(value) -> bool:
+	if not value is Array:
+		return false
+	var seen: Array = []
+	for entry in value:
+		if not entry is Dictionary or not _keys(entry, ["card", "group", "label", "played", "unpublished"]) or not _types(entry, {"card": TYPE_DICTIONARY, "group": TYPE_STRING, "label": TYPE_STRING, "played": TYPE_BOOL, "unpublished": TYPE_BOOL}):
+			return false
+		if entry.group not in ["hand", "master", "servant"] or not _card(entry.card, true) or not entry.card.has_all(["id", "kind", "cost", "power", "back_image", "zoom_kind", "description"]) or not entry.card.get("visible", false):
+			return false
+		if seen.has(entry.card.id):
+			return false
+		seen.append(entry.card.id)
+	return true
+
+static func _cards(value, private_view: bool = false) -> bool:
 	if not value is Array:
 		return false
 	for card in value:
-		if not _card(card):
+		if not _card(card, private_view):
 			return false
 	return true
 
-static func _card(value) -> bool:
+static func _identity(value) -> bool:
+	if not value is Dictionary or not _keys(value, ["name", "image", "visible", "concealed", "zoom_kind", "description"]):
+		return false
+	return _types(value, {"name": TYPE_STRING, "image": TYPE_STRING, "visible": TYPE_BOOL, "concealed": TYPE_BOOL, "zoom_kind": TYPE_STRING, "description": TYPE_STRING}) and value.visible and not value.concealed
+
+static func _card(value, private_view: bool = false) -> bool:
 	if not value is Dictionary or not _keys(value, ["id", "concealed", "visible", "name", "image", "back_image", "kind", "cost", "power", "effects", "zoom_kind", "description"]):
 		return false
 	if value.is_empty():
@@ -109,7 +164,14 @@ static func _card(value) -> bool:
 		return false
 	if value.has("back_image") and not value.back_image is String:
 		return false
+	if not private_view:
+		if value.concealed and value.visible:
+			return false
+		if value.has("effects") and (not value.effects is Array or not value.effects.is_empty()):
+			return false
 	if not value.visible:
+		if not private_view and value.get("back_image", "") != "":
+			return false
 		for field in ["name", "image", "kind", "cost", "power", "effects", "zoom_kind", "description"]:
 			if value.has(field):
 				return false

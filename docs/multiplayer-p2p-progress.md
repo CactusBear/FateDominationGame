@@ -22,6 +22,7 @@
 - `docs/p2p-full-game-regression/summary.json`：6 套，88 条断言，无引擎错误。该批早于信令驱动与后续测试扩展，不作为最新全部代码的回归证据。
 - `docs/p2p-signaling-regression/summary.json`：3 套，28 条断言，无引擎错误。覆盖信令核心、新旧 CLI。
 - 原生检查完整对局截图：`net_p2p_match.png`、`net_p2p_signal_match.png`。
+- WebRTC 底层消息分帧先复现原生单消息上限拒绝，再修复为传输层透明分帧。真实信令关闭后仍直连传输超过默认应用层单包预算的批准清单与真实卡图，30 条专项通过；正式窗口完整对局 19 条、身份恢复窗口 19 条再次通过。详见 `docs/multiplayer-transfer-progress.md`，不升级为公网或 Linux 验收。
 
 ## 使用与边界
 
