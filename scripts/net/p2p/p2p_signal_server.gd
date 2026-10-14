@@ -70,10 +70,13 @@ func listen(requested_port: int, address: String = "127.0.0.1") -> Error:
 	if not configure({"room_code_length":room_code_length, "room_code_ttl_sec":room_code_ttl_sec, "ice_timeout_sec":handshake_seconds, "max_packet_bytes":max_packet_bytes}):
 		return ERR_INVALID_PARAMETER
 	if requested_port < 0 or requested_port > 65535 or max_clients <= 0 or max_rooms <= 0 or rooms_per_ip <= 0 or max_packet_bytes <= 0 or max_messages_per_second <= 0 or not is_finite(handshake_seconds) or handshake_seconds <= 0:
+		error = "监听端口或连接限制无效"
 		return ERR_INVALID_PARAMETER
 	var result := _listener.listen(requested_port, address)
 	if result == OK:
 		port = _listener.get_local_port()
+	else:
+		error = "无法监听 %s:%d：%s。请检查地址是否属于本机，以及端口是否已被占用或系统保留。" % [address, requested_port, error_string(result)]
 	return result
 
 func poll() -> void:

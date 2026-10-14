@@ -1,0 +1,451 @@
+{
+  "original_audit_sha256": "335bd0d34f4496c8e432dad22b96899cabdca7b6edf4fbf81ece90d2bbb4d6ab",
+  "assertions_before": [
+    {
+      "original_line": 31,
+      "expression": "result.returncode == expected"
+    },
+    {
+      "original_line": 37,
+      "expression": "set(policy['freeze']['deny_components']) == freeze.EXCLUDED"
+    },
+    {
+      "original_line": 42,
+      "expression": "{(t['preset'], t['platform'], t['role']) for t in targets} == {('FateDomination_demo_v1', 'windows', 'client'), ('FateServer Windows', 'windows', 'server'), ('FateServer Windows', 'windows', 'signaling')}"
+    },
+    {
+      "original_line": 55,
+      "expression": "'纯信令工程禁止游戏/其他 autoload' in row['stdout']"
+    },
+    {
+      "original_line": 61,
+      "expression": "not (RUN / ('freeze-' + role)).exists()"
+    },
+    {
+      "original_line": 62,
+      "expression": "not (RUN / ('freeze-' + role + '.json')).exists()"
+    },
+    {
+      "original_line": 70,
+      "expression": "not forbidden"
+    },
+    {
+      "original_line": 71,
+      "expression": "not [name for name in names if name.lower().endswith(('.pem', '.key', '.log', '.dmp'))]"
+    },
+    {
+      "original_line": 74,
+      "expression": "'_mcp_game_helper=' not in text"
+    },
+    {
+      "original_line": 75,
+      "expression": "'enabled=PackedStringArray()' in text"
+    },
+    {
+      "original_line": 76,
+      "expression": "'version_control/autoload_on_startup=false' in text"
+    },
+    {
+      "original_line": 78,
+      "expression": "'[autoload]' not in text"
+    },
+    {
+      "original_line": 79,
+      "expression": "re.search('(?m)^signaling_only=true$', text)"
+    },
+    {
+      "original_line": 81,
+      "expression": "'[autoload]' in text"
+    },
+    {
+      "original_line": 82,
+      "expression": "any((name.startswith('scripts/net/identity/') for name in names))"
+    },
+    {
+      "original_line": 119,
+      "expression": "(name in selected) == expected_included"
+    },
+    {
+      "original_line": 132,
+      "expression": "policy_denies(name) == (not name.startswith('scripts/'))"
+    },
+    {
+      "original_line": 135,
+      "expression": "'data/savedkeys/example.json' in bypass_selected"
+    },
+    {
+      "original_line": 139,
+      "expression": "'不存在或不唯一' in str(exc)"
+    }
+  ],
+  "assertions_after": [
+    {
+      "expression": "'[autoload]' in text",
+      "occurrences": 1
+    },
+    {
+      "expression": "'[autoload]' not in text",
+      "occurrences": 1
+    },
+    {
+      "expression": "'_mcp_game_helper=' not in text",
+      "occurrences": 1
+    },
+    {
+      "expression": "'data/savedkeys/example.json' in bypass_selected",
+      "occurrences": 1
+    },
+    {
+      "expression": "'enabled=PackedStringArray()' in text",
+      "occurrences": 1
+    },
+    {
+      "expression": "'version_control/autoload_on_startup=false' in text",
+      "occurrences": 1
+    },
+    {
+      "expression": "'不存在或不唯一' in str(exc)",
+      "occurrences": 1
+    },
+    {
+      "expression": "'纯信令工程禁止游戏/其他 autoload' in row['stdout']",
+      "occurrences": 1
+    },
+    {
+      "expression": "(name in selected) == expected_included",
+      "occurrences": 1
+    },
+    {
+      "expression": "any((name.startswith('scripts/net/identity/') for name in names))",
+      "occurrences": 1
+    },
+    {
+      "expression": "not (RUN / ('freeze-' + role + '.json')).exists()",
+      "occurrences": 1
+    },
+    {
+      "expression": "not (RUN / ('freeze-' + role)).exists()",
+      "occurrences": 1
+    },
+    {
+      "expression": "not [name for name in names if name.lower().endswith(('.pem', '.key', '.log', '.dmp'))]",
+      "occurrences": 1
+    },
+    {
+      "expression": "not forbidden",
+      "occurrences": 1
+    },
+    {
+      "expression": "package['integration_status'].startswith('WIRED:')",
+      "occurrences": 1
+    },
+    {
+      "expression": "policy['freeze']['final_inventory_candidate']['deny_filename_patterns'] == candidate['deny_filename_patterns']",
+      "occurrences": 1
+    },
+    {
+      "expression": "policy['freeze']['final_inventory_candidate']['deny_suffixes'] == candidate['deny_suffixes']",
+      "occurrences": 1
+    },
+    {
+      "expression": "policy_denies(name) == (not name.startswith('scripts/'))",
+      "occurrences": 1
+    },
+    {
+      "expression": "re.search('(?m)^signaling_only=true$', text)",
+      "occurrences": 1
+    },
+    {
+      "expression": "rejected == expected_rejected",
+      "occurrences": 1
+    },
+    {
+      "expression": "result.returncode == expected",
+      "occurrences": 1
+    },
+    {
+      "expression": "set(policy['freeze']['deny_components']) == freeze.EXCLUDED",
+      "occurrences": 1
+    },
+    {
+      "expression": "{(t['preset'], t['platform'], t['role']) for t in targets} == {('FateDomination_demo_v1', 'windows', 'client'), ('FateServer Windows', 'windows', 'server'), ('FateServer Windows', 'windows', 'signaling')}",
+      "occurrences": 1
+    }
+  ],
+  "assertions_removed": [],
+  "fixture_cases_before": {
+    "data/savedkeys/example.json": false,
+    "data/net_identity/profile.json": false,
+    "data/net_identity/private.pem": false,
+    "data/server_players.json": false,
+    "data/match_saves/example.json": false,
+    "data/server_rooms/example.json": false,
+    "data/authority_rooms/example.json": false,
+    "data/logs/example.txt": false,
+    "assets/diagnostics/example.json": false,
+    "assets/newtests/example.json": false,
+    "assets/runtime/example.json": false,
+    "data/example.pem": true,
+    "data/example.key": true,
+    "data/example.log": true,
+    "data/validation-probe-1.json": true,
+    "scripts/net/identity/example.gd": true,
+    "scripts/net/server/recovery_save_diagnostic.gd": true
+  },
+  "fixture_cases_after": {
+    "data/savedkeys/example.json": false,
+    "data/net_identity/profile.json": false,
+    "data/net_identity/private.pem": false,
+    "data/server_players.json": false,
+    "data/match_saves/example.json": false,
+    "data/server_rooms/example.json": false,
+    "data/authority_rooms/example.json": false,
+    "data/logs/example.txt": false,
+    "assets/diagnostics/example.json": false,
+    "assets/newtests/example.json": false,
+    "assets/runtime/example.json": false,
+    "data/example.pem": true,
+    "data/example.key": true,
+    "data/example.log": true,
+    "data/validation-probe-1.json": true,
+    "scripts/net/identity/example.gd": true,
+    "scripts/net/server/recovery_save_diagnostic.gd": true
+  },
+  "fixture_cases_identical": true,
+  "fixture_results_before": [
+    {
+      "path": "data/savedkeys/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/net_identity/profile.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/net_identity/private.pem",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/server_players.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/match_saves/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/server_rooms/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/authority_rooms/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/logs/example.txt",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "assets/diagnostics/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "assets/newtests/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "assets/runtime/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/example.pem",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "data/example.key",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "data/example.log",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "data/validation-probe-1.json",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "scripts/net/identity/example.gd",
+      "included_by_real_inventory": true,
+      "status": "SOURCE_CODE_RETAINED"
+    },
+    {
+      "path": "scripts/net/server/recovery_save_diagnostic.gd",
+      "included_by_real_inventory": true,
+      "status": "SOURCE_CODE_RETAINED"
+    }
+  ],
+  "fixture_results_after": [
+    {
+      "path": "data/savedkeys/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/net_identity/profile.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/net_identity/private.pem",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/server_players.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/match_saves/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/server_rooms/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/authority_rooms/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/logs/example.txt",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "assets/diagnostics/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "assets/newtests/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "assets/runtime/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/example.pem",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "data/example.key",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "data/example.log",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "data/validation-probe-1.json",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "scripts/net/identity/example.gd",
+      "included_by_real_inventory": true,
+      "status": "SOURCE_CODE_RETAINED"
+    },
+    {
+      "path": "scripts/net/server/recovery_save_diagnostic.gd",
+      "included_by_real_inventory": true,
+      "status": "SOURCE_CODE_RETAINED"
+    }
+  ],
+  "fixture_results_identical": true,
+  "policy_cases_before": 17,
+  "policy_cases_after": 17,
+  "commands_before": [
+    {
+      "label": "select-client",
+      "expected_exit": 0
+    },
+    {
+      "label": "dry-run-client",
+      "expected_exit": 0
+    },
+    {
+      "label": "select-server",
+      "expected_exit": 0
+    },
+    {
+      "label": "dry-run-server",
+      "expected_exit": 0
+    },
+    {
+      "label": "select-signaling",
+      "expected_exit": 2
+    },
+    {
+      "label": "dry-run-signaling",
+      "expected_exit": 0
+    }
+  ],
+  "commands_after": [
+    {
+      "label": "select-client",
+      "expected_exit": 0
+    },
+    {
+      "label": "dry-run-client",
+      "expected_exit": 0
+    },
+    {
+      "label": "select-server",
+      "expected_exit": 0
+    },
+    {
+      "label": "dry-run-server",
+      "expected_exit": 0
+    },
+    {
+      "label": "select-signaling",
+      "expected_exit": 2
+    },
+    {
+      "label": "dry-run-signaling",
+      "expected_exit": 0
+    }
+  ],
+  "additional_checks_retained": [
+    "release_contract.json JSON parse",
+    "release_privacy_policy.json JSON parse",
+    "freeze_prepare.py AST parse",
+    "shared preset without role must raise ValueError",
+    "three role cold inventory and in-memory project transform"
+  ]
+}

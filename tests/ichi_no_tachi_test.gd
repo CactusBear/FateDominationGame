@@ -1,4 +1,10 @@
 extends Node
+const FixtureClone = preload("res://newtests/fixture_clone.gd")
+# 本局原来源取自 reset_runtime 回执；夹具对 operation 显式传入，不从全局补票。
+var ctx: SessionContext = null
+func _reset_ctx() -> SessionContext:
+	var reset: Dictionary = EffectManager.reset_runtime()
+	return reset.get("context") if reset.get("ok", false) else null
 # 「一之太刀」的实现回归。
 # 卡面：战斗阶段：关闭此牌，然后从手牌打出一张力量基础攻击。
 #       若如此，获得2点魔力且关闭一名交战玩家至多一张基础攻击。
@@ -29,7 +35,7 @@ func effect_named(effs:Array, key:String):
 	return null
 
 func setup() -> void:
-	EffectManager.reset_runtime(); GameLog.reset(); GameLog.set_context(1,"battle")
+	ctx = _reset_ctx(); GameLog.reset(); GameLog.set_context(1,"battle")
 	GameData.player_data_library.clear()
 	for i in range(2):
 		var d:Dictionary=GameData.new_player_data()
@@ -44,10 +50,10 @@ func setup() -> void:
 	#两名玩家放到同一战场："交战玩家"的候选集来自同战场，没有位置时候选为空、选项不可选
 	var area:BaseMapArea = MapData.areas[1]
 	for i in range(2):
-		SetLocation.new().exec(area._locations[i], i, false, true)
+		SetLocation.new().exec(area._locations[i], i, false, true, true, ctx)
 	TimePointChecker.set_phase_time_points([TimePoints.DAY, TimePoints.PHASE,
 		TimePoints.BATTLE_PHASE, TimePoints.NON_CLIMAX])
-	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_PHASE], 0)
+	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_PHASE], 0, null, ctx)
 
 ## 把佐佐木的技能牌克隆给指定玩家并登记其效果（与真实发牌同一条路）
 func register_skill_effects(servant_key:String, skill_key:String, player_id:int) -> Array:
@@ -57,7 +63,7 @@ func register_skill_effects(servant_key:String, skill_key:String, player_id:int)
 	var skill = named(servant._specials.get("SKILLS", []), skill_key)
 	if skill == null:
 		return []
-	var cloned = CloneObject.new().exec(skill)
+	var cloned = FixtureClone.clone_template(skill, ctx)
 	if cloned == null:
 		return []
 	if cloned is BaseHandCard:
@@ -71,7 +77,7 @@ func make_hand_card(key:String) -> BaseCard:
 	var tpl = LoadAttack.resolve(key)
 	if tpl == null:
 		return null
-	return CloneObject.new().exec(tpl)
+	return FixtureClone.clone_template(tpl, ctx)
 
 func run():
 	# —— ① 两条效果都在，且都是主动、需要激活 ——
@@ -182,20 +188,20 @@ func run():
 	GameLog.set_context(1, "action")
 	GameData.player_data_library[0].magic.set_num(BaseNumber.new(7))
 	var template = named(named(GameData.loaded_servants, "sasaki_kojirou")._specials.SKILLS, "ichi_no_tachi")
-	var low_skill = CloneObject.new().exec(template)
+	var low_skill = FixtureClone.clone_template(template, ctx)
 	GameData.player_data_library[0].servant_skills.append(low_skill)
 	var filler = make_hand_card("strength:2")
 	GameData.player_data_library[0].hand_cards.append(filler)
-	check(RegularPlay.submit_group(0, [low_skill, filler], [false, true]), "ichi submits below the skill-zone magic threshold")
+	check(RegularPlay.submit_group(0, [low_skill, filler], [false, true], false, ctx), "ichi submits below the skill-zone magic threshold")
 	setup()
 	GameProgress.current_phase_index = 2
 	GameLog.set_context(1, "action")
 	GameData.player_data_library[0].magic.set_num(BaseNumber.new(7))
-	var other = CloneObject.new().exec(named(named(GameData.loaded_servants, "sasaki_kojirou")._specials.SKILLS, "ni_no_tachi"))
+	var other = FixtureClone.clone_template(named(named(GameData.loaded_servants, "sasaki_kojirou")._specials.SKILLS, "ni_no_tachi"), ctx)
 	GameData.player_data_library[0].servant_skills.append(other)
 	filler = make_hand_card("strength:2")
 	GameData.player_data_library[0].hand_cards.append(filler)
-	check(not RegularPlay.submit_group(0, [other, filler], [false, true]), "other skills remain blocked below threshold")
+	check(not RegularPlay.submit_group(0, [other, filler], [false, true], false, ctx), "other skills remain blocked below threshold")
 
 	print("RESULT checks=",checks," failures=",failures)
 	get_tree().quit(0 if failures.is_empty() else 1)

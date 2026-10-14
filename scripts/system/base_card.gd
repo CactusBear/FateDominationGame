@@ -1,11 +1,14 @@
 extends BaseObject
 class_name BaseCard
 
-func clone_data(context):
+func clone_data(context:CloneContext):
+	if not context.is_copying():
+		return context.copy(self)
+	if context.prepare_card(self) == null:
+		return null
 	var cloned = BaseCard.new()
 	copy_clone_fields(cloned, context)
-	cloned.add_object()
-	return cloned
+	return context.finish_card(self, cloned)
 
 
 func copy_clone_fields(cloned, context) -> void:

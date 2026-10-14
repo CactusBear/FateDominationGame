@@ -79,8 +79,9 @@ func _ready() -> void:
 		room_data_directory = directory
 		_refresh()
 	)
-	$Margin/Content/Actions/Start.pressed.connect(func(): session.request("start", {}))
-	$Margin/Content/Actions/BeginMatch.pressed.connect(func(): session.request("begin_match", {}))
+	$RoomDataPanel.check_finished.connect(_refresh)
+	$Margin/Content/Actions/Start.pressed.connect(_request_broadcast_match.bind("start"))
+	$Margin/Content/Actions/BeginMatch.pressed.connect(_request_broadcast_match.bind("begin_match"))
 	$Margin/Content/Selection/Choose.pressed.connect(_choose_master)
 	$Margin/Content/Members.item_selected.connect(_select_member)
 	$Margin/Content/Actions/Transfer.pressed.connect(func(): session.request("transfer", {"target": _selected_member}))
@@ -90,6 +91,7 @@ func _ready() -> void:
 	$Margin/Content/Guard/Fields/Apply.pressed.connect(_apply_guard_config)
 	$Margin/Content/Simulation/Apply.pressed.connect(_apply_simulation_config)
 	$Margin/Content/Protocol/NetworkMode.item_selected.connect(_network_mode_changed)
+	$Margin/Content/Advanced.toggled.connect(func(_enabled:bool): _refresh_advanced())
 	$Margin/Content/P2P/Buttons/Invite.pressed.connect(_new_invite)
 	$Margin/Content/P2P/Buttons/Apply.pressed.connect(_apply_answer)
 	$Margin/Content/P2P/Buttons/Copy.pressed.connect(func():
@@ -136,15 +138,21 @@ func _process(delta: float) -> void:
 				session.request("data_ack", {"revision": _sync_revision})
 				status.text = "房间数据同步完成"
 			else:
+				if _data_sync.error.is_empty():
+					_data_sync.error = session.error if not session.error.is_empty() else "内容安装未完成或房间版本已改变，请重新下载"
 				status.text = _data_sync.error
 			_refresh()
 	_refresh_signal_status()
+	var background:String = $RoomDataPanel.background_status()
+	if not background.is_empty() and not $RoomDataPanel.visible: status.text = background
 
 func _sync_data() -> void:
-	if session._host or session.data_revision <= 0 or _data_sync.running:
+	# 当前点击不影响后台内容检查任务。
+	if session._host or session.data_revision <= 0 or _data_sync.running or _synced_revision == session.data_revision:
 		return
 	_sync_revision = session.data_revision
 	room_data_directory = "user://rooms/%s/data" % str(Time.get_ticks_usec())
+	_data_sync.local_roots = [LoadHelper.get_data_dir()]
 	if not _data_sync.begin(session, session.room_files, room_data_directory):
 		status.text = _data_sync.error
 	_refresh()
@@ -172,8 +180,19 @@ func _network_mode_changed(index: int) -> void:
 	$Margin/Content/P2P/Output.visible = not signaling
 	$Margin/Content/P2P/Input.visible = not signaling
 	$Margin/Content/P2P/Buttons.visible = not signaling
-	$Margin/Content/P2P/Help.text = "服务只交换握手信令，对局始终直连。房主将房间码发送给客机，无法直连时明确失败。" if signaling else "房主发送邀请码，客机回传应答码。每位客机使用独立邀请码，对局流量只走直连。"
-	$Margin/Content/Connection/Host.text = "创建 P2P 房间" if p2p else ("在服务端创建房间" if server else "创建局域网房间")
+	$Margin/Content/P2P/Help.text = "双方填写同一个连接服务地址。房主创建后把房间码发给其他玩家，对局由玩家电脑直接连接。" if signaling else "房主发送邀请内容，对方加入后发回回复，房主点击接收回复。每位玩家需要单独邀请。"
+	$Margin/Content/Connection/Host.text = "创建直连房间" if p2p else ("创建服务器房间" if server else "创建局域网房间")
+	_refresh_advanced()
+
+func _refresh_advanced() -> void:
+	var expanded:bool = $Margin/Content/Advanced.button_pressed
+	$Margin/Content/Guard.visible = expanded
+	$Margin/Content/Simulation.visible = expanded
+	$Margin/Content/P2P/STUN.visible = expanded
+	var lan:bool = $Margin/Content/Protocol/NetworkMode.selected == 0
+	$Margin/Content/Settings/BindLabel.visible = expanded and lan
+	$Margin/Content/Settings/BindAddress.visible = expanded and lan
+	$Margin/Content/ServerAdmin.visible = expanded and session.identity_authenticated and session.identity_is_admin
 
 func _on_rejected(reason: String) -> void:
 	status.text = reason
@@ -371,6 +390,11 @@ func _host() -> void:
 	var settings := {"capacity": capacity, "minimum": 1, "selection_mode": str(modes[mode.selected].id), "ai_count": int(ai.value), "spectator_limit": capacity}
 	settings["runtime_guard"] = budget.config
 	settings.merge(simulation.config)
+	# 此组合根固定移交正式 v2，拥有真实播报确认消费者。
+	# 本机部署必须先于 LAN/P2P（包括信令）主机创建；不替远端服务器声明。
+	if $Margin/Content/Protocol/NetworkMode.selected != 1 and not session.configure_deployment_broadcast_confirmation(true):
+		status.text = "部署播报确认能力配置失败，未创建房间；请检查会话状态"
+		return
 	if $Margin/Content/Protocol/NetworkMode.selected == 3:
 		var result: Error = _signal.host($Margin/Content/P2P/Signaling/Server.text.strip_edges(), session, $Margin/Content/Connection/Name.text, settings, _ice_configuration())
 		if result == OK:
@@ -408,7 +432,7 @@ func _host() -> void:
 func _show_room_data() -> void:
 	if session.view.get("phase") != "lobby" or (session._host and not _owner):
 		return
-	if not $RoomDataPanel._preparing and not $RoomDataPanel._validation.running:
+	if not $RoomDataPanel._preparing and not $RoomDataPanel._validation.running and not $RoomDataPanel._server_pending and not $RoomDataPanel._awaiting_risk_confirmation:
 		$RoomDataPanel.configure(session, _local_data_root if session._host else LoadHelper.get_data_dir(), modes[mode.selected])
 	$RoomDataPanel.popup_centered()
 
@@ -419,6 +443,17 @@ func _prepare_archive_restore() -> void:
 	var reason:String = $RestoreSeatPanel.open_archive(session, source)
 	if not reason.is_empty(): status.text = reason
 
+## 正式 UI 明确具备播报消费能力；声明失败不发送开局请求。
+func _declare_broadcast_ui() -> bool:
+	if session.declare_broadcast_confirmation(true): return true
+	status.text = "播报确认能力声明失败，未请求开局或恢复；请检查会话状态"
+	return false
+
+func _request_broadcast_match(kind: String) -> void:
+	if not _declare_broadcast_ui(): return
+	var sent: Error = session.request(kind, {})
+	if sent != OK: status.text = "开局请求发送失败：" + error_string(sent)
+
 func _restore_archive(source:String, selected:Dictionary, metadata_source:String) -> void:
 	if $RoomDataPanel._preparing or $RoomDataPanel._validation.running or _data_sync.running:
 		status.text = "请先完成或取消当前数据准备"
@@ -428,12 +463,19 @@ func _restore_archive(source:String, selected:Dictionary, metadata_source:String
 		status.text = "恢复权限或座位映射已失效，请重新选择存档"
 		$RestoreSeatPanel.restore_finished()
 		return
+	if not _declare_broadcast_ui():
+		$RestoreSeatPanel.restore_finished()
+		return
 	status.text = "正在校验存档并等待权威恢复回执"
 	var restored:bool = await session.authority_host.restore_local_match(source, selected, metadata_source)
 	status.text = "存档已恢复并另存，等待客机完成数据同步" if restored else session.error
 	$RestoreSeatPanel.restore_finished()
 
 func _join() -> void:
+	var network_mode:int = $Margin/Content/Protocol/NetworkMode.selected
+	if (network_mode == 1 and $Margin/Content/Protocol/RoomID.text.strip_edges().is_empty()) or (network_mode == 3 and $Margin/Content/P2P/Signaling/Room.text.strip_edges().is_empty()):
+		status.text = "请输入房间码"
+		return
 	if not _validate_username(): return
 	if not _prepare_identity(): return
 	session.join_password = $Margin/Content/RoomPassword/Input.text
@@ -463,9 +505,9 @@ func _join() -> void:
 		return
 	var result: Error
 	if $Margin/Content/Protocol/NetworkMode.selected == 1:
-		var id: String = $Margin/Content/Protocol/RoomID.text
+		var id: String = $Margin/Content/Protocol/RoomID.text.strip_edges()
 		if id.is_empty():
-			status.text = "请填入服务端房间 ID"
+			status.text = "请输入房间码"
 			return
 		result = session.join_server($Margin/Content/Connection/Address.text, int($Margin/Content/Connection/Port.value), $Margin/Content/Connection/Name.text, id, "", {}, $Margin/Content/Connection/Spectator.button_pressed)
 	else:
@@ -473,15 +515,41 @@ func _join() -> void:
 	status.text = "正在连接" if result == OK else "连接失败：" + error_string(result)
 
 func _ready_clicked() -> void:
+	if not _ready_state and not _local_content_ready():
+		status.text = _start_block_reason()
+		return
 	_ready_state = not _ready_state
 	session.request("ready", {"ready": _ready_state})
+
+func _local_content_ready() -> bool:
+	for member in session.view.get("members", []):
+		if member.id == session.peer_id(): return member.get("data_synced", false)
+	return false
+
+func _start_block_reason() -> String:
+	var view:Dictionary = session.view
+	if view.is_empty(): return "请先创建或加入房间"
+	if session.data_revision <= 0: return "房主需先打开本局内容，检查并采用所选内容"
+	if _data_sync.running: return "正在自动准备本局内容，完成后才能准备" if _owner else "正在下载本局内容，完成后才能准备"
+	if _sync_revision == session.data_revision and not _data_sync.error.is_empty():
+		return ("本局内容自动准备失败：" if _owner else "本局内容下载失败：") + _data_sync.error + ("\n修正问题后点击重试准备本局内容" if _owner else "\n修正问题后可重新点击下载，未完成前不能准备")
+	if not _local_content_ready(): return "正在自动准备本局内容，完成后才能准备" if _owner else "请先点击下载本局内容，完成后才能准备"
+	var missing:PackedStringArray = []
+	for member in view.get("members", []):
+		if member.spectator: continue
+		if not member.connected: missing.append(member.name + "已掉线")
+		elif not member.get("data_synced", false): missing.append(member.name + "未下载本局内容")
+		elif not member.ready: missing.append(member.name + "未准备")
+	if not missing.is_empty(): return "暂不能开始选人：" + "、".join(missing)
+	if not view.get("can_start", false): return "暂不能开始选人，请检查房间人数与内容检查状态"
+	return "全员已准备，房主可以开始选人"
 
 func _ai_changed(value: float) -> void:
 	if _owner:
 		session.request("settings", {"changes": {"ai_count": int(value)}})
 
 func _refresh() -> void:
-	$Margin/Content/ServerAdmin.visible = session.identity_authenticated and session.identity_is_admin
+	_refresh_advanced()
 	if session.identity_authenticated:
 		var profile:Dictionary = {"username":session.identity_profile.username,"nickname":session.identity_profile.nickname}
 		if profile != _saved_identity_profile and preload("res://scripts/net/server/server_console_channel.gd").write_json(identity_profile_path,profile) == OK:
@@ -517,6 +585,11 @@ func _refresh() -> void:
 		$Margin/Content/Protocol/NetworkMode.select(1)
 		_network_mode_changed(1)
 	_owner = not view.is_empty() and view.get("owner") == session.peer_id()
+	$Margin/Content/Actions/Sync.visible = not _owner or not _data_sync.error.is_empty()
+	$Margin/Content/Actions/Sync.text = "重试准备本局内容" if _owner else "下载本局内容"
+	if _owner and not session._host and view.get("phase") == "lobby" and session.data_revision > 0 and not session.room_files.is_empty() and _synced_revision != session.data_revision and not _data_sync.running:
+		if _sync_revision != session.data_revision or _data_sync.error.is_empty():
+			call_deferred("_sync_data")
 	$Margin/Content/RoomPassword/Apply.disabled = not _owner or view.get("phase") != "lobby"
 	$Margin/Content/RoomPassword/State.text = "已设置密码" if view.get("password_required",false) else "无密码"
 	$Margin/Content/Archives.visible = view.is_empty() or session._host
@@ -524,12 +597,13 @@ func _refresh() -> void:
 	$Margin/Content/Archives/Restore.disabled = not session._host or not _owner or view.get("phase") != "lobby" or $RoomDataPanel._preparing or $RoomDataPanel._validation.running or _data_sync.running
 	$Margin/Content/Archives/Path.tooltip_text = ProjectSettings.globalize_path(session.archive_root)
 	if not session.server_room_id.is_empty():
-		$Margin/Content/Protocol/RoomID.text = session.server_room_id
+		$Margin/Content/Protocol/RoomID.text = session.server_room_code
 	$Margin/Content/Actions/Data.disabled = view.get("phase") != "lobby" or (session._host and not _owner)
-	$Margin/Content/Actions/Data.text = "房间数据" if session._host or (is_dedicated_authority and _owner) else "共享条目"
+	$Margin/Content/Actions/Data.text = "本局内容" if session._host or (is_dedicated_authority and _owner) else "分享我的内容"
 	var local_can_ready := false
 	for member in view.get("members", []):
 		var state := "已准备" if member.ready else "未准备"
+		if not member.spectator and not member.get("data_synced", false): state = "未下载本局内容"
 		if not member.connected:
 			state = "已掉线"
 		var role: String = "观战" if member.spectator else "玩家"
@@ -546,7 +620,8 @@ func _refresh() -> void:
 	for i in range(count):
 		members.add_item("AI %d" % (i + 1))
 		members.set_item_metadata(members.item_count - 1, 0)
-	$Margin/Content/Actions/Ready.disabled = not local_can_ready or view.get("phase") != "lobby"
+	$Margin/Content/Actions/Ready.disabled = not local_can_ready or view.get("phase") != "lobby" or (not _ready_state and not _local_content_ready())
+	$Margin/Content/Actions/Ready.tooltip_text = _start_block_reason() if not _local_content_ready() else ""
 	$Margin/Content/Actions/Ready.text = "取消准备" if _ready_state else "准备"
 	mode.disabled = not view.is_empty()
 	ai.editable = view.is_empty() or (_owner and view.get("phase") == "lobby")
@@ -554,6 +629,7 @@ func _refresh() -> void:
 		ai.set_value_no_signal(count)
 	_refresh_guard_config(view)
 	$Margin/Content/Actions/Start.disabled = not _owner or not view.get("can_start", false)
+	$Margin/Content/Actions/Start.tooltip_text = _start_block_reason()
 	if view.get("phase") == "lobby":
 		status.text = "已连接房间 · 你拥有房间管理权" if _owner else "已连接房间 · 等待房主开始选人"
 		if session._host and session.require_room_data and session._rules_revision != session.data_revision:
@@ -575,6 +651,7 @@ func _refresh() -> void:
 		status.text = "正在同步房间数据：%d / %d" % [_data_sync.completed_files, session.room_files.size()]
 	elif session.data_revision > 0 and not session._host:
 		status.text = "房间数据同步完成" if _synced_revision == session.data_revision else "房间数据已更新，请同步后继续"
+	if view.get("phase") == "lobby": status.text = _start_block_reason()
 	$Margin/Content/Actions/BeginMatch.disabled = not _owner or not selection.get("complete", false) or view.get("phase") != "selecting" or not view.get("data_ready", true)
 	_refresh_reconnect()
 	_refresh_signal_status()

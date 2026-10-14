@@ -49,6 +49,8 @@ FSN角色制作任务清单.txt
 /regression_out*/
 /*_result.json
 /*_test_result.json
+/result.json
+/*-output.json
 /debug_console_probe.txt
 
 # 本地工作报告、进度记录、备份与代理约定

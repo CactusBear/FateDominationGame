@@ -14,7 +14,7 @@ func run() -> void:
 	for i in range(ids.size()):
 		var area = MapData.areas[i % MapData.areas.size()]
 		var loc = area._locations.filter(func(item): return item._pl_num_limit < 0)[0]
-		SetLocation.new().exec(loc, ids[i], false)
+		SetLocation.new().exec(loc, ids[i], false, false, true, GameStart.startup_context())
 		var pl: Dictionary = GameData.player_data_library[ids[i]]
 		for k in range(mini(3, pl.hand_cards.size())):
 			pl.played_cards.append(pl.hand_cards.pop_back())

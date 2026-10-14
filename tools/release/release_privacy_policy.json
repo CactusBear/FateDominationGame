@@ -1,0 +1,261 @@
+{
+  "version": 1,
+  "scope": "Windows frozen-copy declaration and privacy policy; not an export or runtime approval",
+  "role_source": "release_contract.json: targets; always pass exact preset/platform/role",
+  "signaling": {
+    "source_selection": "must reject the development game project because it contains autoloads",
+    "freeze_entry": "tools/release/freeze_prepare.py --preset \"FateServer Windows\" --role signaling --executable FateSignaling.exe --runtime-files <exact signaling runtime_files>",
+    "project_requirements": [
+      "zero autoload entries",
+      "[network] signaling_only=true"
+    ],
+    "deployment": "generic freeze_prepare descriptor-in-project declaration only; NOT interchangeable with signaling_prepare.py external-native layout",
+    "external_native_layout": "unknown under this release_contract; requires a separately declared external descriptor and native DLL mapping before using signaling_prepare.py"
+  },
+  "freeze": {
+    "consumer": "tools/release/freeze_prepare.py:EXCLUDED; matched by lowercase path components in inventory",
+    "deny_components": [
+      "test",
+      "tests",
+      "newtests",
+      "reports",
+      "scratch",
+      "runtime_reports",
+      "game_data",
+      "__pycache__",
+      "tools",
+      "newtools",
+      "docs",
+      "newdocs",
+      "backups",
+      "buildmanifest",
+      "savedkeys",
+      "net_identity",
+      "identities",
+      "match_saves",
+      "server_rooms",
+      "authority_rooms",
+      "saves",
+      "savegames",
+      "logs",
+      "runtime",
+      "diagnostics",
+      "net_cache",
+      "net_session",
+      "room_validation",
+      "rooms",
+      "private.pem",
+      "profile.json",
+      "server_players.json",
+      "identity.json",
+      "resume_ticket.json",
+      "resume_tickets",
+      "recovery_tickets",
+      "godot_ai",
+      "godot-git-plugin"
+    ],
+    "source_code_must_remain": [
+      "scripts/net/identity/**",
+      "scripts/net/server/recovery_save_diagnostic.gd",
+      "addons/fate_server_signals/fate_server_signals.gdextension",
+      "addons/webrtc_native/webrtc_native.gdextension"
+    ],
+    "autoload_remove_allowlist": {
+      "_mcp_game_helper": "*res://addons/godot_ai/runtime/game_helper.gd"
+    },
+    "editor_plugins_observed": [
+      "res://addons/godot_ai/plugin.cfg"
+    ],
+    "editor_plugin_transform": "existing converter clears editor_plugins.enabled in copy only; new plugins require review",
+    "source_presets": "unchanged; no exclude/include/export_filter semantic changes",
+    "final_inventory_candidate": {
+      "integration_status": "WIRED: tools/release/package_audit.py rejects matching final package inventory paths; candidate declaration only, not a privacy PASS",
+      "deny_suffixes": [".pem", ".key", ".log", ".dmp"],
+      "deny_filename_patterns": ["validation-probe-*.json"],
+      "must_check": "all selected files after runtime_files, descriptor and import closure; reject matches, never silently drop dependencies",
+      "source_preservation": "do not deny the identity component or recovery_save_diagnostic.gd source"
+    },
+    "bypass_warning": "explicit runtime_files and descriptor/import dependencies bypass directory EXCLUDED filtering; independently audit final inventory"
+  },
+  "package": {
+    "integration_status": "WIRED: tools/release/package_audit.py consumes package deny components, filenames, suffixes and filename patterns as hard blockers",
+    "deny_components": [
+      "savedkeys",
+      "net_identity",
+      "identities",
+      "match_saves",
+      "server_rooms",
+      "authority_rooms",
+      "saves",
+      "savegames",
+      "logs",
+      "runtime",
+      "diagnostics",
+      "net_cache",
+      "net_session",
+      "room_validation",
+      "rooms",
+      "resume_tickets",
+      "recovery_tickets",
+      "test",
+      "tests",
+      "newtests",
+      "reports",
+      "runtime_reports",
+      "scratch",
+      "tools",
+      "newtools",
+      "docs",
+      "newdocs",
+      "backups",
+      "game_data",
+      "buildmanifest",
+      "__pycache__",
+      ".git",
+      ".godot",
+      "godot_ai",
+      "godot-git-plugin"
+    ],
+    "deny_filenames": [
+      "private.pem",
+      "profile.json",
+      "server_players.json",
+      "identity.json",
+      "resume_ticket.json"
+    ],
+    "deny_suffixes": [
+      ".pem",
+      ".key",
+      ".log",
+      ".dmp",
+      ".tmp",
+      ".obj",
+      ".os",
+      ".o",
+      ".a",
+      ".lib",
+      ".exp",
+      ".pdb",
+      ".ilk"
+    ],
+    "deny_filename_patterns": [
+      "validation-probe-*.json"
+    ],
+    "pck_cache_exception": [
+      ".godot/imported/**",
+      ".godot/exported/**",
+      ".godot/global_script_class_cache.cfg"
+    ],
+    "cache_exception_requires": "exact indexed runtime dependency and SHA approval; not arbitrary .godot contents",
+    "payloads": {
+      "client": {
+        "exact_files": [
+          "FateDomination.exe",
+          "FateDomination.pck",
+          "libfate_server_signals.windows.template_release.x86_64.dll",
+          "libwebrtc_native.windows.template_release.x86_64.dll"
+        ],
+        "data": "exact approved frozen data file set excluding .import; nonempty; no generic recursive extra files"
+      },
+      "server": {
+        "exact_files": [
+          "FateServer.exe",
+          "FateServer.pck",
+          "libfate_server_signals.windows.template_release.x86_64.dll",
+          "libwebrtc_native.windows.template_release.x86_64.dll"
+        ],
+        "conditional_files": {
+          "FateServer.console.exe": "only actual exporter output with frozen build evidence and SHA approval"
+        },
+        "data": "same frozen approved data set as client; nonempty"
+      },
+      "signaling": {
+        "exact_files": [
+          "FateSignaling.exe",
+          "FateSignaling.pck",
+          "libfate_server_signals.windows.template_release.x86_64.dll"
+        ],
+        "data": "forbidden",
+        "deployment": "generic release_contract layout; external-native layout not approved here"
+      }
+    },
+    "assembly_extra_files": {
+      "Server/server.cfg": "only reviewed frozen assets/config/server.cfg; no existing identity registry or saves",
+      "README-真人测试.md": "only reviewed current docs/human-test-quickstart.md",
+      "SHA256SUMS.json": "generated manifest excluding its own entry"
+    },
+    "launcher_status": "Start.cmd/START-*.cmd not auto-approved; current source and SHA evidence required",
+    "required_integrity": [
+      "new empty destination",
+      "exact allowed file set",
+      "no case collisions or duplicate paths",
+      "no links/junctions/hardlinks",
+      "same frozen source and dependency SHA",
+      "PCK index privacy audit",
+      "ZIP CRC and exact manifest SHA check"
+    ],
+    "content_approval": "已由用户批准；引用 docs/credential-free-evidence.md §6，范围限 §1–5 的只读取证。不是内容扫描通过，不覆盖最终 manifest 未固定或缓存未知项。"
+  },
+  "items": [
+    {
+      "item": "identity directory/private key",
+      "existing_evidence": [
+        "scripts/net/ui/lobby_screen.gd:24-25 identity_key_path/identity_profile_path",
+        "assets/config/server.cfg:16 identity_registry"
+      ],
+      "coverage": "known path components and exact names covered by EXCLUDED; arbitrary .pem/.key suffix not covered by existing inventory"
+    },
+    {
+      "item": "match archives",
+      "existing_evidence": [
+        "scripts/net/session/lobby_session.gd:141 archive_root",
+        "scripts/net/session/authority_host_client.gd:32 storage_root",
+        "assets/config/server.cfg:13 storage_root"
+      ],
+      "coverage": "known match_saves/server_rooms/authority_rooms components covered; renamed archive content unknown"
+    },
+    {
+      "item": "logs",
+      "existing_evidence": [
+        "scripts/net/server/server_gateway.gd:493-495 _log_transport_diagnostic",
+        "scripts/net/session/lobby_session.gd:1781-1784 RECOVERY_SAVE_DIAGNOSTIC"
+      ],
+      "coverage": "logs component covered; *.log elsewhere not enforced by existing inventory; actual log root unknown"
+    },
+    {
+      "item": "diagnostics/runtime outputs",
+      "existing_evidence": [
+        "scripts/net/validation/room_data_validation_worker.gd:14 validation-probe-<pid>.json",
+        "scripts/net/validation/room_validation_task.gd:10 workspace_root",
+        "scripts/net/content/content_cache.gd:8 root",
+        "scripts/net/content/room_data_preparation.gd:61-63 preparation_root/workspace_root"
+      ],
+      "coverage": "known runtime/cache/validation components covered; standalone validation-probe filename pattern declared but not consumed"
+    },
+    {
+      "item": "savedkeys",
+      "existing_evidence": [
+        "tools/release/human_test_candidate.py:29 FORBIDDEN_PARTS"
+      ],
+      "coverage": "explicit component already covered by existing freeze EXCLUDED, not added by this audit; actual creation location unknown"
+    },
+    {
+      "item": "development autoload/plugins",
+      "existing_evidence": [
+        "project.godot:41 _mcp_game_helper",
+        "project.godot:55-60 version_control/editor_plugins",
+        "tools/release/freeze_prepare.py:transform_project"
+      ],
+      "coverage": "known helper removal and editor-plugin disabling already implemented in freeze copy; source unchanged; actual frozen output NOTRUN"
+    },
+    {
+      "item": "external data/whole package privacy",
+      "existing_evidence": [
+        "tools/copy_data_after_export.py:25-26,117-132 skips .import only",
+        "tools/release/package_audit.py:97-104 limited PCK denylist",
+        "tools/release/package_audit.py:142 package_files records but does not enforce exact whole-package whitelist"
+      ],
+      "coverage": "new explicit package policy declared; existing consumers not wired; content audit and actual PCK/ZIP NOTRUN"
+    }
+  ]
+}

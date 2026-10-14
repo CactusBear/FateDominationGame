@@ -39,6 +39,7 @@ MapData="*res://scripts/system/map_data.gd"
 GameProgress="*res://scripts/system/global/game_progress.gd"
 EffectManager="*res://scripts/system/global/effect_manager.gd"
 _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
+WindowOccupancyNotice="*res://scripts/system/global/window_occupancy_notice.gd"
 
 [display]
 
@@ -85,3 +86,7 @@ pointing/android/enable_long_press_as_right_click=true
 [rendering]
 
 renderer/rendering_method="mobile"
+
+[threading]
+
+worker_pool/max_threads=20

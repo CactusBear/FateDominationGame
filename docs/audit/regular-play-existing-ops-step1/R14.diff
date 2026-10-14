@@ -1,0 +1,15 @@
+--- previous/regular_play.gd
++++ R14/regular_play.gd
+@@ -388,7 +388,11 @@
+ 				_operation("set_property").exec(card, "_is_activating", not hidden)
+ 				_take_from_source(d, card)
+ 				_operation("add_to_array").exec(card, d.played_cards, -1)
+-				if CardCountsPower.new().exec(card, id): d.power.add(card._power)
++				if CardCountsPower.new().exec(card, id):
++					var power:BaseNumber = d.power
++					var increment:BaseNumber = card._power
++					if power.can_change:
++						_operation("set_property").exec(power, "number", power.number + increment.number)
+ 				GameLog.record("play", id, -1, "", card, ["play"], {"card_name":card._name, "card_type":"attack" if card is BaseAttack else "skill", "extra":state.extra_cards.has(card), "concealed":hidden})
+ 				if hidden:
+ 					state.index += 1

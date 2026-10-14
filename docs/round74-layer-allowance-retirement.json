@@ -1,0 +1,341 @@
+{
+  "scope": "A04/A05/F05 exact allowance retirement only; no production edits, no full Godot regression, no timing benchmark, no commit",
+  "before": {
+    "exit_code": 1,
+    "findings": 41,
+    "allowlist": 43,
+    "new": [],
+    "stale_count": 2
+  },
+  "retired": [
+    {
+      "path": "tests/outpost_identity_test.gd",
+      "target": "GameProgress._phase_end_pending",
+      "line": 51,
+      "code": "GameProgress._phase_end_pending=false",
+      "count": 1
+    },
+    {
+      "path": "tests/outpost_identity_test.gd",
+      "target": "GameProgress._phase_end_running",
+      "line": 52,
+      "code": "GameProgress._phase_end_running=false",
+      "count": 1
+    }
+  ],
+  "currenthash": {
+    "tools/check_layer_deps.py": "332e09461adffdb93167e0be7c4228da5bcaa1c42107b8be71f287fcc58efb9e",
+    "tools/tests/test_check_layer_deps.py": "951b3b906ce305d4bd47b0a2f8f6e98cdcabfc28a5cd0269674a17f6628a1ed6",
+    "tests/outpost_identity_test.gd": "460a97373ecbfc83878bbeae69fe6d6d951d4ea24446d5a39a3b4ec66440525c",
+    "tests/net_v2_one_round_test.gd": "bdea48b2c0ff663f84801d47be37386de2d5378b483c9fd7b7ff87230894466e",
+    "scratch/transaction-return-consumers/transaction_return_consumers_test.gd": "147d8da21a758fc62c54a5d2bd63eeda1df56327f398b311a34a13c4b9521bc4",
+    "scripts/system/global/game_progress.gd": "8ba402ae1e1a34a8d65ab16bd8732b0d76a027c9ed4634f3b28e1f551d343c42"
+  },
+  "remaining_permits_by_path_member": [
+    {
+      "rule": "layer",
+      "path": "scripts/net/server/server_bootstrap.gd",
+      "target": "res://assets/scenes/main_menu/room_data_validation_worker.tscn",
+      "occurrences": 1
+    },
+    {
+      "rule": "layer",
+      "path": "scripts/net/server/server_bootstrap.gd",
+      "target": "res://assets/scenes/main_menu/server_cli.tscn",
+      "occurrences": 1
+    },
+    {
+      "rule": "layer",
+      "path": "scripts/net/server/server_bootstrap.gd",
+      "target": "res://assets/scenes/main_menu/server_console.tscn",
+      "occurrences": 1
+    },
+    {
+      "rule": "layer",
+      "path": "scripts/net/server/server_bootstrap.gd",
+      "target": "res://assets/scenes/main_menu/server_room_worker.tscn",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._active_runs",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._batch_transactions",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._begin_guard_transaction",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._continuation_transactions",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._drain_guard_continuations",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._guard_continuations",
+      "occurrences": 2
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._guard_run",
+      "occurrences": 5
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._guard_transactions",
+      "occurrences": 7
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._inherit_guard_transaction",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._paused_runs",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._pending_choices",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._release_guard_transactions",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._runtime_guard",
+      "occurrences": 6
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._settle_idle_guard_transactions",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "target": "EffectManager._transaction_scope",
+      "occurrences": 2
+    },
+    {
+      "rule": "private",
+      "path": "tests/net_v2_one_round_test.gd",
+      "target": "GameProgress._action_completion_block_reason",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "tests/pending_board_power_test.gd",
+      "target": "EffectManager._pending_announcements",
+      "occurrences": 1
+    },
+    {
+      "rule": "private",
+      "path": "tests/private_knowledge_corrosion_test.gd",
+      "target": "GameProgress._round_end_running",
+      "occurrences": 2
+    },
+    {
+      "rule": "private",
+      "path": "tests/rule_guard_root_transaction_v2_test.gd",
+      "target": "EffectManager._queue_time_point_batch",
+      "occurrences": 1
+    }
+  ],
+  "remaining_total": 41,
+  "gate": {
+    "status": "PASS",
+    "exit_code": 0,
+    "root": "E:/Projects/Godot/FateDominationGame-master",
+    "findings": 41,
+    "allowlist": 41,
+    "new": [],
+    "stale": [],
+    "rules": {
+      "layer": 4,
+      "private": 37
+    }
+  },
+  "commands": {
+    "unit": {
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "tools.tests.test_check_layer_deps",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_all_plan_directories_and_only_those (tools.tests.test_check_layer_deps.LayerGateTests.test_all_plan_directories_and_only_those) ... ok\ntest_class_names_and_loads_and_route_literals (tools.tests.test_check_layer_deps.LayerGateTests.test_class_names_and_loads_and_route_literals) ... ok\ntest_comments_and_non_reference_strings_are_ignored (tools.tests.test_check_layer_deps.LayerGateTests.test_comments_and_non_reference_strings_are_ignored) ... ok\ntest_e14_expired_route_allowance_is_retired (tools.tests.test_check_layer_deps.LayerGateTests.test_e14_expired_route_allowance_is_retired) ... ok\ntest_each_real_allowlist_occurrence_is_individually_retirable (tools.tests.test_check_layer_deps.LayerGateTests.test_each_real_allowlist_occurrence_is_individually_retirable) ... ok\ntest_line_shift_whitespace_and_inline_comment_keep_anchor (tools.tests.test_check_layer_deps.LayerGateTests.test_line_shift_whitespace_and_inline_comment_keep_anchor) ... ok\ntest_missing_root_is_error_not_success (tools.tests.test_check_layer_deps.LayerGateTests.test_missing_root_is_error_not_success) ... ok\ntest_new_ui_dependency_exits_one (tools.tests.test_check_layer_deps.LayerGateTests.test_new_ui_dependency_exits_one) ... ok\ntest_newtests_private_coverage_keeps_existing_layer_boundary (tools.tests.test_check_layer_deps.LayerGateTests.test_newtests_private_coverage_keeps_existing_layer_boundary) ... ok\ntest_owners_exempt_only_their_own_members (tools.tests.test_check_layer_deps.LayerGateTests.test_owners_exempt_only_their_own_members) ... ok\ntest_path_dot_segments_do_not_bypass_gate (tools.tests.test_check_layer_deps.LayerGateTests.test_path_dot_segments_do_not_bypass_gate) ... ok\ntest_precise_allowance_does_not_allow_duplicates_or_other_files (tools.tests.test_check_layer_deps.LayerGateTests.test_precise_allowance_does_not_allow_duplicates_or_other_files) ... ok\ntest_private_access_in_any_file (tools.tests.test_check_layer_deps.LayerGateTests.test_private_access_in_any_file) ... ok\ntest_public_watermark_does_not_waive_private_allocator_access (tools.tests.test_check_layer_deps.LayerGateTests.test_public_watermark_does_not_waive_private_allocator_access) ... ok\ntest_real_baseline_copy_cli_pass_new_and_stale (tools.tests.test_check_layer_deps.LayerGateTests.test_real_baseline_copy_cli_pass_new_and_stale) ... ok\ntest_retired_checkpoint_consumer_allowances_are_absent (tools.tests.test_check_layer_deps.LayerGateTests.test_retired_checkpoint_consumer_allowances_are_absent) ... ok\ntest_retired_outpost_access_reintroduced_is_rejected (tools.tests.test_check_layer_deps.LayerGateTests.test_retired_outpost_access_reintroduced_is_rejected) ... ok\ntest_same_line_duplicate_load_is_counted (tools.tests.test_check_layer_deps.LayerGateTests.test_same_line_duplicate_load_is_counted) ... ok\ntest_stale_allowlist_detected_and_removal_restores_pass (tools.tests.test_check_layer_deps.LayerGateTests.test_stale_allowlist_detected_and_removal_restores_pass) ... ok\ntest_text_modules_reject_ui_and_node_inheritance (tools.tests.test_check_layer_deps.LayerGateTests.test_text_modules_reject_ui_and_node_inheritance) ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 8.154s\n\nOK\n"
+    },
+    "gate": {
+      "command": [
+        "python",
+        "tools/check_layer_deps.py",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\": \"PASS\", \"exit_code\": 0, \"root\": \"E:/Projects/Godot/FateDominationGame-master\", \"findings\": 41, \"allowlist\": 41, \"new\": [], \"stale\": [], \"rules\": {\"layer\": 4, \"private\": 37}}\n",
+      "stderr": ""
+    }
+  },
+  "regression_RED": {
+    "command": "python -m unittest tools.tests.test_check_layer_deps.LayerGateTests.test_retired_outpost_access_reintroduced_is_rejected -v",
+    "exit_code": 1,
+    "failed_subtests": [
+      "GameProgress._phase_end_pending",
+      "GameProgress._phase_end_running"
+    ],
+    "reason": "Retired access still has an allowance"
+  },
+  "outpost_completed_evidence": {
+    "readback": "E:\\scratch\\round74-outpost-4364023db18d40b9b1a8f10ca25a5212\\evidence\\readback.json",
+    "readback_sha256": "eea866310bd1e0c4343aa8cb9d4ee71e612676180a20ba1cae4026345756d907",
+    "source_hash_matches": true,
+    "log_hash_mismatches": [],
+    "scenes": [
+      {
+        "label": "old-fixture-precondition-RED",
+        "exit": 1,
+        "actual_checks": 5,
+        "declared_checks": 5,
+        "failures": [
+          "outpost fixture selects actor through phase lifecycle",
+          "outpost fixture establishes matching fixed phase window",
+          "outpost fixture establishes matching self phase window"
+        ],
+        "errors": []
+      },
+      {
+        "label": "public-fixture-precondition-GREEN",
+        "exit": 0,
+        "actual_checks": 5,
+        "declared_checks": 5,
+        "failures": [],
+        "errors": []
+      },
+      {
+        "label": "public-lifecycle-query-messages-GREEN",
+        "exit": 0,
+        "actual_checks": 15,
+        "declared_checks": 15,
+        "failures": [],
+        "errors": []
+      },
+      {
+        "label": "formal-outpost-once-GREEN",
+        "exit": 0,
+        "actual_checks": 43,
+        "declared_checks": 43,
+        "failures": [],
+        "errors": []
+      }
+    ],
+    "assertions_missing": [],
+    "log_readback": [
+      {
+        "path": "E:\\scratch\\round74-outpost-4364023db18d40b9b1a8f10ca25a5212\\evidence\\formal-outpost-once-GREEN.stdout.log",
+        "sha256": "b65f07ab62e404db3826dfd4b2fa2f030ee3e1f57e726eae2fca2ba10dfeaba5",
+        "result_lines": [
+          "RESULT checks=43 failures=[]"
+        ],
+        "script_errors": []
+      },
+      {
+        "path": "E:\\scratch\\round74-outpost-4364023db18d40b9b1a8f10ca25a5212\\evidence\\old-fixture-precondition-RED.stdout.log",
+        "sha256": "a29ec60f34bc7bf8f607e3ec7108d9d4b8bf6b270ed9951804cc8fcf300bd0f9",
+        "result_lines": [
+          "RESULT checks=5 failures=[\"outpost fixture selects actor through phase lifecycle\", \"outpost fixture establishes matching fixed phase window\", \"outpost fixture establishes matching self phase window\"]"
+        ],
+        "script_errors": []
+      },
+      {
+        "path": "E:\\scratch\\round74-outpost-4364023db18d40b9b1a8f10ca25a5212\\evidence\\public-fixture-precondition-GREEN.stdout.log",
+        "sha256": "f45ab32ff636b07f77e5b4a69d192265520ae950762256b9f014e3b128527ff6",
+        "result_lines": [
+          "RESULT checks=5 failures=[]"
+        ],
+        "script_errors": []
+      },
+      {
+        "path": "E:\\scratch\\round74-outpost-4364023db18d40b9b1a8f10ca25a5212\\evidence\\public-lifecycle-query-messages-GREEN.stdout.log",
+        "sha256": "83dc14b23637c008bef4db36e97ca4fddab65ea2f0cfd88105593559e9a6eedb",
+        "result_lines": [
+          "RESULT checks=15 failures=[]"
+        ],
+        "script_errors": []
+      }
+    ],
+    "historical_runner_issues": [
+      "KeyError: 'results'",
+      "AttributeError: no_reparse_ancestors; fixed to existing no_links/tree_bytes; no scene rerun"
+    ],
+    "net_long_round": "not_run_no_public_reason_equivalence"
+  },
+  "coverage": {
+    "collect_sources": "root.rglob(*.gd), real files; excludes .git/.godot; ignores do not exclude newtests",
+    "newtests_gd_enumerated": 14,
+    "newtests_current_findings": [],
+    "private_owners": {
+      "EffectManager": "scripts/system/global/effect_manager.gd",
+      "GameProgress": "scripts/system/global/game_progress.gd",
+      "DummyBot": "scripts/system/ai/temp/dummy_bot.gd"
+    },
+    "layer_roots": [
+      "scripts/system/",
+      "scripts/match/",
+      "scripts/net/authority/",
+      "scripts/net/session/",
+      "scripts/net/server/",
+      "scripts/net/content/",
+      "scripts/net/validation/",
+      "scripts/net/transport/",
+      "scripts/net/identity/"
+    ],
+    "text_roots": [
+      "scripts/ui/text/"
+    ],
+    "limits": "No all-class private guarantee: aliases/reflection/dynamic references and unlisted owners not checked; newtests has private checks for three owners but is not a layer-restricted root; scanner rules/scopes unchanged"
+  },
+  "retained_reasons": {
+    "bootstrap": "4 existing composition-root route anchors retained",
+    "scratch/transaction-return-consumers/transaction_return_consumers_test.gd": "32 existing occurrences still present; active actor; untouched, retirement deferred to main after delivery",
+    "tests/net_v2_one_round_test.gd": "Private completion reason still used in observe at current line 179; public can_end only boolean, no equivalent reason field; long round not rerun",
+    "tests/pending_board_power_test.gd": "Still snapshots pending announcements at line 99; no verified completed migration",
+    "tests/private_knowledge_corrosion_test.gd": "Still asserts round-end pause/resume at lines 100/104; no verified completed migration",
+    "tests/rule_guard_root_transaction_v2_test.gd": "Still queues batch from running mutate callback at current line 23; no verified completed migration"
+  },
+  "issues_current": [],
+  "dirty_tree_check_note": "Whole existing dirty-tree git diff --check returned exit 2 with CRLF warnings; no cleanup attempted. Scoped status confirms all three deliverables are untracked existing/new files, so tracked git diff is not an acceptance proof for them; exact applied patches, real unit/CLI execution and currenthash readback provide this task's verification.",
+  "new_owner_reports": []
+}

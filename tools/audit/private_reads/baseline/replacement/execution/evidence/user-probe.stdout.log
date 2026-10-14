@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ACTUAL_USER_PATH E:/hermes-scratch/private-read-replacement-20261010/selected-082e42f9c79b4ce0b772276292acb817/generated/appdata/FateDomination
+USER_PROBE {"path":"E:/hermes-scratch/private-read-replacement-20261010/selected-082e42f9c79b4ce0b772276292acb817/generated/appdata/FateDomination","pid":36644,"role":"main","token":"selected-082e42f9c79b4ce0b772276292acb817","worker_pool_max_threads":20}
+OWNED_CHILD 39564
+CHILD_EXITED 39564
+CHILD_EXIT_CODE 0
+USER_PROBE {"path":"E:/hermes-scratch/private-read-replacement-20261010/selected-082e42f9c79b4ce0b772276292acb817/generated/appdata/FateDomination","pid":39564,"role":"worker","token":"selected-082e42f9c79b4ce0b772276292acb817","worker_pool_max_threads":20}

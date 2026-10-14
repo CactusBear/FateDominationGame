@@ -10,9 +10,27 @@ extends RefCounted
 
 #来源标签：一条记录同时带类型标签与"是谁的能力"标签，查询按标签交集筛。
 #  类型：situation event master servant buff skill attack command_spell other rule
-#  归属：self（这名玩家自己发动的）others（其他玩家发动的）；场上牌与规则没有归属标签
-static func record(player_id:int, field:String, delta, card = null) -> void:
+# 归属：self（这名玩家自己发动的）others（其他玩家发动的）；场上牌与规则没有归属标签
+# 只接受显式 context，或当前已验证函数帧继承的 context；不会读取 current_token/activating_eff 补票。
+static func current_context(context:Variant = null) -> SessionContext:
+	var candidate:Variant = context
+	if candidate == null:
+		var frame:Dictionary = EffectManager.execution_context()
+		if not frame.get("ok", false):
+			return null
+		candidate = frame.get("context")
+	var status:Dictionary = SessionGeneration.validate_context(candidate)
+	return candidate as SessionContext if status.get("ok", false) else null
+
+
+static func record(player_id:int, field:String, delta, card = null, context:Variant = null) -> void:
+	var source_context:SessionContext = current_context(context)
+	if source_context == null:
+		return
 	if delta == null or delta == 0:
+		return
+	#事实写点只接受已经存在的主体；查询不得通过 get_player_data 建库。
+	if GameDataManager.find_player_data(player_id).is_empty():
 		return
 	var info:Dictionary = EffectManager.activating_source_info()
 	var by:int = int(info.get("by_player", -1))
@@ -25,7 +43,10 @@ static func record(player_id:int, field:String, delta, card = null) -> void:
 
 #本回合仍在生效的来源记录。出牌威力与合计威力加成只在本回合有效（回合结束重建/归零）；
 #改卡牌威力的记录只要那张牌此刻仍计入合计威力就一直有效（残留牌跨回合也算）
-static func active_entries(player_id:int) -> Array:
+static func active_entries(player_id:int, context:Variant = null) -> Array:
+	var source_context:SessionContext = current_context(context)
+	if source_context == null or GameDataManager.find_player_data(player_id).is_empty():
+		return []
 	var result:Array = []
 	for entry in GameLog.query({"type": "power_source", "actor": player_id}, null):
 		var field:String = str(entry.get("data", {}).get("field", ""))

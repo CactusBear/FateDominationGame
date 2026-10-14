@@ -10,10 +10,14 @@ extends RefCounted
 #min_power是"印刷威力至少达到多少才参与加成"的门槛，由调用方传入，
 #留空(-1)表示不限——"基本威力≥4的攻击威力+1"这类规则用同一个开关表达，不写死数字。
 #类别/门槛都由调用方声明，不在本操作里写死哪张卡该受限
-func exec(required_attributes:Array, power_delta:BaseNumber = BaseNumber.new(0), player_id:int = -1, attack:BaseAttack = null, exclude_attack:BaseAttack = null, required_category:String = "", min_power:int = -1):
+func exec(required_attributes:Array, power_delta:BaseNumber = BaseNumber.new(0), player_id:int = -1, attack = null, exclude_attack = null, required_category:String = "", min_power:int = -1):
 
 	var id = EffectManager.resolve_player_id(player_id)
 	if power_delta.number == 0:
+		return
+	# callv 的动态对象可能是 BaseSkill 等 BaseHandCard；先在无类型入口筛掉，
+	# 避免不兼容的 typed 参数转换，同时保留 null 的全场扫描语义。
+	if attack != null and !(attack is BaseAttack):
 		return
 	var counts_power = CardCountsPower.new()
 	var total:int = 0
@@ -33,7 +37,7 @@ func exec(required_attributes:Array, power_delta:BaseNumber = BaseNumber.new(0),
 	if total == 0:
 		return
 	#复用EditPower统一改写玩家的合计威力
-	EditPower.new().exec(null, BaseNumber.new(total), id)
+	preload("res://scripts/system/operation_router.gd").exec_registered("edit_power", [null, BaseNumber.new(total), id])
 
 
 func _match(attack:BaseAttack, required_attributes:Array, required_category:String = "", min_power:int = -1) -> bool:

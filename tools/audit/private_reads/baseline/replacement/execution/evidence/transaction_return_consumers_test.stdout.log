@@ -1,0 +1,66 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+DIAGNOSTIC_USER_PATH E:/hermes-scratch/private-read-replacement-20261010/selected-082e42f9c79b4ce0b772276292acb817/generated/appdata/FateDomination
+CHECK 隔离审计复位 true
+CHECK start append 失败不得接受根事务 true
+CHECK start 失败必须暂停 true
+CHECK start 故障命中真实 append true
+CHECK 隔离审计复位 true
+CHECK child append 失败不得接受子事务 true
+CHECK 真实子登记命中继承并保留同根归属 true
+CHECK 隔离审计复位 true
+CHECK 登记失败仍必须拦住调用方同步尾部 true
+CHECK 登记写失败不得执行或丢弃尾部 true
+CHECK 延期布尔值不是审计成功回执 true
+CHECK 尾票消费在审计故障下拒绝而不重写 true
+CHECK 隔离审计复位 true
+CHECK 空闲提交前公开建立原根 true
+CHECK 空闲提交失败不得接受下一根 true
+CHECK commit append 失败不得放行事实 generation true
+CHECK commit 失败必须保留事务 true
+CHECK 真实空闲结算 commit 命中 true
+CHECK 隔离审计复位 true
+CHECK 整批释放前公开建立原根 true
+CHECK 整批释放路径 commit 失败不得放行 generation true
+CHECK 公开整批释放故障保留原事务身份 true
+CHECK 隔离审计复位 true
+CHECK 真实预算配置 true
+CHECK 真实执行修改后暂停原片 true
+CHECK resume append 失败不得报告成功 true
+CHECK resume 失败必须保留暂停片 true
+CHECK resume 写失败不重做规则步骤 true
+CHECK 隔离审计复位 true
+CHECK 真实预算配置 true
+CHECK 真实执行修改后暂停原片 true
+CHECK 真实根检查点可恢复 true
+CHECK 公开事务边界安装恢复观察器 true
+CHECK intent 写失败不得执行恢复 true
+CHECK intent 失败保留已执行规则前片 true
+CHECK 隔离审计复位 true
+CHECK 真实预算配置 true
+CHECK 真实执行修改后暂停原片 true
+CHECK 真实根检查点可恢复 true
+CHECK 公开事务边界安装恢复观察器 true
+CHECK rollback 完成回执写失败不得报告成功 true
+CHECK 规则已恢复时旧事实 generation 必须 abort true
+CHECK 真实规则恢复发生在失败完成回执之前 true
+CHECK 隔离审计复位 true
+CHECK 动作返回 true 后 flush 失败不得伪报成功 true
+CHECK 写失败必须废弃旧视图并给出原因 true
+CHECK 隔离审计复位 true
+CHECK 未录制态没有录制器 true
+CHECK 未录制态公开提交仅执行命令一次 true
+CHECK 录制中公开提交接受成功回执 true
+CHECK 录制中只执行录制器且不关闭 true
+CHECK 公开动作正确映射录制指令与参数 true
+CHECK 公开关闭录制成功 true
+CHECK 已停态保留同一录制器且已关闭 true
+CHECK 已停态公开提交回到命令且不重入录制器 true
+CHECK perform 返回 true 但录制失败不得报告成功 true
+CHECK 失败必须关闭录制且保留原因 true
+CHECK 失败动作只执行一次且不回退重做命令 true
+CHECK 录制失败废弃原公开视图且重试不重复动作 true
+CHECK 故障关闭后新视图提交使用命令而非录制器 true
+CHECK 隔离审计复位 true
+RESULT transaction_return_consumers checks=61 failures=[]

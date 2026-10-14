@@ -14,7 +14,8 @@ func exec(player_id:int = -1, attributes:Array = []):
 	var total:int = 0
 	var counts_power = CardCountsPower.new()
 	for card in player_data["played_cards"]:
-		if !(card is BaseAttack):
+		# 技能区打出的技能攻击同样计入合计威力，归零口径与普通攻击一致
+		if !(card is BaseHandCard):
 			continue
 		if !counts_power.exec(card, id):
 			continue
@@ -23,5 +24,5 @@ func exec(player_id:int = -1, attributes:Array = []):
 				total += (card._power as BaseNumber).number
 				break
 	if total > 0:
-		EditPower.new().exec(null, BaseNumber.new(-total), id)
+		preload("res://scripts/system/operation_router.gd").exec_registered("edit_power", [null, BaseNumber.new(-total), id])
 	return total

@@ -1,0 +1,320 @@
+{
+  "changed_files": [
+    {
+      "path": "newtests/play_affordance_rule_audit_test.gd",
+      "lines": [
+        75
+      ],
+      "before_sha256": "32c27a860c02edb90aedf2af342e23ee3f876f625b08fc3441092774aec10302",
+      "after_sha256": "fa11eb29a52a29eed20a2761f5600fa7d9403ee19f56570892cfb8db1f88b404",
+      "exact_byte_change_verified": true
+    },
+    {
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "lines": [
+        280
+      ],
+      "before_sha256": "535c8b56dd43606ace9f5c13e7465aa9381812f40a074a92257fd906fb1cbad5",
+      "after_sha256": "59f6a72cd1512e17bf4177d96825e61cb6bbb25c20b7190f4f23fde2a03b7bb1",
+      "exact_byte_change_verified": true
+    },
+    {
+      "path": "tests/climax_gated_ability_test.gd",
+      "lines": [
+        62
+      ],
+      "before_sha256": "638f827688cf28ffaa19910cc96ec8d87ce0d469e41cd596ba3d0a3e6706af62",
+      "after_sha256": "1bf260e3b0cbd96d8ecf667ec527c7ea5bc10f9a0e5c7a66105edcacab2b6360",
+      "exact_byte_change_verified": true
+    },
+    {
+      "path": "tests/match_finished_authority_test.gd",
+      "lines": [
+        59,
+        63,
+        83,
+        86
+      ],
+      "before_sha256": "a1ecfb78c144607a52deb77795d1285fd5967d924951fd6ea4325ac0138ffb06",
+      "after_sha256": "7e0de23a0ff0e9d2a119faab24b7d655d53e91a951858b7b4c7551c28dd8b5dd",
+      "exact_byte_change_verified": true
+    },
+    {
+      "path": "tests/refactor_net_area_diagnostic.gd",
+      "lines": [
+        180
+      ],
+      "before_sha256": "a0964fdf276e12326bf63eddb9ea719943de0c5070b65e08d216f078837e0fd3",
+      "after_sha256": "e7eb3f96da06646e4920c51b5f6f25910e864bb55e4bbdb56f7cc9dc89ace557",
+      "exact_byte_change_verified": true
+    },
+    {
+      "path": "tests/servant_skill_eight_magic_test.gd",
+      "lines": [
+        85
+      ],
+      "before_sha256": "8758eadfc12064ba6109a338f7005dc13ee91e35747f674c26d0ae13d1a3a861",
+      "after_sha256": "489814c473f58f66f1d8b3246c52b7d5cb05ebcdde0fc2a098e9ce55fe5b9a95",
+      "exact_byte_change_verified": true
+    }
+  ],
+  "unmodified_files": [
+    {
+      "path": "tests/authority_revision_query_test.gd",
+      "lines": [
+        18,
+        40
+      ],
+      "before_sha256": "f0b94b7f89843a3a7ad7222982b7d04362f327d06596005a89986fdef8e59d24",
+      "after_sha256": "f0b94b7f89843a3a7ad7222982b7d04362f327d06596005a89986fdef8e59d24",
+      "exact_byte_change_verified": true
+    }
+  ],
+  "changed_read_count": 9,
+  "unmodified_read_count": 2,
+  "gate_owners": {
+    "EffectManager": "scripts/system/global/effect_manager.gd",
+    "GameProgress": "scripts/system/global/game_progress.gd",
+    "DummyBot": "scripts/system/ai/temp/dummy_bot.gd"
+  },
+  "gate_owner_site_count": 0,
+  "gate_sha256": "5dabf762ded90d5e0a6151ba1a50468c14f9029c3f2478ef996c9f6fb6bcf0be",
+  "sites": [
+    {
+      "path": "newtests/play_affordance_rule_audit_test.gd",
+      "line": 75,
+      "ordinal": 93,
+      "receiver": "card",
+      "member": "_attributes",
+      "owner": "scripts/system/base_card.gd",
+      "declaration_line": 35,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "可立即替换",
+      "public_equivalent": "has_attribute(原参数)（scripts/system/base_card.gd:88）",
+      "reason": "完全等价的has查询"
+    },
+    {
+      "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+      "line": 280,
+      "ordinal": 913,
+      "receiver": "authority",
+      "member": "_revision",
+      "owner": "scripts/net/authority/match_authority.gd",
+      "declaration_line": 13,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "scratch诊断",
+      "gate_owner": false,
+      "category": "可立即替换",
+      "public_equivalent": "current_revision()（scripts/net/authority/match_authority.gd:33）",
+      "reason": "直接标量/只读值快照；保留原断言语义"
+    },
+    {
+      "path": "tests/authority_revision_query_test.gd",
+      "line": 18,
+      "ordinal": 1223,
+      "receiver": "authority",
+      "member": "_revision",
+      "owner": "scripts/net/authority/match_authority.gd",
+      "declaration_line": 13,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "可立即替换",
+      "public_equivalent": "current_revision()（scripts/net/authority/match_authority.gd:33）",
+      "reason": "直接标量/只读值快照；保留原断言语义"
+    },
+    {
+      "path": "tests/authority_revision_query_test.gd",
+      "line": 40,
+      "ordinal": 1229,
+      "receiver": "authority",
+      "member": "_revision",
+      "owner": "scripts/net/authority/match_authority.gd",
+      "declaration_line": 13,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "可立即替换",
+      "public_equivalent": "current_revision()（scripts/net/authority/match_authority.gd:33）",
+      "reason": "直接标量/只读值快照；保留原断言语义"
+    },
+    {
+      "path": "tests/climax_gated_ability_test.gd",
+      "line": 62,
+      "ordinal": 1931,
+      "receiver": "clone",
+      "member": "_attributes",
+      "owner": "scripts/system/base_card.gd",
+      "declaration_line": 35,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "可立即替换",
+      "public_equivalent": "has_attribute(原参数)（scripts/system/base_card.gd:88）",
+      "reason": "完全等价的has查询"
+    },
+    {
+      "path": "tests/match_finished_authority_test.gd",
+      "line": 59,
+      "ordinal": 2609,
+      "receiver": "authority",
+      "member": "_revision",
+      "owner": "scripts/net/authority/match_authority.gd",
+      "declaration_line": 13,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "可立即替换",
+      "public_equivalent": "current_revision()（scripts/net/authority/match_authority.gd:33）",
+      "reason": "直接标量/只读值快照；保留原断言语义"
+    },
+    {
+      "path": "tests/match_finished_authority_test.gd",
+      "line": 63,
+      "ordinal": 2611,
+      "receiver": "authority",
+      "member": "_revision",
+      "owner": "scripts/net/authority/match_authority.gd",
+      "declaration_line": 13,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "可立即替换",
+      "public_equivalent": "current_revision()（scripts/net/authority/match_authority.gd:33）",
+      "reason": "直接标量/只读值快照；保留原断言语义"
+    },
+    {
+      "path": "tests/match_finished_authority_test.gd",
+      "line": 83,
+      "ordinal": 2619,
+      "receiver": "authority",
+      "member": "_revision",
+      "owner": "scripts/net/authority/match_authority.gd",
+      "declaration_line": 13,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "可立即替换",
+      "public_equivalent": "current_revision()（scripts/net/authority/match_authority.gd:33）",
+      "reason": "直接标量/只读值快照；保留原断言语义"
+    },
+    {
+      "path": "tests/match_finished_authority_test.gd",
+      "line": 86,
+      "ordinal": 2620,
+      "receiver": "authority",
+      "member": "_revision",
+      "owner": "scripts/net/authority/match_authority.gd",
+      "declaration_line": 13,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "可立即替换",
+      "public_equivalent": "current_revision()（scripts/net/authority/match_authority.gd:33）",
+      "reason": "直接标量/只读值快照；保留原断言语义"
+    },
+    {
+      "path": "tests/refactor_net_area_diagnostic.gd",
+      "line": 180,
+      "ordinal": 3765,
+      "receiver": "diagnostic_host.match_authority",
+      "member": "_revision",
+      "owner": "scripts/net/authority/match_authority.gd",
+      "declaration_line": 13,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "可立即替换",
+      "public_equivalent": "current_revision()（scripts/net/authority/match_authority.gd:33）",
+      "reason": "直接标量/只读值快照；保留原断言语义"
+    },
+    {
+      "path": "tests/servant_skill_eight_magic_test.gd",
+      "line": 85,
+      "ordinal": 4315,
+      "receiver": "current",
+      "member": "_attributes",
+      "owner": "scripts/system/base_card.gd",
+      "declaration_line": 35,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "可立即替换",
+      "public_equivalent": "has_attribute(原参数)（scripts/system/base_card.gd:88）",
+      "reason": "完全等价的has查询"
+    }
+  ],
+  "reclassification": [
+    {
+      "path": "tests/authority_revision_query_test.gd",
+      "line": 18,
+      "ordinal": 1223,
+      "receiver": "authority",
+      "member": "_revision",
+      "owner": "scripts/net/authority/match_authority.gd",
+      "declaration_line": 13,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "需要新增公开能力",
+      "public_equivalent": "current_revision()（scripts/net/authority/match_authority.gd:33）",
+      "reason": "公开查询自身的准确性/无副作用契约需要独立oracle；改为被测current_revision会降低断言强度；现存入口不足以保留该独立观测"
+    },
+    {
+      "path": "tests/authority_revision_query_test.gd",
+      "line": 40,
+      "ordinal": 1229,
+      "receiver": "authority",
+      "member": "_revision",
+      "owner": "scripts/net/authority/match_authority.gd",
+      "declaration_line": 13,
+      "kind": "state",
+      "syntax": "dot",
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "scope": "现行测试诊断",
+      "gate_owner": false,
+      "category": "需要新增公开能力",
+      "public_equivalent": "current_revision()（scripts/net/authority/match_authority.gd:33）",
+      "reason": "公开查询自身的准确性/无副作用契约需要独立oracle；改为被测current_revision会降低断言强度；现存入口不足以保留该独立观测"
+    }
+  ]
+}

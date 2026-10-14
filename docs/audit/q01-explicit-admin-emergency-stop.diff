@@ -1,0 +1,323 @@
+--- a/scripts/net/server/server_console_channel.gd
++++ b/scripts/net/server/server_console_channel.gd
+@@ -95,6 +95,7 @@
+ 		"room save":{"arguments":1,"handler":_room_save},
+ 		"room seed":{"arguments":1,"handler":_room_seed},
+ 		"room close":{"arguments":1,"handler":_room_close},
++		"room emergency-stop":{"arguments":5,"handler":_room_emergency_stop},
+ 		"room pause":{"arguments":1,"handler":_room_pause},
+ 		"room resume":{"arguments":1,"handler":_room_resume},
+ 		"room kick":{"arguments":2,"handler":_room_kick},
+@@ -123,7 +124,7 @@
+ 	if not parsed.ok: return parsed
+ 	var command:String = parsed.action
+ 	if not commands.has(command): return {"ok":false,"error":"未知命令，请输入 help"}
+-	if command in ["status","room legacy-approve","room legacy-reject","room consumed"] and not trusted_local:
++	if command in ["status","room legacy-approve","room legacy-reject","room consumed","room emergency-stop"] and not trusted_local:
+ 		return {"ok":false,"error":"此操作仅允许可信本机控制台"}
+ 	var arguments:PackedStringArray = parsed.args
+ 	if not RequestCodec.valid_arguments(arguments,commands[command].arguments): return {"ok":false,"error":"命令参数数量无效"}
+@@ -193,7 +194,8 @@
+ 		if command == "room create": line += " <name> <settings_json>"
+ 		elif command.begins_with("room "):
+ 			line = "room <id> " + command.trim_prefix("room ")
+-			if command in ["room result","room forget"]: line += " <request_id>"
++			if command == "room emergency-stop": line += " <pid> <instance_id> --confirm-unsaved-risk '<reason>'（可能丢失未保存进度）"
++			elif command in ["room result","room forget"]: line += " <request_id>"
+ 			elif command == "room consumed": line += " <request_id> <response_sha256>"
+ 			elif command == "room kick": line += " <connection_id>"
+ 			elif command == "room legacy-approve": line += " <pid> <instance_id> legacy_approved '<member_to_connection_json>'"
+@@ -293,6 +295,42 @@
+ 	if not response.get("ok") is bool or not response.ok or not result is Dictionary: return false
+ 	if not result.get("closing") is bool or not result.closing: return false
+ 	return (result.get("saved") is bool and result.saved) or (result.get("room_state_saved") is bool and result.room_state_saved)
++
++## 独立于正常保存关断；只有本机显式确认风险的命令进入此函数。
++## 意图落盘且读回后才执行；退出不是保存，原回执/存档/登记均保留。
++func _room_emergency_stop(args:PackedStringArray) -> Dictionary:
++	var warning:String = "紧急强停可能丢失未保存进度；未确认保存成功，不视为已保存"
++	if args[3] != "--confirm-unsaved-risk" or args[4].strip_edges().is_empty():
++		return {"ok":false,"error":"必须显式确认未保存风险并提供原因；"+warning}
++	if directory.is_empty(): return {"ok":false,"error":"本机审计目录未配置；未执行强停"}
++	if not RequestCodec.valid_integer(args[1],true) or not RequestCodec.valid_id(args[2]):
++		return {"ok":false,"error":"必须提供当前 PID 与实例编号；未执行强停"}
++	var binding:Dictionary = gateway.manager.instance_binding(args[0])
++	if binding.is_empty() or binding.pid != args[1].to_int() or binding.instance_id != args[2] or not gateway.manager.process_identity_verified(binding):
++		return {"ok":false,"error":"进程实例或原生所有权未确认；未执行强停"}
++	var audit_id:String = Crypto.new().generate_random_bytes(16).hex_encode()
++	var audit_root:String = directory.path_join("emergency-stop")
++	if DirAccess.make_dir_recursive_absolute(audit_root) != OK: return {"ok":false,"error":"审计目录不可写；未执行强停"}
++	var intent_path:String = audit_root.path_join(audit_id+".intent.json")
++	var audit_path:String = audit_root.path_join(audit_id+".result.json")
++	var intent:Dictionary = {"audit_id":audit_id,"stage":"intent","action":"room emergency-stop","source":"trusted_local_console","binding":binding,"reason":args[4],"confirmed_unsaved_risk":true,"saved":false,"save_confirmed":false,"warning":warning,"requested_at_unix":Time.get_unix_time_from_system()}
++	if write_json(intent_path,intent) != OK: return {"ok":false,"error":"强停意图审计写入失败；未执行强停"}
++	if FileAccess.get_file_as_string(intent_path) != JSON.stringify(intent): return {"ok":false,"error":"强停意图审计读回失败；未执行强停"}
++	print("SERVER_EMERGENCY_STOP_INTENT ",JSON.stringify(intent))
++	var terminated:bool = gateway.manager.terminate_process_for_binding(binding)
++	var exited:bool = gateway.manager.process_state_for_binding(binding) == 0
++	var outcome:Dictionary = intent.duplicate(true)
++	outcome.stage = "result"
++	outcome["termination_confirmed"] = terminated
++	outcome["process_exited"] = exited
++	outcome["completed_at_unix"] = Time.get_unix_time_from_system()
++	outcome["intent_path"] = intent_path
++	outcome["audit_path"] = audit_path
++	print("SERVER_EMERGENCY_STOP_RESULT ",JSON.stringify(outcome))
++	if write_json(audit_path,outcome) != OK: return {"ok":false,"error":"强停结果审计写入失败；"+warning,"result":outcome}
++	if FileAccess.get_file_as_string(audit_path) != JSON.stringify(outcome): return {"ok":false,"error":"强停结果审计读回失败；"+warning,"result":outcome}
++	if not terminated or not exited: return {"ok":false,"error":"未确认强停完成；保留原生所有权和证据；"+warning,"result":outcome}
++	return {"ok":true,"result":outcome}
+ 
+ func _room_close(args:PackedStringArray) -> Dictionary:
+ 	return _room_request(args[0],"close")
+--- a/scripts/net/server/server_room_manager.gd
++++ b/scripts/net/server/server_room_manager.gd
+@@ -317,6 +317,15 @@
+ 	var room:Dictionary = rooms[binding.room]
+ 	if not room.get("process_token") is String: return false
+ 	return _process_owner.call("verify", room.process_token, binding.pid) == true
++
++## 仅供可信本机管理员入口组合；不保存、不 release、不撤销房间登记。
++## 复用创建时持有的原生句柄；错误/旧实例/UNKNOWN 不能退回裸 PID。
++func terminate_process_for_binding(binding:Dictionary) -> bool:
++	if not process_identity_verified(binding): return false
++	var room:Dictionary = rooms[binding.room]
++	if not _terminate_process(room) or process_state_for_binding(binding) != 0: return false
++	room.ready = false
++	return true
+ 
+ ## UNKNOWN 不等于 EXITED；不允许调用方退回裸 PID 判活。
+ func process_state_for_binding(binding:Dictionary) -> int:
+--- /dev/null
++++ b/newtests/net_emergency_stop_test.gd
+@@ -0,0 +1,99 @@
++extends "res://newtests/net_server_shutdown_failure_test.gd"
++
++func run() -> void:
++	gateway = preload("res://scripts/net/server/server_gateway.gd").new()
++	relay = preload("res://scripts/net/p2p/p2p_signal_server.gd").new()
++	console = Channel.new()
++	root = OS.get_environment("HERMES_SHUTDOWN_TEST_ROOT")
++	if root.is_empty() or not root.is_absolute_path():
++		check(false,"explicit E scratch root required")
++		finish()
++		return
++	root = root.path_join("emergency-%d" % Time.get_ticks_usec())
++	check(console.configure(root.path_join("console"),gateway,relay) == OK,"configure real local console")
++	if not gateway.manager.process_ownership_available():
++		check(false,"native ownership required")
++		finish()
++		return
++	_watchdog()
++	var room:Dictionary = await _spawn("unsaved")
++	if room.is_empty():
++		await _cleanup()
++		finish()
++		return
++	var prefix:String = "room %s emergency-stop %d %s " % [room.id,room.pid,room.instance_id]
++	check(not console.execute(prefix+"--confirm-unsaved-risk 'administrator test'",false).ok and _alive(room),"remote administrator cannot invoke local emergency command")
++	check(not console.execute(prefix+"no-confirm 'administrator test'").ok and _alive(room),"missing explicit risk confirmation cannot kill")
++	check(not console.execute(prefix+"--confirm-unsaved-risk").ok and _alive(room),"missing reason cannot kill")
++	check(not console.execute(prefix+"--confirm-unsaved-risk '   '").ok and _alive(room),"blank reason cannot kill")
++	var console_root:String = console.directory
++	console.directory = ""
++	check(not console.execute(prefix+"--confirm-unsaved-risk 'administrator test'").ok and _alive(room),"unconfigured audit directory cannot kill")
++	console.directory = console_root
++	var token:String = room.process_token
++	room.process_token = "invalid-token"
++	var unknown:Dictionary = console.execute(prefix+"--confirm-unsaved-risk 'administrator test'")
++	room.process_token = token
++	check(not unknown.ok and _alive(room),"unverified native ownership cannot kill")
++	var help:Dictionary = console.execute("help")
++	check(help.ok and str(help.result).contains("--confirm-unsaved-risk") and str(help.result).contains("可能丢失未保存进度"),"help documents explicit risk confirmation")
++	check(not console.execute("room %s emergency-stop %d %s --confirm-unsaved-risk 'stale'" % [room.id,room.pid+1,room.instance_id]).ok and _alive(room),"stale PID cannot kill")
++	check(not console.execute("room %s emergency-stop %d %s --confirm-unsaved-risk 'stale'" % [room.id,room.pid,"0".repeat(32)]).ok and _alive(room),"stale instance cannot kill")
++	var close:Dictionary = console.execute("room %s close" % room.id)
++	check(close.ok,"normal close request accepted")
++	var request_id:String = close.result.request_id
++	_allow(room,"poll")
++	await _wait_file(str(room.directory).path_join("control").path_join(request_id+".response.json"))
++	var refused:Dictionary = console._room_result(PackedStringArray([room.id,request_id]))
++	check(not refused.ok and not Channel.saved_close_receipt(refused) and _alive(room),"real unsaved match rejects close and stays alive")
++	var old_receipt:String = FileAccess.get_sha256(str(room.directory).path_join("control").path_join(request_id+".response.json"))
++	var binding:Dictionary = gateway.manager.instance_binding(room.id)
++	# 走生产本机命令文件通道；未投递命令的 poll 不会自动升级正常保存拒绝。
++	console.poll()
++	check(_alive(room),"failed normal close never automatically invokes emergency stop")
++	var command_id:String = Crypto.new().generate_random_bytes(16).hex_encode()
++	var command_path:String = console.directory.path_join(command_id+".request.json")
++	check(Channel.write_json(command_path,{"instance":console.instance_id,"command":prefix+"--confirm-unsaved-risk 'administrator test'"}) == OK,"submit explicit command via real local CLI transport")
++	console.poll()
++	var response_path:String = console.directory.path_join(command_id+".response.json")
++	var stopped = JSON.parse_string(FileAccess.get_file_as_string(response_path))
++	if not stopped is Dictionary:
++		check(false,"local CLI response required")
++		await _cleanup()
++		finish()
++		return
++	check(stopped.ok,"explicit administrator emergency stop executes")
++	check(gateway.manager.process_state_for_binding(binding) == 0,"real native handle confirms EXITED")
++	if stopped.get("result") is Dictionary:
++		check(stopped.result.get("process_exited") == true and stopped.result.get("saved") == false and stopped.result.get("save_confirmed") == false and str(stopped.result.get("warning","")).contains("未确认"),"emergency exit never implies successful save")
++		var intent = JSON.parse_string(FileAccess.get_file_as_string(str(stopped.result.get("intent_path",""))))
++		var audit = JSON.parse_string(FileAccess.get_file_as_string(str(stopped.result.get("audit_path",""))))
++		check(intent is Dictionary and intent.get("stage") == "intent" and intent.get("binding",{}).get("pid") == binding.pid and intent.get("confirmed_unsaved_risk") == true and intent.get("reason") == "administrator test","durable intent binds administrator confirmation reason and process")
++		check(audit is Dictionary and audit.get("process_exited") == true and audit.get("saved") == false and audit.get("audit_id") == intent.get("audit_id"),"durable outcome audit can be read back")
++	else:
++		check(false,"emergency result required")
++	check(FileAccess.get_sha256(str(room.directory).path_join("control").path_join(request_id+".response.json")) == old_receipt,"normal failed-save receipt remains byte-identical")
++	check(gateway.manager.rooms.has(room.id) and not FileAccess.file_exists(str(room.directory).path_join("recovery.json")),"registration retained and no fake saved recovery file")
++	# 同一命令文件重放只读已有回执，不再次执行强停。
++	var audit_root:String = console.directory.path_join("emergency-stop")
++	var audit_count:int = DirAccess.get_files_at(audit_root).size()
++	check(Channel.write_json(command_path,{"instance":console.instance_id,"command":prefix+"--confirm-unsaved-risk 'administrator test'"}) == OK,"replay local command envelope")
++	console.poll()
++	check(DirAccess.get_files_at(audit_root).size() == audit_count and not FileAccess.file_exists(command_path),"existing CLI receipt suppresses duplicate emergency side effects")
++	await _cleanup()
++	# 确认新增紧急入口不改变正常成功保存链。
++	var healthy:Dictionary = await _spawn("idle")
++	if not healthy.is_empty():
++		var normal:Dictionary = console.execute("room %s close" % healthy.id)
++		check(normal.ok,"healthy normal close still submits")
++		_allow(healthy,"poll")
++		await _wait_file(str(healthy.directory).path_join("control").path_join(normal.result.request_id+".response.json"))
++		await _wait_file(str(healthy.directory).path_join("prepared.json"))
++		var saved:Dictionary = console._room_result(PackedStringArray([healthy.id,normal.result.request_id]))
++		check(Channel.saved_close_receipt(saved) and FileAccess.file_exists(str(healthy.directory).path_join("recovery.json")) and _alive(healthy),"normal close has real saved receipt and file before exit")
++		_allow(healthy,"exit")
++		await _wait_exit(healthy)
++		console.poll()
++		check(not gateway.manager.closed_binding_for_request(healthy.id,normal.result.request_id).is_empty() and healthy.pid == -1,"normal close still confirms save plus exit and releases handle")
++	await _cleanup()
++	finish()
+--- /dev/null
++++ b/newtests/net_emergency_stop_test.tscn
+@@ -0,0 +1,6 @@
++[gd_scene load_steps=2 format=3]
++
++[ext_resource type="Script" path="res://newtests/net_emergency_stop_test.gd" id="1"]
++
++[node name="EmergencyStopTest" type="Node"]
++script = ExtResource("1")
+--- /dev/null
++++ b/newtests/run_emergency_stop.py
+@@ -0,0 +1,119 @@
++"""Real Godot emergency-stop regression, with owned Windows Job and E-only scratch."""
++import argparse
++import importlib.util
++import json
++import os
++import hashlib
++import re
++import shutil
++from pathlib import Path
++import sys
++from types import SimpleNamespace
++import uuid
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument('--godot', required=True)
++    parser.add_argument('--root', required=True)
++    parser.add_argument('--timeout', required=True, type=float)
++    args = parser.parse_args()
++    if args.timeout < 600:
++        parser.error('watchdog must be at least 600 seconds')
++    project = Path(__file__).resolve().parents[1]
++    spec = importlib.util.spec_from_file_location('isolated', project / 'tools/run_isolated_godot_test.py')
++    isolated = importlib.util.module_from_spec(spec)
++    spec.loader.exec_module(isolated)
++    native_execute = isolated.execute
++
++    def fixed_execute(command, *positional, **keywords):
++        command = list(command)
++        if '--fixed-fps' not in command:
++            command[1:1] = ['--fixed-fps', '60']
++        return native_execute(command, *positional, **keywords)
++
++    isolated.execute = fixed_execute
++    root = isolated.physical_e(args.root)
++    output = root / ('emergency-stop-' + uuid.uuid4().hex)
++    output.mkdir()
++    os.environ.update(TMPDIR=str(output), TEMP=str(output), TMP=str(output),
++                      HERMES_SHUTDOWN_TEST_ROOT=output.as_posix())
++    # Cold-import an independent snapshot: never repair the live editor's class cache.
++    generated = output / 'generated'
++    generated.mkdir()
++    snapshot = generated / 'snapshot'
++    snapshot.mkdir()
++    includes = ['scripts', 'data', 'addons/fate_server_signals/fate_server_signals.gdextension',
++                'addons/godot_ai/runtime/game_helper.gd', 'icon.svg',
++                'newtests/net_emergency_stop_test.gd', 'newtests/net_emergency_stop_test.tscn',
++                'newtests/net_server_shutdown_failure_test.gd', 'newtests/match_journal_test.gd',
++                'newtests/net_shutdown_owned_worker.gd', 'newtests/net_shutdown_owned_worker.tscn']
++    selected = set(isolated.source_files(project, includes))
++    queue = list(selected)
++    while queue:
++        rel = queue.pop()
++        if rel.suffix not in {'.gd', '.tscn', '.tres', '.gdextension'}:
++            continue
++        for ref in re.findall(r'res://([^\s\"\'\)]+)', (project / rel).read_text(encoding='utf-8-sig')):
++            path = project / ref
++            if path.is_file() and path.relative_to(project) not in selected:
++                isolated.no_links(path)
++                child = path.relative_to(project)
++                selected.add(child)
++                queue.append(child)
++    fingerprints = []
++    for rel in sorted(selected):
++        if rel.name.startswith('~') and rel.suffix == '.dll':
++            continue
++        destination = snapshot / rel
++        destination.parent.mkdir(parents=True, exist_ok=True)
++        shutil.copyfile(project / rel, destination)
++        digest = hashlib.sha256(destination.read_bytes()).hexdigest()
++        if digest != hashlib.sha256((project / rel).read_bytes()).hexdigest():
++            raise RuntimeError('source changed during snapshot: ' + str(rel))
++        fingerprints.append({'path': rel.as_posix(), 'sha256': digest})
++    config = (project / 'project.godot').read_text(encoding='utf-8-sig')
++    config = re.sub(r'^run/main_scene=.*$', '', config, flags=re.M)
++    # This headless protocol fixture has no cursor/UI consumer; avoid texture autoload
++    # running before a cold importer has produced its texture resources.
++    config = re.sub(r'^CursorReplace=.*$', '', config, flags=re.M)
++    config = config.replace('version_control/autoload_on_startup=true', 'version_control/autoload_on_startup=false')
++    config = re.sub(r'^enabled=PackedStringArray\("res://addons/godot_ai/plugin.cfg"\)$', 'enabled=PackedStringArray()', config, flags=re.M)
++    (snapshot / 'project.godot').write_text(config, encoding='utf-8')
++    (output / 'snapshot-files.json').write_text(json.dumps(fingerprints, indent=2), encoding='utf-8')
++    import_evidence = output / 'import-evidence'
++    import_evidence.mkdir()
++    env = os.environ.copy()
++    env.update(APPDATA=str(output / 'appdata'), LOCALAPPDATA=str(output / 'localappdata'))
++    processes = []
++    try:
++        stdout, stderr, code = isolated.execute([str(isolated.physical_e(args.godot)), '--headless', '--fixed-fps', '60',
++            '--editor', '--import', '--path', str(snapshot)], env, generated, import_evidence, 'import',
++            {'seconds': args.timeout, 'bytes': 2147483648, 'min_free': 1073741824}, processes)
++    finally:
++        (output / 'import-processes.json').write_text(json.dumps(processes, indent=2), encoding='utf-8')
++    if code or re.search(r'SCRIPT ERROR|ERROR:', stdout + stderr):
++        print(json.dumps({'passed': False, 'stage': 'import', 'output': str(output), 'exit': code, 'processes': processes}))
++        return 1
++    result = isolated.run(SimpleNamespace(project=str(snapshot), scene='res://newtests/net_emergency_stop_test.tscn',
++        root=str(output), godot=args.godot, timeout=args.timeout, max_bytes=2147483648,
++        min_free_bytes=1073741824, freeze=False, include=[]))
++    manifests = list(output.glob('isolated-*/manifest.json'))
++    for path in manifests:
++        manifest = json.loads(path.read_text(encoding='utf-8'))
++        print(json.dumps({'manifest': str(path), 'analysis': manifest.get('analysis'),
++                          'processes': manifest.get('processes'), 'passed': manifest['passed']}, ensure_ascii=False))
++    child_errors = []
++    for log in output.glob('emergency-*/**/worker.log'):
++        text = log.read_text(encoding='utf-8', errors='replace')
++        if re.search(r'SCRIPT ERROR|SHADER ERROR|^ERROR:', text, re.M):
++            child_errors.append(str(log))
++    (output / 'child-log-check.json').write_text(json.dumps({'error_logs': child_errors}, indent=2), encoding='utf-8')
++    if child_errors:
++        print(json.dumps({'passed': False, 'stage': 'worker_log', 'error_logs': child_errors}))
++        return 1
++    return result
++
++
++if __name__ == '__main__':
++    sys.exit(main())

@@ -118,20 +118,32 @@ func _exchange_card(object:BaseCard, source:Array, target:Array, old_owner:int, 
 
 
 func add_clone(player_id:int, source_name:String, to_path:String) -> Dictionary:
+	# 本同步入口是新调试动作边界；模板查询与旧 runtime 消费绝不补 current。
+	var generation:Dictionary = SessionGeneration.current_token()
+	if not generation.ok:
+		return _fail("调试动作缺少有效会话来源")
+	var captured:Dictionary = SessionGeneration.derive_context(generation.token, &"DebugCardAdapter.add_clone")
+	if not captured.ok:
+		return _fail("调试动作来源无效")
+	var source_context:SessionContext = captured.context
 	var template = find_card_template(source_name)
 	if template == null:
 		return _fail("找不到卡牌模板")
 	var target = zone_by_path(player_id, to_path)
 	if !(target is Array):
 		return _fail("目标牌区不存在")
-	var card = CloneObject.new().exec(template)
-	if !(card is BaseCard):
-		return _fail("模板克隆失败")
+	var factory := CloneContext.new()
+	if not factory.configure_template(source_context, [template]):
+		return _fail("模板来源拒绝：" + str(factory.failure_reason()))
+	var copied:Dictionary = factory.copy_result(template, source_context)
+	if not copied.ok or not (copied.object is BaseCard):
+		return _fail("模板克隆失败：" + str(copied.reason))
+	var card:BaseCard = copied.object
 	target.append(card)
 	if card is BaseHandCard:
 		(card as BaseHandCard).set_if_activating(to_path == "played_cards")
 	if _zone_registers_effects(to_path):
-		RegisterObjectEffects.new().exec(card, player_id)
+		RegisterObjectEffects.new().exec(card, player_id, source_context)
 	if to_path == "played_cards":
 		SyncPower.new().exec(player_id)
 	return {"ok":true, "changed":true, "player_id":player_id, "object_id":card.get_instance_id(), "value":to_path}
@@ -175,7 +187,8 @@ func shuffle(player_id:int, path:String) -> Dictionary:
 	var zone = zone_by_path(player_id, path)
 	if !(zone is Array):
 		return _fail("牌区不存在")
-	ShuffleArray.new().exec(zone)
+	if ShuffleArray.new().exec(zone) == null:
+		return _fail("unknown_random_stream")
 	return {"ok":true, "changed":zone.size() > 1, "player_id":player_id, "value":zone.size()}
 
 
@@ -225,24 +238,25 @@ func conceal(instance_id:int, concealed:bool) -> Dictionary:
 		"before":before, "value":bool(card.get("_is_concealed"))}
 
 
-func awaken(instance_id:int, player_id:int) -> Dictionary:
+func awaken(instance_id:int, player_id:int, context:SessionContext = null) -> Dictionary:
 	var skill = find_card(instance_id)
 	if not (skill is BaseSkill) or is_template(skill):
 		return _fail("目标不是实战升华技")
-	var changed:bool = AwakenSkill.new().exec(skill, player_id)
+	var changed:bool = AwakenSkill.new().exec(skill, player_id, context)
 	if not changed:
 		return _fail("已觉醒、归属不符或不满足解锁窗口")
 	return {"ok":true, "changed":true, "player_id":player_id, "object_id":instance_id, "value":true}
 
 
-func close(instance_id:int) -> Dictionary:
+func close(instance_id:int, context:SessionContext = null) -> Dictionary:
 	var card = find_card(instance_id)
 	if !(card is BaseHandCard) or is_template(card):
 		return _fail("目标不是可关闭的实战牌")
 	var owner := find_card_owner(card)
 	if str(owner.get("path", "")) != "played_cards":
 		return _fail("CloseCard 只接受已打出牌")
-	CloseCard.new().exec(card, int(owner.player_id))
+	if not CloseCard.new().exec(card, int(owner.player_id), context):
+		return _fail("CloseCard 拒绝了这次关闭（来源或卡牌状态不满足）")
 	return {"ok":true, "changed":true, "player_id":int(owner.player_id), "object_id":instance_id}
 
 

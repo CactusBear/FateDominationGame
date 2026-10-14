@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/em16_quote_payment_origin_test.gd" id="1"]
+
+[node name="EM16QuotePaymentOriginTest" type="Node"]
+script = ExtResource("1")

@@ -120,15 +120,19 @@ void fragment() {
 	float cover_progress = clamp(blue_cover, 0.0, 1.0);
 	float cover_front = mix(1.12, -0.10, cover_progress);
 	float blue_white = smoothstep(cover_front - 0.14, cover_front + 0.14, rn);
-	// 沿多个相邻方向回采云环，形成云的连续延伸，避免中心生成均匀白圆。
+	// 云光仍来自原云环，但采样半径固定在孔边；不再把不同半径的云像素拉成长射线。
+	// 角度随覆盖深度平滑弯曲，使云纹向内推进时保留旋涡形状而非放射条纹。
 	vec2 ray_dir = length(d) > 0.00001 ? normalize(d) : vec2(1.0, 0.0);
+	float cloud_angle = atan(ray_dir.y, ray_dir.x);
+	float cloud_depth = 1.0 - smoothstep(0.0, 1.0, clamp(rn, 0.0, 1.0));
+	float cloud_twist = cloud_depth * (0.72 * sin(cloud_angle * 3.0 + 2.1) + 0.36 * sin(cloud_angle * 7.0 - 1.4));
 	vec3 cloud_source = vec3(0.0);
-	for (int j = 0; j < 5; j++) {
-		float q = float(j) / 4.0 - 0.5;
-		vec2 sample_dir = rotate_point(ray_dir, q * 0.20);
-		cloud_source += sample_zone(sample_dir * radius * (1.02 + q * 0.10), aspect, false, 0.0);
+	for (int j = 0; j < 3; j++) {
+		float q = float(j) - 1.0;
+		vec2 sample_dir = rotate_point(ray_dir, cloud_twist + q * 0.035);
+		cloud_source += sample_zone(sample_dir * radius, aspect, false, 0.0);
 	}
-	cloud_source /= 5.0;
+	cloud_source /= 3.0;
 	vec3 cloud_white = min(cloud_source * (1.10 + 0.45 * cover_progress) + light_color * 0.04, vec3(1.0));
 	col = mix(col, cloud_white, blue_white * cover_progress);
 	// 孔边桥接：内侧最后一段使用同一圈云光，保证云环向内延伸时没有亮度断缝。

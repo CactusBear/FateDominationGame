@@ -20,6 +20,7 @@ var _entropy := RandomNumberGenerator.new()
 var _last_hash: String = ""
 var _recording: bool = false
 var _source_data: String = ""
+var _context: SessionContext = null
 var _restored_folder: String = ""
 var _restored_log_hash: String = ""
 var initial:Dictionary = {}
@@ -34,7 +35,7 @@ const MAINTENANCE_CHUNK_BYTES:int = 256 * 1024
 func _confirm_audit() -> bool:
 	if Journal.flush_audit(): return true
 	if error.is_empty(): error = Journal.audit_error
-	EffectManager._guard_audit_failed(EffectManager.runtime_guard_effect())
+	EffectManager.mark_guard_audit_failed(EffectManager.runtime_guard_effect())
 	return false
 
 func _checkpoint(maintenance:Callable) -> bool:
@@ -153,8 +154,7 @@ func _start(header: Dictionary, archive: String) -> bool:
 	GameData.player_id = int(header.local_id)
 	GameData.default_master = str(header.default_master)
 	GameData.default_servant = str(header.default_servant)
-	DummyBot._phase_attempt_scope = ""
-	DummyBot._phase_attempted_effect_ids.clear()
+	DummyBot.clear_attempts()
 	driver = Driver.new()
 	if header.has("seat_kinds"):
 		driver.seats.default_kind = driver.seats.VACANT
@@ -175,19 +175,26 @@ func _start(header: Dictionary, archive: String) -> bool:
 	if not GameStart.game_start(header.players, assignments, header.order, header.get("runtime_guard", {})):
 		error = "存档开局参数无效"
 		return false
+	_context = Driver.capture_runtime_context()
+	if not SessionGeneration.validate_context(_context).get("ok", false):
+		error = "存档开局未建立可验证的规则来源"
+		GameStart.end_session()
+		return false
+	driver = Driver.new(null, _context)
 	return true
 
 func perform(kind: String, args: Array = []):
 	if _maintenance_busy or not _confirm_audit(): return null
+	if not SessionGeneration.validate_context(_context).get("ok", false):
+		error = "存档来源已失效"
+		return null
 	if not _recording or not error.is_empty():
 		return null
 	if not _allowed(kind):
 		error = "未知存档操作: " + kind
 		return null
-	var before := state_hash()
-	if before != _last_hash:
-		error = "存在未记录的规则修改，请勿继续写入此存档"
-		return null
+	# 上一动作的 after 就是本动作的 before，不再重拍整局；未记录修改由 pulse 与存档前核对、读档逐条校验发现。
+	var before:String = _last_hash
 	var packed = ids.encode(args)
 	if not ids.error.is_empty():
 		error = ids.error
@@ -198,7 +205,7 @@ func perform(kind: String, args: Array = []):
 	var random_entry:Dictionary = RuleRandom.snapshot()
 	# 管理续行不是新规则取样入口，不得改变暂停前随机流。
 	if not guard_management: RuleRandom.start_seed(action_seed)
-	var result = _execute(kind, args)
+	var result = _execute(kind, args, _context)
 	var after := state_hash()
 	var record := {"kind": kind, "args": packed, "seed": action_seed, "before": before, "after": after}
 	if guard_management: record["random_entry"] = random_entry
@@ -243,6 +250,8 @@ func restore(folder: String, maintenance:Callable = Callable()) -> bool:
 	Journal.audit_replaying = true
 	var restored:bool = await _restore(folder, _maintenance_callback(maintenance))
 	if not _confirm_audit(): restored = false
+	# 完整重放与最终审计成功后才使旧输送确认失效；规则哈希不含批次 serial。
+	if restored: GameProgress.renew_battle_broadcast_batch()
 	Journal.audit_replaying = previous_replaying
 	_maintenance_busy = false
 	return restored
@@ -324,7 +333,7 @@ func _restore(folder: String, maintenance:Callable = Callable()) -> bool:
 			if not ids.error.is_empty() or not args is Array:
 				error = ids.error
 				return false
-			_execute(record.kind, args)
+			_execute(record.kind, args, _context)
 		if state_hash() != record.get("after"):
 			error = "操作后状态校验失败"
 			return false
@@ -514,6 +523,7 @@ func _close_unchecked() -> void:
 	Journal.end_audit(_audit_journal)
 	_audit_journal = null
 	_recording = false
+	_context = null
 
 func release() -> void:
 	if _maintenance_busy: return
@@ -527,12 +537,32 @@ func release() -> void:
 func _allowed(kind: String) -> bool:
 	return kind in COMMANDS or kind in ["guard_skip", "guard_continue", "ai_turn", "answer_effect", "answer_card", "answer_player", "answer_location", "set_broadcast_enabled"]
 
-func _execute(kind: String, args: Array):
+## 与 MatchCommandDispatcher._effect_context/_subject_context 同一口径：对象（效果/牌）带自身来源且属本局
+## token 时转交对象原来源；否则沿用本局来源（部署/移动等无对象动作）。录制与回放共用，不按命令名猜。
+static func _subject_source(args: Array, source: SessionContext) -> SessionContext:
+	if args.is_empty() or not args[0] is Object:
+		return source
+	var origin: Dictionary = SessionGeneration.origin_of(args[0])
+	if not origin.get("ok", false):
+		return source
+	var own: SessionContext = origin.get("context")
+	return own if own != null and is_same(own.token(), source.token()) else source
+
+func _execute(kind: String, args: Array, source_context: SessionContext = null):
+	var source: SessionContext = source_context if source_context != null else _context
+	if not SessionGeneration.validate_context(source).get("ok", false):
+		error = "存档来源已失效"
+		return null
 	if not _valid_args(kind, args):
 		error = "存档操作参数无效: " + kind
 		return null
 	if kind in COMMANDS:
-		return commands.callv(kind, args)
+		if kind == "end_current_player_action":
+			return GameProgress.end_current_player_action(source)
+		var forwarded: Array = args.duplicate()
+		if kind in ["submit_group", "request_manual_activation", "set_card_concealed", "deploy", "move", "deploy_to_area", "submit_option_choice", "submit_active_choice", "cancel_pending_choice", "submit_card_selection", "submit_player_selection", "submit_location_selection"]:
+			forwarded.append(_subject_source(args, source))
+		return commands.callv(kind, forwarded)
 	if kind in ["guard_skip", "guard_continue"]:
 		var before:Dictionary = EffectManager.runtime_guard_status()
 		var accepted:bool = EffectManager.skip_runtime_guard() if kind == "guard_skip" else EffectManager.resume_runtime_guard()
@@ -543,10 +573,8 @@ func _execute(kind: String, args: Array):
 		return accepted
 	match kind:
 		"set_broadcast_enabled":
-			if args[0]:
-				GameProgress.register_battle_broadcast_consumer(self)
-			else:
-				GameProgress.unregister_battle_broadcast_consumer(self)
+			# 录制显式规则声明，不把录制器/展示消费者当作规则身份。
+			GameProgress.battle_broadcast_requires_confirm = args[0]
 		"ai_turn":
 			driver.run_bot_turn(int(args[0]))
 		"answer_effect":

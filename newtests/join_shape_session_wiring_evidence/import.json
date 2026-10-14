@@ -1,0 +1,17 @@
+{
+  "command": [
+    "E:\\scratch\\pw-27b3ce34\\engine\\Godot_v4.7.2-stable_win64_console.exe",
+    "--headless",
+    "--editor",
+    "--path",
+    "E:\\scratch\\pw-27b3ce34\\project",
+    "--import",
+    "--quit"
+  ],
+  "pid": 38420,
+  "exit_code": 0,
+  "timeout": false,
+  "ERROR": 0,
+  "active_owned_processes": 0,
+  "engine_sha256": "c8f0a6bc45a19b33541501e57f6f7cd972ab18453743266339d495cbbe846643"
+}

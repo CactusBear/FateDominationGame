@@ -1,0 +1,5783 @@
+{
+  "method": "Static lexical class/preload references, not runtime call graph; comments may count; physical line counts; scripts only, excludes third-party addons/tests/data",
+  "script_count": 383,
+  "global_file_references": {
+    "GameData": 57,
+    "GameProgress": 28,
+    "EffectManager": 143,
+    "MapData": 35,
+    "GameStart": 11,
+    "GameDataManager": 97,
+    "MasterManager": 2,
+    "ServantManager": 1,
+    "TimePointChecker": 30,
+    "LoadGame": 9
+  },
+  "files": [
+    {
+      "path": "scripts/debug/debug_action_panel.gd",
+      "lines": 896,
+      "functions": 34,
+      "dependencies": [
+        "scripts/debug/debug_adapters/debug_card_adapter.gd",
+        "scripts/debug/debug_adapters/debug_player_adapter.gd",
+        "scripts/debug/debug_session.gd",
+        "scripts/debug/debug_validate.gd",
+        "scripts/system/attributes.gd",
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_master.gd",
+        "scripts/system/base_situation.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/regular_play.gd"
+      ],
+      "globals": {
+        "GameData": 16,
+        "EffectManager": 3,
+        "MapData": 2
+      },
+      "incoming": 1,
+      "sha256": "881c7be32fea6c24f429812e2bbaca38f53ee80c90bf80bd8f14067970a67c65"
+    },
+    {
+      "path": "scripts/debug/debug_command_registry.gd",
+      "lines": 338,
+      "functions": 23,
+      "dependencies": [
+        "scripts/debug/debug_adapters/debug_board_adapter.gd",
+        "scripts/debug/debug_adapters/debug_card_adapter.gd",
+        "scripts/debug/debug_adapters/debug_identity_adapter.gd",
+        "scripts/debug/debug_adapters/debug_map_adapter.gd",
+        "scripts/debug/debug_adapters/debug_player_adapter.gd",
+        "scripts/debug/debug_session.gd",
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 17
+      },
+      "incoming": 1,
+      "sha256": "332c40cc7b43ef150af836aa733a1a8fe5b693e12e7bf903f07d80b9f7aa37c9"
+    },
+    {
+      "path": "scripts/debug/debug_console_ui.gd",
+      "lines": 348,
+      "functions": 30,
+      "dependencies": [
+        "scripts/debug/debug_action_panel.gd",
+        "scripts/debug/debug_session.gd",
+        "scripts/debug/debug_validate.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_situation.gd"
+      ],
+      "globals": {
+        "GameData": 3
+      },
+      "incoming": 2,
+      "sha256": "8ab33e0163342ba86e6cce6daf60609ce9e2aba326d76488136dddcf8fb138ea"
+    },
+    {
+      "path": "scripts/debug/debug_session.gd",
+      "lines": 264,
+      "functions": 20,
+      "dependencies": [
+        "scripts/debug/debug_command_registry.gd",
+        "scripts/debug/debug_validate.gd",
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {
+        "GameData": 3,
+        "GameProgress": 6,
+        "EffectManager": 9
+      },
+      "incoming": 3,
+      "sha256": "e5338ff09b37ba0973a8ffa138dca012a3069c74c61eba37a1e568357167a2f7"
+    },
+    {
+      "path": "scripts/debug/debug_validate.gd",
+      "lines": 219,
+      "functions": 13,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/operations/GetEffectiveLocationBenefit.gd",
+        "scripts/system/operations/GetPlayerTotalPower.gd"
+      ],
+      "globals": {
+        "GameData": 14,
+        "MapData": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 6,
+      "sha256": "1a887df3f5f40c401f50352f6920f5e36cb27ed9366074202f913433ce1f1a3c"
+    },
+    {
+      "path": "scripts/game_scene/battle_board_v2.gd",
+      "lines": 6077,
+      "functions": 303,
+      "dependencies": [
+        "assets/scenes/main_menu/multiplayer_lobby.tscn",
+        "assets/shaders/ui_mask.gdshader",
+        "scripts/debug/debug_console_ui.gd",
+        "scripts/game_scene/native_choice_renderer.gd",
+        "scripts/game_scene/tactical_board_ui.gd",
+        "scripts/match/match_commands.gd",
+        "scripts/match/match_driver.gd",
+        "scripts/match/seat_controller.gd",
+        "scripts/net/ui/v2_view_presenter.gd",
+        "scripts/system/action_rules.gd",
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_event.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/deploy_rules.gd",
+        "scripts/system/global/battle_resolver.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_helper.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/GetEffectiveLocationBenefit.gd",
+        "scripts/system/operations/GetPlCommandSpellOutGame.gd",
+        "scripts/system/operations/GetPlayerTotalPower.gd",
+        "scripts/system/operations/HideTrueName.gd",
+        "scripts/system/operations/IsEngaged.gd",
+        "scripts/system/operations/ReleaseTrueName.gd",
+        "scripts/system/regular_play.gd"
+      ],
+      "globals": {
+        "GameData": 8,
+        "GameProgress": 43,
+        "EffectManager": 24,
+        "MapData": 34,
+        "GameStart": 4,
+        "GameDataManager": 10
+      },
+      "incoming": 0,
+      "sha256": "c4b9adfadfc9dfa86ae03c6787a28ae1f4372ded04df6ec88bdb98ac9c3e533f"
+    },
+    {
+      "path": "scripts/game_scene/held_card_hit_area.gd",
+      "lines": 14,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "7c4f62b40bf649c65f960757eb127ddbd484b281c3e6d2e8e087be13a6a69b3f"
+    },
+    {
+      "path": "scripts/game_scene/mana_sigil.gd",
+      "lines": 128,
+      "functions": 5,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "94972224e1e8f6617a99c52542f5ccb484f95bdf0757fab75b7994cdf124c0a3"
+    },
+    {
+      "path": "scripts/game_scene/native_choice_renderer.gd",
+      "lines": 149,
+      "functions": 7,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 4,
+      "sha256": "386e48c28fe4faadb5df92493cb3f3adf0205c652eadcb68756bbed58eda33b2"
+    },
+    {
+      "path": "scripts/game_scene/PlayerPad.gd",
+      "lines": 11,
+      "functions": 2,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "736efc572d3aba1d2c1cef1fe8741b769194577c83ce8916d220768059cb6d59"
+    },
+    {
+      "path": "scripts/game_scene/seat_ring.gd",
+      "lines": 33,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "7dec28df4028742ecbfe0ec96f00308e35e788eb2abe99c26310463c07dae7ff"
+    },
+    {
+      "path": "scripts/game_scene/tactical_board_ui.gd",
+      "lines": 5273,
+      "functions": 221,
+      "dependencies": [
+        "assets/images/ui/icons/icon_holy_grail.png",
+        "assets/images/ui/icons/icon_mana_orb.png",
+        "assets/images/ui/icons/icon_swords.png",
+        "scripts/debug/debug_console_ui.gd",
+        "scripts/system/action_rules.gd",
+        "scripts/system/ai/temp/dummy_bot.gd",
+        "scripts/system/attributes.gd",
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_event.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_master.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_servant.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/deploy_rules.gd",
+        "scripts/system/global/battle_resolver.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_helper.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/Deploy.gd",
+        "scripts/system/operations/GetEffectiveLocationBenefit.gd",
+        "scripts/system/operations/GetLocation.gd",
+        "scripts/system/operations/GetMoveTargetLocation.gd",
+        "scripts/system/operations/GetPlCommandSpellOutGame.gd",
+        "scripts/system/operations/GetPlayerTotalPower.gd",
+        "scripts/system/operations/IsEngaged.gd",
+        "scripts/system/operations/Move.gd",
+        "scripts/system/operations/MoveLocation.gd",
+        "scripts/system/operations/PlayAttack.gd",
+        "scripts/system/operations/ReleaseTrueName.gd",
+        "scripts/system/operations/SetLocation.gd",
+        "scripts/system/operations/Tag.gd",
+        "scripts/system/regular_play.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 10,
+        "GameProgress": 39,
+        "EffectManager": 40,
+        "MapData": 44,
+        "GameStart": 2,
+        "GameDataManager": 30
+      },
+      "incoming": 4,
+      "sha256": "d27bb3706ce9c28658bf13730e6a4a0410135a780c655803ff7c567646ae452b"
+    },
+    {
+      "path": "scripts/io/atomic_file_replace.gd",
+      "lines": 26,
+      "functions": 2,
+      "dependencies": [
+        "scripts/net/server/recovery_path_safety.gd"
+      ],
+      "globals": {},
+      "incoming": 3,
+      "sha256": "13decd6a6c40f92e90060f67c4fc8c10546d1d9a0a0fce8ae59f10677739273d"
+    },
+    {
+      "path": "scripts/io/validated_file_content.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "d895dfbad569e0517190af4b206f153b9450149c6e682e546fb7b243532035ba"
+    },
+    {
+      "path": "scripts/main_menu/game_start.gd",
+      "lines": 167,
+      "functions": 8,
+      "dependencies": [
+        "scripts/match/rule_budget.gd",
+        "scripts/match/rule_random.gd",
+        "scripts/system/base_master.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_servant.gd",
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {
+        "GameData": 10,
+        "GameProgress": 2,
+        "EffectManager": 1,
+        "MapData": 1,
+        "GameDataManager": 1,
+        "MasterManager": 3,
+        "ServantManager": 1,
+        "LoadGame": 1
+      },
+      "incoming": 0,
+      "sha256": "4535d1729fdfeb9cb5223738019f244a844de9327a4726ba084e3d156c2faf50"
+    },
+    {
+      "path": "scripts/main_menu/main_menu.gd",
+      "lines": 350,
+      "functions": 16,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "fff051bf66a53d5dc9e7ea337ff20699998e1329d6d52f5748e6c9b42060d854"
+    },
+    {
+      "path": "scripts/main_menu/opening_warp.gd",
+      "lines": 142,
+      "functions": 7,
+      "dependencies": [],
+      "globals": {
+        "LoadGame": 1
+      },
+      "incoming": 0,
+      "sha256": "50184bef8eecb6e66602de2847f197c6490c07dc42cc56f305cab1dc8733f830"
+    },
+    {
+      "path": "scripts/main_menu/viewport_fit.gd",
+      "lines": 13,
+      "functions": 2,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "ecb94cfb1e4d467130bceecb77666a5432f4f132206e92802ee79eefc3438e77"
+    },
+    {
+      "path": "scripts/match/effect_checkpoint.gd",
+      "lines": 93,
+      "functions": 4,
+      "dependencies": [
+        "scripts/match/match_journal.gd",
+        "scripts/match/rule_random.gd",
+        "scripts/system/ability_restrictions.gd",
+        "scripts/system/ai/temp/dummy_bot.gd",
+        "scripts/system/attributes.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/global/load_attack.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_helper.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/operations/GetEffSourceCard.gd"
+      ],
+      "globals": {
+        "GameProgress": 2,
+        "EffectManager": 8
+      },
+      "incoming": 1,
+      "sha256": "466ba4265385a436f544a1d6a2b9a2f28f04021fe2de840e299a32d61be233cb"
+    },
+    {
+      "path": "scripts/match/match_commands.gd",
+      "lines": 53,
+      "functions": 14,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/deploy_rules.gd",
+        "scripts/system/operations/Deploy.gd",
+        "scripts/system/operations/Move.gd",
+        "scripts/system/operations/SetCardConcealed.gd",
+        "scripts/system/regular_play.gd"
+      ],
+      "globals": {
+        "GameProgress": 2,
+        "EffectManager": 7,
+        "GameDataManager": 2
+      },
+      "incoming": 3,
+      "sha256": "331e8f2839d5c109180f4e9e03aef3693ef0cdb549ceeb5c5d352b835baa30ae"
+    },
+    {
+      "path": "scripts/match/match_driver.gd",
+      "lines": 126,
+      "functions": 16,
+      "dependencies": [
+        "scripts/game_scene/tactical_board_ui.gd",
+        "scripts/match/seat_controller.gd",
+        "scripts/system/ai/temp/dummy_bot.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/deploy_rules.gd"
+      ],
+      "globals": {
+        "GameProgress": 7,
+        "EffectManager": 6,
+        "MapData": 2
+      },
+      "incoming": 3,
+      "sha256": "585cd5c0906b39d6a12ace6185f82b664cb9a1d1fa141c66305243ebabfea6ae"
+    },
+    {
+      "path": "scripts/match/match_journal.gd",
+      "lines": 617,
+      "functions": 30,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 6,
+      "sha256": "867874fbe5c973f79a3508c046e587253d0e49273050d43c926cf4d97e2cd70e"
+    },
+    {
+      "path": "scripts/match/match_replay.gd",
+      "lines": 790,
+      "functions": 35,
+      "dependencies": [
+        "scripts/match/match_commands.gd",
+        "scripts/match/match_driver.gd",
+        "scripts/match/match_journal.gd",
+        "scripts/match/net_ids.gd",
+        "scripts/match/rule_budget.gd",
+        "scripts/match/rule_random.gd",
+        "scripts/match/rule_state.gd",
+        "scripts/system/ai/temp/dummy_bot.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "GameData": 9,
+        "GameProgress": 6,
+        "EffectManager": 10,
+        "GameStart": 3
+      },
+      "incoming": 3,
+      "sha256": "efba4ba8b3ef9bd5775eb37ed052decebb8e85d270d7417f6d95c9db903d0533"
+    },
+    {
+      "path": "scripts/match/net_ids.gd",
+      "lines": 194,
+      "functions": 9,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 4,
+      "sha256": "3969a9b074ede49db429f348ae2d9420eb42805850b2e38a75b7f5a4c0c0e3eb"
+    },
+    {
+      "path": "scripts/match/rule_budget.gd",
+      "lines": 71,
+      "functions": 6,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 11,
+      "sha256": "1b1e2a6d53aa09c5f7cf3b2e3c5ad729e718a5e6e2b74138552bf916ba7a041e"
+    },
+    {
+      "path": "scripts/match/rule_checkpoint.gd",
+      "lines": 183,
+      "functions": 4,
+      "dependencies": [
+        "scripts/match/net_ids.gd",
+        "scripts/system/base_func.gd"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "40e618391899fc4bb9a79884e7e821819368febdea28a43569358141713d5cee"
+    },
+    {
+      "path": "scripts/match/rule_random.gd",
+      "lines": 67,
+      "functions": 8,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 10,
+      "sha256": "e8a2d1b84871f8b69bfc77b8a557b75e559bc6ffc48250d3ef79665bfd42202e"
+    },
+    {
+      "path": "scripts/match/rule_state.gd",
+      "lines": 72,
+      "functions": 5,
+      "dependencies": [
+        "scripts/match/net_ids.gd",
+        "scripts/match/rule_random.gd",
+        "scripts/system/ability_restrictions.gd",
+        "scripts/system/ai/temp/dummy_bot.gd",
+        "scripts/system/attributes.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/global/load_attack.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_situation.gd"
+      ],
+      "globals": {
+        "GameData": 3,
+        "GameProgress": 1,
+        "EffectManager": 4
+      },
+      "incoming": 1,
+      "sha256": "e23dd281940522fad488949946faa51d7511fc463d8342c480e252a3e474f127"
+    },
+    {
+      "path": "scripts/match/seat_controller.gd",
+      "lines": 30,
+      "functions": 5,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 4,
+      "sha256": "f16c3953e4fde9035d90814febe54cc9281a847848cef8da19ac9495d3619242"
+    },
+    {
+      "path": "scripts/match/view_builder.gd",
+      "lines": 390,
+      "functions": 22,
+      "dependencies": [
+        "scripts/game_scene/tactical_board_ui.gd",
+        "scripts/match/net_ids.gd",
+        "scripts/system/attributes.gd",
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_event.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_object.gd",
+        "scripts/system/base_servant.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/operations/DiscardPlayedCards.gd",
+        "scripts/system/operations/GetEffectiveLocationBenefit.gd",
+        "scripts/system/operations/GetPlayerTotalPower.gd",
+        "scripts/system/operations/ReleaseTrueName.gd",
+        "scripts/system/regular_play.gd"
+      ],
+      "globals": {
+        "GameData": 6,
+        "GameProgress": 8,
+        "EffectManager": 2,
+        "MapData": 8,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "2cfa118bb14987bb740db0e8930406921df35dd59a017eb4e664367710ef4f0b"
+    },
+    {
+      "path": "scripts/match/view_mirror.gd",
+      "lines": 341,
+      "functions": 18,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "6d104838e5d68a5c8f1ae681c8e1f8e5a10a9a89111d6df3bb83404d9df2270a"
+    },
+    {
+      "path": "scripts/selection/class_pool_selection.gd",
+      "lines": 127,
+      "functions": 8,
+      "dependencies": [
+        "scripts/system/operations/ShuffleArray.gd"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "b759a80dac26d8ecaa9b32c6f0c2781e7c4e71cab1654ce26d7dbcbf5628ad67"
+    },
+    {
+      "path": "scripts/selection/roster_catalog.gd",
+      "lines": 115,
+      "functions": 7,
+      "dependencies": [
+        "scripts/system/base_object.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "GameData": 6
+      },
+      "incoming": 1,
+      "sha256": "7d680452d52c46a0c07d1c1f66ea433418cde151326882fc72351afd3b88bef2"
+    },
+    {
+      "path": "scripts/selection/selection_mode.gd",
+      "lines": 31,
+      "functions": 7,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 3,
+      "sha256": "e593a6c01874f72b6c903999950d565ce9e16f249e3cc20db639fc5de9e28a1c"
+    },
+    {
+      "path": "scripts/selection/selection_screen.gd",
+      "lines": 179,
+      "functions": 10,
+      "dependencies": [
+        "scripts/selection/selection_mode.gd",
+        "scripts/system/ai/temp/dummy_bot.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "GameData": 4,
+        "GameStart": 8,
+        "LoadGame": 5
+      },
+      "incoming": 0,
+      "sha256": "0dfff308d3649a64b8c257fbf2f25d3e5b95ac152792aac74098bde3080e2112"
+    },
+    {
+      "path": "scripts/system/ability_restrictions.gd",
+      "lines": 35,
+      "functions": 4,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameProgress": 2
+      },
+      "incoming": 6,
+      "sha256": "4b82c2219367e33fe1659a3b462505397c7535c670f6f0bc30a64dafaea1a7aa"
+    },
+    {
+      "path": "scripts/system/action_rules.gd",
+      "lines": 66,
+      "functions": 5,
+      "dependencies": [
+        "scripts/system/deploy_rules.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/GetPlCommandSpellOutGame.gd",
+        "scripts/system/play_rules.gd"
+      ],
+      "globals": {
+        "GameData": 2,
+        "EffectManager": 2
+      },
+      "incoming": 5,
+      "sha256": "417a53d4b2d6b18306c728dacb553c02cba08e43c507b294f4cdee54cfc67186"
+    },
+    {
+      "path": "scripts/system/attributes.gd",
+      "lines": 77,
+      "functions": 6,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 7,
+      "sha256": "e41ccf8df257b389061e972000db595ce1562f38142d9ac8f976c624b9a26a23"
+    },
+    {
+      "path": "scripts/system/base_attack.gd",
+      "lines": 29,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 21,
+      "sha256": "90590134c5557e20131f4d3faebaeb37d1bea827d58054e3610a9c9d2f2a3f6a"
+    },
+    {
+      "path": "scripts/system/base_buff.gd",
+      "lines": 39,
+      "functions": 5,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_object.gd"
+      ],
+      "globals": {},
+      "incoming": 16,
+      "sha256": "a7f953ccf98cf5a6effeb0c9e493df9dc301fab7631df3acd11113a9d6534314"
+    },
+    {
+      "path": "scripts/system/base_card.gd",
+      "lines": 89,
+      "functions": 8,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_object.gd"
+      ],
+      "globals": {},
+      "incoming": 35,
+      "sha256": "2d21cf3ff9e744419dfc8a8cd60f2a470311267a4485cbe26e64663a3fac1c42"
+    },
+    {
+      "path": "scripts/system/base_effect.gd",
+      "lines": 190,
+      "functions": 15,
+      "dependencies": [
+        "scripts/system/base_func.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_object.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 1
+      },
+      "incoming": 45,
+      "sha256": "33b023a4f6b30acb5949773580128995e1059b350344a548c2718b411da276c3"
+    },
+    {
+      "path": "scripts/system/base_event.gd",
+      "lines": 26,
+      "functions": 3,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 13,
+      "sha256": "80b2803a09ea7dc84c83b9e2cb1c1e8272cde0719064ff2ca9426741cb2ae1b8"
+    },
+    {
+      "path": "scripts/system/base_func.gd",
+      "lines": 56,
+      "functions": 3,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 11,
+      "sha256": "24d0408a4dff350eeb64d6fcbb01c561661c63fcb4eed0c44f9d709adb7fe2ff"
+    },
+    {
+      "path": "scripts/system/base_handcard.gd",
+      "lines": 78,
+      "functions": 9,
+      "dependencies": [
+        "scripts/system/ability_restrictions.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 23,
+      "sha256": "a86945ce684c254d1bc33d5a0ce9909c8bf61fc2a6978b2f2eb59c704492d4ff"
+    },
+    {
+      "path": "scripts/system/base_location.gd",
+      "lines": 59,
+      "functions": 4,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/SetLocationPlNumLimit.gd"
+      ],
+      "globals": {},
+      "incoming": 35,
+      "sha256": "174c7f4a2e22667cead34a53ec9e84815c8b6e1b3b94677398865b366a42cacb"
+    },
+    {
+      "path": "scripts/system/base_map_area.gd",
+      "lines": 64,
+      "functions": 5,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/SetMapAreaCanMoveTo.gd"
+      ],
+      "globals": {
+        "MapData": 1
+      },
+      "incoming": 50,
+      "sha256": "1b38cba1de0b07999fed1ec0baed4955b8634bd49a7815d70c096ba7c5a9c425"
+    },
+    {
+      "path": "scripts/system/base_master.gd",
+      "lines": 40,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_object.gd"
+      ],
+      "globals": {},
+      "incoming": 8,
+      "sha256": "c0c1f811c411cd63ae70f5f42ed1ef169a9f28558ea6f2e5cad071a283998070"
+    },
+    {
+      "path": "scripts/system/base_number.gd",
+      "lines": 71,
+      "functions": 9,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 93,
+      "sha256": "e43cb2c999f54735309b88cec7281609fd43e39cdce1e49e2dc5d37528e85f76"
+    },
+    {
+      "path": "scripts/system/base_object.gd",
+      "lines": 119,
+      "functions": 10,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "GameData": 3,
+        "EffectManager": 1
+      },
+      "incoming": 22,
+      "sha256": "4dd35f730796a84123677125ce72be0fd14325ce7afff0c2adc0b48f4f871d43"
+    },
+    {
+      "path": "scripts/system/base_servant.gd",
+      "lines": 32,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_object.gd"
+      ],
+      "globals": {},
+      "incoming": 6,
+      "sha256": "a6ffff736a0de4501b90f59a29dc997cacccd4638cc6b7c3a0ee752e17d1bd14"
+    },
+    {
+      "path": "scripts/system/base_situation.gd",
+      "lines": 25,
+      "functions": 3,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 10,
+      "sha256": "62debe3423657f280619ced77a85120454c1248cef56b2ed616771b11759c6a5"
+    },
+    {
+      "path": "scripts/system/base_skill.gd",
+      "lines": 33,
+      "functions": 3,
+      "dependencies": [
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 23,
+      "sha256": "8590cfc80cf838d5b866b4d6f9bc8da083d9eb11e2ecf6fea7e6507d584bfa81"
+    },
+    {
+      "path": "scripts/system/card_zones.gd",
+      "lines": 106,
+      "functions": 8,
+      "dependencies": [
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 4,
+        "EffectManager": 2,
+        "TimePointChecker": 2
+      },
+      "incoming": 5,
+      "sha256": "9cb0451c4bc722920caa757419c3b3937d537bdbf7ed2ddd59741cc463e0ba17"
+    },
+    {
+      "path": "scripts/system/clone_context.gd",
+      "lines": 59,
+      "functions": 4,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 3,
+      "sha256": "9c8b7bf220fc21dcda7f1a044d34803340f50cc5eb2cfe59db6a2582d31a4f6e"
+    },
+    {
+      "path": "scripts/system/deploy_rules.gd",
+      "lines": 93,
+      "functions": 6,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/CanGainMagic.gd",
+        "scripts/system/operations/Deploy.gd",
+        "scripts/system/operations/EditMagic.gd",
+        "scripts/system/operations/GetEffectiveLocationBenefit.gd",
+        "scripts/system/play_rules.gd",
+        "scripts/system/regular_play.gd"
+      ],
+      "globals": {
+        "MapData": 1
+      },
+      "incoming": 8,
+      "sha256": "e74dccdc4b46d2d77a6ebe34abfc5cc0b837dd97c3f685e99fb2b5931d4bc83d"
+    },
+    {
+      "path": "scripts/system/map_data.gd",
+      "lines": 179,
+      "functions": 5,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_object.gd",
+        "scripts/system/base_situation.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/operations/CloneObject.gd",
+        "scripts/system/operations/ShuffleArray.gd"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "376628dd65b5eab836db59578d4998e6a59892ee3b17d9c4b967d83af4ba0f63"
+    },
+    {
+      "path": "scripts/system/play_rules.gd",
+      "lines": 61,
+      "functions": 4,
+      "dependencies": [
+        "scripts/system/attributes.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/effects/ForbidNoblePhantasmEffect.gd",
+        "scripts/system/effects/ForbidSpecialAttackEffect.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/BoardHasEffect.gd",
+        "scripts/system/operations/MapAreaHasEffect.gd",
+        "scripts/system/operations/PlayAttack.gd",
+        "scripts/system/operations/PlaySkill.gd"
+      ],
+      "globals": {
+        "MapData": 2
+      },
+      "incoming": 5,
+      "sha256": "12ab04d0fba5d7d1eab651533d5800884d7012ae7aa9f2dc05fc4a1f8e914db2"
+    },
+    {
+      "path": "scripts/system/power_sources.gd",
+      "lines": 38,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_handcard.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/EditCardPower.gd",
+        "scripts/system/operations/EditDataNumber.gd",
+        "scripts/system/operations/EditPower.gd"
+      ],
+      "globals": {
+        "EffectManager": 2
+      },
+      "incoming": 5,
+      "sha256": "a7bb65d476466fbff8a04e11bb8efd386def70b9b29d1253bfdc5618beb7dc5f"
+    },
+    {
+      "path": "scripts/system/regular_play.gd",
+      "lines": 418,
+      "functions": 35,
+      "dependencies": [
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/card_zones.gd",
+        "scripts/system/effects/CannotPlayCardsEffect.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/ApplyCardKeywords.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/PlayerBuffsHaveEffect.gd",
+        "scripts/system/play_rules.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 6,
+        "GameProgress": 6,
+        "EffectManager": 2,
+        "GameDataManager": 14,
+        "TimePointChecker": 3
+      },
+      "incoming": 11,
+      "sha256": "f6fce80464730c6a259bc188b5d252efe7da5ab70cafecb9901cbabfdb825d27"
+    },
+    {
+      "path": "scripts/system/time_points.gd",
+      "lines": 513,
+      "functions": 0,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 31,
+      "sha256": "4d0efceb07141424d3288f8fc4c643c38cf1814e76f205603e15786d6a26c406"
+    },
+    {
+      "path": "scripts/ui/header_turn.gd",
+      "lines": 57,
+      "functions": 5,
+      "dependencies": [
+        "assets/images/ui/header/header_overlap_disabled.png",
+        "assets/images/ui/header/header_overlap_hover.png",
+        "assets/images/ui/header/header_overlap_norm.png",
+        "assets/images/ui/header/header_overlap_pressed.png"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "0bd12a0b9119e1b0d371dc3f3c978615e3b1a25e42d141b7e453aa153be17565"
+    },
+    {
+      "path": "scripts/system/buffs/defeat_buff.gd",
+      "lines": 67,
+      "functions": 6,
+      "dependencies": [
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/effects/CannotPlayCardsEffect.gd",
+        "scripts/system/effects/ExcludedFromBattleWinEffect.gd",
+        "scripts/system/global/battle_resolver.gd",
+        "scripts/system/operations/ManageBuff.gd",
+        "scripts/system/operations/PlayAttack.gd",
+        "scripts/system/operations/PlaySkill.gd"
+      ],
+      "globals": {
+        "GameData": 5,
+        "GameDataManager": 2
+      },
+      "incoming": 3,
+      "sha256": "ed1a3e085210f30f6c899f6e5c1e70d9ebb65fb57a8addf0c1659fa438d26058"
+    },
+    {
+      "path": "scripts/system/effects/CannotPlayCardsEffect.gd",
+      "lines": 16,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/operations/PlayAttack.gd",
+        "scripts/system/operations/PlaySkill.gd"
+      ],
+      "globals": {},
+      "incoming": 4,
+      "sha256": "9e8fec571ea7e0d3621d22bd89f2031f5a472c70cd29d2031d6911247af5f42b"
+    },
+    {
+      "path": "scripts/system/effects/CountsPowerWhileConcealedEffect.gd",
+      "lines": 15,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/operations/CardCountsPower.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "0a67fee68e5eda49781743d5a1a82cf26cfcca87e70453823c2d2f05c2e65452"
+    },
+    {
+      "path": "scripts/system/effects/ExcludedFromBattleWinEffect.gd",
+      "lines": 16,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "d7b38d49f9e2f2199e76eba93576efe1afe4caf1eb435c67269bb001abe0fd62"
+    },
+    {
+      "path": "scripts/system/effects/ForbidNoblePhantasmEffect.gd",
+      "lines": 15,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/operations/BoardHasEffect.gd",
+        "scripts/system/operations/PlayAttack.gd",
+        "scripts/system/operations/PlaySkill.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "ae3be42d459f1d7e66e9e13b2ca56c2a1ff1f00e5643271dfda02bcdbf533062"
+    },
+    {
+      "path": "scripts/system/effects/ForbidSpecialAttackEffect.gd",
+      "lines": 15,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/operations/BoardHasEffect.gd",
+        "scripts/system/operations/PlayAttack.gd",
+        "scripts/system/operations/PlaySkill.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "a95faad81accb44f08572928c229cbae4032ae24e7f08ed7038204d2135a8bf0"
+    },
+    {
+      "path": "scripts/system/effects/NeverCountsPowerEffect.gd",
+      "lines": 14,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/operations/CardCountsPower.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "f015c8b7567a961ccc085e27668c2cf35585112bfc43f5c0e403eacaa9d1c426"
+    },
+    {
+      "path": "scripts/system/effects/NoLocationBenefitEffect.gd",
+      "lines": 14,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/global/battle_resolver.gd",
+        "scripts/system/operations/MapAreaHasEffect.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "578120573fba3c16a6eb74a895a90fd5b7efa001f010b57ef4b65121bcdbe25b"
+    },
+    {
+      "path": "scripts/system/global/all_operations.gd",
+      "lines": 308,
+      "functions": 5,
+      "dependencies": [
+        "scripts/system/operations/ActivateEffect.gd",
+        "scripts/system/operations/AddAttack.gd",
+        "scripts/system/operations/AddEventFromDeck.gd",
+        "scripts/system/operations/AddMapArea.gd",
+        "scripts/system/operations/AddMapAreaBuff.gd",
+        "scripts/system/operations/AddMapAreaEvents.gd",
+        "scripts/system/operations/AddPlayer.gd",
+        "scripts/system/operations/AddSituations.gd",
+        "scripts/system/operations/AddSkill.gd",
+        "scripts/system/operations/AddSkillToSkillZone.gd",
+        "scripts/system/operations/AddToArray.gd",
+        "scripts/system/operations/AndFunc.gd",
+        "scripts/system/operations/ApplyCardKeywords.gd",
+        "scripts/system/operations/ArrayDifference.gd",
+        "scripts/system/operations/ArrayLength.gd",
+        "scripts/system/operations/AskPlayerNumber.gd",
+        "scripts/system/operations/AskPlayerOption.gd",
+        "scripts/system/operations/AskPlayersSecretOption.gd",
+        "scripts/system/operations/AwakenSkill.gd",
+        "scripts/system/operations/BoardHasEffect.gd",
+        "scripts/system/operations/BuildCard.gd",
+        "scripts/system/operations/BuildEffect.gd",
+        "scripts/system/operations/CalculateNumber.gd",
+        "scripts/system/operations/CanGainMagic.gd",
+        "scripts/system/operations/CancelPendingAction.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/CardHasEffect.gd",
+        "scripts/system/operations/ChangePlOrder.gd",
+        "scripts/system/operations/CloneObject.gd",
+        "scripts/system/operations/CloseCard.gd",
+        "scripts/system/operations/CloseTimePoint.gd",
+        "scripts/system/operations/CompareNumber.gd",
+        "scripts/system/operations/Counter.gd",
+        "scripts/system/operations/CreateBaseNumber.gd",
+        "scripts/system/operations/CreateBuff.gd",
+        "scripts/system/operations/CreateCard.gd",
+        "scripts/system/operations/CreateFunc.gd",
+        "scripts/system/operations/DealPlayerCards.gd",
+        "scripts/system/operations/Defeat.gd",
+        "scripts/system/operations/Deploy.gd",
+        "scripts/system/operations/DiscardPlayedCards.gd",
+        "scripts/system/operations/DoNothing.gd",
+        "scripts/system/operations/DrawCardByCard.gd",
+        "scripts/system/operations/DrawCardByIndex.gd",
+        "scripts/system/operations/DrawCardFromPlDeckToHand.gd",
+        "scripts/system/operations/EditCardAttributes.gd",
+        "scripts/system/operations/EditCardCost.gd",
+        "scripts/system/operations/EditCardPower.gd",
+        "scripts/system/operations/EditDataNumber.gd",
+        "scripts/system/operations/EditLives.gd",
+        "scripts/system/operations/EditLocationBenefit.gd",
+        "scripts/system/operations/EditLocationMagic.gd",
+        "scripts/system/operations/EditMagic.gd",
+        "scripts/system/operations/EditMapAreaMoveCost.gd",
+        "scripts/system/operations/EditMapAreaScore.gd",
+        "scripts/system/operations/EditNumAndReturn.gd",
+        "scripts/system/operations/EditPendingAction.gd",
+        "scripts/system/operations/EditPower.gd",
+        "scripts/system/operations/EditScore.gd",
+        "scripts/system/operations/EmitTimePoint.gd",
+        "scripts/system/operations/EndGame.gd",
+        "scripts/system/operations/FilterByProperty.gd",
+        "scripts/system/operations/FindPlayerArrayContaining.gd",
+        "scripts/system/operations/FlipCardFace.gd",
+        "scripts/system/operations/ForFunc.gd",
+        "scripts/system/operations/ForeachFunc.gd",
+        "scripts/system/operations/GetActivatingEff.gd",
+        "scripts/system/operations/GetActivePlayersId.gd",
+        "scripts/system/operations/GetAllPlayersId.gd",
+        "scripts/system/operations/GetAreaRoundParticipants.gd",
+        "scripts/system/operations/GetAreaRoundWinners.gd",
+        "scripts/system/operations/GetAttackPrintedCost.gd",
+        "scripts/system/operations/GetAttackPrintedPower.gd",
+        "scripts/system/operations/GetBuffByNameFrArr.gd",
+        "scripts/system/operations/GetByTag.gd",
+        "scripts/system/operations/GetCardAttributes.gd",
+        "scripts/system/operations/GetCardByIndexFrArr.gd",
+        "scripts/system/operations/GetCardsByAttributesFrArr.gd",
+        "scripts/system/operations/GetCardsByNameFrArr.gd",
+        "scripts/system/operations/GetCardsByTagFrArr.gd",
+        "scripts/system/operations/GetCurrentRound.gd",
+        "scripts/system/operations/GetDataNumber.gd",
+        "scripts/system/operations/GetDictionaryValue.gd",
+        "scripts/system/operations/GetEffSourceCard.gd",
+        "scripts/system/operations/GetEffectNumber.gd",
+        "scripts/system/operations/GetEffectUsingNums.gd",
+        "scripts/system/operations/GetEffectiveLocationBenefit.gd",
+        "scripts/system/operations/GetEventPrintedScore.gd",
+        "scripts/system/operations/GetEvents.gd",
+        "scripts/system/operations/GetExtremeByProperty.gd",
+        "scripts/system/operations/GetGameDataValue.gd",
+        "scripts/system/operations/GetLocation.gd",
+        "scripts/system/operations/GetLocationBenefit.gd",
+        "scripts/system/operations/GetLocationMagic.gd",
+        "scripts/system/operations/GetLocationMapArea.gd",
+        "scripts/system/operations/GetMapAreaBuffs.gd",
+        "scripts/system/operations/GetMapAreaByName.gd",
+        "scripts/system/operations/GetMapAreaScore.gd",
+        "scripts/system/operations/GetMapAreaScoreNeedWin.gd",
+        "scripts/system/operations/GetMapDataValue.gd",
+        "scripts/system/operations/GetMoveCost.gd",
+        "scripts/system/operations/GetMoveTargetLocation.gd",
+        "scripts/system/operations/GetNumOfPlInMapArea.gd",
+        "scripts/system/operations/GetObjectsByNameFrArr.gd",
+        "scripts/system/operations/GetPendingActionValue.gd",
+        "scripts/system/operations/GetPhaseOrder.gd",
+        "scripts/system/operations/GetPlAttacksOutGame.gd",
+        "scripts/system/operations/GetPlBuffsOutGame.gd",
+        "scripts/system/operations/GetPlBuffsSide.gd",
+        "scripts/system/operations/GetPlCommandSpellOutGame.gd",
+        "scripts/system/operations/GetPlCommandSpellSide.gd",
+        "scripts/system/operations/GetPlDeckSide.gd",
+        "scripts/system/operations/GetPlDiscardSide.gd",
+        "scripts/system/operations/GetPlIdUsingEff.gd",
+        "scripts/system/operations/GetPlMasterOutGame.gd",
+        "scripts/system/operations/GetPlMasterSide.gd",
+        "scripts/system/operations/GetPlOthersOutGame.gd",
+        "scripts/system/operations/GetPlOthersSide.gd",
+        "scripts/system/operations/GetPlServantOutGame.gd",
+        "scripts/system/operations/GetPlServantSide.gd",
+        "scripts/system/operations/GetPlSkillsOutGame.gd",
+        "scripts/system/operations/GetPlSkillsSide.gd",
+        "scripts/system/operations/GetPlayerBuffs.gd",
+        "scripts/system/operations/GetPlayerCommandSpell.gd",
+        "scripts/system/operations/GetPlayerDataValue.gd",
+        "scripts/system/operations/GetPlayerDeck.gd",
+        "scripts/system/operations/GetPlayerDiscard.gd",
+        "scripts/system/operations/GetPlayerHandCards.gd",
+        "scripts/system/operations/GetPlayerIdsByDataValue.gd",
+        "scripts/system/operations/GetPlayerLives.gd",
+        "scripts/system/operations/GetPlayerLocationBenefit.gd",
+        "scripts/system/operations/GetPlayerMaster.gd",
+        "scripts/system/operations/GetPlayerMasterSkills.gd",
+        "scripts/system/operations/GetPlayerName.gd",
+        "scripts/system/operations/GetPlayerPlayedCards.gd",
+        "scripts/system/operations/GetPlayerPowerBreakdown.gd",
+        "scripts/system/operations/GetPlayerServant.gd",
+        "scripts/system/operations/GetPlayerServantSkills.gd",
+        "scripts/system/operations/GetPlayerTimePoints.gd",
+        "scripts/system/operations/GetPlayerTotalPower.gd",
+        "scripts/system/operations/GetPlayersField.gd",
+        "scripts/system/operations/GetPlayersInMapArea.gd",
+        "scripts/system/operations/GetPlayersInSameArea.gd",
+        "scripts/system/operations/GetPlsInLocation.gd",
+        "scripts/system/operations/GetPrintedNum.gd",
+        "scripts/system/operations/GetPrintedNums.gd",
+        "scripts/system/operations/GetProperty.gd",
+        "scripts/system/operations/GetRankByDataNumber.gd",
+        "scripts/system/operations/GetRoundBattleWins.gd",
+        "scripts/system/operations/GetSharedAttackAttribute.gd",
+        "scripts/system/operations/GetSituationPrintedMagic.gd",
+        "scripts/system/operations/GetSituations.gd",
+        "scripts/system/operations/GetSkillPrintedCost.gd",
+        "scripts/system/operations/GetSkillPrintedPower.gd",
+        "scripts/system/operations/Has.gd",
+        "scripts/system/operations/HasAttribute.gd",
+        "scripts/system/operations/HideTrueName.gd",
+        "scripts/system/operations/IfElseFunc.gd",
+        "scripts/system/operations/IfFunc.gd",
+        "scripts/system/operations/IsEngaged.gd",
+        "scripts/system/operations/IsInArray.gd",
+        "scripts/system/operations/IsNull.gd",
+        "scripts/system/operations/IsTrueNameReleased.gd",
+        "scripts/system/operations/Location.gd",
+        "scripts/system/operations/LogExists.gd",
+        "scripts/system/operations/LogFieldValues.gd",
+        "scripts/system/operations/ManageBuff.gd",
+        "scripts/system/operations/MapAreaHasEffect.gd",
+        "scripts/system/operations/MatchFunc.gd",
+        "scripts/system/operations/MergeArrays.gd",
+        "scripts/system/operations/ModifyAttackPowerByAttribute.gd",
+        "scripts/system/operations/Move.gd",
+        "scripts/system/operations/MoveLocation.gd",
+        "scripts/system/operations/NotFunc.gd",
+        "scripts/system/operations/OrFunc.gd",
+        "scripts/system/operations/PlayAttack.gd",
+        "scripts/system/operations/PlaySkill.gd",
+        "scripts/system/operations/PlayedCards.gd",
+        "scripts/system/operations/PlayerBuffsHaveEffect.gd",
+        "scripts/system/operations/QueryLog.gd",
+        "scripts/system/operations/QueueOptionalEffectForPlayers.gd",
+        "scripts/system/operations/RandomFloat.gd",
+        "scripts/system/operations/RandomInt.gd",
+        "scripts/system/operations/RefillHand.gd",
+        "scripts/system/operations/RegisterObjectEffects.gd",
+        "scripts/system/operations/ReleaseTrueName.gd",
+        "scripts/system/operations/RemoveDefeat.gd",
+        "scripts/system/operations/RemoveFromArray.gd",
+        "scripts/system/operations/RemoveFromBoard.gd",
+        "scripts/system/operations/ReshuffleDiscard.gd",
+        "scripts/system/operations/RestoreLocationBenefits.gd",
+        "scripts/system/operations/RestoreLocationPlNumLimits.gd",
+        "scripts/system/operations/RestoreMapAreaMoveFlags.gd",
+        "scripts/system/operations/RestrictAbilities.gd",
+        "scripts/system/operations/ScheduleEffectOnTimePoint.gd",
+        "scripts/system/operations/SetBattleResult.gd",
+        "scripts/system/operations/SetCardConcealed.gd",
+        "scripts/system/operations/SetDictionaryValue.gd",
+        "scripts/system/operations/SetLocation.gd",
+        "scripts/system/operations/SetLocationPlNumLimit.gd",
+        "scripts/system/operations/SetMapAreaCanMoveTo.gd",
+        "scripts/system/operations/SetPlayerData.gd",
+        "scripts/system/operations/SetProperty.gd",
+        "scripts/system/operations/ShowCards.gd",
+        "scripts/system/operations/ShowMessage.gd",
+        "scripts/system/operations/ShuffleArray.gd",
+        "scripts/system/operations/StoreValue.gd",
+        "scripts/system/operations/SumLogData.gd",
+        "scripts/system/operations/SyncPower.gd",
+        "scripts/system/operations/Tag.gd",
+        "scripts/system/operations/UnregisterObjectEffects.gd",
+        "scripts/system/operations/When.gd",
+        "scripts/system/operations/WhileFunc.gd",
+        "scripts/system/operations/ZeroAttributePower.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "109c34df278ab7ee5ef80686eeebd8227da7b74ee9148e5f83dc59d26eb331bc"
+    },
+    {
+      "path": "scripts/system/global/battle_resolver.gd",
+      "lines": 285,
+      "functions": 7,
+      "dependencies": [
+        "scripts/system/base_event.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/effects/ExcludedFromBattleWinEffect.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/EditScore.gd",
+        "scripts/system/operations/GetPlayerTotalPower.gd",
+        "scripts/system/operations/PlayerBuffsHaveEffect.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 3,
+        "MapData": 3,
+        "GameDataManager": 10,
+        "TimePointChecker": 6
+      },
+      "incoming": 9,
+      "sha256": "6751276a7c00ba0ab9070076e539704d1a28a256b468778582f1d91ecf911e57"
+    },
+    {
+      "path": "scripts/system/global/board_power_query.gd",
+      "lines": 182,
+      "functions": 8,
+      "dependencies": [
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/AndFunc.gd",
+        "scripts/system/operations/CalculateNumber.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/GetAttackPrintedPower.gd",
+        "scripts/system/operations/GetEffectiveLocationBenefit.gd",
+        "scripts/system/operations/GetMapAreaByName.gd",
+        "scripts/system/operations/GetPlayerLocationBenefit.gd",
+        "scripts/system/operations/GetPlayerPlayedCards.gd",
+        "scripts/system/operations/GetPlayersInMapArea.gd",
+        "scripts/system/operations/GetProperty.gd",
+        "scripts/system/operations/GetRankByDataNumber.gd",
+        "scripts/system/operations/GetSharedAttackAttribute.gd",
+        "scripts/system/operations/IfElseFunc.gd",
+        "scripts/system/operations/IfFunc.gd",
+        "scripts/system/operations/IsNull.gd",
+        "scripts/system/operations/IsTrueNameReleased.gd",
+        "scripts/system/operations/MatchFunc.gd",
+        "scripts/system/operations/MergeArrays.gd",
+        "scripts/system/operations/NotFunc.gd"
+      ],
+      "globals": {
+        "GameData": 3,
+        "MapData": 3
+      },
+      "incoming": 2,
+      "sha256": "4149f94f1d3734a7acb92cedcbe5b4f506ba7b7df3d46a5e3e1ae4c5163bc385"
+    },
+    {
+      "path": "scripts/system/global/climax_resolver.gd",
+      "lines": 70,
+      "functions": 3,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/RemoveFromBoard.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 2,
+        "GameDataManager": 7,
+        "TimePointChecker": 2
+      },
+      "incoming": 2,
+      "sha256": "003ceb7a2a3cecde506f35a67d61f6e46897cd5b5b527a20a3bb20ef8eaf5a91"
+    },
+    {
+      "path": "scripts/system/global/cursor_replace.gd",
+      "lines": 38,
+      "functions": 4,
+      "dependencies": [
+        "assets/images/ui/cursor/cursor_disabled.png",
+        "assets/images/ui/cursor/cursor_norm.png",
+        "assets/images/ui/cursor/cursor_pointing.png"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "8dbba5b5810715efe3fe5fb14ef5165ca73b335c11812ab504ad7ffb474f6476"
+    },
+    {
+      "path": "scripts/system/global/effect_manager.gd",
+      "lines": 2641,
+      "functions": 134,
+      "dependencies": [
+        "scripts/match/effect_checkpoint.gd",
+        "scripts/match/match_journal.gd",
+        "scripts/match/rule_budget.gd",
+        "scripts/system/ability_restrictions.gd",
+        "scripts/system/attributes.gd",
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_event.gd",
+        "scripts/system/base_func.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_master.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_object.gd",
+        "scripts/system/base_servant.gd",
+        "scripts/system/base_situation.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/effects/ForbidNoblePhantasmEffect.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_helper.gd",
+        "scripts/system/operations/ActivateEffect.gd",
+        "scripts/system/operations/BoardHasEffect.gd",
+        "scripts/system/operations/EditMagic.gd",
+        "scripts/system/operations/ForFunc.gd",
+        "scripts/system/operations/ForeachFunc.gd",
+        "scripts/system/operations/GetCardsByAttributesFrArr.gd",
+        "scripts/system/operations/GetEffSourceCard.gd",
+        "scripts/system/operations/GetLocation.gd",
+        "scripts/system/operations/MapAreaHasEffect.gd",
+        "scripts/system/operations/PlayerBuffsHaveEffect.gd",
+        "scripts/system/operations/SetLocation.gd",
+        "scripts/system/operations/WhileFunc.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 19,
+        "GameProgress": 8,
+        "GameDataManager": 19,
+        "TimePointChecker": 9
+      },
+      "incoming": 0,
+      "sha256": "73ac0574915001959f7422d9404f250a95da5f331a8dd3f47707d19480c49acf"
+    },
+    {
+      "path": "scripts/system/global/event_journal.gd",
+      "lines": 125,
+      "functions": 9,
+      "dependencies": [
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "b80e6ee792c010be391f4a647f5d7fad7e00009c3954097a6718ae7dac4f03d3"
+    },
+    {
+      "path": "scripts/system/global/event_resolver.gd",
+      "lines": 97,
+      "functions": 7,
+      "dependencies": [
+        "scripts/system/base_event.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/operations/AddEventFromDeck.gd",
+        "scripts/system/operations/GetMapAreaByName.gd",
+        "scripts/system/operations/SetCardConcealed.gd",
+        "scripts/system/operations/UnregisterObjectEffects.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 3,
+        "MapData": 3,
+        "GameDataManager": 1,
+        "TimePointChecker": 1
+      },
+      "incoming": 4,
+      "sha256": "551774cfd968682d3cb916754153867e43a93d0aacaf098f3af447747ec5215c"
+    },
+    {
+      "path": "scripts/system/global/execution_trace.gd",
+      "lines": 122,
+      "functions": 5,
+      "dependencies": [
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "ac0601c4558ece92b2acec449c9289c04878665b8d42ad09431a28b4e84f48a3"
+    },
+    {
+      "path": "scripts/system/global/fact_delivery.gd",
+      "lines": 87,
+      "functions": 9,
+      "dependencies": [
+        "scripts/system/global/event_journal.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "8f8452ba976d6d312b4997e42da19969ca242c415c46ea4f5c9734bde066093d"
+    },
+    {
+      "path": "scripts/system/global/game_data.gd",
+      "lines": 245,
+      "functions": 9,
+      "dependencies": [
+        "scripts/system/action_rules.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_master.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_object.gd",
+        "scripts/system/base_servant.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/global/load_attack.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_helper.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/operations/EditScore.gd",
+        "scripts/system/operations/GetEffectiveLocationBenefit.gd"
+      ],
+      "globals": {
+        "GameProgress": 1,
+        "EffectManager": 2,
+        "MapData": 7,
+        "GameStart": 2
+      },
+      "incoming": 0,
+      "sha256": "6d7c4f67a05cbc8da61f831cc32253e23565f510e7b7b7ca838e7ed460aafbe2"
+    },
+    {
+      "path": "scripts/system/global/game_data_manager.gd",
+      "lines": 81,
+      "functions": 8,
+      "dependencies": [
+        "scripts/system/operations/ReleaseTrueName.gd"
+      ],
+      "globals": {
+        "GameData": 16,
+        "EffectManager": 1
+      },
+      "incoming": 0,
+      "sha256": "4ef4ed3a178dd3571a809510b571a24c8b715272eaf22697f29047ea3410733f"
+    },
+    {
+      "path": "scripts/system/global/game_log.gd",
+      "lines": 208,
+      "functions": 24,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/base_object.gd",
+        "scripts/system/global/event_journal.gd",
+        "scripts/system/global/execution_trace.gd",
+        "scripts/system/global/fact_delivery.gd",
+        "scripts/system/global/load_attack.gd",
+        "scripts/system/operations/ForFunc.gd",
+        "scripts/system/operations/ForeachFunc.gd",
+        "scripts/system/operations/WhileFunc.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 52,
+      "sha256": "7399fc9a40e7d7b0a610d2094c62df281a090808a1d7e2a020291dd713bff684"
+    },
+    {
+      "path": "scripts/system/global/game_progress.gd",
+      "lines": 615,
+      "functions": 37,
+      "dependencies": [
+        "scripts/system/action_rules.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/buffs/defeat_buff.gd",
+        "scripts/system/global/battle_resolver.gd",
+        "scripts/system/global/climax_resolver.gd",
+        "scripts/system/global/event_resolver.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/global/situation_resolver.gd",
+        "scripts/system/global/victory_resolver.gd",
+        "scripts/system/operations/ChangePlOrder.gd",
+        "scripts/system/operations/CloneObject.gd",
+        "scripts/system/operations/DiscardPlayedCards.gd",
+        "scripts/system/operations/RefillHand.gd",
+        "scripts/system/operations/RegisterObjectEffects.gd",
+        "scripts/system/operations/RemoveFromBoard.gd",
+        "scripts/system/operations/RestoreLocationBenefits.gd",
+        "scripts/system/operations/ShuffleArray.gd",
+        "scripts/system/operations/SyncPower.gd",
+        "scripts/system/regular_play.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 4,
+        "EffectManager": 15,
+        "MapData": 2,
+        "GameDataManager": 13,
+        "TimePointChecker": 18
+      },
+      "incoming": 0,
+      "sha256": "32ed22618550e72be825a141c04c44602fcac5da645721f7f8cffc28c8a496dd"
+    },
+    {
+      "path": "scripts/system/global/load_attack.gd",
+      "lines": 98,
+      "functions": 7,
+      "dependencies": [
+        "scripts/system/base_attack.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {},
+      "incoming": 7,
+      "sha256": "6e4e78096edeb02881676c5550d27835680633c3ab207e286ab46ddda2e7a664"
+    },
+    {
+      "path": "scripts/system/global/load_command_spell.gd",
+      "lines": 110,
+      "functions": 9,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {},
+      "incoming": 16,
+      "sha256": "17319da4e42332c28594270f8c4ffec487614ee83fab103b98deb898d3a9e58c"
+    },
+    {
+      "path": "scripts/system/global/load_event.gd",
+      "lines": 56,
+      "functions": 4,
+      "dependencies": [
+        "scripts/system/base_event.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {},
+      "incoming": 12,
+      "sha256": "9616505175735d95fe41e415082fc290f4b5c8b259580876afa328e3f1f4d98a"
+    },
+    {
+      "path": "scripts/system/global/load_game.gd",
+      "lines": 620,
+      "functions": 25,
+      "dependencies": [
+        "scripts/selection/roster_catalog.gd",
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_event.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_master.gd",
+        "scripts/system/base_object.gd",
+        "scripts/system/base_servant.gd",
+        "scripts/system/base_situation.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/global/load_attack.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_helper.gd",
+        "scripts/system/global/load_situation.gd"
+      ],
+      "globals": {
+        "GameData": 5,
+        "GameStart": 1
+      },
+      "incoming": 0,
+      "sha256": "9c1d3854897db6070dca0c105a0b7987f13ebaf41190fe0fc11b1564281016ea"
+    },
+    {
+      "path": "scripts/system/global/load_helper.gd",
+      "lines": 436,
+      "functions": 21,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_func.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/global/load_attack.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/operations/GetLocation.gd"
+      ],
+      "globals": {},
+      "incoming": 28,
+      "sha256": "1a87e4a6f580b9e8b3f55846637f491c4599244c0427874875cc24d6dbe9741b"
+    },
+    {
+      "path": "scripts/system/global/load_situation.gd",
+      "lines": 65,
+      "functions": 4,
+      "dependencies": [
+        "scripts/system/base_situation.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {},
+      "incoming": 17,
+      "sha256": "2a41ae85468715a0be217762036ec4f4f817a040dfc0d27f0a8d2334eb6e4602"
+    },
+    {
+      "path": "scripts/system/global/master_manager.gd",
+      "lines": 50,
+      "functions": 3,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_master.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/operations/CloneObject.gd",
+        "scripts/system/operations/RegisterObjectEffects.gd"
+      ],
+      "globals": {
+        "EffectManager": 2,
+        "GameDataManager": 3
+      },
+      "incoming": 0,
+      "sha256": "3520e6a380d1da087e391fc26c972ed64e1c3bef21d644b7e31d6e187c6bd174"
+    },
+    {
+      "path": "scripts/system/global/servant_manager.gd",
+      "lines": 9,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 0,
+      "sha256": "226712df89daadaa8786ff3fdb131f29cd96caa925cf8eedb6c5cb0d330de15a"
+    },
+    {
+      "path": "scripts/system/global/situation_resolver.gd",
+      "lines": 95,
+      "functions": 6,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/base_situation.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/operations/CloneObject.gd",
+        "scripts/system/operations/EditMagic.gd",
+        "scripts/system/operations/RestoreLocationPlNumLimits.gd",
+        "scripts/system/operations/RestoreMapAreaMoveFlags.gd",
+        "scripts/system/operations/UnregisterObjectEffects.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameProgress": 1,
+        "EffectManager": 5,
+        "MapData": 10,
+        "GameDataManager": 2,
+        "TimePointChecker": 2
+      },
+      "incoming": 2,
+      "sha256": "f27aa498eb960117dca26616f804f83bb2c7cecf25555fde289f197b4bad0396"
+    },
+    {
+      "path": "scripts/system/global/time_point_checker.gd",
+      "lines": 143,
+      "functions": 9,
+      "dependencies": [
+        "scripts/system/ability_restrictions.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameProgress": 2,
+        "EffectManager": 12,
+        "GameDataManager": 8
+      },
+      "incoming": 0,
+      "sha256": "289cba0dc5dae96e5fdfccfa33d8ed2d5d835038008b09a4ae253253267a48e1"
+    },
+    {
+      "path": "scripts/system/global/victory_resolver.gd",
+      "lines": 59,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/global/battle_resolver.gd"
+      ],
+      "globals": {
+        "MapData": 1,
+        "GameDataManager": 5
+      },
+      "incoming": 1,
+      "sha256": "b57f218a88ce0e2914f4adeedd40a4758860248118df0e989ef2451e07d22c94"
+    },
+    {
+      "path": "scripts/system/operations/ActivateEffect.gd",
+      "lines": 40,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/operations/CloneObject.gd"
+      ],
+      "globals": {
+        "EffectManager": 13
+      },
+      "incoming": 2,
+      "sha256": "ed97cf09f579db0389fa5a131dcf4e358ee69e17ad01035e1745cfa3a4307a00"
+    },
+    {
+      "path": "scripts/system/operations/AddAttack.gd",
+      "lines": 30,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/ApplyCardKeywords.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/PlayAttack.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1,
+        "TimePointChecker": 2
+      },
+      "incoming": 1,
+      "sha256": "4936f89c6d9dd27f108e4c2b95e5f61c8b64a5e9ff23eb2905cc7074601fee02"
+    },
+    {
+      "path": "scripts/system/operations/AddEventFromDeck.gd",
+      "lines": 40,
+      "functions": 3,
+      "dependencies": [
+        "scripts/system/base_event.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/global/event_resolver.gd",
+        "scripts/system/operations/AddMapAreaEvents.gd",
+        "scripts/system/operations/CloneObject.gd",
+        "scripts/system/operations/SetCardConcealed.gd"
+      ],
+      "globals": {
+        "EffectManager": 3,
+        "MapData": 3
+      },
+      "incoming": 3,
+      "sha256": "845e9ad7f18ae25a4601f86ba3fb283453b876fe713f1e1b9832be76c101d3ae"
+    },
+    {
+      "path": "scripts/system/operations/AddMapArea.gd",
+      "lines": 38,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/operations/GetMapAreaByName.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "MapData": 4,
+        "LoadGame": 2
+      },
+      "incoming": 1,
+      "sha256": "3be77562e82e6971e0c0456a5649fc2f9022fd8270ec63c0fa86cf069648f360"
+    },
+    {
+      "path": "scripts/system/operations/AddMapAreaBuff.gd",
+      "lines": 7,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "8290101d96634ddacf2309320e59bec5dfaa2bee999b8c97c5f89bf3b9dec7c8"
+    },
+    {
+      "path": "scripts/system/operations/AddMapAreaEvents.gd",
+      "lines": 9,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_event.gd",
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "a00bf19d5f6b629e58fb90ca8cd1f3deffb178acc670d162eb65a0988cf483c6"
+    },
+    {
+      "path": "scripts/system/operations/AddPlayer.gd",
+      "lines": 49,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {
+        "GameData": 4
+      },
+      "incoming": 1,
+      "sha256": "f9047b6d9cd118830eb123e40a69d91eb1dcd216cbde2c85f8a66fb1722d748b"
+    },
+    {
+      "path": "scripts/system/operations/AddSituations.gd",
+      "lines": 7,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_situation.gd"
+      ],
+      "globals": {
+        "MapData": 1
+      },
+      "incoming": 1,
+      "sha256": "59c1bd8397747302b6d140bf3b3234ee9a5b6c44d9b687f4ee83add9e273ae49"
+    },
+    {
+      "path": "scripts/system/operations/AddSkill.gd",
+      "lines": 32,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/ApplyCardKeywords.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/PlayAttack.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 1,
+        "GameDataManager": 1,
+        "TimePointChecker": 2
+      },
+      "incoming": 1,
+      "sha256": "0ed7aafd4d97d519e188b59c0c24b4ddb090bb0264cf8cf80680e604650c150e"
+    },
+    {
+      "path": "scripts/system/operations/AddSkillToSkillZone.gd",
+      "lines": 60,
+      "functions": 4,
+      "dependencies": [
+        "scripts/system/base_object.gd",
+        "scripts/system/base_skill.gd"
+      ],
+      "globals": {
+        "EffectManager": 3,
+        "GameDataManager": 1
+      },
+      "incoming": 3,
+      "sha256": "766afc8b20f6c989dd9a09c264a7691f2c8c728f360b80009ee2985cbd0cf7e8"
+    },
+    {
+      "path": "scripts/system/operations/AddToArray.gd",
+      "lines": 14,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "dba487dd28feaac2d2aab224cfe004bad967e767f9bef45667674acfa46307a1"
+    },
+    {
+      "path": "scripts/system/operations/AndFunc.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "93b38e8d7781e82cd3f479b30f0804d4be48cabae875eca15ba317131ac6b09b"
+    },
+    {
+      "path": "scripts/system/operations/ApplyCardKeywords.gd",
+      "lines": 38,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/operations/ReleaseTrueName.gd"
+      ],
+      "globals": {
+        "EffectManager": 2
+      },
+      "incoming": 6,
+      "sha256": "a153e1b48b93f48f7eca974b1f493997857b95cc35f8eb8f942b720023b2f7de"
+    },
+    {
+      "path": "scripts/system/operations/ArrayDifference.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "b51248e960723202689f6574d86cd78b3a20305d060760570294001253d68bbe"
+    },
+    {
+      "path": "scripts/system/operations/ArrayLength.gd",
+      "lines": 9,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "62b5b3675da6a4b1f55f9df9e9d3ba94b2480179009e0f0d1d5f69d8341efb07"
+    },
+    {
+      "path": "scripts/system/operations/AskPlayerNumber.gd",
+      "lines": 44,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_func.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/AskPlayerOption.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "db81fb5c76fa56ff6d9468e2499ef36cf5a6ab0e6c3c082c204430b6a4d1d1b4"
+    },
+    {
+      "path": "scripts/system/operations/AskPlayerOption.gd",
+      "lines": 26,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "EffectManager": 4
+      },
+      "incoming": 3,
+      "sha256": "9a8dbe8282ebc8f173a02ec860d6470b6a1d529599d430da44833966b857e1e7"
+    },
+    {
+      "path": "scripts/system/operations/AskPlayersSecretOption.gd",
+      "lines": 81,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_func.gd",
+        "scripts/system/operations/AskPlayerOption.gd"
+      ],
+      "globals": {
+        "GameData": 2,
+        "EffectManager": 5
+      },
+      "incoming": 1,
+      "sha256": "bef437eae7987bb8225ec74c0ade83429867630bd836f8566ced4d75db8adb0a"
+    },
+    {
+      "path": "scripts/system/operations/AwakenSkill.gd",
+      "lines": 20,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_master.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/RegisterObjectEffects.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "GameProgress": 1,
+        "EffectManager": 1,
+        "GameDataManager": 1,
+        "TimePointChecker": 1
+      },
+      "incoming": 2,
+      "sha256": "9261326ddf94eff56e166d0814c4473b16e5b09d5e4e5903f13971c0032189cb"
+    },
+    {
+      "path": "scripts/system/operations/BoardHasEffect.gd",
+      "lines": 27,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {
+        "MapData": 2
+      },
+      "incoming": 5,
+      "sha256": "d54d4195a50e9f4bfe4c115759fe44eaa7e83223b8c93a437c2d8a134611cf49"
+    },
+    {
+      "path": "scripts/system/operations/BuildCard.gd",
+      "lines": 74,
+      "functions": 5,
+      "dependencies": [
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_helper.gd",
+        "scripts/system/global/load_situation.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "LoadGame": 4
+      },
+      "incoming": 2,
+      "sha256": "39bccf99e5005e2cabf29600b75b77719a01435680707ed6130bab60d3c0cb91"
+    },
+    {
+      "path": "scripts/system/operations/BuildEffect.gd",
+      "lines": 16,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/global/load_helper.gd",
+        "scripts/system/operations/GetEffSourceCard.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "28a530cabf163caac808d8a847dba6b893b169ae32db9959f553841b07c947c3"
+    },
+    {
+      "path": "scripts/system/operations/CalculateNumber.gd",
+      "lines": 41,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/EditMagic.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "ed9ba9ef93fa59cc6d86c95fabe4ab7461015025eba747a293e6b510eafeab8d"
+    },
+    {
+      "path": "scripts/system/operations/CancelPendingAction.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 1,
+      "sha256": "8a3079c5158e88f1449b2af92772c27a5b7fd9e56d30a979429a1f5738f35206"
+    },
+    {
+      "path": "scripts/system/operations/CanGainMagic.gd",
+      "lines": 17,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/operations/PlayerBuffsHaveEffect.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 2,
+      "sha256": "a2b0d57c38bf3e58d992cea99512c63c6b241c329ce5791a859a0a564de19ff8"
+    },
+    {
+      "path": "scripts/system/operations/CardCountsPower.gd",
+      "lines": 41,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_handcard.gd",
+        "scripts/system/effects/CountsPowerWhileConcealedEffect.gd",
+        "scripts/system/effects/NeverCountsPowerEffect.gd",
+        "scripts/system/operations/CardHasEffect.gd"
+      ],
+      "globals": {
+        "GameData": 2,
+        "EffectManager": 2,
+        "GameDataManager": 1
+      },
+      "incoming": 22,
+      "sha256": "a8feefbb24f59ba556b3b138bc1c572a44f3cea580720e6f4fe4fab8fc82b286"
+    },
+    {
+      "path": "scripts/system/operations/CardHasEffect.gd",
+      "lines": 14,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "0ab4604f7d897678cabed6d08a2ded32c3d8a7bac2c77e0503cd9c0fbbd8864f"
+    },
+    {
+      "path": "scripts/system/operations/ChangePlOrder.gd",
+      "lines": 40,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/GetAllPlayersId.gd"
+      ],
+      "globals": {
+        "GameData": 6,
+        "EffectManager": 1,
+        "GameDataManager": 4
+      },
+      "incoming": 2,
+      "sha256": "f779d276aa2301890e15f878e7efd64ac025497bdcec1b3b744e28f055c91635"
+    },
+    {
+      "path": "scripts/system/operations/CloneObject.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/clone_context.gd"
+      ],
+      "globals": {},
+      "incoming": 11,
+      "sha256": "d5220dd2a2ab8cedb18391852ad83fa9686db995694422f7b659f17314b6bc10"
+    },
+    {
+      "path": "scripts/system/operations/CloseCard.gd",
+      "lines": 31,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/operations/AddSkillToSkillZone.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/EditPower.gd",
+        "scripts/system/operations/SetCardConcealed.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 2,
+        "GameDataManager": 1,
+        "TimePointChecker": 1
+      },
+      "incoming": 2,
+      "sha256": "cddc52bda5d103d31043c7a85c1fcb0a85363b1dc47e47a33ad910fe564b0a65"
+    },
+    {
+      "path": "scripts/system/operations/CloseTimePoint.gd",
+      "lines": 12,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 3
+      },
+      "incoming": 1,
+      "sha256": "92fe073a5d7aff8ebc8f506bcaa2415509b007faaa1e912f981c8c1e84ed604e"
+    },
+    {
+      "path": "scripts/system/operations/CompareNumber.gd",
+      "lines": 14,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "bd6bd8526b5ce9d12851be962c91dfd193dfda79e40c1e9014f9609ef645df02"
+    },
+    {
+      "path": "scripts/system/operations/Counter.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_func.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 1,
+      "sha256": "5f563708966ba3272d3fed015b566ef04f53c99b752f21b475bdf8b1414412b2"
+    },
+    {
+      "path": "scripts/system/operations/CreateBaseNumber.gd",
+      "lines": 16,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "a54503c0e648cabed1218bdb09b20949279972c9acac6fb444ac3ac04ef4147e"
+    },
+    {
+      "path": "scripts/system/operations/CreateBuff.gd",
+      "lines": 7,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_buff.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "9ba67a6f8c8a49864e28fb6fdd3b77da0659521dddf8ce3632ce0e5bbd764850"
+    },
+    {
+      "path": "scripts/system/operations/CreateCard.gd",
+      "lines": 50,
+      "functions": 3,
+      "dependencies": [
+        "scripts/system/base_object.gd",
+        "scripts/system/global/load_attack.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/operations/CloneObject.gd",
+        "scripts/system/operations/GetEffSourceCard.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "5eb741ec68389cb990d2d2be18e611ffe3cde92a5173bc0ba64bf3ce2da8d106"
+    },
+    {
+      "path": "scripts/system/operations/CreateFunc.gd",
+      "lines": 7,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_func.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "80ab27080849cf14f052403ce42317edf0ff91fb3ada424045b3cf4027908fe4"
+    },
+    {
+      "path": "scripts/system/operations/DealPlayerCards.gd",
+      "lines": 9,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "GameProgress": 2
+      },
+      "incoming": 2,
+      "sha256": "ab6099f36300d8126e4513db5c73f1f56da0e3a4b3cec452cf41dd1d6dd0e577"
+    },
+    {
+      "path": "scripts/system/operations/Defeat.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/buffs/defeat_buff.gd",
+        "scripts/system/global/battle_resolver.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 2,
+        "TimePointChecker": 1
+      },
+      "incoming": 2,
+      "sha256": "b3d9222acd1c0355dfef27bc3555595ddda66cdc570a1e9b38a3382a615b65d5"
+    },
+    {
+      "path": "scripts/system/operations/Deploy.gd",
+      "lines": 19,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/deploy_rules.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/SetLocation.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 6,
+      "sha256": "784f81136612cf437872552070a50556c525cbcd3e0444f20c5965e878dcfdf9"
+    },
+    {
+      "path": "scripts/system/operations/DiscardPlayedCards.gd",
+      "lines": 32,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/operations/AddSkillToSkillZone.gd",
+        "scripts/system/operations/DrawCardByCard.gd",
+        "scripts/system/operations/SetCardConcealed.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 3,
+      "sha256": "8d70c76ca53419a35b97000e7f137bf45da192e50298f1ceb13f773fcc35e5b3"
+    },
+    {
+      "path": "scripts/system/operations/DoNothing.gd",
+      "lines": 12,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "7459565a2a7c9941e3d832f0d1ead48004a30e1ee5f79e6c6a3a4cba2828b6d8"
+    },
+    {
+      "path": "scripts/system/operations/DrawCardByCard.gd",
+      "lines": 39,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/card_zones.gd"
+      ],
+      "globals": {},
+      "incoming": 5,
+      "sha256": "c7d6e6b3c08861b68136629fcb0e8e66f27cb6b96fe68fa019567c28702e04b4"
+    },
+    {
+      "path": "scripts/system/operations/DrawCardByIndex.gd",
+      "lines": 41,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/card_zones.gd",
+        "scripts/system/operations/DrawCardByCard.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "cf56db8ca979fef9efdd1cd190d06580461188791607576858cc6440a5c52dc4"
+    },
+    {
+      "path": "scripts/system/operations/DrawCardFromPlDeckToHand.gd",
+      "lines": 32,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/card_zones.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 2,
+        "GameDataManager": 1,
+        "TimePointChecker": 1
+      },
+      "incoming": 3,
+      "sha256": "8d6294352dc11508a9731fcca2babd3a176810a0ea5604d6d04dbf7c2daddef6"
+    },
+    {
+      "path": "scripts/system/operations/EditCardAttributes.gd",
+      "lines": 18,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/operations/GetEffSourceCard.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "843e334faad4b92aacd2e45917c803d8b7fd3846b94cf33095619307f8e9bb68"
+    },
+    {
+      "path": "scripts/system/operations/EditCardCost.gd",
+      "lines": 20,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/GetEffSourceCard.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "aee4deaf0e6557408118451f106f8919544151476ae9c5b5062ab105130facf0"
+    },
+    {
+      "path": "scripts/system/operations/EditCardPower.gd",
+      "lines": 24,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/power_sources.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 4,
+      "sha256": "2f70713757123b9c4d0921576e85a967642e21e0defbb2193c4f36932aba5ef6"
+    },
+    {
+      "path": "scripts/system/operations/EditDataNumber.gd",
+      "lines": 29,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/EditScore.gd",
+        "scripts/system/power_sources.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 3,
+      "sha256": "5b1485ce1eb4042b1d8d8e5662ba8b25061b9431ca2c40fe5added1a6523bf7b"
+    },
+    {
+      "path": "scripts/system/operations/EditLives.gd",
+      "lines": 28,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 2,
+        "GameDataManager": 1,
+        "TimePointChecker": 5
+      },
+      "incoming": 1,
+      "sha256": "d0f233fcb20e9c49a2c07753a056e8af83ba4c7668df50ec74550e6bf8b08800"
+    },
+    {
+      "path": "scripts/system/operations/EditLocationBenefit.gd",
+      "lines": 24,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/RestoreLocationBenefits.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "86b3dbdc583a4d59046829d3ecbeee37fbd784987e553cbc66f2b20f1246e9c6"
+    },
+    {
+      "path": "scripts/system/operations/EditLocationMagic.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "35df43fa4b962f3cf732ec216f52585e46995d7cc0ffab9cd8a696bb440673d6"
+    },
+    {
+      "path": "scripts/system/operations/EditMagic.gd",
+      "lines": 45,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/EditScore.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 2,
+        "GameDataManager": 1,
+        "TimePointChecker": 2
+      },
+      "incoming": 9,
+      "sha256": "6578c2e92535b9f62ecc3c25dd7a00027daeaa3f1ebe5f62c71ae09162fa5ecf"
+    },
+    {
+      "path": "scripts/system/operations/EditMapAreaMoveCost.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "17ea6420fa72d7673ddee23a7fac1a47f3babf7385d67c6a8c939122412b9d1b"
+    },
+    {
+      "path": "scripts/system/operations/EditMapAreaScore.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "24b0d1ffd747538917510025fe714356c113d1b29231e1c98f0a6e4d39db4868"
+    },
+    {
+      "path": "scripts/system/operations/EditNumAndReturn.gd",
+      "lines": 19,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "4b8be75d7e0519747b6dd4aee3ed7325a5741acfc5004060b87165097dc0e04c"
+    },
+    {
+      "path": "scripts/system/operations/EditPendingAction.gd",
+      "lines": 19,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 1,
+      "sha256": "53b9e86778dad8f6b3116b02dd9618c2327eedb22a321a6aa08895e47322fc13"
+    },
+    {
+      "path": "scripts/system/operations/EditPower.gd",
+      "lines": 16,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/power_sources.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 5,
+      "sha256": "9537e38bff68937922e346158463f225e32008557eb264aaaefc74e60854b563"
+    },
+    {
+      "path": "scripts/system/operations/EditScore.gd",
+      "lines": 32,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 2,
+        "GameDataManager": 1,
+        "TimePointChecker": 2
+      },
+      "incoming": 5,
+      "sha256": "5752b76d42ce82f842f752761e2b7193ded3449d7c0a88925bf390a6be38e356"
+    },
+    {
+      "path": "scripts/system/operations/EmitTimePoint.gd",
+      "lines": 10,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "GameProgress": 1
+      },
+      "incoming": 1,
+      "sha256": "995e5fd234088d6af0ab50c12071a0faabae086cdfbcd85173c4371b071a4dae"
+    },
+    {
+      "path": "scripts/system/operations/EndGame.gd",
+      "lines": 19,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "GameData": 3,
+        "GameProgress": 3
+      },
+      "incoming": 1,
+      "sha256": "d7f5475028ebd843205e0d6048837b1138212d0bc10dca7dd5e9eca5e66d0b15"
+    },
+    {
+      "path": "scripts/system/operations/FilterByProperty.gd",
+      "lines": 15,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/operations/GetProperty.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "b253f94fde24311b76249f14b9cd71c7222153d69845e9596ce39311c0d8fb36"
+    },
+    {
+      "path": "scripts/system/operations/FindPlayerArrayContaining.gd",
+      "lines": 54,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "b7f30c5a5f34297534063ab7bfa61a3c89e336be976ccfb2ddcf6200f0afe127"
+    },
+    {
+      "path": "scripts/system/operations/FlipCardFace.gd",
+      "lines": 107,
+      "functions": 4,
+      "dependencies": [
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_event.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_situation.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/card_zones.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/operations/BuildCard.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/EditCardPower.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 2,
+        "EffectManager": 2,
+        "GameDataManager": 1,
+        "TimePointChecker": 2
+      },
+      "incoming": 1,
+      "sha256": "ec683ec5bc7f0018140229290b9bb8811c88c840c8e647f4c325ccd879477a56"
+    },
+    {
+      "path": "scripts/system/operations/ForeachFunc.gd",
+      "lines": 50,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {
+        "EffectManager": 6
+      },
+      "incoming": 3,
+      "sha256": "bc3462c05015c0eddb45aa5064b85bfe43ec5b81e2f9f73c3188f073d273d263"
+    },
+    {
+      "path": "scripts/system/operations/ForFunc.gd",
+      "lines": 38,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {
+        "EffectManager": 6
+      },
+      "incoming": 3,
+      "sha256": "b7af8e178258fab6adea8270652102e21b9c31d413a0ea681b57587bb1761b2a"
+    },
+    {
+      "path": "scripts/system/operations/GetActivatingEff.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 1,
+      "sha256": "e95b01c433b8d1afb222d8e9c4efc7dc01a2475341273b9444c4c099b25b35c4"
+    },
+    {
+      "path": "scripts/system/operations/GetActivePlayersId.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "ff056cadaa663c39b3464055fe33b5c4bb25fa3bb99a9df9cc23404ed7bfb86c"
+    },
+    {
+      "path": "scripts/system/operations/GetAllPlayersId.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "GameData": 1
+      },
+      "incoming": 3,
+      "sha256": "f572c78c296a5c26223a336efecec86412dfc20b995383508d78afec76d5f44e"
+    },
+    {
+      "path": "scripts/system/operations/GetAreaRoundParticipants.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd",
+        "scripts/system/global/battle_resolver.gd",
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "02ea8722374d02e53ca941a1a278a95eaee15ea44711b13fe25c2bc664b596d4"
+    },
+    {
+      "path": "scripts/system/operations/GetAreaRoundWinners.gd",
+      "lines": 17,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd",
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "2db8f260e0d63f0ffc84bb4b39567a1d5d38be7b4694b5e33d83b3eb8a3e14f4"
+    },
+    {
+      "path": "scripts/system/operations/GetAttackPrintedCost.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_attack.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "3973b1164335401d4eaec9f9ccb8cd8ea2e99ad9c2e0a0fae17515baada751c3"
+    },
+    {
+      "path": "scripts/system/operations/GetAttackPrintedPower.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_attack.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "95c2ac0abab067fc4412f80a3e4c14f4cd2afa6308e971feadc06d363d5fd9b0"
+    },
+    {
+      "path": "scripts/system/operations/GetBuffByNameFrArr.gd",
+      "lines": 12,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_buff.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "cca784fc83483fa0fe202a6853aa14748ca79521851dc33f5f2da963a7b81d30"
+    },
+    {
+      "path": "scripts/system/operations/GetByTag.gd",
+      "lines": 11,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "GameData": 1
+      },
+      "incoming": 1,
+      "sha256": "97dcec75346eba8b047b4903db8a1f6b4737f6a23779c19dbb968eee6dd90374"
+    },
+    {
+      "path": "scripts/system/operations/GetCardAttributes.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/operations/GetEffSourceCard.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "4831a956fd4dfba99e5b2f27d43a64f4a4df50c961a989dda514cccb50a86755"
+    },
+    {
+      "path": "scripts/system/operations/GetCardByIndexFrArr.gd",
+      "lines": 12,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "1a5a0c9ca548f9f3f1189707e1a97a68cd56696fc5895eecd184fd2829924ed3"
+    },
+    {
+      "path": "scripts/system/operations/GetCardsByAttributesFrArr.gd",
+      "lines": 25,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/operations/HasAttribute.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "73a4500848de96b717589e8fa68696e8a79ed87cb03dfc187b1ada921166be7b"
+    },
+    {
+      "path": "scripts/system/operations/GetCardsByNameFrArr.gd",
+      "lines": 11,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_object.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "9fb8c46de762b331849fab02b92efe6ce66eb2bcee0ac62c6da3bd717dc8730c"
+    },
+    {
+      "path": "scripts/system/operations/GetCardsByTagFrArr.gd",
+      "lines": 21,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_object.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "ab4125e7d1ac4fd626130ce86c7f982339784924acd12bdc94430e03a5899fc8"
+    },
+    {
+      "path": "scripts/system/operations/GetCurrentRound.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "GameProgress": 1
+      },
+      "incoming": 1,
+      "sha256": "ecd6397d43b82737b5ca5eb83aa5c75bfd0378c2fa673df0660b65382cc34e4c"
+    },
+    {
+      "path": "scripts/system/operations/GetDataNumber.gd",
+      "lines": 20,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "dfd42318747184d33272583c08a115833fdd94f92537d40d1606563f2deb9d89"
+    },
+    {
+      "path": "scripts/system/operations/GetDictionaryValue.gd",
+      "lines": 12,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "0e32bfaa20ac3e6d53755e94b96a9c508ebc318fe0403615b2337205a636a5b6"
+    },
+    {
+      "path": "scripts/system/operations/GetEffectiveLocationBenefit.gd",
+      "lines": 64,
+      "functions": 3,
+      "dependencies": [
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/effects/NoLocationBenefitEffect.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/GetLocation.gd",
+        "scripts/system/operations/MapAreaHasEffect.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 10,
+      "sha256": "a23fede2356cfe638fb59ea295a034bb26175eb55cdd1a05943e06e01919cf0d"
+    },
+    {
+      "path": "scripts/system/operations/GetEffectNumber.gd",
+      "lines": 14,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_object.gd",
+        "scripts/system/operations/GetEffSourceCard.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "917ad16f4f09bfd064f42f0f55ca3ddc897b3d6f7b3df0f7ad9d923a94a05fb4"
+    },
+    {
+      "path": "scripts/system/operations/GetEffectUsingNums.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "5d40a27577b21a941c91ee83c7afe310d27c1b8423efd0d9545ef1e742d8feea"
+    },
+    {
+      "path": "scripts/system/operations/GetEffSourceCard.gd",
+      "lines": 18,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_object.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 12,
+      "sha256": "b57d5230ec1a3dd508daa26c2be20f7da27cf680a1698f33e038028138d77a8f"
+    },
+    {
+      "path": "scripts/system/operations/GetEventPrintedScore.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_event.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "c09207087fe4712cea8b20dfb8141acee1f13a1e89db58b69c636421f45e2460"
+    },
+    {
+      "path": "scripts/system/operations/GetEvents.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "b3cb622d82827f3db3a0299bbf65ea79c862f46bd2cf01e0296ae9bac5f2761e"
+    },
+    {
+      "path": "scripts/system/operations/GetExtremeByProperty.gd",
+      "lines": 28,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/GetProperty.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "6fa84d6c147f513cfe9d2f06afeae885308ff906c097a9068444ac239aa94474"
+    },
+    {
+      "path": "scripts/system/operations/GetGameDataValue.gd",
+      "lines": 10,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "GameData": 1
+      },
+      "incoming": 1,
+      "sha256": "94885ac2db68c02a74f332f5e0e04880956889275e5e85164c5dac2ee1aba04d"
+    },
+    {
+      "path": "scripts/system/operations/GetLocation.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 8,
+      "sha256": "6ef339a333644fc8057a1d87d9380b92adbd8a5db770f62bb844014a664e49ec"
+    },
+    {
+      "path": "scripts/system/operations/GetLocationBenefit.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "2a2c823437689f38ed107839a18c57bc838b3dea121aaef98cbd3392efedb8e0"
+    },
+    {
+      "path": "scripts/system/operations/GetLocationMagic.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "608e0991a4cae89b35c400ba692650f3ec2a525d8d9e2352934464970097acb3"
+    },
+    {
+      "path": "scripts/system/operations/GetLocationMapArea.gd",
+      "lines": 16,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/operations/GetLocation.gd"
+      ],
+      "globals": {
+        "MapData": 1
+      },
+      "incoming": 1,
+      "sha256": "206631407aee5beabda51ee80bf4f223d7bac332e9d3801c368ac47cc0bd168b"
+    },
+    {
+      "path": "scripts/system/operations/GetMapAreaBuffs.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "caec8f73a876e43ff9a769d001fb2423e0a621d1290c86bf8ff5b646d0cc79f7"
+    },
+    {
+      "path": "scripts/system/operations/GetMapAreaByName.gd",
+      "lines": 10,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {
+        "MapData": 1
+      },
+      "incoming": 4,
+      "sha256": "ef39832eb98380d92aacb23e3c887a088fb23886491db911e2d7290443f7d989"
+    },
+    {
+      "path": "scripts/system/operations/GetMapAreaScore.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "cff66456d81b3cfaa32ea74a7444353f723a4d8611dea3567d5e4e44410c5cc0"
+    },
+    {
+      "path": "scripts/system/operations/GetMapAreaScoreNeedWin.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "8a55a8530fdd0c81dd9f43c0e214a56d561ac7f2d485963d3e0232415293aa2a"
+    },
+    {
+      "path": "scripts/system/operations/GetMapDataValue.gd",
+      "lines": 12,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "MapData": 1
+      },
+      "incoming": 1,
+      "sha256": "15eed52ecaea495d4f628bc16eabc72fd0d8d9c5ca385211286e51d669b02d73"
+    },
+    {
+      "path": "scripts/system/operations/GetMoveCost.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "b693ea017a1cdea7f9f4734a55ffe6f3f624baef234de452bb6144cff52c179c"
+    },
+    {
+      "path": "scripts/system/operations/GetMoveTargetLocation.gd",
+      "lines": 18,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/operations/MoveLocation.gd",
+        "scripts/system/operations/SetLocation.gd"
+      ],
+      "globals": {},
+      "incoming": 3,
+      "sha256": "d275b6bbf12e1454f9eba212115c8d81a8bc27f097dd0d7833d3e0d04625420b"
+    },
+    {
+      "path": "scripts/system/operations/GetNumOfPlInMapArea.gd",
+      "lines": 10,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "3159e5f87e8e1dca682699e1c6f0c79129e9a61065e13b21f4a990e70c37e6e2"
+    },
+    {
+      "path": "scripts/system/operations/GetObjectsByNameFrArr.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_object.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "78318738ab881ae056e56ecc3e3b0fc7ef545f60c6ff042686245965a45f251b"
+    },
+    {
+      "path": "scripts/system/operations/GetPendingActionValue.gd",
+      "lines": 14,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 1,
+      "sha256": "34e837e5e3f1e235886b9784de1daa47d57185a1b8e40a09d39a4e96b08d3bd7"
+    },
+    {
+      "path": "scripts/system/operations/GetPhaseOrder.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {
+        "EffectManager": 2
+      },
+      "incoming": 1,
+      "sha256": "2c9276fa6135cb0c02f786c097eaadbaa570af20a07946574e7c651f3b9d8561"
+    },
+    {
+      "path": "scripts/system/operations/GetPlAttacksOutGame.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "3333ed22ed3b3d27bef64e4afef4404008726824a7cd611509cfdd1182c08b2b"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerBuffs.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "65e588a73006c60771d82653a3860681e8eccd50c58a17056c101c75b94121f6"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerCommandSpell.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "09bb54eafbdbaeab63e42c38859403f9ee81f83a19d2865248ea8997a4b78490"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerDataValue.gd",
+      "lines": 12,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "72b0060c26ebfa39bd46a0fb1c62c5dc0845274470aff1d361dbbf33ef30676a"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerDeck.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "8506f6ffc1ef0d4d4078a1589c60abdc8d203502b60bc79d699b526588ec6151"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerDiscard.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "4e871443014443fb9c6eb8577ac1d5da1a3cd8c323087011e8137ebce17060a6"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerHandCards.gd",
+      "lines": 9,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "c9816853708e5a3c951974710f3b1fb9d234db351b7a6004d29e60f6cea4d6a1"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerIdsByDataValue.gd",
+      "lines": 15,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "GameData": 1,
+        "GameDataManager": 2
+      },
+      "incoming": 1,
+      "sha256": "790fb42a024e51cb4f853453c42d3dee5e5b7b2026e9a491781ffb35962b270f"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerLives.gd",
+      "lines": 9,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "fcea404c2e975ae81bbb0bc27377cf106b9b8b6d30101f652e821adad229db1c"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerLocationBenefit.gd",
+      "lines": 17,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/EditLocationBenefit.gd",
+        "scripts/system/operations/GetLocation.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "907e861e9397da974908763f015a670d8a93802daeb7a52e1ba4d54965186ae5"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerMaster.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "24a5a4ff8172d93304981947d19e20eeeb02e2563058f0deb91f4884f6636253"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerMasterSkills.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "5891b65f1ebd0e2d3fc22eca89b8840980d775f09e985e0bed9c104513d83508"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerName.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "cc3b5c98db7aed34122adbc6235d20ba0fc394de3bb9cff8749a0e1dd1ff02cd"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerPlayedCards.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 2,
+      "sha256": "916a486dc8e3db2959e40ae67c12168d2e1346f8ce8d2f3b2c0411cdd3e4fe3c"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerPowerBreakdown.gd",
+      "lines": 39,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/GetPlayerTotalPower.gd",
+        "scripts/system/power_sources.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 1,
+      "sha256": "d75ab6c8890c6811f71d4e14cde7099f427b61235d76de586c9973fa392febfc"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerServant.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "9f3ff429b914f08dcf676ef9e8f303155f8a94f08ad568f858a1fa075b8ba182"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerServantSkills.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "f46f68f6af9d9f23a0603b4af311312f447b91197c956cc811555e068fbdf257"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayersField.gd",
+      "lines": 18,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "GameData": 1,
+        "GameDataManager": 2
+      },
+      "incoming": 1,
+      "sha256": "898936867f172cb908e32525063cbadafd52fb63d813548f462f389d9689b46d"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayersInMapArea.gd",
+      "lines": 19,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "GameDataManager": 2
+      },
+      "incoming": 2,
+      "sha256": "65b45d492f17e836d6267daf281c4616499605217e5cebed8b35a7f63c40739b"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayersInSameArea.gd",
+      "lines": 30,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "MapData": 1,
+        "GameDataManager": 3
+      },
+      "incoming": 1,
+      "sha256": "67f40d5a4684069c112919a5467b8b5258b68fa32779c1171b05f214bf5ff45f"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerTimePoints.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "927152881090ebe7a63ca15dae973e1d605082f636248e43f68ffa41d90e8470"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerTotalPower.gd",
+      "lines": 72,
+      "functions": 3,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/global/board_power_query.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/GetEffectiveLocationBenefit.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 9,
+      "sha256": "5aa911a2110ae152ab67267141082a736af3596e1163b224edf9fbd6611df92d"
+    },
+    {
+      "path": "scripts/system/operations/GetPlBuffsOutGame.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "2d7e19c1953d88de16853ed9344ccc83b80b126c3a173f72a4b906900f4a0bb4"
+    },
+    {
+      "path": "scripts/system/operations/GetPlBuffsSide.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "54569b0cc58632f1f72902341573bd8ee51b91d1b2fbf8b878a7f3f68d17c691"
+    },
+    {
+      "path": "scripts/system/operations/GetPlCommandSpellOutGame.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 5,
+      "sha256": "0509701c7719fe2a9b9728e6cb717b9f2355032d4730ce532240f60e5279e9cf"
+    },
+    {
+      "path": "scripts/system/operations/GetPlCommandSpellSide.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "2211bf866221e592301650043b329102037d4d55e8143f31908820b747cec7bf"
+    },
+    {
+      "path": "scripts/system/operations/GetPlDeckSide.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "b1b8c171d485418481fb60db316ef7ec6c8ae74b43ca7ec6daf6ee68711ecbcd"
+    },
+    {
+      "path": "scripts/system/operations/GetPlDiscardSide.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "1d9e39742ed1bd80686ef11111afce2b28b0f96a8d0366b1931c6162e7d20a6c"
+    },
+    {
+      "path": "scripts/system/operations/GetPlIdUsingEff.gd",
+      "lines": 20,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/operations/GetAllPlayersId.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "3645c3849657d34fa6cf156c23ea5a33bddf80d604ca2fafde41d72da1179d86"
+    },
+    {
+      "path": "scripts/system/operations/GetPlMasterOutGame.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "7b14d541a01aefbcd0308e451a2f1ea5353195de8e5f6022972dfc33bf524cf9"
+    },
+    {
+      "path": "scripts/system/operations/GetPlMasterSide.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "139997fcea4c0782f65f7386a2f7d2514511ee68368439cd230660c2f629676d"
+    },
+    {
+      "path": "scripts/system/operations/GetPlOthersOutGame.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "ff3ff4f4aa595359b6d1c1cfe1823a438daba288a391e3cf2d3533690dacc264"
+    },
+    {
+      "path": "scripts/system/operations/GetPlOthersSide.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "f0c211357eb5a9934520d1ea2100575467b0de47b0ab8bcfa910e8bdbfef8f87"
+    },
+    {
+      "path": "scripts/system/operations/GetPlServantOutGame.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "3c5dd22e22876fe52060d977743a65838ddd5ee4122a8b1a44e36729962fad7b"
+    },
+    {
+      "path": "scripts/system/operations/GetPlServantSide.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "20960e4c496c9054a5ef96ac57dfd8539d2b4d76967c8c3795ca0d38fb83f8d6"
+    },
+    {
+      "path": "scripts/system/operations/GetPlsInLocation.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "040f804895fcee9a0d048e0199f520ce2481658305b9e7f7fcdf40cddcdf5213"
+    },
+    {
+      "path": "scripts/system/operations/GetPlSkillsOutGame.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "09aef7752432fb49c95e25de0e9136967f9acd6bfe75f350ca14baedd090c6dc"
+    },
+    {
+      "path": "scripts/system/operations/GetPlSkillsSide.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "6561824a15e15822c2782455524e605ade6c75a836a4a9d14f36473d851e4c28"
+    },
+    {
+      "path": "scripts/system/operations/GetPrintedNum.gd",
+      "lines": 9,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/base_object.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "87b1a35370fdde5fe537fbd2b38553242d10e74494e44933dbc0f178283bbf54"
+    },
+    {
+      "path": "scripts/system/operations/GetPrintedNums.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_object.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "3caaec9139a8c5e39830836f4a82bdb3b95910be563b6b6d0fce0dd3b9d17d6c"
+    },
+    {
+      "path": "scripts/system/operations/GetProperty.gd",
+      "lines": 21,
+      "functions": 2,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 4,
+      "sha256": "245e7b0ad9fee6ba787c4b107d07aae6c3fee7d9e8325f467d928ee684519d4a"
+    },
+    {
+      "path": "scripts/system/operations/GetRankByDataNumber.gd",
+      "lines": 38,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {
+        "GameData": 2,
+        "EffectManager": 1,
+        "GameDataManager": 2
+      },
+      "incoming": 2,
+      "sha256": "e0d3716762f3655c1e6b17ef2fe673b3bb5fc8c7a2c59307a55efc8babeccc73"
+    },
+    {
+      "path": "scripts/system/operations/GetRoundBattleWins.gd",
+      "lines": 15,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 1,
+      "sha256": "e42676e7a3c49a5bb9c1cb9edd439b1724e170f2e3e385b5c18a961b299a9a76"
+    },
+    {
+      "path": "scripts/system/operations/GetSharedAttackAttribute.gd",
+      "lines": 37,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_attack.gd",
+        "scripts/system/operations/CardCountsPower.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 2,
+      "sha256": "b268639b62ac4cae0611f4f824be10e5eb76f4f133d4e1d5d6d283eac0ada4a4"
+    },
+    {
+      "path": "scripts/system/operations/GetSituationPrintedMagic.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_situation.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "9076a499bfabe5ba880e9fb7166a890e00d7d54107d4595e2e09098f23a5698a"
+    },
+    {
+      "path": "scripts/system/operations/GetSituations.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "MapData": 1
+      },
+      "incoming": 1,
+      "sha256": "ed3db8b04e102e9a70cc23e57ef1b9332c4805011b7e4a74d52ba25026179f8f"
+    },
+    {
+      "path": "scripts/system/operations/GetSkillPrintedCost.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_skill.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "2dddbf725d3b9a59099b33f0f4903585394f8b8984ab8fa71fc075fd34ce74e1"
+    },
+    {
+      "path": "scripts/system/operations/GetSkillPrintedPower.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_skill.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "1c58936ba14e2bb3ff661640dc1b8e1fef440de5aa47eecdb6c8d710198c0151"
+    },
+    {
+      "path": "scripts/system/operations/Has.gd",
+      "lines": 25,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "146df666ceee264f20ee957da28db5306204656b912e15ed880239e8eb581c47"
+    },
+    {
+      "path": "scripts/system/operations/HasAttribute.gd",
+      "lines": 18,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/operations/GetEffSourceCard.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "b0f80e788e53ca9c0c2c396a7d66a54d9cde5ed8e992f74bcc04aa3e8bf637c3"
+    },
+    {
+      "path": "scripts/system/operations/HideTrueName.gd",
+      "lines": 39,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_skill.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/ReleaseTrueName.gd",
+        "scripts/system/operations/SetCardConcealed.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 1,
+        "GameDataManager": 1,
+        "TimePointChecker": 1
+      },
+      "incoming": 5,
+      "sha256": "98b933393b8ede0c3c1d08d17a3e823c2692cdfe7b682ff1bc2a71fed8d0ccea"
+    },
+    {
+      "path": "scripts/system/operations/IfElseFunc.gd",
+      "lines": 18,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "64fae38e393cd4d19ad8e9de441738574a0496dc18da6ce13716a235a95a4816"
+    },
+    {
+      "path": "scripts/system/operations/IfFunc.gd",
+      "lines": 14,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "9d53004fadecb32aed0f01662e03fce24288d491d23569e7b7de834d15a29ef5"
+    },
+    {
+      "path": "scripts/system/operations/IsEngaged.gd",
+      "lines": 35,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd",
+        "scripts/system/operations/GetLocation.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 4
+      },
+      "incoming": 4,
+      "sha256": "366327abca4bbb588fd21260f12b536804b8b885002d68bf53c6451614f4ed86"
+    },
+    {
+      "path": "scripts/system/operations/IsInArray.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "12847882b6599737f12b2db04ecf4c3f5a946365926966a8171913578e24c6fd"
+    },
+    {
+      "path": "scripts/system/operations/IsNull.gd",
+      "lines": 7,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "026521dcb4288630bfd4a4f6597bc363adbd4a1acbd402a22d5af16fba604c92"
+    },
+    {
+      "path": "scripts/system/operations/IsTrueNameReleased.gd",
+      "lines": 7,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/operations/ReleaseTrueName.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 2,
+      "sha256": "ffc3932b4549912daae805df5de99b74b98335a3531ccd1760ae975dcf24b5da"
+    },
+    {
+      "path": "scripts/system/operations/Location.gd",
+      "lines": 7,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "43b873f6d0a00b5eaa201e96c51edddb3809baab750fc9da26af2ecb603e191b"
+    },
+    {
+      "path": "scripts/system/operations/LogExists.gd",
+      "lines": 16,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/operations/QueryLog.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "be91f5f9acbe561d508e23bf48629a2836ae6f8bdb06ecd38b7e1550840fd4e1"
+    },
+    {
+      "path": "scripts/system/operations/LogFieldValues.gd",
+      "lines": 17,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/operations/QueryLog.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "441b3d48df9780964ca4739271d5bedc6bc44ee281bddbac3a44d812e25a5d69"
+    },
+    {
+      "path": "scripts/system/operations/ManageBuff.gd",
+      "lines": 28,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 3,
+        "GameDataManager": 1,
+        "TimePointChecker": 2
+      },
+      "incoming": 4,
+      "sha256": "49e1a251e3ab4e28f67727cf73ffd4b0b7487105017a87397d1661e8850bebaf"
+    },
+    {
+      "path": "scripts/system/operations/MapAreaHasEffect.gd",
+      "lines": 23,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {},
+      "incoming": 6,
+      "sha256": "81075eb9b62f1e5c69c99725905761895e26371e471b07f41d96d2697cb94d6b"
+    },
+    {
+      "path": "scripts/system/operations/MatchFunc.gd",
+      "lines": 10,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "717d0d7ed594442cc3d60b5ec370fbd15a28bfebb1f4ba5ae88266a77e025d56"
+    },
+    {
+      "path": "scripts/system/operations/MergeArrays.gd",
+      "lines": 16,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "cc54bf8d04bd09f374f9b0e4dc3e08556bf0a85afbc9ac1ad97cec56baeb4e84"
+    },
+    {
+      "path": "scripts/system/operations/ModifyAttackPowerByAttribute.gd",
+      "lines": 49,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/EditPower.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "c84058ae83799841832c3f32d22a5666d5433130aa1d54ddd8f7a8ffc99d653d"
+    },
+    {
+      "path": "scripts/system/operations/Move.gd",
+      "lines": 21,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/EditMagic.gd",
+        "scripts/system/operations/IsEngaged.gd",
+        "scripts/system/operations/MoveLocation.gd"
+      ],
+      "globals": {
+        "EffectManager": 2,
+        "GameDataManager": 1
+      },
+      "incoming": 5,
+      "sha256": "9044596c611317bbf47c69a252f0cc166705915b25bb22d96b070207e9064a1e"
+    },
+    {
+      "path": "scripts/system/operations/MoveLocation.gd",
+      "lines": 80,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/GetMoveTargetLocation.gd",
+        "scripts/system/operations/Move.gd",
+        "scripts/system/operations/SetLocation.gd"
+      ],
+      "globals": {
+        "EffectManager": 8,
+        "MapData": 3,
+        "GameDataManager": 1
+      },
+      "incoming": 4,
+      "sha256": "821dee7e282c7d48464104fc803728df0744926b06ce5044b8fac8e8e89e9b1b"
+    },
+    {
+      "path": "scripts/system/operations/NotFunc.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "dcb43f1312051bafe72c33d133af4e932853f782109850455d07c3079dc56ca2"
+    },
+    {
+      "path": "scripts/system/operations/OrFunc.gd",
+      "lines": 6,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "dbce85e9f373aa485ed42e7d269cefd9863636469d65a405c7e7c239df0999a5"
+    },
+    {
+      "path": "scripts/system/operations/PlayAttack.gd",
+      "lines": 92,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/effects/CannotPlayCardsEffect.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/ApplyCardKeywords.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/EditMagic.gd",
+        "scripts/system/operations/PlayerBuffsHaveEffect.gd",
+        "scripts/system/play_rules.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "GameProgress": 2,
+        "EffectManager": 4,
+        "GameDataManager": 1,
+        "TimePointChecker": 3
+      },
+      "incoming": 11,
+      "sha256": "94385a0532baab8222cdd21a22b56c97525b513474667f1f3eb6e40571cb7c04"
+    },
+    {
+      "path": "scripts/system/operations/PlayedCards.gd",
+      "lines": 7,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "TimePointChecker": 1
+      },
+      "incoming": 1,
+      "sha256": "f1e1b3a16a25b0aaf7ebd291e2763797bc05af7680a190cca7ae3ce3b0cb6c4c"
+    },
+    {
+      "path": "scripts/system/operations/PlayerBuffsHaveEffect.gd",
+      "lines": 19,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_effect.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 7,
+      "sha256": "75af292612342bea3aed959da25b1d32022ebe90e89db2b04a6c7b56e9fa111c"
+    },
+    {
+      "path": "scripts/system/operations/PlaySkill.gd",
+      "lines": 63,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/effects/CannotPlayCardsEffect.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/ApplyCardKeywords.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/EditMagic.gd",
+        "scripts/system/operations/PlayAttack.gd",
+        "scripts/system/operations/PlayerBuffsHaveEffect.gd",
+        "scripts/system/play_rules.gd",
+        "scripts/system/regular_play.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 2,
+        "GameDataManager": 1,
+        "TimePointChecker": 3
+      },
+      "incoming": 7,
+      "sha256": "f0deea3fbe6be965d852440aa3d7869da4188a4616d296d4c03dbdc35eb806bf"
+    },
+    {
+      "path": "scripts/system/operations/QueryLog.gd",
+      "lines": 21,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 4,
+      "sha256": "b2eca7114dca2321374fc87258afcc6c9bcba7c2dfb7ab448e7bc2f8baad1031"
+    },
+    {
+      "path": "scripts/system/operations/QueueOptionalEffectForPlayers.gd",
+      "lines": 41,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_func.gd",
+        "scripts/system/clone_context.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 3
+      },
+      "incoming": 1,
+      "sha256": "90eb3b73a116cc54e58a7ff6b3429a24cf63b3ba1b7c5e80b3d7a7a0aea301e4"
+    },
+    {
+      "path": "scripts/system/operations/RandomFloat.gd",
+      "lines": 11,
+      "functions": 1,
+      "dependencies": [
+        "scripts/match/rule_random.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "612c4ad0df0bc6e2e181333972c3aa8e998b418d93bb68b59a0f92b9a5612265"
+    },
+    {
+      "path": "scripts/system/operations/RandomInt.gd",
+      "lines": 17,
+      "functions": 2,
+      "dependencies": [
+        "scripts/match/rule_random.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/GetCardByIndexFrArr.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "e8195b7754dcf15bfea3c6903d63b5b960d7f32ca0db72bb2a3f86d629662963"
+    },
+    {
+      "path": "scripts/system/operations/RefillHand.gd",
+      "lines": 43,
+      "functions": 2,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/DrawCardFromPlDeckToHand.gd",
+        "scripts/system/operations/ReshuffleDiscard.gd"
+      ],
+      "globals": {
+        "EffectManager": 4,
+        "GameDataManager": 1
+      },
+      "incoming": 4,
+      "sha256": "78031a67d0d9f488e33290a1d2107714387a0808389b59712d45e368241ed950"
+    },
+    {
+      "path": "scripts/system/operations/RegisterObjectEffects.gd",
+      "lines": 10,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 2
+      },
+      "incoming": 7,
+      "sha256": "62004858b47b1c12a7454c208c8fd4d6b475f02133cb7de9005d9c08a09c913d"
+    },
+    {
+      "path": "scripts/system/operations/ReleaseTrueName.gd",
+      "lines": 67,
+      "functions": 3,
+      "dependencies": [
+        "scripts/system/base_skill.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/HideTrueName.gd",
+        "scripts/system/operations/SetCardConcealed.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 2,
+        "GameDataManager": 1,
+        "TimePointChecker": 1
+      },
+      "incoming": 11,
+      "sha256": "6ddfe7aa756e0b380e5fef747c687e56701251e40187cbc1c7ccd274593b11b2"
+    },
+    {
+      "path": "scripts/system/operations/RemoveDefeat.gd",
+      "lines": 8,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/buffs/defeat_buff.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 2,
+      "sha256": "fff3a13c88a3ddc52a83b831610532235552262aaace48db2fb9bd454651662e"
+    },
+    {
+      "path": "scripts/system/operations/RemoveFromArray.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "652e5a9cc5b78e599336ce0d6108901212a8e60406bbc988baf5b3cbd20c833b"
+    },
+    {
+      "path": "scripts/system/operations/RemoveFromBoard.gd",
+      "lines": 23,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/SetLocation.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1,
+        "TimePointChecker": 1
+      },
+      "incoming": 4,
+      "sha256": "cb73bae6cb9f1a0843671d50e098c95a3832a62cebc75150507fc8f358e02597"
+    },
+    {
+      "path": "scripts/system/operations/ReshuffleDiscard.gd",
+      "lines": 28,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/ShuffleArray.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 2,
+        "GameDataManager": 1,
+        "TimePointChecker": 1
+      },
+      "incoming": 3,
+      "sha256": "56a7c0a71ea67017dc65bfc842249cdb88cdc2b283fdf11925c27daafa9969a4"
+    },
+    {
+      "path": "scripts/system/operations/RestoreLocationBenefits.gd",
+      "lines": 25,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/RestoreLocationPlNumLimits.gd",
+        "scripts/system/operations/RestoreMapAreaMoveFlags.gd"
+      ],
+      "globals": {
+        "MapData": 1
+      },
+      "incoming": 3,
+      "sha256": "a5062c0710d873a9df3462f5f525c489602ffcc4bba7888c1d4c40905c440160"
+    },
+    {
+      "path": "scripts/system/operations/RestoreLocationPlNumLimits.gd",
+      "lines": 13,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {
+        "MapData": 1
+      },
+      "incoming": 4,
+      "sha256": "695f533091d66c2a682b6b5a25da7230bdcfe30fb955f2c57724b8e3470750e1"
+    },
+    {
+      "path": "scripts/system/operations/RestoreMapAreaMoveFlags.gd",
+      "lines": 12,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd"
+      ],
+      "globals": {
+        "MapData": 1
+      },
+      "incoming": 4,
+      "sha256": "fab4f51dbaf2a1ee3ea1f13cd7122d0c83b015a6f45eb2c6f201d6957d94d15e"
+    },
+    {
+      "path": "scripts/system/operations/RestrictAbilities.gd",
+      "lines": 7,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/ability_restrictions.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/operations/GetEffSourceCard.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "8478fdf8736210f7dd5b5b60159e1c5f795960e2d1e2ca5c5f991d70728bc0f7"
+    },
+    {
+      "path": "scripts/system/operations/ScheduleEffectOnTimePoint.gd",
+      "lines": 28,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_func.gd",
+        "scripts/system/clone_context.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "EffectManager": 2
+      },
+      "incoming": 1,
+      "sha256": "a2b8556d899adda889946194e7cc339a5eb118ff658a0e33b92007377e21467a"
+    },
+    {
+      "path": "scripts/system/operations/SetBattleResult.gd",
+      "lines": 24,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd",
+        "scripts/system/global/battle_resolver.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "17ae2df5025fa3ec34428ee749c1855d4cbd613665600346857d5fb47500d132"
+    },
+    {
+      "path": "scripts/system/operations/SetCardConcealed.gd",
+      "lines": 34,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_card.gd",
+        "scripts/system/base_event.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/global/event_resolver.gd",
+        "scripts/system/operations/CardCountsPower.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "GameDataManager": 1,
+        "TimePointChecker": 1
+      },
+      "incoming": 9,
+      "sha256": "24efe7be6575093e2959b4edfdc0c59fcd8df122fa2a7c934bb49a9ede76e95d"
+    },
+    {
+      "path": "scripts/system/operations/SetDictionaryValue.gd",
+      "lines": 12,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "6640e75c5585c99cf29b19a334a8c37443785289bb2717cbc954b8be7307867c"
+    },
+    {
+      "path": "scripts/system/operations/SetLocation.gd",
+      "lines": 86,
+      "functions": 3,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/Deploy.gd",
+        "scripts/system/operations/MapAreaHasEffect.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "EffectManager": 1,
+        "MapData": 2,
+        "GameDataManager": 2,
+        "TimePointChecker": 2
+      },
+      "incoming": 8,
+      "sha256": "68ac10d123264ba6f5257b3f267cbb514e8a109476615f9ad09b581edeb3be7f"
+    },
+    {
+      "path": "scripts/system/operations/SetLocationPlNumLimit.gd",
+      "lines": 15,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_location.gd",
+        "scripts/system/operations/RestoreLocationPlNumLimits.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "7bfe1bad20b5ad3dc71f86800a638e921e87c51f6b1518a99934d18f383af5a9"
+    },
+    {
+      "path": "scripts/system/operations/SetMapAreaCanMoveTo.gd",
+      "lines": 15,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_map_area.gd",
+        "scripts/system/operations/RestoreMapAreaMoveFlags.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "b173890360bef39c1ee8c82f90b5339df86869a89a8fc8dc9a85c2a95c4fcf92"
+    },
+    {
+      "path": "scripts/system/operations/SetPlayerData.gd",
+      "lines": 14,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {
+        "EffectManager": 3,
+        "GameDataManager": 1
+      },
+      "incoming": 3,
+      "sha256": "46489312651a768cfd037041439dc13eceb24f78c998bf2287f62f5456f998af"
+    },
+    {
+      "path": "scripts/system/operations/SetProperty.gd",
+      "lines": 22,
+      "functions": 2,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "d6b402b2465ba08e0fcf9a1526c7bbcef2e21d3068bab0445db0699c7cad3131"
+    },
+    {
+      "path": "scripts/system/operations/ShowCards.gd",
+      "lines": 24,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_object.gd",
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {
+        "EffectManager": 3
+      },
+      "incoming": 1,
+      "sha256": "55ccdb2fb34372a494484722214c71a83d749dc7b47c8c0b49a0a3e94c03bf6a"
+    },
+    {
+      "path": "scripts/system/operations/ShowMessage.gd",
+      "lines": 10,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 1,
+      "sha256": "ee8da394e133ec9625a1be605ce618080ae4c6acebd27bc675f40b2aa7b91124"
+    },
+    {
+      "path": "scripts/system/operations/ShuffleArray.gd",
+      "lines": 16,
+      "functions": 1,
+      "dependencies": [
+        "scripts/match/rule_random.gd"
+      ],
+      "globals": {},
+      "incoming": 6,
+      "sha256": "70382ae148918e3e0a232775379b269459a3769e01090d2f86ed8fa825aa8ca6"
+    },
+    {
+      "path": "scripts/system/operations/StoreValue.gd",
+      "lines": 7,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "537e2203e5fb706095f0212e847c7bed71c94de8ab794d8220d9e2598f0152be"
+    },
+    {
+      "path": "scripts/system/operations/SumLogData.gd",
+      "lines": 19,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/QueryLog.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "22cbf938cf1d971429f9ac1422b016f2893a5fd768d4ec994998210684e62173"
+    },
+    {
+      "path": "scripts/system/operations/SyncPower.gd",
+      "lines": 18,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/CardCountsPower.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 6,
+      "sha256": "82b123544a273c264273ba2a6f21bb3749be7e28466a8647c08a5ec3c96d2a99"
+    },
+    {
+      "path": "scripts/system/operations/Tag.gd",
+      "lines": 10,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "3d09c85028f24d5d9bbb4ab1745ccd72dd55c58feb02f3e56a71eaa5349c2a36"
+    },
+    {
+      "path": "scripts/system/operations/UnregisterObjectEffects.gd",
+      "lines": 11,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_effect.gd"
+      ],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 5,
+      "sha256": "b8d7653cb5aad532ed4b5846f5bf74ff3c416f14f3638794d6d1491649ea06ed"
+    },
+    {
+      "path": "scripts/system/operations/When.gd",
+      "lines": 14,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {
+        "EffectManager": 1
+      },
+      "incoming": 1,
+      "sha256": "e856aefc846a7c61547a2e659bd6e4a41a58c4ef2c8cc6ad3fe2aed39a96712a"
+    },
+    {
+      "path": "scripts/system/operations/WhileFunc.gd",
+      "lines": 53,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_func.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {
+        "EffectManager": 8
+      },
+      "incoming": 3,
+      "sha256": "8780379fec926152c77d4d2af1fa6ca7c645d15faab4bef740da13453cec19f5"
+    },
+    {
+      "path": "scripts/system/operations/ZeroAttributePower.gd",
+      "lines": 27,
+      "functions": 1,
+      "dependencies": [
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/EditPower.gd",
+        "scripts/system/operations/SyncPower.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "EffectManager": 1,
+        "GameDataManager": 1
+      },
+      "incoming": 1,
+      "sha256": "d200130c1cb0e2fdff5ed4e39f5c10086c972274c3813ca99ab46d60f8855758"
+    },
+    {
+      "path": "scripts/system/ai/temp/dummy_bot.gd",
+      "lines": 232,
+      "functions": 12,
+      "dependencies": [
+        "scripts/match/rule_random.gd",
+        "scripts/system/action_rules.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/Deploy.gd",
+        "scripts/system/operations/GetPlCommandSpellOutGame.gd",
+        "scripts/system/regular_play.gd"
+      ],
+      "globals": {
+        "GameProgress": 6,
+        "EffectManager": 16,
+        "GameDataManager": 1
+      },
+      "incoming": 7,
+      "sha256": "c1df1591d7ff32fccdb9543172f8e1a2d6139e2b7a26d93232cbf52316faf1d3"
+    },
+    {
+      "path": "scripts/net/authority/match_authority.gd",
+      "lines": 695,
+      "functions": 28,
+      "dependencies": [
+        "scripts/game_scene/native_choice_renderer.gd",
+        "scripts/game_scene/tactical_board_ui.gd",
+        "scripts/match/match_commands.gd",
+        "scripts/match/match_driver.gd",
+        "scripts/match/match_journal.gd",
+        "scripts/match/match_replay.gd",
+        "scripts/match/rule_budget.gd",
+        "scripts/match/rule_random.gd",
+        "scripts/match/view_builder.gd",
+        "scripts/net/session/recovery_seat_bindings.gd",
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_effect.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/deploy_rules.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/global/load_helper.gd",
+        "scripts/system/operations/CardCountsPower.gd",
+        "scripts/system/operations/GetEffSourceCard.gd",
+        "scripts/system/operations/GetPlayerTotalPower.gd",
+        "scripts/system/regular_play.gd"
+      ],
+      "globals": {
+        "GameData": 1,
+        "GameProgress": 14,
+        "EffectManager": 38,
+        "MapData": 8,
+        "GameStart": 8,
+        "GameDataManager": 5,
+        "LoadGame": 2
+      },
+      "incoming": 2,
+      "sha256": "3530fc31deb9fb78e63f997ead293827721c83736cb52fc754bdc3b3fe319f35"
+    },
+    {
+      "path": "scripts/net/authority/selection_authority.gd",
+      "lines": 57,
+      "functions": 4,
+      "dependencies": [
+        "scripts/selection/selection_mode.gd",
+        "scripts/system/ai/temp/dummy_bot.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "ef60dae1ce1d1c7abe14a9ee4c74368a19115bdac0de83881c95a3787e1f0c14"
+    },
+    {
+      "path": "scripts/net/content/blob_receiver.gd",
+      "lines": 93,
+      "functions": 10,
+      "dependencies": [
+        "scripts/net/content/content_cache.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "bbf719d72dc8562c936754b977febe25d2d23e31d02fce07828710d1a3e05bc2"
+    },
+    {
+      "path": "scripts/net/content/content_cache.gd",
+      "lines": 295,
+      "functions": 20,
+      "dependencies": [
+        "scripts/io/atomic_file_replace.gd",
+        "scripts/net/server/recovery_path_safety.gd"
+      ],
+      "globals": {},
+      "incoming": 7,
+      "sha256": "eb7b3d1dfec6cf017e64ea15eecdfa60d7d9ea44087bd4e527453c2853f5b9de"
+    },
+    {
+      "path": "scripts/net/content/data_catalog.gd",
+      "lines": 198,
+      "functions": 9,
+      "dependencies": [
+        "scripts/net/content/content_cache.gd",
+        "scripts/net/content/room_data_assembler.gd"
+      ],
+      "globals": {},
+      "incoming": 7,
+      "sha256": "ea6cd861dd8e3656bfce95852b6106f7bc2c25c848b0d9182d119eb4a6016d81"
+    },
+    {
+      "path": "scripts/net/content/room_assets.gd",
+      "lines": 76,
+      "functions": 6,
+      "dependencies": [
+        "scripts/net/content/content_cache.gd",
+        "scripts/net/content/data_catalog.gd",
+        "scripts/net/content/room_data_assembler.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "c09ba1c4a956920fc83f5c02ef00c36cff84d2d233afcea5f7b497434ee86f06"
+    },
+    {
+      "path": "scripts/net/content/room_data_assembler.gd",
+      "lines": 172,
+      "functions": 10,
+      "dependencies": [
+        "scripts/net/content/content_cache.gd",
+        "scripts/net/content/data_catalog.gd"
+      ],
+      "globals": {},
+      "incoming": 11,
+      "sha256": "e87510ca9e6fd57e88c7d008695cb34d51fb9b1979bc280a662367b8a40c63a3"
+    },
+    {
+      "path": "scripts/net/content/room_data_plan.gd",
+      "lines": 41,
+      "functions": 1,
+      "dependencies": [
+        "scripts/net/content/content_cache.gd",
+        "scripts/net/content/data_catalog.gd",
+        "scripts/net/content/room_data_assembler.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "f1ab14d58621c17d3e263f499a0105e2aaa14c7fb4e5e98a70f7b61e8f9e4ab3"
+    },
+    {
+      "path": "scripts/net/content/room_data_sync.gd",
+      "lines": 177,
+      "functions": 7,
+      "dependencies": [
+        "scripts/net/content/room_data_assembler.gd",
+        "scripts/net/server/recovery_path_safety.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "e4fab1f71bd98337cf41369ef133dc43e3b8606e8d9590f390ffd9883779d44f"
+    },
+    {
+      "path": "scripts/net/identity/identity_inheritance_input.gd",
+      "lines": 37,
+      "functions": 4,
+      "dependencies": [
+        "scripts/net/identity/member_identity_bindings.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "fe2a71d109f73d558310198ed0b10dd4a0bbabb4127862d0e1ec38c87cc79b2d"
+    },
+    {
+      "path": "scripts/net/identity/identity_inheritance_panel.gd",
+      "lines": 140,
+      "functions": 12,
+      "dependencies": [
+        "scripts/net/identity/identity_inheritance_input.gd"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "90402dd953b2b2b132d8c0a0db76b431ea16567ccff377d17083e17e3ae51566"
+    },
+    {
+      "path": "scripts/net/identity/lan_identity_challenge.gd",
+      "lines": 73,
+      "functions": 7,
+      "dependencies": [
+        "scripts/net/identity/player_identity.gd",
+        "scripts/net/identity/player_name_rules.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "6f9426cda0fc12bfd9085e83f243c0325c6f8d9bf516d78690d741262541bc05"
+    },
+    {
+      "path": "scripts/net/identity/legacy_identity_migration.gd",
+      "lines": 109,
+      "functions": 5,
+      "dependencies": [
+        "scripts/net/identity/member_identity_bindings.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "fb347d1f34293a7b8a8d16f5fa72d6e9cdecbbbe21018cc4463ddd2ffe2245bd"
+    },
+    {
+      "path": "scripts/net/identity/member_identity_bindings.gd",
+      "lines": 125,
+      "functions": 6,
+      "dependencies": [
+        "scripts/net/identity/player_registry.gd",
+        "scripts/net/server/server_console_channel.gd"
+      ],
+      "globals": {},
+      "incoming": 11,
+      "sha256": "a355a4c2e0d200f579f20854e0cfe3b007860c16689f4c295f07e016bc45013b"
+    },
+    {
+      "path": "scripts/net/identity/player_identity.gd",
+      "lines": 58,
+      "functions": 6,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 3,
+      "sha256": "c975c818ff5105de1297922383f648b712ed9bf7c93db93ab3e4f8e72c0d77b8"
+    },
+    {
+      "path": "scripts/net/identity/player_name_rules.gd",
+      "lines": 14,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 6,
+      "sha256": "a56ad7487278301876a6c13c9a44062a4e7899bd609bc0d7584565c1afac8e2a"
+    },
+    {
+      "path": "scripts/net/identity/player_registry.gd",
+      "lines": 104,
+      "functions": 9,
+      "dependencies": [
+        "scripts/net/identity/player_name_rules.gd",
+        "scripts/net/server/server_console_channel.gd"
+      ],
+      "globals": {},
+      "incoming": 5,
+      "sha256": "000cc2c911e90e26de250c1f4af2073d78a501f37291f8502d3404db47a67270"
+    },
+    {
+      "path": "scripts/net/identity/restore_seat_panel.gd",
+      "lines": 140,
+      "functions": 11,
+      "dependencies": [
+        "scripts/net/server/lan_archive_restore.gd",
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/session/recovery_seat_json.gd"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "575b5d621440ce5dfe26a23e17fcc6d836c9ab33cf51d4ca40411c2fd629fe27"
+    },
+    {
+      "path": "scripts/net/identity/room_password.gd",
+      "lines": 26,
+      "functions": 3,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "482b0329fdf368c19a4a21bccd0e88a80b74dfc350b8353a0fa330db73a45303"
+    },
+    {
+      "path": "scripts/net/p2p/p2p_invite.gd",
+      "lines": 215,
+      "functions": 21,
+      "dependencies": [
+        "scripts/net/transport/webrtc_link.gd"
+      ],
+      "globals": {},
+      "incoming": 3,
+      "sha256": "ffe9b1e2e430b1e9752aebb988f22866dcc8492bbbecaf2c238d996bee1349cf"
+    },
+    {
+      "path": "scripts/net/p2p/p2p_signal_client.gd",
+      "lines": 288,
+      "functions": 14,
+      "dependencies": [
+        "scripts/net/p2p/p2p_invite.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "9954f79cf7007e9568171c2d43ada94507905080941838fd2241b792f23c6da6"
+    },
+    {
+      "path": "scripts/net/p2p/p2p_signal_server.gd",
+      "lines": 263,
+      "functions": 12,
+      "dependencies": [
+        "scripts/net/p2p/p2p_invite.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "6d9fdea6d76aa963ebbba78c24353294503da4b909d9feb4990e470b1309f2b2"
+    },
+    {
+      "path": "scripts/net/server/authority_restore_contract.gd",
+      "lines": 54,
+      "functions": 3,
+      "dependencies": [
+        "scripts/net/identity/member_identity_bindings.gd",
+        "scripts/net/server/server_console_channel.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "8320b51800805edf64ab2f2e29ed92032c7a7d0fb1c61d03756766251f32f9c9"
+    },
+    {
+      "path": "scripts/net/server/empty_room_policy.gd",
+      "lines": 56,
+      "functions": 6,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "d1c89b471b5566687f20703f0a320fde6b185e555a7c754fecb654a14aafe2a7"
+    },
+    {
+      "path": "scripts/net/server/lan_archive_restore.gd",
+      "lines": 179,
+      "functions": 7,
+      "dependencies": [
+        "scripts/net/identity/member_identity_bindings.gd",
+        "scripts/net/server/authority_restore_contract.gd",
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/server/server_console_channel.gd",
+        "scripts/net/server/supervisor_management_sequence.gd",
+        "scripts/net/server/worker_identity_ipc.gd",
+        "scripts/net/session/recovery_seat_json.gd"
+      ],
+      "globals": {},
+      "incoming": 3,
+      "sha256": "3a12dda1205432938c2c327bbe5cb7b3a1d3a9a979d7d239213d11ebd9680d01"
+    },
+    {
+      "path": "scripts/net/server/lan_supervisor_identity_bridge.gd",
+      "lines": 97,
+      "functions": 2,
+      "dependencies": [
+        "scripts/net/identity/member_identity_bindings.gd",
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/server/server_console_channel.gd",
+        "scripts/net/server/supervisor_identity_ipc.gd",
+        "scripts/net/server/supervisor_management_sequence.gd",
+        "scripts/net/server/worker_identity_ipc.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "ae02832f19785a15ad9288d6886b4ea95328eef636c95dd9d99e9d74f2cba6b6"
+    },
+    {
+      "path": "scripts/net/server/lan_worker_identity_bridge.gd",
+      "lines": 119,
+      "functions": 7,
+      "dependencies": [
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/server/server_console_channel.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "ccc8267a08802577aa399ba2e419716b76955d7a53ac1895dd83a3335183f630"
+    },
+    {
+      "path": "scripts/net/server/recovery_path_safety.gd",
+      "lines": 112,
+      "functions": 6,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 15,
+      "sha256": "266238e43e871a5237ad819ef5a8cae9c929681f2165f64024ffc8be208ee27f"
+    },
+    {
+      "path": "scripts/net/server/server_bootstrap.gd",
+      "lines": 162,
+      "functions": 11,
+      "dependencies": [
+        "scripts/net/p2p/p2p_signal_server.gd",
+        "scripts/net/server/server_process_signals.gd"
+      ],
+      "globals": {},
+      "incoming": 3,
+      "sha256": "32c24513f3ec66a8207c4a52bc85be1536b81164c31ebf75fed127e08040ea99"
+    },
+    {
+      "path": "scripts/net/server/server_cli.gd",
+      "lines": 267,
+      "functions": 8,
+      "dependencies": [
+        "scripts/net/p2p/p2p_signal_server.gd",
+        "scripts/net/server/server_bootstrap.gd",
+        "scripts/net/server/server_console_channel.gd",
+        "scripts/net/server/server_gateway.gd",
+        "scripts/net/server/server_policy_config.gd",
+        "scripts/net/server/server_process_signals.gd",
+        "scripts/net/server/server_shutdown.gd",
+        "scripts/net/session/room_state.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "76692d943ece3ce73d47122b33acdbead721cfebe8e88cfbe313f3ac54ffad88"
+    },
+    {
+      "path": "scripts/net/server/server_command_line.gd",
+      "lines": 38,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "61de9933077af5a0b61eee85cdc6e4fef1543cc1b28cbf80e23cac2ae0b4b8b2"
+    },
+    {
+      "path": "scripts/net/server/server_console.gd",
+      "lines": 62,
+      "functions": 1,
+      "dependencies": [
+        "scripts/net/server/server_console_channel.gd",
+        "scripts/net/server/server_console_shared_output.gd"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "9b6be0e10ade9db5aa8f7637b0f2f2787e11bb9abd9fef883f446072bffa3d51"
+    },
+    {
+      "path": "scripts/net/server/server_console_channel.gd",
+      "lines": 346,
+      "functions": 32,
+      "dependencies": [
+        "scripts/net/identity/legacy_identity_migration.gd",
+        "scripts/net/server/server_command_line.gd",
+        "scripts/net/session/room_state.gd"
+      ],
+      "globals": {},
+      "incoming": 16,
+      "sha256": "4285ea8df4063a0e2e7844d53823ee4ce5812e07bbdfc87dc5143449f34b888f"
+    },
+    {
+      "path": "scripts/net/server/server_console_shared_output.gd",
+      "lines": 21,
+      "functions": 2,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "4e24e40a526e152b10501ec5552b95a073e56f7e58b8333f45e2ee85eb5ce4fc"
+    },
+    {
+      "path": "scripts/net/server/server_data_approval.gd",
+      "lines": 188,
+      "functions": 13,
+      "dependencies": [
+        "scripts/net/validation/room_data_preparation.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "e024a6f748b0768a21ba00eb59317ecae89184f38f4f407cbf1bcf8369fc3957"
+    },
+    {
+      "path": "scripts/net/server/server_gateway.gd",
+      "lines": 660,
+      "functions": 36,
+      "dependencies": [
+        "scripts/net/identity/legacy_identity_migration.gd",
+        "scripts/net/identity/member_identity_bindings.gd",
+        "scripts/net/identity/player_identity.gd",
+        "scripts/net/identity/player_name_rules.gd",
+        "scripts/net/identity/player_registry.gd",
+        "scripts/net/server/server_room_manager.gd",
+        "scripts/net/transport/enet_transport.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "154686f5b384d36cc20fa8e48cc065ae67eec53362752b68648c3f0fdc26b949"
+    },
+    {
+      "path": "scripts/net/server/server_policy_config.gd",
+      "lines": 25,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "0e448ee172884dcfeb78e23bf029eb4d2f4890497ee0e9b7a4bbdfc53fc641a4"
+    },
+    {
+      "path": "scripts/net/server/server_process_signals.gd",
+      "lines": 7,
+      "functions": 1,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 3,
+      "sha256": "354918be4b757882fe2f671e1a2bb02f1d32bad6b80cfac763c3dd6f192a373f"
+    },
+    {
+      "path": "scripts/net/server/server_room_control.gd",
+      "lines": 139,
+      "functions": 9,
+      "dependencies": [
+        "scripts/net/server/empty_room_policy.gd",
+        "scripts/net/server/lan_archive_restore.gd",
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/server/server_console_channel.gd",
+        "scripts/net/server/worker_identity_ipc.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "296edf36916d77d767e67fceeb33808554e8e487dabb92a43ac0fa5703630997"
+    },
+    {
+      "path": "scripts/net/server/server_room_manager.gd",
+      "lines": 627,
+      "functions": 38,
+      "dependencies": [
+        "scripts/io/atomic_file_replace.gd",
+        "scripts/io/validated_file_content.gd",
+        "scripts/match/rule_budget.gd",
+        "scripts/net/server/empty_room_policy.gd",
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/server/server_bootstrap.gd",
+        "scripts/net/session/lobby_session.gd",
+        "scripts/net/session/room_state.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "a5b508b20712025d60f3843fe7cec7e6d535b7afd5bf203c8cf96e8871770576"
+    },
+    {
+      "path": "scripts/net/server/server_room_worker.gd",
+      "lines": 533,
+      "functions": 19,
+      "dependencies": [
+        "scripts/match/match_journal.gd",
+        "scripts/match/match_replay.gd",
+        "scripts/net/content/data_catalog.gd",
+        "scripts/net/content/room_data_assembler.gd",
+        "scripts/net/content/room_data_plan.gd",
+        "scripts/net/server/lan_worker_identity_bridge.gd",
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/server/server_console_channel.gd",
+        "scripts/net/server/server_data_approval.gd",
+        "scripts/net/server/server_process_signals.gd",
+        "scripts/net/server/server_room_control.gd",
+        "scripts/net/server/server_room_manager.gd",
+        "scripts/net/session/lobby_session.gd",
+        "scripts/net/session/room_state.gd",
+        "scripts/net/validation/room_data_validator.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "EffectManager": 3,
+        "GameStart": 2,
+        "LoadGame": 2
+      },
+      "incoming": 0,
+      "sha256": "6567765bd35b2e2cfeaf93f01952c131f4869eb75d3363503c0313cb61174342"
+    },
+    {
+      "path": "scripts/net/server/server_shutdown.gd",
+      "lines": 98,
+      "functions": 3,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "56133773f8fd5d1c762149b04ee745a16587cb7fd663b1988a57cfa1a0ed27bc"
+    },
+    {
+      "path": "scripts/net/server/supervisor_identity_ipc.gd",
+      "lines": 60,
+      "functions": 4,
+      "dependencies": [
+        "scripts/net/identity/member_identity_bindings.gd",
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/server/server_console_channel.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "9bcb0441e2f60091a9a87b4ee1a29596890ab29560e73bd93e965027a3f17815"
+    },
+    {
+      "path": "scripts/net/server/supervisor_management_sequence.gd",
+      "lines": 39,
+      "functions": 2,
+      "dependencies": [
+        "scripts/net/identity/member_identity_bindings.gd",
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/server/server_console_channel.gd",
+        "scripts/net/server/worker_identity_ipc.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "2bd73d705c60c69eef570acc5eb9949338c845d877d3b6addea7c869db5ae8d6"
+    },
+    {
+      "path": "scripts/net/server/worker_identity_ipc.gd",
+      "lines": 105,
+      "functions": 11,
+      "dependencies": [
+        "scripts/net/identity/member_identity_bindings.gd",
+        "scripts/net/identity/player_name_rules.gd",
+        "scripts/net/identity/player_registry.gd",
+        "scripts/net/server/server_console_channel.gd"
+      ],
+      "globals": {},
+      "incoming": 4,
+      "sha256": "714e0673a2e59e6e4b09f163b9d8b08b09d0bf57ab79d9963377e65ea3611d52"
+    },
+    {
+      "path": "scripts/net/session/authority_host_client.gd",
+      "lines": 321,
+      "functions": 12,
+      "dependencies": [
+        "scripts/net/identity/lan_identity_challenge.gd",
+        "scripts/net/identity/member_identity_bindings.gd",
+        "scripts/net/identity/player_registry.gd",
+        "scripts/net/server/lan_archive_restore.gd",
+        "scripts/net/server/lan_supervisor_identity_bridge.gd",
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/server/server_console_channel.gd",
+        "scripts/net/server/server_gateway.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "7deb3f97bc3886a737ec297ed001cdd03d694efc73b3f978dfdca6ebf745f3cd"
+    },
+    {
+      "path": "scripts/net/session/lobby_session.gd",
+      "lines": 1996,
+      "functions": 91,
+      "dependencies": [
+        "scripts/io/atomic_file_replace.gd",
+        "scripts/io/validated_file_content.gd",
+        "scripts/match/match_journal.gd",
+        "scripts/match/match_replay.gd",
+        "scripts/match/rule_budget.gd",
+        "scripts/match/view_mirror.gd",
+        "scripts/net/authority/match_authority.gd",
+        "scripts/net/authority/selection_authority.gd",
+        "scripts/net/content/blob_receiver.gd",
+        "scripts/net/content/data_catalog.gd",
+        "scripts/net/content/room_assets.gd",
+        "scripts/net/content/room_data_assembler.gd",
+        "scripts/net/identity/identity_inheritance_input.gd",
+        "scripts/net/identity/lan_identity_challenge.gd",
+        "scripts/net/identity/member_identity_bindings.gd",
+        "scripts/net/identity/player_identity.gd",
+        "scripts/net/identity/player_name_rules.gd",
+        "scripts/net/identity/player_registry.gd",
+        "scripts/net/identity/room_password.gd",
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/server/server_console_channel.gd",
+        "scripts/net/session/authority_host_client.gd",
+        "scripts/net/session/recovery_seat_bindings.gd",
+        "scripts/net/session/recovery_seat_json.gd",
+        "scripts/net/session/room_state.gd",
+        "scripts/net/transport/catalog_message_transfer.gd",
+        "scripts/net/transport/enet_transport.gd",
+        "scripts/net/transport/room_manifest_transfer.gd",
+        "scripts/net/validation/room_data_validator.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "GameData": 2,
+        "GameProgress": 1,
+        "EffectManager": 1,
+        "GameStart": 12,
+        "LoadGame": 6
+      },
+      "incoming": 3,
+      "sha256": "06a074bb96294ee32f6a2f7f97735350de44a4ea96239bff5b9e4a34561048d7"
+    },
+    {
+      "path": "scripts/net/session/recovery_seat_bindings.gd",
+      "lines": 56,
+      "functions": 4,
+      "dependencies": [
+        "scripts/match/seat_controller.gd",
+        "scripts/net/session/recovery_seat_json.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "8824ba2ee85180c96c3decb75dbb709d8da5dd3fc1c2214f9d9434af0ccec659"
+    },
+    {
+      "path": "scripts/net/session/recovery_seat_json.gd",
+      "lines": 64,
+      "functions": 4,
+      "dependencies": [
+        "scripts/match/seat_controller.gd"
+      ],
+      "globals": {},
+      "incoming": 4,
+      "sha256": "a9c081a18afc7edb7abf959ac9e504baeefdee168914d3a52ed82a0c89e23f5a"
+    },
+    {
+      "path": "scripts/net/session/room_state.gd",
+      "lines": 182,
+      "functions": 22,
+      "dependencies": [
+        "scripts/match/rule_budget.gd"
+      ],
+      "globals": {},
+      "incoming": 5,
+      "sha256": "4f7622622fd8762c3af58de162d93ca90b05bbecead908cfb9586a1b93cdc4cd"
+    },
+    {
+      "path": "scripts/net/transport/catalog_message_transfer.gd",
+      "lines": 58,
+      "functions": 3,
+      "dependencies": [
+        "scripts/net/transport/enet_transport.gd",
+        "scripts/net/transport/packet_fragments.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "ab9c642793d02f14ed9ecab3bfb0d2c67c30bce74a8e314d60894a0c4f9a6263"
+    },
+    {
+      "path": "scripts/net/transport/enet_transport.gd",
+      "lines": 216,
+      "functions": 16,
+      "dependencies": [
+        "scripts/net/transport/packet_fragments.gd",
+        "scripts/net/transport/recovery_net_probe.gd"
+      ],
+      "globals": {},
+      "incoming": 3,
+      "sha256": "28977e756622651ad7b21976872611b4a9813339800681a911f3e3239342e748"
+    },
+    {
+      "path": "scripts/net/transport/packet_fragments.gd",
+      "lines": 110,
+      "functions": 10,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "01a0996fe7e060400f6d42deff0891dd377f4ed9b5ccaf7e73c4a2a82805d2f3"
+    },
+    {
+      "path": "scripts/net/transport/recovery_net_probe.gd",
+      "lines": 64,
+      "functions": 4,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "2e111123c7a505f12c592a83c8e8f55d0e1d4b33893725dcbf9a2ce76473cc0f"
+    },
+    {
+      "path": "scripts/net/transport/room_manifest_transfer.gd",
+      "lines": 104,
+      "functions": 7,
+      "dependencies": [
+        "scripts/net/content/room_data_assembler.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "d251e1607e1e1107abc566532eaa79dfab11d1a5be76c456fbddd66d9001dce6"
+    },
+    {
+      "path": "scripts/net/transport/webrtc_link.gd",
+      "lines": 153,
+      "functions": 13,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "0dda042895351e334eb8e4b14543a3eb08cbd1e22790885e64d4f7eef59682ad"
+    },
+    {
+      "path": "scripts/net/ui/group_selection.gd",
+      "lines": 159,
+      "functions": 13,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "4212b6ca936f6223de50539ff4d900a420613df857c77a0e926b2088108072a5"
+    },
+    {
+      "path": "scripts/net/ui/lobby_screen.gd",
+      "lines": 729,
+      "functions": 46,
+      "dependencies": [
+        "assets/scenes/game_scene/battle_board_v2.tscn",
+        "scripts/match/rule_budget.gd",
+        "scripts/net/content/room_data_sync.gd",
+        "scripts/net/identity/player_name_rules.gd",
+        "scripts/net/p2p/p2p_invite.gd",
+        "scripts/net/p2p/p2p_signal_client.gd",
+        "scripts/net/server/server_console_channel.gd",
+        "scripts/net/session/lobby_session.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "GameStart": 2
+      },
+      "incoming": 0,
+      "sha256": "9dc920a89802a8f338f05d41b95d8bd24c282e7b819cb7ba026d87ebe4b4853c"
+    },
+    {
+      "path": "scripts/net/ui/network_choice_panel.gd",
+      "lines": 214,
+      "functions": 23,
+      "dependencies": [
+        "scripts/game_scene/native_choice_renderer.gd"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "3eb0b11ef0ffff13b755bc7de8cbf2fbcaadb7811afdc48e675f8b3d90e686cd"
+    },
+    {
+      "path": "scripts/net/ui/room_data_panel.gd",
+      "lines": 363,
+      "functions": 24,
+      "dependencies": [
+        "scripts/net/content/data_catalog.gd",
+        "scripts/net/validation/room_data_preparation.gd"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "483f0b58b9de303bae3acc4149af3dad99aecde5c6c3aea8b63c042016a6ac3c"
+    },
+    {
+      "path": "scripts/net/ui/v2_view_presenter.gd",
+      "lines": 1042,
+      "functions": 65,
+      "dependencies": [
+        "scripts/game_scene/native_choice_renderer.gd",
+        "scripts/net/ui/group_selection.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "MapData": 2
+      },
+      "incoming": 1,
+      "sha256": "a429caf38c27e87ef2b8d415e04f4e52e496da78b9855dddc2d7dd379236826f"
+    },
+    {
+      "path": "scripts/net/validation/room_data_preparation.gd",
+      "lines": 188,
+      "functions": 7,
+      "dependencies": [
+        "scripts/net/content/data_catalog.gd",
+        "scripts/net/content/room_data_assembler.gd",
+        "scripts/net/content/room_data_plan.gd",
+        "scripts/net/validation/room_validation_task.gd",
+        "scripts/net/validation/rule_random_simulation.gd"
+      ],
+      "globals": {},
+      "incoming": 2,
+      "sha256": "7c91d65243584f18176d29add326bd4c7b0988fc77abe9c8ab5cfc515a23faa9"
+    },
+    {
+      "path": "scripts/net/validation/room_data_validation_worker.gd",
+      "lines": 120,
+      "functions": 3,
+      "dependencies": [
+        "scripts/match/rule_budget.gd",
+        "scripts/net/content/content_cache.gd",
+        "scripts/net/content/room_data_assembler.gd",
+        "scripts/net/validation/room_data_validator.gd",
+        "scripts/net/validation/rule_loop_analysis.gd",
+        "scripts/net/validation/rule_random_simulation.gd",
+        "scripts/system/global/load_helper.gd"
+      ],
+      "globals": {
+        "GameData": 5,
+        "LoadGame": 2
+      },
+      "incoming": 0,
+      "sha256": "fef838d2268e920cc121098ffff8e7c727a08d985ca6255deac9f66f94ee53e5"
+    },
+    {
+      "path": "scripts/net/validation/room_data_validator.gd",
+      "lines": 98,
+      "functions": 5,
+      "dependencies": [
+        "scripts/net/content/content_cache.gd",
+        "scripts/net/content/room_data_assembler.gd",
+        "scripts/system/global/all_operations.gd",
+        "scripts/system/global/board_power_query.gd"
+      ],
+      "globals": {},
+      "incoming": 4,
+      "sha256": "576ec7024902ffbecc5c23f8af0f05b29da9c7054e9b8767bc12d21e0557e37d"
+    },
+    {
+      "path": "scripts/net/validation/room_validation_task.gd",
+      "lines": 166,
+      "functions": 6,
+      "dependencies": [
+        "scripts/match/rule_budget.gd",
+        "scripts/net/content/room_data_assembler.gd",
+        "scripts/net/server/recovery_path_safety.gd",
+        "scripts/net/server/server_bootstrap.gd",
+        "scripts/net/validation/room_data_validator.gd"
+      ],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "0fad05938a792843dc87253c145dad43759605bd00d993be97449039305aff25"
+    },
+    {
+      "path": "scripts/net/validation/rule_loop_analysis.gd",
+      "lines": 186,
+      "functions": 9,
+      "dependencies": [],
+      "globals": {},
+      "incoming": 1,
+      "sha256": "675341c0a236bf8e62fa1cd86d4aa80952e4912d285d045bdfa1caa312fe1a51"
+    },
+    {
+      "path": "scripts/net/validation/rule_random_simulation.gd",
+      "lines": 87,
+      "functions": 2,
+      "dependencies": [
+        "scripts/match/rule_budget.gd",
+        "scripts/match/rule_random.gd",
+        "scripts/net/authority/match_authority.gd",
+        "scripts/net/authority/selection_authority.gd",
+        "scripts/selection/selection_mode.gd",
+        "scripts/system/global/game_log.gd"
+      ],
+      "globals": {
+        "GameProgress": 3,
+        "EffectManager": 2,
+        "GameStart": 5
+      },
+      "incoming": 2,
+      "sha256": "adf8c84d7a8782b8db9c63547a2c0082a3e7eb966476aa4b213c9177ecf628e6"
+    },
+    {
+      "path": "scripts/net/ui/legacy/network_hand_strip.gd",
+      "lines": 54,
+      "functions": 4,
+      "dependencies": [
+        "scripts/net/ui/group_selection.gd"
+      ],
+      "globals": {},
+      "incoming": 0,
+      "sha256": "3bc3d25bc2f9f352e0c4bf32df5e37ef41de44d4ea25fab71bd682ef30de4584"
+    },
+    {
+      "path": "scripts/debug/debug_adapters/debug_board_adapter.gd",
+      "lines": 110,
+      "functions": 12,
+      "dependencies": [
+        "scripts/debug/debug_adapters/debug_map_adapter.gd",
+        "scripts/system/base_situation.gd",
+        "scripts/system/global/event_resolver.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/global/situation_resolver.gd",
+        "scripts/system/operations/AddEventFromDeck.gd",
+        "scripts/system/operations/CloneObject.gd",
+        "scripts/system/operations/EditMagic.gd",
+        "scripts/system/operations/RegisterObjectEffects.gd"
+      ],
+      "globals": {
+        "GameProgress": 1,
+        "EffectManager": 2,
+        "MapData": 11,
+        "GameDataManager": 2,
+        "TimePointChecker": 1
+      },
+      "incoming": 1,
+      "sha256": "aae684d47fbb148cb17197adb5856287650e845f0520f8796d548224411f2252"
+    },
+    {
+      "path": "scripts/debug/debug_adapters/debug_card_adapter.gd",
+      "lines": 322,
+      "functions": 25,
+      "dependencies": [
+        "scripts/debug/debug_validate.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/global/load_event.gd",
+        "scripts/system/global/load_situation.gd",
+        "scripts/system/operations/AwakenSkill.gd",
+        "scripts/system/operations/CloneObject.gd",
+        "scripts/system/operations/CloseCard.gd",
+        "scripts/system/operations/DrawCardByCard.gd",
+        "scripts/system/operations/DrawCardFromPlDeckToHand.gd",
+        "scripts/system/operations/EditCardAttributes.gd",
+        "scripts/system/operations/EditCardCost.gd",
+        "scripts/system/operations/EditCardPower.gd",
+        "scripts/system/operations/RefillHand.gd",
+        "scripts/system/operations/RegisterObjectEffects.gd",
+        "scripts/system/operations/ReshuffleDiscard.gd",
+        "scripts/system/operations/SetCardConcealed.gd",
+        "scripts/system/operations/ShuffleArray.gd",
+        "scripts/system/operations/SyncPower.gd",
+        "scripts/system/operations/UnregisterObjectEffects.gd"
+      ],
+      "globals": {
+        "GameData": 13,
+        "EffectManager": 1
+      },
+      "incoming": 3,
+      "sha256": "c709cbcc461f31ad04058143c062c73e8eb47d9e315c03d2f23fa899f33ce58b"
+    },
+    {
+      "path": "scripts/debug/debug_adapters/debug_identity_adapter.gd",
+      "lines": 479,
+      "functions": 32,
+      "dependencies": [
+        "scripts/debug/debug_validate.gd",
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_card.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/global/load_command_spell.gd",
+        "scripts/system/operations/DealPlayerCards.gd",
+        "scripts/system/operations/DrawCardByCard.gd",
+        "scripts/system/operations/HideTrueName.gd",
+        "scripts/system/operations/ManageBuff.gd",
+        "scripts/system/operations/RefillHand.gd",
+        "scripts/system/operations/RegisterObjectEffects.gd",
+        "scripts/system/operations/ReleaseTrueName.gd",
+        "scripts/system/operations/SetPlayerData.gd",
+        "scripts/system/operations/SyncPower.gd",
+        "scripts/system/operations/UnregisterObjectEffects.gd"
+      ],
+      "globals": {
+        "GameData": 33,
+        "EffectManager": 1,
+        "MasterManager": 1
+      },
+      "incoming": 1,
+      "sha256": "e93f45595b59fae4aa5b402fe7f0a7574416ae71ad97e625b0e75ef952699050"
+    },
+    {
+      "path": "scripts/debug/debug_adapters/debug_map_adapter.gd",
+      "lines": 187,
+      "functions": 16,
+      "dependencies": [
+        "scripts/debug/debug_adapters/debug_card_adapter.gd",
+        "scripts/system/base_attack.gd",
+        "scripts/system/base_handcard.gd",
+        "scripts/system/base_location.gd",
+        "scripts/system/base_map_area.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/base_skill.gd",
+        "scripts/system/deploy_rules.gd",
+        "scripts/system/operations/GetEffectiveLocationBenefit.gd",
+        "scripts/system/operations/HideTrueName.gd",
+        "scripts/system/operations/Move.gd",
+        "scripts/system/operations/PlayAttack.gd",
+        "scripts/system/operations/PlaySkill.gd",
+        "scripts/system/operations/ReleaseTrueName.gd",
+        "scripts/system/operations/RemoveFromArray.gd",
+        "scripts/system/operations/RemoveFromBoard.gd",
+        "scripts/system/operations/SetLocation.gd",
+        "scripts/system/regular_play.gd"
+      ],
+      "globals": {
+        "GameData": 11,
+        "GameProgress": 2,
+        "MapData": 6
+      },
+      "incoming": 2,
+      "sha256": "7f2bb28fb6e41c1b5f85213f82bf96c9fb9b0e01656e5011e0f5c9287a000c42"
+    },
+    {
+      "path": "scripts/debug/debug_adapters/debug_player_adapter.gd",
+      "lines": 166,
+      "functions": 14,
+      "dependencies": [
+        "scripts/debug/debug_validate.gd",
+        "scripts/system/base_buff.gd",
+        "scripts/system/base_number.gd",
+        "scripts/system/global/climax_resolver.gd",
+        "scripts/system/global/game_log.gd",
+        "scripts/system/operations/CloneObject.gd",
+        "scripts/system/operations/Defeat.gd",
+        "scripts/system/operations/EditDataNumber.gd",
+        "scripts/system/operations/GetPlayerTotalPower.gd",
+        "scripts/system/operations/ManageBuff.gd",
+        "scripts/system/operations/ReleaseTrueName.gd",
+        "scripts/system/operations/RemoveDefeat.gd",
+        "scripts/system/operations/SetPlayerData.gd",
+        "scripts/system/operations/SyncPower.gd",
+        "scripts/system/power_sources.gd",
+        "scripts/system/time_points.gd"
+      ],
+      "globals": {
+        "GameData": 19,
+        "TimePointChecker": 1
+      },
+      "incoming": 2,
+      "sha256": "209b4c78b5c691247551c366dafe99ad50246572bcb3382eb0397b587e4d30d5"
+    }
+  ]
+}

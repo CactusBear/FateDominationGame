@@ -1,0 +1,16 @@
+--- a/tools/release/release_privacy_policy.json
++++ b/tools/release/release_privacy_policy.json
+@@ -68,6 +68,13 @@
+     ],
+     "editor_plugin_transform": "existing converter clears editor_plugins.enabled in copy only; new plugins require review",
+     "source_presets": "unchanged; no exclude/include/export_filter semantic changes",
++    "final_inventory_candidate": {
++      "integration_status": "DECLARED_NOT_WIRED; candidate only, not a privacy PASS",
++      "deny_suffixes": [".pem", ".key", ".log", ".dmp"],
++      "deny_filename_patterns": ["validation-probe-*.json"],
++      "must_check": "all selected files after runtime_files, descriptor and import closure; reject matches, never silently drop dependencies",
++      "source_preservation": "do not deny the identity component or recovery_save_diagnostic.gd source"
++    },
+     "bypass_warning": "explicit runtime_files and descriptor/import dependencies bypass directory EXCLUDED filtering; independently audit final inventory"
+   },
+   "package": {

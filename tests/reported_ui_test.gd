@@ -1,4 +1,6 @@
 extends Node
+# 本局原来源取自 reset_runtime 回执；真名解放/隐藏显式传入，不从全局补票。
+var runtime_context:SessionContext = null
 
 var failures: Array = []
 var checks := 0
@@ -58,7 +60,8 @@ func run() -> void:
 	add_child(ui)
 	ui.set_process(false)
 	GameProgress.is_game_over = true
-	EffectManager.reset_runtime()
+	var reset_receipt:Dictionary = EffectManager.reset_runtime()
+	runtime_context = reset_receipt.get("context") if reset_receipt.get("ok", false) else null
 	GameLog.reset()
 	await frames()
 	var ids: Array = GameData.player_data_library.keys()
@@ -174,12 +177,12 @@ func run() -> void:
 	data.servant_skills = []
 	ui._update_drawer_visuals(slot_for(pid))
 	check(bool(servant.get_meta("zoom_disabled", false)), "empty skills do not reveal servant")
-	var skill = BaseSkill.new("visible skill", "", [])
+	var skill = LoadGame.load_skills([{"skill_name": "visible skill", "skill_card_img": "", "attributes": [], "cost": {"number": 0, "can_change": true, "is_pure_number": true}, "power": {"number": 0, "can_change": true, "is_pure_number": true}, "ignore_limit": false, "effects": []}], "", null, "skill", runtime_context)[0]
 	skill._is_concealed = false
 	data.servant_skills = [skill]
 	ui._update_drawer_visuals(slot_for(pid))
 	check(bool(servant.get_meta("zoom_disabled", false)), "face-up skill does not imply release")
-	ReleaseTrueName.new().exec(pid)
+	ReleaseTrueName.new().exec(pid, ReleaseTrueName.DEFAULT_SHOWN_AREAS, runtime_context)
 	ui.refresh_all_ui()
 	check(not bool(servant.get_meta("zoom_disabled", true)), "open drawer refreshes release")
 	var hint: Label = ui.opponent_drawer.get_node("VBox/HeaderBar/IdentityHint")
@@ -187,7 +190,7 @@ func run() -> void:
 	check(hint.get_theme_color("font_color") == Color(1.0, 0.84, 0.3), "drawer release gold")
 	var top: Label = slot_for(pid).get_node_or_null("HBox/Info/TrueNameStatus")
 	check(top != null and top.text == "真名解放", "top release label")
-	ReleaseTrueName.new().exec(ui._local_player_id)
+	ReleaseTrueName.new().exec(ui._local_player_id, ReleaseTrueName.DEFAULT_SHOWN_AREAS, runtime_context)
 	ui.refresh_all_ui()
 	check(ui.get_node(PODIUM).text.contains("真名解放"), "local release label")
 	# Force the old slot to represent another player; refresh must retain the selected ID.
@@ -196,8 +199,7 @@ func run() -> void:
 	ui.refresh_all_ui()
 	check(str(ui._selected_opponent_id) == str(pid), "drawer stores stable player identity")
 	check(hint.text == "真名解放", "drawer does not switch player after slot rebind")
-	HideTrueName.new().exec(pid)
-	HideTrueName.new().exec(ui._local_player_id)
+	HideTrueName.new().exec(pid, HideTrueName.DEFAULT_HIDDEN_AREAS, runtime_context)
 	ui.refresh_all_ui()
 	check(bool(servant.get_meta("zoom_disabled", false)) and hint.text == "真名未解放", "hide refreshes open drawer")
 	check(hint.get_theme_color("font_color") == Color(0.6, 0.64, 0.7), "hidden status gray")
@@ -424,8 +426,8 @@ func run() -> void:
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png("res://tests/reported_ui_report.png")
 		ui.battle_report_modal.hide()
-		ReleaseTrueName.new().exec(pid)
-		ReleaseTrueName.new().exec(ui._local_player_id)
+		ReleaseTrueName.new().exec(pid, ReleaseTrueName.DEFAULT_SHOWN_AREAS, runtime_context)
+		ReleaseTrueName.new().exec(ui._local_player_id, ReleaseTrueName.DEFAULT_SHOWN_AREAS, runtime_context)
 		ui.refresh_all_ui()
 		ui._update_drawer_visuals(slot_for(pid))
 		ui.opponent_drawer.show()

@@ -1,25 +1,40 @@
 extends "res://tests/card_effect_runtime_test.gd"
 # 复用已有 setup/place/check；不调用其手工登记来源的辅助函数。
 # 来源只经 deal_player_cards -> RegularPlay -> BattleResolver。
-# 本套件是待运行 RED：不能以手工登记/修改激活状态修补生产链路。
+# 不以手工登记/修改激活状态修补生产链路；保存创建时原来源贯穿生命周期。
 
 func run() -> void:
-	test_fresh_deal_loss_and_removed_copy()
-	test_unplayed_dealt_copies()
-	test_returned_copy_stays_idle_and_keeps_bonus()
+	await test_fresh_deal_loss_and_removed_copy()
+	await test_unplayed_dealt_copies()
+	await test_returned_copy_stays_idle_and_keeps_bonus()
 	print("RESULT checks=", checks, " failures=", failures)
 	get_tree().quit(0 if failures.is_empty() else 1)
 
 func lifecycle_setup() -> Array:
 	super.setup(3, int(GameData.magic_limit.number))
-	SituationResolver.new().clear_all()
+	check(fixture_reset.get("ok", false), "fixture captures original lifecycle context")
+	if not fixture_reset.get("ok", false):
+		return []
+	var cleared:Dictionary = SituationResolver.new().clear_all(fixture_context)
+	check(cleared.ok, "fixture clears situation with original context")
+	if not cleared.ok:
+		return []
 	var servant = named(GameData.loaded_servants, "heracles")
 	check(servant != null, "fixture loads Heracles")
 	if servant == null:
 		return []
 	var d:Dictionary = GameDataManager.get_player_data(0)
-	d.servant = servant
-	GameProgress.deal_player_cards(0)
+	var prepared:Dictionary = MasterManager.prepare_role_runtime(servant, fixture_context)
+	check(prepared.ok, "S0 prepares Heracles runtime from loaded template")
+	if not prepared.ok:
+		return []
+	d.servant = prepared.object
+	# 发牌含洗牌，使用显式确定性规则流，不借用引擎全局随机。
+	preload("res://scripts/match/rule_random.gd").start_seed(5556)
+	var dealt:Dictionary = GameProgress.deal_player_cards(0, fixture_context)
+	check(dealt.ok, "real deal accepts original runtime source")
+	if not dealt.ok:
+		return []
 	var copies:Array = d.servant_skills.duplicate()
 	check(copies.size() == 3, "real deal supplies three Twelve Labors instances")
 	if copies.size() != 3:
@@ -50,30 +65,50 @@ func next_action_round() -> void:
 	# 复用 end_round 的收牌/威力同步原语，避免 start_round 随机抽局势干扰专项。
 	# 不清 EffectManager/GameLog，保留真实回收登记与移除后残留效果。
 	for id in range(3):
-		DiscardPlayedCards.new().exec(id)
-		SyncPower.new().exec(id)
-		RemoveFromBoard.new().exec(id)
+		# 既有 TABLE 根创建真实函数帧；void 操作消费完成回执而非伪造成功值。
+		for key in ["discard_played_cards", "sync_power", "remove_from_board"]:
+			var operation:Dictionary = GameProgress.start_progress_operation(key, [id], fixture_context)
+			var completed:Dictionary = await GameProgress.wait_progress_operation(operation, false)
+			check(completed.ok and completed.completed, "round cleanup completes registered %s for %d" % [key, id])
+			if not completed.ok:
+				return
+			if key == "remove_from_board":
+				check(completed.value == true, "registered remove_from_board consumes original frame for %d" % id)
 		GameDataManager.get_player_data(id).total_power_bonus.number = 0
 	DefeatBuff.clear_all()
 	enter_action_round(GameProgress.current_round + 1)
 
+## 保留原填充牌的零费用/零威力声明，由已有加载工厂生成合法 runtime，绝不消费口补票。
+func lifecycle_attack(card_name:String) -> BaseAttack:
+	var card:BaseAttack = LoadAttack._create_attack({"attack_name":card_name, "_dir_path":"",
+		"attack_card_img":"", "attributes":[], "cost":{"number":0, "can_change":true, "is_pure_number":true}, "power":{"number":0, "can_change":true, "is_pure_number":true},
+		"effects":[]}, fixture_context)
+	check(card != null and RegisterObjectEffects.source_is_current(fixture_context, card), "filler factory supplies runtime origin")
+	return card
+
 func play_pair(skill = null) -> bool:
 	var d:Dictionary = GameDataManager.get_player_data(0)
-	var filler := BaseAttack.new("lifecycle_filler", "", [], BaseNumber.new(0), BaseNumber.new(0))
+	var filler:BaseAttack = lifecycle_attack("lifecycle_filler")
+	if filler == null:
+		return false
 	d.hand_cards.append(filler)
 	var first = skill
 	if first == null:
-		first = BaseAttack.new("lifecycle_plain", "", [], BaseNumber.new(0), BaseNumber.new(0))
+		first = lifecycle_attack("lifecycle_plain")
+		if first == null:
+			return false
 		d.hand_cards.append(first)
 	var cards:Array = [first, filler]
 	check(d.magic.number >= GameData.skill_zone_magic_limit.number, "round starts with enough magic for legal skill-zone play")
-	var legal:bool = RegularPlay.can_submit_group(0, cards, [false, false])
+	var payment:Dictionary = RegularPlay.payment_quote(0, fixture_context)
+	check(not payment.is_empty() and RegularPlay.payment_quote_is_current(0, payment), "query captures original context payment envelope")
+	var legal:bool = RegularPlay.can_submit_group(0, cards, [false, false], false, payment)
 	check(legal, "regular group is legal before submission")
 	if not legal:
 		return false
 	var before = d.magic.number
 	var expected_cost:float = RegularPlay.cost(first, d) + RegularPlay.cost(filler, d)
-	var submitted:bool = RegularPlay.submit_group(0, cards, [false, false])
+	var submitted:bool = RegularPlay.submit_group(0, cards, [false, false], false, fixture_context)
 	check(submitted, "real regular group submits")
 	check(d.magic.number == before - expected_cost, "regular play actually pays card costs")
 	check(RegularPlay.completed(0) and d.played_cards.has(first), "regular group completion and live source are recorded")
@@ -87,7 +122,7 @@ func resolve_battle(owner_wins:bool = false) -> Dictionary:
 	GameDataManager.get_player_data(0).total_power_bonus.number = 200 if owner_wins else 0
 	for id in [1, 2]:
 		GameDataManager.get_player_data(id).power.number = 100
-	var result:Dictionary = BattleResolver.new().exec([0, 1, 2])
+	var result:Dictionary = BattleResolver.new(fixture_context).exec([0, 1, 2])
 	var winners:Array = result.get("winners_by_area", {}).get(MapData.miyama._area_name, [])
 	check(winners == ([0] if owner_wins else [1, 2]), "BattleResolver produces the intended winners")
 	return result
@@ -114,7 +149,7 @@ func test_fresh_deal_loss_and_removed_copy() -> void:
 		check(card._power.number == 8, "other dealt copy gains permanent three power")
 	var score_before = d.score.number
 	var powers_before:Array = [copies[1]._power.number, copies[2]._power.number]
-	next_action_round()
+	await next_action_round()
 	check(d.out_of_game.skills.has(copies[0]), "removed source stays removed across cleanup")
 	check(not RegularPlay.candidates(0).has(copies[0]), "removed source cannot be played again")
 	if not play_pair():
@@ -141,7 +176,7 @@ func test_returned_copy_stays_idle_and_keeps_bonus() -> void:
 		return
 	var d:Dictionary = GameDataManager.get_player_data(0)
 	resolve_battle(true)
-	next_action_round()
+	await next_action_round()
 	var returned = copies[0]
 	check(d.side.skills.has(returned) and not returned._is_activating, "winning copy really returns inactive to side.skills")
 	var history_before:Array = returned.get_modification_details().duplicate(true)
@@ -162,7 +197,7 @@ func test_returned_copy_stays_idle_and_keeps_bonus() -> void:
 		history.pop_back()
 		check(history == history_before, "adding a power history entry preserves prior history")
 	var saved_history:Array = returned.get_modification_details().duplicate(true)
-	next_action_round()
+	await next_action_round()
 	check(returned._power.number == 8 and returned.get_modification_details() == saved_history, "bonus and history survive the next round")
 	# 即使前面的规则断言失败也继续尝试真实出牌；非法候选会明确报夹具/规则失败而非崩溃。
 	if not play_pair(returned):
@@ -170,6 +205,6 @@ func test_returned_copy_stays_idle_and_keeps_bonus() -> void:
 	check(d.power.number == 8, "replayed returned copy contributes its increased power")
 	check(not d.side.skills.has(returned), "replay removes the returned copy from side.skills")
 	resolve_battle(true)
-	next_action_round()
+	await next_action_round()
 	check(d.side.skills.has(returned) and returned._power.number == 8, "replayed copy returns again without losing permanent bonus")
 	check(returned.get_modification_details() == saved_history, "replay and cleanup neither erase nor duplicate history")

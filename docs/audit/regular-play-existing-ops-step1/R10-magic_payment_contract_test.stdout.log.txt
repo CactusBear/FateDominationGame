@@ -1,0 +1,224 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+CHECK descriptor missing permission refuses without mutation true
+CHECK descriptor explicit per-call permission permits overdraft true
+CHECK permission never leaks into subsequent payment true
+CHECK explicit payment logged exactly once true
+CHECK attack cost rise accepts only explicit permission true
+CHECK attack explicit payment enters correct card count true
+CHECK attack explicit payment debited once true
+CHECK group cost rise accepts only explicit permission true
+CHECK group explicit payment enters correct card count true
+CHECK group explicit payment debited once true
+CHECK explicit completed group cannot pay twice true
+CHECK static short group denies missing permission true
+CHECK explicit group permission also applies to submit gate true
+CHECK payment refuses negative amount without changing cost formula true
+CHECK payment refuses nonfinite amount true
+CHECK existing immunity keeps free payment semantics true
+CHECK immune payment creates no debit log true
+CHECK guard fixture enabled false true
+CHECK guard submission schedules saved continuation false true
+CHECK guard pause has not charged false true
+CHECK guard actual resume false true
+CHECK guard actual resume false true
+CHECK guard actual resume false true
+CHECK guard actual resume false true
+CHECK guard actual resume false true
+CHECK guard resumes reach final state false true
+CHECK guard final balance follows explicit permission false true
+CHECK guard final source and entry atomic false true
+CHECK guard no partial power/completion false true
+CHECK guard no duplicate payment false true
+CHECK guard rejected group restores tracked random state true
+CHECK late resume never pays again false true
+CHECK guard fixture enabled true true
+CHECK guard submission schedules saved continuation true true
+CHECK guard pause has not charged true true
+CHECK guard actual resume true true
+CHECK guard actual resume true true
+CHECK guard actual resume true true
+CHECK guard actual resume true true
+CHECK guard actual resume true true
+CHECK guard resumes reach final state true true
+CHECK guard final balance follows explicit permission true true
+CHECK guard final source and entry atomic true true
+CHECK guard no partial power/completion true true
+CHECK guard no duplicate payment true true
+CHECK late resume never pays again true true
+CHECK payment rechecks balance changed by cost timing true
+CHECK balance-drop refusal restores whole group true
+CHECK balance-drop refusal restores both effect change and payment history true
+CHECK rejected cursor is terminal true
+CHECK replayed rejected cursor has no side effects true
+CHECK static exact pre-event group gate false true
+CHECK static exact quote is read-only false true
+CHECK static exact actual return false true
+CHECK static exact actual event final cost false true
+CHECK static exact actual balance false true
+CHECK static exact actual source/entry false true
+CHECK static exact actual activation false true
+CHECK static exact actual play log false true
+CHECK static exact actual group completion false true
+CHECK static exact completed resubmission never charges true
+CHECK static exact pre-event group gate true true
+CHECK static exact quote is read-only true true
+CHECK static exact actual return true true
+CHECK static exact actual event final cost true true
+CHECK static exact actual balance true true
+CHECK static exact actual source/entry true true
+CHECK static exact actual activation true true
+CHECK static exact actual play log true true
+CHECK static exact actual group completion true true
+CHECK static short one pre-event group gate false true
+CHECK static short one quote is read-only false true
+CHECK static short one actual return false true
+CHECK static short one actual event final cost false true
+CHECK static short one actual balance false true
+CHECK static short one actual source/entry false true
+CHECK static short one actual activation false true
+CHECK static short one actual play log false true
+CHECK static short one actual group completion false true
+CHECK static short one rejected no partial state true
+CHECK static short one rejected no payment/start logs true
+CHECK static short one repeated rejected submission never charges true
+CHECK static short one pre-event group gate true true
+CHECK static short one quote is read-only true true
+CHECK static short one actual return true true
+CHECK static short one actual event final cost true true
+CHECK static short one actual balance true true
+CHECK static short one actual source/entry true true
+CHECK static short one actual activation true true
+CHECK static short one actual play log true true
+CHECK static short one actual group completion true true
+CHECK static cost above cap pre-event group gate false true
+CHECK static cost above cap quote is read-only false true
+CHECK static cost above cap actual return false true
+CHECK static cost above cap actual event final cost false true
+CHECK static cost above cap actual balance false true
+CHECK static cost above cap actual source/entry false true
+CHECK static cost above cap actual activation false true
+CHECK static cost above cap actual play log false true
+CHECK static cost above cap actual group completion false true
+CHECK static cost above cap rejected no partial state true
+CHECK static cost above cap rejected no payment/start logs true
+CHECK static cost above cap repeated rejected submission never charges true
+CHECK static cost above cap pre-event group gate true true
+CHECK static cost above cap quote is read-only true true
+CHECK static cost above cap actual return true true
+CHECK static cost above cap actual event final cost true true
+CHECK static cost above cap actual balance true true
+CHECK static cost above cap actual source/entry true true
+CHECK static cost above cap actual activation true true
+CHECK static cost above cap actual play log true true
+CHECK static cost above cap actual group completion true true
+CHECK event exact pre-event group gate false true
+CHECK event exact quote is read-only false true
+CHECK event exact actual return false true
+CHECK event exact actual event final cost false true
+CHECK event exact actual balance false true
+CHECK event exact actual source/entry false true
+CHECK event exact actual activation false true
+CHECK event exact actual play log false true
+CHECK event exact actual group completion false true
+CHECK event exact completed resubmission never charges true
+CHECK event exact pre-event group gate true true
+CHECK event exact quote is read-only true true
+CHECK event exact actual return true true
+CHECK event exact actual event final cost true true
+CHECK event exact actual balance true true
+CHECK event exact actual source/entry true true
+CHECK event exact actual activation true true
+CHECK event exact actual play log true true
+CHECK event exact actual group completion true true
+CHECK event short one RED pre-event group gate false true
+CHECK event short one RED quote is read-only false true
+CHECK event short one RED actual return false true
+CHECK event short one RED actual event final cost false true
+CHECK event short one RED actual balance false true
+CHECK event short one RED actual source/entry false true
+CHECK event short one RED actual activation false true
+CHECK event short one RED actual play log false true
+CHECK event short one RED actual group completion false true
+CHECK event short one RED rejected no partial state true
+CHECK event short one RED rejected no payment/start logs true
+CHECK event short one RED repeated rejected submission never charges true
+CHECK event short one RED pre-event group gate true true
+CHECK event short one RED quote is read-only true true
+CHECK event short one RED actual return true true
+CHECK event short one RED actual event final cost true true
+CHECK event short one RED actual balance true true
+CHECK event short one RED actual source/entry true true
+CHECK event short one RED actual activation true true
+CHECK event short one RED actual play log true true
+CHECK event short one RED actual group completion true true
+CHECK event cost above cap RED pre-event group gate false true
+CHECK event cost above cap RED quote is read-only false true
+CHECK event cost above cap RED actual return false true
+CHECK event cost above cap RED actual event final cost false true
+CHECK event cost above cap RED actual balance false true
+CHECK event cost above cap RED actual source/entry false true
+CHECK event cost above cap RED actual activation false true
+CHECK event cost above cap RED actual play log false true
+CHECK event cost above cap RED actual group completion false true
+CHECK event cost above cap RED rejected no partial state true
+CHECK event cost above cap RED rejected no payment/start logs true
+CHECK event cost above cap RED repeated rejected submission never charges true
+CHECK event cost above cap RED pre-event group gate true true
+CHECK event cost above cap RED quote is read-only true true
+CHECK event cost above cap RED actual return true true
+CHECK event cost above cap RED actual event final cost true true
+CHECK event cost above cap RED actual balance true true
+CHECK event cost above cap RED actual source/entry true true
+CHECK event cost above cap RED actual activation true true
+CHECK event cost above cap RED actual play log true true
+CHECK event cost above cap RED actual group completion true true
+CHECK injected overcap state path difference pre-event group gate false true
+CHECK injected overcap state path difference quote is read-only false true
+CHECK injected overcap state path difference actual return false true
+CHECK injected overcap state path difference actual event final cost false true
+CHECK injected overcap state path difference actual balance false true
+CHECK injected overcap state path difference actual source/entry false true
+CHECK injected overcap state path difference actual activation false true
+CHECK injected overcap state path difference actual play log false true
+CHECK injected overcap state path difference actual group completion false true
+CHECK injected overcap state path difference rejected no partial state true
+CHECK injected overcap state path difference rejected no payment/start logs true
+CHECK injected overcap state path difference repeated rejected submission never charges true
+CHECK injected overcap state path difference pre-event group gate true true
+CHECK injected overcap state path difference quote is read-only true true
+CHECK injected overcap state path difference actual return true true
+CHECK injected overcap state path difference actual event final cost true true
+CHECK injected overcap state path difference actual balance true true
+CHECK injected overcap state path difference actual source/entry true true
+CHECK injected overcap state path difference actual activation true true
+CHECK injected overcap state path difference actual play log true true
+CHECK injected overcap state path difference actual group completion true true
+CHECK two-card aggregate event overflow RED pre-event group gate false true
+CHECK two-card aggregate event overflow RED quote is read-only false true
+CHECK two-card aggregate event overflow RED actual return false true
+CHECK two-card aggregate event overflow RED actual event final cost false true
+CHECK two-card aggregate event overflow RED actual balance false true
+CHECK two-card aggregate event overflow RED actual source/entry false true
+CHECK two-card aggregate event overflow RED actual activation false true
+CHECK two-card aggregate event overflow RED actual play log false true
+CHECK two-card aggregate event overflow RED actual group completion false true
+CHECK two-card aggregate event overflow RED rejected no partial state true
+CHECK two-card aggregate event overflow RED rejected no payment/start logs true
+CHECK two-card aggregate event overflow RED repeated rejected submission never charges true
+CHECK two-card aggregate event overflow RED pre-event group gate true true
+CHECK two-card aggregate event overflow RED quote is read-only true true
+CHECK two-card aggregate event overflow RED actual return true true
+CHECK two-card aggregate event overflow RED actual event final cost true true
+CHECK two-card aggregate event overflow RED actual balance true true
+CHECK two-card aggregate event overflow RED actual source/entry true true
+CHECK two-card aggregate event overflow RED actual activation true true
+CHECK two-card aggregate event overflow RED actual play log true true
+CHECK two-card aggregate event overflow RED actual group completion true true
+CHECK EditMagic lower bound clamps negative target to zero true
+CHECK EditMagic upper bound uses declared global cap true
+CHECK EditMagic upper bound respects declared player override true
+CHECK diagnostic payments did not enable explicit immunity exception true
+AUDIT_ROWS [{"accepted":true,"cap":12,"case":"static exact","entered":2,"final_first_cost":2.0,"group_completed":true,"initial_cost":2.0,"initial_magic":2,"injected_overcap_state":false,"magic_after":0.0,"path":"RegularPlay.submit_group","pre_event_group_allowed":true},{"accepted":true,"cap":12,"case":"static exact","entered":1,"final_first_cost":2.0,"group_completed":false,"initial_cost":2.0,"initial_magic":2,"injected_overcap_state":false,"magic_after":0.0,"path":"PlayAttack(ignore_limit=true)","pre_event_group_allowed":true},{"accepted":false,"cap":12,"case":"static short one","entered":0,"final_first_cost":2.0,"group_completed":false,"initial_cost":2.0,"initial_magic":1,"injected_overcap_state":false,"magic_after":1,"path":"RegularPlay.submit_group","pre_event_group_allowed":false},{"accepted":false,"cap":12,"case":"static short one","entered":0,"final_first_cost":2.0,"group_completed":false,"initial_cost":2.0,"initial_magic":1,"injected_overcap_state":false,"magic_after":1,"path":"PlayAttack(ignore_limit=true)","pre_event_group_allowed":false},{"accepted":false,"cap":12,"case":"static cost above cap","entered":0,"final_first_cost":13.0,"group_completed":false,"initial_cost":13.0,"initial_magic":12,"injected_overcap_state":false,"magic_after":12,"path":"RegularPlay.submit_group","pre_event_group_allowed":false},{"accepted":false,"cap":12,"case":"static cost above cap","entered":0,"final_first_cost":13.0,"group_completed":false,"initial_cost":13.0,"initial_magic":12,"injected_overcap_state":false,"magic_after":12,"path":"PlayAttack(ignore_limit=true)","pre_event_group_allowed":false},{"accepted":true,"cap":12,"case":"event exact","entered":2,"final_first_cost":3.0,"group_completed":true,"initial_cost":2.0,"initial_magic":3,"injected_overcap_state":false,"magic_after":0.0,"path":"RegularPlay.submit_group","pre_event_group_allowed":true},{"accepted":true,"cap":12,"case":"event exact","entered":1,"final_first_cost":3.0,"group_completed":false,"initial_cost":2.0,"initial_magic":3,"injected_overcap_state":false,"magic_after":0.0,"path":"PlayAttack(ignore_limit=true)","pre_event_group_allowed":true},{"accepted":false,"cap":12,"case":"event short one RED","entered":0,"final_first_cost":2.0,"group_completed":false,"initial_cost":2.0,"initial_magic":2,"injected_overcap_state":false,"magic_after":2,"path":"RegularPlay.submit_group","pre_event_group_allowed":true},{"accepted":false,"cap":12,"case":"event short one RED","entered":0,"final_first_cost":3.0,"group_completed":false,"initial_cost":2.0,"initial_magic":2,"injected_overcap_state":false,"magic_after":2,"path":"PlayAttack(ignore_limit=true)","pre_event_group_allowed":true},{"accepted":false,"cap":12,"case":"event cost above cap RED","entered":0,"final_first_cost":12.0,"group_completed":false,"initial_cost":12.0,"initial_magic":12,"injected_overcap_state":false,"magic_after":12,"path":"RegularPlay.submit_group","pre_event_group_allowed":true},{"accepted":false,"cap":12,"case":"event cost above cap RED","entered":0,"final_first_cost":13.0,"group_completed":false,"initial_cost":12.0,"initial_magic":12,"injected_overcap_state":false,"magic_after":12,"path":"PlayAttack(ignore_limit=true)","pre_event_group_allowed":true},{"accepted":false,"cap":1,"case":"injected overcap state path difference","entered":0,"final_first_cost":2.0,"group_completed":false,"initial_cost":2.0,"initial_magic":20,"injected_overcap_state":true,"magic_after":20,"path":"RegularPlay.submit_group","pre_event_group_allowed":false},{"accepted":true,"cap":1,"case":"injected overcap state path difference","entered":1,"final_first_cost":2.0,"group_completed":false,"initial_cost":2.0,"initial_magic":20,"injected_overcap_state":true,"magic_after":18.0,"path":"PlayAttack(ignore_limit=true)","pre_event_group_allowed":false},{"accepted":false,"cap":12,"case":"two-card aggregate event overflow RED","entered":0,"final_first_cost":6.0,"group_completed":false,"initial_cost":6.0,"initial_magic":12,"injected_overcap_state":false,"magic_after":12,"path":"RegularPlay.submit_group","pre_event_group_allowed":true},{"accepted":true,"cap":12,"case":"two-card aggregate event overflow RED","entered":1,"final_first_cost":7.0,"group_completed":false,"initial_cost":6.0,"initial_magic":12,"injected_overcap_state":false,"magic_after":5.0,"path":"PlayAttack(ignore_limit=true)","pre_event_group_allowed":true}]
+RESULT magic_overdraft_declaration checks=219 failures=[]

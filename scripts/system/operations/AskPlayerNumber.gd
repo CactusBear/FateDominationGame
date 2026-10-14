@@ -16,11 +16,11 @@ func exec(min_value, max_value, player_id:int = -1, shown_name:String = "") -> B
 	#上下限相同就没有可选的，直接给出
 	if high == low:
 		return result
-	var choice:BaseEffect = AskPlayerOption.new().exec([{
+	var choice:BaseEffect = preload("res://scripts/system/operation_router.gd").exec_registered("ask_player_option", [[{
 		"shown_option_name": shown_name,
 		"quantity_range": [low, high],
 		"funcs": []
-	}], shown_name, player_id)
+	}], shown_name, player_id])
 	#选择结算时把玩家定的数量写进 result。直接挂一个内部 func，不经 JSON
 	var writer := _QuantityWriter.new()
 	writer.target = result

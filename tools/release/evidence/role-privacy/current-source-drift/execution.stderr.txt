@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "E:\Projects\Godot\FateDominationGame-master\tools\release\role_privacy_audit.py", line 77, in <module>
+    assert not forbidden, forbidden
+           ^^^^^^^^^^^^^
+AssertionError: ['tools/release/templates/human-test/Launch-HumanTest.ps1', 'tools/release/templates/human-test/START-CLIENT.cmd']

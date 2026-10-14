@@ -18,17 +18,14 @@ func exec(battle_result:Dictionary = {}) -> Array:
 		var player_data = GameDataManager.get_player_data(id) as Dictionary
 		if player_data.get("victory_override", false):
 			overridden_winners.append(id)
+	#只判定胜者；is_victory 由 GameProgress.end_game 统一写入（与 EndGame 同一条路径）。
 	if !overridden_winners.is_empty():
-		for id in active_ids:
-			var player_data = GameDataManager.get_player_data(id) as Dictionary
-			player_data["is_victory"] = overridden_winners.has(id)
 		return overridden_winners
 
 	var highest_score = null
 	var winners:Array = []
 	for id in active_ids:
 		var player_data = GameDataManager.get_player_data(id) as Dictionary
-		player_data["is_victory"] = false
 		var score = (player_data["score"] as BaseNumber).number
 		if highest_score == null or score > highest_score:
 			highest_score = score
@@ -39,9 +36,6 @@ func exec(battle_result:Dictionary = {}) -> Array:
 	if winners.size() > 1:
 		winners = _resolve_tie_by_miyama_battle(winners, battle_result)
 
-	for id in winners:
-		var player_data = GameDataManager.get_player_data(id) as Dictionary
-		player_data["is_victory"] = true
 	return winners
 
 

@@ -15,6 +15,18 @@ var identity_receipt_sequence:int = 0
 var restore_snapshot:Callable
 var restore_transaction:Callable
 var _archive_restore = preload("res://scripts/net/server/lan_archive_restore.gd").new()
+var empty_policy = preload("res://scripts/net/server/empty_room_policy.gd").new()
+
+func observe_empty(now:int) -> void:
+	if _archive_restore.busy: empty_policy.reset()
+	else: empty_policy.observe(session,now)
+
+func idle_state(now:int) -> Dictionary:
+	return {"room":room_id,"pid":OS.get_process_id(),"instance_id":instance_id,"authority_host_mode":authority_host_mode,"epoch":empty_policy.epoch,"eligible":not _archive_restore.busy and empty_policy.expired(session,now)}
+
+func prepare_empty_close() -> Dictionary:
+	if _archive_restore.busy or not empty_policy.expired(session,Time.get_ticks_msec()): return {"ok":false,"error":"房间已有人、处于事务中或无人等待未到期，未关闭"}
+	return prepare_close()
 
 func poll() -> void:
 	if _archive_restore.busy: return
@@ -45,12 +57,14 @@ func poll() -> void:
 			response = ledger.install(request) if ledger != null else {"ok":false,"code":"identity_ledger_unavailable","executed":false}
 		elif request.get("action") == "restore":
 			response = await _archive_restore.execute(self,request)
-		elif request.size() == 5 and request.get("room") == room_id and request.get("pid") == OS.get_process_id() and request.get("instance") == instance_id and request.get("authority_host_mode") == authority_host_mode and request.get("action") in ["save","seed","close","pause","resume"]:
-			if session.room.phase == "restoring" or session.match_authority._archive_pulse_running: continue
+		elif request.size() == 5 and request.get("room") == room_id and request.get("pid") == OS.get_process_id() and request.get("instance") == instance_id and request.get("authority_host_mode") == authority_host_mode and request.get("action") in ["save","seed","close","close_empty","pause","resume"]:
+			if session._restore_in_progress or session._begin_in_progress or session.match_authority._archive_pulse_running: continue
+			if session.room.phase == "restoring" and request.action != "close_empty": continue
 			match request.action:
 				"save": response = save()
 				"seed": response = seed_value()
 				"close": response = prepare_close()
+				"close_empty": response = prepare_empty_close()
 				"pause": response = set_paused(true)
 				"resume": response = set_paused(false)
 		response["pid"] = OS.get_process_id()
@@ -65,7 +79,7 @@ func poll() -> void:
 			if request.get("action") == "restore" and session._restore_failed_closed:
 				shutdown_ready.emit()
 				return
-			if request.get("action") == "close" and response.get("ok",false):
+			if request.get("action") in ["close","close_empty"] and response.get("ok",false):
 				shutdown_ready.emit()
 				return
 

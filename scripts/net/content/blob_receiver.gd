@@ -11,6 +11,19 @@ var error: String = ""
 var _pending: Dictionary = {}
 var _reserved: int = 0
 
+## Session 已执行来源/身份门；只返回同步回执，不持有 Session 或回调。
+## 字段门槛保持旧客户端语义，内容验证仍唯一复用 accept。
+func receive_client(sender: int, message: Dictionary) -> Dictionary:
+	if message.get("kind") == "blob_error" and message.get("key") is String:
+		cancel_blob(sender, message.key)
+		return {"handled": true, "error": "请求的文件不可用"}
+	if message.get("kind") == "blob_chunk":
+		if message.get("key") is String and message.get("offset") is int and message.get("bytes") is PackedByteArray:
+			if not accept(sender, message.key, message.offset, message.bytes):
+				return {"handled": true, "error": error}
+		return {"handled": true}
+	return {"handled": false}
+
 func expect_blob(sender: int, key: String, size: int) -> bool:
 	error = ""
 	if sender <= 0 or not cache.valid_key(key) or size <= 0 or size > cache.max_file_bytes:

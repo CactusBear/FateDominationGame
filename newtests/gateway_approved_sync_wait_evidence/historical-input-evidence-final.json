@@ -1,0 +1,52 @@
+{
+  "excluded_generated": "tag_list.json",
+  "historical_fixed_approved_files": 204,
+  "historical_fixed_approved_bytes": 95949242,
+  "diagnostic_installed_files": 204,
+  "same_fixed_and_diagnostic_installed": true,
+  "unique_approved_hashes": 203,
+  "historical_cache_files": 197,
+  "historical_cache_bad_hashes": [],
+  "historical_cache_missing_approved_files": [
+    {
+      "path": "selection_modes.json",
+      "hash": "33d5b420f25920e85ea58a71533009ee142318112263ef38d66174bea061f1c4",
+      "size": 426
+    },
+    {
+      "path": "card_backs/servant_card_back.png",
+      "hash": "6fe417667013a15e61d67f3554bcf06b9943604cb908fc4a59959b8cb034c767",
+      "size": 1260542
+    },
+    {
+      "path": "card_backs/situation_card_back.png",
+      "hash": "a9b5f129c0ee3c268dc8a0e4aa304baceb6b1b3af08791b78115db1195c329e2",
+      "size": 987053
+    },
+    {
+      "path": "card_backs/skill_card_back.png",
+      "hash": "e5e25a237b90524ba6d8ad0d37784f1f94f309b693f05f785c929dc236c89418",
+      "size": 414865
+    },
+    {
+      "path": "card_backs/upgrade_skill_card_back.png",
+      "hash": "972b8c5ea73b61dd3ff4ea945ad7434f6956e17c4f37bd5cce491a5854986ed4",
+      "size": 760494
+    },
+    {
+      "path": "command_spells/normal_command_spell.json",
+      "hash": "19b075670eb966b704759b39469aefcf0c6fda61bb64820b3cd80e79e1795329",
+      "size": 2181
+    }
+  ],
+  "category_counts": {
+    "selection_modes.json": 1,
+    "card_backs": 9,
+    "command_spells": 2,
+    "situations": 26,
+    "servants": 40,
+    "masters": 46,
+    "events": 32,
+    "attacks": 48
+  }
+}

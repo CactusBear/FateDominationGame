@@ -6,6 +6,8 @@ extends Node
 # 未声明 owner 时保持原语义（挑触发者自己的牌）——最后一条是既有卡不受影响的保证。
 var failures:Array=[]
 var checks:int=0
+var fixture_context:SessionContext
+const FixtureFactory = preload("res://newtests/s1_signature_fixture.gd")
 
 func check(ok:bool,label:String):
 	checks+=1
@@ -15,7 +17,10 @@ func check(ok:bool,label:String):
 func _ready(): call_deferred("run")
 
 func setup() -> void:
-	EffectManager.reset_runtime(); GameLog.reset(); GameLog.set_context(1,"action")
+	var lifecycle:Dictionary = GameProgress.reset_progress()
+	fixture_context = lifecycle.context
+	preload("res://scripts/match/rule_random.gd").start_seed(817)
+	GameLog.reset(); GameLog.set_context(1,"action")
 	GameData.player_data_library.clear()
 	for i in range(2):
 		var d:Dictionary=GameData.new_player_data()
@@ -28,15 +33,18 @@ func setup() -> void:
 	GameProgress.current_phase_index=2
 	GameProgress.current_player_id=0
 	TimePointChecker.set_phase_time_points([TimePoints.DAY, TimePoints.PHASE,
-		TimePoints.ACTION_PHASE, TimePoints.NON_CLIMAX])
+		TimePoints.ACTION_PHASE, TimePoints.NON_CLIMAX], fixture_context)
 
 ## 构造带一条选项的手动效果；选项内容由调用方声明
 func make_effect(effect_name:String, option:Dictionary) -> BaseEffect:
-	var eff:=BaseEffect.new(effect_name,[TimePoints.SELF_PREFIX + TimePoints.ACTION_PHASE],0,false,false)
-	eff._is_manual=true
-	eff._need_activate=false
-	eff._max_choices=1
-	eff._options=[option]
+	var descriptor:Dictionary = {"effect_name":effect_name,"time_points":[TimePoints.SELF_PREFIX + TimePoints.ACTION_PHASE],"priority":0,"is_pure_passive":false,"is_residue":false,"effect_numbers":[],"funcs":[],"is_manual":true,"need_activate":false,"max_choices":1}
+	# 正式选项的 BaseFunc 已在原来源工厂创建，保留实例，不重签。
+	var runtime_option:bool = option.get("funcs", []).any(func(value): return value is BaseFunc)
+	descriptor.options = [] if runtime_option else [option]
+	var effects:Array = LoadHelper.load_effects([descriptor], null, fixture_context)
+	if effects.is_empty(): return null
+	var eff:BaseEffect = effects[0]
+	if runtime_option: eff._options = [option]
 	return eff
 
 ## 造一张牌当手牌用（属性:威力）。必须克隆成独立实例：
@@ -46,12 +54,12 @@ func make_card() -> BaseCard:
 	if tpl == null:
 		push_error("fixture could not resolve a base attack")
 		return null
-	return CloneObject.new().exec(tpl)
+	return FixtureFactory.runtime(tpl, fixture_context)
 
 func open_window() -> void:
 	TimePointChecker.set_phase_time_points([TimePoints.DAY, TimePoints.PHASE,
-		TimePoints.ACTION_PHASE, TimePoints.NON_CLIMAX])
-	TimePointChecker.dynamic_time_point([TimePoints.ACTION_PHASE], 0)
+		TimePoints.ACTION_PHASE, TimePoints.NON_CLIMAX], fixture_context)
+	TimePointChecker.dynamic_time_point([TimePoints.ACTION_PHASE], 0, null, fixture_context)
 
 func run():
 	# —— ① 同时声明 select_players + select_cards(owner=target_player) ——

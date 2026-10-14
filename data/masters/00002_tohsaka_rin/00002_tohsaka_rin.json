@@ -341,7 +341,8 @@
 		  {
 			"effect_name": "yin_qi_bullet_remove_after_close",
 			"shown_effect_name": "每局游戏限一次，关闭后移除游戏",
-			"time_points": [
+			"source_bound": true,
+"time_points": [
               "self_card_closed"
 			],
 			"priority": 0,
@@ -621,26 +622,7 @@
 					"var_index": 7
 				  },
 				  {
-					"func_name": "get_player_hand_cards",
-					"parameters": [],
-					"var_index": 8
-				  },
-				  {
-					"func_name": "draw_card_by_card",
-					"parameters": [
-					  {
-						"self_var": 7
-					  },
-					  {
-						"self_var": 5
-					  },
-					  {
-						"self_var": 8
-					  }
-					]
-				  },
-				  {
-					"func_name": "play_attack",
+					"func_name": "remove_from_array", "parameters": [{"self_var": 7}, {"self_var": 5}], "var_index": -1}, {"func_name": "add_attack",
 					"parameters": [
 					  {
 						"self_var": 7
@@ -784,11 +766,7 @@
 					]
 				  }
 				],
-				"select_cards": {
-				  "source": "hand_cards",
-				  "min": 1,
-				  "max": 3
-				}
+				"select_cards": {"candidates": [{"func_name": "get_player_hand_cards", "parameters": [-1], "var_index": 0}, {"func_name": "store_value", "parameters": [{"self_var": 0}], "var_index": 1}], "min": 1, "max": 3}
 			  }
 			],
 			"require_all_time_points": true
@@ -804,7 +782,7 @@
 			"priority": 0,
 			"is_pure_passive": false,
 			"is_residue": false,
-			"effect_numbers": [],
+			"effect_numbers": [{"number": 1, "can_change": true, "is_pure_number": true}],
 			"max_choices": 1,
 			"max_total_uses": 9,
 			"reset_counts_each_round": true,
@@ -998,26 +976,7 @@
 					"var_index": 7
 				  },
 				  {
-					"func_name": "get_player_hand_cards",
-					"parameters": [],
-					"var_index": 8
-				  },
-				  {
-					"func_name": "draw_card_by_card",
-					"parameters": [
-					  {
-						"self_var": 7
-					  },
-					  {
-						"self_var": 5
-					  },
-					  {
-						"self_var": 8
-					  }
-					]
-				  },
-				  {
-					"func_name": "play_attack",
+					"func_name": "remove_from_array", "parameters": [{"self_var": 7}, {"self_var": 5}], "var_index": -1}, {"func_name": "add_attack",
 					"parameters": [
 					  {
 						"self_var": 7
@@ -1161,11 +1120,7 @@
 					]
 				  }
 				],
-				"select_cards": {
-				  "source": "hand_cards",
-				  "min": 1,
-				  "max": 3
-				}
+				"select_cards": {"candidates": [{"func_name": "get_player_hand_cards", "parameters": [-1], "var_index": 0}, {"func_name": "store_value", "parameters": [{"self_var": 0}], "var_index": 1}], "min": 1, "max": 3}
 			  }
 			],
 			"require_all_time_points": true
@@ -1452,88 +1407,8 @@
 	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
 	  "effects": [],
 	  "zoom_kind": "card",
-	  "relate_buff": "jewels"
-	},
-	{
-	  "thing_name": "jewel_card",
-	  "shown_thing_name": "宝石",
-	  "card_img": "00002_tohsaka_rin_jewels.png",
-	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
-	  "effects": [],
-	  "zoom_kind": "card",
-	  "relate_buff": "jewels"
-	},
-	{
-	  "thing_name": "jewel_card",
-	  "shown_thing_name": "宝石",
-	  "card_img": "00002_tohsaka_rin_jewels.png",
-	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
-	  "effects": [],
-	  "zoom_kind": "card",
-	  "relate_buff": "jewels"
-	},
-	{
-	  "thing_name": "jewel_card",
-	  "shown_thing_name": "宝石",
-	  "card_img": "00002_tohsaka_rin_jewels.png",
-	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
-	  "effects": [],
-	  "zoom_kind": "card",
-	  "relate_buff": "jewels"
-	},
-	{
-	  "thing_name": "jewel_card",
-	  "shown_thing_name": "宝石",
-	  "card_img": "00002_tohsaka_rin_jewels.png",
-	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
-	  "effects": [],
-	  "zoom_kind": "card",
-	  "relate_buff": "jewels"
-	},
-	{
-	  "thing_name": "jewel_card",
-	  "shown_thing_name": "宝石",
-	  "card_img": "00002_tohsaka_rin_jewels.png",
-	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
-	  "effects": [],
-	  "zoom_kind": "card",
-	  "relate_buff": "jewels"
-	},
-	{
-	  "thing_name": "jewel_card",
-	  "shown_thing_name": "宝石",
-	  "card_img": "00002_tohsaka_rin_jewels.png",
-	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
-	  "effects": [],
-	  "zoom_kind": "card",
-	  "relate_buff": "jewels"
-	},
-	{
-	  "thing_name": "jewel_card",
-	  "shown_thing_name": "宝石",
-	  "card_img": "00002_tohsaka_rin_jewels.png",
-	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
-	  "effects": [],
-	  "zoom_kind": "card",
-	  "relate_buff": "jewels"
-	},
-	{
-	  "thing_name": "jewel_card",
-	  "shown_thing_name": "宝石",
-	  "card_img": "00002_tohsaka_rin_jewels.png",
-	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
-	  "effects": [],
-	  "zoom_kind": "card",
-	  "relate_buff": "jewels"
-	},
-	{
-	  "thing_name": "jewel_card",
-	  "shown_thing_name": "宝石",
-	  "card_img": "00002_tohsaka_rin_jewels.png",
-	  "card_back_img": "00002_tohsaka_rin_jewels_back.png",
-	  "effects": [],
-	  "zoom_kind": "card",
-	  "relate_buff": "jewels"
+	  "relate_buff": "jewels",
+	  "count": 10
 	}
   ],
   "header_img_zoom_kind": "avatar",

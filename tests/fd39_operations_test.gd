@@ -1,4 +1,10 @@
 extends Node
+const FixtureClone = preload("res://newtests/fixture_clone.gd")
+# 本局原来源取自 reset_runtime 回执；夹具对 operation 显式传入，不从全局补票。
+var ctx: SessionContext = null
+func _reset_ctx() -> SessionContext:
+	var reset: Dictionary = EffectManager.reset_runtime()
+	return reset.get("context") if reset.get("ok", false) else null
 # FD3.9 新增 operation 与框架改造的专项回归。
 # 每一项都经真实加载器（LoadHelper.load_effects）解析 JSON、经 EffectManager 真实结算，
 # 条件型改动同时验正例与反例（反例要求不留任何副作用）。
@@ -18,7 +24,7 @@ func _ready() -> void:
 
 
 func setup(count:int = 2) -> void:
-	EffectManager.reset_runtime()
+	ctx = _reset_ctx()
 	GameLog.reset()
 	GameData.player_data_library.clear()
 	for i in count:
@@ -120,7 +126,7 @@ func test_map_data_and_dictionary() -> void:
 	check(vars.size() > 0 and is_same(vars[0], MapData.event_deck), "get_map_data_value returns the real event deck array")
 	check(host._values.has("spirit") and (host._values["spirit"] as BaseNumber).number == 5, "named counter written then increased via existing ops")
 	check(vars.size() > 4 and vars[4] == null, "empty key reads nothing")
-	var clone = CloneObject.new().exec(host)
+	var clone = FixtureClone.clone_template(host, ctx)
 	check(clone._values.has("spirit") and clone._values["spirit"] != host._values["spirit"] and clone._values["spirit"].number == 5, "clone copies named values by value")
 
 
@@ -153,15 +159,15 @@ func test_pending_cancel_and_edit() -> void:
 	check(!pd(0).is_out, "cancelled elimination keeps the player in")
 	check(pd(0).score.number == 7, "survive_elimination fired after cancel")
 	var cr := ClimaxResolver.new()
-	check(!cr.eliminate_player(0) and !pd(0).is_out, "climax elimination honours the same cancel")
-	check(cr.eliminate_player(1) and pd(1).is_out, "players without the listener are eliminated")
+	check(!cr.eliminate_player(0, ctx) and !pd(0).is_out, "climax elimination honours the same cancel")
+	check(cr.eliminate_player(1, ctx) and pd(1).is_out, "players without the listener are eliminated")
 	# 取消败北
 	setup()
 	host_with([effect_data("probe_guard", [
 		{"func_name": "cancel_pending_action", "parameters": [], "var_index": -1}
 	], [], ["self_before_defeat"])])
-	Defeat.new().exec(0)
-	Defeat.new().exec(1)
+	Defeat.new().exec(0, ctx)
+	Defeat.new().exec(1, ctx)
 	check(!DefeatBuff.is_defeated(0) and DefeatBuff.is_defeated(1), "before_defeat cancel only protects the listener")
 	# 魔力获得被取消 / 改写不影响扣减
 	setup()
@@ -201,7 +207,7 @@ func test_zone_time_points() -> void:
 		{"func_name": "edit_score", "parameters": [null, {"number_index": 0}, -1], "var_index": -1}
 	], [num(1)], ["self_card_leave_deck"])])
 	pd(0).deck.append(BaseAttack.new("probe_deck", "", []))
-	DrawCardFromPlDeckToHand.new().exec(0, 0)
+	DrawCardFromPlDeckToHand.new().exec(0, 0, ctx)
 	check(pd(0).score.number == 11, "draw fires card_drawn and card_leave_deck %d" % pd(0).score.number)
 	# 进入/离开地点
 	setup()
@@ -212,9 +218,9 @@ func test_zone_time_points() -> void:
 	], [num(100)], ["self_leave_location"])])
 	var loc_a:BaseLocation = MapData.miyama._locations[0]
 	var loc_b:BaseLocation = MapData.shinto._locations[0]
-	SetLocation.new().exec(loc_a, 0, false)
-	SetLocation.new().exec(loc_b, 0, false)
-	RemoveFromBoard.new().exec(0)
+	SetLocation.new().exec(loc_a, 0, false, false, true, ctx)
+	SetLocation.new().exec(loc_b, 0, false, false, true, ctx)
+	RemoveFromBoard.new().exec(0, ctx)
 	check(pd(0).score.number == 202, "enter x2 and leave x2 (move + remove) %d" % pd(0).score.number)
 
 
@@ -325,11 +331,11 @@ func test_build_and_activate_effect() -> void:
 	setup()
 	var blocked := host_with([granted], 0)
 	blocked._text_disabled = true
-	check(ActivateEffect.new().exec(blocked._effects[0], 0) == null and pd(0).score.number == 0, "text-disabled effect cannot be activated")
+	check(ActivateEffect.new().exec(blocked._effects[0], 0, ctx) == null and pd(0).score.number == 0, "text-disabled effect cannot be activated")
 	# 已归属他人的效果：复制一份，原效果归属不变
 	setup()
 	var owned := host_with([granted], 0)
-	var used = ActivateEffect.new().exec(owned._effects[0], 1)
+	var used = ActivateEffect.new().exec(owned._effects[0], 1, ctx)
 	check(used != owned._effects[0] and owned._effects[0]._trigger_player_id == 0 and pd(1).score.number == 5, "activating another's effect uses a copy")
 
 
@@ -348,7 +354,7 @@ func test_flip_card_face() -> void:
 	pd(0).played_cards.append(card)
 	card._is_activating = true
 	pd(0).power.set_num(BaseNumber.new(3))
-	RegisterObjectEffects.new().exec(card, 0)
+	RegisterObjectEffects.new().exec(card, 0, ctx)
 	var cost_ref:BaseNumber = card._cost
 	FlipCardFace.new().exec(card)
 	check(card._name == "form_b" and card._attributes == ["magic"] and card._face_index == 1, "flipped to the next face")
@@ -378,7 +384,7 @@ func test_text_disabled_and_alias() -> void:
 
 
 func _place(id:int, loc:BaseLocation, power:int) -> void:
-	Deploy.new().exec(loc, id, true)
+	Deploy.new().exec(loc, id, true, ctx)
 	pd(id).power.set_num(BaseNumber.new(power))
 
 
@@ -446,8 +452,8 @@ func test_add_map_area() -> void:
 		MapData.scout, null)
 	check(area is BaseMapArea and MapData.areas.size() == before + 1 and MapData.areas.has(area), "new area appended to the map")
 	check(MapData.scout._linked_map_area == area and area._locations[0].get_from() == area, "linked from scout, locations point back")
-	check(SetLocation.new().exec(area._locations[0], 0, false) and GetPlayersInMapArea.new().exec(area).has(0), "players can be placed in the new area")
-	RemoveFromBoard.new().exec(0)
+	check(SetLocation.new().exec(area._locations[0], 0, false, false, true, ctx) and GetPlayersInMapArea.new().exec(area).has(0), "players can be placed in the new area")
+	RemoveFromBoard.new().exec(0, ctx)
 	MapData.areas.erase(area)
 	MapData.scout._linked_map_area = old_link
 	check(AddMapArea.new().exec({}) == null and MapData.areas.size() == before, "empty data adds nothing")
@@ -479,20 +485,20 @@ func test_player_limits() -> void:
 	# 基础地利加成只在享有地利时生效
 	setup()
 	var loc:BaseLocation = MapData.miyama._locations[0]
-	Deploy.new().exec(loc, 0, true)
+	Deploy.new().exec(loc, 0, true, ctx)
 	pd(0).location_benefit_bonus = BaseNumber.new(2)
 	check(GetEffectiveLocationBenefit.new().exec(0) == GetEffectiveLocationBenefit.current_benefit(loc) + 2, "benefit bonus adds to deployed benefit")
-	RemoveFromBoard.new().exec(0)
-	SetLocation.new().exec(MapData.miyama._locations[1], 0, false)
+	RemoveFromBoard.new().exec(0, ctx)
+	SetLocation.new().exec(MapData.miyama._locations[1], 0, false, false, true, ctx)
 	check(GetEffectiveLocationBenefit.new().exec(0) == 0, "bonus does not apply without deployed benefit")
-	RemoveFromBoard.new().exec(0)
+	RemoveFromBoard.new().exec(0, ctx)
 	# 每段移动减免
 	setup()
-	SetLocation.new().exec(MapData.miyama._locations[2], 0, false)
+	SetLocation.new().exec(MapData.miyama._locations[2], 0, false, false, true, ctx)
 	pd(0).move_cost_discount_per_step = BaseNumber.new(1)
-	var cost = MoveLocation.new().exec(BaseNumber.new(1), 0)
+	var cost = MoveLocation.new().exec(BaseNumber.new(1), 0, false, ctx)
 	check(cost is BaseNumber and cost.number == maxi(0, MapData.miyama._move_cost.number - 1), "per-step discount applied")
-	RemoveFromBoard.new().exec(0)
+	RemoveFromBoard.new().exec(0, ctx)
 
 
 func test_power_breakdown() -> void:
@@ -550,12 +556,12 @@ func test_real_card_json() -> void:
 	_real_effect("masters/00001_emiya_shirou/00001_emiya_shirou.json", "avalon", 0)
 	(pd(0).magic as BaseNumber).set_num(BaseNumber.new(7))
 	var cr := ClimaxResolver.new()
-	check(!cr.eliminate_player(0) and !pd(0).is_out, "avalon cancels the first elimination")
+	check(!cr.eliminate_player(0, ctx) and !pd(0).is_out, "avalon cancels the first elimination")
 	check((pd(0).magic as BaseNumber).number == 0, "avalon loses all magic when it saves you")
 	(pd(0).magic as BaseNumber).set_num(BaseNumber.new(5))
-	check(cr.eliminate_player(0) and pd(0).is_out, "avalon does not save a second time")
+	check(cr.eliminate_player(0, ctx) and pd(0).is_out, "avalon does not save a second time")
 	check((pd(0).magic as BaseNumber).number == 5, "second elimination leaves magic untouched")
-	check(cr.eliminate_player(1) and pd(1).is_out, "avalon only protects its owner")
+	check(cr.eliminate_player(1, ctx) and pd(1).is_out, "avalon only protects its owner")
 	# 生命归零路径与高潮淘汰走同一个即将淘汰询问
 	setup()
 	_real_effect("masters/00001_emiya_shirou/00001_emiya_shirou.json", "avalon", 0)
@@ -565,7 +571,7 @@ func test_real_card_json() -> void:
 	setup()
 	var before_lives:int = (pd(0).lives as BaseNumber).number
 	_real_effect("masters/00001_emiya_shirou/00001_emiya_shirou.json", "avalon", 0)
-	TimePointChecker.global_time_point([TimePoints.GAME_START])
+	TimePointChecker.global_time_point([TimePoints.GAME_START], null, ctx)
 	check((pd(0).lives as BaseNumber).number == before_lives, "avalon no longer grants an extra life at game start")
 
 	# 吸魔命令：进入深山町（部署、移动、效果搬运都算）获得魔力，进入别处不获得
@@ -578,12 +584,12 @@ func test_real_card_json() -> void:
 			other_area = area
 			break
 	(pd(0).magic as BaseNumber).set_num(BaseNumber.new(0))
-	SetLocation.new().exec(other_area._locations[0], 0, false, true)
+	SetLocation.new().exec(other_area._locations[0], 0, false, true, true, ctx)
 	check((pd(0).magic as BaseNumber).number == 0, "entering another area gives no magic")
-	SetLocation.new().exec(miyama._locations[0], 0, false, true)
+	SetLocation.new().exec(miyama._locations[0], 0, false, true, true, ctx)
 	check((pd(0).magic as BaseNumber).number == 1, "effect relocation into miyama gives 1 magic")
-	SetLocation.new().exec(miyama._locations[1], 0, false, true)
+	SetLocation.new().exec(miyama._locations[1], 0, false, true, true, ctx)
 	check((pd(0).magic as BaseNumber).number == 2, "entering a new miyama location counts as entering again")
-	RemoveFromBoard.new().exec(0)
-	Deploy.new().exec(miyama._locations[0], 0)
+	RemoveFromBoard.new().exec(0, ctx)
+	Deploy.new().exec(miyama._locations[0], 0, false, ctx)
 	check((pd(0).magic as BaseNumber).number == 3, "deploying into miyama gives 1 magic")

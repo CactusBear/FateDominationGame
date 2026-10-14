@@ -1,0 +1,41 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+NATURAL 炽天覆七重圆环 cost=2 candidate=true faceup=true modes=[false] hand_costs=[1, 1, 0] forbidden_np=false
+NATURAL 伪·螺旋剑 cost=2 candidate=true faceup=true modes=[false] hand_costs=[1, 1, 0] forbidden_np=false
+NATURAL 无限剑制 cost=8 candidate=true faceup=true modes=[false] hand_costs=[1, 1, 0] forbidden_np=false
+CHECK real servant skills exist true
+PROBE name=炽天覆七重圆环 cost=2 awakened=true activating=false concealed=false
+PROBE candidate=true faceup=true modes=[false] group=true
+CHECK real servant skill is a regular-play candidate at eight magic true
+CHECK real servant skill passes the eight-magic gate true
+CHECK real servant skill has a faceup pending mode true
+CHECK real servant skill completes a legal group with a free hand card true
+CHECK real skill slot stores the faceup mode true
+CHECK real skill slot has a card-art input target true
+CHECK clicking the real servant skill card art stages it for play true
+CHECK noble-phantasm prohibition situation is loaded true
+CHECK curse declares an active noble-phantasm prohibition true
+CURSE 炽天覆七重圆环 attributes=["special"] allowed=true
+CHECK curse permits only non-noble servant skill 0 true
+CURSE 伪·螺旋剑 attributes=["agility", "noble_phantasm"] allowed=false
+CHECK curse permits only non-noble servant skill 1 true
+CURSE 无限剑制 attributes=["special"] allowed=true
+CHECK curse permits only non-noble servant skill 2 true
+CHECK the fixture runs without a noble-phantasm prohibition true
+SKILL 0 炽天覆七重圆环 cost=2 legal=true
+CHECK servant skill 0 has a legal faceup group at eight magic true
+CHECK servant skill 0 is bound to a visible slot true
+CHECK servant skill 0 has an art target true
+CHECK servant skill 0 card-art click stages its own card true
+SKILL 1 伪·螺旋剑 cost=2 legal=true
+CHECK servant skill 1 has a legal faceup group at eight magic true
+CHECK servant skill 1 is bound to a visible slot true
+CHECK servant skill 1 has an art target true
+CHECK servant skill 1 card-art click stages its own card true
+SKILL 2 无限剑制 cost=8 legal=true
+CHECK servant skill 2 has a legal faceup group at eight magic true
+CHECK servant skill 2 is bound to a visible slot true
+CHECK servant skill 2 has an art target true
+CHECK servant skill 2 card-art click stages its own card true
+RESULT checks=26 failures=[]

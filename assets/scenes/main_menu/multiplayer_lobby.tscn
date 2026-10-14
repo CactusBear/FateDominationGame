@@ -42,11 +42,11 @@ item_count = 4
 selected = 0
 popup/item_0/text = "局域网"
 popup/item_0/id = 0
-popup/item_1/text = "独立服务端"
+popup/item_1/text = "服务器"
 popup/item_1/id = 1
-popup/item_2/text = "P2P 邀请码"
+popup/item_2/text = "手动邀请直连"
 popup/item_2/id = 2
-popup/item_3/text = "P2P 信令"
+popup/item_3/text = "房间码直连"
 popup/item_3/id = 3
 
 [node name="RoomName" type="LineEdit" parent="Margin/Content/Protocol"]
@@ -54,13 +54,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 visible = false
 text = "房间"
-placeholder_text = "服务端房间名称"
+placeholder_text = "创建时填写房间名称"
 
 [node name="RoomID" type="LineEdit" parent="Margin/Content/Protocol"]
 layout_mode = 2
 size_flags_horizontal = 3
 visible = false
-placeholder_text = "房间 ID · 创建后可复制给其他玩家"
+placeholder_text = "加入时填写房间码"
 
 [node name="Identity" type="HBoxContainer" parent="Margin/Content"]
 layout_mode = 2
@@ -83,7 +83,7 @@ autowrap_mode = 2
 
 [node name="Apply" type="Button" parent="Margin/Content/Identity"]
 layout_mode = 2
-text = "登记或修改用户名"
+text = "保存用户名"
 
 [node name="Connection" type="HBoxContainer" parent="Margin/Content"]
 layout_mode = 2
@@ -128,12 +128,12 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="Margin/Content/ServerAdmin"]
 layout_mode = 2
-text = "服务端管理"
+text = "服务器管理"
 
 [node name="Command" type="LineEdit" parent="Margin/Content/ServerAdmin"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "输入 help 查看命令，身份管理以密钥指纹为目标"
+placeholder_text = "管理员命令，输入 help 查看帮助"
 
 [node name="Send" type="Button" parent="Margin/Content/ServerAdmin"]
 layout_mode = 2
@@ -166,7 +166,7 @@ layout_mode = 2
 
 [node name="BindLabel" type="Label" parent="Margin/Content/Settings"]
 layout_mode = 2
-text = "监听地址"
+text = "开放连接的网卡"
 
 [node name="BindAddress" type="LineEdit" parent="Margin/Content/Settings"]
 layout_mode = 2
@@ -180,14 +180,20 @@ custom_minimum_size = Vector2(360, 0)
 
 [node name="AIText" type="Label" parent="Margin/Content/Settings"]
 layout_mode = 2
-text = "AI 数量"
+text = "电脑玩家数量"
 
 [node name="AI" type="SpinBox" parent="Margin/Content/Settings"]
 layout_mode = 2
 min_value = 0.0
 max_value = 0.0
 
+[node name="Advanced" type="CheckButton" parent="Margin/Content"]
+layout_mode = 2
+text = "高级设置"
+tooltip_text = "计算限制、开局前试运行和网络参数"
+
 [node name="Guard" type="VBoxContainer" parent="Margin/Content"]
+visible = false
 layout_mode = 2
 
 [node name="Fields" type="HBoxContainer" parent="Margin/Content/Guard"]
@@ -196,11 +202,11 @@ theme_override_constants/separation = 12
 
 [node name="Enabled" type="CheckButton" parent="Margin/Content/Guard/Fields"]
 layout_mode = 2
-text = "启用协作执行预算"
+text = "限制规则计算"
 
 [node name="StepsLabel" type="Label" parent="Margin/Content/Guard/Fields"]
 layout_mode = 2
-text = "步骤预算"
+text = "最大计算步数"
 
 [node name="Steps" type="LineEdit" parent="Margin/Content/Guard/Fields"]
 layout_mode = 2
@@ -209,7 +215,7 @@ text = "0"
 
 [node name="SecondsLabel" type="Label" parent="Margin/Content/Guard/Fields"]
 layout_mode = 2
-text = "时间预算 秒"
+text = "最长计算时间 秒"
 
 [node name="Seconds" type="LineEdit" parent="Margin/Content/Guard/Fields"]
 layout_mode = 2
@@ -218,25 +224,26 @@ text = "0"
 
 [node name="Apply" type="Button" parent="Margin/Content/Guard/Fields"]
 layout_mode = 2
-text = "应用预算"
+text = "保存计算设置"
 
 [node name="Help" type="Label" parent="Margin/Content/Guard"]
 layout_mode = 2
 autowrap_mode = 2
-text = "仅在可恢复规则边界暂停，不是完整死循环保护，不能中断未接入的原生操作。限制为 0 时不限。"
+text = "计算过久时尝试暂停并提示处理。不能保证中断所有异常效果，填 0 表示不限。"
 
 [node name="Simulation" type="HBoxContainer" parent="Margin/Content"]
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="Enabled" type="CheckButton" parent="Margin/Content/Simulation"]
 layout_mode = 2
-text = "随机模拟预检"
+text = "开局前试运行"
 button_pressed = true
 
 [node name="BudgetLabel" type="Label" parent="Margin/Content/Simulation"]
 layout_mode = 2
-text = "模拟时间 秒"
+text = "试运行时间 秒"
 
 [node name="Seconds" type="LineEdit" parent="Margin/Content/Simulation"]
 custom_minimum_size = Vector2(160, 0)
@@ -245,7 +252,7 @@ text = "60"
 
 [node name="Apply" type="Button" parent="Margin/Content/Simulation"]
 layout_mode = 2
-text = "应用预检设置"
+text = "保存试运行设置"
 
 [node name="P2P" type="VBoxContainer" parent="Margin/Content"]
 visible = false
@@ -258,8 +265,8 @@ text = "房主发送邀请码，客机回传应答码。每位客机使用独立
 
 [node name="STUN" type="LineEdit" parent="Margin/Content/P2P"]
 layout_mode = 2
-placeholder_text = "STUN 地址，用逗号分隔，留空只收集直接地址"
-tooltip_text = "例如 stun:服务地址:端口。不支持 TURN，无法直连时明确失败。"
+placeholder_text = "辅助连接地址，多个地址用逗号分隔"
+tooltip_text = "跨网络直连可填写 stun:服务器:端口。留空只尝试本地地址，不支持转发对局流量。"
 
 [node name="Signaling" type="HBoxContainer" parent="Margin/Content/P2P"]
 visible = false
@@ -268,7 +275,7 @@ layout_mode = 2
 [node name="Server" type="LineEdit" parent="Margin/Content/P2P/Signaling"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "信令服务地址 ws://服务器:端口，公网建议 wss://"
+placeholder_text = "房间连接服务地址 ws://服务器:端口"
 
 [node name="Room" type="LineEdit" parent="Margin/Content/P2P/Signaling"]
 layout_mode = 2
@@ -337,27 +344,27 @@ layout_mode = 2
 [node name="Record" type="CheckButton" parent="Margin/Content/Archives"]
 layout_mode = 2
 button_pressed = true
-text = "自动保存主机存档"
+text = "自动保存对局"
 
 [node name="Restore" type="Button" parent="Margin/Content/Archives"]
 layout_mode = 2
 disabled = true
-text = "恢复主机存档"
+text = "从存档继续"
 
 [node name="Path" type="Label" parent="Margin/Content/Archives"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "存档包含已批准数据与卡图"
+text = "存档包含本局内容与卡图"
 clip_text = true
 
 [node name="Data" type="Button" parent="Margin/Content/Actions"]
 layout_mode = 2
-text = "房间数据"
+text = "本局内容"
 disabled = true
 
 [node name="Sync" type="Button" parent="Margin/Content/Actions"]
 layout_mode = 2
-text = "同步房间数据"
+text = "下载本局内容"
 disabled = true
 
 [node name="Start" type="Button" parent="Margin/Content/Actions"]
@@ -380,9 +387,9 @@ text = "清理联机缓存"
 
 [node name="Transfer" type="Button" parent="Margin/Content/Actions"]
 layout_mode = 2
-text = "转让管理权"
+text = "移交房主"
 disabled = true
-tooltip_text = "转移房间管理权限，不迁移运算主机"
+tooltip_text = "交给另一位玩家管理房间，计算对局的电脑不变"
 
 [node name="Kick" type="Button" parent="Margin/Content/Actions"]
 layout_mode = 2
@@ -396,9 +403,9 @@ disabled = true
 
 [node name="InheritIdentity" type="Button" parent="Margin/Content/Actions"]
 layout_mode = 2
-text = "指定身份继承"
+text = "指定玩家接替"
 disabled = true
-tooltip_text = "选择掉线成员，由当前认证房主指定新用户继承"
+tooltip_text = "为身份无法恢复的掉线玩家指定接替者，需要房主确认"
 
 [node name="Selection" type="HBoxContainer" parent="Margin/Content"]
 visible = false

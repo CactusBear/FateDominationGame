@@ -4,13 +4,18 @@ extends Node
 #决定 SELF_CARD_REVEALED / OTHERS_CARD_REVEALED 是否命中。
 var failures:Array=[]
 var checks:=0
+var context:SessionContext
+const SOURCE = preload("res://newtests/s1_signature_fixture.gd")
 func check(ok:bool,label:String):
 	checks+=1
 	if not ok: failures.append(label)
 	print("CHECK ",label," ",ok)
 
 func setup(round:int) -> void:
-	EffectManager.reset_runtime(); GameLog.reset(); GameLog.set_context(round,"situation")
+	var prepared:Dictionary = GameData.reset_game_session([0,1,2,3])
+	context = prepared.context
+	preload("res://scripts/match/rule_random.gd").start_seed(817)
+	GameLog.reset(); GameLog.set_context(round,"situation")
 	GameProgress.is_game_over=false
 	GameProgress.current_round=round
 	GameData.player_data_library.clear()
@@ -20,16 +25,14 @@ func setup(round:int) -> void:
 		d.is_out=false
 		d.order.set_num(BaseNumber.new(i))
 		d.magic.number=0
-	MapData.reset_event_deck()
+	check(MapData.reset_event_deck(context).ok,"S1 actual event factory accepted")
 	for area in MapData.areas:
 		(area._events as Array).clear()
 
 func make_reveal_listener(effect_name:String, time_point:String, player_id:int, owner = null) -> BaseEffect:
-	var listener:=BaseEffect.new(effect_name,[time_point],0,true,false)
-	listener._need_activate=false
-	listener._funcs=LoadHelper.load_funcs([{"func_name":"do_nothing","parameters":[],"var_index":-1}],listener)
-	if owner != null: listener.from=owner
-	EffectManager.register_effect(listener,player_id)
+	var loaded:Array = LoadHelper.load_effects([{"effect_name":effect_name,"time_points":[time_point],"priority":0,"is_pure_passive":true,"need_activate":false,"is_residue":false,"effect_numbers":[],"funcs":[{"func_name":"do_nothing","parameters":[],"var_index":-1}]}],owner,context)
+	var listener:BaseEffect = loaded[0]
+	check(EffectManager.register_effect(listener,player_id),"S1 listener registered from original source")
 	return listener
 
 func has_effect_log(effect_name:String) -> bool:
@@ -73,24 +76,24 @@ func run():
 	check(killer_template != null, "killer in miyama situation is loadable")
 	if killer_template != null:
 		setup(1)
-		var killer := CloneObject.new().exec(killer_template) as BaseSituation
+		var killer := SOURCE.runtime(killer_template,context) as BaseSituation
 		MapData.active_situation = killer
-		SituationResolver.new()._register_situation_effects()
+		check(SituationResolver.new()._register_situation_effects(MapData.active_situation,context),"S1 original situation registration accepted")
 		var killer_effect:BaseEffect = killer._effects[0]
-		TimePointChecker.card_revealed(killer)
+		TimePointChecker.card_revealed(killer,context)
 		var situation_logs:Array = GameLog.query({"type":"effect", "data":{"effect_name":killer_effect._name}}, null)
 		check(not situation_logs.is_empty() and int(situation_logs[0].actor) == -1, "situation self reveal effect resolves")
 
 	#——三种语义：同一张卡、其他卡、任意卡分别验证——
 	setup(1)
-	var source_card := CloneObject.new().exec(killer_template) as BaseSituation
-	var other_card := CloneObject.new().exec(killer_template) as BaseSituation
+	var source_card := SOURCE.runtime(killer_template,context) as BaseSituation
+	var other_card := SOURCE.runtime(killer_template,context) as BaseSituation
 	make_reveal_listener("self_match", TimePoints.SELF_CARD_REVEALED, 0, source_card)
 	make_reveal_listener("self_miss", TimePoints.SELF_CARD_REVEALED, 0, other_card)
 	make_reveal_listener("other_match", TimePoints.OTHERS_CARD_REVEALED, 0, other_card)
 	make_reveal_listener("other_miss", TimePoints.OTHERS_CARD_REVEALED, 0, source_card)
 	make_reveal_listener("any_match", TimePoints.CARD_REVEALED, 0, other_card)
-	TimePointChecker.card_revealed(source_card)
+	TimePointChecker.card_revealed(source_card,context)
 	check(has_effect_log("self_match"), "self_card_revealed matches the revealing card")
 	check(not has_effect_log("self_miss"), "self_card_revealed ignores another card")
 	check(has_effect_log("other_match"), "others_card_revealed matches another card")
@@ -99,7 +102,7 @@ func run():
 
 	#——行为层：局势牌亮出就把事件牌摆上，不等战斗阶段——
 	var target = null
-	for tmpl in (MapData.situations + LoadSituation.climax_situations.values()):
+	for tmpl in (LoadSituation.situations + LoadSituation.climax_situations.values()):
 		if tmpl == null: continue
 		for eff in tmpl._effects:
 			for f in eff._funcs:
@@ -111,10 +114,10 @@ func run():
 		setup(1)
 		var before:int = 0
 		for area in MapData.areas: before += (area._events as Array).size()
-		var active := CloneObject.new().exec(target) as BaseSituation
+		var active := SOURCE.runtime(target,context) as BaseSituation
 		MapData.active_situation = active
-		SituationResolver.new()._register_situation_effects()
-		TimePointChecker.card_revealed(active)
+		check(SituationResolver.new()._register_situation_effects(MapData.active_situation,context),"S1 original situation registration accepted")
+		TimePointChecker.card_revealed(active,context)
 		var after:int = 0
 		for area in MapData.areas: after += (area._events as Array).size()
 		check(after > before, "events are placed when the situation card reveals (%d -> %d)" % [before, after])
@@ -123,7 +126,7 @@ func run():
 	#无 source 的普通时点广播仍可用于测试/特殊系统逻辑，并会被一次性消费。
 	setup(1)
 	for id in GameDataManager.get_active_player_ids(): make_reveal_listener("any_listener_%d" % id, TimePoints.CARD_REVEALED, id)
-	TimePointChecker.global_time_point([TimePoints.CARD_REVEALED])
+	TimePointChecker.global_time_point([TimePoints.CARD_REVEALED],null,context)
 	var got:int = 0
 	var consumed:bool = true
 	for id in GameDataManager.get_active_player_ids():

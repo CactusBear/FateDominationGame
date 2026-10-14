@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://b61g65el55tir"
+
+[deps]
+
+files=["res://docs/multiplayer-ui-function-inventory.源码行.translation", "res://docs/multiplayer-ui-function-inventory.联机直接调用共享函数.translation", "res://docs/multiplayer-ui-function-inventory.审查/验收状态.translation"]
+
+source_file="res://docs/multiplayer-ui-function-inventory.csv"
+dest_files=["res://docs/multiplayer-ui-function-inventory.源码行.translation", "res://docs/multiplayer-ui-function-inventory.联机直接调用共享函数.translation", "res://docs/multiplayer-ui-function-inventory.审查/验收状态.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

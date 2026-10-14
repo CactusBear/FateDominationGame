@@ -1,6 +1,8 @@
 class_name AskPlayersSecretOption
 extends RefCounted
 
+const OperationRouter = preload("res://scripts/system/operation_router.gd")
+
 #让多名玩家各自秘密地从同一组选项里选一项（猜拳、预测、宣言……）。
 #每人一次独立的选择，按传入顺序依次询问；谁选了哪一项写进 results（{玩家id : 选项下标}），返回的也就是它，
 #后面的步骤用 get_dictionary_value / match_func / compare_number 比较结果。放弃选择的玩家不在 results 里。
@@ -24,7 +26,7 @@ func exec(players:Array, options:Array, shown_name:String = "", reveal:bool = fa
 				tags.append("secret_choice")
 			copied["tags"] = tags
 			marked.append(copied)
-		var choice:BaseEffect = AskPlayerOption.new().exec(marked, shown_name, id)
+		var choice:BaseEffect = OperationRouter.exec_registered("ask_player_option", [marked, shown_name, id])
 		for i in range(choice._options.size()):
 			var writer := _ResultWriter.new()
 			writer.results = results

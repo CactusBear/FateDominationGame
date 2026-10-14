@@ -1,0 +1,167 @@
+{
+  "runs": [
+    {
+      "passed": false,
+      "exit_code": 1,
+      "checks": 27,
+      "failed_checks": [
+        "identity_room_unknown_deny",
+        "identity_pid_unknown_deny",
+        "identity_instance_id_unknown_deny",
+        "identity_authority_host_mode_unknown_deny"
+      ],
+      "ERROR_count": 0,
+      "fixture_Job0": true,
+      "production_Job0": "UNKNOWN_NOT_OBSERVED",
+      "native_observation": {
+        "can_instantiate": true,
+        "class_exists": true,
+        "production_job_zero_verified": false,
+        "query_performed": false,
+        "release_readback_verified": false,
+        "source": "real_ClassDB_metadata",
+        "state_available": true,
+        "status": "UNKNOWN",
+        "tree_observe_available": false
+      },
+      "scope": "E:\\scratch\\cleanup-native-failclosed-5805581a8556424485e072d7419a06a7",
+      "flags": "--mutation binding",
+      "runner_exit_code": 1
+    },
+    {
+      "passed": false,
+      "exit_code": 1,
+      "checks": 27,
+      "failed_checks": [
+        "identity_unknown_unknown_deny",
+        "missing_native_unknown_deny",
+        "state_unknown_unknown_deny",
+        "real_native_observation_never_promoted_to_safe_unknown_deny"
+      ],
+      "ERROR_count": 0,
+      "fixture_Job0": true,
+      "production_Job0": "UNKNOWN_NOT_OBSERVED",
+      "native_observation": {
+        "can_instantiate": true,
+        "class_exists": true,
+        "production_job_zero_verified": false,
+        "query_performed": false,
+        "release_readback_verified": false,
+        "source": "real_ClassDB_metadata",
+        "state_available": true,
+        "status": "UNKNOWN",
+        "tree_observe_available": false
+      },
+      "scope": "E:\\scratch\\cleanup-native-failclosed-01534d55f9d64b0c87d6b07def38017f",
+      "flags": "--mutation unknown",
+      "runner_exit_code": 1
+    },
+    {
+      "passed": false,
+      "exit_code": 1,
+      "checks": 27,
+      "failed_checks": [
+        "active_process_reaches_policy_as_current_not_safe"
+      ],
+      "ERROR_count": 0,
+      "fixture_Job0": true,
+      "production_Job0": "UNKNOWN_NOT_OBSERVED",
+      "native_observation": {
+        "can_instantiate": true,
+        "class_exists": true,
+        "production_job_zero_verified": false,
+        "query_performed": false,
+        "release_readback_verified": false,
+        "source": "real_ClassDB_metadata",
+        "state_available": true,
+        "status": "UNKNOWN",
+        "tree_observe_available": false
+      },
+      "scope": "E:\\scratch\\cleanup-native-failclosed-52fa7c5f020b42efbd33c51ff1b5c952",
+      "flags": "--mutation active",
+      "runner_exit_code": 1
+    },
+    {
+      "passed": false,
+      "exit_code": 1,
+      "checks": 27,
+      "failed_checks": [
+        "member_epoch_drift_unknown_deny"
+      ],
+      "ERROR_count": 0,
+      "fixture_Job0": true,
+      "production_Job0": "UNKNOWN_NOT_OBSERVED",
+      "native_observation": {
+        "can_instantiate": true,
+        "class_exists": true,
+        "production_job_zero_verified": false,
+        "query_performed": false,
+        "release_readback_verified": false,
+        "source": "real_ClassDB_metadata",
+        "state_available": true,
+        "status": "UNKNOWN",
+        "tree_observe_available": false
+      },
+      "scope": "E:\\scratch\\cleanup-native-failclosed-7efd94e191ff441bab953be24ab7cffc",
+      "flags": "--mutation epoch",
+      "runner_exit_code": 1
+    },
+    {
+      "passed": true,
+      "exit_code": 0,
+      "checks": 27,
+      "failed_checks": [],
+      "ERROR_count": 0,
+      "fixture_Job0": true,
+      "production_Job0": "UNKNOWN_NOT_OBSERVED",
+      "native_observation": {
+        "can_instantiate": true,
+        "class_exists": true,
+        "production_job_zero_verified": false,
+        "query_performed": false,
+        "release_readback_verified": false,
+        "source": "real_ClassDB_metadata",
+        "state_available": true,
+        "status": "UNKNOWN",
+        "tree_observe_available": false
+      },
+      "scope": "E:\\scratch\\cleanup-native-failclosed-631425612e3a404391e7f0cf83b1df87",
+      "flags": "",
+      "runner_exit_code": 0
+    },
+    {
+      "passed": true,
+      "exit_code": 0,
+      "checks": 27,
+      "failed_checks": [],
+      "ERROR_count": 0,
+      "fixture_Job0": true,
+      "production_Job0": "UNKNOWN_NOT_OBSERVED",
+      "native_observation": {
+        "can_instantiate": false,
+        "class_exists": false,
+        "production_job_zero_verified": false,
+        "query_performed": false,
+        "release_readback_verified": false,
+        "source": "real_ClassDB_metadata",
+        "state_available": false,
+        "status": "UNKNOWN",
+        "tree_observe_available": false
+      },
+      "scope": "E:\\scratch\\cleanup-native-failclosed-e5d9294b8ded46daa98e3f440291b080",
+      "flags": "--without-native",
+      "runner_exit_code": 0
+    }
+  ],
+  "same_final_freeze": {
+    "newtests/cleanup_native_failclosed_contract_test.gd": true,
+    "newtests/cleanup_native_failclosed_contract_test.tscn": true,
+    "newtests/run_cleanup_native_failclosed_contract.py": true,
+    "scripts/net/server/temporary_cleanup_proof_collector.gd": true,
+    "scripts/net/server/temporary_cleanup_ledger.gd": true,
+    "scripts/net/server/temporary_cleanup_policy.gd": true
+  },
+  "evidence_readback_verified": true,
+  "production_registry_verified": false,
+  "production_auto_cleanup_enabled": false
+}

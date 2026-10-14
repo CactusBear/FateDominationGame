@@ -1,0 +1,4939 @@
+{
+  "schema_version": 1,
+  "root": "E:\\Projects\\Godot\\FateDominationGame-master",
+  "rules": {
+    "R1": "描述行带效果前缀",
+    "R2": "括号补充文字（本口径不处理）",
+    "R3": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+    "R4": "资源标签费用未使用魔力消耗"
+  },
+  "scope": [
+    "data/**",
+    "assets/**",
+    "scripts/**/*.gd",
+    "json_maker/**/*.gd"
+  ],
+  "summary": {
+    "scanned_files": 521,
+    "chinese_entries": 4624,
+    "violation_rule_hits": 0,
+    "violating_entries": 0,
+    "violating_files": 0,
+    "violations_by_rule": {
+      "R1": 0,
+      "R2": 0,
+      "R3": 0,
+      "R4": 0
+    },
+    "manual_review_rule_hits": 16,
+    "manual_reviews_by_rule": {
+      "R1": 1,
+      "R2": 0,
+      "R3": 0,
+      "R4": 15
+    },
+    "out_of_scope_rule_hits": 124,
+    "out_of_scope_by_rule": {
+      "R1": 0,
+      "R2": 61,
+      "R3": 63,
+      "R4": 0
+    },
+    "visible_fee_mentions": 15,
+    "fee_mentions": 15,
+    "errors": 0,
+    "skipped_files_by_extension": {
+      ".cfg": 1,
+      ".gdshader": 8,
+      ".gdshaderinc": 1,
+      ".import": 229,
+      ".jpg": 9,
+      ".json": 2,
+      ".ogv": 4,
+      ".png": 187,
+      ".svg": 14,
+      ".tres": 1,
+      ".tscn": 2,
+      ".ttf": 5,
+      ".uid": 432,
+      ".webp": 14
+    }
+  },
+  "fee_mentions": [
+    {
+      "file": "assets/scenes/debug/debug_console.tscn",
+      "line": 353,
+      "column": 8,
+      "key_path": "text",
+      "original": "改卡牌费用",
+      "visible": true,
+      "evidence": "场景展示属性:text"
+    },
+    {
+      "file": "assets/scenes/game_scene/battle_board_v2.tscn",
+      "line": 1511,
+      "column": 8,
+      "key_path": "text",
+      "original": "悬浮右侧竖条切换主图 · 令咒可代替移动费用",
+      "visible": true,
+      "evidence": "场景展示属性:text"
+    },
+    {
+      "file": "data/servants/00005_medea/00005_medea.json",
+      "line": 31,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[0].effects[0].shown_effect_name",
+      "original": "此牌费用为X，X为16-（当前回合数×2）",
+      "visible": true,
+      "evidence": "JSON展示字段:shown_effect_name"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 3050,
+      "column": 3,
+      "key_path": "_confirm_fixed_number",
+      "original": "固定数字不能再被任何效果更改（例如「费用减一」「威力加倍」都会对它无效）。\n卡面上的数字一般都应当能被更改，除非这张牌写明了这个数字不变。\n\n确定要改成固定数字吗？",
+      "visible": true,
+      "evidence": "UI间接输出证据:_confirm_fixed_number"
+    },
+    {
+      "file": "scripts/debug/debug_action_panel.gd",
+      "line": 171,
+      "column": 32,
+      "key_path": "<top-level>",
+      "original": "改卡牌费用",
+      "visible": true,
+      "evidence": "UI间接输出证据:<top-level>"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 95,
+      "column": 100,
+      "key_path": "<top-level>",
+      "original": "攻击印刷费用",
+      "visible": true,
+      "evidence": "UI间接输出证据:<top-level>"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 97,
+      "column": 98,
+      "key_path": "<top-level>",
+      "original": "技能印刷费用",
+      "visible": true,
+      "evidence": "UI间接输出证据:<top-level>"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 127,
+      "column": 80,
+      "key_path": "<top-level>",
+      "original": "区域移动费用",
+      "visible": true,
+      "evidence": "UI间接输出证据:<top-level>"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 190,
+      "column": 82,
+      "key_path": "<top-level>",
+      "original": "改卡费用",
+      "visible": true,
+      "evidence": "UI间接输出证据:<top-level>"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 200,
+      "column": 97,
+      "key_path": "<top-level>",
+      "original": "改区域移动费用",
+      "visible": true,
+      "evidence": "UI间接输出证据:<top-level>"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 224,
+      "column": 72,
+      "key_path": "<top-level>",
+      "original": "把攻击加入场上(不计费用上限)",
+      "visible": true,
+      "evidence": "UI间接输出证据:<top-level>"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 228,
+      "column": 78,
+      "key_path": "<top-level>",
+      "original": "只改位置并返回费用",
+      "visible": true,
+      "evidence": "UI间接输出证据:<top-level>"
+    },
+    {
+      "file": "scripts/system/time_points.gd",
+      "line": 450,
+      "column": 25,
+      "key_path": "<top-level>",
+      "original": "卡牌费用计算完成时",
+      "visible": true,
+      "evidence": "UI间接输出证据:<top-level>"
+    },
+    {
+      "file": "scripts/system/time_points.gd",
+      "line": 451,
+      "column": 30,
+      "key_path": "<top-level>",
+      "original": "自己卡牌费用计算完成时",
+      "visible": true,
+      "evidence": "UI间接输出证据:<top-level>"
+    },
+    {
+      "file": "scripts/system/time_points.gd",
+      "line": 452,
+      "column": 32,
+      "key_path": "<top-level>",
+      "original": "他人卡牌费用计算完成时",
+      "visible": true,
+      "evidence": "UI间接输出证据:<top-level>"
+    }
+  ],
+  "applied_changes": [
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 1644,
+      "key_path": "metadata/event_desc",
+      "before": "深山町明置事件牌\\n\\n效果：本战场所有英灵进行光荣的正面对决，力量属性攻击的威力 +2。",
+      "after": "深山町明置事件牌\\n\\n本战场所有英灵进行光荣的正面对决，力量属性攻击的威力 +2。"
+    },
+    {
+      "file": "assets/scenes/game_scene/battle_board_v2.tscn",
+      "line": 1490,
+      "key_path": "text",
+      "before": "移动路线 · 费用",
+      "after": "移动路线 · 魔力消耗"
+    }
+  ],
+  "source_manifest": [
+    {
+      "file": "assets/fonts/BodoniModa-OFL.txt",
+      "sha256": "931dfe2e0cd3c9443295f5c1d754b8a8403bf060df50c1d5900267ade83d0046"
+    },
+    {
+      "file": "assets/images/game_scene/v2/background_candidates/sources.json",
+      "sha256": "e3db280e9aeb9460cb9cf4809a03472476bb5d000a9e3d997587427def855af1"
+    },
+    {
+      "file": "assets/images/game_scene/v2/board_alternatives/selected_sources.json",
+      "sha256": "fdd655604d0c10f152aea57f3ad6a5a8e9da6149ff8aeb844339c730e55f8503"
+    },
+    {
+      "file": "assets/images/game_scene/v2/board_alternatives/sources.json",
+      "sha256": "2e1e043c64e918910c76d0ca8dc520b958b1017941efa78846e21c59c6cfbdf0"
+    },
+    {
+      "file": "assets/scenes/debug/debug_console.tscn",
+      "sha256": "552e4d3cc0b539f5fbc7437593c1be0c7d9af0c6e6223caa326172c450997339"
+    },
+    {
+      "file": "assets/scenes/fire_circle.tscn",
+      "sha256": "50e5adc662a72ccbf6afbb957bc10e6f49b646c3307943c4895eac2a5b8259f1"
+    },
+    {
+      "file": "assets/scenes/game_scene/battle_board_v2.tscn",
+      "sha256": "819c08a3db6a88c943849d328dbd0e2bfca0c51bdac9c71f910c89e2451bf512"
+    },
+    {
+      "file": "assets/scenes/game_scene/game_scene.tscn",
+      "sha256": "537533fcd7f8300010b5c43fb138e8aca242d953caaa63fbad256b6474f26404"
+    },
+    {
+      "file": "assets/scenes/game_scene/mana_sigil.tscn",
+      "sha256": "8ece1d987df23aad09ff983eb5e1d4dbfea57d9db8ea038ae6b13c59b710ac57"
+    },
+    {
+      "file": "assets/scenes/game_scene/network_choice_panel.tscn",
+      "sha256": "dd9d5708f59bce3f254a6f0032b21520d4db6ad84b19776b49b686fbfd604fb3"
+    },
+    {
+      "file": "assets/scenes/game_scene/network_hand_strip.tscn",
+      "sha256": "c2df287476aee31e4221972f4761129b6276f3ede6473d7bd9a19e480c4147af"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "sha256": "6a9e3fe8f40a1e91ccd4ae62d6547cc17617341d1c2a4cec88d5a84e5379befc"
+    },
+    {
+      "file": "assets/scenes/main_menu/identity_inheritance_panel.tscn",
+      "sha256": "fffde9a37eecab8da969e6d1e3c434fe4b8de15e4a1aca155f2e5119b88d5185"
+    },
+    {
+      "file": "assets/scenes/main_menu/main_menu.tscn",
+      "sha256": "33ae907160c489aeb56fd360601bcb55e13ab19391c12275e199f97913a81c04"
+    },
+    {
+      "file": "assets/scenes/main_menu/multiplayer_lobby.tscn",
+      "sha256": "6184925aa6b586fbfb4d67942425e56c7591d4506f7b4b7cad11dc40fd11ba37"
+    },
+    {
+      "file": "assets/scenes/main_menu/opening_background.tscn",
+      "sha256": "6344bc882a16461f27dc7095381efd973e9de3f24895877c92d2ea6e1102739c"
+    },
+    {
+      "file": "assets/scenes/main_menu/restore_seat_panel.tscn",
+      "sha256": "baf051fa571c7ecb029fe1cc7bd092454d1b68f3e1669ae827e6925a2b6af452"
+    },
+    {
+      "file": "assets/scenes/main_menu/room_data_panel.tscn",
+      "sha256": "549e82dd0bbe8116ea04280e2cfb7acee56b7a617ff850809654d0ef9a2e797d"
+    },
+    {
+      "file": "assets/scenes/main_menu/room_data_validation_worker.tscn",
+      "sha256": "e0f44a3d1b92c0a7eeb102af3659fbe0f71fe98f78b5ee6161d36dead93b800f"
+    },
+    {
+      "file": "assets/scenes/main_menu/selection_screen.tscn",
+      "sha256": "d366595fb069cca7311dbe9f934d49e422cff2914d314aedc593b49c4493a8e2"
+    },
+    {
+      "file": "assets/scenes/main_menu/server_bootstrap.tscn",
+      "sha256": "99cddf9a542b33d7fbc3f399226dbac99c720a26a63317b439137a9868ccefbb"
+    },
+    {
+      "file": "assets/scenes/main_menu/server_cli.tscn",
+      "sha256": "af5a55b395ee8ccb1842b56a93fcb070977d0ae8650eb20c2696790f850b0a0c"
+    },
+    {
+      "file": "assets/scenes/main_menu/server_console.tscn",
+      "sha256": "940e91e95239b0fbd50d5a3d9934b309be060d6e94a6044ddfa7e8e7c3460468"
+    },
+    {
+      "file": "assets/scenes/main_menu/server_room_worker.tscn",
+      "sha256": "b9274b05b93bf47c887bd718376dec9d2106cf6e46200a63dce99d5520501c36"
+    },
+    {
+      "file": "assets/scenes/shiny_card.tscn",
+      "sha256": "40226c8c82ba877480f7fbc4b8bb2429e98a41b9af6f634c00ad76d268bbc98c"
+    },
+    {
+      "file": "assets/scenes/ui/header_turn.tscn",
+      "sha256": "eaf1c35373da7c2c3707d4f4e1d9eda47bad4ee614192c28d0b0c736a52d629f"
+    },
+    {
+      "file": "data/attacks/basic/luck/luck.json",
+      "sha256": "7b48de35068fba207273e353349833e7077355602530b19fdbbf766f1bb82fce"
+    },
+    {
+      "file": "data/attacks/basic/magic_blast_0_2/magic_blast_0_2.json",
+      "sha256": "39ad69ac496727661a0a2e2b714110037dc95b8dc92094ebf96e221162569c61"
+    },
+    {
+      "file": "data/attacks/basic/magic_blast_0_3/magic_blast_0_3.json",
+      "sha256": "9ee704e2320d15793de71a0be4742dbf551d57da8a52baf2bf1260a919a53501"
+    },
+    {
+      "file": "data/attacks/basic/magic_blast_0_4/magic_blast_0_4.json",
+      "sha256": "d25e5517f0aa63361717a0ec0dbb382b40aebd4b34f1e04c6e0b926d562afdd8"
+    },
+    {
+      "file": "data/attacks/basic/magic_blast_1_5/magic_blast_1_5.json",
+      "sha256": "4a88655e171e0cc12eb7386c012b47bb0f676f0383de12a64cac9d3cd1a09dd2"
+    },
+    {
+      "file": "data/attacks/basic/physical_attack_0_2/physical_attack_0_2.json",
+      "sha256": "69e45a7ddac77a9b8f225dfdf6f392303e892465b1dada90dd07613136492cda"
+    },
+    {
+      "file": "data/attacks/basic/physical_attack_0_3/physical_attack_0_3.json",
+      "sha256": "a976aeb54f3b499a281622417f27baf14823384896442d650d428b75b151d1c9"
+    },
+    {
+      "file": "data/attacks/basic/physical_attack_0_4/physical_attack_0_4.json",
+      "sha256": "50dc08866d06b7fa4dbba5c783824132c025427d022a7bf13444a3d40f8e062c"
+    },
+    {
+      "file": "data/attacks/basic/physical_attack_1_5/physical_attack_1_5.json",
+      "sha256": "7f6c825cc17ce972260d0f14de11aeb1997007f4955c3bc6a7a365d2d3fb66fb"
+    },
+    {
+      "file": "data/attacks/basic/precision_strike_0_2/precision_strike_0_2.json",
+      "sha256": "c867c418523144a64f2506379f0a0cfcf85f4c67c869ab2933f73d779ba14cec"
+    },
+    {
+      "file": "data/attacks/basic/precision_strike_0_3/precision_strike_0_3.json",
+      "sha256": "efea743163d5a9eb83c1969d2e3a967c14abacd8a6ab3af87e43bd6551906f8b"
+    },
+    {
+      "file": "data/attacks/basic/precision_strike_0_4/precision_strike_0_4.json",
+      "sha256": "c94feba332fa38e181d11aaeaa45c402f853783c0d6100b9e4372a070321d1eb"
+    },
+    {
+      "file": "data/attacks/basic/precision_strike_1_5/precision_strike_1_5.json",
+      "sha256": "13ad155ada05be1fb01f78d438b65f73f8798b003a868abcd28b0e8a196a4702"
+    },
+    {
+      "file": "data/attacks/basic/preparation/preparation.json",
+      "sha256": "eee8d3c0ead74bce6e72d63d2018472ee68ae0c00ea8dfdb460fcf4df52a663a"
+    },
+    {
+      "file": "data/attacks/basic/surveil/surveil.json",
+      "sha256": "799dcd2605baeb811684fcf095cf94b70b09eb2ae43099bcdad702145cf7eef1"
+    },
+    {
+      "file": "data/attacks/class/avenger_class/avenger_class.json",
+      "sha256": "d48d6d1a1dd7c3e30a178d13d70fb0ce13dfc9cb4087844049f6407d80f02b8d"
+    },
+    {
+      "file": "data/attacks/class/berserker_class_agility_3_7/berserker_class_agility_3_7.json",
+      "sha256": "a3c386890b2e4a98698456d1e06ab1a982697b7c1bf4d492d4ad9408ab914833"
+    },
+    {
+      "file": "data/attacks/class/berserker_class_agility_5_9/berserker_class_agility_5_9.json",
+      "sha256": "bc58dd4cc53312eae8df940cb897b629e485adede7061cb7dceb959088b4e551"
+    },
+    {
+      "file": "data/attacks/class/berserker_class_magic_3_7/berserker_class_magic_3_7.json",
+      "sha256": "1100fba84d6b2e1a2270a073445558267f45b122835e089226a0fc227cf52e82"
+    },
+    {
+      "file": "data/attacks/class/berserker_class_magic_5_9/berserker_class_magic_5_9.json",
+      "sha256": "5e8be6c0d7eaa43722125d97ae576cea16cb858bde19cdbb3a3ff3bfe81dfb5b"
+    },
+    {
+      "file": "data/attacks/class/berserker_class_strength_3_7/berserker_class_strength_3_7.json",
+      "sha256": "31ca82873e4e04c869f57ff46513e1b7a996c04fe287e4515d1b8fcbbe0b8242"
+    },
+    {
+      "file": "data/attacks/class/berserker_class_strength_5_9/berserker_class_strength_5_9.json",
+      "sha256": "5895172b63b016f6db131afea25f2f0e6abca2314e02dcc386e6214e0ebb1e52"
+    },
+    {
+      "file": "data/attacks/class/foreigner_class/foreigner_class.json",
+      "sha256": "413ca6fdc12e3b99330f16008b1ce2265d990bcd4301a5d498ec401b9a00b970"
+    },
+    {
+      "file": "data/attacks/class/mooncancer_class/mooncancer_class.json",
+      "sha256": "e4982e6ccd23adec4c81518eece42363bcce50436f640e15c30df469e902c68c"
+    },
+    {
+      "file": "data/command_spells/normal_command_spell.json",
+      "sha256": "19b075670eb966b704759b39469aefcf0c6fda61bb64820b3cd80e79e1795329"
+    },
+    {
+      "file": "data/events/origin/contain_third_party/contain_third_party.json",
+      "sha256": "d05d567d25cbe5fc609308af1a294344471a3aad26bc6c98c08cfe4067e7f737"
+    },
+    {
+      "file": "data/events/origin/cooperation/cooperation.json",
+      "sha256": "33a718701decd80f3b9351e00d4697e3b7237c8f2329eb228fb5d1565bde73a3"
+    },
+    {
+      "file": "data/events/origin/desperate_measure/desperate_measure.json",
+      "sha256": "b30b41ef0af44e5612aef524d4765868e67e71b3ff3e0bcf87739cf77977ffc7"
+    },
+    {
+      "file": "data/events/origin/fate_battle/fate_battle.json",
+      "sha256": "aa356d735f19ddf66a188895506e522416dd41915c2b09cee243d7d002049071"
+    },
+    {
+      "file": "data/events/origin/glorious_duel/glorious_duel.json",
+      "sha256": "d79e6393c90fa09648af393a61f9ec93838ae487b94d9d1393fc4e7f8720641a"
+    },
+    {
+      "file": "data/events/origin/ground_zero/ground_zero.json",
+      "sha256": "db565087bd8966620d181e021f172324166163c9b490547b308d691432a14e75"
+    },
+    {
+      "file": "data/events/origin/holy_ground/holy_ground.json",
+      "sha256": "c2c0d2cad2a1487a3107dd4f5e376d1892ff71c8cfa6b3d1a22aa1dc3c23a283"
+    },
+    {
+      "file": "data/events/origin/ley_line/ley_line.json",
+      "sha256": "d477268f3f2fb596765de2827b66140f5ac0256d289a5961001a74d0f6531d3c"
+    },
+    {
+      "file": "data/events/origin/occupy_high_ground/occupy_high_ground.json",
+      "sha256": "84efe1c0ae7464e2099a9ff49aa9fd9c746b0fd000fcec68220cc581d1c01885"
+    },
+    {
+      "file": "data/events/origin/reality_marble/reality_marble.json",
+      "sha256": "482303ea3ba5e6f5fa1e16468c80fc88f62dd84e06456ba67d615a84cf8ff426"
+    },
+    {
+      "file": "data/events/origin/rescue_illya/rescue_illya.json",
+      "sha256": "92efbca2197701074d8dd333a80e9a93bde6eedd7c170ccc1efa32bd0b39bd74"
+    },
+    {
+      "file": "data/events/origin/sacrifice_ground/sacrifice_ground.json",
+      "sha256": "e0bcf1f10aac289ab558de3f071a80286a1cbe4b723dcb402e1e91f9fcf0f8a4"
+    },
+    {
+      "file": "data/events/origin/sneak_attack/sneak_attack.json",
+      "sha256": "66564e37b86dbedcb69ffe608dee4d31c7a7e223f042a1b71451e7823116ac71"
+    },
+    {
+      "file": "data/events/origin/strength_test/strength_test.json",
+      "sha256": "d4c2f239201515a309b232e41526257c43ec6962c65a2b082500af44e69793ef"
+    },
+    {
+      "file": "data/events/origin/suppressive_fire/suppressive_fire.json",
+      "sha256": "1c2f01db7bd30116208fd6d2a59c4892c1401de4fd6e1378a1298803cb0a88ef"
+    },
+    {
+      "file": "data/events/origin/treacherous_terrain/treacherous_terrain.json",
+      "sha256": "f663a13f178021bf21389843aa14660ad90c47981e821ff3e3804649f45f0601"
+    },
+    {
+      "file": "data/masters/00001_emiya_shirou/00001_emiya_shirou.json",
+      "sha256": "ee41139b9be0b93ebccb46b1d0af24a76e111a0d787701399124234d096a423e"
+    },
+    {
+      "file": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "sha256": "d34ee17b0e4ad2640dfcc82bd0dcc6d38f5ba02e1863eb098ed78aab9e3dc20a"
+    },
+    {
+      "file": "data/masters/00003_matou_shinji/00003_matou_shinji.json",
+      "sha256": "1f6c1766b6bc04e27c399a897deb3b118237bf4c1a5c18a97dec8192db7bbd32"
+    },
+    {
+      "file": "data/masters/00004_matou_sakura/00004_matou_sakura.json",
+      "sha256": "0309edb45c66986d75e59f9ebe6e985959db22c73f81ccc15055d270bd9a7d46"
+    },
+    {
+      "file": "data/masters/00005_illyasviel_von_einzbern/00005_illyasviel_von_einzbern.json",
+      "sha256": "506ca092af01cbcfcb734b83646650a75bd2a9e3e52870f61ee1ea850b6e37ad"
+    },
+    {
+      "file": "data/masters/00006_kotomine_kirei/00006_kotomine_kirei.json",
+      "sha256": "10f1d275e5a8f8afa71803a235a502e0ab1f0ca30ce87fe6427766aff2a832ff"
+    },
+    {
+      "file": "data/masters/00007_kuzuki_souichirou/00007_kuzuki_souichirou.json",
+      "sha256": "ff00878605c6892bb44d4816ffa86b3adecb613300ef25541235ba1a478f3fb2"
+    },
+    {
+      "file": "data/selection_modes.json",
+      "sha256": "33d5b420f25920e85ea58a71533009ee142318112263ef38d66174bea061f1c4"
+    },
+    {
+      "file": "data/servants/00001_artoria_pendragon/00001_artoria_pendragon.json",
+      "sha256": "fbe473eb52360bb89bdee96d7909ad7bea59c17fa69620692b6a3db1a024a952"
+    },
+    {
+      "file": "data/servants/00002_emiya/00002_emiya.json",
+      "sha256": "4b0dddd399142ca3c46704ca4be578025ee0cc66f191b0e9d9c6728a2f6bf3d1"
+    },
+    {
+      "file": "data/servants/00003_cu_chulainn/00003_cu_chulainn.json",
+      "sha256": "4aac553a7aeb0404dc203e3f9c2ee6b85eae2256cdd3f96246b5cc1599e157d3"
+    },
+    {
+      "file": "data/servants/00004_medusa/00004_medusa.json",
+      "sha256": "98ce512c94b6f09619ccce42302532f62732f23998126218201b224d3e9a6dd9"
+    },
+    {
+      "file": "data/servants/00005_medea/00005_medea.json",
+      "sha256": "8a5faf63375d904ed2ff717854364930687ac4e8dacef54a38be96706e6eecbf"
+    },
+    {
+      "file": "data/servants/00006_sasaki_kojirou/00006_sasaki_kojirou.json",
+      "sha256": "a14f552c383491fa78876e64a5b7ea67ec19ceb292e761122d4a704c2093f0b4"
+    },
+    {
+      "file": "data/servants/00007_heracles/00007_heracles.json",
+      "sha256": "1b9d8eb343329e9da195e8e7d2ded47a52d3711c9b93d19d16bab3d76ea36e5f"
+    },
+    {
+      "file": "data/servants/00008_angra_mainyu/00008_angra_mainyu.json",
+      "sha256": "af5a5cad1c14af0354073c579bfc84adad646361a1a2f3299dfba10bc58fbf95"
+    },
+    {
+      "file": "data/situations/origin/battle_of_shinto/battle_of_shinto.json",
+      "sha256": "aaaa50153ce8ad3db941fb400bce0e1d3e0bc02a5eff5260a71fdd96e8b14d58"
+    },
+    {
+      "file": "data/situations/origin/calm_before_storm/calm_before_storm.json",
+      "sha256": "c40b557c015fe15d9401c5a322bf01082feaadaa3bd9c1be18ace201e8f58aab"
+    },
+    {
+      "file": "data/situations/origin/curse_of_angra_mainyu/curse_of_angra_mainyu.json",
+      "sha256": "710846a3e8de59d788dfbdc925c66fa7479ea28663fa446da390220711d435bd"
+    },
+    {
+      "file": "data/situations/origin/gate_of_hell/gate_of_hell.json",
+      "sha256": "6118ff39b92fab9e0d5a5ca07819a3e0932334dc6d9d38dafb1ac11513126dc6"
+    },
+    {
+      "file": "data/situations/origin/heavens_feel/heavens_feel.json",
+      "sha256": "54f97cc16c0be583ec2447131153e995fd663cf1890a53e6762dc36f4f5298c6"
+    },
+    {
+      "file": "data/situations/origin/hope_for_future/hope_for_future.json",
+      "sha256": "0935201344b22ae853793e19c6d124be337d38c76cd2d1394b9103413864b7c8"
+    },
+    {
+      "file": "data/situations/origin/killer_in_miyama/killer_in_miyama.json",
+      "sha256": "4d122b24df8131463e101bdad2dc46094faa82e22f75450dfa1f63a7859f4133"
+    },
+    {
+      "file": "data/situations/origin/night_of_fate/night_of_fate.json",
+      "sha256": "ae445f04ef00122292f2ee5347b03e8c94bba19afe6500b643fffa73af8dd78c"
+    },
+    {
+      "file": "data/situations/origin/outrage/outrage.json",
+      "sha256": "3b02cfdbb04ba38aaf5f02de91d28c80afb77918e2dbee7c5392c5d04bd5f956"
+    },
+    {
+      "file": "data/situations/origin/perfect_flow/perfect_flow.json",
+      "sha256": "55fffc16c4759b05979ff37decba01174e32c5d106abba8f4472fa74e3611297"
+    },
+    {
+      "file": "data/situations/origin/shadow_of_angra_mainyu/shadow_of_angra_mainyu.json",
+      "sha256": "c47baa11c9795863f436c38cdd04d34939d7afa2aa30ff1bd2db1a55f9d95155"
+    },
+    {
+      "file": "data/situations/origin/substance_of_angra_mainyu/substance_of_angra_mainyu.json",
+      "sha256": "f2ac3e8caa8b3e60e01f51a67a99e14902b9a08b95df9d0cf03b95b0702d7a7c"
+    },
+    {
+      "file": "data/situations/origin/turnaround/turnaround.json",
+      "sha256": "b2cdfb3ea1b38bec9b3534d3a9224e5e9e48b14ed28e875174f72144d599690b"
+    },
+    {
+      "file": "data/tag_list.json",
+      "sha256": "ec00ed474e7153e95a862482133716b2203fc0d4584a0ba9056763ca2036f948"
+    },
+    {
+      "file": "json_maker/json_codec.gd",
+      "sha256": "e297a0057c52fae6eb8aad79df5d9d0c9960eb3669364fa6fa129796ef3a186e"
+    },
+    {
+      "file": "json_maker/json_maker.gd",
+      "sha256": "e85850253d1b3c0237bb602fdb239162b0e67dce808ece6d7858ac949518a557"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "sha256": "78b55d217cdced1c95d79f55cad7b2ce55e07b9532053b2bef7035afd2d1d849"
+    },
+    {
+      "file": "json_maker/json_style.gd",
+      "sha256": "92a3d5ade217f80216e192961c8dcec6bcf5ba3c5f2f558609884e6e7d650ede"
+    },
+    {
+      "file": "scripts/debug/debug_action_panel.gd",
+      "sha256": "881c7be32fea6c24f429812e2bbaca38f53ee80c90bf80bd8f14067970a67c65"
+    },
+    {
+      "file": "scripts/debug/debug_adapters/debug_board_adapter.gd",
+      "sha256": "aae684d47fbb148cb17197adb5856287650e845f0520f8796d548224411f2252"
+    },
+    {
+      "file": "scripts/debug/debug_adapters/debug_card_adapter.gd",
+      "sha256": "c709cbcc461f31ad04058143c062c73e8eb47d9e315c03d2f23fa899f33ce58b"
+    },
+    {
+      "file": "scripts/debug/debug_adapters/debug_identity_adapter.gd",
+      "sha256": "e93f45595b59fae4aa5b402fe7f0a7574416ae71ad97e625b0e75ef952699050"
+    },
+    {
+      "file": "scripts/debug/debug_adapters/debug_map_adapter.gd",
+      "sha256": "7bea69a095dd2aa356c6b9631ff327f2498ff1975bc1383a0c71c30d3282cca2"
+    },
+    {
+      "file": "scripts/debug/debug_adapters/debug_player_adapter.gd",
+      "sha256": "209b4c78b5c691247551c366dafe99ad50246572bcb3382eb0397b587e4d30d5"
+    },
+    {
+      "file": "scripts/debug/debug_command_registry.gd",
+      "sha256": "332c40cc7b43ef150af836aa733a1a8fe5b693e12e7bf903f07d80b9f7aa37c9"
+    },
+    {
+      "file": "scripts/debug/debug_console_ui.gd",
+      "sha256": "8ab33e0163342ba86e6cce6daf60609ce9e2aba326d76488136dddcf8fb138ea"
+    },
+    {
+      "file": "scripts/debug/debug_session.gd",
+      "sha256": "e5338ff09b37ba0973a8ffa138dca012a3069c74c61eba37a1e568357167a2f7"
+    },
+    {
+      "file": "scripts/debug/debug_validate.gd",
+      "sha256": "1a887df3f5f40c401f50352f6920f5e36cb27ed9366074202f913433ce1f1a3c"
+    },
+    {
+      "file": "scripts/game_scene/PlayerPad.gd",
+      "sha256": "736efc572d3aba1d2c1cef1fe8741b769194577c83ce8916d220768059cb6d59"
+    },
+    {
+      "file": "scripts/game_scene/battle_board_v2.gd",
+      "sha256": "1e183b3dda933944a45d7161053554e6477b4f25e0d436bc892c08d21ea620ee"
+    },
+    {
+      "file": "scripts/game_scene/battle_io/battle_host_lifecycle.gd",
+      "sha256": "ac3011654a8ccae7b230d693632fbdab40032c857c2b684a1da4430b5a499605"
+    },
+    {
+      "file": "scripts/game_scene/battle_io/local_battle_commands.gd",
+      "sha256": "9f307a0010f35a992050a5ac248afda7ce604ecf4f609bd291409c108dc0cbfd"
+    },
+    {
+      "file": "scripts/game_scene/battle_io/local_battle_source.gd",
+      "sha256": "bcf2c7b03a48bdffbec8483f768c6005146ff2ca1f555b323fa783e87d0e1657"
+    },
+    {
+      "file": "scripts/game_scene/battle_io/network_battle_commands.gd",
+      "sha256": "43bb53535f3e64a9d0b730d77b6e2abf489a77aa15349bcd03d8ba4535f5758a"
+    },
+    {
+      "file": "scripts/game_scene/battle_io/network_battle_source.gd",
+      "sha256": "659dccfd291d429ef59f5b9649bc965123d2f7dda3f6cfb6d3cfefb7e48aff2e"
+    },
+    {
+      "file": "scripts/game_scene/battle_io/shared_view_sections.gd",
+      "sha256": "da6882e21ad24ecd43bc9d52dd8821dd462e281b6634c2fd425e0526ab0295c8"
+    },
+    {
+      "file": "scripts/game_scene/held_card_hit_area.gd",
+      "sha256": "7c4f62b40bf649c65f960757eb127ddbd484b281c3e6d2e8e087be13a6a69b3f"
+    },
+    {
+      "file": "scripts/game_scene/mana_sigil.gd",
+      "sha256": "94972224e1e8f6617a99c52542f5ccb484f95bdf0757fab75b7994cdf124c0a3"
+    },
+    {
+      "file": "scripts/game_scene/native_choice_renderer.gd",
+      "sha256": "8a785a0850cc1651fdf49a976df06e9b95beefea80fb725c2a7a0b4b7812144c"
+    },
+    {
+      "file": "scripts/game_scene/seat_ring.gd",
+      "sha256": "7dec28df4028742ecbfe0ec96f00308e35e788eb2abe99c26310463c07dae7ff"
+    },
+    {
+      "file": "scripts/game_scene/tactical_board_ui.gd",
+      "sha256": "3063aca824df5c4561cf08588c4e77d14588a3777e48397d33823e5b6a15acda"
+    },
+    {
+      "file": "scripts/io/atomic_file_replace.gd",
+      "sha256": "13decd6a6c40f92e90060f67c4fc8c10546d1d9a0a0fce8ae59f10677739273d"
+    },
+    {
+      "file": "scripts/io/native_capability_view.gd",
+      "sha256": "e24b24228589e9cf68b59b91dae7fa1b80b6586f618726be26e37325964671ba"
+    },
+    {
+      "file": "scripts/io/native_method_contract.gd",
+      "sha256": "c22ffd6012cf39b2b80e915bf526c8459a2c1f5888503961cd8502cef5505c85"
+    },
+    {
+      "file": "scripts/io/temporary_cleanup_native_delete.gd",
+      "sha256": "5b8b404ade4af5942977d1af352d67ac3db01ba9ec01b4776c1b04ee81659396"
+    },
+    {
+      "file": "scripts/io/validated_file_content.gd",
+      "sha256": "d895dfbad569e0517190af4b206f153b9450149c6e682e546fb7b243532035ba"
+    },
+    {
+      "file": "scripts/main_menu/game_start.gd",
+      "sha256": "4535d1729fdfeb9cb5223738019f244a844de9327a4726ba084e3d156c2faf50"
+    },
+    {
+      "file": "scripts/main_menu/main_menu.gd",
+      "sha256": "fff051bf66a53d5dc9e7ea337ff20699998e1329d6d52f5748e6c9b42060d854"
+    },
+    {
+      "file": "scripts/main_menu/opening_warp.gd",
+      "sha256": "bdffb507dc559e28dccb31d0b14e7181639ad7fe9de23e21317fb2ae3ffd31d8"
+    },
+    {
+      "file": "scripts/main_menu/viewport_fit.gd",
+      "sha256": "ecb94cfb1e4d467130bceecb77666a5432f4f132206e92802ee79eefc3438e77"
+    },
+    {
+      "file": "scripts/match/effect_checkpoint.gd",
+      "sha256": "65d5e293d6e6d8be6142b0caf65e6096c8cfd791576de6b089de88c0e8a8488b"
+    },
+    {
+      "file": "scripts/match/match_command_dispatcher.gd",
+      "sha256": "6e23d647c6b2e68c3b289902c4b96a987167cac10c0ee2b26b4ee3d24cab634b"
+    },
+    {
+      "file": "scripts/match/match_commands.gd",
+      "sha256": "331e8f2839d5c109180f4e9e03aef3693ef0cdb549ceeb5c5d352b835baa30ae"
+    },
+    {
+      "file": "scripts/match/match_driver.gd",
+      "sha256": "8f76ea384e5ade542a4f3a8f39c8817423f043e305790f01d0596e50e1429307"
+    },
+    {
+      "file": "scripts/match/match_journal.gd",
+      "sha256": "867874fbe5c973f79a3508c046e587253d0e49273050d43c926cf4d97e2cd70e"
+    },
+    {
+      "file": "scripts/match/match_replay.gd",
+      "sha256": "851f77f939974d3f51eea51b70feda9c2593c0ee700e265bb4e090b78419d175"
+    },
+    {
+      "file": "scripts/match/match_seat_query.gd",
+      "sha256": "f7688104a9c0f51a998a2c6637a556563fd40e62025cdf8acd92ad9a827718be"
+    },
+    {
+      "file": "scripts/match/net_ids.gd",
+      "sha256": "20284c284aac13b2caefa67fceb9ac0062cd1da52e401f6246e2916ee296d115"
+    },
+    {
+      "file": "scripts/match/rule_budget.gd",
+      "sha256": "1b1e2a6d53aa09c5f7cf3b2e3c5ad729e718a5e6e2b74138552bf916ba7a041e"
+    },
+    {
+      "file": "scripts/match/rule_checkpoint.gd",
+      "sha256": "40e618391899fc4bb9a79884e7e821819368febdea28a43569358141713d5cee"
+    },
+    {
+      "file": "scripts/match/rule_random.gd",
+      "sha256": "e8a2d1b84871f8b69bfc77b8a557b75e559bc6ffc48250d3ef79665bfd42202e"
+    },
+    {
+      "file": "scripts/match/rule_state.gd",
+      "sha256": "b18b4cff2b4f3bff128a0645c91459d037477f6fe8503b418f8d057e59020b02"
+    },
+    {
+      "file": "scripts/match/seat_controller.gd",
+      "sha256": "f16c3953e4fde9035d90814febe54cc9281a847848cef8da19ac9495d3619242"
+    },
+    {
+      "file": "scripts/match/view_builder.gd",
+      "sha256": "78607bec727a0698e81370e33e988caa0b41def226a04f5e13bd4b8e6567ca8e"
+    },
+    {
+      "file": "scripts/match/view_mirror.gd",
+      "sha256": "8007a3cc6e2e1ed0bb319ba3e1b3bd21fb825e7b9bc24f3f212a724c514eef20"
+    },
+    {
+      "file": "scripts/net/authority/match_authority.gd",
+      "sha256": "d4aec6e62c09bb7e9137ffd9d5d6d97c8329f2f720a4bc65d5e66b4eaf7710f3"
+    },
+    {
+      "file": "scripts/net/authority/selection_authority.gd",
+      "sha256": "ef60dae1ce1d1c7abe14a9ee4c74368a19115bdac0de83881c95a3787e1f0c14"
+    },
+    {
+      "file": "scripts/net/content/blob_receiver.gd",
+      "sha256": "4286dc14ef4f46a9837bf0bedbeba159e3bff57b9fcb26f1db77858999010bba"
+    },
+    {
+      "file": "scripts/net/content/content_cache.gd",
+      "sha256": "eb7b3d1dfec6cf017e64ea15eecdfa60d7d9ea44087bd4e527453c2853f5b9de"
+    },
+    {
+      "file": "scripts/net/content/data_catalog.gd",
+      "sha256": "ea6cd861dd8e3656bfce95852b6106f7bc2c25c848b0d9182d119eb4a6016d81"
+    },
+    {
+      "file": "scripts/net/content/room_assets.gd",
+      "sha256": "c09ba1c4a956920fc83f5c02ef00c36cff84d2d233afcea5f7b497434ee86f06"
+    },
+    {
+      "file": "scripts/net/content/room_data_assembler.gd",
+      "sha256": "f39d01f8b8a48a3298c461a69fdcee986e68559066b29e69957e0899f76d282e"
+    },
+    {
+      "file": "scripts/net/content/room_data_plan.gd",
+      "sha256": "f1ab14d58621c17d3e263f499a0105e2aaa14c7fb4e5e98a70f7b61e8f9e4ab3"
+    },
+    {
+      "file": "scripts/net/content/room_data_sync.gd",
+      "sha256": "e4fab1f71bd98337cf41369ef133dc43e3b8606e8d9590f390ffd9883779d44f"
+    },
+    {
+      "file": "scripts/net/identity/client_identity_inbox.gd",
+      "sha256": "cfcd2ac03f0585ff1c9013888b085c7c2dde52ded3dbf157a5c045ec59962f7a"
+    },
+    {
+      "file": "scripts/net/identity/host_identity_request_codec.gd",
+      "sha256": "3cf4c8ee29f22b310265ccd8bbf1d81bc1e612b7a9f767f02318a84513113116"
+    },
+    {
+      "file": "scripts/net/identity/identity_inheritance_input.gd",
+      "sha256": "fe2a71d109f73d558310198ed0b10dd4a0bbabb4127862d0e1ec38c87cc79b2d"
+    },
+    {
+      "file": "scripts/net/identity/identity_inheritance_panel.gd",
+      "sha256": "90402dd953b2b2b132d8c0a0db76b431ea16567ccff377d17083e17e3ae51566"
+    },
+    {
+      "file": "scripts/net/identity/lan_identity_challenge.gd",
+      "sha256": "6f9426cda0fc12bfd9085e83f243c0325c6f8d9bf516d78690d741262541bc05"
+    },
+    {
+      "file": "scripts/net/identity/legacy_identity_migration.gd",
+      "sha256": "fb347d1f34293a7b8a8d16f5fa72d6e9cdecbbbe21018cc4463ddd2ffe2245bd"
+    },
+    {
+      "file": "scripts/net/identity/member_identity_bindings.gd",
+      "sha256": "a355a4c2e0d200f579f20854e0cfe3b007860c16689f4c295f07e016bc45013b"
+    },
+    {
+      "file": "scripts/net/identity/player_identity.gd",
+      "sha256": "a4c578cde6512d1c663049a1a98968384892f00f1bc6dc092d7afe62e8bb5c08"
+    },
+    {
+      "file": "scripts/net/identity/player_name_rules.gd",
+      "sha256": "a56ad7487278301876a6c13c9a44062a4e7899bd609bc0d7584565c1afac8e2a"
+    },
+    {
+      "file": "scripts/net/identity/player_registry.gd",
+      "sha256": "000cc2c911e90e26de250c1f4af2073d78a501f37291f8502d3404db47a67270"
+    },
+    {
+      "file": "scripts/net/identity/restore_seat_panel.gd",
+      "sha256": "575b5d621440ce5dfe26a23e17fcc6d836c9ab33cf51d4ca40411c2fd629fe27"
+    },
+    {
+      "file": "scripts/net/identity/resume_ack_transaction.gd",
+      "sha256": "37148da5003a901dac6f69e6e47d89ecbfea44b1b86dfccf0ab4d398b8294954"
+    },
+    {
+      "file": "scripts/net/identity/room_password.gd",
+      "sha256": "482b0329fdf368c19a4a21bccd0e88a80b74dfc350b8353a0fa330db73a45303"
+    },
+    {
+      "file": "scripts/net/p2p/p2p_invite.gd",
+      "sha256": "ffe9b1e2e430b1e9752aebb988f22866dcc8492bbbecaf2c238d996bee1349cf"
+    },
+    {
+      "file": "scripts/net/p2p/p2p_signal_client.gd",
+      "sha256": "9954f79cf7007e9568171c2d43ada94507905080941838fd2241b792f23c6da6"
+    },
+    {
+      "file": "scripts/net/p2p/p2p_signal_server.gd",
+      "sha256": "6d9fdea6d76aa963ebbba78c24353294503da4b909d9feb4990e470b1309f2b2"
+    },
+    {
+      "file": "scripts/net/server/authority_restore_contract.gd",
+      "sha256": "8320b51800805edf64ab2f2e29ed92032c7a7d0fb1c61d03756766251f32f9c9"
+    },
+    {
+      "file": "scripts/net/server/empty_room_policy.gd",
+      "sha256": "d1c89b471b5566687f20703f0a320fde6b185e555a7c754fecb654a14aafe2a7"
+    },
+    {
+      "file": "scripts/net/server/heartbeat_publication_policy.gd",
+      "sha256": "b45b13235d422711cdece9d4af79e315a85d69fb7614fd4519747ff9871fc4ab"
+    },
+    {
+      "file": "scripts/net/server/lan_archive_restore.gd",
+      "sha256": "3a12dda1205432938c2c327bbe5cb7b3a1d3a9a979d7d239213d11ebd9680d01"
+    },
+    {
+      "file": "scripts/net/server/lan_supervisor_identity_bridge.gd",
+      "sha256": "ae02832f19785a15ad9288d6886b4ea95328eef636c95dd9d99e9d74f2cba6b6"
+    },
+    {
+      "file": "scripts/net/server/lan_worker_identity_bridge.gd",
+      "sha256": "ccc8267a08802577aa399ba2e419716b76955d7a53ac1895dd83a3335183f630"
+    },
+    {
+      "file": "scripts/net/server/recovery_path_safety.gd",
+      "sha256": "266238e43e871a5237ad819ef5a8cae9c929681f2165f64024ffc8be208ee27f"
+    },
+    {
+      "file": "scripts/net/server/recovery_save_diagnostic.gd",
+      "sha256": "96d66505708d7e2bd0980a2df3648a827bfe9eed9ee02bae2db72d919bc089a9"
+    },
+    {
+      "file": "scripts/net/server/server_admin_request_codec.gd",
+      "sha256": "970c86654563b2d3a9b87ded76229bbd6d1466ba3a5ada05a8f5e3d647b91a89"
+    },
+    {
+      "file": "scripts/net/server/server_bootstrap.gd",
+      "sha256": "6dbf5dfda785de5b11cab76f01e725317821eff51be37a4fbfba4bae5e978a3b"
+    },
+    {
+      "file": "scripts/net/server/server_cli.gd",
+      "sha256": "8ecc943bd496ef2c85e16e66c3495a6b37b63818d56e94e2e398c0a94ddfaf6a"
+    },
+    {
+      "file": "scripts/net/server/server_command_line.gd",
+      "sha256": "61de9933077af5a0b61eee85cdc6e4fef1543cc1b28cbf80e23cac2ae0b4b8b2"
+    },
+    {
+      "file": "scripts/net/server/server_console.gd",
+      "sha256": "9b6be0e10ade9db5aa8f7637b0f2f2787e11bb9abd9fef883f446072bffa3d51"
+    },
+    {
+      "file": "scripts/net/server/server_console_channel.gd",
+      "sha256": "afbfd5a071a2fcb062555f00fcd9ac08dbe476a04ad3fd6efc2c7142373af3c3"
+    },
+    {
+      "file": "scripts/net/server/server_console_shared_output.gd",
+      "sha256": "4e24e40a526e152b10501ec5552b95a073e56f7e58b8333f45e2ee85eb5ce4fc"
+    },
+    {
+      "file": "scripts/net/server/server_data_approval.gd",
+      "sha256": "5283d3f338ed01d12a760b07be12bf79a766bbc2abc0f10be803797136e48387"
+    },
+    {
+      "file": "scripts/net/server/server_deployment_validation.gd",
+      "sha256": "7396c12aebfec92c1e1ae56c507ad052ed4b9c1619f11c7b102af1831c4f7af3"
+    },
+    {
+      "file": "scripts/net/server/server_gateway.gd",
+      "sha256": "6c37eb25356bb1bbea22b7c0abf1c270c542745a2460f7d503bba740d6532cc1"
+    },
+    {
+      "file": "scripts/net/server/server_policy_config.gd",
+      "sha256": "0e448ee172884dcfeb78e23bf029eb4d2f4890497ee0e9b7a4bbdfc53fc641a4"
+    },
+    {
+      "file": "scripts/net/server/server_process_signals.gd",
+      "sha256": "354918be4b757882fe2f671e1a2bb02f1d32bad6b80cfac763c3dd6f192a373f"
+    },
+    {
+      "file": "scripts/net/server/server_room_control.gd",
+      "sha256": "296edf36916d77d767e67fceeb33808554e8e487dabb92a43ac0fa5703630997"
+    },
+    {
+      "file": "scripts/net/server/server_room_manager.gd",
+      "sha256": "ea4f181aacb86400ec4c46143298cf7edab3ceed952a1ba12ba78ef81f9123e4"
+    },
+    {
+      "file": "scripts/net/server/server_room_worker.gd",
+      "sha256": "a1d935675ce6d6a3f804ac9000104b15d95c2c279c8cf13c459acdd3920107eb"
+    },
+    {
+      "file": "scripts/net/server/server_shutdown.gd",
+      "sha256": "7526d0b8fd7d427a04a67085f462425f845e883a3210ee8017a0a30963b60227"
+    },
+    {
+      "file": "scripts/net/server/supervisor_identity_ipc.gd",
+      "sha256": "9bcb0441e2f60091a9a87b4ee1a29596890ab29560e73bd93e965027a3f17815"
+    },
+    {
+      "file": "scripts/net/server/supervisor_management_sequence.gd",
+      "sha256": "2bd73d705c60c69eef570acc5eb9949338c845d877d3b6addea7c869db5ae8d6"
+    },
+    {
+      "file": "scripts/net/server/temporary_cleanup_executor.gd",
+      "sha256": "2619e8131365435a27f2862a86588aa55b7defa4e592e9bf8e2617a4a3c4acea"
+    },
+    {
+      "file": "scripts/net/server/temporary_cleanup_ledger.gd",
+      "sha256": "62c42e4d427efa5a54d4942c02255f45902610c52227621ee9b2350c8b59b5ac"
+    },
+    {
+      "file": "scripts/net/server/temporary_cleanup_policy.gd",
+      "sha256": "1267c21231bc52b9592efde775828fcfcec8f599b9ee4f70e8f374803e10dc51"
+    },
+    {
+      "file": "scripts/net/server/temporary_cleanup_proof_collector.gd",
+      "sha256": "42bb452dd63b90816c70ea2ff3fa299a2d69221222bec564316d8d003f48e692"
+    },
+    {
+      "file": "scripts/net/server/worker_identity_ipc.gd",
+      "sha256": "714e0673a2e59e6e4b09f163b9d8b08b09d0bf57ab79d9963377e65ea3611d52"
+    },
+    {
+      "file": "scripts/net/session/authority_host_client.gd",
+      "sha256": "4a145ffa7f6960aa8b9e808fa3539686d4d23ab2cd366316a1684c1d67098d75"
+    },
+    {
+      "file": "scripts/net/session/client_match_inbox.gd",
+      "sha256": "cf9a54204cfc5f5b68ff17742deac4a60882b7b51d1a057a6e5d9d2c2aaf95c2"
+    },
+    {
+      "file": "scripts/net/session/host_content_inbox.gd",
+      "sha256": "ca724fa5e1a57ea2f5db6ae7982dac50a5524e6b41a5acb83cd3b0bd6af7882a"
+    },
+    {
+      "file": "scripts/net/session/host_guard_inbox.gd",
+      "sha256": "e2042626210bd12dbedd63ddf6369216a741791696a68465d89b7391ae480832"
+    },
+    {
+      "file": "scripts/net/session/host_match_request_inbox.gd",
+      "sha256": "285463a2699b9393cc1d27e5f50820d70d3dbeec47a71eca32cc279a758a42db"
+    },
+    {
+      "file": "scripts/net/session/host_room_inbox.gd",
+      "sha256": "fb4a14e16b28d8ab2d844176014aff528c476e4b9223fb512bda4f5dadacc799"
+    },
+    {
+      "file": "scripts/net/session/host_room_password_request.gd",
+      "sha256": "71106339b98abd39bbed6cce3d6dc1afba83c8c24698dc57e8b2a6a2ee38e615"
+    },
+    {
+      "file": "scripts/net/session/lobby_session.gd",
+      "sha256": "e07db399d36ac77d8f2458644b1fb75901882a5d39f89d7d6f8770ad16d5c5f3"
+    },
+    {
+      "file": "scripts/net/session/recovery_seat_bindings.gd",
+      "sha256": "8824ba2ee85180c96c3decb75dbb709d8da5dd3fc1c2214f9d9434af0ccec659"
+    },
+    {
+      "file": "scripts/net/session/recovery_seat_json.gd",
+      "sha256": "a9c081a18afc7edb7abf959ac9e504baeefdee168914d3a52ed82a0c89e23f5a"
+    },
+    {
+      "file": "scripts/net/session/room_state.gd",
+      "sha256": "4f7622622fd8762c3af58de162d93ca90b05bbecead908cfb9586a1b93cdc4cd"
+    },
+    {
+      "file": "scripts/net/session/server_data_status_inbox.gd",
+      "sha256": "c46b44bd9e19ccef1fe408491fb0ce0896941a2714a429509d41294e1785f9c3"
+    },
+    {
+      "file": "scripts/net/transport/catalog_message_transfer.gd",
+      "sha256": "ab9c642793d02f14ed9ecab3bfb0d2c67c30bce74a8e314d60894a0c4f9a6263"
+    },
+    {
+      "file": "scripts/net/transport/enet_transport.gd",
+      "sha256": "28977e756622651ad7b21976872611b4a9813339800681a911f3e3239342e748"
+    },
+    {
+      "file": "scripts/net/transport/packet_fragments.gd",
+      "sha256": "01a0996fe7e060400f6d42deff0891dd377f4ed9b5ccaf7e73c4a2a82805d2f3"
+    },
+    {
+      "file": "scripts/net/transport/recovery_net_probe.gd",
+      "sha256": "2e111123c7a505f12c592a83c8e8f55d0e1d4b33893725dcbf9a2ce76473cc0f"
+    },
+    {
+      "file": "scripts/net/transport/room_manifest_transfer.gd",
+      "sha256": "d251e1607e1e1107abc566532eaa79dfab11d1a5be76c456fbddd66d9001dce6"
+    },
+    {
+      "file": "scripts/net/transport/webrtc_link.gd",
+      "sha256": "0dda042895351e334eb8e4b14543a3eb08cbd1e22790885e64d4f7eef59682ad"
+    },
+    {
+      "file": "scripts/net/ui/group_selection.gd",
+      "sha256": "4212b6ca936f6223de50539ff4d900a420613df857c77a0e926b2088108072a5"
+    },
+    {
+      "file": "scripts/net/ui/legacy/network_hand_strip.gd",
+      "sha256": "3bc3d25bc2f9f352e0c4bf32df5e37ef41de44d4ea25fab71bd682ef30de4584"
+    },
+    {
+      "file": "scripts/net/ui/lobby_screen.gd",
+      "sha256": "dc9c99cf144c6dd9f8c5adf2c75f6f0fa5c975b91eaf31ee7df1e7be26ef7830"
+    },
+    {
+      "file": "scripts/net/ui/network_choice_panel.gd",
+      "sha256": "a48412ca6c0738bbf4bf4222a42dfaa3e557137124cca3d1d020a77720c0aa2a"
+    },
+    {
+      "file": "scripts/net/ui/notification_inbox.gd",
+      "sha256": "b764d5d6300ac93fcd0130e448c40d80e9acbd5228c4d62781b6650ea9d22fe0"
+    },
+    {
+      "file": "scripts/net/ui/room_data_panel.gd",
+      "sha256": "a77ca33b165a9f9c0f60754c133f5f8140fe70b7da0410392ccbff05b33cd3af"
+    },
+    {
+      "file": "scripts/net/ui/v2_view_presenter.gd",
+      "sha256": "81285a188f225449e7bdac8f3f955a8a3c196d83c79152e0888afd98d94d55f6"
+    },
+    {
+      "file": "scripts/net/validation/room_data_preparation.gd",
+      "sha256": "12918b213f39bd88ae4f8cfbb9e949f75359e91e7ac999d7177b95b5c2b7b16a"
+    },
+    {
+      "file": "scripts/net/validation/room_data_validation_worker.gd",
+      "sha256": "7d5f26444bd5adeeef2eefa3e0071c7a765a19d0e4d52dec8a5b7f21aa12b16e"
+    },
+    {
+      "file": "scripts/net/validation/room_data_validator.gd",
+      "sha256": "5a6a7fd6f8e2a9a8d91aae488ad5988bd9130ef3a8d355993427bd7eaa67efd1"
+    },
+    {
+      "file": "scripts/net/validation/room_validation_task.gd",
+      "sha256": "a96ac36c35bda7310dc85512d0888f00c778dddd639f93567f05671d2c80818b"
+    },
+    {
+      "file": "scripts/net/validation/rule_loop_analysis.gd",
+      "sha256": "675341c0a236bf8e62fa1cd86d4aa80952e4912d285d045bdfa1caa312fe1a51"
+    },
+    {
+      "file": "scripts/net/validation/rule_random_simulation.gd",
+      "sha256": "5375d41a0e89e1992a30211c01b91078f3e61a1f747394f3d2b4ac5cc485a228"
+    },
+    {
+      "file": "scripts/selection/class_pool_selection.gd",
+      "sha256": "b759a80dac26d8ecaa9b32c6f0c2781e7c4e71cab1654ce26d7dbcbf5628ad67"
+    },
+    {
+      "file": "scripts/selection/roster_catalog.gd",
+      "sha256": "7d680452d52c46a0c07d1c1f66ea433418cde151326882fc72351afd3b88bef2"
+    },
+    {
+      "file": "scripts/selection/selection_mode.gd",
+      "sha256": "e593a6c01874f72b6c903999950d565ce9e16f249e3cc20db639fc5de9e28a1c"
+    },
+    {
+      "file": "scripts/selection/selection_screen.gd",
+      "sha256": "0dfff308d3649a64b8c257fbf2f25d3e5b95ac152792aac74098bde3080e2112"
+    },
+    {
+      "file": "scripts/system/ability_restrictions.gd",
+      "sha256": "4b82c2219367e33fe1659a3b462505397c7535c670f6f0bc30a64dafaea1a7aa"
+    },
+    {
+      "file": "scripts/system/action_rules.gd",
+      "sha256": "417a53d4b2d6b18306c728dacb553c02cba08e43c507b294f4cdee54cfc67186"
+    },
+    {
+      "file": "scripts/system/ai/temp/dummy_bot.gd",
+      "sha256": "94aec64c19a6c7f73e76d63ac1a3a5273279af11e109bb91334967a4600f7e72"
+    },
+    {
+      "file": "scripts/system/area_action_rules.gd",
+      "sha256": "409d569acaf4c4ba646ef44bb516878c3f70f4e74b5f7797e7d02a2235adce8a"
+    },
+    {
+      "file": "scripts/system/attributes.gd",
+      "sha256": "e41ccf8df257b389061e972000db595ce1562f38142d9ac8f976c624b9a26a23"
+    },
+    {
+      "file": "scripts/system/base_attack.gd",
+      "sha256": "90590134c5557e20131f4d3faebaeb37d1bea827d58054e3610a9c9d2f2a3f6a"
+    },
+    {
+      "file": "scripts/system/base_buff.gd",
+      "sha256": "a7f953ccf98cf5a6effeb0c9e493df9dc301fab7631df3acd11113a9d6534314"
+    },
+    {
+      "file": "scripts/system/base_card.gd",
+      "sha256": "2d21cf3ff9e744419dfc8a8cd60f2a470311267a4485cbe26e64663a3fac1c42"
+    },
+    {
+      "file": "scripts/system/base_effect.gd",
+      "sha256": "33b023a4f6b30acb5949773580128995e1059b350344a548c2718b411da276c3"
+    },
+    {
+      "file": "scripts/system/base_event.gd",
+      "sha256": "80b2803a09ea7dc84c83b9e2cb1c1e8272cde0719064ff2ca9426741cb2ae1b8"
+    },
+    {
+      "file": "scripts/system/base_func.gd",
+      "sha256": "24d0408a4dff350eeb64d6fcbb01c561661c63fcb4eed0c44f9d709adb7fe2ff"
+    },
+    {
+      "file": "scripts/system/base_handcard.gd",
+      "sha256": "a86945ce684c254d1bc33d5a0ce9909c8bf61fc2a6978b2f2eb59c704492d4ff"
+    },
+    {
+      "file": "scripts/system/base_location.gd",
+      "sha256": "174c7f4a2e22667cead34a53ec9e84815c8b6e1b3b94677398865b366a42cacb"
+    },
+    {
+      "file": "scripts/system/base_map_area.gd",
+      "sha256": "1b38cba1de0b07999fed1ec0baed4955b8634bd49a7815d70c096ba7c5a9c425"
+    },
+    {
+      "file": "scripts/system/base_master.gd",
+      "sha256": "c0c1f811c411cd63ae70f5f42ed1ef169a9f28558ea6f2e5cad071a283998070"
+    },
+    {
+      "file": "scripts/system/base_number.gd",
+      "sha256": "e43cb2c999f54735309b88cec7281609fd43e39cdce1e49e2dc5d37528e85f76"
+    },
+    {
+      "file": "scripts/system/base_object.gd",
+      "sha256": "4dd35f730796a84123677125ce72be0fd14325ce7afff0c2adc0b48f4f871d43"
+    },
+    {
+      "file": "scripts/system/base_servant.gd",
+      "sha256": "a6ffff736a0de4501b90f59a29dc997cacccd4638cc6b7c3a0ee752e17d1bd14"
+    },
+    {
+      "file": "scripts/system/base_situation.gd",
+      "sha256": "62debe3423657f280619ced77a85120454c1248cef56b2ed616771b11759c6a5"
+    },
+    {
+      "file": "scripts/system/base_skill.gd",
+      "sha256": "8590cfc80cf838d5b866b4d6f9bc8da083d9eb11e2ecf6fea7e6507d584bfa81"
+    },
+    {
+      "file": "scripts/system/buffs/defeat_buff.gd",
+      "sha256": "ed1a3e085210f30f6c899f6e5c1e70d9ebb65fb57a8addf0c1659fa438d26058"
+    },
+    {
+      "file": "scripts/system/card_zones.gd",
+      "sha256": "9cb0451c4bc722920caa757419c3b3937d537bdbf7ed2ddd59741cc463e0ba17"
+    },
+    {
+      "file": "scripts/system/clone_context.gd",
+      "sha256": "9c8b7bf220fc21dcda7f1a044d34803340f50cc5eb2cfe59db6a2582d31a4f6e"
+    },
+    {
+      "file": "scripts/system/deploy_rules.gd",
+      "sha256": "e74dccdc4b46d2d77a6ebe34abfc5cc0b837dd97c3f685e99fb2b5931d4bc83d"
+    },
+    {
+      "file": "scripts/system/effects/CannotPlayCardsEffect.gd",
+      "sha256": "9e8fec571ea7e0d3621d22bd89f2031f5a472c70cd29d2031d6911247af5f42b"
+    },
+    {
+      "file": "scripts/system/effects/CountsPowerWhileConcealedEffect.gd",
+      "sha256": "0a67fee68e5eda49781743d5a1a82cf26cfcca87e70453823c2d2f05c2e65452"
+    },
+    {
+      "file": "scripts/system/effects/ExcludedFromBattleWinEffect.gd",
+      "sha256": "d7b38d49f9e2f2199e76eba93576efe1afe4caf1eb435c67269bb001abe0fd62"
+    },
+    {
+      "file": "scripts/system/effects/ForbidNoblePhantasmEffect.gd",
+      "sha256": "ae3be42d459f1d7e66e9e13b2ca56c2a1ff1f00e5643271dfda02bcdbf533062"
+    },
+    {
+      "file": "scripts/system/effects/ForbidSpecialAttackEffect.gd",
+      "sha256": "a95faad81accb44f08572928c229cbae4032ae24e7f08ed7038204d2135a8bf0"
+    },
+    {
+      "file": "scripts/system/effects/NeverCountsPowerEffect.gd",
+      "sha256": "f015c8b7567a961ccc085e27668c2cf35585112bfc43f5c0e403eacaa9d1c426"
+    },
+    {
+      "file": "scripts/system/effects/NoLocationBenefitEffect.gd",
+      "sha256": "578120573fba3c16a6eb74a895a90fd5b7efa001f010b57ef4b65121bcdbe25b"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "sha256": "8f39c2dfa98a2989a79040fba436d69bc93c8e6c93a86e7f3664e0f44fbd775a"
+    },
+    {
+      "file": "scripts/system/global/battle_resolver.gd",
+      "sha256": "6751276a7c00ba0ab9070076e539704d1a28a256b468778582f1d91ecf911e57"
+    },
+    {
+      "file": "scripts/system/global/board_power_query.gd",
+      "sha256": "4149f94f1d3734a7acb92cedcbe5b4f506ba7b7df3d46a5e3e1ae4c5163bc385"
+    },
+    {
+      "file": "scripts/system/global/climax_resolver.gd",
+      "sha256": "0aab398b99a56f6014203ef99199b802671dbf22aa628e4944ee86718f6b8c37"
+    },
+    {
+      "file": "scripts/system/global/content_environment.gd",
+      "sha256": "fdc139c595c143b68a3168f93eb2ee4d992d899230c9546025a962eb8580c363"
+    },
+    {
+      "file": "scripts/system/global/cursor_replace.gd",
+      "sha256": "8dbba5b5810715efe3fe5fb14ef5165ca73b335c11812ab504ad7ffb474f6476"
+    },
+    {
+      "file": "scripts/system/global/effect_manager.gd",
+      "sha256": "1755ff077e675105844d3d6ec33645bc3f701a48aa1cdf8dc2b11c8a6b5340c1"
+    },
+    {
+      "file": "scripts/system/global/event_journal.gd",
+      "sha256": "b80e6ee792c010be391f4a647f5d7fad7e00009c3954097a6718ae7dac4f03d3"
+    },
+    {
+      "file": "scripts/system/global/event_resolver.gd",
+      "sha256": "551774cfd968682d3cb916754153867e43a93d0aacaf098f3af447747ec5215c"
+    },
+    {
+      "file": "scripts/system/global/execution_trace.gd",
+      "sha256": "ac0601c4558ece92b2acec449c9289c04878665b8d42ad09431a28b4e84f48a3"
+    },
+    {
+      "file": "scripts/system/global/fact_delivery.gd",
+      "sha256": "c44a260ace12e9d4f230b635318cd4b9f167140db4af76ea724ae958e5b8f419"
+    },
+    {
+      "file": "scripts/system/global/game_data.gd",
+      "sha256": "6d7c4f67a05cbc8da61f831cc32253e23565f510e7b7b7ca838e7ed460aafbe2"
+    },
+    {
+      "file": "scripts/system/global/game_data_manager.gd",
+      "sha256": "d8cb5112300a319c64eee3da6eb008bf2cc98631a39f4916cfd972327833b1c1"
+    },
+    {
+      "file": "scripts/system/global/game_log.gd",
+      "sha256": "c7aa358ba183dbf7378e22f2d3cad502f53d96473c6ff8436c0fca58e3839386"
+    },
+    {
+      "file": "scripts/system/global/game_progress.gd",
+      "sha256": "0db25f9e17b9da91c248201d6be5c67eb7081b58295d49142b3824286cac4978"
+    },
+    {
+      "file": "scripts/system/global/load_attack.gd",
+      "sha256": "6e4e78096edeb02881676c5550d27835680633c3ab207e286ab46ddda2e7a664"
+    },
+    {
+      "file": "scripts/system/global/load_command_spell.gd",
+      "sha256": "17319da4e42332c28594270f8c4ffec487614ee83fab103b98deb898d3a9e58c"
+    },
+    {
+      "file": "scripts/system/global/load_event.gd",
+      "sha256": "9616505175735d95fe41e415082fc290f4b5c8b259580876afa328e3f1f4d98a"
+    },
+    {
+      "file": "scripts/system/global/load_game.gd",
+      "sha256": "2a78f90ac18bd76ea2ea3181349d069874bda5df3ce8280134e17f9ef17c92e5"
+    },
+    {
+      "file": "scripts/system/global/load_helper.gd",
+      "sha256": "1a87e4a6f580b9e8b3f55846637f491c4599244c0427874875cc24d6dbe9741b"
+    },
+    {
+      "file": "scripts/system/global/load_situation.gd",
+      "sha256": "2a41ae85468715a0be217762036ec4f4f817a040dfc0d27f0a8d2334eb6e4602"
+    },
+    {
+      "file": "scripts/system/global/master_manager.gd",
+      "sha256": "3520e6a380d1da087e391fc26c972ed64e1c3bef21d644b7e31d6e187c6bd174"
+    },
+    {
+      "file": "scripts/system/global/servant_manager.gd",
+      "sha256": "226712df89daadaa8786ff3fdb131f29cd96caa925cf8eedb6c5cb0d330de15a"
+    },
+    {
+      "file": "scripts/system/global/situation_resolver.gd",
+      "sha256": "f27aa498eb960117dca26616f804f83bb2c7cecf25555fde289f197b4bad0396"
+    },
+    {
+      "file": "scripts/system/global/time_point_checker.gd",
+      "sha256": "289cba0dc5dae96e5fdfccfa33d8ed2d5d835038008b09a4ae253253267a48e1"
+    },
+    {
+      "file": "scripts/system/global/victory_resolver.gd",
+      "sha256": "b57f218a88ce0e2914f4adeedd40a4758860248118df0e989ef2451e07d22c94"
+    },
+    {
+      "file": "scripts/system/map_data.gd",
+      "sha256": "376628dd65b5eab836db59578d4998e6a59892ee3b17d9c4b967d83af4ba0f63"
+    },
+    {
+      "file": "scripts/system/operations/ActivateEffect.gd",
+      "sha256": "ed97cf09f579db0389fa5a131dcf4e358ee69e17ad01035e1745cfa3a4307a00"
+    },
+    {
+      "file": "scripts/system/operations/AddAttack.gd",
+      "sha256": "4936f89c6d9dd27f108e4c2b95e5f61c8b64a5e9ff23eb2905cc7074601fee02"
+    },
+    {
+      "file": "scripts/system/operations/AddEventFromDeck.gd",
+      "sha256": "845e9ad7f18ae25a4601f86ba3fb283453b876fe713f1e1b9832be76c101d3ae"
+    },
+    {
+      "file": "scripts/system/operations/AddMapArea.gd",
+      "sha256": "3be77562e82e6971e0c0456a5649fc2f9022fd8270ec63c0fa86cf069648f360"
+    },
+    {
+      "file": "scripts/system/operations/AddMapAreaBuff.gd",
+      "sha256": "8290101d96634ddacf2309320e59bec5dfaa2bee999b8c97c5f89bf3b9dec7c8"
+    },
+    {
+      "file": "scripts/system/operations/AddMapAreaEvents.gd",
+      "sha256": "a00bf19d5f6b629e58fb90ca8cd1f3deffb178acc670d162eb65a0988cf483c6"
+    },
+    {
+      "file": "scripts/system/operations/AddPlayer.gd",
+      "sha256": "f9047b6d9cd118830eb123e40a69d91eb1dcd216cbde2c85f8a66fb1722d748b"
+    },
+    {
+      "file": "scripts/system/operations/AddSituations.gd",
+      "sha256": "59c1bd8397747302b6d140bf3b3234ee9a5b6c44d9b687f4ee83add9e273ae49"
+    },
+    {
+      "file": "scripts/system/operations/AddSkill.gd",
+      "sha256": "0ed7aafd4d97d519e188b59c0c24b4ddb090bb0264cf8cf80680e604650c150e"
+    },
+    {
+      "file": "scripts/system/operations/AddSkillToSkillZone.gd",
+      "sha256": "766afc8b20f6c989dd9a09c264a7691f2c8c728f360b80009ee2985cbd0cf7e8"
+    },
+    {
+      "file": "scripts/system/operations/AddToArray.gd",
+      "sha256": "dba487dd28feaac2d2aab224cfe004bad967e767f9bef45667674acfa46307a1"
+    },
+    {
+      "file": "scripts/system/operations/AndFunc.gd",
+      "sha256": "93b38e8d7781e82cd3f479b30f0804d4be48cabae875eca15ba317131ac6b09b"
+    },
+    {
+      "file": "scripts/system/operations/ApplyCardKeywords.gd",
+      "sha256": "a153e1b48b93f48f7eca974b1f493997857b95cc35f8eb8f942b720023b2f7de"
+    },
+    {
+      "file": "scripts/system/operations/ArrayDifference.gd",
+      "sha256": "b51248e960723202689f6574d86cd78b3a20305d060760570294001253d68bbe"
+    },
+    {
+      "file": "scripts/system/operations/ArrayLength.gd",
+      "sha256": "62b5b3675da6a4b1f55f9df9e9d3ba94b2480179009e0f0d1d5f69d8341efb07"
+    },
+    {
+      "file": "scripts/system/operations/AskPlayerNumber.gd",
+      "sha256": "db81fb5c76fa56ff6d9468e2499ef36cf5a6ab0e6c3c082c204430b6a4d1d1b4"
+    },
+    {
+      "file": "scripts/system/operations/AskPlayerOption.gd",
+      "sha256": "9a8dbe8282ebc8f173a02ec860d6470b6a1d529599d430da44833966b857e1e7"
+    },
+    {
+      "file": "scripts/system/operations/AskPlayersSecretOption.gd",
+      "sha256": "bef437eae7987bb8225ec74c0ade83429867630bd836f8566ced4d75db8adb0a"
+    },
+    {
+      "file": "scripts/system/operations/AwakenSkill.gd",
+      "sha256": "9261326ddf94eff56e166d0814c4473b16e5b09d5e4e5903f13971c0032189cb"
+    },
+    {
+      "file": "scripts/system/operations/BoardHasEffect.gd",
+      "sha256": "d54d4195a50e9f4bfe4c115759fe44eaa7e83223b8c93a437c2d8a134611cf49"
+    },
+    {
+      "file": "scripts/system/operations/BuildCard.gd",
+      "sha256": "39bccf99e5005e2cabf29600b75b77719a01435680707ed6130bab60d3c0cb91"
+    },
+    {
+      "file": "scripts/system/operations/BuildEffect.gd",
+      "sha256": "28a530cabf163caac808d8a847dba6b893b169ae32db9959f553841b07c947c3"
+    },
+    {
+      "file": "scripts/system/operations/CalculateNumber.gd",
+      "sha256": "ed9ba9ef93fa59cc6d86c95fabe4ab7461015025eba747a293e6b510eafeab8d"
+    },
+    {
+      "file": "scripts/system/operations/CanGainMagic.gd",
+      "sha256": "a2b0d57c38bf3e58d992cea99512c63c6b241c329ce5791a859a0a564de19ff8"
+    },
+    {
+      "file": "scripts/system/operations/CancelPendingAction.gd",
+      "sha256": "8a3079c5158e88f1449b2af92772c27a5b7fd9e56d30a979429a1f5738f35206"
+    },
+    {
+      "file": "scripts/system/operations/CardCountsPower.gd",
+      "sha256": "a8feefbb24f59ba556b3b138bc1c572a44f3cea580720e6f4fe4fab8fc82b286"
+    },
+    {
+      "file": "scripts/system/operations/CardHasEffect.gd",
+      "sha256": "0ab4604f7d897678cabed6d08a2ded32c3d8a7bac2c77e0503cd9c0fbbd8864f"
+    },
+    {
+      "file": "scripts/system/operations/ChangePlOrder.gd",
+      "sha256": "f779d276aa2301890e15f878e7efd64ac025497bdcec1b3b744e28f055c91635"
+    },
+    {
+      "file": "scripts/system/operations/CloneObject.gd",
+      "sha256": "d5220dd2a2ab8cedb18391852ad83fa9686db995694422f7b659f17314b6bc10"
+    },
+    {
+      "file": "scripts/system/operations/CloseCard.gd",
+      "sha256": "cddc52bda5d103d31043c7a85c1fcb0a85363b1dc47e47a33ad910fe564b0a65"
+    },
+    {
+      "file": "scripts/system/operations/CloseTimePoint.gd",
+      "sha256": "92fe073a5d7aff8ebc8f506bcaa2415509b007faaa1e912f981c8c1e84ed604e"
+    },
+    {
+      "file": "scripts/system/operations/CompareNumber.gd",
+      "sha256": "bd6bd8526b5ce9d12851be962c91dfd193dfda79e40c1e9014f9609ef645df02"
+    },
+    {
+      "file": "scripts/system/operations/Counter.gd",
+      "sha256": "5f563708966ba3272d3fed015b566ef04f53c99b752f21b475bdf8b1414412b2"
+    },
+    {
+      "file": "scripts/system/operations/CreateBaseNumber.gd",
+      "sha256": "a54503c0e648cabed1218bdb09b20949279972c9acac6fb444ac3ac04ef4147e"
+    },
+    {
+      "file": "scripts/system/operations/CreateBuff.gd",
+      "sha256": "9ba67a6f8c8a49864e28fb6fdd3b77da0659521dddf8ce3632ce0e5bbd764850"
+    },
+    {
+      "file": "scripts/system/operations/CreateCard.gd",
+      "sha256": "5eb741ec68389cb990d2d2be18e611ffe3cde92a5173bc0ba64bf3ce2da8d106"
+    },
+    {
+      "file": "scripts/system/operations/CreateFunc.gd",
+      "sha256": "80ab27080849cf14f052403ce42317edf0ff91fb3ada424045b3cf4027908fe4"
+    },
+    {
+      "file": "scripts/system/operations/DealPlayerCards.gd",
+      "sha256": "ab6099f36300d8126e4513db5c73f1f56da0e3a4b3cec452cf41dd1d6dd0e577"
+    },
+    {
+      "file": "scripts/system/operations/Defeat.gd",
+      "sha256": "b3d9222acd1c0355dfef27bc3555595ddda66cdc570a1e9b38a3382a615b65d5"
+    },
+    {
+      "file": "scripts/system/operations/Deploy.gd",
+      "sha256": "784f81136612cf437872552070a50556c525cbcd3e0444f20c5965e878dcfdf9"
+    },
+    {
+      "file": "scripts/system/operations/DiscardPlayedCards.gd",
+      "sha256": "8d70c76ca53419a35b97000e7f137bf45da192e50298f1ceb13f773fcc35e5b3"
+    },
+    {
+      "file": "scripts/system/operations/DoNothing.gd",
+      "sha256": "7459565a2a7c9941e3d832f0d1ead48004a30e1ee5f79e6c6a3a4cba2828b6d8"
+    },
+    {
+      "file": "scripts/system/operations/DrawCardByCard.gd",
+      "sha256": "c7d6e6b3c08861b68136629fcb0e8e66f27cb6b96fe68fa019567c28702e04b4"
+    },
+    {
+      "file": "scripts/system/operations/DrawCardByIndex.gd",
+      "sha256": "cf56db8ca979fef9efdd1cd190d06580461188791607576858cc6440a5c52dc4"
+    },
+    {
+      "file": "scripts/system/operations/DrawCardFromPlDeckToHand.gd",
+      "sha256": "8d6294352dc11508a9731fcca2babd3a176810a0ea5604d6d04dbf7c2daddef6"
+    },
+    {
+      "file": "scripts/system/operations/EditCardAttributes.gd",
+      "sha256": "843e334faad4b92aacd2e45917c803d8b7fd3846b94cf33095619307f8e9bb68"
+    },
+    {
+      "file": "scripts/system/operations/EditCardCost.gd",
+      "sha256": "aee4deaf0e6557408118451f106f8919544151476ae9c5b5062ab105130facf0"
+    },
+    {
+      "file": "scripts/system/operations/EditCardPower.gd",
+      "sha256": "2f70713757123b9c4d0921576e85a967642e21e0defbb2193c4f36932aba5ef6"
+    },
+    {
+      "file": "scripts/system/operations/EditDataNumber.gd",
+      "sha256": "5b1485ce1eb4042b1d8d8e5662ba8b25061b9431ca2c40fe5added1a6523bf7b"
+    },
+    {
+      "file": "scripts/system/operations/EditLives.gd",
+      "sha256": "d0f233fcb20e9c49a2c07753a056e8af83ba4c7668df50ec74550e6bf8b08800"
+    },
+    {
+      "file": "scripts/system/operations/EditLocationBenefit.gd",
+      "sha256": "86b3dbdc583a4d59046829d3ecbeee37fbd784987e553cbc66f2b20f1246e9c6"
+    },
+    {
+      "file": "scripts/system/operations/EditLocationMagic.gd",
+      "sha256": "35df43fa4b962f3cf732ec216f52585e46995d7cc0ffab9cd8a696bb440673d6"
+    },
+    {
+      "file": "scripts/system/operations/EditMagic.gd",
+      "sha256": "7403e2a0f2a3949147a7f726345eacd319930611f3c6dfe611d6e24940df4a8b"
+    },
+    {
+      "file": "scripts/system/operations/EditMapAreaMoveCost.gd",
+      "sha256": "17ea6420fa72d7673ddee23a7fac1a47f3babf7385d67c6a8c939122412b9d1b"
+    },
+    {
+      "file": "scripts/system/operations/EditMapAreaScore.gd",
+      "sha256": "24b0d1ffd747538917510025fe714356c113d1b29231e1c98f0a6e4d39db4868"
+    },
+    {
+      "file": "scripts/system/operations/EditNumAndReturn.gd",
+      "sha256": "4b8be75d7e0519747b6dd4aee3ed7325a5741acfc5004060b87165097dc0e04c"
+    },
+    {
+      "file": "scripts/system/operations/EditPendingAction.gd",
+      "sha256": "53b9e86778dad8f6b3116b02dd9618c2327eedb22a321a6aa08895e47322fc13"
+    },
+    {
+      "file": "scripts/system/operations/EditPower.gd",
+      "sha256": "9537e38bff68937922e346158463f225e32008557eb264aaaefc74e60854b563"
+    },
+    {
+      "file": "scripts/system/operations/EditScore.gd",
+      "sha256": "5752b76d42ce82f842f752761e2b7193ded3449d7c0a88925bf390a6be38e356"
+    },
+    {
+      "file": "scripts/system/operations/EmitTimePoint.gd",
+      "sha256": "995e5fd234088d6af0ab50c12071a0faabae086cdfbcd85173c4371b071a4dae"
+    },
+    {
+      "file": "scripts/system/operations/EndGame.gd",
+      "sha256": "d7f5475028ebd843205e0d6048837b1138212d0bc10dca7dd5e9eca5e66d0b15"
+    },
+    {
+      "file": "scripts/system/operations/FilterByProperty.gd",
+      "sha256": "b253f94fde24311b76249f14b9cd71c7222153d69845e9596ce39311c0d8fb36"
+    },
+    {
+      "file": "scripts/system/operations/FindPlayerArrayContaining.gd",
+      "sha256": "b7f30c5a5f34297534063ab7bfa61a3c89e336be976ccfb2ddcf6200f0afe127"
+    },
+    {
+      "file": "scripts/system/operations/FlipCardFace.gd",
+      "sha256": "ec683ec5bc7f0018140229290b9bb8811c88c840c8e647f4c325ccd879477a56"
+    },
+    {
+      "file": "scripts/system/operations/ForFunc.gd",
+      "sha256": "b7af8e178258fab6adea8270652102e21b9c31d413a0ea681b57587bb1761b2a"
+    },
+    {
+      "file": "scripts/system/operations/ForeachFunc.gd",
+      "sha256": "bc3462c05015c0eddb45aa5064b85bfe43ec5b81e2f9f73c3188f073d273d263"
+    },
+    {
+      "file": "scripts/system/operations/GetActivatingEff.gd",
+      "sha256": "e95b01c433b8d1afb222d8e9c4efc7dc01a2475341273b9444c4c099b25b35c4"
+    },
+    {
+      "file": "scripts/system/operations/GetActivePlayersId.gd",
+      "sha256": "ff056cadaa663c39b3464055fe33b5c4bb25fa3bb99a9df9cc23404ed7bfb86c"
+    },
+    {
+      "file": "scripts/system/operations/GetAllPlayersId.gd",
+      "sha256": "f572c78c296a5c26223a336efecec86412dfc20b995383508d78afec76d5f44e"
+    },
+    {
+      "file": "scripts/system/operations/GetAreaRoundParticipants.gd",
+      "sha256": "02ea8722374d02e53ca941a1a278a95eaee15ea44711b13fe25c2bc664b596d4"
+    },
+    {
+      "file": "scripts/system/operations/GetAreaRoundWinners.gd",
+      "sha256": "2db8f260e0d63f0ffc84bb4b39567a1d5d38be7b4694b5e33d83b3eb8a3e14f4"
+    },
+    {
+      "file": "scripts/system/operations/GetAttackPrintedCost.gd",
+      "sha256": "3973b1164335401d4eaec9f9ccb8cd8ea2e99ad9c2e0a0fae17515baada751c3"
+    },
+    {
+      "file": "scripts/system/operations/GetAttackPrintedPower.gd",
+      "sha256": "95c2ac0abab067fc4412f80a3e4c14f4cd2afa6308e971feadc06d363d5fd9b0"
+    },
+    {
+      "file": "scripts/system/operations/GetBuffByNameFrArr.gd",
+      "sha256": "cca784fc83483fa0fe202a6853aa14748ca79521851dc33f5f2da963a7b81d30"
+    },
+    {
+      "file": "scripts/system/operations/GetByTag.gd",
+      "sha256": "97dcec75346eba8b047b4903db8a1f6b4737f6a23779c19dbb968eee6dd90374"
+    },
+    {
+      "file": "scripts/system/operations/GetCardAttributes.gd",
+      "sha256": "4831a956fd4dfba99e5b2f27d43a64f4a4df50c961a989dda514cccb50a86755"
+    },
+    {
+      "file": "scripts/system/operations/GetCardByIndexFrArr.gd",
+      "sha256": "1a5a0c9ca548f9f3f1189707e1a97a68cd56696fc5895eecd184fd2829924ed3"
+    },
+    {
+      "file": "scripts/system/operations/GetCardsByAttributesFrArr.gd",
+      "sha256": "73a4500848de96b717589e8fa68696e8a79ed87cb03dfc187b1ada921166be7b"
+    },
+    {
+      "file": "scripts/system/operations/GetCardsByNameFrArr.gd",
+      "sha256": "9fb8c46de762b331849fab02b92efe6ce66eb2bcee0ac62c6da3bd717dc8730c"
+    },
+    {
+      "file": "scripts/system/operations/GetCardsByTagFrArr.gd",
+      "sha256": "ab4125e7d1ac4fd626130ce86c7f982339784924acd12bdc94430e03a5899fc8"
+    },
+    {
+      "file": "scripts/system/operations/GetCurrentRound.gd",
+      "sha256": "ecd6397d43b82737b5ca5eb83aa5c75bfd0378c2fa673df0660b65382cc34e4c"
+    },
+    {
+      "file": "scripts/system/operations/GetDataNumber.gd",
+      "sha256": "dfd42318747184d33272583c08a115833fdd94f92537d40d1606563f2deb9d89"
+    },
+    {
+      "file": "scripts/system/operations/GetDictionaryValue.gd",
+      "sha256": "0e32bfaa20ac3e6d53755e94b96a9c508ebc318fe0403615b2337205a636a5b6"
+    },
+    {
+      "file": "scripts/system/operations/GetEffSourceCard.gd",
+      "sha256": "b57d5230ec1a3dd508daa26c2be20f7da27cf680a1698f33e038028138d77a8f"
+    },
+    {
+      "file": "scripts/system/operations/GetEffectNumber.gd",
+      "sha256": "917ad16f4f09bfd064f42f0f55ca3ddc897b3d6f7b3df0f7ad9d923a94a05fb4"
+    },
+    {
+      "file": "scripts/system/operations/GetEffectUsingNums.gd",
+      "sha256": "5d40a27577b21a941c91ee83c7afe310d27c1b8423efd0d9545ef1e742d8feea"
+    },
+    {
+      "file": "scripts/system/operations/GetEffectiveLocationBenefit.gd",
+      "sha256": "a23fede2356cfe638fb59ea295a034bb26175eb55cdd1a05943e06e01919cf0d"
+    },
+    {
+      "file": "scripts/system/operations/GetEventPrintedScore.gd",
+      "sha256": "c09207087fe4712cea8b20dfb8141acee1f13a1e89db58b69c636421f45e2460"
+    },
+    {
+      "file": "scripts/system/operations/GetEvents.gd",
+      "sha256": "b3cb622d82827f3db3a0299bbf65ea79c862f46bd2cf01e0296ae9bac5f2761e"
+    },
+    {
+      "file": "scripts/system/operations/GetExtremeByProperty.gd",
+      "sha256": "6fa84d6c147f513cfe9d2f06afeae885308ff906c097a9068444ac239aa94474"
+    },
+    {
+      "file": "scripts/system/operations/GetGameDataValue.gd",
+      "sha256": "94885ac2db68c02a74f332f5e0e04880956889275e5e85164c5dac2ee1aba04d"
+    },
+    {
+      "file": "scripts/system/operations/GetLocation.gd",
+      "sha256": "6ef339a333644fc8057a1d87d9380b92adbd8a5db770f62bb844014a664e49ec"
+    },
+    {
+      "file": "scripts/system/operations/GetLocationBenefit.gd",
+      "sha256": "2a2c823437689f38ed107839a18c57bc838b3dea121aaef98cbd3392efedb8e0"
+    },
+    {
+      "file": "scripts/system/operations/GetLocationMagic.gd",
+      "sha256": "608e0991a4cae89b35c400ba692650f3ec2a525d8d9e2352934464970097acb3"
+    },
+    {
+      "file": "scripts/system/operations/GetLocationMapArea.gd",
+      "sha256": "206631407aee5beabda51ee80bf4f223d7bac332e9d3801c368ac47cc0bd168b"
+    },
+    {
+      "file": "scripts/system/operations/GetMapAreaBuffs.gd",
+      "sha256": "caec8f73a876e43ff9a769d001fb2423e0a621d1290c86bf8ff5b646d0cc79f7"
+    },
+    {
+      "file": "scripts/system/operations/GetMapAreaByName.gd",
+      "sha256": "ef39832eb98380d92aacb23e3c887a088fb23886491db911e2d7290443f7d989"
+    },
+    {
+      "file": "scripts/system/operations/GetMapAreaScore.gd",
+      "sha256": "cff66456d81b3cfaa32ea74a7444353f723a4d8611dea3567d5e4e44410c5cc0"
+    },
+    {
+      "file": "scripts/system/operations/GetMapAreaScoreNeedWin.gd",
+      "sha256": "8a55a8530fdd0c81dd9f43c0e214a56d561ac7f2d485963d3e0232415293aa2a"
+    },
+    {
+      "file": "scripts/system/operations/GetMapDataValue.gd",
+      "sha256": "15eed52ecaea495d4f628bc16eabc72fd0d8d9c5ca385211286e51d669b02d73"
+    },
+    {
+      "file": "scripts/system/operations/GetMoveCost.gd",
+      "sha256": "b693ea017a1cdea7f9f4734a55ffe6f3f624baef234de452bb6144cff52c179c"
+    },
+    {
+      "file": "scripts/system/operations/GetMoveTargetLocation.gd",
+      "sha256": "d275b6bbf12e1454f9eba212115c8d81a8bc27f097dd0d7833d3e0d04625420b"
+    },
+    {
+      "file": "scripts/system/operations/GetNumOfPlInMapArea.gd",
+      "sha256": "3159e5f87e8e1dca682699e1c6f0c79129e9a61065e13b21f4a990e70c37e6e2"
+    },
+    {
+      "file": "scripts/system/operations/GetObjectsByNameFrArr.gd",
+      "sha256": "78318738ab881ae056e56ecc3e3b0fc7ef545f60c6ff042686245965a45f251b"
+    },
+    {
+      "file": "scripts/system/operations/GetPendingActionValue.gd",
+      "sha256": "34e837e5e3f1e235886b9784de1daa47d57185a1b8e40a09d39a4e96b08d3bd7"
+    },
+    {
+      "file": "scripts/system/operations/GetPhaseOrder.gd",
+      "sha256": "2c9276fa6135cb0c02f786c097eaadbaa570af20a07946574e7c651f3b9d8561"
+    },
+    {
+      "file": "scripts/system/operations/GetPlAttacksOutGame.gd",
+      "sha256": "3333ed22ed3b3d27bef64e4afef4404008726824a7cd611509cfdd1182c08b2b"
+    },
+    {
+      "file": "scripts/system/operations/GetPlBuffsOutGame.gd",
+      "sha256": "2d7e19c1953d88de16853ed9344ccc83b80b126c3a173f72a4b906900f4a0bb4"
+    },
+    {
+      "file": "scripts/system/operations/GetPlBuffsSide.gd",
+      "sha256": "54569b0cc58632f1f72902341573bd8ee51b91d1b2fbf8b878a7f3f68d17c691"
+    },
+    {
+      "file": "scripts/system/operations/GetPlCommandSpellOutGame.gd",
+      "sha256": "0509701c7719fe2a9b9728e6cb717b9f2355032d4730ce532240f60e5279e9cf"
+    },
+    {
+      "file": "scripts/system/operations/GetPlCommandSpellSide.gd",
+      "sha256": "2211bf866221e592301650043b329102037d4d55e8143f31908820b747cec7bf"
+    },
+    {
+      "file": "scripts/system/operations/GetPlDeckSide.gd",
+      "sha256": "b1b8c171d485418481fb60db316ef7ec6c8ae74b43ca7ec6daf6ee68711ecbcd"
+    },
+    {
+      "file": "scripts/system/operations/GetPlDiscardSide.gd",
+      "sha256": "1d9e39742ed1bd80686ef11111afce2b28b0f96a8d0366b1931c6162e7d20a6c"
+    },
+    {
+      "file": "scripts/system/operations/GetPlIdUsingEff.gd",
+      "sha256": "3645c3849657d34fa6cf156c23ea5a33bddf80d604ca2fafde41d72da1179d86"
+    },
+    {
+      "file": "scripts/system/operations/GetPlMasterOutGame.gd",
+      "sha256": "7b14d541a01aefbcd0308e451a2f1ea5353195de8e5f6022972dfc33bf524cf9"
+    },
+    {
+      "file": "scripts/system/operations/GetPlMasterSide.gd",
+      "sha256": "139997fcea4c0782f65f7386a2f7d2514511ee68368439cd230660c2f629676d"
+    },
+    {
+      "file": "scripts/system/operations/GetPlOthersOutGame.gd",
+      "sha256": "ff3ff4f4aa595359b6d1c1cfe1823a438daba288a391e3cf2d3533690dacc264"
+    },
+    {
+      "file": "scripts/system/operations/GetPlOthersSide.gd",
+      "sha256": "f0c211357eb5a9934520d1ea2100575467b0de47b0ab8bcfa910e8bdbfef8f87"
+    },
+    {
+      "file": "scripts/system/operations/GetPlServantOutGame.gd",
+      "sha256": "3c5dd22e22876fe52060d977743a65838ddd5ee4122a8b1a44e36729962fad7b"
+    },
+    {
+      "file": "scripts/system/operations/GetPlServantSide.gd",
+      "sha256": "20960e4c496c9054a5ef96ac57dfd8539d2b4d76967c8c3795ca0d38fb83f8d6"
+    },
+    {
+      "file": "scripts/system/operations/GetPlSkillsOutGame.gd",
+      "sha256": "09aef7752432fb49c95e25de0e9136967f9acd6bfe75f350ca14baedd090c6dc"
+    },
+    {
+      "file": "scripts/system/operations/GetPlSkillsSide.gd",
+      "sha256": "6561824a15e15822c2782455524e605ade6c75a836a4a9d14f36473d851e4c28"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerBuffs.gd",
+      "sha256": "65e588a73006c60771d82653a3860681e8eccd50c58a17056c101c75b94121f6"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerCommandSpell.gd",
+      "sha256": "09bb54eafbdbaeab63e42c38859403f9ee81f83a19d2865248ea8997a4b78490"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerDataValue.gd",
+      "sha256": "72b0060c26ebfa39bd46a0fb1c62c5dc0845274470aff1d361dbbf33ef30676a"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerDeck.gd",
+      "sha256": "8506f6ffc1ef0d4d4078a1589c60abdc8d203502b60bc79d699b526588ec6151"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerDiscard.gd",
+      "sha256": "4e871443014443fb9c6eb8577ac1d5da1a3cd8c323087011e8137ebce17060a6"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerHandCards.gd",
+      "sha256": "c9816853708e5a3c951974710f3b1fb9d234db351b7a6004d29e60f6cea4d6a1"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerIdsByDataValue.gd",
+      "sha256": "790fb42a024e51cb4f853453c42d3dee5e5b7b2026e9a491781ffb35962b270f"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerLives.gd",
+      "sha256": "fcea404c2e975ae81bbb0bc27377cf106b9b8b6d30101f652e821adad229db1c"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerLocationBenefit.gd",
+      "sha256": "907e861e9397da974908763f015a670d8a93802daeb7a52e1ba4d54965186ae5"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerMaster.gd",
+      "sha256": "24a5a4ff8172d93304981947d19e20eeeb02e2563058f0deb91f4884f6636253"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerMasterSkills.gd",
+      "sha256": "5891b65f1ebd0e2d3fc22eca89b8840980d775f09e985e0bed9c104513d83508"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerName.gd",
+      "sha256": "cc3b5c98db7aed34122adbc6235d20ba0fc394de3bb9cff8749a0e1dd1ff02cd"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerPlayedCards.gd",
+      "sha256": "916a486dc8e3db2959e40ae67c12168d2e1346f8ce8d2f3b2c0411cdd3e4fe3c"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerPowerBreakdown.gd",
+      "sha256": "d75ab6c8890c6811f71d4e14cde7099f427b61235d76de586c9973fa392febfc"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerServant.gd",
+      "sha256": "9f3ff429b914f08dcf676ef9e8f303155f8a94f08ad568f858a1fa075b8ba182"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerServantSkills.gd",
+      "sha256": "f46f68f6af9d9f23a0603b4af311312f447b91197c956cc811555e068fbdf257"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerTimePoints.gd",
+      "sha256": "927152881090ebe7a63ca15dae973e1d605082f636248e43f68ffa41d90e8470"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayerTotalPower.gd",
+      "sha256": "5aa911a2110ae152ab67267141082a736af3596e1163b224edf9fbd6611df92d"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayersField.gd",
+      "sha256": "898936867f172cb908e32525063cbadafd52fb63d813548f462f389d9689b46d"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayersInMapArea.gd",
+      "sha256": "65b45d492f17e836d6267daf281c4616499605217e5cebed8b35a7f63c40739b"
+    },
+    {
+      "file": "scripts/system/operations/GetPlayersInSameArea.gd",
+      "sha256": "67f40d5a4684069c112919a5467b8b5258b68fa32779c1171b05f214bf5ff45f"
+    },
+    {
+      "file": "scripts/system/operations/GetPlsInLocation.gd",
+      "sha256": "040f804895fcee9a0d048e0199f520ce2481658305b9e7f7fcdf40cddcdf5213"
+    },
+    {
+      "file": "scripts/system/operations/GetPrintedNum.gd",
+      "sha256": "87b1a35370fdde5fe537fbd2b38553242d10e74494e44933dbc0f178283bbf54"
+    },
+    {
+      "file": "scripts/system/operations/GetPrintedNums.gd",
+      "sha256": "3caaec9139a8c5e39830836f4a82bdb3b95910be563b6b6d0fce0dd3b9d17d6c"
+    },
+    {
+      "file": "scripts/system/operations/GetProperty.gd",
+      "sha256": "245e7b0ad9fee6ba787c4b107d07aae6c3fee7d9e8325f467d928ee684519d4a"
+    },
+    {
+      "file": "scripts/system/operations/GetRankByDataNumber.gd",
+      "sha256": "e0d3716762f3655c1e6b17ef2fe673b3bb5fc8c7a2c59307a55efc8babeccc73"
+    },
+    {
+      "file": "scripts/system/operations/GetRoundBattleWins.gd",
+      "sha256": "e42676e7a3c49a5bb9c1cb9edd439b1724e170f2e3e385b5c18a961b299a9a76"
+    },
+    {
+      "file": "scripts/system/operations/GetSharedAttackAttribute.gd",
+      "sha256": "b268639b62ac4cae0611f4f824be10e5eb76f4f133d4e1d5d6d283eac0ada4a4"
+    },
+    {
+      "file": "scripts/system/operations/GetSituationPrintedMagic.gd",
+      "sha256": "9076a499bfabe5ba880e9fb7166a890e00d7d54107d4595e2e09098f23a5698a"
+    },
+    {
+      "file": "scripts/system/operations/GetSituations.gd",
+      "sha256": "ed3db8b04e102e9a70cc23e57ef1b9332c4805011b7e4a74d52ba25026179f8f"
+    },
+    {
+      "file": "scripts/system/operations/GetSkillPrintedCost.gd",
+      "sha256": "2dddbf725d3b9a59099b33f0f4903585394f8b8984ab8fa71fc075fd34ce74e1"
+    },
+    {
+      "file": "scripts/system/operations/GetSkillPrintedPower.gd",
+      "sha256": "1c58936ba14e2bb3ff661640dc1b8e1fef440de5aa47eecdb6c8d710198c0151"
+    },
+    {
+      "file": "scripts/system/operations/Has.gd",
+      "sha256": "146df666ceee264f20ee957da28db5306204656b912e15ed880239e8eb581c47"
+    },
+    {
+      "file": "scripts/system/operations/HasAttribute.gd",
+      "sha256": "b0f80e788e53ca9c0c2c396a7d66a54d9cde5ed8e992f74bcc04aa3e8bf637c3"
+    },
+    {
+      "file": "scripts/system/operations/HideTrueName.gd",
+      "sha256": "98b933393b8ede0c3c1d08d17a3e823c2692cdfe7b682ff1bc2a71fed8d0ccea"
+    },
+    {
+      "file": "scripts/system/operations/IfElseFunc.gd",
+      "sha256": "64fae38e393cd4d19ad8e9de441738574a0496dc18da6ce13716a235a95a4816"
+    },
+    {
+      "file": "scripts/system/operations/IfFunc.gd",
+      "sha256": "9d53004fadecb32aed0f01662e03fce24288d491d23569e7b7de834d15a29ef5"
+    },
+    {
+      "file": "scripts/system/operations/IsEngaged.gd",
+      "sha256": "366327abca4bbb588fd21260f12b536804b8b885002d68bf53c6451614f4ed86"
+    },
+    {
+      "file": "scripts/system/operations/IsInArray.gd",
+      "sha256": "12847882b6599737f12b2db04ecf4c3f5a946365926966a8171913578e24c6fd"
+    },
+    {
+      "file": "scripts/system/operations/IsNull.gd",
+      "sha256": "026521dcb4288630bfd4a4f6597bc363adbd4a1acbd402a22d5af16fba604c92"
+    },
+    {
+      "file": "scripts/system/operations/IsTrueNameReleased.gd",
+      "sha256": "ffc3932b4549912daae805df5de99b74b98335a3531ccd1760ae975dcf24b5da"
+    },
+    {
+      "file": "scripts/system/operations/Location.gd",
+      "sha256": "43b873f6d0a00b5eaa201e96c51edddb3809baab750fc9da26af2ecb603e191b"
+    },
+    {
+      "file": "scripts/system/operations/LogExists.gd",
+      "sha256": "be91f5f9acbe561d508e23bf48629a2836ae6f8bdb06ecd38b7e1550840fd4e1"
+    },
+    {
+      "file": "scripts/system/operations/LogFieldValues.gd",
+      "sha256": "441b3d48df9780964ca4739271d5bedc6bc44ee281bddbac3a44d812e25a5d69"
+    },
+    {
+      "file": "scripts/system/operations/ManageBuff.gd",
+      "sha256": "49e1a251e3ab4e28f67727cf73ffd4b0b7487105017a87397d1661e8850bebaf"
+    },
+    {
+      "file": "scripts/system/operations/MapAreaHasEffect.gd",
+      "sha256": "81075eb9b62f1e5c69c99725905761895e26371e471b07f41d96d2697cb94d6b"
+    },
+    {
+      "file": "scripts/system/operations/MatchFunc.gd",
+      "sha256": "717d0d7ed594442cc3d60b5ec370fbd15a28bfebb1f4ba5ae88266a77e025d56"
+    },
+    {
+      "file": "scripts/system/operations/MergeArrays.gd",
+      "sha256": "cc54bf8d04bd09f374f9b0e4dc3e08556bf0a85afbc9ac1ad97cec56baeb4e84"
+    },
+    {
+      "file": "scripts/system/operations/ModifyAttackPowerByAttribute.gd",
+      "sha256": "361d509c00191163ad7970216863fcbb347a75c7b10c889cbdc3e1c7342d46dc"
+    },
+    {
+      "file": "scripts/system/operations/Move.gd",
+      "sha256": "9044596c611317bbf47c69a252f0cc166705915b25bb22d96b070207e9064a1e"
+    },
+    {
+      "file": "scripts/system/operations/MoveLocation.gd",
+      "sha256": "821dee7e282c7d48464104fc803728df0744926b06ce5044b8fac8e8e89e9b1b"
+    },
+    {
+      "file": "scripts/system/operations/NotFunc.gd",
+      "sha256": "dcb43f1312051bafe72c33d133af4e932853f782109850455d07c3079dc56ca2"
+    },
+    {
+      "file": "scripts/system/operations/OrFunc.gd",
+      "sha256": "dbce85e9f373aa485ed42e7d269cefd9863636469d65a405c7e7c239df0999a5"
+    },
+    {
+      "file": "scripts/system/operations/PayMagic.gd",
+      "sha256": "f2dc69593ab7ad442e250e6a5afaf904cd4ce2c4db06e9da73e17a9c155dadd1"
+    },
+    {
+      "file": "scripts/system/operations/PlayAttack.gd",
+      "sha256": "b2e42b80d1602fa0d52c4c4b59bd00baae3d063870e49880bfe9c95431489444"
+    },
+    {
+      "file": "scripts/system/operations/PlaySkill.gd",
+      "sha256": "f0deea3fbe6be965d852440aa3d7869da4188a4616d296d4c03dbdc35eb806bf"
+    },
+    {
+      "file": "scripts/system/operations/PlayedCards.gd",
+      "sha256": "f1e1b3a16a25b0aaf7ebd291e2763797bc05af7680a190cca7ae3ce3b0cb6c4c"
+    },
+    {
+      "file": "scripts/system/operations/PlayerBuffsHaveEffect.gd",
+      "sha256": "75af292612342bea3aed959da25b1d32022ebe90e89db2b04a6c7b56e9fa111c"
+    },
+    {
+      "file": "scripts/system/operations/QueryLog.gd",
+      "sha256": "b2eca7114dca2321374fc87258afcc6c9bcba7c2dfb7ab448e7bc2f8baad1031"
+    },
+    {
+      "file": "scripts/system/operations/QueueOptionalEffectForPlayers.gd",
+      "sha256": "90eb3b73a116cc54e58a7ff6b3429a24cf63b3ba1b7c5e80b3d7a7a0aea301e4"
+    },
+    {
+      "file": "scripts/system/operations/RandomFloat.gd",
+      "sha256": "612c4ad0df0bc6e2e181333972c3aa8e998b418d93bb68b59a0f92b9a5612265"
+    },
+    {
+      "file": "scripts/system/operations/RandomInt.gd",
+      "sha256": "e8195b7754dcf15bfea3c6903d63b5b960d7f32ca0db72bb2a3f86d629662963"
+    },
+    {
+      "file": "scripts/system/operations/RefillHand.gd",
+      "sha256": "78031a67d0d9f488e33290a1d2107714387a0808389b59712d45e368241ed950"
+    },
+    {
+      "file": "scripts/system/operations/RegisterObjectEffects.gd",
+      "sha256": "62004858b47b1c12a7454c208c8fd4d6b475f02133cb7de9005d9c08a09c913d"
+    },
+    {
+      "file": "scripts/system/operations/ReleaseTrueName.gd",
+      "sha256": "6ddfe7aa756e0b380e5fef747c687e56701251e40187cbc1c7ccd274593b11b2"
+    },
+    {
+      "file": "scripts/system/operations/RemoveDefeat.gd",
+      "sha256": "fff3a13c88a3ddc52a83b831610532235552262aaace48db2fb9bd454651662e"
+    },
+    {
+      "file": "scripts/system/operations/RemoveFromArray.gd",
+      "sha256": "652e5a9cc5b78e599336ce0d6108901212a8e60406bbc988baf5b3cbd20c833b"
+    },
+    {
+      "file": "scripts/system/operations/RemoveFromBoard.gd",
+      "sha256": "cb73bae6cb9f1a0843671d50e098c95a3832a62cebc75150507fc8f358e02597"
+    },
+    {
+      "file": "scripts/system/operations/ReshuffleDiscard.gd",
+      "sha256": "56a7c0a71ea67017dc65bfc842249cdb88cdc2b283fdf11925c27daafa9969a4"
+    },
+    {
+      "file": "scripts/system/operations/RestoreLocationBenefits.gd",
+      "sha256": "a5062c0710d873a9df3462f5f525c489602ffcc4bba7888c1d4c40905c440160"
+    },
+    {
+      "file": "scripts/system/operations/RestoreLocationPlNumLimits.gd",
+      "sha256": "695f533091d66c2a682b6b5a25da7230bdcfe30fb955f2c57724b8e3470750e1"
+    },
+    {
+      "file": "scripts/system/operations/RestoreMapAreaMoveFlags.gd",
+      "sha256": "fab4f51dbaf2a1ee3ea1f13cd7122d0c83b015a6f45eb2c6f201d6957d94d15e"
+    },
+    {
+      "file": "scripts/system/operations/RestrictAbilities.gd",
+      "sha256": "8478fdf8736210f7dd5b5b60159e1c5f795960e2d1e2ca5c5f991d70728bc0f7"
+    },
+    {
+      "file": "scripts/system/operations/ScheduleEffectOnTimePoint.gd",
+      "sha256": "a2b8556d899adda889946194e7cc339a5eb118ff658a0e33b92007377e21467a"
+    },
+    {
+      "file": "scripts/system/operations/SetBattleResult.gd",
+      "sha256": "17ae2df5025fa3ec34428ee749c1855d4cbd613665600346857d5fb47500d132"
+    },
+    {
+      "file": "scripts/system/operations/SetCardConcealed.gd",
+      "sha256": "24efe7be6575093e2959b4edfdc0c59fcd8df122fa2a7c934bb49a9ede76e95d"
+    },
+    {
+      "file": "scripts/system/operations/SetDictionaryValue.gd",
+      "sha256": "6640e75c5585c99cf29b19a334a8c37443785289bb2717cbc954b8be7307867c"
+    },
+    {
+      "file": "scripts/system/operations/SetLocation.gd",
+      "sha256": "68ac10d123264ba6f5257b3f267cbb514e8a109476615f9ad09b581edeb3be7f"
+    },
+    {
+      "file": "scripts/system/operations/SetLocationPlNumLimit.gd",
+      "sha256": "7bfe1bad20b5ad3dc71f86800a638e921e87c51f6b1518a99934d18f383af5a9"
+    },
+    {
+      "file": "scripts/system/operations/SetMapAreaCanMoveTo.gd",
+      "sha256": "b173890360bef39c1ee8c82f90b5339df86869a89a8fc8dc9a85c2a95c4fcf92"
+    },
+    {
+      "file": "scripts/system/operations/SetPlayerData.gd",
+      "sha256": "46489312651a768cfd037041439dc13eceb24f78c998bf2287f62f5456f998af"
+    },
+    {
+      "file": "scripts/system/operations/SetProperty.gd",
+      "sha256": "d6b402b2465ba08e0fcf9a1526c7bbcef2e21d3068bab0445db0699c7cad3131"
+    },
+    {
+      "file": "scripts/system/operations/ShowCards.gd",
+      "sha256": "55ccdb2fb34372a494484722214c71a83d749dc7b47c8c0b49a0a3e94c03bf6a"
+    },
+    {
+      "file": "scripts/system/operations/ShowMessage.gd",
+      "sha256": "ee8da394e133ec9625a1be605ce618080ae4c6acebd27bc675f40b2aa7b91124"
+    },
+    {
+      "file": "scripts/system/operations/ShuffleArray.gd",
+      "sha256": "70382ae148918e3e0a232775379b269459a3769e01090d2f86ed8fa825aa8ca6"
+    },
+    {
+      "file": "scripts/system/operations/StoreValue.gd",
+      "sha256": "537e2203e5fb706095f0212e847c7bed71c94de8ab794d8220d9e2598f0152be"
+    },
+    {
+      "file": "scripts/system/operations/SumLogData.gd",
+      "sha256": "22cbf938cf1d971429f9ac1422b016f2893a5fd768d4ec994998210684e62173"
+    },
+    {
+      "file": "scripts/system/operations/SyncPower.gd",
+      "sha256": "82b123544a273c264273ba2a6f21bb3749be7e28466a8647c08a5ec3c96d2a99"
+    },
+    {
+      "file": "scripts/system/operations/Tag.gd",
+      "sha256": "3d09c85028f24d5d9bbb4ab1745ccd72dd55c58feb02f3e56a71eaa5349c2a36"
+    },
+    {
+      "file": "scripts/system/operations/UnregisterObjectEffects.gd",
+      "sha256": "b8d7653cb5aad532ed4b5846f5bf74ff3c416f14f3638794d6d1491649ea06ed"
+    },
+    {
+      "file": "scripts/system/operations/When.gd",
+      "sha256": "e856aefc846a7c61547a2e659bd6e4a41a58c4ef2c8cc6ad3fe2aed39a96712a"
+    },
+    {
+      "file": "scripts/system/operations/WhileFunc.gd",
+      "sha256": "8780379fec926152c77d4d2af1fa6ca7c645d15faab4bef740da13453cec19f5"
+    },
+    {
+      "file": "scripts/system/operations/ZeroAttributePower.gd",
+      "sha256": "d200130c1cb0e2fdff5ed4e39f5c10086c972274c3813ca99ab46d60f8855758"
+    },
+    {
+      "file": "scripts/system/play_rules.gd",
+      "sha256": "12ab04d0fba5d7d1eab651533d5800884d7012ae7aa9f2dc05fc4a1f8e914db2"
+    },
+    {
+      "file": "scripts/system/power_sources.gd",
+      "sha256": "a7bb65d476466fbff8a04e11bb8efd386def70b9b29d1253bfdc5618beb7dc5f"
+    },
+    {
+      "file": "scripts/system/regular_play.gd",
+      "sha256": "40ad584c500f5a327b248b528175b33ffe9574b9b3998ed36aec700b09eec064"
+    },
+    {
+      "file": "scripts/system/time_points.gd",
+      "sha256": "4d0efceb07141424d3288f8fc4c643c38cf1814e76f205603e15786d6a26c406"
+    },
+    {
+      "file": "scripts/ui/header_turn.gd",
+      "sha256": "0bd12a0b9119e1b0d371dc3f3c978615e3b1a25e42d141b7e453aa153be17565"
+    },
+    {
+      "file": "scripts/ui/text/card_desc_text.gd",
+      "sha256": "80c62325ac4287c57fee1b8bdb32043a1cffdfb490971076ac9f23217e5431ba"
+    },
+    {
+      "file": "scripts/ui/text/choice_text.gd",
+      "sha256": "f4211b3acc56e8258d3ba94e463d17abdfed50b1292aa97a8f73f1c91c812f21"
+    },
+    {
+      "file": "scripts/ui/text/cost_text.gd",
+      "sha256": "c432cd4bd5db8a4a89e5210de26b92719b263c00b79a61415012bd559e118c73"
+    },
+    {
+      "file": "scripts/ui/text/game_log_text.gd",
+      "sha256": "bafdb571773d81b2955c0a204624ed9c766c4705b5db7ccea951a054ae2ed7a8"
+    }
+  ],
+  "source_manifest_sha256": "32fee4a665029f9e14e66ddf6e0f47efba7a3701b39956093110063daea1dd82",
+  "findings": [
+    {
+      "file": "assets/scenes/debug/debug_console.tscn",
+      "line": 353,
+      "column": 8,
+      "key_path": "text",
+      "original": "改卡牌费用",
+      "source_literal": "\"改卡牌费用\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "正文/操作文字/非魔力资源费用，非明确魔力标签；需确认替换口径"
+    },
+    {
+      "file": "assets/scenes/game_scene/battle_board_v2.tscn",
+      "line": 1511,
+      "column": 8,
+      "key_path": "text",
+      "original": "悬浮右侧竖条切换主图 · 令咒可代替移动费用",
+      "source_literal": "\"悬浮右侧竖条切换主图 · 令咒可代替移动费用\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "正文/操作文字/非魔力资源费用，非明确魔力标签；需确认替换口径"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 440,
+      "column": 8,
+      "key_path": "text",
+      "original": "顺位流转 (首家 ➔ 末家)",
+      "source_literal": "\"顺位流转 (首家 ➔ 末家)\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(首家 ➔ 末家)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 873,
+      "column": 8,
+      "key_path": "text",
+      "original": "🥉 士郎 (你)",
+      "source_literal": "\"🥉 士郎 (你)\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(你)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 1193,
+      "column": 8,
+      "key_path": "text",
+      "original": "⚔️ 深山町已打出牌 (威力: 8)",
+      "source_literal": "\"⚔️ 深山町已打出牌 (威力: 8)\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(威力: 8)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 2091,
+      "column": 8,
+      "key_path": "text",
+      "original": "御主卡 (士郎)",
+      "source_literal": "\"御主卡 (士郎)\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(士郎)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 2157,
+      "column": 8,
+      "key_path": "text",
+      "original": "⚔️ 出牌区 (深山町)",
+      "source_literal": "\"⚔️ 出牌区 (深山町)\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(深山町)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 2201,
+      "column": 8,
+      "key_path": "text",
+      "original": "力量3 (常规)",
+      "source_literal": "\"力量3 (常规)\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(常规)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 2219,
+      "column": 8,
+      "key_path": "text",
+      "original": "敏捷3 (常规)",
+      "source_literal": "\"敏捷3 (常规)\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(常规)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 2237,
+      "column": 8,
+      "key_path": "text",
+      "original": "幸运4 (追加)",
+      "source_literal": "\"幸运4 (追加)\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(追加)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 2244,
+      "column": 8,
+      "key_path": "text",
+      "original": "常规2张 + 幸运追加 (已计入深山町地利+3)",
+      "source_literal": "\"常规2张 + 幸运追加 (已计入深山町地利+3)\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(已计入深山町地利+3)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 2407,
+      "column": 8,
+      "key_path": "text",
+      "original": "牌库 (7)",
+      "source_literal": "\"牌库 (7)\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(7)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "assets/scenes/game_scene/tactical_board_ui.tscn",
+      "line": 2425,
+      "column": 8,
+      "key_path": "text",
+      "original": "弃牌 (2)",
+      "source_literal": "\"弃牌 (2)\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:text",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(2)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "assets/scenes/main_menu/multiplayer_lobby.tscn",
+      "line": 268,
+      "column": 20,
+      "key_path": "placeholder_text",
+      "original": "辅助连接地址，多个地址用逗号分隔",
+      "source_literal": "\"辅助连接地址，多个地址用逗号分隔\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "场景展示属性:placeholder_text",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "多个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/attacks/basic/preparation/preparation.json",
+      "line": 81,
+      "column": 25,
+      "key_path": "$.effects[1].shown_effect_name",
+      "original": "战斗阶段：若你赢得战斗，获得2点战果。",
+      "source_literal": "\"战斗阶段：若你赢得战斗，获得2点战果。\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "2点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/events/origin/contain_third_party/contain_third_party.json",
+      "line": 87,
+      "column": 25,
+      "key_path": "$.effects[1].shown_effect_name",
+      "original": "此战场胜者可恢复1枚令咒",
+      "source_literal": "\"此战场胜者可恢复1枚令咒\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "1枚"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/events/origin/contain_third_party/contain_third_party.json",
+      "line": 133,
+      "column": 7,
+      "key_path": "$.effects[1].funcs[3].parameters[2]",
+      "original": "恢复1枚令咒",
+      "source_literal": "\"恢复1枚令咒\"",
+      "visible": false,
+      "identity": false,
+      "evidence": "JSON未声明展示用途:parameters",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "1枚"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/events/origin/ley_line/ley_line.json",
+      "line": 13,
+      "column": 25,
+      "key_path": "$.effects[0].shown_effect_name",
+      "original": "位于此战场的玩家在此战场发生战斗后获得2点魔力",
+      "source_literal": "\"位于此战场的玩家在此战场发生战斗后获得2点魔力\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "2点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00001_emiya_shirou/00001_emiya_shirou.json",
+      "line": 122,
+      "column": 6,
+      "key_path": "$.specials.SKILLS[0].shown_notes[0]",
+      "original": "你的魔力需要达到8点才能打出此牌",
+      "source_literal": "\"你的魔力需要达到8点才能打出此牌\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_notes",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "8点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "line": 10,
+      "column": 25,
+      "key_path": "$.effects[0].shown_effect_name",
+      "original": "宝石魔术·聚宝 - 游戏开始时，你获得10枚【宝石】",
+      "source_literal": "\"宝石魔术·聚宝 - 游戏开始时，你获得10枚【宝石】\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "10枚"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "line": 96,
+      "column": 25,
+      "key_path": "$.effects[1].shown_effect_name",
+      "original": "绝对服从的命令 - 你必须于第一回合使用一枚令咒。否则于该回合结束失去一枚令咒。",
+      "source_literal": "\"绝对服从的命令 - 你必须于第一回合使用一枚令咒。否则于该回合结束失去一枚令咒。\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一枚",
+        "一枚"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "line": 245,
+      "column": 25,
+      "key_path": "$.effects[2].shown_effect_name",
+      "original": "绝对服从的命令 - 若你以该令咒获得了魔力，战斗阶段结束后，你失去4点魔力",
+      "source_literal": "\"绝对服从的命令 - 若你以该令咒获得了魔力，战斗阶段结束后，你失去4点魔力\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "4点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "line": 437,
+      "column": 26,
+      "key_path": "$.specials.BUFFS[0].effects[0].options[0].shown_option_name",
+      "original": "获得1点魔力",
+      "source_literal": "\"获得1点魔力\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_option_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "1点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "line": 799,
+      "column": 25,
+      "key_path": "$.specials.BUFFS[0].effects[1].shown_effect_name",
+      "original": "高潮回合的行动阶段：可以选择相同的选项，每个选项至多3次，共计9次",
+      "source_literal": "\"高潮回合的行动阶段：可以选择相同的选项，每个选项至多3次，共计9次\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "每个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "line": 814,
+      "column": 26,
+      "key_path": "$.specials.BUFFS[0].effects[1].options[0].shown_option_name",
+      "original": "获得1点魔力",
+      "source_literal": "\"获得1点魔力\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_option_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "1点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00003_matou_shinji/00003_matou_shinji.json",
+      "line": 10,
+      "column": 28,
+      "key_path": "$.effects[0].shown_effect_name",
+      "original": "吸魔命令 - 进入深山町时，获得1点魔力",
+      "source_literal": "\"吸魔命令 - 进入深山町时，获得1点魔力\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "1点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00003_matou_shinji/00003_matou_shinji.json",
+      "line": 135,
+      "column": 28,
+      "key_path": "$.effects[2].shown_effect_name",
+      "original": "小丑 - 当你战败时，失去一枚令咒",
+      "source_literal": "\"小丑 - 当你战败时，失去一枚令咒\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一枚"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00003_matou_shinji/00003_matou_shinji.json",
+      "line": 481,
+      "column": 34,
+      "key_path": "$.specials.BUFFS[0].effects[1].shown_effect_name",
+      "original": "契约再续 - 间桐樱在场时，当你第一次失去所有令咒，该回合结束时将从者替换为一个随机的、未被使用的从者，重新获得3令咒",
+      "source_literal": "\"契约再续 - 间桐樱在场时，当你第一次失去所有令咒，该回合结束时将从者替换为一个随机的、未被使用的从者，重新获得3令咒\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00003_matou_shinji/00003_matou_shinji.json",
+      "line": 1226,
+      "column": 32,
+      "key_path": "$.upgrade_skill[0].effects[2].shown_effect_name",
+      "original": "若莎士比亚并非你的第一名从者，你获得8点战果",
+      "source_literal": "\"若莎士比亚并非你的第一名从者，你获得8点战果\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "8点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00004_matou_sakura/00004_matou_sakura.json",
+      "line": 514,
+      "column": 25,
+      "key_path": "$.specials.BUFFS[0].effects[0].shown_effect_name",
+      "original": "黑泥 - 准备阶段：花费2点魔力，若你未激活【被污染的圣杯】，获得2点战果",
+      "source_literal": "\"黑泥 - 准备阶段：花费2点魔力，若你未激活【被污染的圣杯】，获得2点战果\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "2点",
+        "2点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00004_matou_sakura/00004_matou_sakura.json",
+      "line": 615,
+      "column": 25,
+      "key_path": "$.specials.BUFFS[1].effects[0].shown_effect_name",
+      "original": "你拥有无限魔力（此状态下无法获得或失去魔力）",
+      "source_literal": "\"你拥有无限魔力（此状态下无法获得或失去魔力）\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（此状态下无法获得或失去魔力）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00005_illyasviel_von_einzbern/00005_illyasviel_von_einzbern.json",
+      "line": 249,
+      "column": 25,
+      "key_path": "$.effects[3].shown_effect_name",
+      "original": "小圣杯 - 回合结束时，若你本回合打出的攻击均为暗置，获得1点魔力",
+      "source_literal": "\"小圣杯 - 回合结束时，若你本回合打出的攻击均为暗置，获得1点魔力\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "1点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00005_illyasviel_von_einzbern/00005_illyasviel_von_einzbern.json",
+      "line": 343,
+      "column": 25,
+      "key_path": "$.specials.BUFFS[0].effects[0].shown_effect_name",
+      "original": "归于虚无 - 回合开始时，若你上回合在战斗阶段时与至少一名被淘汰的玩家位于同一战场，获得2点战果",
+      "source_literal": "\"归于虚无 - 回合开始时，若你上回合在战斗阶段时与至少一名被淘汰的玩家位于同一战场，获得2点战果\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "2点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00006_kotomine_kirei/00006_kotomine_kirei.json",
+      "line": 10,
+      "column": 25,
+      "key_path": "$.effects[0].shown_effect_name",
+      "original": "两幅面孔 - 当从者真名隐藏时，你是【监督者】；其他情况下，你是【执行者】（包括且不限于你没有从者）",
+      "source_literal": "\"两幅面孔 - 当从者真名隐藏时，你是【监督者】；其他情况下，你是【执行者】（包括且不限于你没有从者）\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（包括且不限于你没有从者）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00007_kuzuki_souichirou/00007_kuzuki_souichirou.json",
+      "line": 208,
+      "column": 25,
+      "key_path": "$.effects[3].shown_effect_name",
+      "original": "局外人 - 每回合战斗阶段结束后，若你于该回合未获得战果，获得1点战果，若你同时是位于魔术工房的唯一玩家，改为获得2点战果",
+      "source_literal": "\"局外人 - 每回合战斗阶段结束后，若你于该回合未获得战果，获得1点战果，若你同时是位于魔术工房的唯一玩家，改为获得2点战果\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "1点",
+        "2点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00007_kuzuki_souichirou/00007_kuzuki_souichirou.json",
+      "line": 549,
+      "column": 26,
+      "key_path": "$.upgrade_skill[0].effects[2].shown_effect_name",
+      "original": "你的【蛇】获得以下效果 - 被动/战斗阶段：花费6点魔力，将此牌加入你的攻击中",
+      "source_literal": "\"你的【蛇】获得以下效果 - 被动/战斗阶段：花费6点魔力，将此牌加入你的攻击中\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "6点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/masters/00007_kuzuki_souichirou/00007_kuzuki_souichirou.json",
+      "line": 648,
+      "column": 28,
+      "key_path": "$.upgrade_skill[0].effects[2].funcs[6].parameters[0][3].parameters[0].shown_effect_name",
+      "original": "被动/战斗阶段：花费6点魔力，将此牌加入你的攻击中",
+      "source_literal": "\"被动/战斗阶段：花费6点魔力，将此牌加入你的攻击中\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "6点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00001_artoria_pendragon/00001_artoria_pendragon.json",
+      "line": 31,
+      "column": 28,
+      "key_path": "$.specials.SKILLS[0].effects[0].shown_effect_name",
+      "original": "宝具绽放 - 被动/战斗阶段：若你于本回合打出了你战斗中魔力消耗最高的宝具攻击，获得1点战果。若其消耗≥4，你额外获得1点战果",
+      "source_literal": "\"宝具绽放 - 被动/战斗阶段：若你于本回合打出了你战斗中魔力消耗最高的宝具攻击，获得1点战果。若其消耗≥4，你额外获得1点战果\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "1点",
+        "1点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00001_artoria_pendragon/00001_artoria_pendragon.json",
+      "line": 58,
+      "column": 30,
+      "key_path": "$.specials.SKILLS[0].effects[0].options[0].shown_option_name",
+      "original": "宝具绽放 - 被动/战斗阶段：若你于本回合打出了你战斗中魔力消耗最高的宝具攻击，获得1点战果。若其消耗≥4，你额外获得1点战果",
+      "source_literal": "\"宝具绽放 - 被动/战斗阶段：若你于本回合打出了你战斗中魔力消耗最高的宝具攻击，获得1点战果。若其消耗≥4，你额外获得1点战果\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_option_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "1点",
+        "1点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00003_cu_chulainn/00003_cu_chulainn.json",
+      "line": 46,
+      "column": 26,
+      "key_path": "$.specials.SKILLS[0].effects[0].options[0].shown_option_name",
+      "original": "移动至任意地点（魔术工房除外）",
+      "source_literal": "\"移动至任意地点（魔术工房除外）\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_option_name",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（魔术工房除外）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00003_cu_chulainn/00003_cu_chulainn.json",
+      "line": 111,
+      "column": 25,
+      "key_path": "$.specials.SKILLS[1].effects[0].shown_effect_name",
+      "original": "【真名解放】战斗阶段：战斗阶段结束后，每与一名对手进行了战斗便获得1点战果。若你获得胜利，每名交战对手失去该数量的战果",
+      "source_literal": "\"【真名解放】战斗阶段：战斗阶段结束后，每与一名对手进行了战斗便获得1点战果。若你获得胜利，每名交战对手失去该数量的战果\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "1点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00003_cu_chulainn/00003_cu_chulainn.json",
+      "line": 319,
+      "column": 25,
+      "key_path": "$.specials.SKILLS[2].effects[0].shown_effect_name",
+      "original": "【真名解放】打出时：此牌+2魔力消耗（可叠加）直至游戏结束",
+      "source_literal": "\"【真名解放】打出时：此牌+2魔力消耗（可叠加）直至游戏结束\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（可叠加）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00004_medusa/00004_medusa.json",
+      "line": 211,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[1].effects[0].shown_effect_name",
+      "original": "【真名解放】行动阶段：移动到任一地点，若为战场，重新部署于该地点的2个地利，原地利的占领者失去该地利",
+      "source_literal": "\"【真名解放】行动阶段：移动到任一地点，若为战场，重新部署于该地点的2个地利，原地利的占领者失去该地利\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "2个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00005_medea/00005_medea.json",
+      "line": 31,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[0].effects[0].shown_effect_name",
+      "original": "此牌费用为X，X为16-（当前回合数×2）",
+      "source_literal": "\"此牌费用为X，X为16-（当前回合数×2）\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（当前回合数×2）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00005_medea/00005_medea.json",
+      "line": 31,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[0].effects[0].shown_effect_name",
+      "original": "此牌费用为X，X为16-（当前回合数×2）",
+      "source_literal": "\"此牌费用为X，X为16-（当前回合数×2）\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "正文/操作文字/非魔力资源费用，非明确魔力标签；需确认替换口径"
+    },
+    {
+      "file": "data/servants/00005_medea/00005_medea.json",
+      "line": 105,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[0].effects[1].shown_effect_name",
+      "original": "残留：当你部署于魔术工房时，获得1点魔力和2点战果",
+      "source_literal": "\"残留：当你部署于魔术工房时，获得1点魔力和2点战果\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "1点",
+        "2点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00005_medea/00005_medea.json",
+      "line": 207,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[1].effects[0].shown_effect_name",
+      "original": "【真名解放】<每局游戏限一次>行动阶段：你所在战场的一名玩家失去一枚令咒，若其原本只有一枚或更少的令咒，令其【败北】。若其原本没有令咒，你总威力+10",
+      "source_literal": "\"【真名解放】<每局游戏限一次>行动阶段：你所在战场的一名玩家失去一枚令咒，若其原本只有一枚或更少的令咒，令其【败北】。若其原本没有令咒，你总威力+10\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一枚",
+        "一枚"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00005_medea/00005_medea.json",
+      "line": 238,
+      "column": 38,
+      "key_path": "$.specials.SKILLS[1].effects[0].options[0].shown_option_name",
+      "original": "【真名解放】，令一名同战场玩家失去一枚令咒",
+      "source_literal": "\"【真名解放】，令一名同战场玩家失去一枚令咒\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_option_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一枚"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00006_sasaki_kojirou/00006_sasaki_kojirou.json",
+      "line": 31,
+      "column": 28,
+      "key_path": "$.specials.SKILLS[0].effects[0].shown_effect_name",
+      "original": "你拥有的魔力少于8点也可打出此牌",
+      "source_literal": "\"你拥有的魔力少于8点也可打出此牌\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "8点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00006_sasaki_kojirou/00006_sasaki_kojirou.json",
+      "line": 155,
+      "column": 28,
+      "key_path": "$.specials.SKILLS[0].effects[2].shown_effect_name",
+      "original": "若如此，获得2点魔力且关闭一名交战玩家至多一张基础攻击。",
+      "source_literal": "\"若如此，获得2点魔力且关闭一名交战玩家至多一张基础攻击。\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "2点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00006_sasaki_kojirou/00006_sasaki_kojirou.json",
+      "line": 347,
+      "column": 28,
+      "key_path": "$.specials.SKILLS[1].effects[0].shown_effect_name",
+      "original": "行动阶段：与你位于同一战场的对手无法使用【行动阶段】和【战斗阶段】能力（令咒为行动阶段能力）",
+      "source_literal": "\"行动阶段：与你位于同一战场的对手无法使用【行动阶段】和【战斗阶段】能力（令咒为行动阶段能力）\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（令咒为行动阶段能力）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00006_sasaki_kojirou/00006_sasaki_kojirou.json",
+      "line": 362,
+      "column": 30,
+      "key_path": "$.specials.SKILLS[1].effects[0].options[0].shown_option_name",
+      "original": "行动阶段：与你位于同一战场的对手无法使用【行动阶段】和【战斗阶段】能力（令咒为行动阶段能力）",
+      "source_literal": "\"行动阶段：与你位于同一战场的对手无法使用【行动阶段】和【战斗阶段】能力（令咒为行动阶段能力）\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_option_name",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（令咒为行动阶段能力）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00007_heracles/00007_heracles.json",
+      "line": 32,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[0].effects[0].shown_effect_name",
+      "original": "【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束",
+      "source_literal": "\"【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "3点",
+        "3点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00007_heracles/00007_heracles.json",
+      "line": 330,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[1].effects[0].shown_effect_name",
+      "original": "【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束",
+      "source_literal": "\"【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "3点",
+        "3点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00007_heracles/00007_heracles.json",
+      "line": 628,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[2].effects[0].shown_effect_name",
+      "original": "【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束",
+      "source_literal": "\"【真名解放】若你战败，获得3点战果并令此战斗的所有胜者分别失去3点战果，然后将此牌移除游戏并令你的其他【十二试炼】获得+3威力直至游戏结束\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "3点",
+        "3点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00008_angra_mainyu/00008_angra_mainyu.json",
+      "line": 47,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[0].effects[0].shown_effect_name",
+      "original": "你拥有的魔力少于8点也可使用此牌。\n行动阶段：若你位于的战场存在对手，抽2张牌。若你独自位于一处战场，获得4点魔力。",
+      "source_literal": "\"你拥有的魔力少于8点也可使用此牌。\\n行动阶段：若你位于的战场存在对手，抽2张牌。若你独自位于一处战场，获得4点魔力。\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "8点",
+        "4点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00008_angra_mainyu/00008_angra_mainyu.json",
+      "line": 547,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[2].effects[0].shown_effect_name",
+      "original": "【真名解放】\n行动阶段：战斗阶段结束后弃置自己4张牌（若不足4张，则手牌全部弃置）。若你战败，每弃置一张【复仇者】，你便可偷取一名击败你的胜利者2点战果。",
+      "source_literal": "\"【真名解放】\\n行动阶段：战斗阶段结束后弃置自己4张牌（若不足4张，则手牌全部弃置）。若你战败，每弃置一张【复仇者】，你便可偷取一名击败你的胜利者2点战果。\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（若不足4张，则手牌全部弃置）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "data/servants/00008_angra_mainyu/00008_angra_mainyu.json",
+      "line": 547,
+      "column": 34,
+      "key_path": "$.specials.SKILLS[2].effects[0].shown_effect_name",
+      "original": "【真名解放】\n行动阶段：战斗阶段结束后弃置自己4张牌（若不足4张，则手牌全部弃置）。若你战败，每弃置一张【复仇者】，你便可偷取一名击败你的胜利者2点战果。",
+      "source_literal": "\"【真名解放】\\n行动阶段：战斗阶段结束后弃置自己4张牌（若不足4张，则手牌全部弃置）。若你战败，每弃置一张【复仇者】，你便可偷取一名击败你的胜利者2点战果。\"",
+      "visible": true,
+      "identity": false,
+      "evidence": "JSON展示字段:shown_effect_name",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "2点"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 246,
+      "column": 73,
+      "key_path": "_set_palette_section",
+      "original": "取值：算出一个值，供其他积木引用。",
+      "source_literal": "\"取值：算出一个值，供其他积木引用。\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_set_palette_section",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 410,
+      "column": 11,
+      "key_path": "_palette_text",
+      "original": "当前这一项 循环 每一个",
+      "source_literal": "\"当前这一项 循环 每一个\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_palette_text",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 849,
+      "column": 18,
+      "key_path": "_paint_card",
+      "original": "恢复教程前原稿（包括未保存修改）",
+      "source_literal": "\"恢复教程前原稿（包括未保存修改）\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_paint_card",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（包括未保存修改）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 949,
+      "column": 16,
+      "key_path": "_field_row",
+      "original": "（跟随自动发动）",
+      "source_literal": "\"（跟随自动发动）\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_field_row",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（跟随自动发动）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 1073,
+      "column": 36,
+      "key_path": "_time_points_editor",
+      "original": "＋ 加一个时机",
+      "source_literal": "\"＋ 加一个时机\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_time_points_editor",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 1371,
+      "column": 14,
+      "key_path": "_paint_sub_list",
+      "original": "删掉这一个",
+      "source_literal": "\"删掉这一个\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_paint_sub_list",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 1379,
+      "column": 13,
+      "key_path": "_paint_sub_list",
+      "original": "＋ 加一个",
+      "source_literal": "\"＋ 加一个\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_paint_sub_list",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 1460,
+      "column": 45,
+      "key_path": "_redraw_deck_picker",
+      "original": " 张（可重复）。旧引用保持原样；新选牌按内部名精确引用。",
+      "source_literal": "\" 张（可重复）。旧引用保持原样；新选牌按内部名精确引用。\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_redraw_deck_picker",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（可重复）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 1515,
+      "column": 30,
+      "key_path": "_paint_scripts",
+      "original": "这张牌还没有效果。点上面的按钮加一条，然后从左边拖积木进来。子牌（技能牌、状态、附带物……）的效果在左边「子牌」里点那张牌再编辑。",
+      "source_literal": "\"这张牌还没有效果。点上面的按钮加一条，然后从左边拖积木进来。子牌（技能牌、状态、附带物……）的效果在左边「子牌」里点那张牌再编辑。\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_paint_scripts",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（技能牌、状态、附带物……）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 1670,
+      "column": 30,
+      "key_path": "_hat_block",
+      "original": "（还没选时机）",
+      "source_literal": "\"（还没选时机）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_hat_block",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（还没选时机）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 1673,
+      "column": 23,
+      "key_path": "_hat_block",
+      "original": "效果从这里开始。选一个或多个时机，时机到了就往下做积木。\n\n• 默认满足任意一个时机就触发；在「发动方式与限制」里勾「时机要全部同时成立」就变成都要满足。\n• 「自己……」是轮到自己时，「他人……」是轮到别人时。",
+      "source_literal": "\"效果从这里开始。选一个或多个时机，时机到了就往下做积木。\\n\\n• 默认满足任意一个时机就触发；在「发动方式与限制」里勾「时机要全部同时成立」就变成都要满足。\\n• 「自己……」是轮到自己时，「他人……」是轮到别人时。\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_hat_block",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个",
+        "多个",
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 1927,
+      "column": 13,
+      "key_path": "_options_view",
+      "original": "＋ 再加一个选项",
+      "source_literal": "\"＋ 再加一个选项\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_options_view",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 2213,
+      "column": 13,
+      "key_path": "_option_mouths",
+      "original": "＋ 再加一个选项",
+      "source_literal": "\"＋ 再加一个选项\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_option_mouths",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 2288,
+      "column": 29,
+      "key_path": "_render_raw",
+      "original": "看不懂的一步（原样保留）",
+      "source_literal": "\"看不懂的一步（原样保留）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_render_raw",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（原样保留）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 2495,
+      "column": 27,
+      "key_path": "_slot_widget",
+      "original": "（一串积木）",
+      "source_literal": "\"（一串积木）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_slot_widget",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（一串积木）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 2604,
+      "column": 23,
+      "key_path": "_literal_editor",
+      "original": "填一个数字。它会记成这条效果的数字，别的效果可以改它；也可以把算数字的积木拖进来，或点 ▾ 选。",
+      "source_literal": "\"填一个数字。它会记成这条效果的数字，别的效果可以改它；也可以把算数字的积木拖进来，或点 ▾ 选。\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_literal_editor",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 2614,
+      "column": 22,
+      "key_path": "_literal_editor",
+      "original": "空着就用默认值。点一下填一个数字。",
+      "source_literal": "\"空着就用默认值。点一下填一个数字。\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_literal_editor",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 2730,
+      "column": 83,
+      "key_path": "_slot_groups",
+      "original": "记成这条效果的一个数字，别的效果可以改它",
+      "source_literal": "\"记成这条效果的一个数字，别的效果可以改它\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_slot_groups",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 3050,
+      "column": 3,
+      "key_path": "_confirm_fixed_number",
+      "original": "固定数字不能再被任何效果更改（例如「费用减一」「威力加倍」都会对它无效）。\n卡面上的数字一般都应当能被更改，除非这张牌写明了这个数字不变。\n\n确定要改成固定数字吗？",
+      "source_literal": "\"固定数字不能再被任何效果更改（例如「费用减一」「威力加倍」都会对它无效）。\\n卡面上的数字一般都应当能被更改，除非这张牌写明了这个数字不变。\\n\\n确定要改成固定数字吗？\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:_confirm_fixed_number",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（例如「费用减一」「威力加倍」都会对它无效）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 3050,
+      "column": 3,
+      "key_path": "_confirm_fixed_number",
+      "original": "固定数字不能再被任何效果更改（例如「费用减一」「威力加倍」都会对它无效）。\n卡面上的数字一般都应当能被更改，除非这张牌写明了这个数字不变。\n\n确定要改成固定数字吗？",
+      "source_literal": "\"固定数字不能再被任何效果更改（例如「费用减一」「威力加倍」都会对它无效）。\\n卡面上的数字一般都应当能被更改，除非这张牌写明了这个数字不变。\\n\\n确定要改成固定数字吗？\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:_confirm_fixed_number",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 3279,
+      "column": 26,
+      "key_path": "_open_context",
+      "original": "加一个「仅当」条件",
+      "source_literal": "\"加一个「仅当」条件\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_open_context",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 3338,
+      "column": 24,
+      "key_path": "_open_slot_menu",
+      "original": "改成「↻ 当前这一项」（循环里用）",
+      "source_literal": "\"改成「↻ 当前这一项」（循环里用）\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_open_slot_menu",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（循环里用）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 3363,
+      "column": 20,
+      "key_path": "_show_welcome",
+      "original": "[color=#c9a45c]像搭积木一样写卡牌效果[/color]\n\n1. 上面选卡牌种类，在左中「选一张卡」里双击打开，或点「新建一张」。\n2. 在「卡面信息」里填牌名、选图。\n3. 在「效果积木」里，每条效果先选[color=#c9a45c]当……时[/color]，再从最左边的积木区把积木拖到下面。\n4. 深色的圆角格子是[color=#c9a45c]空位[/color]：可以直接填，也可以把圆角积木（算出一个值的积木）拖进去。\n5. 橙色「如果……那么」把要做的事包起来，就只在条件成立时做。\n6. 点任意积木，这里会告诉你它是干什么的。点积木右边的 ✕ 删除它，右键可以复制。\n7. 想插在两块积木中间，就拖到下面那块的上半截或上面那块的下半截，会出现一条蓝线标出位置。\n8. 右下「还要修的地方」清空后就能保存。\n9. 效果下面的「生成牌」按内部名新建一张牌放进某一区。\n\n",
+      "source_literal": "\"[color=#c9a45c]像搭积木一样写卡牌效果[/color]\\n\\n1. 上面选卡牌种类，在左中「选一张卡」里双击打开，或点「新建一张」。\\n2. 在「卡面信息」里填牌名、选图。\\n3. 在「效果积木」里，每条效果先选[color=#c9a45c]当……时[/color]，再从最左边的积木区把积木拖到下面。\\n4. 深色的圆角格子是[color=#c9a45c]空位[/color]：可以直接填，也可以把圆角积木（算出一个值的积木）拖进去。\\n5. 橙色「如果……那么」把要做的事包起来，就只在条件成立时做。\\n6. 点任意积木，这里会告诉你它是干什么的。点积木右边的 ✕ 删除它，右键可以复制。\\n7. 想插在两块积木中间，就拖到下面那块的上半截或上面那块的下半截，会出现一条蓝线标出位置。\\n8. 右下「还要修的地方」清空后就能保存。\\n9. 效果下面的「生成牌」按内部名新建一张牌放进某一区。\\n\\n\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_show_welcome",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（算出一个值的积木）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 3363,
+      "column": 20,
+      "key_path": "_show_welcome",
+      "original": "[color=#c9a45c]像搭积木一样写卡牌效果[/color]\n\n1. 上面选卡牌种类，在左中「选一张卡」里双击打开，或点「新建一张」。\n2. 在「卡面信息」里填牌名、选图。\n3. 在「效果积木」里，每条效果先选[color=#c9a45c]当……时[/color]，再从最左边的积木区把积木拖到下面。\n4. 深色的圆角格子是[color=#c9a45c]空位[/color]：可以直接填，也可以把圆角积木（算出一个值的积木）拖进去。\n5. 橙色「如果……那么」把要做的事包起来，就只在条件成立时做。\n6. 点任意积木，这里会告诉你它是干什么的。点积木右边的 ✕ 删除它，右键可以复制。\n7. 想插在两块积木中间，就拖到下面那块的上半截或上面那块的下半截，会出现一条蓝线标出位置。\n8. 右下「还要修的地方」清空后就能保存。\n9. 效果下面的「生成牌」按内部名新建一张牌放进某一区。\n\n",
+      "source_literal": "\"[color=#c9a45c]像搭积木一样写卡牌效果[/color]\\n\\n1. 上面选卡牌种类，在左中「选一张卡」里双击打开，或点「新建一张」。\\n2. 在「卡面信息」里填牌名、选图。\\n3. 在「效果积木」里，每条效果先选[color=#c9a45c]当……时[/color]，再从最左边的积木区把积木拖到下面。\\n4. 深色的圆角格子是[color=#c9a45c]空位[/color]：可以直接填，也可以把圆角积木（算出一个值的积木）拖进去。\\n5. 橙色「如果……那么」把要做的事包起来，就只在条件成立时做。\\n6. 点任意积木，这里会告诉你它是干什么的。点积木右边的 ✕ 删除它，右键可以复制。\\n7. 想插在两块积木中间，就拖到下面那块的上半截或上面那块的下半截，会出现一条蓝线标出位置。\\n8. 右下「还要修的地方」清空后就能保存。\\n9. 效果下面的「生成牌」按内部名新建一张牌放进某一区。\\n\\n\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_show_welcome",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 3416,
+      "column": 27,
+      "key_path": "_show_help_for",
+      "original": "放在「对……里的每一个」的嘴里。每一轮，它代表正在处理的那一个。\n\n注意：程序是按「填入位置」把当前这一个填进嘴里每一步的某个空位的，只填空着的那一格。",
+      "source_literal": "\"放在「对……里的每一个」的嘴里。每一轮，它代表正在处理的那一个。\\n\\n注意：程序是按「填入位置」把当前这一个填进嘴里每一步的某个空位的，只填空着的那一格。\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_show_help_for",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个",
+        "一个",
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 3675,
+      "column": 32,
+      "key_path": "_pick_image",
+      "original": "在现在这一层里按名字筛",
+      "source_literal": "\"在现在这一层里按名字筛\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_pick_image",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一层"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 3788,
+      "column": 24,
+      "key_path": "_fill_image_picker",
+      "original": "这一层没有图片也没有文件夹。",
+      "source_literal": "\"这一层没有图片也没有文件夹。\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_fill_image_picker",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一层"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 4353,
+      "column": 39,
+      "key_path": "_collect_key_names",
+      "original": "相对项目根目录（data/masters/00002_x/…）",
+      "source_literal": "\"相对项目根目录（data/masters/00002_x/…）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_collect_key_names",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（data/masters/00002_x/…）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 4353,
+      "column": 82,
+      "key_path": "_collect_key_names",
+      "original": "相对这种卡的根目录（00002_x/…）",
+      "source_literal": "\"相对这种卡的根目录（00002_x/…）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_collect_key_names",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（00002_x/…）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 4353,
+      "column": 116,
+      "key_path": "_collect_key_names",
+      "original": "只放卡文件夹（00002_x/…，不含上层）",
+      "source_literal": "\"只放卡文件夹（00002_x/…，不含上层）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_collect_key_names",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（00002_x/…，不含上层）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 4428,
+      "column": 32,
+      "key_path": "_paint_export_form",
+      "original": "图片命名（不含扩展名）",
+      "source_literal": "\"图片命名（不含扩展名）\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_paint_export_form",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（不含扩展名）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 4504,
+      "column": 93,
+      "key_path": "_paint_export_preview",
+      "original": "（原名）",
+      "source_literal": "\"（原名）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_paint_export_preview",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（原名）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "json_maker/json_maker_ui.gd",
+      "line": 4537,
+      "column": 28,
+      "key_path": "restore_tutorial_previous",
+      "original": "（仍未保存）",
+      "source_literal": "\"（仍未保存）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:restore_tutorial_previous",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（仍未保存）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_action_panel.gd",
+      "line": 171,
+      "column": 32,
+      "key_path": "<top-level>",
+      "original": "改卡牌费用",
+      "source_literal": "\"改卡牌费用\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "scripts/debug/debug_action_panel.gd",
+      "line": 299,
+      "column": 13,
+      "key_path": "_fill_player_picker",
+      "original": "（本地）",
+      "source_literal": "\"（本地）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_fill_player_picker",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（本地）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_action_panel.gd",
+      "line": 301,
+      "column": 13,
+      "key_path": "_fill_player_picker",
+      "original": "（已淘汰）",
+      "source_literal": "\"（已淘汰）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_fill_player_picker",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（已淘汰）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_action_panel.gd",
+      "line": 540,
+      "column": 15,
+      "key_path": "_entries_for",
+      "original": "（本地）",
+      "source_literal": "\"（本地）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_entries_for",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（本地）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_action_panel.gd",
+      "line": 838,
+      "column": 10,
+      "key_path": "_empty_reason",
+      "original": "没有可选对象：%s（当前没有符合条件的对象）",
+      "source_literal": "\"没有可选对象：%s（当前没有符合条件的对象）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_empty_reason",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（当前没有符合条件的对象）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_action_panel.gd",
+      "line": 840,
+      "column": 10,
+      "key_path": "_empty_reason",
+      "original": "没有可选对象：%s（当前没有符合条件的对象）",
+      "source_literal": "\"没有可选对象：%s（当前没有符合条件的对象）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_empty_reason",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（当前没有符合条件的对象）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_adapters/debug_card_adapter.gd",
+      "line": 93,
+      "column": 16,
+      "key_path": "swap_zones",
+      "original": "不能交换同一个牌区",
+      "source_literal": "\"不能交换同一个牌区\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:swap_zones",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_adapters/debug_map_adapter.gd",
+      "line": 125,
+      "column": 25,
+      "key_path": "extra_play",
+      "original": "出牌原语拒绝了这次追加打出（阶段、行动者或卡面条件不满足）",
+      "source_literal": "\"出牌原语拒绝了这次追加打出（阶段、行动者或卡面条件不满足）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:extra_play",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（阶段、行动者或卡面条件不满足）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_adapters/debug_map_adapter.gd",
+      "line": 131,
+      "column": 25,
+      "key_path": "release_name",
+      "original": "原语未执行（已处于真名解放状态或缺卡）",
+      "source_literal": "\"原语未执行（已处于真名解放状态或缺卡）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:release_name",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（已处于真名解放状态或缺卡）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_adapters/debug_map_adapter.gd",
+      "line": 137,
+      "column": 25,
+      "key_path": "hide_name",
+      "original": "原语未执行（当前不处于可隐藏的状态）",
+      "source_literal": "\"原语未执行（当前不处于可隐藏的状态）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:hide_name",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（当前不处于可隐藏的状态）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_adapters/debug_player_adapter.gd",
+      "line": 42,
+      "column": 16,
+      "key_path": "set_resource",
+      "original": "set 与 vary 至少提供一个",
+      "source_literal": "\"set 与 vary 至少提供一个\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:set_resource",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_adapters/debug_player_adapter.gd",
+      "line": 73,
+      "column": 16,
+      "key_path": "edit_number",
+      "original": "set 与 vary 至少提供一个",
+      "source_literal": "\"set 与 vary 至少提供一个\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:edit_number",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/debug/debug_console_ui.gd",
+      "line": 79,
+      "column": 18,
+      "key_path": "open_panel",
+      "original": "[错误] 控制台尚未 initialize(host)",
+      "source_literal": "\"[错误] 控制台尚未 initialize(host)\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:open_panel",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(host)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/game_scene/battle_board_v2.gd",
+      "line": 4327,
+      "column": 13,
+      "key_path": "_refresh_broadcast_continue",
+      "original": "继续（已确认 %d/%d）",
+      "source_literal": "\"继续（已确认 %d/%d）\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_refresh_broadcast_continue",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（已确认 %d/%d）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/game_scene/tactical_board_ui.gd",
+      "line": 3809,
+      "column": 46,
+      "key_path": "_show_effect_modal",
+      "original": "请选择要发动的效果（可多选）",
+      "source_literal": "\"请选择要发动的效果（可多选）\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_show_effect_modal",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（可多选）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/game_scene/tactical_board_ui.gd",
+      "line": 3821,
+      "column": 18,
+      "key_path": "_show_effect_modal",
+      "original": "（已用完）",
+      "source_literal": "\"（已用完）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_show_effect_modal",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（已用完）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/game_scene/tactical_board_ui.gd",
+      "line": 3821,
+      "column": 48,
+      "key_path": "_show_effect_modal",
+      "original": "（不可选）",
+      "source_literal": "\"（不可选）\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_show_effect_modal",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（不可选）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/net/p2p/p2p_signal_client.gd",
+      "line": 154,
+      "column": 10,
+      "key_path": "poll",
+      "original": "一个客机的直连握手超时",
+      "source_literal": "\"一个客机的直连握手超时\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:poll",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/net/session/lobby_session.gd",
+      "line": 429,
+      "column": 82,
+      "key_path": "_join_identity",
+      "original": "认证身份匹配多个成员，请使用原成员恢复凭据",
+      "source_literal": "\"认证身份匹配多个成员，请使用原成员恢复凭据\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_join_identity",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "多个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/net/session/lobby_session.gd",
+      "line": 1987,
+      "column": 10,
+      "key_path": "_fail_closed_restore",
+      "original": "恢复失败并关闭会话（未回滚原对局）；请丢弃此会话并重启权威：",
+      "source_literal": "\"恢复失败并关闭会话（未回滚原对局）；请丢弃此会话并重启权威：\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_fail_closed_restore",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（未回滚原对局）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/net/session/lobby_session.gd",
+      "line": 2268,
+      "column": 11,
+      "key_path": "_begin_selected_match",
+      "original": "录制开局失败并关闭会话（未回滚规则状态）；请重启权威：",
+      "source_literal": "\"录制开局失败并关闭会话（未回滚规则状态）；请重启权威：\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_begin_selected_match",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（未回滚规则状态）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/net/ui/lobby_screen.gd",
+      "line": 183,
+      "column": 34,
+      "key_path": "_network_mode_changed",
+      "original": "双方填写同一个连接服务地址。房主创建后把房间码发给其他玩家，对局由玩家电脑直接连接。",
+      "source_literal": "\"双方填写同一个连接服务地址。房主创建后把房间码发给其他玩家，对局由玩家电脑直接连接。\"",
+      "visible": true,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI输出入口:_network_mode_changed",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/net/ui/v2_view_presenter.gd",
+      "line": 384,
+      "column": 13,
+      "key_path": "_refresh_guard",
+      "original": "结算未完成，疑似异常\n玩家：%s\n卡牌：%s\n效果：%s\n跳过会撤销整个效果，重开会重新开始本局。",
+      "source_literal": "\"结算未完成，疑似异常\\n玩家：%s\\n卡牌：%s\\n效果：%s\\n跳过会撤销整个效果，重开会重新开始本局。\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:_refresh_guard",
+      "rule": "R1",
+      "rule_name": "描述行带效果前缀",
+      "status": "manual_review",
+      "matches": [
+        "\n效果："
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "scripts/system/action_rules.gd",
+      "line": 19,
+      "column": 22,
+      "key_path": "<top-level>",
+      "original": "本回合必须使用一枚令咒",
+      "source_literal": "\"本回合必须使用一枚令咒\"",
+      "visible": false,
+      "fee_visible": false,
+      "identity": false,
+      "evidence": "脚本字面量，未证明可见:<top-level>",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一枚"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 95,
+      "column": 100,
+      "key_path": "<top-level>",
+      "original": "攻击印刷费用",
+      "source_literal": "\"攻击印刷费用\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 97,
+      "column": 98,
+      "key_path": "<top-level>",
+      "original": "技能印刷费用",
+      "source_literal": "\"技能印刷费用\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 119,
+      "column": 113,
+      "key_path": "<top-level>",
+      "original": "当前实际享有的地利(部署才算)",
+      "source_literal": "\"当前实际享有的地利(部署才算)\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(部署才算)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 121,
+      "column": 75,
+      "key_path": "<top-level>",
+      "original": "是否处于交战状态(与对手同处会发生战斗的战场)",
+      "source_literal": "\"是否处于交战状态(与对手同处会发生战斗的战场)\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(与对手同处会发生战斗的战场)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 127,
+      "column": 80,
+      "key_path": "<top-level>",
+      "original": "区域移动费用",
+      "source_literal": "\"区域移动费用\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 128,
+      "column": 101,
+      "key_path": "<top-level>",
+      "original": "常规移动落点(满了返回null)",
+      "source_literal": "\"常规移动落点(满了返回null)\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(满了返回null)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 134,
+      "column": 100,
+      "key_path": "<top-level>",
+      "original": "区域人数(读location._players)",
+      "source_literal": "\"区域人数(读location._players)\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(读location._players)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 137,
+      "column": 89,
+      "key_path": "<top-level>",
+      "original": "MapData任意字段(事件牌堆、局势牌堆等)",
+      "source_literal": "\"MapData任意字段(事件牌堆、局势牌堆等)\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(事件牌堆、局势牌堆等)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 144,
+      "column": 89,
+      "key_path": "<top-level>",
+      "original": "全局面(局势+事件+区域buff)是否含效果名",
+      "source_literal": "\"全局面(局势+事件+区域buff)是否含效果名\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(局势+事件+区域buff)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 148,
+      "column": 73,
+      "key_path": "<top-level>",
+      "original": "查游戏日志（历史事实）",
+      "source_literal": "\"查游戏日志（历史事实）\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "（历史事实）"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 163,
+      "column": 86,
+      "key_path": "<top-level>",
+      "original": "合并最多四个数组",
+      "source_literal": "\"合并最多四个数组\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "四个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 165,
+      "column": 95,
+      "key_path": "<top-level>",
+      "original": "删除一个匹配元素",
+      "source_literal": "\"删除一个匹配元素\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 190,
+      "column": 82,
+      "key_path": "<top-level>",
+      "original": "改卡费用",
+      "source_literal": "\"改卡费用\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 200,
+      "column": 97,
+      "key_path": "<top-level>",
+      "original": "改区域移动费用",
+      "source_literal": "\"改区域移动费用\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 206,
+      "column": 87,
+      "key_path": "<top-level>",
+      "original": "把御主移出版图(回合结束)",
+      "source_literal": "\"把御主移出版图(回合结束)\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(回合结束)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 224,
+      "column": 72,
+      "key_path": "<top-level>",
+      "original": "把攻击加入场上(不计费用上限)",
+      "source_literal": "\"把攻击加入场上(不计费用上限)\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(不计费用上限)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 224,
+      "column": 72,
+      "key_path": "<top-level>",
+      "original": "把攻击加入场上(不计费用上限)",
+      "source_literal": "\"把攻击加入场上(不计费用上限)\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 225,
+      "column": 70,
+      "key_path": "<top-level>",
+      "original": "把技能加入场上(不计常规出牌上限)",
+      "source_literal": "\"把技能加入场上(不计常规出牌上限)\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(不计常规出牌上限)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 228,
+      "column": 78,
+      "key_path": "<top-level>",
+      "original": "只改位置并返回费用",
+      "source_literal": "\"只改位置并返回费用\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 229,
+      "column": 85,
+      "key_path": "<top-level>",
+      "original": "给某玩家(重)发从者牌",
+      "source_literal": "\"给某玩家(重)发从者牌\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R2",
+      "rule_name": "括号补充文字（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "(重)"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 242,
+      "column": 67,
+      "key_path": "<top-level>",
+      "original": "反制效果或其中一个func",
+      "source_literal": "\"反制效果或其中一个func\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/global/all_operations.gd",
+      "line": 253,
+      "column": 86,
+      "key_path": "<top-level>",
+      "original": "执行到这一步时让玩家在区间内选一个数",
+      "source_literal": "\"执行到这一步时让玩家在区间内选一个数\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R3",
+      "rule_name": "数值或数量词后带点/层/画/枚/个（本口径不处理）",
+      "status": "out_of_scope",
+      "matches": [
+        "一个"
+      ],
+      "reason": "本口径不处理"
+    },
+    {
+      "file": "scripts/system/time_points.gd",
+      "line": 450,
+      "column": 25,
+      "key_path": "<top-level>",
+      "original": "卡牌费用计算完成时",
+      "source_literal": "\"卡牌费用计算完成时\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "scripts/system/time_points.gd",
+      "line": 451,
+      "column": 30,
+      "key_path": "<top-level>",
+      "original": "自己卡牌费用计算完成时",
+      "source_literal": "\"自己卡牌费用计算完成时\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    },
+    {
+      "file": "scripts/system/time_points.gd",
+      "line": 452,
+      "column": 32,
+      "key_path": "<top-level>",
+      "original": "他人卡牌费用计算完成时",
+      "source_literal": "\"他人卡牌费用计算完成时\"",
+      "visible": false,
+      "fee_visible": true,
+      "identity": false,
+      "evidence": "UI间接输出证据:<top-level>",
+      "rule": "R4",
+      "rule_name": "资源标签费用未使用魔力消耗",
+      "status": "manual_review",
+      "matches": [
+        "费用"
+      ],
+      "reason": "无明确展示字段或UI输出证据；需确认是否用户可见"
+    }
+  ],
+  "errors": [],
+  "scanner_sha256": "bf704c5e02aee582b73d620361c970bbf719621ce5e97f4324f6b50c2e61e4e1",
+  "command": "python -B tools/scan_visible_copy_style.py --root . --output docs/copy-style-static-scan.json --report docs/copy-style-static-scan.md --top 5 --overwrite",
+  "exit_code": 0
+}

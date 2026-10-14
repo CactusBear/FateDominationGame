@@ -132,12 +132,7 @@
             "options": [
               {
                 "shown_option_name": "打出至多3张基本威力为3或更低的手牌",
-                "select_cards": {
-                  "source": "hand_cards",
-                  "max_power": 3,
-                  "min": 0,
-                  "max": 3
-                },
+                "select_cards": {"candidates": [{"func_name": "get_player_hand_cards", "parameters": [-1], "var_index": 0}, {"func_name": "merge_arrays", "parameters": [], "var_index": 1}, {"func_name": "foreach_func", "parameters": [[{"func_name": "store_value", "parameters": [null], "var_index": 2}, {"func_name": "get_property", "parameters": [{"self_var": 2}, "_power"], "var_index": 3}, {"func_name": "compare_number", "parameters": [{"self_var": 3}, 3], "var_index": 4}, {"func_name": "match_func", "parameters": [{"self_var": 4}, [-1, 0]], "var_index": 5}, {"func_name": "add_to_array", "parameters": [{"self_var": 2}, {"self_var": 1}], "var_index": -1, "condition": {"self_var": 5}}], {"self_var": 0}, 0], "var_index": -1}, {"func_name": "store_value", "parameters": [{"self_var": 1}], "var_index": 6}], "min": 0, "max": 3},
                 "funcs": [
                   {
                     "func_name": "get_activating_eff",

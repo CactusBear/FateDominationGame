@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/scenes/game_scene/battle_board_v2.tscn" id="1"]
+[ext_resource type="Script" path="res://newtests/local-submit-origin_formal.gd" id="2"]
+
+[node name="LocalSubmitOriginFormal" instance=ExtResource("1")]
+script = ExtResource("2")

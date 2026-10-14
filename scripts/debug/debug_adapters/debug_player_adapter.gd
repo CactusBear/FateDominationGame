@@ -89,10 +89,10 @@ func sync_power(id:int) -> Dictionary:
 	return {"ok":true, "changed":before != _number(GameData.player_data_library[id].get("power")), "player_id":id, "before":before, "value":_number(GameData.player_data_library[id].get("power"))}
 
 
-func eliminate(id:int) -> Dictionary:
+func eliminate(id:int, context:SessionContext = null) -> Dictionary:
 	if !GameData.player_data_library.has(id):
 		return _fail("玩家不存在")
-	var ok:bool = ClimaxResolver.new().eliminate_player(id)
+	var ok:bool = ClimaxResolver.new().eliminate_player(id, context)
 	return {"ok":ok, "changed":ok, "player_id":id, "value":ok}
 
 

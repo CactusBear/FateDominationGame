@@ -1,5 +1,7 @@
 extends Control
 
+const LegacyGameLogText = preload("res://scripts/ui/text/game_log_text.gd")
+
 
 ## TacticalBoardUI: 战术界面总控制器 (增强点位版)
 ## 实现了：
@@ -25,6 +27,8 @@ var _selected_opponent_id: int = -1
 #不要写死 0——0 是合法玩家 id，若在赋值前被读到会把 0 号玩家静默当成自己，
 #而 -1 是明显无效值，误读会当场暴露而不是静默错位
 var _local_player_id: int = -1
+var _location_query_context: SessionContext = null
+var _location_query_spec: Dictionary = {}
 var _ai_acting: bool = false
 ## 正在替哪位玩家跑 AI，用于异常兜底复位
 var _ai_acting_for_id: int = -1
@@ -125,20 +129,9 @@ const INACTIVE_COLOR := Color(0.45, 0.06, 0.10, 0.45)
 #令咒耗尽遮罩：半透明纯灰，不带图标。表达"令咒已全部用完"
 const EXHAUSTED_COLOR := Color(0.18, 0.18, 0.22, 0.65)
 # 攻击牌类别的中文标签（卡面右下角角标）
-const ATTACK_CATEGORY_LABELS := {
-	"basic": "基础攻击牌",
-	"class": "职阶攻击牌",
-	"non_basic": "专属攻击牌",
-}
+const ATTACK_CATEGORY_LABELS = CardDescText.ATTACK_CATEGORY_LABELS
 # 数值字段的中文标签表：卡牌说明按此通用提取，"新增数值字段只需补一行标签"
-const FIELD_LABELS := {
-	"_cost": "魔力消耗",
-	"_power": "威力",
-	"_score": "战果",
-	"_magic": "魔力",
-	"_benefit": "地利战力",
-	"_buff_level": "层数",
-}
+const FIELD_LABELS = CardDescText.FIELD_LABELS
 
 var _modal_blockers: Array[Control] = []
 var _dragging_modal: Control = null
@@ -2393,11 +2386,12 @@ func _on_battlefield_clicked(target_area_idx: int) -> void:
 		if target_area_idx < 0 or target_area_idx >= MapData.areas.size():
 			return
 		var spec: Dictionary = pending_location.get("spec", {})
-		var pending_block: String = area_action_block_reason_for(_local_player_id, target_area_idx)
+		var source:SessionContext = SessionGeneration.origin_of(pending_location.effect).get("context")
+		var pending_block: String = area_action_block_reason_for(_local_player_id, target_area_idx, source)
 		if pending_block != "":
 			_show_tactical_confirm(pending_block, true)
 			return
-		var selected:BaseLocation = _first_effect_location_target(MapData.areas[target_area_idx], spec)
+		var selected:BaseLocation = _first_effect_location_target(MapData.areas[target_area_idx], spec, source)
 		if selected == null:
 			_show_tactical_confirm("【%s】没有可用的位置" % MapData.areas[target_area_idx]._area_name, true)
 			return
@@ -2424,28 +2418,8 @@ func _on_battlefield_clicked(target_area_idx: int) -> void:
 # - "unlimited"：只选 _pl_num_limit == -1 的无限位（令咒移动按基础规则摆在地利旁边）
 # - 未声明：沿用原行为，取第一个能容纳玩家的席位；其他卡效仍可移动到地利位
 # 缺少或不认识的规则值不猜，按默认行为处理；不按卡名/角色名分支。
-static func _first_effect_location_target(area:BaseMapArea, spec:Dictionary = {}) -> BaseLocation:
-	if area == null:
-		return null
-	#效果移动同样不能进入被锁战区（固有结界等）：没有合法落点，点击、金框与 AI 选点一并排除
-	if SetLocation.area_locked(area):
-		return null
-	var target_slot:String = str(spec.get("target_slot", ""))
-	var is_workshop_or_scout: bool = area == MapData.magic_workshop or area == MapData.scout
-	for loc:BaseLocation in area._locations:
-		# 规则：魔术工房与侦察战区严禁移入无限格，只能移到这两个区域的合法有限席位上；
-		# 有限席位全满时判定为无法移动
-		if is_workshop_or_scout:
-			if loc._pl_num_limit != -1 and loc._players.size() < loc._pl_num_limit:
-				return loc
-			continue
-		if target_slot == "unlimited":
-			if loc._pl_num_limit == -1:
-				return loc
-			continue
-		if loc._pl_num_limit == -1 or loc._players.size() < loc._pl_num_limit:
-			return loc
-	return null
+static func _first_effect_location_target(area:BaseMapArea, spec:Dictionary = {}, context:SessionContext = null) -> BaseLocation:
+	return AreaActionRules.first_effect_location_target(area, spec, context)
 
 ## 【前哨阶段】准备部署确认
 func _prepare_battlefield_deploy_confirm(target_area_idx: int) -> void:
@@ -2754,67 +2728,11 @@ func _show_zoom_for(card: Control) -> void:
 ## 通用卡牌说明：从任意游戏对象按字段标签表提取 名字/数值/属性/效果，
 ## 不针对具体卡写死；对象上没有的字段自动跳过
 static func _build_card_desc(obj) -> String:
-	if obj == null:
-		return ""
-	var lines: Array[String] = []
-	# 名字由金色标题展示，描述里不再重复
-	for prop in obj.get_property_list():
-		var pname: String = str(prop.get("name", ""))
-		if not FIELD_LABELS.has(pname):
-			continue
-		var v = obj.get(pname)
-		if v is BaseNumber:
-			lines.append("%s：%d" % [FIELD_LABELS[pname], v.number])
-		elif v is int or v is float:
-			lines.append("%s：%d" % [FIELD_LABELS[pname], int(v)])
-	var attrs = obj.get("_attributes")
-	if attrs is Array and attrs.size() > 0:
-		# 复用 Attributes 的通用显示名映射（含自定义属性注册），不重复造表
-		lines.append("属性：" + "、".join(Attributes.get_shown_attributes(attrs)))
-	var cat = obj.get("_category")
-	if cat != null and str(cat) != "":
-		lines.append("类别：" + ATTACK_CATEGORY_LABELS.get(str(cat), str(cat)))
-	#卡面印的打出条件与提示行：文案来自卡自己的数据，这里只负责逐条列出。
-	#注意 Object.get 只接受属性名一个参数，不能带默认值
-	var notes = obj.get("_shown_notes")
-	if notes is Array:
-		for note in notes:
-			if str(note) != "":
-				lines.append(str(note))
-	var play_reqs = obj.get("_play_requirements")
-	if play_reqs is Array:
-		for req in play_reqs:
-			if req is Dictionary and str(req.get("shown_note", "")) != "":
-				lines.append(str(req["shown_note"]))
-	var effs = obj.get("_effects")
-	if effs is Array and effs.size() > 0:
-		var es: Array[String] = []
-		for e in effs:
-			# 选项类效果(单选/多选，如令咒三选一)：本体没有独立说明，把各选项文案列出来
-			if e is BaseEffect and e.has_options():
-				for opt in e._options:
-					var opt_name: String = str(opt.get("shown_option_name", ""))
-					if opt_name != "":
-						es.append(opt_name)
-				continue
-			var en: String = _object_shown_name(e)
-			if en != "":
-				es.append(en)
-		if es.size() > 0:
-			# 效果不带前缀标签，多条换行缩进罗列
-			lines.append("\n　　".join(es))
-	return "\n".join(lines)
+	return CardDescText.card_desc(obj)
 
 ## 通用显示名：优先对象自己的显示名接口，回退内部名
 static func _object_shown_name(obj) -> String:
-	if obj == null:
-		return ""
-	if obj.has_method("get_shown_name"):
-		var s: String = str(obj.get_shown_name())
-		if s != "":
-			return s
-	var n = obj.get("_name")
-	return str(n) if n != null else ""
+	return CardDescText.shown_name(obj)
 
 ## 通用卡位填充：按对象上的卡图字段填 texture 并绑定说明，无数据的卡位隐藏。
 ## img_prop 可传多个候选字段名，按顺序取第一个存在的图（御主用_master_card_img、卡牌用_card_img…）
@@ -2886,70 +2804,7 @@ func _bind_zoom_info(node: Control, obj, img_field: String = "") -> void:
 ## token(状态图标)的说明：名字与层数，不走卡牌式字段罗列。
 ## 效果文案照旧列出，玩家要靠它知道这个状态在做什么
 static func _build_token_desc(obj) -> String:
-	var lines: Array[String] = []
-	var lvl = obj.get("_buff_level")
-	var lvl_num: int = (lvl.number as int) if lvl is BaseNumber else 1
-	if lvl_num > 1:
-		lines.append("层数：%d" % lvl_num)
-	var effs = obj.get("_effects")
-	# 带选项的效果按"效果名 + 它自己的选项"成组收，没有选项的效果只留名字。
-	# 同一个效果既可能挂在状态自己身上、又被持有者的 related_effect_names 指到，
-	# 这里按效果名记一遍，避免同一条列两次
-	var groups: Array = []
-	var flat: Array = []
-	var named: Array = []
-	if effs is Array:
-		for e in effs:
-			if not (e is BaseEffect):
-				continue
-			named.append(e._name)
-			if e.has_options():
-				var options: Array = []
-				for opt in e._options:
-					var option_name: String = str(opt.get("shown_option_name", ""))
-					if option_name != "":
-						options.append(option_name)
-				if not options.is_empty():
-					groups.append({"head": _object_shown_name(e), "options": options})
-			else:
-				var en: String = _object_shown_name(e)
-				if en != "":
-					flat.append(en)
-	var related: Array = obj.get("_related_effect_names")
-	var owner = obj.from.get_ref() if obj.from is WeakRef else obj.from
-	if related is Array and owner != null:
-		var owner_effects = owner.get("_effects")
-		if owner_effects is Array:
-			for effect_name in related:
-				for eff in owner_effects:
-					if eff is BaseEffect and eff._name == str(effect_name):
-						if named.has(eff._name):
-							break
-						var shown: String = _object_shown_name(eff)
-						if shown != "" and not flat.has(shown):
-							flat.append(shown)
-						break
-	# 只有一个带选项的效果时平铺（老口径，多一行效果名是噪音）；
-	# 有多个时按效果名分组——几个效果的选项名可能完全相同，平铺会看成同一条列了两遍
-	if groups.size() > 1:
-		var body: Array = []
-		for group in groups:
-			var head: String = str(group["head"])
-			if head != "":
-				body.append(head)
-			for option_name in group["options"]:
-				body.append("　　" + str(option_name))
-		body.append_array(flat)
-		if not body.is_empty():
-			lines.append("\n".join(body))
-		return "\n".join(lines)
-	var es: Array = []
-	if groups.size() == 1:
-		es.append_array(groups[0]["options"])
-	es.append_array(flat)
-	if not es.is_empty():
-		lines.append("\n　　".join(es))
-	return "\n".join(lines)
+	return CardDescText.token_desc(obj)
 
 ## 右键展示某个放大目标的图与说明。两处右键入口（普通卡牌、顶栏对手头像）共用
 func _show_zoom_and_desc_for(card: Control) -> bool:
@@ -3225,14 +3080,16 @@ func _refresh_clickable_strength() -> void:
 			alive.append(c)
 	_clickable_nodes = alive
 	var my_turn: bool = GameProgress.current_player_id == _local_player_id
+	var pending:Dictionary = AreaActionRules.get_pending_location_selection()
+	var source:SessionContext = SessionGeneration.origin_of(pending.effect).get("context") if not pending.is_empty() else null
 	for c in _clickable_nodes:
 		if !(c is Control):
 			continue
 		var ctrl := c as Control
 		var area_idx: int = _area_index_of_node(ctrl)
 		if area_idx != -1:
-			_set_clickable_active(ctrl, my_turn and _can_act_on_area(area_idx))
-			_set_area_descendant_clickable_active(ctrl, my_turn and _can_act_on_area(area_idx))
+			_set_clickable_active(ctrl, my_turn and _can_act_on_area(area_idx, source))
+			_set_area_descendant_clickable_active(ctrl, my_turn and _can_act_on_area(area_idx, source))
 		elif ctrl.has_meta("playable_hint"):
 			# 自己带着"此刻能不能用"的状态（手牌、令咒卡）：状态为假时不落到下面的兜底分支，
 			# 否则会变成"轮到我 = 亮着"，看起来能点却点不动
@@ -3273,133 +3130,39 @@ func _area_index_of_node(node: Control) -> int:
 
 ## 本地玩家当前所在战区（没有位置时返回 null）
 static func _local_current_area(pl_data: Dictionary) -> BaseMapArea:
-	var loc = pl_data.get("location") as BaseLocation
-	if loc == null:
-		return null
-	return loc.get_from() as BaseMapArea
+	return AreaActionRules.current_area(pl_data)
 
 ## 从当前战区分几步到目标战区的移动费用（含魔术工房折扣）。判据与确认文案共用，
 ## 避免两处各算一套导致"界面显示能走、实际走不动"
 static func _estimate_move_cost(pl_data: Dictionary, step_diff: int) -> int:
-	var area := _local_current_area(pl_data)
-	if area == null:
-		return 0
-	var total_cost: int = 0
-	var step_discount: int = MoveLocation.step_cost_discount(pl_data)
-	for n in range(step_diff):
-		if area._linked_map_area == null:
-			break
-		total_cost += maxi(0, (area._move_cost as BaseNumber).number - step_discount)
-		area = area._linked_map_area
-	if _local_current_area(pl_data) == MapData.magic_workshop:
-		var discount: int = (pl_data.get("move_cost_discount_from_workshop", BaseNumber.new(0)) as BaseNumber).number
-		total_cost = max(0, total_cost - discount)
-	return total_cost
+	return AreaActionRules.estimate_move_cost(pl_data, step_diff)
 
 ## 魔力够不够付这笔移动费用（魔力免疫视为够）
 static func _is_magic_enough_for_move(pl_data: Dictionary, cost: int) -> bool:
-	if bool(pl_data.get("is_magic_immune", false)):
-		return true
-	return (pl_data.get("magic", BaseNumber.new(0)) as BaseNumber).number >= cost
+	return AreaActionRules.magic_enough_for_move(pl_data, cost)
 
 ## 该战区此刻不可操作的原因（空串表示可操作）。呼吸光晕与点击入口共用同一份判据，
 ## 保证"看起来能点"与"点得动"永不漂移；不能操作时还能给玩家一个具体说法，
 ## 不再出现"战区亮着、点下去什么都不发生"
-func _area_action_block_reason(target_area_idx: int) -> String:
-	return area_action_block_reason_for(_local_player_id, target_area_idx)
+func _area_action_block_reason(target_area_idx: int, context:SessionContext = null) -> String:
+	return area_action_block_reason_for(_local_player_id, target_area_idx, context)
 
 ## 与实例版同一份判据，只把"谁在操作"改为显式参数，供 v2 对局界面复用
-static func area_action_block_reason_for(player_id: int, target_area_idx: int) -> String:
-	if target_area_idx < 0 or target_area_idx >= MapData.areas.size():
-		return "目标战区不存在"
-	# 选项级位置选择（令咒"从新都或深山町移动至任意位置"等）：
-	# 呼吸光晕与点击入口(_on_battlefield_clicked)共用这一条判据。
-	# 只要当前正等玩家选位置、且该战区有合法落点，战区就属于"可操作"，必须亮金框；
-	# 否则会陷入常规移动的单向/交战判定，导致"能点却不亮框"
-	var pending_loc: Dictionary = EffectManager.get_pending_location_selection()
-	if not pending_loc.is_empty():
-		var spec: Dictionary = pending_loc.get("spec", {})
-		var eff: BaseEffect = pending_loc.get("effect")
-		var trigger_id: int = eff._trigger_player_id if eff != null else player_id
-		if trigger_id != player_id and trigger_id >= 0:
-			return "当前是其他玩家在选择位置"
-		var target_area: BaseMapArea = MapData.areas[target_area_idx]
-		# 起点战区校验（如令咒只允许从新都/深山町出发）
-		var allowed: Array = spec.get("allowed_origin_areas", []) as Array
-		if not allowed.is_empty():
-			var origin: BaseLocation = GetLocation.new().exec(trigger_id)
-			var origin_area: BaseMapArea = origin.get_from() as BaseMapArea if origin != null else null
-			var origin_name: String = origin_area._area_name if origin_area != null else ""
-			if not allowed.has(origin_name):
-				return "当前战区【%s】不是合法的出发地" % origin_name
-		var lock_reason: String = move_lock_reason(trigger_id, target_area)
-		if lock_reason != "":
-			return lock_reason
-		if _first_effect_location_target(target_area, spec) == null:
-			return "【%s】没有可用的席位" % target_area._area_name
-		return ""
-	if GameProgress.current_player_id != player_id:
-		return "还没轮到你行动"
-	var phase_name := str(GameProgress.get_current_phase().get("name", ""))
-	if GameProgress.is_phase_for(player_id, "outpost") \
-			and GameDataManager.get_player_data(player_id).get("location") == null:
-		var target_area: BaseMapArea = MapData.areas[target_area_idx]
-		if DeployRules.open_locations(target_area).is_empty():
-			return "【%s】没有可用的部署席位" % target_area._area_name
-		return ""
-	if not GameProgress.is_phase_for(player_id, "action"):
-		return "当前是%s，不能部署或移动" % _phase_shown_name(phase_name)
-	var pl_data: Dictionary = GameDataManager.get_player_data(player_id)
-	#交战判定与引擎共用同一个查询：与对手同处一处会发生战斗的战场时不能常规移动
-	if IsEngaged.new().exec(player_id):
-		return "处于交战状态，无法移动"
-	var curr_area := _local_current_area(pl_data)
-	if curr_area == null:
-		return "你还没有部署到任何战区"
-	var current_idx: int = MapData.areas.find(curr_area)
-	if current_idx == -1:
-		return "你当前的位置不在任何战区上"
-	var step_diff: int = target_area_idx - current_idx
-	if step_diff <= 0:
-		return "移动只能沿单方向前进"
-	#落点判据与真正的移动(MoveLocation)共用同一份规则：区域不可移入、或常规落点已满，
-	#这里就判为不可操作——既不亮金色提示，点击时也能直接给出原因
-	var target_area: BaseMapArea = MapData.areas[target_area_idx]
-	var move_lock: String = move_lock_reason(player_id, target_area)
-	if move_lock != "":
-		return move_lock
-	if target_area == MapData.scout and GetMoveTargetLocation.new().exec(target_area) == null:
-		return "侦查先锋位已被占用"
-	if target_area._can_move_to == false:
-		return "无法移动至【%s】" % target_area._area_name
-	if GetMoveTargetLocation.new().exec(target_area) == null:
-		return "【%s】的常规落点已满" % target_area._area_name
-	if !_is_magic_enough_for_move(pl_data, _estimate_move_cost(pl_data, step_diff)):
-		return "魔力不足，无法移动至【%s】" % target_area._area_name
-	return ""
+static func area_action_block_reason_for(player_id: int, target_area_idx: int, context:SessionContext = null) -> String:
+	return AreaActionRules.block_reason(player_id, target_area_idx, context)
 
 ## 战区锁挡住这次移动的原因（出发地被锁不能离开、目标被锁不能进入；途经不限）。
 ## 判据复用规则层 SetLocation.locked_area_for_move，界面只负责把结果说成一句话
 static func move_lock_reason(player_id: int, target_area: BaseMapArea) -> String:
-	var locked: BaseMapArea = SetLocation.locked_area_for_move(player_id, target_area)
-	if locked == null:
-		return ""
-	if locked == target_area:
-		return "无法移动至【%s】" % locked._area_name
-	return "无法离开【%s】" % locked._area_name
+	return AreaActionRules.move_lock_reason(player_id, target_area)
 
 ## 该战区此刻对本地玩家是否可操作
-func _can_act_on_area(target_area_idx: int) -> bool:
-	return _area_action_block_reason(target_area_idx) == ""
+func _can_act_on_area(target_area_idx: int, context:SessionContext = null) -> bool:
+	return _area_action_block_reason(target_area_idx, context) == ""
 
 ## 阶段名的中文口径：界面各处统一由它生成，避免同一阶段在不同位置出现不同写法
 static func _phase_shown_name(phase_key: String) -> String:
-	match phase_key:
-		"prepare": return "准备阶段"
-		"outpost": return "前哨阶段"
-		"action": return "行动阶段"
-		"battle": return "战斗阶段"
-	return phase_key
+	return AreaActionRules.phase_shown_name(phase_key)
 
 ## 递归设置鼠标过滤：放大预览层需整体忽略鼠标，避免抢走底层卡牌的悬浮判定
 func _set_control_mouse_filter_recursive(node: Node, filter: Control.MouseFilter) -> void:
@@ -3715,18 +3478,12 @@ func _show_player_select_panel(pending: Dictionary) -> void:
 func _class_shown(id:int) -> String:
 	if not GameDataManager.can_see_servant_class(_local_player_id, id):
 		return "???"
-	var servant = GameDataManager.get_player_data(id).get("servant")
+	var servant = GameDataManager.find_player_data(id).get("servant")
 	return str(servant.get("_servant_class")) if is_instance_valid(servant) else "???"
 
 
 func _player_shown_name(player_id: int) -> String:
-	var data: Dictionary = GameDataManager.get_player_data(player_id)
-	var master = data.get("master")
-	if master != null and master.has_method("get_shown_name"):
-		var nm: String = str(master.get_shown_name())
-		if nm != "":
-			return nm
-	return "玩家%d" % player_id
+	return EffectManager.player_shown_name(player_id)
 
 func _on_player_target_picked(player_id: int) -> void:
 	if _player_select_effect == null:
@@ -3738,7 +3495,7 @@ func _on_player_target_picked(player_id: int) -> void:
 	EffectManager.submit_player_selection(eff, [player_id])
 	refresh_all_ui()
 
-## AI 的目标选择：交给临时 AI（策略见 system/ai/temp/dummy_bot.gd）
+## AI 的目标选择：交给临时 AI（策略见 system/ai/rule_bot.gd）
 func _resolve_bot_player_selection(pending: Dictionary) -> void:
 	DummyBot.new().resolve_player_selection(pending)
 
@@ -3753,16 +3510,27 @@ func _check_waiting_location_selection() -> void:
 		return
 	var trigger_id:int = eff._trigger_player_id
 	if trigger_id != _local_player_id and trigger_id >= 0:
+		var source:Dictionary = SessionGeneration.origin_of(eff)
+		if not source.ok:
+			return
+		var previous_context:SessionContext = _location_query_context
+		var previous_spec:Dictionary = _location_query_spec
+		_location_query_context = source.context
+		_location_query_spec = pending.spec
 		DummyBot.new().resolve_location_selection(pending, self)
+		_location_query_context = previous_context
+		_location_query_spec = previous_spec
 
 
 ## 供临时 AI 选择效果搬运落点：范围排除由数据声明，具体席位复用界面已有规则。
 func ai_pick_effect_location(spec:Dictionary) -> BaseLocation:
+	if _location_query_context == null or not is_same(spec, _location_query_spec):
+		return null
 	var forbidden:Array = spec.get("forbidden_target_areas", []) as Array
 	for area:BaseMapArea in MapData.areas:
 		if forbidden.has(str(area._area_name)):
 			continue
-		var target:BaseLocation = _first_effect_location_target(area, spec)
+		var target:BaseLocation = _first_effect_location_target(area, spec, _location_query_context)
 		if target != null:
 			return target
 	return null
@@ -3820,7 +3588,7 @@ func _check_waiting_card_selection() -> void:
 		_refresh_card_select_confirm(pending)
 
 
-## 等玩家挑牌/选目标：交给临时 AI（策略见 system/ai/temp/dummy_bot.gd）
+## 等玩家挑牌/选目标：交给临时 AI（策略见 system/ai/rule_bot.gd）
 ## （提交空 = 放弃。此刻来源资源与用量都还没扣，放弃等于这个效果没发动）
 func _resolve_bot_card_selection(pending: Dictionary) -> void:
 	DummyBot.new().resolve_card_selection(pending)
@@ -4011,7 +3779,7 @@ func _on_card_select_cancelled() -> void:
 	refresh_all_ui()
 
 
-## AI自动决断主动效果：策略全部在 system/ai/temp/dummy_bot.gd，界面这里只做委托
+## AI自动决断主动效果：策略全部在 system/ai/rule_bot.gd，界面这里只做委托
 func _resolve_bot_active_effect(effect: BaseEffect, bot_id: int) -> void:
 	DummyBot.new().resolve_active_effect(effect, bot_id)
 	refresh_all_ui()
@@ -4022,46 +3790,19 @@ func _resolve_bot_active_effect(effect: BaseEffect, bot_id: int) -> void:
 ## 消耗条目解析：只读效果数据，不依赖界面实例，供新旧控制器共用
 
 static func _resolve_effect_cost_items(effect: BaseEffect) -> Array[String]:
-	var costs: Array[String] = []
-	if effect == null:
-		return costs
-	if effect._cost != null:
-		_collect_cost_items(effect._cost, costs)
-	return costs
+	return CostText.effect_cost_items(effect)
 
 ## 收集 cost 声明（支持单个 Dictionary 或 Array）
 static func _collect_cost_items(cost_data, out_costs: Array[String]) -> void:
-	if cost_data is Dictionary:
-		var one := _format_cost_item(cost_data)
-		if one != "":
-			out_costs.append(one)
-	elif cost_data is Array:
-		for item in cost_data:
-			if item is Dictionary:
-				var one := _format_cost_item(item)
-				if one != "":
-					out_costs.append(one)
+	CostText._collect(cost_data, out_costs)
 
 ## 格式化单项消耗：资源名 + 数字，无量词
 static func _format_cost_item(c_dict: Dictionary) -> String:
-	var type_str: String = str(c_dict.get("type", "")).to_lower()
-	var amount: int = int(c_dict.get("amount", 1))
-	var res_name: String = str(c_dict.get("name", ""))
-	match type_str:
-		"buff":
-			return "%s %d" % [res_name if res_name != "" else "状态", amount]
-		"magic":
-			return "魔力 %d" % amount
-		"command_spell":
-			return "令咒 %d" % amount
-		_:
-			return "%s %d" % [res_name, amount] if res_name != "" else ""
+	return CostText._format_item(c_dict)
 
 ## 拼接消耗资源行：有消耗才追加，无消耗整行不显示
 static func _attach_cost_line(base_text: String, cost_items: Array[String]) -> String:
-	if cost_items.is_empty():
-		return base_text
-	return base_text + "\n消耗资源：" + "、".join(cost_items)
+	return CostText.attach_line(base_text, cost_items)
 
 ## 效果确认弹窗（无标题、无括号、无消耗则不显示资源行）
 ## 选项类效果(单选/多选)动态生成勾选行；带quantity_range的选项额外带一个数量选择器；
@@ -4336,7 +4077,7 @@ func _run_dummy_bot_turn(bot_id: int) -> void:
 	_ai_play_prompt_round = -1
 	if is_instance_valid(_ai_play_prompt_node):
 		_ai_play_prompt_node.visible = false
-	#行为全部在 system/ai/temp/dummy_bot.gd：界面只提供展示与查询能力
+	#行为全部在 system/ai/rule_bot.gd：界面只提供展示与查询能力
 	DummyBot.new().step(self, bot_id)
 
 ## -------------------------------------------------------------
@@ -4421,7 +4162,7 @@ func _refresh_ai_play_prompt() -> void:
 		scroll.add_child(row)
 		prompt.z_index = MODAL_Z_THRESHOLD - 1
 		_reorder_child_by_z(prompt)
-	var cards: Array = GameDataManager.get_player_data(_ai_play_prompt_player_id).get("played_cards", [])
+	var cards: Array = GameDataManager.find_player_data(_ai_play_prompt_player_id).get("played_cards", [])
 	var row := _ai_play_prompt_node.get_node("CardsScroll/Cards") as HBoxContainer
 	while row.get_child_count() > cards.size():
 		_free_runtime_child(row.get_child(row.get_child_count() - 1))
@@ -4564,7 +4305,7 @@ func _update_ai_play_prompt_geometry() -> void:
 		return
 	if _ai_play_prompt_round != GameProgress.current_round or _ai_play_prompt_card == null \
 			or _ai_play_prompt_player_id < 0 or GameProgress.current_player_id == _local_player_id \
-			or GameDataManager.get_player_data(_ai_play_prompt_player_id).get("played_cards", []).is_empty():
+			or GameDataManager.find_player_data(_ai_play_prompt_player_id).get("played_cards", []).is_empty():
 		_ai_play_prompt_node.hide()
 		return
 	var order_box := get_node_or_null(ORDER_BOX_PATH) as HBoxContainer
@@ -4910,94 +4651,7 @@ func _bind_instant_power_tooltip(label: Control, player_id: int, preview_power: 
 
 ## 格式化单条对局日志为直观清晰的中文描述
 static func _format_game_log_line(e: Dictionary) -> String:
-	var round_num: int = int(e.get("round", 0))
-	var phase_name: String = str(e.get("phase", ""))
-	var phase_zh: String = ""
-	match phase_name:
-		"prepare": phase_zh = "准备"
-		"outpost": phase_zh = "前哨"
-		"action": phase_zh = "行动"
-		"battle": phase_zh = "战斗"
-		"end": phase_zh = "结束"
-		_: phase_zh = phase_name
-	var tag: String = "[第%d回合" % round_num + ("·%s]" % phase_zh if phase_zh != "" else "]")
-	var actor_id: int = int(e.get("actor", -1))
-	var actor_name: String = _player_shown_name_by_id(actor_id) if actor_id >= 0 else ""
-	var e_type: String = str(e.get("type", ""))
-	var place: String = str(e.get("place", ""))
-	match e_type:
-		"deploy":
-			return "%s %s 部署至【%s】" % [tag, actor_name, place]
-		"move":
-			return "%s %s 移动至【%s】" % [tag, actor_name, place]
-		"command_spell_used":
-			return "%s %s 使用令咒" % [tag, actor_name]
-		"draw":
-			# 抽到的具体牌属于隐藏信息；事实日志保留对象供规则查询，玩家战报只公布抽牌动作。
-			return "%s %s 抽牌" % [tag, actor_name]
-		"refill_hand":
-			return "%s %s 补充手牌" % [tag, actor_name]
-		"reshuffle_discard":
-			return "%s %s 将弃牌洗入牌库" % [tag, actor_name]
-		"magic_add", "magic_decrease", "score_add", "score_decrease":
-			var resource_name: String = "魔力" if e_type.begins_with("magic") else "战果"
-			var delta = e.get("data", {}).get("delta", 0)
-			if e_type == "magic_decrease":
-				var payment: bool = e.get("tags", []).has("magic_spend")
-				var purpose: String = str(e.get("data", {}).get("purpose", ""))
-				var uses: Dictionary = {"regular_play":"常规出牌", "effect_attack":"打出攻击", "effect_skill":"打出技能", "move":"移动", "effect_cost":"发动能力"}
-				var use_text: String = " · " + str(uses.get(purpose, purpose)) if payment and purpose != "" else ""
-				return "%s %s %s魔力%d%s" % [tag, actor_name, "支付" if payment else "失去", absi(int(delta)), use_text]
-			return "%s %s %s %+d" % [tag, actor_name, resource_name, delta]
-		"eliminated":
-			return "%s %s 被淘汰" % [tag, actor_name]
-		"true_name_release":
-			return "%s %s 解放真名" % [tag, actor_name]
-		"true_name_hidden":
-			return "%s %s 隐藏真名" % [tag, actor_name]
-		"score_add", "score_decrease":
-			var score_data: Dictionary = e.get("data", {})
-			var delta_score: int = int(score_data.get("delta", 0))
-			var verb: String = "获得" if e_type == "score_add" else "失去"
-			return "%s %s %s战果%s，当前%s" % [tag, actor_name, verb, abs(delta_score), int(score_data.get("now", 0))]
-		"game_end":
-			var winner_names: Array[String] = []
-			for winner_id in e.get("data", {}).get("winners", []):
-				winner_names.append(_player_shown_name_by_id(int(winner_id)))
-			return "%s 对局结束：圣杯溢出，全员判负" % tag if winner_names.is_empty() else "%s 对局结束，胜者：%s" % [tag, "、".join(winner_names)]
-		"play":
-			var played = e.get("object")
-			var card_name: String = _object_shown_name(played) if played != null else str(e.get("data", {}).get("card_name", ""))
-			return "%s %s 打出%s%s" % [tag, actor_name, ("【%s】" % card_name) if card_name != "" else "牌", " · 暗置" if bool(e.get("data", {}).get("concealed", false)) else ""]
-		"regular_play":
-			return "%s %s 完成常规出牌，打出%s" % [tag, actor_name, str(e.get("data", {}).get("count", 0))]
-		"effect":
-			var data: Dictionary = e.get("data", {})
-			var shown_effect: String = str(data.get("shown_effect", ""))
-			if shown_effect == "" or not bool(data.get("applied", false)):
-				return ""
-			var source_name: String = str(data.get("source_name", ""))
-			var points: Array = data.get("trigger_time_points", [])
-			var shown_points: Array[String] = []
-			for point in points:
-				var shown_point: String = str(TimePoints.shown_time_points.get(str(point), ""))
-				if shown_point != "" and not shown_points.has(shown_point):
-					shown_points.append(shown_point)
-			var when: String = " · " + "、".join(shown_points) if not shown_points.is_empty() else ""
-			var source_text: String = "【%s】" % source_name if source_name != "" else ""
-			return "%s %s%s发动%s：%s" % [tag, actor_name, when, source_text if source_text != "" else "效果", shown_effect]
-		"option_used":
-			#秘密选择只进规则日志，战报不公开选了哪一项（公开与否由发起选择的效果决定）
-			if (e.get("tags", []) as Array).has("secret_choice"):
-				return ""
-			var option_text: String = str(e.get("data", {}).get("option_name", ""))
-			return "%s %s 选择【%s】" % [tag, actor_name, option_text] if option_text != "" else ""
-		"time_point":
-			return ""
-		"battle":
-			return "%s 【%s】完成战斗结算" % [tag, place]
-		_:
-			return ""
+	return LegacyGameLogText.line(e)
 
 func _show_battle_report(res: Dictionary, show_all_logs: bool = false) -> void:
 	if battle_report_modal == null:
@@ -5258,11 +4912,7 @@ func _player_names_text(ids: Array) -> String:
 ## 按玩家 id 取示人名字：走对象自己的显示名接口，不直接读 _shown_name
 ## （_shown_name 为空时该接口会回退内部名，直接读字段会显示空白）
 static func _player_shown_name_by_id(player_id: int) -> String:
-	if not GameData.player_data_library.has(player_id):
-		return "玩家 %d" % player_id
-	var master = (GameDataManager.get_player_data(player_id) as Dictionary).get("master")
-	var shown: String = _object_shown_name(master)
-	return shown if shown != "" else ("玩家 %d" % player_id)
+	return EffectManager.player_shown_name(player_id)
 
 
 func _on_close_battle_report() -> void:

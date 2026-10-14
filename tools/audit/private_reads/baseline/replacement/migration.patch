@@ -1,0 +1,84 @@
+--- before/newtests/play_affordance_rule_audit_test.gd
++++ after/newtests/play_affordance_rule_audit_test.gd
+@@ -72,7 +72,7 @@
+ 		if spec.forbid == CannotPlayCardsEffect.EFFECT_NAME: d.buffs.append(buff)
+ 		else:
+ 			MapData.miyama._buffs.append(buff)
+-			if card._attributes.has(Attributes.SPECIAL): d.location = MapData.miyama0
++			if card.has_attribute(Attributes.SPECIAL): d.location = MapData.miyama0
+ 	if spec.get("completed", false): GameLog.record("regular_play", 0, -1, "", null, [], {})
+ 	for i in range(int(spec.get("committed", 0))):
+ 		GameLog.record("play", 0, -1, "", support, [], {"extra":false, "concealed":false, "card_type":"attack"})
+--- before/scratch/transaction-return-consumers/transaction_return_consumers_test.gd
++++ after/scratch/transaction-return-consumers/transaction_return_consumers_test.gd
+@@ -277,7 +277,7 @@
+ 	var authority := SubmitAuthority.new()
+ 	authority.writer = writer
+ 	_check(not authority.submit(1, 1, "fault", {}), "动作返回 true 后 flush 失败不得伪报成功")
+-	_check(authority._revision > 0 and not authority.error.is_empty(), "写失败必须废弃旧视图并给出原因")
++	_check(authority.current_revision() > 0 and not authority.error.is_empty(), "写失败必须废弃旧视图并给出原因")
+ 
+ 	_reset()
+ 	_recording_contract()
+--- before/tests/climax_gated_ability_test.gd
++++ after/tests/climax_gated_ability_test.gd
+@@ -59,7 +59,7 @@
+ 	for servant in GameData.loaded_servants:
+ 		for template in (servant._specials.get("SKILLS", []) as Array):
+ 			var clone:BaseSkill=CloneObject.new().exec(template)
+-			if clone != null and clone._cost.number == 8 and clone._attributes.has(Attributes.NOBLE_PHANTASM):
++			if clone != null and clone._cost.number == 8 and clone.has_attribute(Attributes.NOBLE_PHANTASM):
+ 				if blade == null:
+ 					blade=clone
+ 	check(blade != null, "the priciest noble phantasm is loaded from the servant template")
+--- before/tests/match_finished_authority_test.gd
++++ after/tests/match_finished_authority_test.gd
+@@ -56,11 +56,11 @@
+ 	replay.error = "injected recorder close failure"
+ 	authority.recorder = replay
+ 	var old_driver = authority.driver
+-	var revision:int = authority._revision
++	var revision:int = authority.current_revision()
+ 	var result:Dictionary = authority.finish_match_to_lobby(10, view.seq)
+ 	check(result.code == "archive_error" and result.reason == replay.error, "real recorder close failure exposed")
+ 	check(authority.started and GameProgress.is_game_over and GameStart._started and authority.driver == old_driver, "archive failure preserves rule graph")
+-	check(authority._revision == revision and not authority._issued.is_empty(), "archive failure preserves version and views")
++	check(authority.current_revision() == revision and not authority._issued.is_empty(), "archive failure preserves version and views")
+ 	var journal = preload("res://scripts/match/match_journal.gd")
+ 	replay.error = ""
+ 	journal.audit_error = "injected audit failure"
+@@ -80,10 +80,10 @@
+ 	check(authority.controllers.is_empty() and authority._issued.is_empty(), "controllers and views cleared")
+ 	check(authority._restart_selection.is_empty() and authority._restart_guard.is_empty() and authority._restart_seed == null, "restart state cleared")
+ 	check(authority.driver != old_driver and authority.recorder == null, "fresh driver and detached recorder")
+-	check(authority._revision == revision + 1, "one completion revision")
++	check(authority.current_revision() == revision + 1, "one completion revision")
+ 	check(authority.view_for(10).is_empty() and authority.pending_for(10).is_empty() and authority.actions_for(10).is_empty(), "outputs empty after completion")
+ 	check(not preload("res://scripts/match/rule_random.gd").snapshot().known, "random tracking stopped")
+-	check(authority.finish_match_to_lobby(10, view.seq).code == "not_started" and authority._revision == revision + 1, "duplicate cannot clean twice")
++	check(authority.finish_match_to_lobby(10, view.seq).code == "not_started" and authority.current_revision() == revision + 1, "duplicate cannot clean twice")
+ 	# 独立真实档案关闭夹具；终局标记注入只测句柄收尾，不冒充自然录制回放。
+ 	var archived = MatchReplay.new()
+ 	var folder := "user://match-finished-authority-" + str(Time.get_ticks_usec())
+--- before/tests/refactor_net_area_diagnostic.gd
++++ after/tests/refactor_net_area_diagnostic.gd
+@@ -177,7 +177,7 @@
+ 	var peer: int = diagnostic_guest.transport.peer_id()
+ 	var view: Dictionary = diagnostic_guest.read_match()
+ 	var local: Dictionary = GameDataManager.find_player_data(0)
+-	var state: Dictionary = {"label": label, "display": DisplayServer.get_name(), "peer": peer, "observer": diagnostic_host.match_authority.observer_for(peer), "view_seq": view.get("seq"), "issued": diagnostic_host.match_authority._issued.get(peer), "revision": diagnostic_host.match_authority._revision, "authority_error": diagnostic_host.match_authority.error, "phase": view.get("phase"), "player": GameProgress.current_player_id, "local_location": local.get("location") != null, "actions": diagnostic_guest.read_actions(), "source_query": diagnostic_host.match_authority.seat_query.actions(0), "waiting_choice": EffectManager.is_waiting_for_choice(), "rejections": diagnostic_rejections}
++	var state: Dictionary = {"label": label, "display": DisplayServer.get_name(), "peer": peer, "observer": diagnostic_host.match_authority.observer_for(peer), "view_seq": view.get("seq"), "issued": diagnostic_host.match_authority._issued.get(peer), "revision": diagnostic_host.match_authority.current_revision(), "authority_error": diagnostic_host.match_authority.error, "phase": view.get("phase"), "player": GameProgress.current_player_id, "local_location": local.get("location") != null, "actions": diagnostic_guest.read_actions(), "source_query": diagnostic_host.match_authority.seat_query.actions(0), "waiting_choice": EffectManager.is_waiting_for_choice(), "rejections": diagnostic_rejections}
+ 	if view.get("phase") == "action":
+ 		var reasons: Array = []
+ 		for index in MapData.areas.size():
+--- before/tests/servant_skill_eight_magic_test.gd
++++ after/tests/servant_skill_eight_magic_test.gd
+@@ -82,7 +82,7 @@
+ 			var current:BaseSkill=d.servant_skills[index]
+ 			var allowed:bool=RegularPlay.pending_modes(id,[],[],current).has(false)
+ 			print("CURSE ",current.get_shown_name()," attributes=",current._attributes," allowed=",allowed)
+-			check(allowed == not current._attributes.has(Attributes.NOBLE_PHANTASM),
++			check(allowed == not current.has_attribute(Attributes.NOBLE_PHANTASM),
+ 				"curse permits only non-noble servant skill %d" % index)
+ 	# 后续断言的前提是"局面没有宝具禁令"。开局随机抽到的局势牌可能正好是禁令，
+ 	# 若沿用先前局面会让宝具技能不合法、把夹具随机性误报成规则 bug，这里显式清空。

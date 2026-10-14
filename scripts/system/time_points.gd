@@ -74,6 +74,10 @@ const SELF_PLAYED_CARD = "self_played_card"
 const OTHERS_PLAYED_CARD = "others_played_card"
 
 const MAGIC_ADD = "magic_add"
+#玩家数值字段（令咒数、出牌上限等）发生变化时：日志 player_number_changed 记 key/before/after
+const PLAYER_NUMBER_CHANGED = "player_number_changed"
+const SELF_PLAYER_NUMBER_CHANGED = "self_player_number_changed"
+const OTHERS_PLAYER_NUMBER_CHANGED = "others_player_number_changed"
 const MAGIC_DECREASE = "magic_decrease"
 const SELF_MAGIC_ADD = "self_magic_add"
 const SELF_MAGIC_DECREASE = "self_magic_decrease"
@@ -350,6 +354,9 @@ const shown_time_points:Dictionary = {
 	SELF_PLAYED_CARD : "自己打出卡牌时",
 	OTHERS_PLAYED_CARD : "他人打出卡牌时",
 	MAGIC_ADD : "魔力增加时",
+	PLAYER_NUMBER_CHANGED : "玩家数值变化时",
+	SELF_PLAYER_NUMBER_CHANGED : "自己数值变化时",
+	OTHERS_PLAYER_NUMBER_CHANGED : "他人数值变化时",
 	MAGIC_DECREASE : "魔力减少时",
 	SELF_MAGIC_ADD : "自己魔力增加时",
 	SELF_MAGIC_DECREASE : "自己魔力减少时",

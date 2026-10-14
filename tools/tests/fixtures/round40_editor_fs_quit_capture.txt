@@ -1,0 +1,11 @@
+# Exact selected lines from round40-editor-fs-quit-a/debug.log; full log archived in E scratch.
+OWNED pid=35120 creation_filetime=134360460292122865 command="D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe" --headless --editor --verbose --path "E:\Caches\Hermes\cache\scratch\round40-editor-fs-quit-a\project"
+[R40] ENTER scanning=true
+[R40] SOURCES_CHANGED scanning=false
+[R40] FS_COMPLETE doc_ready=UNKNOWN
+[R40] NORMAL_QUIT_REQUEST
+TRACE rva=0x17aba60 watch_rva=0x66dcc10 value=0x182676e2290
+TRACE rva=0x1792840 watch_rva=0x66dcc10 value=0x0
+EXCEPTION pid=35120 tid=23144 first_chance=0 code=0xc0000005 flags=0x0 address=0x7ff65619d042 parameters=2
+WATCH rva=0x66dcc10 address=0x7ff65747cc10 value=0x0
+EXIT pid=35120 code=0xc0000005 timedout=0

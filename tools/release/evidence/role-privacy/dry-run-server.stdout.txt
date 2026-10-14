@@ -1,0 +1,1 @@
+{"mode": "DRY_RUN_NO_COPY", "files": 1910, "target": "E:\\Projects\\Godot\\FateDominationGame-master-role-privacy-dry-run-only\\freeze-server", "godot_invoked": false}

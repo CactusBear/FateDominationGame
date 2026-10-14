@@ -1,0 +1,504 @@
+{
+  "fixed": {
+    "check_true": 42,
+    "check_false": 4,
+    "approved_assertions": [
+      "CHECK all approved client files assemble and verify before ready true",
+      "CHECK all approved client files assemble and verify before ready true"
+    ],
+    "exit": 1,
+    "engine_errors": 0,
+    "job_active": [
+      0
+    ],
+    "result": {
+      "checks": 46,
+      "failures": [
+        "恢复失败后立即停止，不进入后续长时间镜像等待",
+        "中局恢复失败后立即短路，不级联等待至测试预算耗尽",
+        "保存回执及原生EXITED确认后释放；失败不强杀：{ \"ok\": true, \"result\": { \"stage\": \"failed\", \"failures\": { \"e6397b38f88f89b367c19df0df22afda\": \"原生进程句柄不可用，无法确认本次保存\" }, \"pending_rooms\": [], \"stopped\": false } }",
+        "正常或失败结束均释放全部房间登记及进程所有权"
+      ]
+    },
+    "stdout_sha256": "21b8f4da07ced5be7bf9927674312e1ffea10a30466846ec24b1685eda0609d7",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receipt_sha256": "f16145b0ece1de756014e05bb0180658e24943d1f82be19c2f0dcd897bc35785"
+  },
+  "paced-fixed": {
+    "check_true": 42,
+    "check_false": 4,
+    "approved_assertions": [
+      "CHECK all approved client files assemble and verify before ready true",
+      "CHECK all approved client files assemble and verify before ready true"
+    ],
+    "exit": 1,
+    "engine_errors": 0,
+    "job_active": [
+      0
+    ],
+    "result": {
+      "checks": 46,
+      "failures": [
+        "恢复失败后立即停止，不进入后续长时间镜像等待",
+        "中局恢复失败后立即短路，不级联等待至测试预算耗尽",
+        "保存回执及原生EXITED确认后释放；失败不强杀：{ \"ok\": true, \"result\": { \"stage\": \"failed\", \"failures\": { \"88152fb9b31d92f8106afd3413e42498\": \"原生进程句柄不可用，无法确认本次保存\" }, \"pending_rooms\": [], \"stopped\": false } }",
+        "正常或失败结束均释放全部房间登记及进程所有权"
+      ]
+    },
+    "stdout_sha256": "ecb5bfa2af0d91e2ecdcc3f4869ec4abbf52daeef459e9bb60a6179ec35e6a43",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receipt_sha256": "5c26182963eac69e6091e52fb739747f4b884e439d57c3416494ca00edfb13d3"
+  },
+  "rollback": {
+    "check_true": 11,
+    "check_false": 3,
+    "approved_assertions": [
+      "CHECK all approved client files assemble and verify before ready true",
+      "CHECK all approved client files assemble and verify before ready false"
+    ],
+    "exit": 1,
+    "engine_errors": 0,
+    "job_active": [
+      0
+    ],
+    "result": {
+      "checks": 14,
+      "failures": [
+        "all approved client files assemble and verify before ready",
+        "保存回执及原生EXITED确认后释放；失败不强杀：{ \"ok\": true, \"result\": { \"stage\": \"failed\", \"failures\": { \"e260f67f94bffa55cb002397d196ff69\": \"原生进程句柄不可用，无法确认本次保存\" }, \"pending_rooms\": [], \"stopped\": false } }",
+        "正常或失败结束均释放全部房间登记及进程所有权"
+      ]
+    },
+    "stdout_sha256": "852322c377a54e0d3ecfbc355d981f4d31549ef4dd8e245a934b43303c00b4f6",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receipt_sha256": "a8fcaf7f6db2895014e0e3bac7305ce02d6a6e30d32ee52ab6b1f0537495b172",
+    "supervisor_loss": {
+      "source": "E:\\scratch\\gateway-supervisor-triage\\paced-fixed-v2\\rollback-fixture\\server-match-35800-10621466\\workers\\e260f67f94bffa55cb002397d196ff69\\supervisor-loss.json",
+      "source_sha256": "a8af638724aafbe07064f63cced7d4c7bde6cd19fed83a4a4575a20237faf3d0",
+      "content": {
+        "ok": true,
+        "room": "e260f67f94bffa55cb002397d196ff69",
+        "pid": 29932,
+        "instance": "627799542a6c6dee6bf647192c7f3ed6",
+        "authority_host_mode": "dedicated",
+        "reason": "supervisor_timeout",
+        "result": {
+          "closing": true,
+          "saved": false,
+          "room_state_saved": true
+        }
+      }
+    }
+  },
+  "clean": {
+    "check_true": 54,
+    "check_false": 1,
+    "approved_assertions": [
+      "CHECK all approved client files assemble and verify before ready true",
+      "CHECK all approved client files assemble and verify before ready true"
+    ],
+    "exit": 1,
+    "engine_errors": 0,
+    "job_active": [
+      0
+    ],
+    "result": {
+      "checks": 55,
+      "failures": [
+        "中局崩溃恢复后真人继续提交操作直至终局"
+      ]
+    },
+    "stdout_sha256": "9064422d6746b43c75112c273072d6a8f9a1443159d8ad9548678579050b66a5",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receipt_sha256": "1c54370314ac101d944bd62dee9f6e80b21f8ce1e289a55bb6f0dbb54d5ddac9"
+  },
+  "diagnostic-incomplete": {
+    "check_true": 6,
+    "check_false": 0,
+    "approved_assertions": [],
+    "exit": 1,
+    "engine_errors": 0,
+    "job_active": [
+      0
+    ],
+    "result": null,
+    "stdout_sha256": "854a4bf7db97887fe07c26899173f15e245a7155ac93fba1d0feeb54bda83332",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receipt_sha256": "56bacb39aef989658f0b0469e393738931dde4d548cd68b9ebb85b5544d6f444"
+  },
+  "fault-script-invalid": {
+    "check_true": 0,
+    "check_false": 0,
+    "approved_assertions": [],
+    "exit": 1,
+    "engine_errors": 2,
+    "job_active": [
+      0
+    ],
+    "result": null,
+    "stdout_sha256": "83cf0b082206af2aa236c83064fbcfa76be1e00a4aa3558574b2f65965d9481c",
+    "stderr_sha256": "854b322267e0c5a0ee5ec9c7822455e13d272ff318d6fcaa974f39999b681334",
+    "receipt_sha256": "ef95d93b3a4a6acb99c91f67a84edd16231cd7346860f135080504fd22c986b1"
+  },
+  "rollback_restore": {
+    "before_sha256": "fc014f485c38e317a1915e47ce03070e189cfad49927d14b8cee8cf09351a353",
+    "rollback_source_sha256": "a3dedfd5e6d886d1df47fb0478956f132173d58c770b4e480a3bc66959ec020c",
+    "observer_sha256": "6b320d52d83cb7e4ef882271b41ba9a1aee9ef422f7036444e068db2ff2b6f34",
+    "observer_only_change": "return super._route_is_current unchanged; scalar log on false",
+    "injected_sha256": "eda8e53fd255c6af840d83a01556a3ebe31fe7cf7bf4db5ac29575953157d571",
+    "execution": {
+      "command": [
+        "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\gateway-supervisor-triage\\paced-fixed-v2\\project",
+        "--scene",
+        "res://tests/net_server_gateway_restart_test.tscn",
+        "--",
+        "E:/scratch/gateway-supervisor-triage/paced-fixed-v2/rollback-fixture"
+      ],
+      "exit": 1,
+      "analysis": {
+        "passed": false,
+        "reasons": [
+          "nonzero_exit",
+          "result_failures",
+          "check_false",
+          "check_false",
+          "check_false"
+        ],
+        "result": {
+          "checks": 14,
+          "failures": [
+            "all approved client files assemble and verify before ready",
+            "保存回执及原生EXITED确认后释放；失败不强杀：{ \"ok\": true, \"result\": { \"stage\": \"failed\", \"failures\": { \"e260f67f94bffa55cb002397d196ff69\": \"原生进程句柄不可用，无法确认本次保存\" }, \"pending_rooms\": [], \"stopped\": false } }",
+            "正常或失败结束均释放全部房间登记及进程所有权"
+          ]
+        }
+      },
+      "job_records": [
+        {
+          "label": "rollback",
+          "command": [
+            "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--path",
+            "E:\\scratch\\gateway-supervisor-triage\\paced-fixed-v2\\project",
+            "--scene",
+            "res://tests/net_server_gateway_restart_test.tscn",
+            "--",
+            "E:/scratch/gateway-supervisor-triage/paced-fixed-v2/rollback-fixture"
+          ],
+          "exited": true,
+          "pid": 35800,
+          "exit_code": 1,
+          "budget_failure": null,
+          "duration_seconds": 77.202,
+          "active_owned_processes": 0,
+          "log_handles_released": true
+        }
+      ],
+      "check_true": 11,
+      "check_false": 3,
+      "error_count": 1,
+      "fixture_sha256": "eda8e53fd255c6af840d83a01556a3ebe31fe7cf7bf4db5ac29575953157d571",
+      "helper_sha256": "a785bf7274d8513d5b9b0f0c993ac502d4ba46caec79713f0f755938b253080c"
+    },
+    "restored_sha256": "fc014f485c38e317a1915e47ce03070e189cfad49927d14b8cee8cf09351a353",
+    "restored": true
+  },
+  "discarded_interrupted_restore": {
+    "interrupted_sha256": "c501b70e425141f576fd335774472a877d00aa03c8d2a0e2e8197394aa15b89d",
+    "restored_sha256_before_cleanup": "fc014f485c38e317a1915e47ce03070e189cfad49927d14b8cee8cf09351a353",
+    "expected": "fc014f485c38e317a1915e47ce03070e189cfad49927d14b8cee8cf09351a353",
+    "outer_tool_timeout_seconds": 420,
+    "valid_fault_proof": false
+  },
+  "historical_loss": {
+    "source": "E:\\scratch\\gateway-approved-triage\\fixed\\fixture\\server-match-38784-5837207\\workers\\d19619ca9705a50fa36cb15d809332f0\\supervisor-loss.json",
+    "source_sha256": "5ea6bd8ee90bb23c7de86e9a4843f7a901d8daa58ce8cea4ab8bce72b243b907",
+    "content": {
+      "ok": true,
+      "room": "d19619ca9705a50fa36cb15d809332f0",
+      "pid": 24300,
+      "instance": "e9b5e7d0e23628fd08a06fd5f2788b5a",
+      "authority_host_mode": "dedicated",
+      "reason": "supervisor_timeout",
+      "result": {
+        "closing": true,
+        "saved": false,
+        "room_state_saved": true
+      }
+    }
+  },
+  "historical_config": {
+    "source_sha256": "c8519b86dd4f7600a5c84463e59eafd65fd1c84df3147782df7f16ccc2ffc022",
+    "fields": {
+      "id": "d19619ca9705a50fa36cb15d809332f0",
+      "port": 45000,
+      "instance_id": "e9b5e7d0e23628fd08a06fd5f2788b5a",
+      "authority_host_mode": "dedicated",
+      "supervisor_timeout_seconds": 5.0
+    }
+  },
+  "historical_retired_bindings": {
+    "source_sha256": "ce518ec69e5f04f8e33fef8039b484d13b9f6e55ae478ba6f9c1ed5096a3d3ed",
+    "bindings": [
+      {
+        "binding": {
+          "authority_host_mode": "dedicated",
+          "instance_id": "e9b5e7d0e23628fd08a06fd5f2788b5a",
+          "pid": -1,
+          "room": "d19619ca9705a50fa36cb15d809332f0"
+        },
+        "directory": "E:/scratch/gateway-approved-triage/fixed/fixture/server-match-38784-5837207/workers/d19619ca9705a50fa36cb15d809332f0",
+        "native_verified": false,
+        "process_state": -1
+      }
+    ]
+  },
+  "historical_client1_events": [
+    {
+      "stdout_line": 27,
+      "event_ordinal": 7,
+      "content": {
+        "client": 1,
+        "error": "所选房间已经停止或实例校验失败",
+        "max_poll_gap_msec": 5700,
+        "pending": {},
+        "phase": null,
+        "poll_count": 92118,
+        "raw_nonsecret": {
+          "reason": "所选房间已经停止或实例校验失败"
+        },
+        "round": null,
+        "seq": null,
+        "signal": "rejected",
+        "stage": "baseline",
+        "ticks_msec": 89364
+      }
+    },
+    {
+      "stdout_line": 29,
+      "event_ordinal": 8,
+      "content": {
+        "client": 1,
+        "error": "所选房间已经停止或实例校验失败",
+        "max_poll_gap_msec": 5700,
+        "pending": {},
+        "phase": null,
+        "poll_count": 92118,
+        "raw_nonsecret": {
+          "message": {
+            "diagnostic": {
+              "connection": 1141820696,
+              "instance_id": "e9b5e7d0e23628fd08a06fd5f2788b5a",
+              "pid": 24300,
+              "request_seq": -1,
+              "room": "d19619ca9705a50fa36cb15d809332f0"
+            },
+            "kind": "error",
+            "reason": "所选房间已经停止或实例校验失败",
+            "request_seq": -1
+          },
+          "sender": 1
+        },
+        "round": null,
+        "seq": null,
+        "signal": "message_received",
+        "stage": "baseline",
+        "ticks_msec": 89409
+      }
+    }
+  ],
+  "instrumentation_restoration": [
+    {
+      "mode": "diagnostic",
+      "file": "tests/net_server_match_test.gd",
+      "before": "19abf0a9b7737ad1f0b8b05c2e05c8a07e62cea5b20e3bceeea39ece3785d958",
+      "after": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+      "baseline": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+      "equal": true
+    },
+    {
+      "mode": "diagnostic",
+      "file": "tests/net_server_gateway_restart_test.gd",
+      "before": "483d0f25d60590b9b0d2598fd87bb86c421d7c838e4e2d6fad353dbca13be7fe",
+      "after": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "baseline": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "equal": true
+    },
+    {
+      "mode": "fixed",
+      "file": "tests/net_server_match_test.gd",
+      "before": "0df6bbaf4ecc72c765194872c881ef13be7cc168e3d21813aa247f1b2a8909a4",
+      "after": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+      "baseline": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+      "equal": true
+    },
+    {
+      "mode": "fixed",
+      "file": "tests/net_server_gateway_restart_test.gd",
+      "before": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "after": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "baseline": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "equal": true
+    },
+    {
+      "mode": "paced-fixed",
+      "file": "tests/net_server_match_test.gd",
+      "before": "fc014f485c38e317a1915e47ce03070e189cfad49927d14b8cee8cf09351a353",
+      "after": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+      "baseline": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+      "equal": true
+    },
+    {
+      "mode": "paced-fixed",
+      "file": "tests/net_server_gateway_restart_test.gd",
+      "before": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "after": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "baseline": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "equal": true
+    },
+    {
+      "mode": "paced-fixed-v2",
+      "file": "tests/net_server_match_test.gd",
+      "before": "fc014f485c38e317a1915e47ce03070e189cfad49927d14b8cee8cf09351a353",
+      "after": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+      "baseline": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+      "equal": true
+    },
+    {
+      "mode": "paced-fixed-v2",
+      "file": "tests/net_server_gateway_restart_test.gd",
+      "before": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "after": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "baseline": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "equal": true
+    },
+    {
+      "mode": "clean",
+      "file": "tests/net_server_match_test.gd",
+      "before": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+      "after": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+      "baseline": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+      "equal": true
+    },
+    {
+      "mode": "clean",
+      "file": "tests/net_server_gateway_restart_test.gd",
+      "before": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "after": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "baseline": "f5c25d584886153de2f2363cdc2f91384a05346b3278eeb9d55e6ad7e518cbcd",
+      "equal": true
+    }
+  ],
+  "production_comparison": {
+    "compared": 419,
+    "byte_equal": 406,
+    "newline_normalized_equal": 406,
+    "differences": [
+      {
+        "file": "scripts\\match\\view_builder.gd",
+        "freeze_sha256": "9a7ed25688ded565bce41b0a8b7473f8067553b55629fbb7d7ce88a276ec831e",
+        "repository_sha256": "78607bec727a0698e81370e33e988caa0b41def226a04f5e13bd4b8e6567ca8e",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\net\\identity\\player_identity.gd",
+        "freeze_sha256": "c975c818ff5105de1297922383f648b712ed9bf7c93db93ab3e4f8e72c0d77b8",
+        "repository_sha256": "a4c578cde6512d1c663049a1a98968384892f00f1bc6dc092d7afe62e8bb5c08",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\net\\server\\server_console_channel.gd",
+        "freeze_sha256": "afbfd5a071a2fcb062555f00fcd9ac08dbe476a04ad3fd6efc2c7142373af3c3",
+        "repository_sha256": "18a3926a755a5cdc0e48a32c168bce7b8c03a9b90fbe81fa5946a7412fee4116",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\net\\server\\server_room_manager.gd",
+        "freeze_sha256": "ea4f181aacb86400ec4c46143298cf7edab3ceed952a1ba12ba78ef81f9123e4",
+        "repository_sha256": "86fd5726bcdca4ecbcf8ac7577fdc90200afa3c30c770c0a37d815cdf52a18fd",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\system\\global\\all_operations.gd",
+        "freeze_sha256": "109c34df278ab7ee5ef80686eeebd8227da7b74ee9148e5f83dc59d26eb331bc",
+        "repository_sha256": "223fd3176d57d556cab3fe876580046772dda74fa625cb60a1e3dddddcb2b47b",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\system\\global\\effect_manager.gd",
+        "freeze_sha256": "1755ff077e675105844d3d6ec33645bc3f701a48aa1cdf8dc2b11c8a6b5340c1",
+        "repository_sha256": "ae336875d886a7f104b3091479fcd74371f24e6c89db3a1cf77d1181fc69159a",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\system\\global\\game_progress.gd",
+        "freeze_sha256": "0db25f9e17b9da91c248201d6be5c67eb7081b58295d49142b3824286cac4978",
+        "repository_sha256": "4afd3ce26a142409c3b77462a85ee5f8d051c0154962022c13c62673add73e15",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\system\\global\\situation_resolver.gd",
+        "freeze_sha256": "f27aa498eb960117dca26616f804f83bb2c7cecf25555fde289f197b4bad0396",
+        "repository_sha256": "752aafc2844781b4403f4f8c99125353e411b4805b1c923e7d136839b230e43d",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\system\\global\\time_point_checker.gd",
+        "freeze_sha256": "289cba0dc5dae96e5fdfccfa33d8ed2d5d835038008b09a4ae253253267a48e1",
+        "repository_sha256": "f1f6c8d72a7f2b54244522280d46653ee41c1963c70ae215a8279296fb307b4b",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\system\\operations\\EditMagic.gd",
+        "freeze_sha256": "6578c2e92535b9f62ecc3c25dd7a00027daeaa3f1ebe5f62c71ae09162fa5ecf",
+        "repository_sha256": "7403e2a0f2a3949147a7f726345eacd319930611f3c6dfe611d6e24940df4a8b",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\system\\operations\\PlayAttack.gd",
+        "freeze_sha256": "94385a0532baab8222cdd21a22b56c97525b513474667f1f3eb6e40571cb7c04",
+        "repository_sha256": "b2e42b80d1602fa0d52c4c4b59bd00baae3d063870e49880bfe9c95431489444",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\system\\operations\\PlaySkill.gd",
+        "freeze_sha256": "f0deea3fbe6be965d852440aa3d7869da4188a4616d296d4c03dbdc35eb806bf",
+        "repository_sha256": "65608c5559ad120a028d0ba252a1dd855fd381150d188cc5c035c039739015c9",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      },
+      {
+        "file": "scripts\\system\\regular_play.gd",
+        "freeze_sha256": "f6fce80464730c6a259bc188b5d252efe7da5ab70cafecb9901cbabfdb825d27",
+        "repository_sha256": "a1cebe86a5a044b1eb139b3d103578ccd9054905ae282a4f2874f72c49b6b43c",
+        "byte_equal": false,
+        "newline_normalized_equal": false
+      }
+    ]
+  },
+  "changed_inputs": {
+    "tests/net_server_match_test.gd": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+    "newtests/gateway_client_content_maintenance.gd": "a785bf7274d8513d5b9b0f0c993ac502d4ba46caec79713f0f755938b253080c",
+    "newtests/gateway_supervisor_wait_evidence/run_supervisor_triage.py": "73918ea8f4c7a7d4ec5e63a0268e6344f9b8f725cd891dc278f1bb45be20d4b1",
+    "newtests/gateway_supervisor_wait_evidence/gateway_route_branch_observer.gd": "6b320d52d83cb7e4ef882271b41ba9a1aee9ef422f7036444e068db2ff2b6f34"
+  }
+}

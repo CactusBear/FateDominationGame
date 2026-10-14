@@ -1,0 +1,1530 @@
+{
+  "scope": [
+    "data",
+    "game_data",
+    "json_maker"
+  ],
+  "search_regex": "透支|负魔力|魔力[^\\n。]{0,30}(?:负数|负值|负点|借贷|借用|欠债)|(?:负数|负值|借贷|欠债)[^\\n。]{0,30}魔力|overdraft|allow[_ -]*(?:negative|debt)|negative[_ -]*(?:mana|magic)|(?:mana|magic)[_ -]*(?:debt|borrow)|magic_min",
+  "files": [
+    {
+      "path": "data/attacks/basic/luck/luck.json",
+      "sha256": "7b48de35068fba207273e353349833e7077355602530b19fdbbf766f1bb82fce"
+    },
+    {
+      "path": "data/attacks/basic/magic_blast_0_2/magic_blast_0_2.json",
+      "sha256": "39ad69ac496727661a0a2e2b714110037dc95b8dc92094ebf96e221162569c61"
+    },
+    {
+      "path": "data/attacks/basic/magic_blast_0_3/magic_blast_0_3.json",
+      "sha256": "9ee704e2320d15793de71a0be4742dbf551d57da8a52baf2bf1260a919a53501"
+    },
+    {
+      "path": "data/attacks/basic/magic_blast_0_4/magic_blast_0_4.json",
+      "sha256": "d25e5517f0aa63361717a0ec0dbb382b40aebd4b34f1e04c6e0b926d562afdd8"
+    },
+    {
+      "path": "data/attacks/basic/magic_blast_1_5/magic_blast_1_5.json",
+      "sha256": "4a88655e171e0cc12eb7386c012b47bb0f676f0383de12a64cac9d3cd1a09dd2"
+    },
+    {
+      "path": "data/attacks/basic/physical_attack_0_2/physical_attack_0_2.json",
+      "sha256": "69e45a7ddac77a9b8f225dfdf6f392303e892465b1dada90dd07613136492cda"
+    },
+    {
+      "path": "data/attacks/basic/physical_attack_0_3/physical_attack_0_3.json",
+      "sha256": "a976aeb54f3b499a281622417f27baf14823384896442d650d428b75b151d1c9"
+    },
+    {
+      "path": "data/attacks/basic/physical_attack_0_4/physical_attack_0_4.json",
+      "sha256": "50dc08866d06b7fa4dbba5c783824132c025427d022a7bf13444a3d40f8e062c"
+    },
+    {
+      "path": "data/attacks/basic/physical_attack_1_5/physical_attack_1_5.json",
+      "sha256": "7f6c825cc17ce972260d0f14de11aeb1997007f4955c3bc6a7a365d2d3fb66fb"
+    },
+    {
+      "path": "data/attacks/basic/precision_strike_0_2/precision_strike_0_2.json",
+      "sha256": "c867c418523144a64f2506379f0a0cfcf85f4c67c869ab2933f73d779ba14cec"
+    },
+    {
+      "path": "data/attacks/basic/precision_strike_0_3/precision_strike_0_3.json",
+      "sha256": "efea743163d5a9eb83c1969d2e3a967c14abacd8a6ab3af87e43bd6551906f8b"
+    },
+    {
+      "path": "data/attacks/basic/precision_strike_0_4/precision_strike_0_4.json",
+      "sha256": "c94feba332fa38e181d11aaeaa45c402f853783c0d6100b9e4372a070321d1eb"
+    },
+    {
+      "path": "data/attacks/basic/precision_strike_1_5/precision_strike_1_5.json",
+      "sha256": "13ad155ada05be1fb01f78d438b65f73f8798b003a868abcd28b0e8a196a4702"
+    },
+    {
+      "path": "data/attacks/basic/preparation/preparation.json",
+      "sha256": "eee8d3c0ead74bce6e72d63d2018472ee68ae0c00ea8dfdb460fcf4df52a663a"
+    },
+    {
+      "path": "data/attacks/basic/surveil/surveil.json",
+      "sha256": "799dcd2605baeb811684fcf095cf94b70b09eb2ae43099bcdad702145cf7eef1"
+    },
+    {
+      "path": "data/attacks/class/avenger_class/avenger_class.json",
+      "sha256": "d48d6d1a1dd7c3e30a178d13d70fb0ce13dfc9cb4087844049f6407d80f02b8d"
+    },
+    {
+      "path": "data/attacks/class/berserker_class_agility_3_7/berserker_class_agility_3_7.json",
+      "sha256": "a3c386890b2e4a98698456d1e06ab1a982697b7c1bf4d492d4ad9408ab914833"
+    },
+    {
+      "path": "data/attacks/class/berserker_class_agility_5_9/berserker_class_agility_5_9.json",
+      "sha256": "bc58dd4cc53312eae8df940cb897b629e485adede7061cb7dceb959088b4e551"
+    },
+    {
+      "path": "data/attacks/class/berserker_class_magic_3_7/berserker_class_magic_3_7.json",
+      "sha256": "1100fba84d6b2e1a2270a073445558267f45b122835e089226a0fc227cf52e82"
+    },
+    {
+      "path": "data/attacks/class/berserker_class_magic_5_9/berserker_class_magic_5_9.json",
+      "sha256": "5e8be6c0d7eaa43722125d97ae576cea16cb858bde19cdbb3a3ff3bfe81dfb5b"
+    },
+    {
+      "path": "data/attacks/class/berserker_class_strength_3_7/berserker_class_strength_3_7.json",
+      "sha256": "31ca82873e4e04c869f57ff46513e1b7a996c04fe287e4515d1b8fcbbe0b8242"
+    },
+    {
+      "path": "data/attacks/class/berserker_class_strength_5_9/berserker_class_strength_5_9.json",
+      "sha256": "5895172b63b016f6db131afea25f2f0e6abca2314e02dcc386e6214e0ebb1e52"
+    },
+    {
+      "path": "data/attacks/class/foreigner_class/foreigner_class.json",
+      "sha256": "413ca6fdc12e3b99330f16008b1ce2265d990bcd4301a5d498ec401b9a00b970"
+    },
+    {
+      "path": "data/attacks/class/mooncancer_class/mooncancer_class.json",
+      "sha256": "e4982e6ccd23adec4c81518eece42363bcce50436f640e15c30df469e902c68c"
+    },
+    {
+      "path": "data/command_spells/normal_command_spell.json",
+      "sha256": "19b075670eb966b704759b39469aefcf0c6fda61bb64820b3cd80e79e1795329"
+    },
+    {
+      "path": "data/events/origin/contain_third_party/contain_third_party.json",
+      "sha256": "d05d567d25cbe5fc609308af1a294344471a3aad26bc6c98c08cfe4067e7f737"
+    },
+    {
+      "path": "data/events/origin/cooperation/cooperation.json",
+      "sha256": "33a718701decd80f3b9351e00d4697e3b7237c8f2329eb228fb5d1565bde73a3"
+    },
+    {
+      "path": "data/events/origin/desperate_measure/desperate_measure.json",
+      "sha256": "b30b41ef0af44e5612aef524d4765868e67e71b3ff3e0bcf87739cf77977ffc7"
+    },
+    {
+      "path": "data/events/origin/fate_battle/fate_battle.json",
+      "sha256": "aa356d735f19ddf66a188895506e522416dd41915c2b09cee243d7d002049071"
+    },
+    {
+      "path": "data/events/origin/glorious_duel/glorious_duel.json",
+      "sha256": "d79e6393c90fa09648af393a61f9ec93838ae487b94d9d1393fc4e7f8720641a"
+    },
+    {
+      "path": "data/events/origin/ground_zero/ground_zero.json",
+      "sha256": "db565087bd8966620d181e021f172324166163c9b490547b308d691432a14e75"
+    },
+    {
+      "path": "data/events/origin/holy_ground/holy_ground.json",
+      "sha256": "c2c0d2cad2a1487a3107dd4f5e376d1892ff71c8cfa6b3d1a22aa1dc3c23a283"
+    },
+    {
+      "path": "data/events/origin/ley_line/ley_line.json",
+      "sha256": "d477268f3f2fb596765de2827b66140f5ac0256d289a5961001a74d0f6531d3c"
+    },
+    {
+      "path": "data/events/origin/occupy_high_ground/occupy_high_ground.json",
+      "sha256": "84efe1c0ae7464e2099a9ff49aa9fd9c746b0fd000fcec68220cc581d1c01885"
+    },
+    {
+      "path": "data/events/origin/reality_marble/reality_marble.json",
+      "sha256": "482303ea3ba5e6f5fa1e16468c80fc88f62dd84e06456ba67d615a84cf8ff426"
+    },
+    {
+      "path": "data/events/origin/rescue_illya/rescue_illya.json",
+      "sha256": "92efbca2197701074d8dd333a80e9a93bde6eedd7c170ccc1efa32bd0b39bd74"
+    },
+    {
+      "path": "data/events/origin/sacrifice_ground/sacrifice_ground.json",
+      "sha256": "e0bcf1f10aac289ab558de3f071a80286a1cbe4b723dcb402e1e91f9fcf0f8a4"
+    },
+    {
+      "path": "data/events/origin/sneak_attack/sneak_attack.json",
+      "sha256": "66564e37b86dbedcb69ffe608dee4d31c7a7e223f042a1b71451e7823116ac71"
+    },
+    {
+      "path": "data/events/origin/strength_test/strength_test.json",
+      "sha256": "d4c2f239201515a309b232e41526257c43ec6962c65a2b082500af44e69793ef"
+    },
+    {
+      "path": "data/events/origin/suppressive_fire/suppressive_fire.json",
+      "sha256": "1c2f01db7bd30116208fd6d2a59c4892c1401de4fd6e1378a1298803cb0a88ef"
+    },
+    {
+      "path": "data/events/origin/treacherous_terrain/treacherous_terrain.json",
+      "sha256": "f663a13f178021bf21389843aa14660ad90c47981e821ff3e3804649f45f0601"
+    },
+    {
+      "path": "data/masters/00001_emiya_shirou/00001_emiya_shirou.json",
+      "sha256": "ee41139b9be0b93ebccb46b1d0af24a76e111a0d787701399124234d096a423e"
+    },
+    {
+      "path": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "sha256": "d34ee17b0e4ad2640dfcc82bd0dcc6d38f5ba02e1863eb098ed78aab9e3dc20a"
+    },
+    {
+      "path": "data/masters/00003_matou_shinji/00003_matou_shinji.json",
+      "sha256": "1f6c1766b6bc04e27c399a897deb3b118237bf4c1a5c18a97dec8192db7bbd32"
+    },
+    {
+      "path": "data/masters/00004_matou_sakura/00004_matou_sakura.json",
+      "sha256": "0309edb45c66986d75e59f9ebe6e985959db22c73f81ccc15055d270bd9a7d46"
+    },
+    {
+      "path": "data/masters/00005_illyasviel_von_einzbern/00005_illyasviel_von_einzbern.json",
+      "sha256": "506ca092af01cbcfcb734b83646650a75bd2a9e3e52870f61ee1ea850b6e37ad"
+    },
+    {
+      "path": "data/masters/00006_kotomine_kirei/00006_kotomine_kirei.json",
+      "sha256": "10f1d275e5a8f8afa71803a235a502e0ab1f0ca30ce87fe6427766aff2a832ff"
+    },
+    {
+      "path": "data/masters/00007_kuzuki_souichirou/00007_kuzuki_souichirou.json",
+      "sha256": "ff00878605c6892bb44d4816ffa86b3adecb613300ef25541235ba1a478f3fb2"
+    },
+    {
+      "path": "data/selection_modes.json",
+      "sha256": "33d5b420f25920e85ea58a71533009ee142318112263ef38d66174bea061f1c4"
+    },
+    {
+      "path": "data/servants/00001_artoria_pendragon/00001_artoria_pendragon.json",
+      "sha256": "fbe473eb52360bb89bdee96d7909ad7bea59c17fa69620692b6a3db1a024a952"
+    },
+    {
+      "path": "data/servants/00002_emiya/00002_emiya.json",
+      "sha256": "4b0dddd399142ca3c46704ca4be578025ee0cc66f191b0e9d9c6728a2f6bf3d1"
+    },
+    {
+      "path": "data/servants/00003_cu_chulainn/00003_cu_chulainn.json",
+      "sha256": "4aac553a7aeb0404dc203e3f9c2ee6b85eae2256cdd3f96246b5cc1599e157d3"
+    },
+    {
+      "path": "data/servants/00004_medusa/00004_medusa.json",
+      "sha256": "98ce512c94b6f09619ccce42302532f62732f23998126218201b224d3e9a6dd9"
+    },
+    {
+      "path": "data/servants/00005_medea/00005_medea.json",
+      "sha256": "8a5faf63375d904ed2ff717854364930687ac4e8dacef54a38be96706e6eecbf"
+    },
+    {
+      "path": "data/servants/00006_sasaki_kojirou/00006_sasaki_kojirou.json",
+      "sha256": "a14f552c383491fa78876e64a5b7ea67ec19ceb292e761122d4a704c2093f0b4"
+    },
+    {
+      "path": "data/servants/00007_heracles/00007_heracles.json",
+      "sha256": "1b9d8eb343329e9da195e8e7d2ded47a52d3711c9b93d19d16bab3d76ea36e5f"
+    },
+    {
+      "path": "data/servants/00008_angra_mainyu/00008_angra_mainyu.json",
+      "sha256": "af5a5cad1c14af0354073c579bfc84adad646361a1a2f3299dfba10bc58fbf95"
+    },
+    {
+      "path": "data/situations/origin/battle_of_shinto/battle_of_shinto.json",
+      "sha256": "aaaa50153ce8ad3db941fb400bce0e1d3e0bc02a5eff5260a71fdd96e8b14d58"
+    },
+    {
+      "path": "data/situations/origin/calm_before_storm/calm_before_storm.json",
+      "sha256": "c40b557c015fe15d9401c5a322bf01082feaadaa3bd9c1be18ace201e8f58aab"
+    },
+    {
+      "path": "data/situations/origin/curse_of_angra_mainyu/curse_of_angra_mainyu.json",
+      "sha256": "710846a3e8de59d788dfbdc925c66fa7479ea28663fa446da390220711d435bd"
+    },
+    {
+      "path": "data/situations/origin/gate_of_hell/gate_of_hell.json",
+      "sha256": "6118ff39b92fab9e0d5a5ca07819a3e0932334dc6d9d38dafb1ac11513126dc6"
+    },
+    {
+      "path": "data/situations/origin/heavens_feel/heavens_feel.json",
+      "sha256": "54f97cc16c0be583ec2447131153e995fd663cf1890a53e6762dc36f4f5298c6"
+    },
+    {
+      "path": "data/situations/origin/hope_for_future/hope_for_future.json",
+      "sha256": "0935201344b22ae853793e19c6d124be337d38c76cd2d1394b9103413864b7c8"
+    },
+    {
+      "path": "data/situations/origin/killer_in_miyama/killer_in_miyama.json",
+      "sha256": "4d122b24df8131463e101bdad2dc46094faa82e22f75450dfa1f63a7859f4133"
+    },
+    {
+      "path": "data/situations/origin/night_of_fate/night_of_fate.json",
+      "sha256": "ae445f04ef00122292f2ee5347b03e8c94bba19afe6500b643fffa73af8dd78c"
+    },
+    {
+      "path": "data/situations/origin/outrage/outrage.json",
+      "sha256": "3b02cfdbb04ba38aaf5f02de91d28c80afb77918e2dbee7c5392c5d04bd5f956"
+    },
+    {
+      "path": "data/situations/origin/perfect_flow/perfect_flow.json",
+      "sha256": "55fffc16c4759b05979ff37decba01174e32c5d106abba8f4472fa74e3611297"
+    },
+    {
+      "path": "data/situations/origin/shadow_of_angra_mainyu/shadow_of_angra_mainyu.json",
+      "sha256": "c47baa11c9795863f436c38cdd04d34939d7afa2aa30ff1bd2db1a55f9d95155"
+    },
+    {
+      "path": "data/situations/origin/substance_of_angra_mainyu/substance_of_angra_mainyu.json",
+      "sha256": "f2ac3e8caa8b3e60e01f51a67a99e14902b9a08b95df9d0cf03b95b0702d7a7c"
+    },
+    {
+      "path": "data/situations/origin/turnaround/turnaround.json",
+      "sha256": "b2cdfb3ea1b38bec9b3534d3a9224e5e9e48b14ed28e875174f72144d599690b"
+    },
+    {
+      "path": "data/tag_list.json",
+      "sha256": "ec00ed474e7153e95a862482133716b2203fc0d4584a0ba9056763ca2036f948"
+    },
+    {
+      "path": "json_maker/tutorials/artoria_pendragon.json",
+      "sha256": "10c61cf4897341c1a3b0de3fb0e9952a3ed18254ebcb2c90817bf486395a020e"
+    },
+    {
+      "path": "json_maker/types.json",
+      "sha256": "735524c3eddba40efd3d3181047105efef5c014d1e7ed9d6364f3f4fb3386072"
+    }
+  ],
+  "parse_errors": [],
+  "overdraft_matches": [],
+  "relevant_lines": [
+    {
+      "file": "data/masters/00004_matou_sakura/00004_matou_sakura.json",
+      "line": 472,
+      "text": "\"is_magic_immune\","
+    },
+    {
+      "file": "data/masters/00006_kotomine_kirei/00006_kotomine_kirei.json",
+      "line": 534,
+      "text": "\"message\": \"魔力不足，无法移动\","
+    },
+    {
+      "file": "data/masters/00006_kotomine_kirei/00006_kotomine_kirei.json",
+      "line": 572,
+      "text": "\"is_magic_immune\","
+    },
+    {
+      "file": "data/servants/00001_artoria_pendragon/00001_artoria_pendragon.json",
+      "line": 348,
+      "text": "\"self_card_cost_calculated\","
+    },
+    {
+      "file": "data/servants/00001_artoria_pendragon/00001_artoria_pendragon.json",
+      "line": 390,
+      "text": "\"func_name\": \"edit_card_cost\","
+    },
+    {
+      "file": "data/servants/00003_cu_chulainn/00003_cu_chulainn.json",
+      "line": 340,
+      "text": "\"func_name\": \"edit_card_cost\","
+    },
+    {
+      "file": "data/servants/00005_medea/00005_medea.json",
+      "line": 33,
+      "text": "\"self_card_cost_calculated\""
+    },
+    {
+      "file": "data/servants/00005_medea/00005_medea.json",
+      "line": 89,
+      "text": "\"func_name\": \"edit_card_cost\","
+    },
+    {
+      "file": "json_maker/tutorials/artoria_pendragon.json",
+      "line": 266,
+      "text": "\"self_card_cost_calculated\","
+    },
+    {
+      "file": "json_maker/tutorials/artoria_pendragon.json",
+      "line": 284,
+      "text": "\"self_card_cost_calculated\""
+    },
+    {
+      "file": "json_maker/tutorials/artoria_pendragon.json",
+      "line": 302,
+      "text": "\"self_card_cost_calculated\""
+    },
+    {
+      "file": "json_maker/tutorials/artoria_pendragon.json",
+      "line": 330,
+      "text": "\"self_card_cost_calculated\""
+    },
+    {
+      "file": "json_maker/tutorials/artoria_pendragon.json",
+      "line": 337,
+      "text": "\"func_name\": \"edit_card_cost\""
+    },
+    {
+      "file": "json_maker/tutorials/artoria_pendragon.json",
+      "line": 352,
+      "text": "\"self_card_cost_calculated\""
+    },
+    {
+      "file": "json_maker/tutorials/artoria_pendragon.json",
+      "line": 374,
+      "text": "\"self_card_cost_calculated\""
+    },
+    {
+      "file": "json_maker/tutorials/artoria_pendragon.json",
+      "line": 396,
+      "text": "\"self_card_cost_calculated\""
+    },
+    {
+      "file": "json_maker/types.json",
+      "line": 1892,
+      "text": "\"edit_card_cost\": {"
+    },
+    {
+      "file": "json_maker/types.json",
+      "line": 3210,
+      "text": "\"is_magic_immune\": \"魔力免疫\","
+    },
+    {
+      "file": "json_maker/types.json",
+      "line": 3211,
+      "text": "\"ignore_skill_zone_magic_limit\": \"无视技能区魔力门槛\","
+    },
+    {
+      "file": "json_maker/types.json",
+      "line": 3221,
+      "text": "\"magic_limit\": \"魔力上限\","
+    },
+    {
+      "file": "json_maker/types.json",
+      "line": 3363,
+      "text": "\"self_card_cost_calculated\","
+    }
+  ],
+  "negative_cost_declarations": [],
+  "rule_scripts": [
+    {
+      "path": "scripts/system/ability_restrictions.gd",
+      "sha256": "4b82c2219367e33fe1659a3b462505397c7535c670f6f0bc30a64dafaea1a7aa"
+    },
+    {
+      "path": "scripts/system/action_rules.gd",
+      "sha256": "417a53d4b2d6b18306c728dacb553c02cba08e43c507b294f4cdee54cfc67186"
+    },
+    {
+      "path": "scripts/system/ai/temp/dummy_bot.gd",
+      "sha256": "94aec64c19a6c7f73e76d63ac1a3a5273279af11e109bb91334967a4600f7e72"
+    },
+    {
+      "path": "scripts/system/area_action_rules.gd",
+      "sha256": "409d569acaf4c4ba646ef44bb516878c3f70f4e74b5f7797e7d02a2235adce8a"
+    },
+    {
+      "path": "scripts/system/attributes.gd",
+      "sha256": "e41ccf8df257b389061e972000db595ce1562f38142d9ac8f976c624b9a26a23"
+    },
+    {
+      "path": "scripts/system/base_attack.gd",
+      "sha256": "90590134c5557e20131f4d3faebaeb37d1bea827d58054e3610a9c9d2f2a3f6a"
+    },
+    {
+      "path": "scripts/system/base_buff.gd",
+      "sha256": "a7f953ccf98cf5a6effeb0c9e493df9dc301fab7631df3acd11113a9d6534314"
+    },
+    {
+      "path": "scripts/system/base_card.gd",
+      "sha256": "2d21cf3ff9e744419dfc8a8cd60f2a470311267a4485cbe26e64663a3fac1c42"
+    },
+    {
+      "path": "scripts/system/base_effect.gd",
+      "sha256": "33b023a4f6b30acb5949773580128995e1059b350344a548c2718b411da276c3"
+    },
+    {
+      "path": "scripts/system/base_event.gd",
+      "sha256": "80b2803a09ea7dc84c83b9e2cb1c1e8272cde0719064ff2ca9426741cb2ae1b8"
+    },
+    {
+      "path": "scripts/system/base_func.gd",
+      "sha256": "24d0408a4dff350eeb64d6fcbb01c561661c63fcb4eed0c44f9d709adb7fe2ff"
+    },
+    {
+      "path": "scripts/system/base_handcard.gd",
+      "sha256": "a86945ce684c254d1bc33d5a0ce9909c8bf61fc2a6978b2f2eb59c704492d4ff"
+    },
+    {
+      "path": "scripts/system/base_location.gd",
+      "sha256": "174c7f4a2e22667cead34a53ec9e84815c8b6e1b3b94677398865b366a42cacb"
+    },
+    {
+      "path": "scripts/system/base_map_area.gd",
+      "sha256": "1b38cba1de0b07999fed1ec0baed4955b8634bd49a7815d70c096ba7c5a9c425"
+    },
+    {
+      "path": "scripts/system/base_master.gd",
+      "sha256": "c0c1f811c411cd63ae70f5f42ed1ef169a9f28558ea6f2e5cad071a283998070"
+    },
+    {
+      "path": "scripts/system/base_number.gd",
+      "sha256": "e43cb2c999f54735309b88cec7281609fd43e39cdce1e49e2dc5d37528e85f76"
+    },
+    {
+      "path": "scripts/system/base_object.gd",
+      "sha256": "4dd35f730796a84123677125ce72be0fd14325ce7afff0c2adc0b48f4f871d43"
+    },
+    {
+      "path": "scripts/system/base_servant.gd",
+      "sha256": "a6ffff736a0de4501b90f59a29dc997cacccd4638cc6b7c3a0ee752e17d1bd14"
+    },
+    {
+      "path": "scripts/system/base_situation.gd",
+      "sha256": "62debe3423657f280619ced77a85120454c1248cef56b2ed616771b11759c6a5"
+    },
+    {
+      "path": "scripts/system/base_skill.gd",
+      "sha256": "8590cfc80cf838d5b866b4d6f9bc8da083d9eb11e2ecf6fea7e6507d584bfa81"
+    },
+    {
+      "path": "scripts/system/buffs/defeat_buff.gd",
+      "sha256": "ed1a3e085210f30f6c899f6e5c1e70d9ebb65fb57a8addf0c1659fa438d26058"
+    },
+    {
+      "path": "scripts/system/card_zones.gd",
+      "sha256": "9cb0451c4bc722920caa757419c3b3937d537bdbf7ed2ddd59741cc463e0ba17"
+    },
+    {
+      "path": "scripts/system/clone_context.gd",
+      "sha256": "9c8b7bf220fc21dcda7f1a044d34803340f50cc5eb2cfe59db6a2582d31a4f6e"
+    },
+    {
+      "path": "scripts/system/deploy_rules.gd",
+      "sha256": "e74dccdc4b46d2d77a6ebe34abfc5cc0b837dd97c3f685e99fb2b5931d4bc83d"
+    },
+    {
+      "path": "scripts/system/effects/CannotPlayCardsEffect.gd",
+      "sha256": "9e8fec571ea7e0d3621d22bd89f2031f5a472c70cd29d2031d6911247af5f42b"
+    },
+    {
+      "path": "scripts/system/effects/CountsPowerWhileConcealedEffect.gd",
+      "sha256": "0a67fee68e5eda49781743d5a1a82cf26cfcca87e70453823c2d2f05c2e65452"
+    },
+    {
+      "path": "scripts/system/effects/ExcludedFromBattleWinEffect.gd",
+      "sha256": "d7b38d49f9e2f2199e76eba93576efe1afe4caf1eb435c67269bb001abe0fd62"
+    },
+    {
+      "path": "scripts/system/effects/ForbidNoblePhantasmEffect.gd",
+      "sha256": "ae3be42d459f1d7e66e9e13b2ca56c2a1ff1f00e5643271dfda02bcdbf533062"
+    },
+    {
+      "path": "scripts/system/effects/ForbidSpecialAttackEffect.gd",
+      "sha256": "a95faad81accb44f08572928c229cbae4032ae24e7f08ed7038204d2135a8bf0"
+    },
+    {
+      "path": "scripts/system/effects/NeverCountsPowerEffect.gd",
+      "sha256": "f015c8b7567a961ccc085e27668c2cf35585112bfc43f5c0e403eacaa9d1c426"
+    },
+    {
+      "path": "scripts/system/effects/NoLocationBenefitEffect.gd",
+      "sha256": "578120573fba3c16a6eb74a895a90fd5b7efa001f010b57ef4b65121bcdbe25b"
+    },
+    {
+      "path": "scripts/system/global/all_operations.gd",
+      "sha256": "109c34df278ab7ee5ef80686eeebd8227da7b74ee9148e5f83dc59d26eb331bc"
+    },
+    {
+      "path": "scripts/system/global/battle_resolver.gd",
+      "sha256": "6751276a7c00ba0ab9070076e539704d1a28a256b468778582f1d91ecf911e57"
+    },
+    {
+      "path": "scripts/system/global/board_power_query.gd",
+      "sha256": "4149f94f1d3734a7acb92cedcbe5b4f506ba7b7df3d46a5e3e1ae4c5163bc385"
+    },
+    {
+      "path": "scripts/system/global/climax_resolver.gd",
+      "sha256": "0aab398b99a56f6014203ef99199b802671dbf22aa628e4944ee86718f6b8c37"
+    },
+    {
+      "path": "scripts/system/global/content_environment.gd",
+      "sha256": "fdc139c595c143b68a3168f93eb2ee4d992d899230c9546025a962eb8580c363"
+    },
+    {
+      "path": "scripts/system/global/cursor_replace.gd",
+      "sha256": "8dbba5b5810715efe3fe5fb14ef5165ca73b335c11812ab504ad7ffb474f6476"
+    },
+    {
+      "path": "scripts/system/global/effect_manager.gd",
+      "sha256": "4af166bd7d5f71732af924d963ab4f632840917742ae2e68a308b623756e20d3"
+    },
+    {
+      "path": "scripts/system/global/event_journal.gd",
+      "sha256": "b80e6ee792c010be391f4a647f5d7fad7e00009c3954097a6718ae7dac4f03d3"
+    },
+    {
+      "path": "scripts/system/global/event_resolver.gd",
+      "sha256": "551774cfd968682d3cb916754153867e43a93d0aacaf098f3af447747ec5215c"
+    },
+    {
+      "path": "scripts/system/global/execution_trace.gd",
+      "sha256": "ac0601c4558ece92b2acec449c9289c04878665b8d42ad09431a28b4e84f48a3"
+    },
+    {
+      "path": "scripts/system/global/fact_delivery.gd",
+      "sha256": "c44a260ace12e9d4f230b635318cd4b9f167140db4af76ea724ae958e5b8f419"
+    },
+    {
+      "path": "scripts/system/global/game_data.gd",
+      "sha256": "6d7c4f67a05cbc8da61f831cc32253e23565f510e7b7b7ca838e7ed460aafbe2"
+    },
+    {
+      "path": "scripts/system/global/game_data_manager.gd",
+      "sha256": "d8cb5112300a319c64eee3da6eb008bf2cc98631a39f4916cfd972327833b1c1"
+    },
+    {
+      "path": "scripts/system/global/game_log.gd",
+      "sha256": "c7aa358ba183dbf7378e22f2d3cad502f53d96473c6ff8436c0fca58e3839386"
+    },
+    {
+      "path": "scripts/system/global/game_progress.gd",
+      "sha256": "0db25f9e17b9da91c248201d6be5c67eb7081b58295d49142b3824286cac4978"
+    },
+    {
+      "path": "scripts/system/global/load_attack.gd",
+      "sha256": "6e4e78096edeb02881676c5550d27835680633c3ab207e286ab46ddda2e7a664"
+    },
+    {
+      "path": "scripts/system/global/load_command_spell.gd",
+      "sha256": "17319da4e42332c28594270f8c4ffec487614ee83fab103b98deb898d3a9e58c"
+    },
+    {
+      "path": "scripts/system/global/load_event.gd",
+      "sha256": "9616505175735d95fe41e415082fc290f4b5c8b259580876afa328e3f1f4d98a"
+    },
+    {
+      "path": "scripts/system/global/load_game.gd",
+      "sha256": "2a78f90ac18bd76ea2ea3181349d069874bda5df3ce8280134e17f9ef17c92e5"
+    },
+    {
+      "path": "scripts/system/global/load_helper.gd",
+      "sha256": "1a87e4a6f580b9e8b3f55846637f491c4599244c0427874875cc24d6dbe9741b"
+    },
+    {
+      "path": "scripts/system/global/load_situation.gd",
+      "sha256": "2a41ae85468715a0be217762036ec4f4f817a040dfc0d27f0a8d2334eb6e4602"
+    },
+    {
+      "path": "scripts/system/global/master_manager.gd",
+      "sha256": "3520e6a380d1da087e391fc26c972ed64e1c3bef21d644b7e31d6e187c6bd174"
+    },
+    {
+      "path": "scripts/system/global/servant_manager.gd",
+      "sha256": "226712df89daadaa8786ff3fdb131f29cd96caa925cf8eedb6c5cb0d330de15a"
+    },
+    {
+      "path": "scripts/system/global/situation_resolver.gd",
+      "sha256": "f27aa498eb960117dca26616f804f83bb2c7cecf25555fde289f197b4bad0396"
+    },
+    {
+      "path": "scripts/system/global/time_point_checker.gd",
+      "sha256": "289cba0dc5dae96e5fdfccfa33d8ed2d5d835038008b09a4ae253253267a48e1"
+    },
+    {
+      "path": "scripts/system/global/victory_resolver.gd",
+      "sha256": "b57f218a88ce0e2914f4adeedd40a4758860248118df0e989ef2451e07d22c94"
+    },
+    {
+      "path": "scripts/system/map_data.gd",
+      "sha256": "376628dd65b5eab836db59578d4998e6a59892ee3b17d9c4b967d83af4ba0f63"
+    },
+    {
+      "path": "scripts/system/operations/ActivateEffect.gd",
+      "sha256": "ed97cf09f579db0389fa5a131dcf4e358ee69e17ad01035e1745cfa3a4307a00"
+    },
+    {
+      "path": "scripts/system/operations/AddAttack.gd",
+      "sha256": "4936f89c6d9dd27f108e4c2b95e5f61c8b64a5e9ff23eb2905cc7074601fee02"
+    },
+    {
+      "path": "scripts/system/operations/AddEventFromDeck.gd",
+      "sha256": "845e9ad7f18ae25a4601f86ba3fb283453b876fe713f1e1b9832be76c101d3ae"
+    },
+    {
+      "path": "scripts/system/operations/AddMapArea.gd",
+      "sha256": "3be77562e82e6971e0c0456a5649fc2f9022fd8270ec63c0fa86cf069648f360"
+    },
+    {
+      "path": "scripts/system/operations/AddMapAreaBuff.gd",
+      "sha256": "8290101d96634ddacf2309320e59bec5dfaa2bee999b8c97c5f89bf3b9dec7c8"
+    },
+    {
+      "path": "scripts/system/operations/AddMapAreaEvents.gd",
+      "sha256": "a00bf19d5f6b629e58fb90ca8cd1f3deffb178acc670d162eb65a0988cf483c6"
+    },
+    {
+      "path": "scripts/system/operations/AddPlayer.gd",
+      "sha256": "f9047b6d9cd118830eb123e40a69d91eb1dcd216cbde2c85f8a66fb1722d748b"
+    },
+    {
+      "path": "scripts/system/operations/AddSituations.gd",
+      "sha256": "59c1bd8397747302b6d140bf3b3234ee9a5b6c44d9b687f4ee83add9e273ae49"
+    },
+    {
+      "path": "scripts/system/operations/AddSkill.gd",
+      "sha256": "0ed7aafd4d97d519e188b59c0c24b4ddb090bb0264cf8cf80680e604650c150e"
+    },
+    {
+      "path": "scripts/system/operations/AddSkillToSkillZone.gd",
+      "sha256": "766afc8b20f6c989dd9a09c264a7691f2c8c728f360b80009ee2985cbd0cf7e8"
+    },
+    {
+      "path": "scripts/system/operations/AddToArray.gd",
+      "sha256": "dba487dd28feaac2d2aab224cfe004bad967e767f9bef45667674acfa46307a1"
+    },
+    {
+      "path": "scripts/system/operations/AndFunc.gd",
+      "sha256": "93b38e8d7781e82cd3f479b30f0804d4be48cabae875eca15ba317131ac6b09b"
+    },
+    {
+      "path": "scripts/system/operations/ApplyCardKeywords.gd",
+      "sha256": "a153e1b48b93f48f7eca974b1f493997857b95cc35f8eb8f942b720023b2f7de"
+    },
+    {
+      "path": "scripts/system/operations/ArrayDifference.gd",
+      "sha256": "b51248e960723202689f6574d86cd78b3a20305d060760570294001253d68bbe"
+    },
+    {
+      "path": "scripts/system/operations/ArrayLength.gd",
+      "sha256": "62b5b3675da6a4b1f55f9df9e9d3ba94b2480179009e0f0d1d5f69d8341efb07"
+    },
+    {
+      "path": "scripts/system/operations/AskPlayerNumber.gd",
+      "sha256": "db81fb5c76fa56ff6d9468e2499ef36cf5a6ab0e6c3c082c204430b6a4d1d1b4"
+    },
+    {
+      "path": "scripts/system/operations/AskPlayerOption.gd",
+      "sha256": "9a8dbe8282ebc8f173a02ec860d6470b6a1d529599d430da44833966b857e1e7"
+    },
+    {
+      "path": "scripts/system/operations/AskPlayersSecretOption.gd",
+      "sha256": "bef437eae7987bb8225ec74c0ade83429867630bd836f8566ced4d75db8adb0a"
+    },
+    {
+      "path": "scripts/system/operations/AwakenSkill.gd",
+      "sha256": "9261326ddf94eff56e166d0814c4473b16e5b09d5e4e5903f13971c0032189cb"
+    },
+    {
+      "path": "scripts/system/operations/BoardHasEffect.gd",
+      "sha256": "d54d4195a50e9f4bfe4c115759fe44eaa7e83223b8c93a437c2d8a134611cf49"
+    },
+    {
+      "path": "scripts/system/operations/BuildCard.gd",
+      "sha256": "39bccf99e5005e2cabf29600b75b77719a01435680707ed6130bab60d3c0cb91"
+    },
+    {
+      "path": "scripts/system/operations/BuildEffect.gd",
+      "sha256": "28a530cabf163caac808d8a847dba6b893b169ae32db9959f553841b07c947c3"
+    },
+    {
+      "path": "scripts/system/operations/CalculateNumber.gd",
+      "sha256": "ed9ba9ef93fa59cc6d86c95fabe4ab7461015025eba747a293e6b510eafeab8d"
+    },
+    {
+      "path": "scripts/system/operations/CancelPendingAction.gd",
+      "sha256": "8a3079c5158e88f1449b2af92772c27a5b7fd9e56d30a979429a1f5738f35206"
+    },
+    {
+      "path": "scripts/system/operations/CanGainMagic.gd",
+      "sha256": "a2b0d57c38bf3e58d992cea99512c63c6b241c329ce5791a859a0a564de19ff8"
+    },
+    {
+      "path": "scripts/system/operations/CardCountsPower.gd",
+      "sha256": "a8feefbb24f59ba556b3b138bc1c572a44f3cea580720e6f4fe4fab8fc82b286"
+    },
+    {
+      "path": "scripts/system/operations/CardHasEffect.gd",
+      "sha256": "0ab4604f7d897678cabed6d08a2ded32c3d8a7bac2c77e0503cd9c0fbbd8864f"
+    },
+    {
+      "path": "scripts/system/operations/ChangePlOrder.gd",
+      "sha256": "f779d276aa2301890e15f878e7efd64ac025497bdcec1b3b744e28f055c91635"
+    },
+    {
+      "path": "scripts/system/operations/CloneObject.gd",
+      "sha256": "d5220dd2a2ab8cedb18391852ad83fa9686db995694422f7b659f17314b6bc10"
+    },
+    {
+      "path": "scripts/system/operations/CloseCard.gd",
+      "sha256": "cddc52bda5d103d31043c7a85c1fcb0a85363b1dc47e47a33ad910fe564b0a65"
+    },
+    {
+      "path": "scripts/system/operations/CloseTimePoint.gd",
+      "sha256": "92fe073a5d7aff8ebc8f506bcaa2415509b007faaa1e912f981c8c1e84ed604e"
+    },
+    {
+      "path": "scripts/system/operations/CompareNumber.gd",
+      "sha256": "bd6bd8526b5ce9d12851be962c91dfd193dfda79e40c1e9014f9609ef645df02"
+    },
+    {
+      "path": "scripts/system/operations/Counter.gd",
+      "sha256": "5f563708966ba3272d3fed015b566ef04f53c99b752f21b475bdf8b1414412b2"
+    },
+    {
+      "path": "scripts/system/operations/CreateBaseNumber.gd",
+      "sha256": "a54503c0e648cabed1218bdb09b20949279972c9acac6fb444ac3ac04ef4147e"
+    },
+    {
+      "path": "scripts/system/operations/CreateBuff.gd",
+      "sha256": "9ba67a6f8c8a49864e28fb6fdd3b77da0659521dddf8ce3632ce0e5bbd764850"
+    },
+    {
+      "path": "scripts/system/operations/CreateCard.gd",
+      "sha256": "5eb741ec68389cb990d2d2be18e611ffe3cde92a5173bc0ba64bf3ce2da8d106"
+    },
+    {
+      "path": "scripts/system/operations/CreateFunc.gd",
+      "sha256": "80ab27080849cf14f052403ce42317edf0ff91fb3ada424045b3cf4027908fe4"
+    },
+    {
+      "path": "scripts/system/operations/DealPlayerCards.gd",
+      "sha256": "ab6099f36300d8126e4513db5c73f1f56da0e3a4b3cec452cf41dd1d6dd0e577"
+    },
+    {
+      "path": "scripts/system/operations/Defeat.gd",
+      "sha256": "b3d9222acd1c0355dfef27bc3555595ddda66cdc570a1e9b38a3382a615b65d5"
+    },
+    {
+      "path": "scripts/system/operations/Deploy.gd",
+      "sha256": "784f81136612cf437872552070a50556c525cbcd3e0444f20c5965e878dcfdf9"
+    },
+    {
+      "path": "scripts/system/operations/DiscardPlayedCards.gd",
+      "sha256": "8d70c76ca53419a35b97000e7f137bf45da192e50298f1ceb13f773fcc35e5b3"
+    },
+    {
+      "path": "scripts/system/operations/DoNothing.gd",
+      "sha256": "7459565a2a7c9941e3d832f0d1ead48004a30e1ee5f79e6c6a3a4cba2828b6d8"
+    },
+    {
+      "path": "scripts/system/operations/DrawCardByCard.gd",
+      "sha256": "c7d6e6b3c08861b68136629fcb0e8e66f27cb6b96fe68fa019567c28702e04b4"
+    },
+    {
+      "path": "scripts/system/operations/DrawCardByIndex.gd",
+      "sha256": "cf56db8ca979fef9efdd1cd190d06580461188791607576858cc6440a5c52dc4"
+    },
+    {
+      "path": "scripts/system/operations/DrawCardFromPlDeckToHand.gd",
+      "sha256": "8d6294352dc11508a9731fcca2babd3a176810a0ea5604d6d04dbf7c2daddef6"
+    },
+    {
+      "path": "scripts/system/operations/EditCardAttributes.gd",
+      "sha256": "843e334faad4b92aacd2e45917c803d8b7fd3846b94cf33095619307f8e9bb68"
+    },
+    {
+      "path": "scripts/system/operations/EditCardCost.gd",
+      "sha256": "aee4deaf0e6557408118451f106f8919544151476ae9c5b5062ab105130facf0"
+    },
+    {
+      "path": "scripts/system/operations/EditCardPower.gd",
+      "sha256": "2f70713757123b9c4d0921576e85a967642e21e0defbb2193c4f36932aba5ef6"
+    },
+    {
+      "path": "scripts/system/operations/EditDataNumber.gd",
+      "sha256": "5b1485ce1eb4042b1d8d8e5662ba8b25061b9431ca2c40fe5added1a6523bf7b"
+    },
+    {
+      "path": "scripts/system/operations/EditLives.gd",
+      "sha256": "d0f233fcb20e9c49a2c07753a056e8af83ba4c7668df50ec74550e6bf8b08800"
+    },
+    {
+      "path": "scripts/system/operations/EditLocationBenefit.gd",
+      "sha256": "86b3dbdc583a4d59046829d3ecbeee37fbd784987e553cbc66f2b20f1246e9c6"
+    },
+    {
+      "path": "scripts/system/operations/EditLocationMagic.gd",
+      "sha256": "35df43fa4b962f3cf732ec216f52585e46995d7cc0ffab9cd8a696bb440673d6"
+    },
+    {
+      "path": "scripts/system/operations/EditMagic.gd",
+      "sha256": "6578c2e92535b9f62ecc3c25dd7a00027daeaa3f1ebe5f62c71ae09162fa5ecf"
+    },
+    {
+      "path": "scripts/system/operations/EditMapAreaMoveCost.gd",
+      "sha256": "17ea6420fa72d7673ddee23a7fac1a47f3babf7385d67c6a8c939122412b9d1b"
+    },
+    {
+      "path": "scripts/system/operations/EditMapAreaScore.gd",
+      "sha256": "24b0d1ffd747538917510025fe714356c113d1b29231e1c98f0a6e4d39db4868"
+    },
+    {
+      "path": "scripts/system/operations/EditNumAndReturn.gd",
+      "sha256": "4b8be75d7e0519747b6dd4aee3ed7325a5741acfc5004060b87165097dc0e04c"
+    },
+    {
+      "path": "scripts/system/operations/EditPendingAction.gd",
+      "sha256": "53b9e86778dad8f6b3116b02dd9618c2327eedb22a321a6aa08895e47322fc13"
+    },
+    {
+      "path": "scripts/system/operations/EditPower.gd",
+      "sha256": "9537e38bff68937922e346158463f225e32008557eb264aaaefc74e60854b563"
+    },
+    {
+      "path": "scripts/system/operations/EditScore.gd",
+      "sha256": "5752b76d42ce82f842f752761e2b7193ded3449d7c0a88925bf390a6be38e356"
+    },
+    {
+      "path": "scripts/system/operations/EmitTimePoint.gd",
+      "sha256": "995e5fd234088d6af0ab50c12071a0faabae086cdfbcd85173c4371b071a4dae"
+    },
+    {
+      "path": "scripts/system/operations/EndGame.gd",
+      "sha256": "d7f5475028ebd843205e0d6048837b1138212d0bc10dca7dd5e9eca5e66d0b15"
+    },
+    {
+      "path": "scripts/system/operations/FilterByProperty.gd",
+      "sha256": "b253f94fde24311b76249f14b9cd71c7222153d69845e9596ce39311c0d8fb36"
+    },
+    {
+      "path": "scripts/system/operations/FindPlayerArrayContaining.gd",
+      "sha256": "b7f30c5a5f34297534063ab7bfa61a3c89e336be976ccfb2ddcf6200f0afe127"
+    },
+    {
+      "path": "scripts/system/operations/FlipCardFace.gd",
+      "sha256": "ec683ec5bc7f0018140229290b9bb8811c88c840c8e647f4c325ccd879477a56"
+    },
+    {
+      "path": "scripts/system/operations/ForeachFunc.gd",
+      "sha256": "bc3462c05015c0eddb45aa5064b85bfe43ec5b81e2f9f73c3188f073d273d263"
+    },
+    {
+      "path": "scripts/system/operations/ForFunc.gd",
+      "sha256": "b7af8e178258fab6adea8270652102e21b9c31d413a0ea681b57587bb1761b2a"
+    },
+    {
+      "path": "scripts/system/operations/GetActivatingEff.gd",
+      "sha256": "e95b01c433b8d1afb222d8e9c4efc7dc01a2475341273b9444c4c099b25b35c4"
+    },
+    {
+      "path": "scripts/system/operations/GetActivePlayersId.gd",
+      "sha256": "ff056cadaa663c39b3464055fe33b5c4bb25fa3bb99a9df9cc23404ed7bfb86c"
+    },
+    {
+      "path": "scripts/system/operations/GetAllPlayersId.gd",
+      "sha256": "f572c78c296a5c26223a336efecec86412dfc20b995383508d78afec76d5f44e"
+    },
+    {
+      "path": "scripts/system/operations/GetAreaRoundParticipants.gd",
+      "sha256": "02ea8722374d02e53ca941a1a278a95eaee15ea44711b13fe25c2bc664b596d4"
+    },
+    {
+      "path": "scripts/system/operations/GetAreaRoundWinners.gd",
+      "sha256": "2db8f260e0d63f0ffc84bb4b39567a1d5d38be7b4694b5e33d83b3eb8a3e14f4"
+    },
+    {
+      "path": "scripts/system/operations/GetAttackPrintedCost.gd",
+      "sha256": "3973b1164335401d4eaec9f9ccb8cd8ea2e99ad9c2e0a0fae17515baada751c3"
+    },
+    {
+      "path": "scripts/system/operations/GetAttackPrintedPower.gd",
+      "sha256": "95c2ac0abab067fc4412f80a3e4c14f4cd2afa6308e971feadc06d363d5fd9b0"
+    },
+    {
+      "path": "scripts/system/operations/GetBuffByNameFrArr.gd",
+      "sha256": "cca784fc83483fa0fe202a6853aa14748ca79521851dc33f5f2da963a7b81d30"
+    },
+    {
+      "path": "scripts/system/operations/GetByTag.gd",
+      "sha256": "97dcec75346eba8b047b4903db8a1f6b4737f6a23779c19dbb968eee6dd90374"
+    },
+    {
+      "path": "scripts/system/operations/GetCardAttributes.gd",
+      "sha256": "4831a956fd4dfba99e5b2f27d43a64f4a4df50c961a989dda514cccb50a86755"
+    },
+    {
+      "path": "scripts/system/operations/GetCardByIndexFrArr.gd",
+      "sha256": "1a5a0c9ca548f9f3f1189707e1a97a68cd56696fc5895eecd184fd2829924ed3"
+    },
+    {
+      "path": "scripts/system/operations/GetCardsByAttributesFrArr.gd",
+      "sha256": "73a4500848de96b717589e8fa68696e8a79ed87cb03dfc187b1ada921166be7b"
+    },
+    {
+      "path": "scripts/system/operations/GetCardsByNameFrArr.gd",
+      "sha256": "9fb8c46de762b331849fab02b92efe6ce66eb2bcee0ac62c6da3bd717dc8730c"
+    },
+    {
+      "path": "scripts/system/operations/GetCardsByTagFrArr.gd",
+      "sha256": "ab4125e7d1ac4fd626130ce86c7f982339784924acd12bdc94430e03a5899fc8"
+    },
+    {
+      "path": "scripts/system/operations/GetCurrentRound.gd",
+      "sha256": "ecd6397d43b82737b5ca5eb83aa5c75bfd0378c2fa673df0660b65382cc34e4c"
+    },
+    {
+      "path": "scripts/system/operations/GetDataNumber.gd",
+      "sha256": "dfd42318747184d33272583c08a115833fdd94f92537d40d1606563f2deb9d89"
+    },
+    {
+      "path": "scripts/system/operations/GetDictionaryValue.gd",
+      "sha256": "0e32bfaa20ac3e6d53755e94b96a9c508ebc318fe0403615b2337205a636a5b6"
+    },
+    {
+      "path": "scripts/system/operations/GetEffectiveLocationBenefit.gd",
+      "sha256": "a23fede2356cfe638fb59ea295a034bb26175eb55cdd1a05943e06e01919cf0d"
+    },
+    {
+      "path": "scripts/system/operations/GetEffectNumber.gd",
+      "sha256": "917ad16f4f09bfd064f42f0f55ca3ddc897b3d6f7b3df0f7ad9d923a94a05fb4"
+    },
+    {
+      "path": "scripts/system/operations/GetEffectUsingNums.gd",
+      "sha256": "5d40a27577b21a941c91ee83c7afe310d27c1b8423efd0d9545ef1e742d8feea"
+    },
+    {
+      "path": "scripts/system/operations/GetEffSourceCard.gd",
+      "sha256": "b57d5230ec1a3dd508daa26c2be20f7da27cf680a1698f33e038028138d77a8f"
+    },
+    {
+      "path": "scripts/system/operations/GetEventPrintedScore.gd",
+      "sha256": "c09207087fe4712cea8b20dfb8141acee1f13a1e89db58b69c636421f45e2460"
+    },
+    {
+      "path": "scripts/system/operations/GetEvents.gd",
+      "sha256": "b3cb622d82827f3db3a0299bbf65ea79c862f46bd2cf01e0296ae9bac5f2761e"
+    },
+    {
+      "path": "scripts/system/operations/GetExtremeByProperty.gd",
+      "sha256": "6fa84d6c147f513cfe9d2f06afeae885308ff906c097a9068444ac239aa94474"
+    },
+    {
+      "path": "scripts/system/operations/GetGameDataValue.gd",
+      "sha256": "94885ac2db68c02a74f332f5e0e04880956889275e5e85164c5dac2ee1aba04d"
+    },
+    {
+      "path": "scripts/system/operations/GetLocation.gd",
+      "sha256": "6ef339a333644fc8057a1d87d9380b92adbd8a5db770f62bb844014a664e49ec"
+    },
+    {
+      "path": "scripts/system/operations/GetLocationBenefit.gd",
+      "sha256": "2a2c823437689f38ed107839a18c57bc838b3dea121aaef98cbd3392efedb8e0"
+    },
+    {
+      "path": "scripts/system/operations/GetLocationMagic.gd",
+      "sha256": "608e0991a4cae89b35c400ba692650f3ec2a525d8d9e2352934464970097acb3"
+    },
+    {
+      "path": "scripts/system/operations/GetLocationMapArea.gd",
+      "sha256": "206631407aee5beabda51ee80bf4f223d7bac332e9d3801c368ac47cc0bd168b"
+    },
+    {
+      "path": "scripts/system/operations/GetMapAreaBuffs.gd",
+      "sha256": "caec8f73a876e43ff9a769d001fb2423e0a621d1290c86bf8ff5b646d0cc79f7"
+    },
+    {
+      "path": "scripts/system/operations/GetMapAreaByName.gd",
+      "sha256": "ef39832eb98380d92aacb23e3c887a088fb23886491db911e2d7290443f7d989"
+    },
+    {
+      "path": "scripts/system/operations/GetMapAreaScore.gd",
+      "sha256": "cff66456d81b3cfaa32ea74a7444353f723a4d8611dea3567d5e4e44410c5cc0"
+    },
+    {
+      "path": "scripts/system/operations/GetMapAreaScoreNeedWin.gd",
+      "sha256": "8a55a8530fdd0c81dd9f43c0e214a56d561ac7f2d485963d3e0232415293aa2a"
+    },
+    {
+      "path": "scripts/system/operations/GetMapDataValue.gd",
+      "sha256": "15eed52ecaea495d4f628bc16eabc72fd0d8d9c5ca385211286e51d669b02d73"
+    },
+    {
+      "path": "scripts/system/operations/GetMoveCost.gd",
+      "sha256": "b693ea017a1cdea7f9f4734a55ffe6f3f624baef234de452bb6144cff52c179c"
+    },
+    {
+      "path": "scripts/system/operations/GetMoveTargetLocation.gd",
+      "sha256": "d275b6bbf12e1454f9eba212115c8d81a8bc27f097dd0d7833d3e0d04625420b"
+    },
+    {
+      "path": "scripts/system/operations/GetNumOfPlInMapArea.gd",
+      "sha256": "3159e5f87e8e1dca682699e1c6f0c79129e9a61065e13b21f4a990e70c37e6e2"
+    },
+    {
+      "path": "scripts/system/operations/GetObjectsByNameFrArr.gd",
+      "sha256": "78318738ab881ae056e56ecc3e3b0fc7ef545f60c6ff042686245965a45f251b"
+    },
+    {
+      "path": "scripts/system/operations/GetPendingActionValue.gd",
+      "sha256": "34e837e5e3f1e235886b9784de1daa47d57185a1b8e40a09d39a4e96b08d3bd7"
+    },
+    {
+      "path": "scripts/system/operations/GetPhaseOrder.gd",
+      "sha256": "2c9276fa6135cb0c02f786c097eaadbaa570af20a07946574e7c651f3b9d8561"
+    },
+    {
+      "path": "scripts/system/operations/GetPlAttacksOutGame.gd",
+      "sha256": "3333ed22ed3b3d27bef64e4afef4404008726824a7cd611509cfdd1182c08b2b"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerBuffs.gd",
+      "sha256": "65e588a73006c60771d82653a3860681e8eccd50c58a17056c101c75b94121f6"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerCommandSpell.gd",
+      "sha256": "09bb54eafbdbaeab63e42c38859403f9ee81f83a19d2865248ea8997a4b78490"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerDataValue.gd",
+      "sha256": "72b0060c26ebfa39bd46a0fb1c62c5dc0845274470aff1d361dbbf33ef30676a"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerDeck.gd",
+      "sha256": "8506f6ffc1ef0d4d4078a1589c60abdc8d203502b60bc79d699b526588ec6151"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerDiscard.gd",
+      "sha256": "4e871443014443fb9c6eb8577ac1d5da1a3cd8c323087011e8137ebce17060a6"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerHandCards.gd",
+      "sha256": "c9816853708e5a3c951974710f3b1fb9d234db351b7a6004d29e60f6cea4d6a1"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerIdsByDataValue.gd",
+      "sha256": "790fb42a024e51cb4f853453c42d3dee5e5b7b2026e9a491781ffb35962b270f"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerLives.gd",
+      "sha256": "fcea404c2e975ae81bbb0bc27377cf106b9b8b6d30101f652e821adad229db1c"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerLocationBenefit.gd",
+      "sha256": "907e861e9397da974908763f015a670d8a93802daeb7a52e1ba4d54965186ae5"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerMaster.gd",
+      "sha256": "24a5a4ff8172d93304981947d19e20eeeb02e2563058f0deb91f4884f6636253"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerMasterSkills.gd",
+      "sha256": "5891b65f1ebd0e2d3fc22eca89b8840980d775f09e985e0bed9c104513d83508"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerName.gd",
+      "sha256": "cc3b5c98db7aed34122adbc6235d20ba0fc394de3bb9cff8749a0e1dd1ff02cd"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerPlayedCards.gd",
+      "sha256": "916a486dc8e3db2959e40ae67c12168d2e1346f8ce8d2f3b2c0411cdd3e4fe3c"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerPowerBreakdown.gd",
+      "sha256": "d75ab6c8890c6811f71d4e14cde7099f427b61235d76de586c9973fa392febfc"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerServant.gd",
+      "sha256": "9f3ff429b914f08dcf676ef9e8f303155f8a94f08ad568f858a1fa075b8ba182"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerServantSkills.gd",
+      "sha256": "f46f68f6af9d9f23a0603b4af311312f447b91197c956cc811555e068fbdf257"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayersField.gd",
+      "sha256": "898936867f172cb908e32525063cbadafd52fb63d813548f462f389d9689b46d"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayersInMapArea.gd",
+      "sha256": "65b45d492f17e836d6267daf281c4616499605217e5cebed8b35a7f63c40739b"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayersInSameArea.gd",
+      "sha256": "67f40d5a4684069c112919a5467b8b5258b68fa32779c1171b05f214bf5ff45f"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerTimePoints.gd",
+      "sha256": "927152881090ebe7a63ca15dae973e1d605082f636248e43f68ffa41d90e8470"
+    },
+    {
+      "path": "scripts/system/operations/GetPlayerTotalPower.gd",
+      "sha256": "5aa911a2110ae152ab67267141082a736af3596e1163b224edf9fbd6611df92d"
+    },
+    {
+      "path": "scripts/system/operations/GetPlBuffsOutGame.gd",
+      "sha256": "2d7e19c1953d88de16853ed9344ccc83b80b126c3a173f72a4b906900f4a0bb4"
+    },
+    {
+      "path": "scripts/system/operations/GetPlBuffsSide.gd",
+      "sha256": "54569b0cc58632f1f72902341573bd8ee51b91d1b2fbf8b878a7f3f68d17c691"
+    },
+    {
+      "path": "scripts/system/operations/GetPlCommandSpellOutGame.gd",
+      "sha256": "0509701c7719fe2a9b9728e6cb717b9f2355032d4730ce532240f60e5279e9cf"
+    },
+    {
+      "path": "scripts/system/operations/GetPlCommandSpellSide.gd",
+      "sha256": "2211bf866221e592301650043b329102037d4d55e8143f31908820b747cec7bf"
+    },
+    {
+      "path": "scripts/system/operations/GetPlDeckSide.gd",
+      "sha256": "b1b8c171d485418481fb60db316ef7ec6c8ae74b43ca7ec6daf6ee68711ecbcd"
+    },
+    {
+      "path": "scripts/system/operations/GetPlDiscardSide.gd",
+      "sha256": "1d9e39742ed1bd80686ef11111afce2b28b0f96a8d0366b1931c6162e7d20a6c"
+    },
+    {
+      "path": "scripts/system/operations/GetPlIdUsingEff.gd",
+      "sha256": "3645c3849657d34fa6cf156c23ea5a33bddf80d604ca2fafde41d72da1179d86"
+    },
+    {
+      "path": "scripts/system/operations/GetPlMasterOutGame.gd",
+      "sha256": "7b14d541a01aefbcd0308e451a2f1ea5353195de8e5f6022972dfc33bf524cf9"
+    },
+    {
+      "path": "scripts/system/operations/GetPlMasterSide.gd",
+      "sha256": "139997fcea4c0782f65f7386a2f7d2514511ee68368439cd230660c2f629676d"
+    },
+    {
+      "path": "scripts/system/operations/GetPlOthersOutGame.gd",
+      "sha256": "ff3ff4f4aa595359b6d1c1cfe1823a438daba288a391e3cf2d3533690dacc264"
+    },
+    {
+      "path": "scripts/system/operations/GetPlOthersSide.gd",
+      "sha256": "f0c211357eb5a9934520d1ea2100575467b0de47b0ab8bcfa910e8bdbfef8f87"
+    },
+    {
+      "path": "scripts/system/operations/GetPlServantOutGame.gd",
+      "sha256": "3c5dd22e22876fe52060d977743a65838ddd5ee4122a8b1a44e36729962fad7b"
+    },
+    {
+      "path": "scripts/system/operations/GetPlServantSide.gd",
+      "sha256": "20960e4c496c9054a5ef96ac57dfd8539d2b4d76967c8c3795ca0d38fb83f8d6"
+    },
+    {
+      "path": "scripts/system/operations/GetPlsInLocation.gd",
+      "sha256": "040f804895fcee9a0d048e0199f520ce2481658305b9e7f7fcdf40cddcdf5213"
+    },
+    {
+      "path": "scripts/system/operations/GetPlSkillsOutGame.gd",
+      "sha256": "09aef7752432fb49c95e25de0e9136967f9acd6bfe75f350ca14baedd090c6dc"
+    },
+    {
+      "path": "scripts/system/operations/GetPlSkillsSide.gd",
+      "sha256": "6561824a15e15822c2782455524e605ade6c75a836a4a9d14f36473d851e4c28"
+    },
+    {
+      "path": "scripts/system/operations/GetPrintedNum.gd",
+      "sha256": "87b1a35370fdde5fe537fbd2b38553242d10e74494e44933dbc0f178283bbf54"
+    },
+    {
+      "path": "scripts/system/operations/GetPrintedNums.gd",
+      "sha256": "3caaec9139a8c5e39830836f4a82bdb3b95910be563b6b6d0fce0dd3b9d17d6c"
+    },
+    {
+      "path": "scripts/system/operations/GetProperty.gd",
+      "sha256": "245e7b0ad9fee6ba787c4b107d07aae6c3fee7d9e8325f467d928ee684519d4a"
+    },
+    {
+      "path": "scripts/system/operations/GetRankByDataNumber.gd",
+      "sha256": "e0d3716762f3655c1e6b17ef2fe673b3bb5fc8c7a2c59307a55efc8babeccc73"
+    },
+    {
+      "path": "scripts/system/operations/GetRoundBattleWins.gd",
+      "sha256": "e42676e7a3c49a5bb9c1cb9edd439b1724e170f2e3e385b5c18a961b299a9a76"
+    },
+    {
+      "path": "scripts/system/operations/GetSharedAttackAttribute.gd",
+      "sha256": "b268639b62ac4cae0611f4f824be10e5eb76f4f133d4e1d5d6d283eac0ada4a4"
+    },
+    {
+      "path": "scripts/system/operations/GetSituationPrintedMagic.gd",
+      "sha256": "9076a499bfabe5ba880e9fb7166a890e00d7d54107d4595e2e09098f23a5698a"
+    },
+    {
+      "path": "scripts/system/operations/GetSituations.gd",
+      "sha256": "ed3db8b04e102e9a70cc23e57ef1b9332c4805011b7e4a74d52ba25026179f8f"
+    },
+    {
+      "path": "scripts/system/operations/GetSkillPrintedCost.gd",
+      "sha256": "2dddbf725d3b9a59099b33f0f4903585394f8b8984ab8fa71fc075fd34ce74e1"
+    },
+    {
+      "path": "scripts/system/operations/GetSkillPrintedPower.gd",
+      "sha256": "1c58936ba14e2bb3ff661640dc1b8e1fef440de5aa47eecdb6c8d710198c0151"
+    },
+    {
+      "path": "scripts/system/operations/Has.gd",
+      "sha256": "146df666ceee264f20ee957da28db5306204656b912e15ed880239e8eb581c47"
+    },
+    {
+      "path": "scripts/system/operations/HasAttribute.gd",
+      "sha256": "b0f80e788e53ca9c0c2c396a7d66a54d9cde5ed8e992f74bcc04aa3e8bf637c3"
+    },
+    {
+      "path": "scripts/system/operations/HideTrueName.gd",
+      "sha256": "98b933393b8ede0c3c1d08d17a3e823c2692cdfe7b682ff1bc2a71fed8d0ccea"
+    },
+    {
+      "path": "scripts/system/operations/IfElseFunc.gd",
+      "sha256": "64fae38e393cd4d19ad8e9de441738574a0496dc18da6ce13716a235a95a4816"
+    },
+    {
+      "path": "scripts/system/operations/IfFunc.gd",
+      "sha256": "9d53004fadecb32aed0f01662e03fce24288d491d23569e7b7de834d15a29ef5"
+    },
+    {
+      "path": "scripts/system/operations/IsEngaged.gd",
+      "sha256": "366327abca4bbb588fd21260f12b536804b8b885002d68bf53c6451614f4ed86"
+    },
+    {
+      "path": "scripts/system/operations/IsInArray.gd",
+      "sha256": "12847882b6599737f12b2db04ecf4c3f5a946365926966a8171913578e24c6fd"
+    },
+    {
+      "path": "scripts/system/operations/IsNull.gd",
+      "sha256": "026521dcb4288630bfd4a4f6597bc363adbd4a1acbd402a22d5af16fba604c92"
+    },
+    {
+      "path": "scripts/system/operations/IsTrueNameReleased.gd",
+      "sha256": "ffc3932b4549912daae805df5de99b74b98335a3531ccd1760ae975dcf24b5da"
+    },
+    {
+      "path": "scripts/system/operations/Location.gd",
+      "sha256": "43b873f6d0a00b5eaa201e96c51edddb3809baab750fc9da26af2ecb603e191b"
+    },
+    {
+      "path": "scripts/system/operations/LogExists.gd",
+      "sha256": "be91f5f9acbe561d508e23bf48629a2836ae6f8bdb06ecd38b7e1550840fd4e1"
+    },
+    {
+      "path": "scripts/system/operations/LogFieldValues.gd",
+      "sha256": "441b3d48df9780964ca4739271d5bedc6bc44ee281bddbac3a44d812e25a5d69"
+    },
+    {
+      "path": "scripts/system/operations/ManageBuff.gd",
+      "sha256": "49e1a251e3ab4e28f67727cf73ffd4b0b7487105017a87397d1661e8850bebaf"
+    },
+    {
+      "path": "scripts/system/operations/MapAreaHasEffect.gd",
+      "sha256": "81075eb9b62f1e5c69c99725905761895e26371e471b07f41d96d2697cb94d6b"
+    },
+    {
+      "path": "scripts/system/operations/MatchFunc.gd",
+      "sha256": "717d0d7ed594442cc3d60b5ec370fbd15a28bfebb1f4ba5ae88266a77e025d56"
+    },
+    {
+      "path": "scripts/system/operations/MergeArrays.gd",
+      "sha256": "cc54bf8d04bd09f374f9b0e4dc3e08556bf0a85afbc9ac1ad97cec56baeb4e84"
+    },
+    {
+      "path": "scripts/system/operations/ModifyAttackPowerByAttribute.gd",
+      "sha256": "361d509c00191163ad7970216863fcbb347a75c7b10c889cbdc3e1c7342d46dc"
+    },
+    {
+      "path": "scripts/system/operations/Move.gd",
+      "sha256": "9044596c611317bbf47c69a252f0cc166705915b25bb22d96b070207e9064a1e"
+    },
+    {
+      "path": "scripts/system/operations/MoveLocation.gd",
+      "sha256": "821dee7e282c7d48464104fc803728df0744926b06ce5044b8fac8e8e89e9b1b"
+    },
+    {
+      "path": "scripts/system/operations/NotFunc.gd",
+      "sha256": "dcb43f1312051bafe72c33d133af4e932853f782109850455d07c3079dc56ca2"
+    },
+    {
+      "path": "scripts/system/operations/OrFunc.gd",
+      "sha256": "dbce85e9f373aa485ed42e7d269cefd9863636469d65a405c7e7c239df0999a5"
+    },
+    {
+      "path": "scripts/system/operations/PlayAttack.gd",
+      "sha256": "94385a0532baab8222cdd21a22b56c97525b513474667f1f3eb6e40571cb7c04"
+    },
+    {
+      "path": "scripts/system/operations/PlayedCards.gd",
+      "sha256": "f1e1b3a16a25b0aaf7ebd291e2763797bc05af7680a190cca7ae3ce3b0cb6c4c"
+    },
+    {
+      "path": "scripts/system/operations/PlayerBuffsHaveEffect.gd",
+      "sha256": "75af292612342bea3aed959da25b1d32022ebe90e89db2b04a6c7b56e9fa111c"
+    },
+    {
+      "path": "scripts/system/operations/PlaySkill.gd",
+      "sha256": "f0deea3fbe6be965d852440aa3d7869da4188a4616d296d4c03dbdc35eb806bf"
+    },
+    {
+      "path": "scripts/system/operations/QueryLog.gd",
+      "sha256": "b2eca7114dca2321374fc87258afcc6c9bcba7c2dfb7ab448e7bc2f8baad1031"
+    },
+    {
+      "path": "scripts/system/operations/QueueOptionalEffectForPlayers.gd",
+      "sha256": "90eb3b73a116cc54e58a7ff6b3429a24cf63b3ba1b7c5e80b3d7a7a0aea301e4"
+    },
+    {
+      "path": "scripts/system/operations/RandomFloat.gd",
+      "sha256": "612c4ad0df0bc6e2e181333972c3aa8e998b418d93bb68b59a0f92b9a5612265"
+    },
+    {
+      "path": "scripts/system/operations/RandomInt.gd",
+      "sha256": "e8195b7754dcf15bfea3c6903d63b5b960d7f32ca0db72bb2a3f86d629662963"
+    },
+    {
+      "path": "scripts/system/operations/RefillHand.gd",
+      "sha256": "78031a67d0d9f488e33290a1d2107714387a0808389b59712d45e368241ed950"
+    },
+    {
+      "path": "scripts/system/operations/RegisterObjectEffects.gd",
+      "sha256": "62004858b47b1c12a7454c208c8fd4d6b475f02133cb7de9005d9c08a09c913d"
+    },
+    {
+      "path": "scripts/system/operations/ReleaseTrueName.gd",
+      "sha256": "6ddfe7aa756e0b380e5fef747c687e56701251e40187cbc1c7ccd274593b11b2"
+    },
+    {
+      "path": "scripts/system/operations/RemoveDefeat.gd",
+      "sha256": "fff3a13c88a3ddc52a83b831610532235552262aaace48db2fb9bd454651662e"
+    },
+    {
+      "path": "scripts/system/operations/RemoveFromArray.gd",
+      "sha256": "652e5a9cc5b78e599336ce0d6108901212a8e60406bbc988baf5b3cbd20c833b"
+    },
+    {
+      "path": "scripts/system/operations/RemoveFromBoard.gd",
+      "sha256": "cb73bae6cb9f1a0843671d50e098c95a3832a62cebc75150507fc8f358e02597"
+    },
+    {
+      "path": "scripts/system/operations/ReshuffleDiscard.gd",
+      "sha256": "56a7c0a71ea67017dc65bfc842249cdb88cdc2b283fdf11925c27daafa9969a4"
+    },
+    {
+      "path": "scripts/system/operations/RestoreLocationBenefits.gd",
+      "sha256": "a5062c0710d873a9df3462f5f525c489602ffcc4bba7888c1d4c40905c440160"
+    },
+    {
+      "path": "scripts/system/operations/RestoreLocationPlNumLimits.gd",
+      "sha256": "695f533091d66c2a682b6b5a25da7230bdcfe30fb955f2c57724b8e3470750e1"
+    },
+    {
+      "path": "scripts/system/operations/RestoreMapAreaMoveFlags.gd",
+      "sha256": "fab4f51dbaf2a1ee3ea1f13cd7122d0c83b015a6f45eb2c6f201d6957d94d15e"
+    },
+    {
+      "path": "scripts/system/operations/RestrictAbilities.gd",
+      "sha256": "8478fdf8736210f7dd5b5b60159e1c5f795960e2d1e2ca5c5f991d70728bc0f7"
+    },
+    {
+      "path": "scripts/system/operations/ScheduleEffectOnTimePoint.gd",
+      "sha256": "a2b8556d899adda889946194e7cc339a5eb118ff658a0e33b92007377e21467a"
+    },
+    {
+      "path": "scripts/system/operations/SetBattleResult.gd",
+      "sha256": "17ae2df5025fa3ec34428ee749c1855d4cbd613665600346857d5fb47500d132"
+    },
+    {
+      "path": "scripts/system/operations/SetCardConcealed.gd",
+      "sha256": "24efe7be6575093e2959b4edfdc0c59fcd8df122fa2a7c934bb49a9ede76e95d"
+    },
+    {
+      "path": "scripts/system/operations/SetDictionaryValue.gd",
+      "sha256": "6640e75c5585c99cf29b19a334a8c37443785289bb2717cbc954b8be7307867c"
+    },
+    {
+      "path": "scripts/system/operations/SetLocation.gd",
+      "sha256": "68ac10d123264ba6f5257b3f267cbb514e8a109476615f9ad09b581edeb3be7f"
+    },
+    {
+      "path": "scripts/system/operations/SetLocationPlNumLimit.gd",
+      "sha256": "7bfe1bad20b5ad3dc71f86800a638e921e87c51f6b1518a99934d18f383af5a9"
+    },
+    {
+      "path": "scripts/system/operations/SetMapAreaCanMoveTo.gd",
+      "sha256": "b173890360bef39c1ee8c82f90b5339df86869a89a8fc8dc9a85c2a95c4fcf92"
+    },
+    {
+      "path": "scripts/system/operations/SetPlayerData.gd",
+      "sha256": "46489312651a768cfd037041439dc13eceb24f78c998bf2287f62f5456f998af"
+    },
+    {
+      "path": "scripts/system/operations/SetProperty.gd",
+      "sha256": "d6b402b2465ba08e0fcf9a1526c7bbcef2e21d3068bab0445db0699c7cad3131"
+    },
+    {
+      "path": "scripts/system/operations/ShowCards.gd",
+      "sha256": "55ccdb2fb34372a494484722214c71a83d749dc7b47c8c0b49a0a3e94c03bf6a"
+    },
+    {
+      "path": "scripts/system/operations/ShowMessage.gd",
+      "sha256": "ee8da394e133ec9625a1be605ce618080ae4c6acebd27bc675f40b2aa7b91124"
+    },
+    {
+      "path": "scripts/system/operations/ShuffleArray.gd",
+      "sha256": "70382ae148918e3e0a232775379b269459a3769e01090d2f86ed8fa825aa8ca6"
+    },
+    {
+      "path": "scripts/system/operations/StoreValue.gd",
+      "sha256": "537e2203e5fb706095f0212e847c7bed71c94de8ab794d8220d9e2598f0152be"
+    },
+    {
+      "path": "scripts/system/operations/SumLogData.gd",
+      "sha256": "22cbf938cf1d971429f9ac1422b016f2893a5fd768d4ec994998210684e62173"
+    },
+    {
+      "path": "scripts/system/operations/SyncPower.gd",
+      "sha256": "82b123544a273c264273ba2a6f21bb3749be7e28466a8647c08a5ec3c96d2a99"
+    },
+    {
+      "path": "scripts/system/operations/Tag.gd",
+      "sha256": "3d09c85028f24d5d9bbb4ab1745ccd72dd55c58feb02f3e56a71eaa5349c2a36"
+    },
+    {
+      "path": "scripts/system/operations/UnregisterObjectEffects.gd",
+      "sha256": "b8d7653cb5aad532ed4b5846f5bf74ff3c416f14f3638794d6d1491649ea06ed"
+    },
+    {
+      "path": "scripts/system/operations/When.gd",
+      "sha256": "e856aefc846a7c61547a2e659bd6e4a41a58c4ef2c8cc6ad3fe2aed39a96712a"
+    },
+    {
+      "path": "scripts/system/operations/WhileFunc.gd",
+      "sha256": "8780379fec926152c77d4d2af1fa6ca7c645d15faab4bef740da13453cec19f5"
+    },
+    {
+      "path": "scripts/system/operations/ZeroAttributePower.gd",
+      "sha256": "d200130c1cb0e2fdff5ed4e39f5c10086c972274c3813ca99ab46d60f8855758"
+    },
+    {
+      "path": "scripts/system/play_rules.gd",
+      "sha256": "12ab04d0fba5d7d1eab651533d5800884d7012ae7aa9f2dc05fc4a1f8e914db2"
+    },
+    {
+      "path": "scripts/system/power_sources.gd",
+      "sha256": "a7bb65d476466fbff8a04e11bb8efd386def70b9b29d1253bfdc5618beb7dc5f"
+    },
+    {
+      "path": "scripts/system/regular_play.gd",
+      "sha256": "f6fce80464730c6a259bc188b5d252efe7da5ab70cafecb9901cbabfdb825d27"
+    },
+    {
+      "path": "scripts/system/time_points.gd",
+      "sha256": "4d0efceb07141424d3288f8fc4c643c38cf1814e76f205603e15786d6a26c406"
+    }
+  ],
+  "json_count": 73,
+  "rule_script_count": 276,
+  "base_rules": {
+    "path": "E:\\Users\\Administrator\\Downloads\\Fate_Domination 基础规则【墨水修订1版】.docx",
+    "sha256": "81c0760819c21d780e715253d0c68b2f743f63f0114d116daf203b7654538242",
+    "overdraft_matches": [],
+    "magic_quotes": [
+      "每个玩家通常拥有从 0 到 12 的魔力值。若您玩的是实体版，建议您使用 12 面骰子（朝下以表示两位数）或两个 6 面骰子。 如果您在 桌游模拟器 上游玩，每个玩家面前都会有一个魔力表。",
+      "然后，同时花费这些牌的魔力消耗，你无法同时打出超过你魔力上限消耗的攻击（因为你同一时间至多花费等量的魔力，但分段花费则不影响，举例，你打出了12魔力的攻击，然后其中一张攻击具有：“行动阶段：花费4点魔力，打出一张牌。”则你可以在打出后再使用某些方式[如令咒]回复魔力再使用此效果。或你免费打出了其中一张，也同样不影响。）",
+      "若你不位于战场，你可以打出两张暗置牌，暗置牌处于未被激活的状态，它们不消耗魔力，不计算威力，也不属于攻击且于回合结束时进入你的弃牌堆。通常而言，技能牌不能被暗置打出。"
+    ]
+  }
+}

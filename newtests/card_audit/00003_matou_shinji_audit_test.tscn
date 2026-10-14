@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/card_audit/00003_matou_shinji_audit_test.gd" id="1"]
+
+[node name="Audit" type="Node"]
+script = ExtResource("1")

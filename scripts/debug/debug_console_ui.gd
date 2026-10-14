@@ -54,7 +54,8 @@ func initialize(host) -> void:
 		_release_console_pauses()
 		# 换会话前先断开旧 Session/Registry 的互相引用，否则重复初始化会留下引用环对象。
 		session.shutdown()
-	session = DebugSession.new(host)
+	# 创建时读取一次成功开局保存的原值；动作消费口不查询或重新签发来源。
+	session = DebugSession.new(host, GameStart.startup_context())
 	_panel_pause_token = ""
 	_refresh_elapsed = 0.0
 	if is_node_ready():

@@ -1,0 +1,51 @@
+--- a/scripts/game_scene/battle_board_v2.gd
++++ b/scripts/game_scene/battle_board_v2.gd
+@@ -360,10 +360,7 @@
+ 	_main.hide()
+ 	_events.hide()
+ 	_seats.hide()
+-	_top.get_node("BoardButton").pressed.connect(func() -> void:
+-		_board.visible = not _board.visible
+-		_bind_board()
+-	)
++	_top.get_node("BoardButton").pressed.connect(_toggle_scoreboard)
+ 	# 行动横幅是提示层：它排在卷轴之前会被卷轴里的出牌区盖住（牌压住横幅头像）。
+ 	# 提到最后一位保证横幅在上，同时忽略鼠标，避免它吃掉底下的地图点击
+ 	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+@@ -3159,6 +3156,11 @@
+ 				slot.rotation = slot.get_meta("rest_rotation")
+ 
+ 
++func _toggle_scoreboard() -> void:
++	_board.visible = not _board.visible
++	_bind_board()
++
++
+ func _bind_board() -> void:
+ 	_update_board_return_controls()
+ 	if not _board.visible:
+--- a/scripts/net/ui/v2_view_presenter.gd
++++ b/scripts/net/ui/v2_view_presenter.gd
+@@ -54,7 +54,7 @@
+ 	selection.bind_session(session)
+ 	selection.changed.connect(_selection_changed)
+ 	board.get_node("Top/LogButton").pressed.connect(open_log)
+-	board.get_node("Top/BoardButton").pressed.connect(toggle_scoreboard)
++	board.get_node("Top/BoardButton").pressed.connect(board._toggle_scoreboard)
+ 	var out_button: Button = board._opponent_drawer.get_node("VBox/BtnOutOfGame")
+ 	if out_button.pressed.is_connected(board._on_drawer_out_of_game_pressed):
+ 		out_button.pressed.disconnect(board._on_drawer_out_of_game_pressed)
+@@ -81,13 +81,6 @@
+ 	board._check_game_over()
+ 	_game_over_presented = board._game_over_shown
+ 
+-
+-func toggle_scoreboard() -> void:
+-	var panel: Control = board.get_node("Board")
+-	panel.visible = not panel.visible
+-	if not panel.visible:
+-		return
+-	board._bind_board()
+ 
+ func browse_input(event: InputEvent) -> bool:
+ 	for overlay in [board._hover_zoom, board._hover_desc]:

@@ -1,0 +1,19 @@
+{
+  "data/savedkeys/example.json": false,
+  "data/net_identity/profile.json": false,
+  "data/net_identity/private.pem": false,
+  "data/server_players.json": false,
+  "data/match_saves/example.json": false,
+  "data/server_rooms/example.json": false,
+  "data/authority_rooms/example.json": false,
+  "data/logs/example.txt": false,
+  "assets/diagnostics/example.json": false,
+  "assets/newtests/example.json": false,
+  "assets/runtime/example.json": false,
+  "data/example.pem": true,
+  "data/example.key": true,
+  "data/example.log": true,
+  "data/validation-probe-1.json": true,
+  "scripts/net/identity/example.gd": true,
+  "scripts/net/server/recovery_save_diagnostic.gd": true
+}

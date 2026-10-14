@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+CHECK 真实增量出牌请求被接受 true
+CHECK 有限诊断循环完成 true
+CHECK 首张完成后仍允许继续独立加牌 true
+CHECK 真实增量出牌请求被接受 true
+CHECK 有限诊断循环完成 true
+CHECK 真实增量出牌请求被接受 true
+CHECK 真实增量费用时点触发预算暂停 true
+CHECK 增量费用效果暂停时不提前扣费和入场 true
+CHECK 增量尚未达到完成判据时不记完成事实 true
+CHECK 有限诊断循环完成 true
+CHECK 首张完成后仍允许继续独立加牌 true
+CHECK 真实增量出牌请求被接受 true
+CHECK 真实增量费用时点触发预算暂停 true
+CHECK 增量费用效果暂停时不提前扣费和入场 true
+CHECK 增量尚未达到完成判据时不记完成事实 true
+CHECK 有限诊断循环完成 true
+CHECK 两张牌真实费用效果的读取序列与最终结果保持一致 true
+CHECK 多次续行只扣各牌一次费用并只完成一次整组 true
+RESULT checks=18 failures=[]

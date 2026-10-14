@@ -9,7 +9,7 @@ extends RefCounted
 func exec(player_id:int = -1):
 
 	var id:int = EffectManager.resolve_player_id(player_id)
-	var player_data:Dictionary = GameDataManager.get_player_data(id)
+	var player_data:Dictionary = GameDataManager.get_player_data_readonly(id)
 	if player_data == null or player_data.is_empty():
 		return null
 	var counts_power := CardCountsPower.new()

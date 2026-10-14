@@ -15,7 +15,14 @@ extends RefCounted
 #overrides：新条目上要改写的字段初值（如 player_name、power、master）。
 #  原字段是数字对象而传入裸数字时包成数字对象；其余原样写入。
 #新条目不登记任何效果：控制者的能力不会因为多了一个条目而触发两次
-func exec(controller_id:int = -2, shared_keys:Array = [], overrides:Dictionary = {}) -> int:
+func exec(controller_id:int = -2, shared_keys:Array = [], overrides:Dictionary = {}, context:Variant = null) -> int:
+	context = RegisterObjectEffects.captured_context(context)
+	if not RegisterObjectEffects.source_is_current(context):
+		return -1
+	#只AddPlayer显式建条目；控制者和共享字段仍保留原数据语义。
+	for value in overrides.values():
+		if not RegisterObjectEffects.source_is_current(context, value):
+			return -1
 
 	var data:Dictionary = GameData.new_player_data()
 	data["is_out"] = false

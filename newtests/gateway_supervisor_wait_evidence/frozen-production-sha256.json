@@ -1,0 +1,38 @@
+{
+  "files": {
+    "scripts/net/server/server_gateway.gd": "6c37eb25356bb1bbea22b7c0abf1c270c542745a2460f7d503bba740d6532cc1",
+    "scripts/net/server/server_room_manager.gd": "ea4f181aacb86400ec4c46143298cf7edab3ceed952a1ba12ba78ef81f9123e4",
+    "scripts/net/server/server_room_worker.gd": "a1d935675ce6d6a3f804ac9000104b15d95c2c279c8cf13c459acdd3920107eb",
+    "scripts/net/server/server_cli.gd": "8ecc943bd496ef2c85e16e66c3495a6b37b63818d56e94e2e398c0a94ddfaf6a",
+    "scripts/net/server/server_console_channel.gd": "afbfd5a071a2fcb062555f00fcd9ac08dbe476a04ad3fd6efc2c7142373af3c3",
+    "scripts/net/content/room_data_sync.gd": "e4fab1f71bd98337cf41369ef133dc43e3b8606e8d9590f390ffd9883779d44f",
+    "scripts/net/content/room_data_assembler.gd": "f39d01f8b8a48a3298c461a69fdcee986e68559066b29e69957e0899f76d282e",
+    "scripts/net/content/room_assets.gd": "c09ba1c4a956920fc83f5c02ef00c36cff84d2d233afcea5f7b497434ee86f06"
+  },
+  "line_locations": {
+    "gateway": {
+      "frozen": [
+        98
+      ],
+      "repository": [
+        98
+      ]
+    },
+    "manager": {
+      "frozen": [
+        412
+      ],
+      "repository": [
+        421
+      ]
+    },
+    "worker": {
+      "frozen": [
+        374
+      ],
+      "repository": [
+        374
+      ]
+    }
+  }
+}

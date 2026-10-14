@@ -1,0 +1,79 @@
+{
+  "mode": "READ_ONLY_NO_GODOT",
+  "source_fingerprint": "f10f0df6de5d27af218c61b63959ad4b2800b4fd03dc669a54c0691689838448",
+  "source_count": 1450,
+  "role_counts": {
+    "client": 1424,
+    "server": 1424,
+    "signaling": 12
+  },
+  "declarations": {
+    "budget": 15.0,
+    "enabled": true,
+    "pool": 20
+  },
+  "native_source_fingerprint": "4ac3303015caa5cbea4a915cd6a13d3304cc5086d77618929198cce4501375a8",
+  "production_dll_sha256": "92a42bd2860af19ca432321400bdaa514a2a9c11f9289a43c76e19a2e2bd68cd",
+  "native_reports": [
+    {
+      "path": "E:\\FateDiagnostics\\round55-native-build-20261010-1\\manifest.json",
+      "sha256": "1cfe7b8016ba78c124c174a82b51474dd890318554281dc53fcf6374302d00ae",
+      "laststage": "start",
+      "error": "Historical object dependency changed E:/Projects/Godot/FateDominationGame-master/scratch/native-process-ownership-v6/deps/godot-cpp-714c9e2c165db2dcb7e6ea57e62a04204d3cfbfa/gen/include/godot_cpp/core/version.hpp",
+      "cpp_mismatch": [],
+      "build_contract_declared": false,
+      "dll": null,
+      "frozen_inputs_unchanged": true
+    },
+    {
+      "path": "E:\\FateDiagnostics\\round55-native-build-20261010-2\\manifest.json",
+      "sha256": "1253e347a307c77fa3b4032a4d59ec7c1f53f79728ed54478b3b5d2b49ef54aa",
+      "laststage": "start",
+      "error": "Historical object dependency changed E:/Projects/Godot/FateDominationGame-master/scratch/native-process-ownership-v6/deps/godot-cpp-714c9e2c165db2dcb7e6ea57e62a04204d3cfbfa/gen/include/godot_cpp/classes/resource.hpp",
+      "cpp_mismatch": [],
+      "build_contract_declared": false,
+      "dll": null,
+      "frozen_inputs_unchanged": true
+    },
+    {
+      "path": "E:\\FateDiagnostics\\round55-native-build-20261010-3\\manifest.json",
+      "sha256": "398fa894d7234b934eedb63deddc3f3706a14dcae8d9a3912a778f1f42bb07de",
+      "laststage": "start",
+      "error": "[Errno 2] No such file or directory: 'E:\\\\Projects\\\\Godot\\\\FateDominationGame-master\\\\scratch\\\\native-process-ownership-v6\\\\deps\\\\godot-cpp-714c9e2c165db2dcb7e6ea57e62a04204d3cfbfa\\\\gen\\\\src\\\\variant\\\\string.windows.template_release.x86_64.obj'",
+      "cpp_mismatch": [],
+      "build_contract_declared": false,
+      "dll": null,
+      "frozen_inputs_unchanged": true
+    },
+    {
+      "path": "E:\\FateDiagnostics\\round55-native-build-20261010-4\\manifest.json",
+      "sha256": "9f4477278dcc71967adbb675db692b4b67ebfaae4e94da7b2cdb0fa5864c78ac",
+      "laststage": "COMPLETE_BUILD_ONLY_RUNTIME_NOTRUN",
+      "error": null,
+      "cpp_mismatch": [],
+      "build_contract_declared": false,
+      "dll": {
+        "path": "E:\\FateDiagnostics\\round55-native-build-20261010-4\\libfate_server_signals.windows.template_release.x86_64.dll",
+        "sha256": "58b49cfc027bb292f7e335128f41a48213834eb84eb9745ed7034bfd063f5ca0",
+        "bytes": 452608,
+        "checks": {
+          "pe_x64": true,
+          "export_init": true,
+          "tree_observe_symbol": true,
+          "remove_verified_symbol": true,
+          "tree_observe_method_string": true,
+          "remove_verified_method_string": true
+        }
+      },
+      "frozen_inputs_unchanged": true
+    }
+  ],
+  "round54_observation_source_comparison": {
+    "report": "E:\\scratch\\isolated-0e410d7575e24a6e954f3e7e05c7ac01\\manifest.json",
+    "sha256": "c514f45c3a4494e3c9504bfd809105789d61099b2e20ec9700b4a81924612210",
+    "mismatch": [
+      "scripts/net/server/server_room_manager.gd",
+      "assets/config/server.cfg"
+    ]
+  }
+}

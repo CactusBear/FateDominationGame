@@ -1,4 +1,5 @@
 extends Node
+const FixtureClone = preload("res://newtests/fixture_clone.gd")
 
 var failures: Array[String] = []
 var checks := 0
@@ -90,7 +91,7 @@ func run() -> void:
 	var saved_score = area._score.number
 	area._events.clear()
 	for i in range(3):
-		area._events.append(CloneObject.new().exec(LoadEvent.events[0]))
+		area._events.append(FixtureClone.clone_template(LoadEvent.events[0], GameStart.startup_context()))
 	board.refresh_all_ui()
 	for openness in [0.0, 0.5, 1.0]:
 		board._layout_scroll(first, openness)
@@ -123,7 +124,7 @@ func run() -> void:
 	area._events.clear()
 	# 回推只在牌堆会压到混战区时才触发：堆高超过可用高度才把起点顶上去
 	for i in range(20):
-		area._events.append(CloneObject.new().exec(LoadEvent.events[0]))
+		area._events.append(FixtureClone.clone_template(LoadEvent.events[0], GameStart.startup_context()))
 	board.refresh_all_ui()
 	board._layout_scroll(first, 1.0)
 	var many_top := stack_top(first.get_node("EventIcons"))
@@ -135,7 +136,7 @@ func run() -> void:
 	check(many_gap >= board.EVENT_STACK_GAP - 0.5, "pushed-up stack still keeps clear of the melee row (gap %.1f)" % many_gap)
 	area._events.clear()
 	for i in range(3):
-		area._events.append(CloneObject.new().exec(LoadEvent.events[0]))
+		area._events.append(FixtureClone.clone_template(LoadEvent.events[0], GameStart.startup_context()))
 	board.refresh_all_ui()
 	board._layout_scroll(first, 1.0)
 	await screenshot("event_stack")
@@ -168,7 +169,7 @@ func run() -> void:
 	MapData.active_situation = null
 	var unlimited: BaseLocation = MapData.miyama._locations.filter(func(loc): return loc._pl_num_limit < 0)[0]
 	for pid in GameData.player_data_library.keys():
-		SetLocation.new().exec(unlimited, int(pid), false)
+		SetLocation.new().exec(unlimited, int(pid), false, false, true, GameStart.startup_context())
 	board.refresh_all_ui()
 	var own_index: int = MapData.areas.find(board._player_area(GameData.player_id))
 	check(own_index >= 0 and board._default_area_index() == own_index, "deployed player defaults to their own battlefield")

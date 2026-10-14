@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/conceal_allow_while_concealed_test.gd" id="1"]
+
+[node name="ConcealAllowWhileConcealedTest" type="Node"]
+script = ExtResource("1")

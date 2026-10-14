@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/em14_execution_frame_origin_test.gd" id="1"]
+
+[node name="A114PrepRED" type="Node"]
+script = ExtResource("1")

@@ -855,6 +855,38 @@ shader_parameter/flow_speed = 300.0
 shader_parameter/flow_spacing = 700.0
 shader_parameter/flow_length = 560.0
 
+[sub_resource type="StyleBoxFlat" id="CardModificationTagNormal"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.051, 0.0706, 0.1098, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7882, 0.6431, 0.3608, 0.95)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="CardModificationTagHover"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.051, 0.0706, 0.1098, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.9098, 0.8039, 0.5255, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [sub_resource type="StyleBoxFlat" id="HeldOutline"]
 draw_center = false
 border_width_left = 3
@@ -866,6 +898,30 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="ManualEffectOutline"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.72, 0.46, 1, 1)
+corner_radius_top_left = 11
+corner_radius_top_right = 11
+corner_radius_bottom_right = 11
+corner_radius_bottom_left = 11
+
+[sub_resource type="StyleBoxFlat" id="ManualEffectSelectedOutline"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 11
+corner_radius_top_right = 11
+corner_radius_bottom_right = 11
+corner_radius_bottom_left = 11
 
 [sub_resource type="StyleBoxFlat" id="SelectedOutline"]
 draw_center = false
@@ -1487,7 +1543,7 @@ layout_mode = 2
 theme_type_variation = &"Gold"
 theme_override_fonts/font = SubResource("CnR4")
 theme_override_font_sizes/font_size = 12
-text = "移动路线 · 费用"
+text = "移动路线 · 魔力消耗"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -1768,6 +1824,15 @@ offset_bottom = 52.0
 theme_type_variation = &"Dim"
 theme_override_fonts/font = SubResource("CnR1")
 theme_override_font_sizes/font_size = 12
+
+[node name="LocationCancel" type="Button" parent="Hint"]
+visible = false
+layout_mode = 0
+offset_left = 394.0
+offset_top = 32.0
+offset_right = 476.0
+offset_bottom = 58.0
+text = "取消选择"
 
 [node name="Banner" type="Panel" parent="." unique_id=507545322]
 visible = false
@@ -2647,6 +2712,33 @@ offset_bottom = 80.0
 mouse_filter = 2
 theme_override_constants/separation = 0
 
+[node name="ReturnActions" type="HBoxContainer" parent="Board"]
+layout_mode = 1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = -31.0
+offset_right = 408.0
+offset_bottom = 0.0
+grow_vertical = 0
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="ReturnToLobby" type="Button" parent="Board/ReturnActions"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "返回房间大厅"
+
+[node name="ReturnToMainMenu" type="Button" parent="Board/ReturnActions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "返回主菜单"
+
 [node name="Overlay" type="Control" parent="." unique_id=182110429]
 layout_mode = 1
 anchors_preset = 15
@@ -3058,6 +3150,80 @@ focus_mode = 2
 theme_override_font_sizes/normal_font_size = 22
 selection_enabled = true
 
+[node name="CardModificationHistory" type="Control" parent="."]
+visible = false
+z_index = 115
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Shade" type="ColorRect" parent="CardModificationHistory"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.03, 0.05, 0.8)
+
+[node name="Panel" type="Panel" parent="CardModificationHistory"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -280.0
+offset_right = 400.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"GoldPanel"
+
+[node name="Title" type="Label" parent="CardModificationHistory/Panel"]
+layout_mode = 1
+anchor_right = 1.0
+offset_left = 24.0
+offset_top = 18.0
+offset_right = -130.0
+offset_bottom = 56.0
+mouse_filter = 2
+theme_type_variation = &"Gold2"
+theme_override_font_sizes/font_size = 24
+text = "修改记录"
+text_overrun_behavior = 3
+
+[node name="Close" type="Button" parent="CardModificationHistory/Panel"]
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -120.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = 56.0
+theme_type_variation = &"GhostButton"
+text = "关闭"
+
+[node name="Entries" type="RichTextLabel" parent="CardModificationHistory/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 82.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 2
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = false
+selection_enabled = true
+
 [node name="BattleBroadcast" type="Control" parent="." unique_id=245638959]
 visible = false
 z_index = 120
@@ -3166,6 +3332,17 @@ offset_bottom = 1016.0
 theme_type_variation = &"GoldButtonV"
 theme_override_font_sizes/font_size = 22
 text = "继续"
+
+[node name="ConfirmAbsentBtn" type="Button" parent="BattleBroadcast"]
+visible = false
+layout_mode = 0
+offset_left = 1200.0
+offset_top = 952.0
+offset_right = 1620.0
+offset_bottom = 1016.0
+theme_type_variation = &"GoldButtonV"
+theme_override_font_sizes/font_size = 22
+text = "代断线玩家确认"
 
 [node name="ManaCostPreview" type="PanelContainer" parent="." unique_id=1944988523]
 visible = false
@@ -3512,6 +3689,18 @@ text = "请选择目标"
 [node name="NameRow" type="HBoxContainer" parent="ModalLayer/PlayerSelect/Box" unique_id=337785287]
 layout_mode = 2
 theme_override_constants/separation = 12
+
+[node name="ButtonsRow" type="HBoxContainer" parent="ModalLayer/PlayerSelect/Box"]
+layout_mode = 2
+alignment = 2
+
+[node name="Confirm" type="Button" parent="ModalLayer/PlayerSelect/Box/ButtonsRow"]
+layout_mode = 2
+text = "确认选择"
+
+[node name="Cancel" type="Button" parent="ModalLayer/PlayerSelect/Box/ButtonsRow"]
+layout_mode = 2
+text = "取消"
 
 [node name="OpponentDrawer" type="Panel" parent="ModalLayer" unique_id=1064051215]
 visible = false
@@ -4212,11 +4401,44 @@ theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Avatar" type="Panel" parent="Templates/SelfSlot" unique_id=939656238]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -34.0
+offset_right = 24.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"AvatarMana"
+
+[node name="Img" type="TextureRect" parent="Templates/SelfSlot/Avatar" unique_id=939656239]
+material = SubResource("CircleMask")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
 [node name="Label" type="Label" parent="Templates/SelfSlot" unique_id=1542503301]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 100.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_type_variation = &"Text"
@@ -4720,6 +4942,27 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
 
+[node name="CardModificationBadge" type="Button" parent="Templates/PlayedCard"]
+visible = false
+z_index = 3
+layout_mode = 1
+anchor_left = -0.055
+anchor_top = 0.4
+anchor_right = 0.2
+anchor_bottom = 0.6
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+focus_mode = 0
+theme_type_variation = &"GhostButton"
+theme_override_fonts/font = SubResource("CnB0")
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("CardModificationTagNormal")
+theme_override_styles/hover = SubResource("CardModificationTagHover")
+theme_override_styles/pressed = SubResource("CardModificationTagHover")
+text = "改"
+tooltip_text = "查看真实修改记录"
+
 [node name="AreaBackdrop" type="TextureRect" parent="Templates" unique_id=1787800152]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 0
@@ -5123,8 +5366,29 @@ offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+z_index = 0
 theme_type_variation = &"Breath"
 theme_override_styles/panel = SubResource("HeldOutline")
+metadata/available_outline = SubResource("HeldOutline")
+metadata/selected_outline = SubResource("SelectedOutline")
+
+[node name="EffectBreath" type="Panel" parent="Templates/HandCard"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+z_index = 0
+theme_override_styles/panel = SubResource("ManualEffectOutline")
+metadata/available_outline = SubResource("ManualEffectOutline")
+metadata/selected_outline = SubResource("ManualEffectSelectedOutline")
 
 [node name="Selected" type="Panel" parent="Templates/HandCard" unique_id=879949146]
 visible = false
@@ -5139,6 +5403,7 @@ offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+z_index = 0
 theme_override_styles/panel = SubResource("SelectedOutline")
 
 [node name="StackCount" type="Label" parent="Templates/HandCard" unique_id=146723283]
@@ -5172,6 +5437,27 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"Lock"
+
+[node name="CardModificationBadge" type="Button" parent="Templates/HandCard"]
+visible = false
+z_index = 3
+layout_mode = 1
+anchor_left = -0.055
+anchor_top = 0.4
+anchor_right = 0.2
+anchor_bottom = 0.6
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+focus_mode = 0
+theme_type_variation = &"GhostButton"
+theme_override_fonts/font = SubResource("CnB0")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("CardModificationTagNormal")
+theme_override_styles/hover = SubResource("CardModificationTagHover")
+theme_override_styles/pressed = SubResource("CardModificationTagHover")
+text = "改"
+tooltip_text = "查看真实修改记录"
 
 [node name="ZoneCard" type="Control" parent="Templates" unique_id=1048803063]
 anchors_preset = 0
@@ -5219,8 +5505,29 @@ offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+z_index = 0
 theme_type_variation = &"Breath"
 theme_override_styles/panel = SubResource("HeldOutline")
+metadata/available_outline = SubResource("HeldOutline")
+metadata/selected_outline = SubResource("SelectedOutline")
+
+[node name="EffectBreath" type="Panel" parent="Templates/ZoneCard"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+z_index = 0
+theme_override_styles/panel = SubResource("ManualEffectOutline")
+metadata/available_outline = SubResource("ManualEffectOutline")
+metadata/selected_outline = SubResource("ManualEffectSelectedOutline")
 
 [node name="Selected" type="Panel" parent="Templates/ZoneCard" unique_id=1494029372]
 visible = false
@@ -5235,6 +5542,7 @@ offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+z_index = 0
 theme_override_styles/panel = SubResource("SelectedOutline")
 
 [node name="StackCount" type="Label" parent="Templates/ZoneCard" unique_id=693349376]
@@ -5268,6 +5576,27 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_type_variation = &"Lock"
+
+[node name="CardModificationBadge" type="Button" parent="Templates/ZoneCard"]
+visible = false
+z_index = 3
+layout_mode = 1
+anchor_left = -0.055
+anchor_top = 0.4
+anchor_right = 0.2
+anchor_bottom = 0.6
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+focus_mode = 0
+theme_type_variation = &"GhostButton"
+theme_override_fonts/font = SubResource("CnB0")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("CardModificationTagNormal")
+theme_override_styles/hover = SubResource("CardModificationTagHover")
+theme_override_styles/pressed = SubResource("CardModificationTagHover")
+text = "改"
+tooltip_text = "查看真实修改记录"
 
 [node name="EffectButton" type="Button" parent="Templates" unique_id=570328840]
 visible = false

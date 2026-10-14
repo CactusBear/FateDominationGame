@@ -3,9 +3,18 @@ extends RefCounted
 
 const Catalog = preload("res://scripts/net/content/data_catalog.gd")
 const Cache = preload("res://scripts/net/content/content_cache.gd")
+## 显式工程预算：递增退避合计 700ms，额外等待小于 1 秒；不是实测最佳参数。
+## 调用方可覆盖整张表；表长就是重试上限，空表禁用重试。
+const DEFAULT_PUBLISH_RETRY_DELAYS_MSEC: Array[int] = [100, 200, 400]
+var publish_retry_delays_msec: Array[int] = DEFAULT_PUBLISH_RETRY_DELAYS_MSEC.duplicate()
+var _publish_retry_delays_msec: Array[int] = []
+var _publish_retry_index: int = 0
+var _publish_retry_started_msec: int = 0
 var max_total_bytes: int = 2 * 1024 * 1024 * 1024
 var max_files: int = 20000
 var error: String = ""
+## 失败观测仅保留标量与存在性；不暴露绝对路径、字节或凭据。
+var diagnostic:Dictionary = {}
 
 var running: bool = false
 var complete: bool = false
@@ -22,16 +31,26 @@ var _polling: bool = false
 ## 同步调用兼容；联机准备使用 start/poll，批次之间返回原主循环。
 func assemble(destination: String, files: Array, cache) -> bool:
 	if not start(destination, files, cache): return false
-	while running: poll(2)
+	while running:
+		poll(2)
+		if running and _publish_retry_index > 0:
+			var remaining: int = _publish_retry_delays_msec[_publish_retry_index - 1] - (Time.get_ticks_msec() - _publish_retry_started_msec)
+			if remaining > 0: OS.delay_msec(remaining)
 	return complete
 
 ## destination 仅由本机分配；全部缓存预校验结束前不创建 staging。
 func start(destination: String, files: Array, cache) -> bool:
-	if _polling: return false
+	if _polling:
+		diagnostic = {"phase":_phase,"index":_index,"reason":"组装正在执行，不接受重入"}
+		return false
 	cancel()
 	error = ""
+	diagnostic.clear()
 	if DirAccess.dir_exists_absolute(destination) or FileAccess.file_exists(destination):
 		return _reject("会话目录已存在，不覆盖")
+	for delay in publish_retry_delays_msec:
+		if delay <= 0: return _reject("发布重试退避必须为正毫秒数")
+	_publish_retry_delays_msec = publish_retry_delays_msec.duplicate()
 	if not validate(files, cache.max_file_bytes): return false
 	_destination = destination
 	_files = files.duplicate(true)
@@ -63,9 +82,28 @@ func _step(budget: int, generation: int) -> void:
 				_index = 0
 				return
 			# 独立的发布步骤：取消或失败时永远不发布半成品。
-			if DirAccess.dir_exists_absolute(_destination) or FileAccess.file_exists(_destination) or DirAccess.rename_absolute(_staging, _destination) != OK:
-				_abort("无法发布完整会话目录")
+			if _publish_retry_index > 0 and Time.get_ticks_msec() - _publish_retry_started_msec < _publish_retry_delays_msec[_publish_retry_index - 1]: return
+			var destination_directory_exists:bool = DirAccess.dir_exists_absolute(_destination)
+			var destination_file_exists:bool = FileAccess.file_exists(_destination)
+			var rename_attempted:bool = not destination_directory_exists and not destination_file_exists
+			var rename_error:Error = DirAccess.rename_absolute(_staging, _destination) if rename_attempted else ERR_ALREADY_EXISTS
+			if rename_error != OK:
+				var details: Dictionary = {"destination_directory_exists":destination_directory_exists,"destination_file_exists":destination_file_exists,"staging_exists":DirAccess.dir_exists_absolute(_staging),"destination_length":_destination.length(),"staging_length":_staging.length(),"rename_attempted":rename_attempted,"rename_error":int(rename_error),"destination_parent_exists":DirAccess.dir_exists_absolute(_destination.get_base_dir())}
+				if _publish_retry_index == 0:
+					diagnostic = details.duplicate()
+					diagnostic.merge({"phase":_phase,"index":_index,"files":_files.size(),"reason":"无法发布完整会话目录"})
+					print("ROOM_DATA_ASSEMBLY_REJECT ", JSON.stringify(diagnostic))
+				# Godot FAILED 折叠系统错误；这里只判定有界候选，不声称已识别 ACCESS_DENIED。
+				var retryable: bool = rename_attempted and rename_error == FAILED and details.staging_exists and details.destination_parent_exists
+				if retryable and _publish_retry_index < _publish_retry_delays_msec.size():
+					_publish_retry_started_msec = Time.get_ticks_msec()
+					_publish_retry_index += 1
+					print("ROOM_DATA_ASSEMBLY_PUBLISH_RETRY ", JSON.stringify({"retry":_publish_retry_index,"delay_msec":_publish_retry_delays_msec[_publish_retry_index - 1]}))
+					return
+				print("ROOM_DATA_ASSEMBLY_PUBLISH_STOP ", JSON.stringify({"retries":_publish_retry_index,"final_rename_error":int(rename_error)}))
+				_abort("无法发布完整会话目录", diagnostic)
 				return
+			if not diagnostic.is_empty(): print("ROOM_DATA_ASSEMBLY_PUBLISH_RECOVERED ", JSON.stringify({"retries":_publish_retry_index}))
 			_staging = ""
 			_created.clear()
 			running = false
@@ -107,8 +145,15 @@ func cancel() -> void:
 	_files.clear()
 	_cache = null
 	_phase = "idle"
+	_publish_retry_delays_msec.clear()
+	_publish_retry_index = 0
+	_publish_retry_started_msec = 0
 
-func _abort(reason: String) -> void:
+func _abort(reason: String, details:Dictionary = {}) -> void:
+	diagnostic = details.duplicate()
+	diagnostic.merge({"phase":_phase,"index":_index,"files":_files.size(),"reason":reason})
+	# 在 cleanup 前记录原失败现场，不以另一次成功组装代替这次错误。
+	print("ROOM_DATA_ASSEMBLY_REJECT ",JSON.stringify(diagnostic))
 	cancel()
 	error = reason
 

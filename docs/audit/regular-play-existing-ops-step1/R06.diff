@@ -1,0 +1,11 @@
+--- previous/regular_play.gd
++++ R06/regular_play.gd
+@@ -384,7 +384,7 @@
+ 				if not PayMagic.new().exec(BaseNumber.new(paid), id, "regular_play", card, false, state.allow_magic_overdraft):
+ 					_reject_group(state)
+ 					return
+-				card._is_concealed = hidden
++				_operation("set_property").exec(card, "_is_concealed", hidden)
+ 				card._is_activating = not hidden
+ 				_take_from_source(d, card)
+ 				_operation("add_to_array").exec(card, d.played_cards, -1)

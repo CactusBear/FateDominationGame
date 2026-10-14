@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/registry_b21_unregister_probe.gd" id="1"]
+
+[node name="registry_b21_unregister_probe" type="Node"]
+script = ExtResource("1")

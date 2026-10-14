@@ -1,0 +1,559 @@
+{
+  "passed": false,
+  "boundary": "headless affordance-rule boundary audit; no GUI/full/performance; diagnostic PASS not product acceptance",
+  "suites": [
+    {
+      "scene": "newtests/play_affordance_rule_audit_test.tscn",
+      "command": [
+        "E:\\scratch\\play-affordance-rule-audit-boundary-03\\isolated-a107ee8932f74500aa35ff728ba1a7f4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\play-affordance-rule-audit-boundary-03\\isolated-a107ee8932f74500aa35ff728ba1a7f4\\generated\\project",
+        "--scene",
+        "res://newtests/play_affordance_rule_audit_test.tscn"
+      ],
+      "exit_code": 0,
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "suite": "play_affordance_rule_audit",
+          "checks": 438,
+          "failures": []
+        }
+      }
+    }
+  ],
+  "traces": [
+    {
+      "case": "magic exact 2",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "magic short 1",
+      "executed_modes": [
+        true
+      ],
+      "modes": [
+        true
+      ],
+      "play_attack_ignore_limit": false,
+      "v2_hint": true
+    },
+    {
+      "case": "magic zero",
+      "executed_modes": [
+        true
+      ],
+      "modes": [
+        true
+      ],
+      "play_attack_ignore_limit": false,
+      "v2_hint": true
+    },
+    {
+      "case": "discount exact",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "discount short",
+      "executed_modes": [
+        true
+      ],
+      "modes": [
+        true
+      ],
+      "play_attack_ignore_limit": false,
+      "v2_hint": true
+    },
+    {
+      "case": "discount clamps zero",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "immune bypass cost",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "magic cap exact",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "magic cap short",
+      "executed_modes": [
+        true
+      ],
+      "modes": [
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "min magic exact",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "min magic short",
+      "executed_modes": [
+        true
+      ],
+      "modes": [
+        true
+      ],
+      "play_attack_ignore_limit": false,
+      "v2_hint": true
+    },
+    {
+      "case": "immune does not bypass min magic",
+      "executed_modes": [
+        true
+      ],
+      "modes": [
+        true
+      ],
+      "play_attack_ignore_limit": false,
+      "v2_hint": true
+    },
+    {
+      "case": "unknown requirement",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "extra play prohibited",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": false,
+      "v2_hint": false
+    },
+    {
+      "case": "activated prohibited",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": false,
+      "v2_hint": false
+    },
+    {
+      "case": "already played candidate excluded",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": true,
+      "v2_hint": false
+    },
+    {
+      "case": "undeclared discard excluded",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": true,
+      "v2_hint": false
+    },
+    {
+      "case": "declared discard allowed",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "out prohibited",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": false,
+      "v2_hint": false
+    },
+    {
+      "case": "wrong actor prohibited",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": false,
+      "v2_hint": false
+    },
+    {
+      "case": "phase 0 prohibited",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": false,
+      "v2_hint": false
+    },
+    {
+      "case": "phase 1 prohibited",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": false,
+      "v2_hint": false
+    },
+    {
+      "case": "phase 3 prohibited",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": false,
+      "v2_hint": false
+    },
+    {
+      "case": "effective action in battle",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": false,
+      "v2_hint": true
+    },
+    {
+      "case": "actual action remapped away",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": true,
+      "v2_hint": false
+    },
+    {
+      "case": "play limit short",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": true,
+      "v2_hint": false
+    },
+    {
+      "case": "no completion support",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": true,
+      "v2_hint": false
+    },
+    {
+      "case": "committed at limit",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": true,
+      "v2_hint": false
+    },
+    {
+      "case": "flow completed",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": true,
+      "v2_hint": false
+    },
+    {
+      "case": "cannot play buff",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": false,
+      "v2_hint": false
+    },
+    {
+      "case": "noble forbidden",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": false,
+      "v2_hint": false
+    },
+    {
+      "case": "special area forbidden",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": false,
+      "v2_hint": false
+    },
+    {
+      "case": "battle second all hidden",
+      "executed_modes": [
+        false
+      ],
+      "modes": [
+        false
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "battle second after faceup",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "nonbattle second all hidden",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "pending cost exactly",
+      "executed_modes": [
+        false,
+        true
+      ],
+      "modes": [
+        false,
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "pending cost short",
+      "executed_modes": [
+        true
+      ],
+      "modes": [
+        true
+      ],
+      "play_attack_ignore_limit": true,
+      "v2_hint": true
+    },
+    {
+      "case": "skill zone exact 8",
+      "executed_modes": [
+        false
+      ],
+      "modes": [
+        false
+      ],
+      "play_attack_ignore_limit": null,
+      "v2_hint": true
+    },
+    {
+      "case": "skill zone short 7",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": null,
+      "v2_hint": false
+    },
+    {
+      "case": "skill zone explicit bypass",
+      "executed_modes": [
+        false
+      ],
+      "modes": [
+        false
+      ],
+      "play_attack_ignore_limit": null,
+      "v2_hint": true
+    },
+    {
+      "case": "skill card zone bypass",
+      "executed_modes": [
+        false
+      ],
+      "modes": [
+        false
+      ],
+      "play_attack_ignore_limit": null,
+      "v2_hint": true
+    },
+    {
+      "case": "unawakened skill prohibited",
+      "executed_modes": [],
+      "modes": [],
+      "play_attack_ignore_limit": null,
+      "v2_hint": false
+    },
+    {
+      "case": "hand skill no zone threshold",
+      "executed_modes": [
+        false
+      ],
+      "modes": [
+        false
+      ],
+      "play_attack_ignore_limit": null,
+      "v2_hint": true
+    },
+    {
+      "accepted": true,
+      "actual_cost": 3,
+      "case": "dynamic cost group",
+      "hinted_faceup": true,
+      "magic_after": -1.0
+    },
+    {
+      "accepted": false,
+      "actual_cost": 3,
+      "case": "dynamic cost single",
+      "hinted_faceup": true,
+      "magic_after": 2
+    }
+  ],
+  "source_drift": {
+    "scripts/system/global/effect_manager.gd": [
+      "626754ecdacb21cc22353e53ae743bd74a9f0586a85c8e0bb5b849ebc4bb1d68",
+      "8d4526b0ccf550d6f0fa72f5248e9d8f25bba56a68a9c8a8cb0280cb11bc47e9"
+    ]
+  },
+  "freeze_drift": {},
+  "log_diagnostics": [
+    {
+      "path": "import.stderr.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "import.stdout.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "play_affordance_rule_audit_test.stderr.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "play_affordance_rule_audit_test.stdout.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "probe.stderr.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "probe.stdout.log",
+      "errors": 0,
+      "warnings": 0
+    }
+  ],
+  "clean_error_warning_gate": true,
+  "cleanup": "generated_removed",
+  "manifest": "E:\\scratch\\play-affordance-rule-audit-boundary-03\\isolated-a107ee8932f74500aa35ff728ba1a7f4\\manifest.json",
+  "runner_exit_code": 1,
+  "frozen_suite_passed": true,
+  "processes": [
+    {
+      "label": "probe",
+      "pid": 19796,
+      "exit_code": 0,
+      "active_owned_processes": 0,
+      "exited": true,
+      "log_handles_released": true
+    },
+    {
+      "label": "import",
+      "pid": 39760,
+      "exit_code": 0,
+      "active_owned_processes": 0,
+      "exited": true,
+      "log_handles_released": true
+    },
+    {
+      "label": "play_affordance_rule_audit_test",
+      "pid": 38332,
+      "exit_code": 0,
+      "active_owned_processes": 0,
+      "exited": true,
+      "log_handles_released": true
+    }
+  ],
+  "source_sha256": {
+    "newtests/play_affordance_rule_audit_test.gd": "32c27a860c02edb90aedf2af342e23ee3f876f625b08fc3441092774aec10302",
+    "scripts/game_scene/battle_board_v2.gd": "9f1cece2079691fae275fa7c588ef542142c06e85276e50739a9ec9f36ed0d2f",
+    "scripts/match/match_seat_query.gd": "f7688104a9c0f51a998a2c6637a556563fd40e62025cdf8acd92ad9a827718be",
+    "scripts/system/global/effect_manager.gd": "626754ecdacb21cc22353e53ae743bd74a9f0586a85c8e0bb5b849ebc4bb1d68",
+    "scripts/system/operations/PlayAttack.gd": "94385a0532baab8222cdd21a22b56c97525b513474667f1f3eb6e40571cb7c04",
+    "scripts/system/play_rules.gd": "12ab04d0fba5d7d1eab651533d5800884d7012ae7aa9f2dc05fc4a1f8e914db2",
+    "scripts/system/regular_play.gd": "f6fce80464730c6a259bc188b5d252efe7da5ab70cafecb9901cbabfdb825d27"
+  },
+  "previous_clean_run": {
+    "manifest": "E:\\scratch\\play-affordance-rule-audit-boundary-02\\isolated-50b0fe906eac41c58f0ac336ff614f14\\manifest.json",
+    "checks": 338,
+    "runner_exit_code": 0,
+    "passed": true
+  },
+  "stable_source_retry": {
+    "manifest": "E:\\scratch\\play-affordance-rule-audit-boundary-04\\isolated-5f46eae26f22405ea4721233dc5edf8a\\manifest.json",
+    "error": "ValueError('freeze copy drift: scripts\\\\system\\\\global\\\\effect_manager.gd')",
+    "passed": false,
+    "runner_exit_code": 1,
+    "processes": [],
+    "cleanup": "generated_removed"
+  }
+}

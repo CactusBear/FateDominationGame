@@ -12,12 +12,33 @@ class FateProcessOwner : public RefCounted {
         CharString bytes = value.utf8();
         return std::string(bytes.get_data(), static_cast<size_t>(bytes.length()));
     }
+    static Dictionary receipt(const fate::WindowsJobLease::Receipt &value) {
+        Dictionary out;
+        out["ok"] = value.ok;
+        out["stage"] = String(value.stage.c_str());
+        out["native_error"] = static_cast<int64_t>(value.native_error);
+        out["token"] = String(value.binding.token.c_str());
+        out["root_pid"] = static_cast<int64_t>(value.binding.root_pid);
+        out["creation_time"] = static_cast<int64_t>(value.binding.creation_time);
+        out["local_owner_pid"] = static_cast<int64_t>(value.local_owner_pid);
+        out["root_state"] = value.root_state == fate::WindowsJobLease::RootState::running ? "running" :
+            value.root_state == fate::WindowsJobLease::RootState::exited ? "exited" : "unknown";
+        out["active_known"] = value.active_known;
+        out["active_processes"] = static_cast<int64_t>(value.active_processes);
+        out["total_processes"] = static_cast<int64_t>(value.total_processes);
+        out["root_exit_code_known"] = value.root_exit_code_known;
+        out["root_exit_code"] = static_cast<int64_t>(value.root_exit_code);
+        out["release_complete"] = value.release_complete;
+        out["handles_released"] = value.handles_released;
+        return out;
+    }
 protected:
     static void _bind_methods() {
         ClassDB::bind_method(D_METHOD("available"), &FateProcessOwner::available);
         ClassDB::bind_method(D_METHOD("spawn", "executable", "arguments"), &FateProcessOwner::spawn);
         ClassDB::bind_method(D_METHOD("state", "token", "pid"), &FateProcessOwner::state);
         ClassDB::bind_method(D_METHOD("verify", "token", "pid"), &FateProcessOwner::verify);
+        ClassDB::bind_method(D_METHOD("tree_observe", "token", "pid"), &FateProcessOwner::tree_observe);
         ClassDB::bind_method(D_METHOD("terminate", "token", "pid"), &FateProcessOwner::terminate);
         ClassDB::bind_method(D_METHOD("release", "token", "pid"), &FateProcessOwner::release);
     }
@@ -34,6 +55,9 @@ public:
     }
     int64_t state(const String &token, int64_t pid) { return processes.state(text(token), pid); }
     bool verify(const String &token, int64_t pid) { return state(token, pid) == fate::ProcessOwner::RUNNING; }
+    Dictionary tree_observe(const String &token, int64_t pid) const {
+        return receipt(processes.tree_observe(text(token), pid));
+    }
     bool terminate(const String &token, int64_t pid) { return processes.terminate(text(token), pid); }
     bool release(const String &token, int64_t pid) { return processes.release(text(token), pid); }
 };

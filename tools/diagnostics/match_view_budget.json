@@ -1,0 +1,17 @@
+{
+  "suite": "res://tests/match_view_test.tscn",
+  "measured_full_duration_seconds": 35.084,
+  "measurement_manifest": "E:/Caches/Hermes/cache/scratch/match-view-budget/isolated-d8f35d7ad8474c0ba8cd3707d8cb71e8/manifest.json",
+  "measurement_load": "high local load; scene CPU mean 92.27911315107423 percent, 7 five-second samples, 12 logical CPUs",
+  "previous_watchdog_seconds": 600,
+  "previous_censored_run": "600 seconds was exhausted without RESULT; 602.768 seconds includes owned process recovery, not a complete suite duration",
+  "watchdog_seconds": 1200.0,
+  "watchdog_basis": "60 * ceil(2 * max(measured_full_duration_seconds, previous_watchdog_seconds) / 60); preserve historical censored lower bound, not merely the faster new-freeze sample",
+  "watchdog_increase_seconds": 600,
+  "previous_fixture_timer_seconds": 90.0,
+  "fixture_timer_seconds": 120.0,
+  "fixture_basis": "max(60 * ceil(2 * 35.084 / 60), 3000 * 2 / 60 + 20) = 120; Godot timer under fixed-fps is simulation time, not external wall-clock watchdog",
+  "fixture_increase_seconds": 30,
+  "scope": "finite test declarations only; no production, golden, assertions, seed, driver steps, loop cap, or natural terminal changes",
+  "certification": "measurement and verification bind the same independent production freeze; not historical old-freeze or live-tree certification"
+}

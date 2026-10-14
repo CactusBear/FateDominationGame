@@ -81,13 +81,15 @@ func setup(ids: Array, masters: Array, servants: Array, config: Dictionary) -> b
 	_draw_groups = _groups(servants, config)
 	return true
 
-func _draw_servants() -> Array:
+func _draw_servants():
 	var pool: Array = []
 	for group in _draw_groups:
 		var candidates: Array = group.candidates.duplicate()
-		_shuffle.exec(candidates)
+		if _shuffle.exec(candidates) == null:
+			return null
 		pool.append_array(candidates.slice(0, int(group.count)))
-	_shuffle.exec(pool)
+	if _shuffle.exec(pool) == null:
+		return null
 	return pool
 
 func available_masters(player_id: int) -> Array:
@@ -107,15 +109,27 @@ func choose_master(player_id: int, master) -> bool:
 	if not available_masters(player_id).has(master):
 		error = "该御主不可选择"
 		return false
-	assignments[player_id] = {"master": master}
-	error = ""
-	if assignments.size() == player_ids.size():
-		var pool := _draw_servants()
+	# 缺流时在任何阵容提交前拒绝；消费口不声明流、不取全局随机。
+	if not _shuffle.can_shuffle():
+		error = "unknown_random_stream"
+		return false
+	if assignments.size() + int(not assignments.has(player_id)) == player_ids.size():
+		var pool = _draw_servants()
+		if pool == null:
+			error = "unknown_random_stream"
+			return false
+		var order: Array = player_ids.duplicate()
+		if _randomize_order and _shuffle.exec(order) == null:
+			error = "unknown_random_stream"
+			return false
+		# 全部随机工作完成才发布；失败不覆盖已有选主或顺位。
+		assignments[player_id] = {"master": master}
 		for i in player_ids.size():
 			assignments[player_ids[i]]["servant"] = pool[i]
-		initial_order = player_ids.duplicate()
-		if _randomize_order:
-			_shuffle.exec(initial_order)
+		initial_order = order
+	else:
+		assignments[player_id] = {"master": master}
+	error = ""
 	return true
 
 func is_complete() -> bool:

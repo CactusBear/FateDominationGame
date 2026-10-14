@@ -1,0 +1,47 @@
+{
+  "conclusion": "未证实；正式入口静态已定位，外置 headless 驱动没有执行回执，按用户要求停止重试并等待正式窗口操作批准",
+  "old_artifact": true,
+  "nonfinal": true,
+  "formal_entry": "开始游戏 → 联机大厅 → Margin/Content/Identity/Apply.pressed → _prepare_identity → configure_identity → player_identity.open",
+  "production_approved_data_root_required_for_this_entry": false,
+  "production_identity_root_parameter_required_for_this_entry": false,
+  "additional_approval_needed": "批准在 E 盘副本的两个自有非 headless 窗口输入合法用户名/昵称、点击身份应用和正常退出；不得截图或采集凭据界面。若工具无法避免采集凭据界面，由用户手动点击应用，runner 只观测目录和 SHA。批准前不再启动客户端。",
+  "root": "E:/Caches/Hermes/cache/scratch/round75-dual-identity-formal-20261010-saidentity",
+  "raw_evidence": "E:/Caches/Hermes/cache/scratch/round75-dual-identity-formal-20261010-saidentity/evidence.json",
+  "raw_evidence_sha256": "e96134cc6f384abbaf596a0b8304d6a465d230b04d869e6f6435288084b44e91",
+  "runner_exit_code": 1,
+  "metadata_tests": {"count": 3, "exit_code": 0, "not_client_execution_proof": true},
+  "client_launch_count": 1,
+  "host_launcher_pid": 27348,
+  "host_launcher_exit_code": 125,
+  "exe_pid_mapping_verified": false,
+  "observed_owned_process_exit_codes": [
+    {"pid": 27348, "exit_code": 125},
+    {"pid": 38304, "exit_code": 125},
+    {"pid": 33964, "exit_code": 125}
+  ],
+  "guest_started": false,
+  "headless_driver_marker_observed": false,
+  "watchdog": {"failure": "WATCHDOG_host_ready", "stage_deadline_seconds": 45, "final_elapsed_seconds": 45.407, "product_performance_requirement": false},
+  "forced_termination": true,
+  "normal_exit": false,
+  "job_final": {"total": 3, "active": 0, "terminated": 0, "pids": []},
+  "Job0": true,
+  "current_exact_root_residuals": [],
+  "residual_census_exit_code": 0,
+  "identity": {
+    "host": {"path": "E:/Caches/Hermes/cache/scratch/round75-dual-identity-formal-20261010-saidentity/test-users/host/appdata/FateDomination/net_identity", "exists": false, "file_count": 0, "files": {}, "sha256": null},
+    "guest": {"path": "E:/Caches/Hermes/cache/scratch/round75-dual-identity-formal-20261010-saidentity/test-users/guest/appdata/FateDomination/net_identity", "exists": false, "file_count": 0, "files": {}, "sha256": null}
+  },
+  "acceptance": {"generated_both": false, "path_strings_distinct": true, "different_sha": null, "no_overwrite": null, "coexistence": null, "sequential_reopen": null, "normal_exit": false, "overall": false},
+  "logs": [
+    {"name": "host.engine.log", "line_count": 0, "SCRIPT ERROR": 0, "Parse Error": 0, "ERROR:": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+    {"name": "host.stdout.log", "line_count": 2, "SCRIPT ERROR": 0, "Parse Error": 0, "ERROR:": 0, "sha256": "83cf0b082206af2aa236c83064fbcfa76be1e00a4aa3558574b2f65965d9481c", "key_lines": [{"line": 1, "text": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org"}]},
+    {"name": "host.stderr.log", "line_count": 0, "SCRIPT ERROR": 0, "Parse Error": 0, "ERROR:": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+  ],
+  "source_all_files_unchanged": true,
+  "copied_exe_pck_dll_launcher_unchanged": true,
+  "protected_pids_not_in_owned_job": [17120, 28100],
+  "private_material_text_read_or_output": false,
+  "retry_after_unclear_execution": false
+}

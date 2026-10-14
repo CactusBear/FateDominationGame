@@ -676,14 +676,7 @@
                               {
                                 "shown_option_name": "弃置4张牌",
                                 "allow_cancel": false,
-                                "select_cards": {
-                                  "source": [
-                                    "hand_cards",
-                                    "played_cards"
-                                  ],
-                                  "min": 4,
-                                  "max": 4
-                                },
+                                "select_cards": {"candidates": [{"func_name": "get_player_hand_cards", "parameters": [-1], "var_index": 0}, {"func_name": "get_player_played_cards", "parameters": [-1], "var_index": 1}, {"func_name": "merge_arrays", "parameters": [{"self_var": 0}, {"self_var": 1}], "var_index": 2}, {"func_name": "store_value", "parameters": [{"self_var": 2}], "var_index": 3}], "min": 4, "max": 4},
                                 "funcs": [
                                   {
                                     "func_name": "get_activating_eff",

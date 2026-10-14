@@ -1,0 +1,60 @@
+{
+  "suite": "net_server_gateway_restart_test",
+  "command": [
+    "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+    "--headless",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\scratch\\e08-e12-budget-rerun-job0-20261011\\net_server_gateway_restart_test\\project",
+    "--scene",
+    "res://tests/net_server_gateway_restart_test.tscn",
+    "--",
+    "E:/scratch/e08-e12-budget-rerun-job0-20261011/net_server_gateway_restart_test/fixture"
+  ],
+  "budgets": {
+    "seconds": 1200,
+    "bytes": 8589934592,
+    "min_free": 0
+  },
+  "exit": 1,
+  "elapsed_seconds": 85.194,
+  "analysis": {
+    "passed": false,
+    "reasons": [
+      "nonzero_exit",
+      "result_failures",
+      "check_false"
+    ],
+    "result": {
+      "checks": 12,
+      "failures": [
+        "all approved client files assemble and verify before ready"
+      ]
+    }
+  },
+  "job_records": [
+    {
+      "label": "scene",
+      "command": [
+        "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\e08-e12-budget-rerun-job0-20261011\\net_server_gateway_restart_test\\project",
+        "--scene",
+        "res://tests/net_server_gateway_restart_test.tscn",
+        "--",
+        "E:/scratch/e08-e12-budget-rerun-job0-20261011/net_server_gateway_restart_test/fixture"
+      ],
+      "exited": true,
+      "pid": 39556,
+      "exit_code": 1,
+      "budget_failure": null,
+      "duration_seconds": 85.193,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    }
+  ]
+}

@@ -19,13 +19,15 @@ var _last_text:String = ""
 var _preparation = preload("res://scripts/net/validation/room_data_preparation.gd").new()
 
 func configure(session, root:String, entries:Array, base:Array, workspace_root:String = "") -> void:
+	close()
 	_session = session
 	_entries = entries.duplicate(true)
 	_base = base.duplicate(true)
+	_approved.clear()
 
 	if not session.room_files.is_empty():
 		for entry in _entries: _approved.append({"provider":entry.provider, "key":entry.key})
-	_preparation.session = session
+	_preparation = session.create_data_preparation()
 	_preparation.source_root = root
 	_preparation.workspace_root = workspace_root
 	_preparation.source_provider = "server"
@@ -119,7 +121,9 @@ func poll() -> void:
 		return
 	if _preparation.validation.complete:
 		_stage = "ready"
-		_status("服务端已完成隔离校验，等待房主确认", _actor, _preparation.validation.report.get("loop_analysis", {}))
+		var simulation:Dictionary = _preparation.validation.report.get("random_simulation", {})
+		print("SERVER_DATA_VALIDATION_COMPLETE ", JSON.stringify({"request_id":_request_id,"task_complete":_preparation.validation.complete,"task_running":_preparation.validation.running,"task_pid":_preparation.validation.process_id,"stage":_stage,"simulation_budget_seconds":simulation.get("budget_seconds",0.0),"simulation_elapsed_seconds":simulation.get("elapsed_seconds",0.0)}))
+		_status("校验完成，等待房主确认后应用所选数据", _actor, _preparation.validation.report.get("loop_analysis", {}))
 	elif _preparation.status != _last_text:
 		_status(_preparation.status)
 
@@ -175,10 +179,10 @@ func close() -> void:
 	_actor = 0
 	_stage = "idle"
 	if _session != null:
-		_session.data_management_requested.disconnect(_request)
-		_session.catalogs_changed.disconnect(_catalogs_changed)
-		_session.changed.disconnect(_room_changed)
-	_preparation.session = null
+		if _session.data_management_requested.is_connected(_request): _session.data_management_requested.disconnect(_request)
+		if _session.catalogs_changed.is_connected(_catalogs_changed): _session.catalogs_changed.disconnect(_catalogs_changed)
+		if _session.changed.is_connected(_room_changed): _session.changed.disconnect(_room_changed)
+	_preparation = preload("res://scripts/net/validation/room_data_preparation.gd").new()
 	_session = null
 
 func _proposal_is_current() -> bool:

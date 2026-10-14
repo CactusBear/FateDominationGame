@@ -1,0 +1,357 @@
+{
+  "status": "DECLARATIONS_AUDITABLE_PRIVACY_ENFORCEMENT_INCOMPLETE",
+  "explicit_runtime_bypass_confirmed": true,
+  "shared_preset_without_role_rejected": true,
+  "selected_inventory_sensitive_suffix_matches": [],
+  "godot_invoked": false,
+  "freeze_copied": false,
+  "exported": false,
+  "native_loaded": false,
+  "source_presets_sha256": "f8f6afbbeb520f780deab5d7f7d5a59e9f5b2f33e02db4cb64c6823a428da091",
+  "credential_free_approval": {
+    "status": "APPROVED_BY_USER",
+    "evidence": "docs/credential-free-evidence.md section 6",
+    "scope": "sections 1-5; not content scanning or final manifest validation"
+  },
+  "files_sha256": {
+    "release_contract.json": "3fd93d4b945eb04d8a0261158ccf427e03ac0fb8652884f8a550b1f0fb9b8a43",
+    "tools/release/release_privacy_policy.json": "7f9ba2d33a92c7e02bfb5ecf0b6637d27faf962a0c0022b8df0c77fcd17b56c0",
+    "tools/release/freeze_prepare.py": "b9f1cc2a38f9738e0899a0ae3ccee399e755b7584b2217b4986159081ffc083d"
+  },
+  "tool_sha256": {
+    "tools/release/release_contract.py": "3d04b330face411f34b9d9ab08b6d5ed044082c9378373725882fc33d2774e80",
+    "tools/release/package_audit.py": "238e1ebf15475ff4b7e24ac94a03e4e3068fd77289bdc147281728a0b5c37887",
+    "tools/copy_data_after_export.py": "3210a8de8d6afb24a9d7cf6c49b8c9df21f65b5ad5154227c83c0d4fb6a6ebd0",
+    "project.godot": "986a066adc6f0d1346d19612538780abaf2ce4d3cdfef4342db653a0b53d8c8a"
+  },
+  "commands": [
+    {
+      "label": "select-client",
+      "argv": [
+        "C:\\Users\\Administrator\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe",
+        "-B",
+        "-c",
+        "import json,sys; from pathlib import Path; sys.path.insert(0,\"tools/release\"); from release_contract import select;\ntry: print(json.dumps(select(Path.cwd(),sys.argv[1],\"windows\",sys.argv[2]),ensure_ascii=False))\nexcept (OSError,ValueError) as e: print(\"BLOCK:\",e); sys.exit(2)",
+        "FateDomination_demo_v1",
+        "client"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"preset\": \"FateDomination_demo_v1\", \"platform\": \"windows\", \"role\": \"client\", \"executable\": \"FateDomination.exe\", \"runtime_files\": [{\"source\": \"addons/fate_server_signals/bin/libfate_server_signals.windows.template_release.x86_64.dll\", \"target\": \"libfate_server_signals.windows.template_release.x86_64.dll\"}, {\"source\": \"addons/webrtc_native/lib/libwebrtc_native.windows.template_release.x86_64.dll\", \"target\": \"libwebrtc_native.windows.template_release.x86_64.dll\"}]}\n",
+      "stderr": "",
+      "expected_exit": 0
+    },
+    {
+      "label": "dry-run-client",
+      "argv": [
+        "C:\\Users\\Administrator\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe",
+        "-B",
+        "E:\\Projects\\Godot\\FateDominationGame-master\\tools\\release\\freeze_prepare.py",
+        "--source",
+        "E:\\Projects\\Godot\\FateDominationGame-master",
+        "--target",
+        "E:\\Projects\\Godot\\FateDominationGame-master-role-privacy-dry-run-only\\freeze-client",
+        "--manifest",
+        "E:\\Projects\\Godot\\FateDominationGame-master-role-privacy-dry-run-only\\freeze-client.json",
+        "--preset",
+        "FateDomination_demo_v1",
+        "--role",
+        "client",
+        "--executable",
+        "FateDomination.exe",
+        "--runtime-files",
+        "[{\"source\": \"addons/fate_server_signals/bin/libfate_server_signals.windows.template_release.x86_64.dll\", \"target\": \"libfate_server_signals.windows.template_release.x86_64.dll\"}, {\"source\": \"addons/webrtc_native/lib/libwebrtc_native.windows.template_release.x86_64.dll\", \"target\": \"libwebrtc_native.windows.template_release.x86_64.dll\"}]",
+        "--allowed-root",
+        "E:\\Projects\\Godot\\FateDominationGame-master-role-privacy-dry-run-only"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"mode\": \"DRY_RUN_NO_COPY\", \"files\": 1898, \"target\": \"E:\\\\Projects\\\\Godot\\\\FateDominationGame-master-role-privacy-dry-run-only\\\\freeze-client\", \"godot_invoked\": false}\n",
+      "stderr": "",
+      "expected_exit": 0
+    },
+    {
+      "label": "select-server",
+      "argv": [
+        "C:\\Users\\Administrator\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe",
+        "-B",
+        "-c",
+        "import json,sys; from pathlib import Path; sys.path.insert(0,\"tools/release\"); from release_contract import select;\ntry: print(json.dumps(select(Path.cwd(),sys.argv[1],\"windows\",sys.argv[2]),ensure_ascii=False))\nexcept (OSError,ValueError) as e: print(\"BLOCK:\",e); sys.exit(2)",
+        "FateServer Windows",
+        "server"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"preset\": \"FateServer Windows\", \"platform\": \"windows\", \"role\": \"server\", \"executable\": \"FateServer.exe\", \"runtime_files\": [{\"source\": \"addons/fate_server_signals/bin/libfate_server_signals.windows.template_release.x86_64.dll\", \"target\": \"libfate_server_signals.windows.template_release.x86_64.dll\"}, {\"source\": \"addons/webrtc_native/lib/libwebrtc_native.windows.template_release.x86_64.dll\", \"target\": \"libwebrtc_native.windows.template_release.x86_64.dll\"}]}\n",
+      "stderr": "",
+      "expected_exit": 0
+    },
+    {
+      "label": "dry-run-server",
+      "argv": [
+        "C:\\Users\\Administrator\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe",
+        "-B",
+        "E:\\Projects\\Godot\\FateDominationGame-master\\tools\\release\\freeze_prepare.py",
+        "--source",
+        "E:\\Projects\\Godot\\FateDominationGame-master",
+        "--target",
+        "E:\\Projects\\Godot\\FateDominationGame-master-role-privacy-dry-run-only\\freeze-server",
+        "--manifest",
+        "E:\\Projects\\Godot\\FateDominationGame-master-role-privacy-dry-run-only\\freeze-server.json",
+        "--preset",
+        "FateServer Windows",
+        "--role",
+        "server",
+        "--executable",
+        "FateServer.exe",
+        "--runtime-files",
+        "[{\"source\": \"addons/fate_server_signals/bin/libfate_server_signals.windows.template_release.x86_64.dll\", \"target\": \"libfate_server_signals.windows.template_release.x86_64.dll\"}, {\"source\": \"addons/webrtc_native/lib/libwebrtc_native.windows.template_release.x86_64.dll\", \"target\": \"libwebrtc_native.windows.template_release.x86_64.dll\"}]",
+        "--allowed-root",
+        "E:\\Projects\\Godot\\FateDominationGame-master-role-privacy-dry-run-only"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"mode\": \"DRY_RUN_NO_COPY\", \"files\": 1898, \"target\": \"E:\\\\Projects\\\\Godot\\\\FateDominationGame-master-role-privacy-dry-run-only\\\\freeze-server\", \"godot_invoked\": false}\n",
+      "stderr": "",
+      "expected_exit": 0
+    },
+    {
+      "label": "select-signaling",
+      "argv": [
+        "C:\\Users\\Administrator\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe",
+        "-B",
+        "-c",
+        "import json,sys; from pathlib import Path; sys.path.insert(0,\"tools/release\"); from release_contract import select;\ntry: print(json.dumps(select(Path.cwd(),sys.argv[1],\"windows\",sys.argv[2]),ensure_ascii=False))\nexcept (OSError,ValueError) as e: print(\"BLOCK:\",e); sys.exit(2)",
+        "FateServer Windows",
+        "signaling"
+      ],
+      "exit_code": 2,
+      "stdout": "BLOCK: 纯信令工程禁止游戏/其他 autoload\n",
+      "stderr": "",
+      "expected_exit": 2
+    },
+    {
+      "label": "dry-run-signaling",
+      "argv": [
+        "C:\\Users\\Administrator\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe",
+        "-B",
+        "E:\\Projects\\Godot\\FateDominationGame-master\\tools\\release\\freeze_prepare.py",
+        "--source",
+        "E:\\Projects\\Godot\\FateDominationGame-master",
+        "--target",
+        "E:\\Projects\\Godot\\FateDominationGame-master-role-privacy-dry-run-only\\freeze-signaling",
+        "--manifest",
+        "E:\\Projects\\Godot\\FateDominationGame-master-role-privacy-dry-run-only\\freeze-signaling.json",
+        "--preset",
+        "FateServer Windows",
+        "--role",
+        "signaling",
+        "--executable",
+        "FateSignaling.exe",
+        "--runtime-files",
+        "[{\"source\": \"addons/fate_server_signals/bin/libfate_server_signals.windows.template_release.x86_64.dll\", \"target\": \"libfate_server_signals.windows.template_release.x86_64.dll\"}]",
+        "--allowed-root",
+        "E:\\Projects\\Godot\\FateDominationGame-master-role-privacy-dry-run-only"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"mode\": \"DRY_RUN_NO_COPY\", \"files\": 15, \"target\": \"E:\\\\Projects\\\\Godot\\\\FateDominationGame-master-role-privacy-dry-run-only\\\\freeze-signaling\", \"godot_invoked\": false}\n",
+      "stderr": "",
+      "expected_exit": 0
+    }
+  ],
+  "inventories": {
+    "client": {
+      "cold_files": 1438,
+      "denied_components_in_selected_inventory": [],
+      "names_sha256": "7d2236af667a58838b768776dcc37420d461b5e20ea13076663f6d8ab378e4e0"
+    },
+    "server": {
+      "cold_files": 1438,
+      "denied_components_in_selected_inventory": [],
+      "names_sha256": "7d2236af667a58838b768776dcc37420d461b5e20ea13076663f6d8ab378e4e0"
+    },
+    "signaling": {
+      "cold_files": 13,
+      "denied_components_in_selected_inventory": [],
+      "names_sha256": "a329665ec09830aaa51b8c10bf60f8931ad8efcb2bca369c324500995ef291a5"
+    }
+  },
+  "project_checks": {
+    "client": {
+      "in_memory_only": true,
+      "helper_removed": true,
+      "editor_plugins_disabled": true,
+      "all_autoloads_removed": false,
+      "signaling_only": false
+    },
+    "server": {
+      "in_memory_only": true,
+      "helper_removed": true,
+      "editor_plugins_disabled": true,
+      "all_autoloads_removed": false,
+      "signaling_only": false
+    },
+    "signaling": {
+      "in_memory_only": true,
+      "helper_removed": true,
+      "editor_plugins_disabled": true,
+      "all_autoloads_removed": true,
+      "signaling_only": true
+    }
+  },
+  "real_consumer_fixture_results": [
+    {
+      "path": "data/savedkeys/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/net_identity/profile.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/net_identity/private.pem",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/server_players.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/match_saves/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/server_rooms/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/authority_rooms/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/logs/example.txt",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "assets/diagnostics/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "assets/newtests/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "assets/runtime/example.json",
+      "included_by_real_inventory": false,
+      "status": "COVERED"
+    },
+    {
+      "path": "data/example.pem",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "data/example.key",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "data/example.log",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "data/validation-probe-1.json",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED"
+    },
+    {
+      "path": "scripts/net/identity/example.gd",
+      "included_by_real_inventory": true,
+      "status": "SOURCE_CODE_RETAINED"
+    },
+    {
+      "path": "scripts/net/server/recovery_save_diagnostic.gd",
+      "included_by_real_inventory": true,
+      "status": "SOURCE_CODE_RETAINED"
+    }
+  ],
+  "fixture_case_count": 17,
+  "policy_fixture_case_count": 17,
+  "not_covered": [
+    "arbitrary secret/log/diagnostic suffix or pattern in data",
+    "runtime_files/descriptor/import explicit dependency exclusion bypass",
+    "whole external package whitelist not wired to existing audit",
+    "specialized signaling_prepare external-native layout contract"
+  ],
+  "not_run": [
+    "real frozen copy",
+    "Godot import/export",
+    "real EXE/PCK/ZIP audit",
+    "runtime readiness",
+    "GUI or cross-network verification"
+  ],
+  "four_uncovered_items": [
+    {
+      "path": "data/example.pem",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED",
+      "existing_package_declaration": "COVERED",
+      "freeze_enforcement": "MISSING_FINAL_SUFFIX_OR_PATTERN_GATE",
+      "actual_private_content": "unknown",
+      "candidate_declaration_denies": true
+    },
+    {
+      "path": "data/example.key",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED",
+      "existing_package_declaration": "COVERED",
+      "freeze_enforcement": "MISSING_FINAL_SUFFIX_OR_PATTERN_GATE",
+      "actual_private_content": "unknown",
+      "candidate_declaration_denies": true
+    },
+    {
+      "path": "data/example.log",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED",
+      "existing_package_declaration": "COVERED",
+      "freeze_enforcement": "MISSING_FINAL_SUFFIX_OR_PATTERN_GATE",
+      "actual_private_content": "unknown",
+      "candidate_declaration_denies": true
+    },
+    {
+      "path": "data/validation-probe-1.json",
+      "included_by_real_inventory": true,
+      "status": "NOT_COVERED",
+      "existing_package_declaration": "COVERED",
+      "freeze_enforcement": "MISSING_FINAL_SUFFIX_OR_PATTERN_GATE",
+      "actual_private_content": "unknown",
+      "candidate_declaration_denies": true
+    }
+  ],
+  "candidate_patch_sha256": "cc1b232f1d5867bf9c3f8a45ccb1d99f1689ee0cfa1c45df511268e841574df2",
+  "candidate_applied": false,
+  "checklist_comparison": {
+    "assertion_expressions_before": 19,
+    "assertion_expressions_after": 19,
+    "removed": [],
+    "fixture_cases_identical": true,
+    "fixture_results_identical": true,
+    "commands_identical": true,
+    "additional_checks_retained": [
+      "release_contract.json JSON parse",
+      "release_privacy_policy.json JSON parse",
+      "freeze_prepare.py AST parse",
+      "shared preset without role must raise ValueError",
+      "three role cold inventory and in-memory project transform"
+    ]
+  },
+  "audit_script_sha256": "4cd2d304b340fdc6e5feea3e529d8900e130749219d68b542c7bbb021222c091",
+  "fixture_declaration_sha256": "803d0a7ec93e11cdf4b44ff9ebedd0e1f5a150b98677a2074355d37a494f283e"
+}

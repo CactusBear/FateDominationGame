@@ -1,20 +1,18 @@
 extends Node
 # 令咒回归：胜场奖励必须在真实 BattleResolver 胜场记录之后发生；
 # 移动是选择一个显式位置的免费效果，且仅能从深山町/新都发动。
-var failures:Array = []
-var checks:int = 0
+const Observer = preload("res://tests/round47_public_test_observer.gd")
 var keepalive:Array = []
+var fixture_context:SessionContext = null
 
 func check(ok:bool, label:String) -> void:
-	checks += 1
-	if !ok:
-		failures.append(label)
-	print("CHECK ", label, " ", ok)
+	Observer.check(ok, label)
 
 func _ready() -> void:
 	call_deferred("run")
 
 func run() -> void:
+	Observer.reset()
 	_setup()
 	_test_delayed_battle_reward()
 	_setup()
@@ -37,14 +35,15 @@ func run() -> void:
 	await _test_ai_defaults_to_restore_seal()
 	_setup()
 	await _test_move_tip_and_announcement()
-	print("RESULT checks=", checks, " failures=", failures)
 	var file := FileAccess.open("res://command_spell_test_result.json", FileAccess.WRITE)
-	file.store_string(JSON.stringify({"checks": checks, "failures": failures}))
+	file.store_string(JSON.stringify({"checks": Observer.checks, "failures": Observer.failures}))
 	file.close()
-	get_tree().quit(0 if failures.is_empty() else 1)
+	Observer.finish(get_tree())
 
 func _setup() -> void:
-	EffectManager.reset_runtime()
+	var reset:Dictionary = EffectManager.reset_runtime()
+	check(reset.ok, "fixture reset returns its original context")
+	fixture_context = reset.get("context") as SessionContext
 	GameLog.reset()
 	GameLog.set_context(1, "action")
 	GameData.player_data_library.clear()
@@ -63,12 +62,12 @@ func _setup() -> void:
 		for loc in area._locations:
 			loc._players.clear()
 	TimePointChecker.set_phase_time_points([TimePoints.DAY, TimePoints.PHASE, TimePoints.ACTION_PHASE, TimePoints.NON_CLIMAX])
-	TimePointChecker.dynamic_time_point([TimePoints.ACTION_PHASE, TimePoints.NON_CLIMAX], 0)
+	TimePointChecker.dynamic_time_point([TimePoints.ACTION_PHASE, TimePoints.NON_CLIMAX], 0, null, fixture_context)
 
 func _command_effect() -> BaseEffect:
 	for template in LoadCommandSpell.command_spells.values():
 		if template != null and template._name == "normal_command_spell":
-			var card = CloneObject.new().exec(template)
+			var card = _runtime_template(template)
 			if card == null:
 				return null
 			keepalive.append(card)
@@ -77,11 +76,18 @@ func _command_effect() -> BaseEffect:
 			return effect
 	return null
 
+func _runtime_template(template):
+	var clone := CloneContext.new()
+	if not clone.configure_template(fixture_context, [template]):
+		return null
+	var copied:Dictionary = clone.copy_result(template, fixture_context)
+	return copied.object if copied.ok else null
+
 func _choose(effect:BaseEffect, option_index:int) -> bool:
 	return EffectManager.request_manual_activation(effect, 0) and EffectManager.submit_option_choice(effect, [option_index])
 
 func _place(area:BaseMapArea, player_id:int, slot:int = 0) -> bool:
-	return SetLocation.new().exec(area._locations[slot], player_id, false, true)
+	return SetLocation.new().exec(area._locations[slot], player_id, false, true, true, fixture_context)
 
 func _test_delayed_battle_reward() -> void:
 	_place(MapData.miyama, 0, 0)
@@ -90,13 +96,24 @@ func _test_delayed_battle_reward() -> void:
 	var effect := _command_effect()
 	check(effect != null and _choose(effect, 1), "power command option is accepted")
 	var before:int = GameDataManager.get_player_data(0).score.number
-	var battle := BattleResolver.new().exec([0, 1])
+	var battle := BattleResolver.new(fixture_context).exec([0, 1])
 	var detail:Dictionary = battle.details_by_area.get(MapData.miyama._area_name, {})
 	var reported:int = int((detail.get("score_gained", {}) as Dictionary).get(0, 0))
 	var after:int = GameDataManager.get_player_data(0).score.number
 	check(detail.get("winners", []).has(0), "reward fixture records a real battle win")
 	check(after - before == reported, "battle report includes the command reward in actual net score")
 	check(reported == int(detail.get("total_score", 0)) + 2, "command reward adds two score beyond the base pool")
+	var original_fact = GameLog.last({"type": "effect", "object": effect}, null)
+	var delayed_fact = null
+	# 事实筛选器不负责嵌套字段；按实际效果身份查出延迟结算记录。
+	for fact in GameLog.query({"type": "effect"}, null):
+		if str(fact.data.get("effect_name", "")) == "scheduled_effect":
+			delayed_fact = fact
+	check(original_fact != null and delayed_fact != null and
+		str(delayed_fact.data.get("source_name", "")) != "" and
+		delayed_fact.data.get("source_name") == original_fact.data.get("source_name"),
+		"settled delayed reward records the original readable source")
+	Observer.trace("delayed battle reward")
 
 func _test_delayed_reward_expires() -> void:
 	var effect := _command_effect()
@@ -109,43 +126,83 @@ func _test_delayed_reward_expires() -> void:
 		"delayed reward carries its declared day-end expiry")
 	check(scheduled != null and scheduled.get_shown_name() == effect.get_shown_name(),
 		"delayed reward inherits the original player-readable effect text")
-	check(scheduled != null and EffectManager._effect_source_name(scheduled) == EffectManager._effect_source_name(effect),
+	check(scheduled != null and scheduled.from == effect.from,
 		"delayed reward inherits the original source object")
 	var batch_before:int = EffectManager.time_point_id
-	TimePointChecker.global_time_point([TimePoints.DAY_END])
+	TimePointChecker.global_time_point([TimePoints.DAY_END], null, fixture_context)
 	check(EffectManager.time_point_id == batch_before + 1, "a new timepoint increments the batch id")
 	check(scheduled != null and not EffectManager.effect_pool.has(scheduled), "unused delayed reward expires at day end")
 	var score_before:int = GameDataManager.get_player_data(0).score.number
-	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], 0)
+	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], 0, null, fixture_context)
 	check(GameDataManager.get_player_data(0).score.number == score_before,
 		"an expired delayed reward cannot carry into a later round")
 
 func _test_effect_announcement_is_player_readable() -> void:
 	var master := BaseMaster.new("announcement_master", "测试御主", "", "", "")
 	GameDataManager.get_player_data(0).master = master
-	var effect := BaseEffect.new("announcement_probe", [], 0, true)
+	var produced:Array = LoadHelper.load_effects([{
+		"effect_name":"announcement_probe", "time_points":[], "priority":0,
+		"is_pure_passive":true, "is_residue":false, "effect_numbers":[], "funcs":[]
+	}], master, fixture_context)
+	check(produced.size() == 1, "announcement fixture creates a sourced runtime effect")
+	if produced.size() != 1:
+		return
+	var effect:BaseEffect = produced[0]
 	effect._shown_name = "测试能力"
 	effect._trigger_player_id = 0
 	effect.from = master
-	EffectManager._announce_effect(effect)
-	EffectManager._flush_announcements()
-	var messages:Array = EffectManager.pop_messages(0)
+	effect._funcs = LoadHelper.load_funcs([{"func_name": "edit_score", "parameters": [null, BaseNumber.new(1), 0], "var_index": -1}], effect, fixture_context)
+	EffectManager.register_effect(effect, 0)
+	EffectManager.add_to_activation_pool(effect)
+	EffectManager.run_pipeline()
+	check(GameDataManager.get_player_data(0).score.number == 1, "announcement follows a real applied effect")
+	check(EffectManager.messages.size() == 1 and int(EffectManager.messages[0].get("player_id", 0)) == -1,
+		"pipeline flush publishes a public broadcast ticket")
+	var messages:Array = EffectManager.pop_messages(1)
 	var text:String = "\n".join(messages)
 	check(text.contains("测试御主：测试能力"), "announcement keeps the actor and readable effect text")
 	check(not text.contains("【测试御主】"), "announcement does not repeat an identical actor and source")
+	check(EffectManager.pop_messages(0).is_empty(), "announcement is consumed exactly once")
+	Observer.trace("announcement pipeline")
 
 func _test_waiting_preserves_following_timepoint() -> void:
+	var sentinels := LoadHelper.load_effects([{
+		"effect_name": "queued_day_end_probe", "time_points": [TimePoints.DAY_END],
+		"priority": 0, "is_pure_passive": true, "is_residue": false, "effect_numbers": [], "funcs": [
+			{"func_name": "edit_score", "parameters": [null, BaseNumber.new(1), 0], "var_index": -1}]
+	}, {
+		"effect_name": "queued_day_start_probe", "time_points": [TimePoints.DAY_START],
+		"priority": 0, "is_pure_passive": true, "is_residue": false, "effect_numbers": [], "funcs": [
+			{"func_name": "edit_score", "parameters": [null, BaseNumber.new(10), 0], "var_index": -1}]
+	}], null, fixture_context)
+	EffectManager.register_effects(sentinels, 0)
 	var effect := _command_effect()
 	check(effect != null and EffectManager.request_manual_activation(effect, 0), "command spell opens a real pending choice")
 	var batch_before:int = EffectManager.time_point_id
-	TimePointChecker.global_time_point([TimePoints.DAY_END])
+	TimePointChecker.global_time_point([TimePoints.DAY_END], null, fixture_context)
+	TimePointChecker.global_time_point([TimePoints.DAY_START], null, fixture_context)
 	check(EffectManager.waiting_effect == effect, "a following timepoint does not overwrite the pending choice")
-	check(EffectManager.time_point_id == batch_before and EffectManager._queued_time_point_batches.size() == 1,
+	check(EffectManager.time_point_id == batch_before and GameDataManager.get_player_data(0).score.number == 0,
 		"the following timepoint waits in order")
 	check(EffectManager.submit_option_choice(effect, [0]), "pending command choice resolves")
-	check(EffectManager.waiting_effect == null and EffectManager._queued_time_point_batches.is_empty(),
+	check(EffectManager.waiting_effect == null and GameDataManager.get_player_data(0).score.number == 11,
 		"queued timepoint runs after the choice resolves")
 	check(EffectManager.time_point_id > batch_before, "queued timepoint runs in a later batch")
+	var chosen:Array = Observer.names(effect._name)
+	var queued:Array = Observer.names("queued_day_end_probe")
+	check(chosen == ["edit_magic"] and queued == ["edit_score"] and Observer.names("queued_day_start_probe") == ["edit_score"],
+		"choice and both deferred timepoints each execute exactly once")
+	var facts:Array = GameLog.query({"type": "effect"}, null)
+	var settled:Array = []
+	for fact in facts:
+		settled.append(str(fact.data.get("effect_name", "")))
+	check(settled == ["queued_day_end_probe", "queued_day_start_probe", effect._name],
+		"accepted choice releases queued timepoints in FIFO order before its branch settles")
+	var calls_before:int = GameLog.all_func_calls().size()
+	EffectManager.run_pipeline()
+	check(GameLog.all_func_calls().size() == calls_before and GameDataManager.get_player_data(0).score.number == 11,
+		"idle pipeline cannot replay a drained timepoint")
+	Observer.trace("deferred timepoint")
 
 func _test_free_targeted_move() -> void:
 	_place(MapData.miyama, 0, 0)
@@ -183,7 +240,7 @@ func _test_battle_end_restores_seal() -> void:
 	check(GameDataManager.get_player_data(1).command_spell_count.number == 3, "the loser gets no command spell from the winner effect")
 	# 明确放弃的那一项必须真的什么都不做
 	check(EffectManager.waiting_effect == null, "one battle queues exactly one seal choice")
-	EventResolver.new().clear_all()
+	check(EventResolver.new().clear_all(fixture_context).ok, "fixture clears events with original context")
 
 
 func _test_restore_respects_dynamic_limit() -> void:
@@ -196,7 +253,7 @@ func _test_restore_respects_dynamic_limit() -> void:
 	check(pending != null and EffectManager.submit_option_choice(pending, [0]),
 		"restore at a raised limit resolves")
 	check(data.command_spell_count.number == 4, "restore never exceeds the current command spell limit")
-	EventResolver.new().clear_all()
+	check(EventResolver.new().clear_all(fixture_context).ok, "fixture clears events with original context")
 
 	_setup()
 	data = GameDataManager.get_player_data(0)
@@ -208,7 +265,7 @@ func _test_restore_respects_dynamic_limit() -> void:
 	check(pending != null and EffectManager.submit_option_choice(pending, [0]),
 		"restore below a raised limit resolves")
 	check(data.command_spell_count.number == 5, "restore can reach a command spell limit above three")
-	EventResolver.new().clear_all()
+	check(EventResolver.new().clear_all(fixture_context).ok, "fixture clears events with original context")
 
 
 ## 胜者选择"不恢复令咒"时令咒不变——选项要有真实分支，不能两个选项都加令咒
@@ -220,7 +277,7 @@ func _test_battle_end_decline_restores_nothing() -> void:
 	check(pending != null and pending.has_options(), "decline case gets the same options effect")
 	check(EffectManager.submit_option_choice(pending, [1]), "choosing decline is accepted")
 	check(GameDataManager.get_player_data(0).command_spell_count.number == 3, "decline option restores nothing")
-	EventResolver.new().clear_all()
+	check(EventResolver.new().clear_all(fixture_context).ok, "fixture clears events with original context")
 
 ## AI 必须默认恢复令咒：魔力为 0 的 AI 也不该放弃这个零成本收益
 ## （原来的"魔力≥1"门槛会让它连选项都不看就放弃）
@@ -239,7 +296,7 @@ func _test_ai_defaults_to_restore_seal() -> void:
 	if pending != null:
 		ui._resolve_bot_active_effect(pending, 0)
 	check(GameDataManager.get_player_data(0).command_spell_count.number == 1, "ai defaults to restoring the seal even at zero magic")
-	EventResolver.new().clear_all()
+	check(EventResolver.new().clear_all(fixture_context).ok, "fixture clears events with original context")
 	ui.queue_free()
 
 ## 摆好一场真实战斗并挂上「遏制第三方威胁」，返回结算后排队给胜者的那个待决效果
@@ -250,10 +307,13 @@ func _battle_end_choice(winner_spells:int = 0) -> BaseEffect:
 	for card in LoadEvent.events:
 		if card._name == "contain_third_party":
 			template = card
-	var event = CloneObject.new().exec(template) as BaseEvent
+	var event = _runtime_template(template) as BaseEvent
+	check(event != null, "battle event fixture clones the trusted template into runtime")
+	if event == null:
+		return null
 	AddMapAreaEvents.new().exec(MapData.miyama, event)
-	EventResolver.new().register_entered(event)
-	BattleResolver.new().exec([0, 1])
+	check(EventResolver.new().register_entered(event, fixture_context), "fixture registers event with original context")
+	BattleResolver.new(fixture_context).exec([0, 1])
 	return EffectManager.waiting_effect
 
 func _test_invalid_origin_does_not_spend_spell() -> void:

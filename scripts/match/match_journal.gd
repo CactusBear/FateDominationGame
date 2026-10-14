@@ -39,6 +39,43 @@ static var _audit_previous:String = ""
 static var _audit_total_bytes:int = 0
 static var _tail_consumptions:Dictionary = {}
 
+# 只读图外观察；不创建命名空间、不分配编号、不刷新 writer。
+static func audit_boundary() -> Dictionary:
+	_audit_mutex.lock()
+	var boundary:Dictionary = {"identity":_audit_identity, "revision":audit_revision,
+		"records":audit_records.size(), "hash":_audit_previous, "error":audit_error}
+	_audit_mutex.unlock()
+	return boundary
+
+# 影子诊断而非可提升的审计文件；无 FileAccess、live writer/namespace/编号回指。
+# 不声称复现真实审计幂等链/故障策略；需要该能力的完整 forecast 仍须 unknown。
+class ShadowSink extends RefCounted:
+	var error:String = ""
+	var _identity:int = 0
+	var _records:Array = []
+
+	func next_audit_identity() -> int:
+		if _identity == 9223372036854775807:
+			error = "影子诊断身份空间已满"
+			return 0
+		_identity += 1
+		return _identity
+
+	func audit_event(event:String, metadata:Dictionary = {}) -> bool:
+		if not error.is_empty(): return false
+		if event not in MatchJournal.AUDIT_EVENTS or not MatchJournal._plain(metadata):
+			error = "影子诊断事件或基础载荷无效"
+			return false
+		_records.append({"event":event, "metadata":metadata.duplicate(true)})
+		return true
+
+	func records() -> Array:
+		return _records.duplicate(true)
+
+static func new_shadow_sink() -> ShadowSink:
+	return ShadowSink.new()
+
+
 static func next_audit_identity() -> int:
 	_audit_mutex.lock()
 	if _audit_identity == 9223372036854775807:

@@ -1,0 +1,15 @@
+--- a/scripts/game_scene/battle_board_v2.gd
++++ b/scripts/game_scene/battle_board_v2.gd
+@@ -101,9 +101,9 @@
+ ## 轮次变更：首位下抽离开顺位横列的纵向下沉量（相对卡高）
+ const ROUND_DROP_RATIO := 1.15
+ ## 轮次变更：被抽出的首位卡会越过顶栏叠进战区卷轴范围，用这个图层抬到卷轴之上（落位后归零）
+-const ROUND_LIFTED_Z := 100
+-## 提示横幅的图层：要压过被抽出的卡片，避免卡片平移经过时盖住"XX 的行动"
+-const BANNER_Z := 120
++const ROUND_LIFTED_Z := 80
++## 棋盘动画 < 提示横幅 < 原生浏览器(100)：压过抽出的卡片，不越过浏览/日志/播报层。
++const BANNER_Z := 85
+ 
+ 
+ ## 卷轴出牌区：所有比例都相对"卡高"，随可用区域与牌数动态求解，不写死某个牌数

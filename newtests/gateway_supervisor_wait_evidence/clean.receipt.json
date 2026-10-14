@@ -1,0 +1,58 @@
+{
+  "command": [
+    "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+    "--headless",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\scratch\\gateway-supervisor-triage\\clean\\project",
+    "--scene",
+    "res://tests/net_server_gateway_restart_test.tscn",
+    "--",
+    "E:/scratch/gateway-supervisor-triage/clean/fixture"
+  ],
+  "exit": 1,
+  "analysis": {
+    "passed": false,
+    "reasons": [
+      "nonzero_exit",
+      "result_failures",
+      "check_false"
+    ],
+    "result": {
+      "checks": 55,
+      "failures": [
+        "中局崩溃恢复后真人继续提交操作直至终局"
+      ]
+    }
+  },
+  "job_records": [
+    {
+      "label": "scene",
+      "command": [
+        "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\gateway-supervisor-triage\\clean\\project",
+        "--scene",
+        "res://tests/net_server_gateway_restart_test.tscn",
+        "--",
+        "E:/scratch/gateway-supervisor-triage/clean/fixture"
+      ],
+      "exited": true,
+      "pid": 39880,
+      "exit_code": 1,
+      "budget_failure": null,
+      "duration_seconds": 191.878,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    }
+  ],
+  "check_true": 54,
+  "check_false": 1,
+  "error_count": 0,
+  "fixture_sha256": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+  "helper_sha256": "a785bf7274d8513d5b9b0f0c993ac502d4ba46caec79713f0f755938b253080c"
+}

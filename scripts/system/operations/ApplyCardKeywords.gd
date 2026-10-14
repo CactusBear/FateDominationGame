@@ -15,24 +15,44 @@ extends RefCounted
 const TRUE_NAME_RELEASE := "true_name_release"
 
 
-func exec(card, player_id:int = -1) -> void:
+func exec(card, player_id:int = -1, context:Variant = null) -> bool:
 	if card == null or !(card is BaseCard):
-		return
-	player_id = EffectManager.resolve_player_id(player_id)
-	if player_id == -1:
-		return
+		return false
+	#没有词条就没有任何写入，属于合法 no-op；来源门只守真正会产生规则动作的分支。
+	if (card as BaseCard)._keywords.is_empty():
+		return true
+	#缺省只继承已验证函数帧；显式来源沿嵌套调用传递，不在消费口补票。
+	context = RegisterObjectEffects.captured_context(context)
+	if not RegisterObjectEffects.source_is_current(context, card):
+		return false
+	var resolved:Dictionary = RegisterObjectEffects.resolved_player_id(player_id, context)
+	if not resolved.ok:
+		return false
+	player_id = resolved.id
+	if not GameData.player_data_library.has(player_id):
+		return false
 	for keyword in (card as BaseCard)._keywords:
-		apply(str(keyword), player_id)
+		if not apply(str(keyword), player_id, context):
+			return false
+	return true
 
 
 #每个词条对应一个已有的单一职责 operation，这里只负责选谁。
 #新增词条时在这里加一个分支，不改任何已有 operation
-func apply(keyword:String, player_id:int = -1) -> void:
-	player_id = EffectManager.resolve_player_id(player_id)
-	if player_id == -1:
-		return
+func apply(keyword:String, player_id:int = -1, context:Variant = null) -> bool:
+	#直接 apply 同样只继承已验帧，不从当前会话或卡牌领取来源。
+	context = RegisterObjectEffects.captured_context(context)
+	var resolved:Dictionary = RegisterObjectEffects.resolved_player_id(player_id, context)
+	if not resolved.ok:
+		return false
+	player_id = resolved.id
+	if not GameData.player_data_library.has(player_id):
+		return false
 	match keyword:
 		TRUE_NAME_RELEASE:
-			#规则：使用带【真名解放】词条的牌后，立即展示从者概览卡与所有技能牌，
-			#并处于【真名解放】状态。已解放时 ReleaseTrueName 自己会跳过，这里不重复判断
-			ReleaseTrueName.new().exec(player_id)
+			#已解放是合法 no-op；不能把它与来源拒绝一并吞掉。
+			if ReleaseTrueName.is_released(player_id):
+				return true
+			var released = preload("res://scripts/system/operation_router.gd").exec_registered("release_true_name", [player_id, ReleaseTrueName.DEFAULT_SHOWN_AREAS, context], context)
+			return typeof(released) == TYPE_BOOL and released
+	return true

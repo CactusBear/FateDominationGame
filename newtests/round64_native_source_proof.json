@@ -1,0 +1,17 @@
+{
+  "scripts/net/server/server_bootstrap.gd": {
+    "only_contract_declaration_changed": true,
+    "before_sha256": "77b86fec2477de5ccddcd8e95cc6556cbadf872b67f5b4eca1d251a68be2f56b",
+    "after_sha256": "6dbf5dfda785de5b11cab76f01e725317821eff51be37a4fbfba4bae5e978a3b"
+  },
+  "scripts/net/server/server_console_channel.gd": {
+    "only_contract_declaration_changed": true,
+    "before_sha256": "9eea95ad15fc0f4e04c3d9edfe0071a523e1f44a23558b324ceab818de16da02",
+    "after_sha256": "afbfd5a071a2fcb062555f00fcd9ac08dbe476a04ad3fd6efc2c7142373af3c3"
+  },
+  "native_view_sha_unchanged": true,
+  "manifest": "E:\\scratch\\isolated-d3fdd5577c874ddcab6fd7b6055b7e87\\manifest.json",
+  "read_only_drift": [],
+  "source_drift": [],
+  "all_owned_jobs_zero": true
+}

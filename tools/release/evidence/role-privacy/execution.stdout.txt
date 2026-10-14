@@ -1,0 +1,1 @@
+{"status": "PRIVACY_PACKAGE_CONSUMER_WIRED_AUDIT_NOTRUN", "fixture_case_count": 17, "evidence": "tools\\release\\evidence\\role-privacy", "godot_invoked": false, "checks_removed": []}

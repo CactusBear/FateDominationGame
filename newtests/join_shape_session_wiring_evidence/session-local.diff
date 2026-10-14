@@ -1,0 +1,11 @@
+--- session-before
++++ session-after
+@@ -1105,7 +1105,7 @@
+ 			return
+ 
+ 		"join":
+-			if args.get("name") is String and args.get("spectator") is bool:
++			if _host_identity_request_codec.validate(message.kind,args).ok:
+ 				ok = _join_identity(connection,args)
+ 				if not ok:
+ 					transport.send(connection,{"kind":"error","seq":_request_sequence(message),"reason":room.error})

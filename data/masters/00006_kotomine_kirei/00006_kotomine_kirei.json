@@ -790,7 +790,10 @@
               "self_battle_phase"
 			],
 			"priority": 0,
-			"is_pure_passive": true,
+			"is_manual": true,
+"max_total_uses": 1,
+"reset_counts_each_round": true,
+"is_pure_passive": false,
 			"is_residue": false,
 			"effect_numbers": [
 			  {
@@ -799,7 +802,9 @@
 				"is_pure_number": true
 			  }
 			],
-			"funcs": [
+			"funcs": [],
+"max_choices": 1,
+"options": [{"shown_option_name": "你的总威力+2", "funcs": [
 			  {
 				"func_name": "edit_data_number",
 				"parameters": [
@@ -811,7 +816,7 @@
 				],
 				"var_index": -1
 			  }
-			]
+			]}]
 		  }
 		],
 		"zoom_kind": "token"

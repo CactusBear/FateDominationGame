@@ -1,0 +1,4 @@
+# Keep only this audit's immutable evidence and replay logs versionable.
+# The scanners ignore Git ignore rules; this does not change scan scope.
+!baseline/replacement/execution/evidence/*.log
+!runs/*/*.log

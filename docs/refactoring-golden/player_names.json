@@ -1,0 +1,531 @@
+{
+	"implementations": [
+		"effect_manager",
+		"game_progress",
+		"climax_resolver",
+		"legacy_static",
+		"legacy_instance",
+		"v2"
+	],
+	"player_ids": [
+		0,
+		1,
+		2,
+		3,
+		4,
+		5,
+		6
+	],
+	"rows": [
+		{
+			"case": "started_0",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "远坂凛",
+			"player_id": 0
+		},
+		{
+			"case": "started_0",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "远坂凛",
+			"player_id": 0
+		},
+		{
+			"case": "started_0",
+			"created_player_ids": [],
+			"implementation": "climax_resolver",
+			"output": "远坂凛",
+			"player_id": 0
+		},
+		{
+			"case": "started_0",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "远坂凛",
+			"player_id": 0
+		},
+		{
+			"case": "started_0",
+			"created_player_ids": [],
+			"implementation": "legacy_instance",
+			"output": "远坂凛",
+			"player_id": 0
+		},
+		{
+			"case": "started_0",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "远坂凛",
+			"player_id": 0
+		},
+		{
+			"case": "started_1",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "间桐慎二",
+			"player_id": 1
+		},
+		{
+			"case": "started_1",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "间桐慎二",
+			"player_id": 1
+		},
+		{
+			"case": "started_1",
+			"created_player_ids": [],
+			"implementation": "climax_resolver",
+			"output": "间桐慎二",
+			"player_id": 1
+		},
+		{
+			"case": "started_1",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "间桐慎二",
+			"player_id": 1
+		},
+		{
+			"case": "started_1",
+			"created_player_ids": [],
+			"implementation": "legacy_instance",
+			"output": "间桐慎二",
+			"player_id": 1
+		},
+		{
+			"case": "started_1",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "间桐慎二",
+			"player_id": 1
+		},
+		{
+			"case": "started_2",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "间桐樱",
+			"player_id": 2
+		},
+		{
+			"case": "started_2",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "间桐樱",
+			"player_id": 2
+		},
+		{
+			"case": "started_2",
+			"created_player_ids": [],
+			"implementation": "climax_resolver",
+			"output": "间桐樱",
+			"player_id": 2
+		},
+		{
+			"case": "started_2",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "间桐樱",
+			"player_id": 2
+		},
+		{
+			"case": "started_2",
+			"created_player_ids": [],
+			"implementation": "legacy_instance",
+			"output": "间桐樱",
+			"player_id": 2
+		},
+		{
+			"case": "started_2",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "间桐樱",
+			"player_id": 2
+		},
+		{
+			"case": "started_3",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "伊莉雅斯菲尔",
+			"player_id": 3
+		},
+		{
+			"case": "started_3",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "伊莉雅斯菲尔",
+			"player_id": 3
+		},
+		{
+			"case": "started_3",
+			"created_player_ids": [],
+			"implementation": "climax_resolver",
+			"output": "伊莉雅斯菲尔",
+			"player_id": 3
+		},
+		{
+			"case": "started_3",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "伊莉雅斯菲尔",
+			"player_id": 3
+		},
+		{
+			"case": "started_3",
+			"created_player_ids": [],
+			"implementation": "legacy_instance",
+			"output": "伊莉雅斯菲尔",
+			"player_id": 3
+		},
+		{
+			"case": "started_3",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "伊莉雅斯菲尔",
+			"player_id": 3
+		},
+		{
+			"case": "started_4",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "言峰绮礼",
+			"player_id": 4
+		},
+		{
+			"case": "started_4",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "言峰绮礼",
+			"player_id": 4
+		},
+		{
+			"case": "started_4",
+			"created_player_ids": [],
+			"implementation": "climax_resolver",
+			"output": "言峰绮礼",
+			"player_id": 4
+		},
+		{
+			"case": "started_4",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "言峰绮礼",
+			"player_id": 4
+		},
+		{
+			"case": "started_4",
+			"created_player_ids": [],
+			"implementation": "legacy_instance",
+			"output": "言峰绮礼",
+			"player_id": 4
+		},
+		{
+			"case": "started_4",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "言峰绮礼",
+			"player_id": 4
+		},
+		{
+			"case": "started_5",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "葛木宗一郎",
+			"player_id": 5
+		},
+		{
+			"case": "started_5",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "葛木宗一郎",
+			"player_id": 5
+		},
+		{
+			"case": "started_5",
+			"created_player_ids": [],
+			"implementation": "climax_resolver",
+			"output": "葛木宗一郎",
+			"player_id": 5
+		},
+		{
+			"case": "started_5",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "葛木宗一郎",
+			"player_id": 5
+		},
+		{
+			"case": "started_5",
+			"created_player_ids": [],
+			"implementation": "legacy_instance",
+			"output": "葛木宗一郎",
+			"player_id": 5
+		},
+		{
+			"case": "started_5",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "葛木宗一郎",
+			"player_id": 5
+		},
+		{
+			"case": "started_6",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "卫宫士郎",
+			"player_id": 6
+		},
+		{
+			"case": "started_6",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "卫宫士郎",
+			"player_id": 6
+		},
+		{
+			"case": "started_6",
+			"created_player_ids": [],
+			"implementation": "climax_resolver",
+			"output": "卫宫士郎",
+			"player_id": 6
+		},
+		{
+			"case": "started_6",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "卫宫士郎",
+			"player_id": 6
+		},
+		{
+			"case": "started_6",
+			"created_player_ids": [],
+			"implementation": "legacy_instance",
+			"output": "卫宫士郎",
+			"player_id": 6
+		},
+		{
+			"case": "started_6",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "卫宫士郎",
+			"player_id": 6
+		},
+		{
+			"case": "missing_999",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "玩家 999",
+			"player_id": 999
+		},
+		{
+			"case": "missing_999",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "玩家 999",
+			"player_id": 999
+		},
+		{
+			"case": "missing_999",
+			"created_player_ids": [
+				999
+			],
+			"implementation": "climax_resolver",
+			"output": "玩家 999",
+			"player_id": 999
+		},
+		{
+			"case": "missing_999",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "玩家 999",
+			"player_id": 999
+		},
+		{
+			"case": "missing_999",
+			"created_player_ids": [
+				999
+			],
+			"implementation": "legacy_instance",
+			"output": "玩家999",
+			"player_id": 999
+		},
+		{
+			"case": "missing_999",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "玩家 999",
+			"player_id": 999
+		},
+		{
+			"case": "master_null",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "master_null",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "master_null",
+			"created_player_ids": [],
+			"implementation": "climax_resolver",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "master_null",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "master_null",
+			"created_player_ids": [],
+			"implementation": "legacy_instance",
+			"output": "玩家0",
+			"player_id": 0
+		},
+		{
+			"case": "master_null",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "master_both_empty",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "master_both_empty",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "master_both_empty",
+			"created_player_ids": [],
+			"implementation": "climax_resolver",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "master_both_empty",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "master_both_empty",
+			"created_player_ids": [],
+			"implementation": "legacy_instance",
+			"output": "玩家0",
+			"player_id": 0
+		},
+		{
+			"case": "master_both_empty",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "master_internal_only",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "golden_internal_name",
+			"player_id": 0
+		},
+		{
+			"case": "master_internal_only",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "golden_internal_name",
+			"player_id": 0
+		},
+		{
+			"case": "master_internal_only",
+			"created_player_ids": [],
+			"implementation": "climax_resolver",
+			"output": "golden_internal_name",
+			"player_id": 0
+		},
+		{
+			"case": "master_internal_only",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "golden_internal_name",
+			"player_id": 0
+		},
+		{
+			"case": "master_internal_only",
+			"created_player_ids": [],
+			"implementation": "legacy_instance",
+			"output": "golden_internal_name",
+			"player_id": 0
+		},
+		{
+			"case": "master_internal_only",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "golden_internal_name",
+			"player_id": 0
+		},
+		{
+			"case": "non_base_empty_shown",
+			"created_player_ids": [],
+			"implementation": "effect_manager",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "non_base_empty_shown",
+			"created_player_ids": [],
+			"implementation": "game_progress",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "non_base_empty_shown",
+			"created_player_ids": [],
+			"implementation": "climax_resolver",
+			"output": "玩家 0",
+			"player_id": 0
+		},
+		{
+			"case": "non_base_empty_shown",
+			"created_player_ids": [],
+			"implementation": "legacy_static",
+			"output": "golden_duck_internal",
+			"player_id": 0
+		},
+		{
+			"case": "non_base_empty_shown",
+			"created_player_ids": [],
+			"implementation": "legacy_instance",
+			"output": "玩家0",
+			"player_id": 0
+		},
+		{
+			"case": "non_base_empty_shown",
+			"created_player_ids": [],
+			"implementation": "v2",
+			"output": "golden_duck_internal",
+			"player_id": 0
+		}
+	],
+	"schema": 1,
+	"seed": 250025
+}

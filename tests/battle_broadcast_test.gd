@@ -2,7 +2,7 @@ extends Node
 
 ## 胜利播报回归：用真实引擎把一场有明确胜者的战斗结算出来，验证
 ## ① 战斗结算后 GameProgress.last_battle_result.details_by_area 字段齐备
-## ② 有播报消费者（对局界面）时，结算后暂停、不立即进入下一回合
+## ② 显式 bool 策略启用时，结算后暂停，消费者存在或销毁均不改变等待
 ## ③ 播报层在结算后可见，且所有玩家确认（AI 自动 + 本地点「继续」）后才恢复推进
 ## 实现依赖：game_progress.gd 的战斗播报确认门，与 battle_board_v2.gd 的全屏播报层。
 
@@ -30,8 +30,9 @@ func _label_text(node: Node) -> String:
 
 
 func run() -> void:
-	# 初始状态：尚无任何播报消费者（无界面 / 旧界面路径不会阻塞推进）
+	# 展示消费者与规则等待策略互相独立。
 	check(not GameProgress.has_battle_broadcast_consumer(), "no broadcast consumer at startup")
+	GameProgress.battle_broadcast_requires_confirm = true
 
 	board = load("res://assets/scenes/game_scene/battle_board_v2.tscn").instantiate()
 	get_tree().root.add_child(board)
@@ -39,6 +40,8 @@ func run() -> void:
 	await get_tree().process_frame
 	# 界面每帧循环一跑起来就登记自己为播报消费者
 	check(GameProgress.has_battle_broadcast_consumer(), "board registers broadcast consumer")
+	GameProgress.unregister_battle_broadcast_consumer(board)
+	check(GameProgress.battle_broadcast_requires_confirm, "unregistering board does not disable explicit wait policy")
 
 	# 构造一场有明确胜者的战斗：玩家 0、1 部署到深山町，玩家 0 出牌威力 20 胜出。
 	# 清空事件牌避免随机牌效弹出确认窗口，只保留纯威力比较。
@@ -63,7 +66,15 @@ func run() -> void:
 		slot.position = Vector2(600, 400)
 		slot.size = Vector2(74, 92)
 		var seat := slot.get_node("Seat") as Control
-		board._bind_seat(seat, benefit_loc, true)
+		board._source.invalidate()
+		var projected_loc: Dictionary = {}
+		var location_id:int = board._source._builder.ids.id_for(benefit_loc)
+		for projected_area in board._source.read_view().get("areas", []):
+			for location in projected_area.get("locations", []):
+				if location.id == location_id:
+					projected_loc = location
+		check(not projected_loc.is_empty(), "formal source projects benefit seat")
+		board._bind_seat(seat, projected_loc, true)
 		var benefit := GetEffectiveLocationBenefit.current_benefit(benefit_loc)
 		check(seat.get_node("Badge/Label").text == str(benefit), "gold badge contains only benefit number")
 		check(seat.get_node("Label").text == "地利 %d" % benefit, "lower benefit label remains unchanged")
@@ -88,6 +99,12 @@ func run() -> void:
 	GameProgress.current_player_id = int(ordered_ids.back())
 	GameProgress.current_phase_player_index = ordered_ids.size()
 	check(GameProgress.end_current_player_action(), "last battle participant finishes through real progression entry")
+	check(not GameProgress.has_battle_broadcast_consumer() and GameProgress.is_battle_broadcast_pending(), "no consumer still waits under explicit bool policy")
+	var consumer := Node.new()
+	GameProgress.register_battle_broadcast_consumer(consumer)
+	consumer.free()
+	check(not GameProgress.has_battle_broadcast_consumer() and GameProgress.battle_broadcast_requires_confirm and GameProgress.is_battle_broadcast_pending(), "destroying consumer changes neither policy nor pending rule")
+	GameProgress.register_battle_broadcast_consumer(board)
 
 	# ① 结算数据字段齐备，且胜负正确
 	check(GameProgress.last_battle_result.has("details_by_area"), "battle result carries details_by_area")
@@ -101,7 +118,7 @@ func run() -> void:
 		check(d.get("players", []) == [0, 1], "both participants recorded")
 		check(d.get("highest_power", -1) == 20, "highest power is 20")
 
-	# ② 有消费者时结算后暂停，不立即进入下一回合
+	# ② 显式策略要求结算后暂停，不立即进入下一回合
 	check(GameProgress.is_battle_broadcast_pending(), "broadcast pending after battle resolve")
 	check(GameProgress.current_phase_index == 3, "phase not advanced while pending")
 

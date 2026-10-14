@@ -1,0 +1,11 @@
+{
+  "scripts/net/server/server_bootstrap.gd": "77b86fec2477de5ccddcd8e95cc6556cbadf872b67f5b4eca1d251a68be2f56b",
+  "scripts/net/server/server_console_channel.gd": "9eea95ad15fc0f4e04c3d9edfe0071a523e1f44a23558b324ceab818de16da02",
+  "scripts/io/native_capability_view.gd": "e24b24228589e9cf68b59b91dae7fa1b80b6586f618726be26e37325964671ba",
+  "scripts/net/server/server_room_manager.gd": "fadbeb892cfce741d62b95ff1c452d86b883d9a39c811851318d4a97f3799d53",
+  "scripts/net/server/server_shutdown.gd": "7526d0b8fd7d427a04a67085f462425f845e883a3210ee8017a0a30963b60227",
+  "scripts/net/server/server_cli.gd": "8ecc943bd496ef2c85e16e66c3495a6b37b63818d56e94e2e398c0a94ddfaf6a",
+  "addons/fate_server_signals/bin/libfate_server_signals.windows.template_release.x86_64.dll": "92a42bd2860af19ca432321400bdaa514a2a9c11f9289a43c76e19a2e2bd68cd",
+  "addons/fate_server_signals/bin/libfate_server_signals.windows.x86_64.dll": "a5990f5eeb5023c9f624e505c50cb989e66ab32e4f85b43436bb751aab6d0730",
+  "addons/fate_server_signals/bin/~libfate_server_signals.windows.template_release.x86_64.dll": "92a42bd2860af19ca432321400bdaa514a2a9c11f9289a43c76e19a2e2bd68cd"
+}

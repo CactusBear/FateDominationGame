@@ -1641,7 +1641,7 @@ metadata/event_zoom_img = "res://data/events/origin/glorious_duel/glorious_duel.
 metadata/event_title = "【光荣的决斗】"
 metadata/event_desc = "深山町明置事件牌
 
-效果：本战场所有英灵进行光荣的正面对决，力量属性攻击的威力 +2。"
+本战场所有英灵进行光荣的正面对决，力量属性攻击的威力 +2。"
 
 [node name="EventDiscardRow" type="CenterContainer" parent="Middle_MainPlayground/Battlefields_CenterContainer/Area_Miyama/VBox" unique_id=933064713]
 layout_mode = 2

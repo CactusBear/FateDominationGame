@@ -56,7 +56,8 @@
 						"options": [
 							{
 								"shown_option_name": "宝具绽放 - 被动/战斗阶段：若你于本回合打出了你战斗中魔力消耗最高的宝具攻击，获得1点战果。若其消耗≥4，你额外获得1点战果",
-								"activation_requirements": [
+								"activation_requirements": [{"message": "本回合未打出魔力消耗最高的宝具攻击", "funcs": [{"func_name": "get_player_played_cards", "parameters": [-1], "var_index": 0},{"func_name": "get_cards_by_attributes_fr_arr", "parameters": [["noble_phantasm"], {"self_var": 0}], "var_index": 1},{"func_name": "array_length", "parameters": [{"self_var": 1}], "var_index": 2},{"func_name": "compare_number", "parameters": [{"self_var": 2}, 0], "var_index": 3},{"func_name": "match_func", "parameters": [{"self_var": 3}, [1]], "var_index": 4}]},
+
 									{
 										"message": "本回合未打出魔力消耗最高的宝具攻击",
 										"funcs": [
@@ -159,16 +160,12 @@
 												"var_index": 9
 											},
 											{
-												"func_name": "is_in_array",
-												"parameters": [
-													{
-														"self_var": 9
-													},
-													{
-														"self_var": 2
-													}
-												],
-												"var_index": 10
+												"func_name": "get_cards_by_attributes_fr_arr", "parameters": [["noble_phantasm"], {"self_var": 2}], "var_index": 10},
+{"func_name": "get_extreme_by_property", "parameters": [{"self_var": 10}, "_cost", true], "var_index": 11},
+{"func_name": "get_property", "parameters": [{"self_var": 9}, "_cost"], "var_index": 12},
+{"func_name": "get_property", "parameters": [{"self_var": 11}, "_cost"], "var_index": 13},
+{"func_name": "compare_number", "parameters": [{"self_var": 13}, {"self_var": 12}], "var_index": 14},
+{"func_name": "match_func", "parameters": [{"self_var": 14}, [0]], "var_index": 15
 											}
 										]
 									}

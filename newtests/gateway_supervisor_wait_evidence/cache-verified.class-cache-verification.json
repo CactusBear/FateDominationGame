@@ -1,0 +1,174 @@
+{
+  "prior_projects": [
+    {
+      "project": "E:\\scratch\\gateway-approved-triage\\fixed\\project",
+      "archive_exists": false,
+      "cleanup": "no archive to delete/ignore; bounded dependency freeze excludes it",
+      "cache_sha256": "e4d9b2ea43a3883804f8cadcce02cee91f8dafc669dd0535e35315a81df6eb29",
+      "MatchLobbySession_entries": [
+        "{\n\"base\": &\"RefCounted\",\n\"class\": &\"MatchLobbySession\",\n\"icon\": \"\",\n\"is_abstract\": false,\n\"is_tool\": false,\n\"language\": &\"GDScript\",\n\"path\": \"res://scripts/net/session/lobby_session.gd\"\n}"
+      ]
+    },
+    {
+      "project": "E:\\scratch\\gateway-supervisor-triage\\diagnostic\\project",
+      "archive_exists": false,
+      "cleanup": "no archive to delete/ignore; bounded dependency freeze excludes it",
+      "cache_sha256": "e4d9b2ea43a3883804f8cadcce02cee91f8dafc669dd0535e35315a81df6eb29",
+      "MatchLobbySession_entries": [
+        "{\n\"base\": &\"RefCounted\",\n\"class\": &\"MatchLobbySession\",\n\"icon\": \"\",\n\"is_abstract\": false,\n\"is_tool\": false,\n\"language\": &\"GDScript\",\n\"path\": \"res://scripts/net/session/lobby_session.gd\"\n}"
+      ]
+    },
+    {
+      "project": "E:\\scratch\\gateway-supervisor-triage\\fixed\\project",
+      "archive_exists": false,
+      "cleanup": "no archive to delete/ignore; bounded dependency freeze excludes it",
+      "cache_sha256": "e4d9b2ea43a3883804f8cadcce02cee91f8dafc669dd0535e35315a81df6eb29",
+      "MatchLobbySession_entries": [
+        "{\n\"base\": &\"RefCounted\",\n\"class\": &\"MatchLobbySession\",\n\"icon\": \"\",\n\"is_abstract\": false,\n\"is_tool\": false,\n\"language\": &\"GDScript\",\n\"path\": \"res://scripts/net/session/lobby_session.gd\"\n}"
+      ]
+    },
+    {
+      "project": "E:\\scratch\\gateway-supervisor-triage\\paced-fixed\\project",
+      "archive_exists": false,
+      "cleanup": "no archive to delete/ignore; bounded dependency freeze excludes it",
+      "cache_sha256": "e4d9b2ea43a3883804f8cadcce02cee91f8dafc669dd0535e35315a81df6eb29",
+      "MatchLobbySession_entries": [
+        "{\n\"base\": &\"RefCounted\",\n\"class\": &\"MatchLobbySession\",\n\"icon\": \"\",\n\"is_abstract\": false,\n\"is_tool\": false,\n\"language\": &\"GDScript\",\n\"path\": \"res://scripts/net/session/lobby_session.gd\"\n}"
+      ]
+    },
+    {
+      "project": "E:\\scratch\\gateway-supervisor-triage\\paced-fixed-v2\\project",
+      "archive_exists": false,
+      "cleanup": "no archive to delete/ignore; bounded dependency freeze excludes it",
+      "cache_sha256": "e4d9b2ea43a3883804f8cadcce02cee91f8dafc669dd0535e35315a81df6eb29",
+      "MatchLobbySession_entries": [
+        "{\n\"base\": &\"RefCounted\",\n\"class\": &\"MatchLobbySession\",\n\"icon\": \"\",\n\"is_abstract\": false,\n\"is_tool\": false,\n\"language\": &\"GDScript\",\n\"path\": \"res://scripts/net/session/lobby_session.gd\"\n}"
+      ]
+    },
+    {
+      "project": "E:\\scratch\\gateway-supervisor-triage\\clean\\project",
+      "archive_exists": false,
+      "cleanup": "no archive to delete/ignore; bounded dependency freeze excludes it",
+      "cache_sha256": "e4d9b2ea43a3883804f8cadcce02cee91f8dafc669dd0535e35315a81df6eb29",
+      "MatchLobbySession_entries": [
+        "{\n\"base\": &\"RefCounted\",\n\"class\": &\"MatchLobbySession\",\n\"icon\": \"\",\n\"is_abstract\": false,\n\"is_tool\": false,\n\"language\": &\"GDScript\",\n\"path\": \"res://scripts/net/session/lobby_session.gd\"\n}"
+      ]
+    }
+  ],
+  "import": {
+    "command": [
+      "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+      "--headless",
+      "--fixed-fps",
+      "60",
+      "--path",
+      "E:\\scratch\\gateway-supervisor-triage\\cache-verified\\project",
+      "--import"
+    ],
+    "exit": 0,
+    "engine_errors": 0,
+    "job_records": [
+      {
+        "label": "import",
+        "command": [
+          "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+          "--headless",
+          "--fixed-fps",
+          "60",
+          "--path",
+          "E:\\scratch\\gateway-supervisor-triage\\cache-verified\\project",
+          "--import"
+        ],
+        "exited": true,
+        "pid": 29404,
+        "exit_code": 0,
+        "budget_failure": null,
+        "duration_seconds": 71.816,
+        "active_owned_processes": 0,
+        "log_handles_released": true
+      }
+    ]
+  },
+  "after_import": {
+    "project": "E:\\scratch\\gateway-supervisor-triage\\cache-verified\\project",
+    "archive_exists": false,
+    "cleanup": "no archive to delete/ignore; bounded dependency freeze excludes it",
+    "cache_sha256": "e4d9b2ea43a3883804f8cadcce02cee91f8dafc669dd0535e35315a81df6eb29",
+    "MatchLobbySession_entries": [
+      "{\n\"base\": &\"RefCounted\",\n\"class\": &\"MatchLobbySession\",\n\"icon\": \"\",\n\"is_abstract\": false,\n\"is_tool\": false,\n\"language\": &\"GDScript\",\n\"path\": \"res://scripts/net/session/lobby_session.gd\"\n}"
+    ]
+  },
+  "scene": {
+    "command": [
+      "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+      "--headless",
+      "--fixed-fps",
+      "60",
+      "--path",
+      "E:\\scratch\\gateway-supervisor-triage\\cache-verified\\project",
+      "--scene",
+      "res://tests/net_server_gateway_restart_test.tscn",
+      "--",
+      "E:/scratch/gateway-supervisor-triage/cache-verified/fixture"
+    ],
+    "exit": 1,
+    "analysis": {
+      "passed": false,
+      "reasons": [
+        "nonzero_exit",
+        "result_failures",
+        "check_false",
+        "check_false",
+        "check_false",
+        "check_false"
+      ],
+      "result": {
+        "checks": 46,
+        "failures": [
+          "恢复失败后立即停止，不进入后续长时间镜像等待",
+          "中局恢复失败后立即短路，不级联等待至测试预算耗尽",
+          "保存回执及原生EXITED确认后释放；失败不强杀：{ \"ok\": true, \"result\": { \"stage\": \"failed\", \"failures\": { \"27bed427884b2a23cd138b235b84e0be\": \"原生进程句柄不可用，无法确认本次保存\" }, \"pending_rooms\": [], \"stopped\": false } }",
+          "正常或失败结束均释放全部房间登记及进程所有权"
+        ]
+      }
+    },
+    "job_records": [
+      {
+        "label": "scene",
+        "command": [
+          "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+          "--headless",
+          "--fixed-fps",
+          "60",
+          "--path",
+          "E:\\scratch\\gateway-supervisor-triage\\cache-verified\\project",
+          "--scene",
+          "res://tests/net_server_gateway_restart_test.tscn",
+          "--",
+          "E:/scratch/gateway-supervisor-triage/cache-verified/fixture"
+        ],
+        "exited": true,
+        "pid": 39372,
+        "exit_code": 1,
+        "budget_failure": null,
+        "duration_seconds": 167.067,
+        "active_owned_processes": 0,
+        "log_handles_released": true
+      }
+    ],
+    "check_true": 42,
+    "check_false": 4,
+    "error_count": 0,
+    "fixture_sha256": "57346fad455f46f44d13845919f29bfb635f963b7e19d3868d3a02ec88ff7b7f",
+    "helper_sha256": "a785bf7274d8513d5b9b0f0c993ac502d4ba46caec79713f0f755938b253080c"
+  },
+  "after_scene": {
+    "project": "E:\\scratch\\gateway-supervisor-triage\\cache-verified\\project",
+    "archive_exists": false,
+    "cleanup": "no archive to delete/ignore; bounded dependency freeze excludes it",
+    "cache_sha256": "e4d9b2ea43a3883804f8cadcce02cee91f8dafc669dd0535e35315a81df6eb29",
+    "MatchLobbySession_entries": [
+      "{\n\"base\": &\"RefCounted\",\n\"class\": &\"MatchLobbySession\",\n\"icon\": \"\",\n\"is_abstract\": false,\n\"is_tool\": false,\n\"language\": &\"GDScript\",\n\"path\": \"res://scripts/net/session/lobby_session.gd\"\n}"
+    ]
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "prebudget_vs_original_failure_differences": [
+    "tests/room_data_preparation_consumer_test.gd",
+    "tests/round36_gateway_fixture.gd"
+  ],
+  "runs": {
+    "diagnostic": {
+      "checks": 46,
+      "true": 41,
+      "false": 5,
+      "exit": 1,
+      "ERROR_lines": [],
+      "Job0": true,
+      "target_checks": [
+        "CHECK all approved client files assemble and verify before ready true",
+        "CHECK all approved client files assemble and verify before ready true"
+      ],
+      "receipt": "E:\\scratch\\gateway-approved-triage\\diagnostic\\evidence\\receipt.json"
+    },
+    "paced-legacy": {
+      "checks": 14,
+      "true": 11,
+      "false": 3,
+      "exit": 1,
+      "ERROR_lines": [],
+      "Job0": true,
+      "target_checks": [
+        "CHECK all approved client files assemble and verify before ready true",
+        "CHECK all approved client files assemble and verify before ready false"
+      ],
+      "receipt": "E:\\scratch\\gateway-approved-triage\\paced-legacy\\evidence\\receipt.json"
+    },
+    "paced-legacy-v2": {
+      "checks": 12,
+      "true": 11,
+      "false": 1,
+      "exit": 1,
+      "ERROR_lines": [],
+      "Job0": true,
+      "target_checks": [
+        "CHECK all approved client files assemble and verify before ready false"
+      ],
+      "receipt": "E:\\scratch\\gateway-approved-triage\\paced-legacy-v2\\evidence\\receipt.json"
+    },
+    "paced-fixed-v2": {
+      "checks": 15,
+      "true": 12,
+      "false": 3,
+      "exit": 1,
+      "ERROR_lines": [],
+      "Job0": true,
+      "target_checks": [
+        "CHECK all approved client files assemble and verify before ready true",
+        "CHECK all approved client files assemble and verify before ready true"
+      ],
+      "receipt": "E:\\scratch\\gateway-approved-triage\\paced-fixed-v2\\evidence\\receipt.json"
+    },
+    "fixed": {
+      "checks": 14,
+      "true": 11,
+      "false": 3,
+      "exit": 1,
+      "ERROR_lines": [],
+      "Job0": true,
+      "target_checks": [
+        "CHECK all approved client files assemble and verify before ready true",
+        "CHECK all approved client files assemble and verify before ready false"
+      ],
+      "receipt": "E:\\scratch\\gateway-approved-triage\\fixed\\evidence\\receipt.json"
+    }
+  },
+  "source_sha256": {
+    "tests/net_server_match_test.gd": "a3dedfd5e6d886d1df47fb0478956f132173d58c770b4e480a3bc66959ec020c",
+    "scripts/net/content/room_data_sync.gd": "e4fab1f71bd98337cf41369ef133dc43e3b8606e8d9590f390ffd9883779d44f",
+    "scripts/net/content/room_data_assembler.gd": "f39d01f8b8a48a3298c461a69fdcee986e68559066b29e69957e0899f76d282e",
+    "scripts/net/ui/lobby_screen.gd": "dc9c99cf144c6dd9f8c5adf2c75f6f0fa5c975b91eaf31ee7df1e7be26ef7830",
+    "tests/round36_gateway_fixture.gd": "87c0ad6f679cec179ce9aded1717646dea61a85814ad7df7db2c4db67460594e"
+  },
+  "diagnostic_vs_fixed_differences": [
+    "tests\\net_server_match_test.gd"
+  ]
+}

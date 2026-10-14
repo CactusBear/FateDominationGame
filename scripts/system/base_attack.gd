@@ -1,11 +1,15 @@
 extends BaseHandCard
 class_name BaseAttack
 
-func clone_data(context):
-	var cloned = BaseAttack.new(_name, _card_img, _attributes.duplicate(), context.copy(_cost), context.copy(_power), [])
+func clone_data(context:CloneContext):
+	if not context.is_copying():
+		return context.copy(self)
+	if context.prepare_card(self) == null:
+		return null
+	var cloned = BaseAttack.new(_name, _card_img, _attributes.duplicate(), context.copy(_cost), context.copy(_power), [], false)
 	copy_clone_fields(cloned, context)
 	cloned._category = _category
-	return cloned
+	return context.finish_card(self, cloned)
 
 #攻击牌类别：用字段区分，不新建子类。
 const CATEGORY_BASIC := "basic"          #基础攻击牌（右下角标 Basic Attack）
@@ -16,7 +20,7 @@ const CATEGORY_CLASS := "class"          #职阶攻击牌（会进牌库的职�
 var _category:String = CATEGORY_NON_BASIC
 
 
-func _init(card_name:String, card_img:String, attributes:Array, cost:BaseNumber = BaseNumber.new(0), power:BaseNumber = BaseNumber.new(0), effects:Array = []):
+func _init(card_name:String, card_img:String, attributes:Array, cost:BaseNumber = BaseNumber.new(0), power:BaseNumber = BaseNumber.new(0), effects:Array = [], register_object:bool = true):
 	_name = card_name
 	_card_img = card_img
 	_attributes = attributes
@@ -26,4 +30,5 @@ func _init(card_name:String, card_img:String, attributes:Array, cost:BaseNumber 
 	
 	numbers.insert(0, cost)
 	numbers.insert(1, power)
-	super.add_object()
+	if register_object:
+		super.add_object()

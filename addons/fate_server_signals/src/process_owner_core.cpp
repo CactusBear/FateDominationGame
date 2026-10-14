@@ -65,6 +65,23 @@ static std::wstring quote(const std::wstring &text) {
     result.append(slashes * 2, L'\\');
     return result + L"\"";
 }
+static uint64_t creation_time(HANDLE process, DWORD &error) {
+    FILETIME created{}, exited{}, kernel{}, user{};
+    if (!GetProcessTimes(process, &created, &exited, &kernel, &user)) {
+        error = GetLastError();
+        return 0;
+    }
+    error = 0;
+    return (static_cast<uint64_t>(created.dwHighDateTime) << 32) | created.dwLowDateTime;
+}
+static void retire_created_root(HANDLE process, HANDLE thread) {
+    if (process && process != INVALID_HANDLE_VALUE) {
+        TerminateProcess(process, 125);
+        WaitForSingleObject(process, 5000);
+    }
+    if (thread && thread != INVALID_HANDLE_VALUE) CloseHandle(thread);
+    if (process && process != INVALID_HANDLE_VALUE) CloseHandle(process);
+}
 #else
 static int wait_readable(int fd, int timeout_ms) {
     auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout_ms);
@@ -129,7 +146,7 @@ ProcessOwner::Spawn ProcessOwner::spawn(const std::string &executable, const std
     for (const auto &arg : args) if (arg.find('\0') != std::string::npos) return result;
     std::string token = new_token();
     if (token.empty() || entries.count(token)) return result;
-    auto slot = entries.emplace(token, Entry{-1, -1}).first;
+    auto slot = entries.emplace(token, Entry{}).first;
 #ifdef _WIN32
     std::wstring application = wide(executable);
     std::wstring command = quote(application);
@@ -141,11 +158,40 @@ ProcessOwner::Spawn ProcessOwner::spawn(const std::string &executable, const std
     if (application.empty() || command.size() >= 32767) { entries.erase(slot); return result; }
     STARTUPINFOW startup{}; startup.cb = sizeof(startup);
     PROCESS_INFORMATION process{};
-    if (!CreateProcessW(application.c_str(), &command[0], nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &process)) {
+    if (!CreateProcessW(application.c_str(), &command[0], nullptr, nullptr, FALSE, CREATE_SUSPENDED,
+        nullptr, nullptr, &startup, &process)) {
         entries.erase(slot); return result;
     }
-    CloseHandle(process.hThread);
-    slot->second = Entry{static_cast<int64_t>(process.dwProcessId), reinterpret_cast<intptr_t>(process.hProcess)};
+    DWORD identity_error = 0;
+    uint64_t born = creation_time(process.hProcess, identity_error);
+    if (identity_error || !born) {
+        entries.erase(slot);
+        retire_created_root(process.hProcess, process.hThread);
+        return result;
+    }
+    WindowsJobLease::Binding binding{token, process.dwProcessId, born};
+    auto lease = std::make_unique<WindowsJobLease>();
+    auto assigned = lease->assign({reinterpret_cast<intptr_t>(process.hProcess), binding, true});
+    if (!assigned.ok) {
+        entries.erase(slot);
+        retire_created_root(process.hProcess, process.hThread);
+        return result;
+    }
+    entries.erase(slot);
+    auto inserted = entries.emplace(token, Entry{static_cast<int64_t>(process.dwProcessId),
+        reinterpret_cast<intptr_t>(process.hProcess), reinterpret_cast<intptr_t>(process.hThread),
+        std::move(lease), binding});
+    if (!inserted.second) {
+        retire_created_root(process.hProcess, process.hThread);
+        return result;
+    }
+    slot = inserted.first;
+    // Entry is registered before release of the caller's suspended gate.
+    if (ResumeThread(process.hThread) != 1) {
+        retire_created_root(process.hProcess, process.hThread);
+        entries.erase(inserted.first);
+        return result;
+    }
 #else
     std::vector<char *> argv;
     argv.push_back(const_cast<char *>(executable.c_str()));
@@ -220,7 +266,14 @@ ProcessOwner::State ProcessOwner::inspect(const Entry &entry) {
 ProcessOwner::State ProcessOwner::state(const std::string &token, int64_t pid) {
     std::lock_guard<std::mutex> lock(mutex);
     auto entry = entries.find(token);
-    return entry == entries.end() || entry->second.pid != pid ? UNKNOWN : inspect(entry->second);
+    if (entry == entries.end() || entry->second.pid != pid) return UNKNOWN;
+    if (entry->second.lease) {
+        auto receipt = entry->second.lease->observe(entry->second.binding);
+        if (!receipt.ok) return UNKNOWN;
+        return receipt.root_state == WindowsJobLease::RootState::exited ? EXITED :
+            receipt.root_state == WindowsJobLease::RootState::running ? RUNNING : UNKNOWN;
+    }
+    return inspect(entry->second);
 }
 bool ProcessOwner::stop(const Entry &entry) {
     State observed = inspect(entry);
@@ -243,6 +296,7 @@ bool ProcessOwner::terminate(const std::string &token, int64_t pid) {
 }
 void ProcessOwner::dispose(const Entry &entry) {
 #ifdef _WIN32
+    if (entry.thread) CloseHandle(reinterpret_cast<HANDLE>(entry.thread));
     CloseHandle(reinterpret_cast<HANDLE>(entry.handle));
 #else
     siginfo_t info{};
@@ -253,12 +307,38 @@ void ProcessOwner::dispose(const Entry &entry) {
 bool ProcessOwner::release(const std::string &token, int64_t pid) {
     std::lock_guard<std::mutex> lock(mutex);
     auto entry = entries.find(token);
-    if (entry == entries.end() || entry->second.pid != pid || inspect(entry->second) != EXITED) return false;
+    if (entry == entries.end() || entry->second.pid != pid) return false;
+    if (entry->second.lease) {
+        auto receipt = entry->second.lease->release(entry->second.binding);
+        if (!receipt.release_complete || !receipt.handles_released) return false;
+#ifdef _WIN32
+        if (!CloseHandle(reinterpret_cast<HANDLE>(entry->second.thread))) return false;
+        entry->second.thread = 0;
+        if (!CloseHandle(reinterpret_cast<HANDLE>(entry->second.handle))) return false;
+        entry->second.handle = 0;
+#endif
+        entries.erase(entry);
+        return true;
+    }
+    if (inspect(entry->second) != EXITED) return false;
     dispose(entry->second); entries.erase(entry); return true;
+}
+WindowsJobLease::Receipt ProcessOwner::tree_observe(const std::string &token, int64_t pid) const {
+    std::lock_guard<std::mutex> lock(mutex);
+    auto entry = entries.find(token);
+    if (entry == entries.end() || entry->second.pid != pid || !entry->second.lease) {
+        WindowsJobLease::Receipt receipt;
+        receipt.stage = "lease_unknown";
+        return receipt;
+    }
+    return entry->second.lease->observe(entry->second.binding);
 }
 ProcessOwner::~ProcessOwner() {
     for (const auto &entry : entries) {
-        stop(entry.second); dispose(entry.second);
+        // Destruction closes this owner's references only. Explicit caller policy
+        // decides whether an unready root may be retired; ready/unknown state is
+        // never silently terminated here.
+        dispose(entry.second);
     }
 }
 }

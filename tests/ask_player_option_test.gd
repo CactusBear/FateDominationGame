@@ -3,14 +3,11 @@ extends Node
 # 选完做选中那一项，再从下一步接着做。放弃选择也要接着做后面的步骤。
 # 选项里与后面的步骤都能读同一张变量表。
 
-var failures:Array[String] = []
-var checks:int = 0
+const Observer = preload("res://tests/round47_public_test_observer.gd")
 
 
 func check(ok:bool, label:String) -> void:
-	checks += 1
-	if !ok: failures.append(label)
-	print("CHECK ", label, " ", ok)
+	Observer.check(ok, label)
 
 
 func _ready() -> void:
@@ -19,6 +16,7 @@ func _ready() -> void:
 
 func setup() -> void:
 	EffectManager.reset_runtime()
+	GameLog.reset()
 	GameData.player_data_library.clear()
 	var d:Dictionary = GameData.new_player_data()
 	d.is_out = false
@@ -55,6 +53,7 @@ func start() -> BaseEffect:
 
 
 func run() -> void:
+	Observer.reset()
 	setup()
 	var base := magic()
 	var parent := start()
@@ -67,6 +66,9 @@ func run() -> void:
 	check(parent._self_vars.size() > 6 and str(parent._self_vars[6]) == "hundred", "later steps read vars set inside the option " + str(parent._self_vars))
 	check(not EffectManager.is_waiting_for_choice(), "nothing left waiting")
 	check(not EffectManager.effect_pool.has(pending), "choice removed after it resolved")
+	check(Observer.names() == ["edit_score", "ask_player_option", "store_value", "edit_score", "store_value", "edit_score"],
+		"selected branch has the complete ordered execution trace")
+	Observer.trace("mid choice selected")
 
 	setup()
 	base = magic()
@@ -75,9 +77,22 @@ func run() -> void:
 	EffectManager.submit_active_choice(pending, false)
 	check(magic() == base + 1 + 1000, "declining still runs the remaining steps " + str(magic() - base))
 	check(not EffectManager.is_waiting_for_choice(), "nothing waiting after decline")
-	check(EffectManager._paused_runs.is_empty(), "no paused run left behind")
+	check(not EffectManager.effect_pool.has(pending), "declined child is removed")
+	check(Observer.names() == ["edit_score", "ask_player_option", "store_value", "edit_score"],
+		"decline trace runs parent tail once without a selected branch")
+	var calls_before:int = GameLog.all_func_calls().size()
+	EffectManager.run_pipeline()
+	check(magic() == base + 1001 and GameLog.all_func_calls().size() == calls_before,
+		"no paused run left behind")
+	check(not EffectManager.submit_active_choice(pending, false), "resolved decline cannot resume parent twice")
+	Observer.trace("mid choice declined")
+	var next_base:int = magic()
+	var next_parent := start()
+	var next_pending := EffectManager.get_pending_active_effect()
+	check(next_pending != null and next_pending != pending and EffectManager.submit_option_choice(next_pending, [0]),
+		"new choice works without resetting the declined runtime")
+	check(magic() == next_base + 1011 and next_parent._self_vars.size() > 6 and next_parent._self_vars[6] == "ten" and
+		not EffectManager.is_waiting_for_choice(), "new parent has its own branch variables and one tail")
+	Observer.trace("new parent after decline without reset")
 
-	print("RESULT checks=%d failures=%d" % [checks, failures.size()])
-	for f in failures:
-		print("FAIL ", f)
-	get_tree().quit(1 if failures.size() > 0 else 0)
+	Observer.finish(get_tree())

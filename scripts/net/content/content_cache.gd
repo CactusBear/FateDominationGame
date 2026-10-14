@@ -12,6 +12,52 @@ var _pins: Dictionary = {}
 static var _shared_pins: Dictionary = {}
 static var _lifecycle_lock: Mutex = Mutex.new()
 var error: String = ""
+## static pin/Mutex 不跨进程。共享模式不提供在线删除。
+var cross_process_shared: bool = false
+## 仅由本机批准的 manifest 显式登记；不扫描或猜测目录。
+var _verified_sources: Dictionary = {}
+
+func configure_shared_root(approved_root: String) -> bool:
+	var shared_root: String = approved_root.path_join("content-cache")
+	if not Paths.checked(approved_root, shared_root, true):
+		error = "共享缓存路径越过批准根或包含链接"
+		return false
+	if DirAccess.make_dir_recursive_absolute(shared_root) != OK or not Paths.checked(approved_root, shared_root):
+		error = "无法安全建立共享缓存"
+		return false
+	root = shared_root
+	cross_process_shared = true
+	return true
+
+func register_verified_source(key: String, approved_root: String, path: String, size: int) -> bool:
+	_lifecycle_lock.lock()
+	var source: Dictionary = {"approved_root": approved_root, "path": path, "size": size, "cache_root": Paths.absolute(root)}
+	var bytes: PackedByteArray = _read_verified_source(key, source)
+	var ok: bool = not bytes.is_empty()
+	if ok:
+		_verified_sources[key] = source
+	else:
+		error = "只读来源路径、大小或 SHA256 校验失败"
+	_lifecycle_lock.unlock()
+	return ok
+
+func _read_verified_source(key: String, source: Dictionary) -> PackedByteArray:
+	if not valid_key(key) or source.size <= 0 or source.size > max_file_bytes or source.cache_root.is_empty() or not Paths.same(root, source.cache_root):
+		return PackedByteArray()
+	if not Paths.checked(source.approved_root, source.path): return PackedByteArray()
+	var file := FileAccess.open(source.path, FileAccess.READ)
+	if file == null: return PackedByteArray()
+	if file.get_length() != source.size:
+		file.close()
+		return PackedByteArray()
+	var bytes: PackedByteArray = file.get_buffer(source.size)
+	var read_error: Error = file.get_error()
+	var same_size: bool = file.get_length() == source.size
+	file.close()
+	if read_error != OK or not same_size or bytes.size() != source.size or digest(bytes) != key or not Paths.checked(source.approved_root, source.path):
+		return PackedByteArray()
+	return bytes
+
 
 static func digest(bytes: PackedByteArray) -> String:
 	var hash := HashingContext.new()
@@ -39,6 +85,9 @@ func _store_locked(key: String, bytes: PackedByteArray) -> bool:
 	if not valid_key(key) or bytes.is_empty() or bytes.size() > max_file_bytes or digest(bytes) != key:
 		error = "缓存大小或校验值无效"
 		return false
+	# 来源命中先于缓存 mkdir/写入；后续 store 同字节也不再复制。
+	if _verified_sources.has(key) and _read_verified_source(key, _verified_sources[key]) == bytes:
+		return true
 	var ancestor: String = Paths.absolute(root)
 	if ancestor.is_empty():
 		error = "缓存路径无效"
@@ -120,7 +169,11 @@ func fetch(key: String) -> PackedByteArray:
 func _fetch_locked(key: String, clean_corrupt: bool = true) -> PackedByteArray:
 	if not valid_key(key):
 		return PackedByteArray()
+	if _verified_sources.has(key):
+		var source_bytes: PackedByteArray = _read_verified_source(key, _verified_sources[key])
+		if not source_bytes.is_empty(): return source_bytes
 	var path := root.path_join(key)
+	if not Paths.checked(root, path): return PackedByteArray()
 	var dir := DirAccess.open(root)
 	# 不跟随显式链接；这不是同权限攻击者下的无竞态文件操作。
 	if dir == null or dir.is_link(key):
@@ -144,6 +197,7 @@ func _fetch_locked(key: String, clean_corrupt: bool = true) -> PackedByteArray:
 	return bytes
 
 func _remove_corrupt_locked(key: String) -> void:
+	if cross_process_shared or not Paths.checked(root, root.path_join(key)): return
 	# 在途/组装持有者的路径不能被清理；稍后 fetch 或 clear 可重试。
 	if _shared_pins.has(_identity(key)):
 		return
@@ -197,6 +251,10 @@ func clear_unused() -> int:
 	return removed
 
 func _clear_unused_locked() -> int:
+	if cross_process_shared:
+		error = "共享缓存禁止在线清理；需所有 worker/校验进程退出后离线维护"
+		return 0
+	if not Paths.checked(root, root): return 0
 	var dir := DirAccess.open(root)
 	if dir == null:
 		return 0

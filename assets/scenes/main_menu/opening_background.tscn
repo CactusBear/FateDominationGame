@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3]
+[gd_scene load_steps=35 format=3]
 
 [ext_resource type="VideoStream" path="res://assets/videos/main_menu/opening_sky_seedvr80_1080p60_v4.ogv" id="1_sky"]
 [ext_resource type="FontFile" path="res://assets/fonts/Cinzel-Bold.ttf" id="2_bold"]
@@ -10,6 +10,7 @@
 [ext_resource type="Shader" path="res://assets/shaders/portal_dolly.gdshader" id="7_portal"]
 [ext_resource type="Script" path="res://scripts/main_menu/viewport_fit.gd" id="8_fit"]
 [ext_resource type="Shader" path="res://assets/shaders/shard_suck.gdshader" id="9_shard"]
+[ext_resource type="VideoStream" path="res://assets/videos/main_menu/ae_opening_transition_v04.ogv" id="11_transition"]
 
 [sub_resource type="SystemFont" id="FontChinese"]
 font_names = PackedStringArray("Noto Serif SC", "Source Han Serif SC", "SimSun")
@@ -418,7 +419,7 @@ shader_parameter/shatter = 0.0
 shader = ExtResource("9_shard")
 shader_parameter/origin = Vector2(0.5, 0.478)
 
-[node name="OpeningBackground" type="Control" node_paths=PackedStringArray("warp_player", "reveal_player", "feedback_player", "stop_players", "freeze_videos", "warm_up_nodes")]
+[node name="OpeningBackground" type="Control" node_paths=PackedStringArray("warp_player", "reveal_player", "feedback_player", "transition_video", "stop_players", "freeze_videos", "warm_up_nodes")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -431,6 +432,8 @@ warp_animation = &"portal"
 next_scene = "res://assets/scenes/main_menu/main_menu.tscn"
 reveal_player = NodePath("Reveal")
 feedback_player = NodePath("PressFeedback")
+transition_video = NodePath("TransitionVideo")
+transition_menu_start_position = 2.16
 stop_players = [NodePath("Reveal"), NodePath("Breathing")]
 freeze_videos = [NodePath("Background")]
 warm_up_nodes = [NodePath("WarpFX"), NodePath("GrailFX"), NodePath("PortalFX")]
@@ -785,6 +788,21 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
+
+[node name="TransitionVideo" type="VideoStreamPlayer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stream = ExtResource("11_transition")
+volume_db = -80.0
+autoplay = false
+expand = true
+loop = false
 
 [node name="Reveal" type="AnimationPlayer" parent="."]
 libraries = {&"": SubResource("LibraryReveal")}

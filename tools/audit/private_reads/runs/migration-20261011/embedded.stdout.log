@@ -1,0 +1,43 @@
+{
+  "verified_templates": [
+    {
+      "path": "tools/tests/round64_shared_browsing.py",
+      "line": 24,
+      "template": "BROWSING_SCRIPT",
+      "generated_lines": 146
+    },
+    {
+      "path": "tools/tests/round64_shared_browsing.py",
+      "line": 74,
+      "template": "diagnostic",
+      "generated_lines": 1
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 28,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_lines": 73
+    },
+    {
+      "path": "tests/round55_gui_first_divergence_runner.py",
+      "line": 67,
+      "template": "NET_DIAGNOSTIC",
+      "generated_lines": 10
+    }
+  ],
+  "state_reads": 18,
+  "observation_reads": 15,
+  "categories": {
+    "需要新增公开能力": 18
+  },
+  "observation_categories": {
+    "需要新增公开能力": 15
+  },
+  "unresolved": 4,
+  "excluded": {
+    "纯赋值排除": 1,
+    "私有方法调用排除": 5
+  },
+  "limitations": "仅四个经调用点人工确认会被write_text/replace真实注入的字面量；词法工具闸门测试和源码迁移旧锚点不算运行时读取；任意动态生成片段仍非穷尽证明"
+}
+REPORT E:\Projects\Godot\FateDominationGame-master\tools\audit\private_reads\runs\migration-20261011\embedded\report.md

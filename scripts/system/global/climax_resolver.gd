@@ -1,15 +1,18 @@
 class_name ClimaxResolver
 extends RefCounted
 
+const operation_router = preload("res://scripts/system/operation_router.gd")
+
 
 #高潮按战果排名淘汰玩家。保留线上的同分玩家全部保留。
-func exec(keep_count:BaseNumber) -> Array:
+## context：调用方保存的本局原来源，逐个传给淘汰；缺省只继承已验证执行帧（由下游原语自行判定）。
+func exec(keep_count:BaseNumber, context:Variant = null) -> Array:
 	var active_ids:Array = GameDataManager.get_active_player_ids()
 	if active_ids.is_empty():
 		return []
 	if keep_count == null or keep_count.number <= 0:
 		for id in active_ids:
-			eliminate_player(id)
+			eliminate_player(id, context)
 		return []
 	if keep_count.number >= active_ids.size():
 		return active_ids
@@ -29,11 +32,11 @@ func exec(keep_count:BaseNumber) -> Array:
 		if score >= cutoff_score:
 			kept.append(id)
 		else:
-			eliminate_player(id)
+			eliminate_player(id, context)
 	return kept
 
 
-func eliminate_player(player_id:int) -> bool:
+func eliminate_player(player_id:int, context:Variant = null) -> bool:
 	if !GameData.player_data_library.has(player_id):
 		return false
 	var player_data = GameDataManager.get_player_data(player_id) as Dictionary
@@ -42,7 +45,7 @@ func eliminate_player(player_id:int) -> bool:
 	#即将淘汰：效果可以取消（遥远的理想乡、阿瓦隆这类"首次淘汰时继续"的替代）。
 	#被取消就派发"免于淘汰"，供"每次从淘汰幸存"类效果监听
 	if EffectManager.begin_pending_action(TimePoints.BEFORE_ELIMINATE, player_id).get("cancelled", false):
-		TimePointChecker.dynamic_time_point([TimePoints.SURVIVE_ELIMINATION], player_id)
+		TimePointChecker.dynamic_time_point([TimePoints.SURVIVE_ELIMINATION], player_id, null, context)
 		return false
 	player_data["is_out"] = true
 	#日志：谁被淘汰（供"当时场上有被淘汰的玩家吗"这类历史查询）。
@@ -51,20 +54,11 @@ func eliminate_player(player_id:int) -> bool:
 	GameLog.record("eliminated", player_id, -1, "", null, ["eliminated"], {"score": score})
 	#被淘汰的玩家离开版图：只置is_out不摘席位，他仍会占着位置、也仍显示在战区上。
 	#复用回合结束用的同一个原语，不在这里另写一套摘除逻辑
-	RemoveFromBoard.new().exec(player_id)
+	# 离席时点（LEAVE_LOCATION）由 remove_from_board 带同一来源派发，离场类效果才能触发。
+	operation_router.exec_registered("remove_from_board", [player_id, context], context)
 	#提示全员：谁被淘汰了。文案由显示名接口生成，不按id编号示人
-	var shown:String = _player_shown_name(player_id)
+	var shown:String = EffectManager.player_shown_name(player_id)
 	EffectManager.push_message("%s 被淘汰，战果 %d" % [shown, score])
-	TimePointChecker.dynamic_time_point([TimePoints.ELIMINATED], player_id)
+	TimePointChecker.dynamic_time_point([TimePoints.ELIMINATED], player_id, null, context)
 	return true
 
-
-#玩家的示人名字：走御主的显示名接口，取不到才回退玩家编号
-func _player_shown_name(player_id:int) -> String:
-	var player_data = GameDataManager.get_player_data(player_id) as Dictionary
-	var master = player_data.get("master")
-	if master != null:
-		var shown:String = str(master.get_shown_name())
-		if shown != "":
-			return shown
-	return "玩家 %d" % player_id

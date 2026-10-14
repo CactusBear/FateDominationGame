@@ -1,95 +1,118 @@
 class_name SituationResolver
 extends RefCounted
 
+const ROUTER = preload("res://scripts/system/operation_router.gd")
 
-#局势牌流程：每回合开始时抽一张局势牌放激活区(A2)并派魔力，回合结束时弃置。
-#抽哪张由回合号决定：1-8随机抽非高潮牌堆(A1)，9/10/11抽固定高潮牌。
-#高潮牌的展示回合存在LoadSituation.climax_situations的key里，规则数字不写死。
-
-
-#每回合开始：抽牌展示 + 所有玩家获得印刷魔力 + 登记效果
-func activate():
-	var situation = _draw_current()
+# 保存原卡、原牌堆、原 map 和原 context；工厂与消费职责分开。
+func activate(context:SessionContext = null) -> Dictionary:
+	var state:Dictionary = {"ok":true, "completed":false, "context":context, "areas":MapData.areas,
+		"deck":MapData.situations, "players":GameDataManager.get_active_player_ids(), "index":0}
+	if not _source(state): return state
+	var drawn:Dictionary = _draw_current(context)
+	if not drawn.ok:
+		_refuse(state, drawn.reason)
+		return state
+	var situation:BaseSituation = drawn.object
 	if situation == null:
 		MapData.active_situation = null
-		return
-	#局势牌即将生效：效果可以取消（直接进弃牌区，本回合没有局势牌），不属于任何玩家
-	if EffectManager.begin_pending_action(TimePoints.BEFORE_SITUATION_ACTIVATE, -1, {"situation": situation}, situation).get("cancelled", false):
+		state.completed = true
+		return state
+	state["situation"] = situation
+	var action:Dictionary = EffectManager.begin_pending_action(TimePoints.BEFORE_SITUATION_ACTIVATE, -1, {"situation":situation}, situation)
+	if not _source(state): return state
+	if action.get("invalidated", false):
+		_refuse(state, &"operation_rejected")
+		return state
+	if action.get("cancelled", false):
 		MapData.situation_discard.append(situation)
 		MapData.active_situation = null
-		return
+		state.completed = true
+		return state
 	MapData.active_situation = situation
-	_resume_activation({"situation": situation, "players": GameDataManager.get_active_player_ids(), "index": 0})
+	_resume_activation(state)
+	return state
 
+static func _refuse(state:Dictionary, reason:StringName) -> void:
+	state["ok"] = false
+	state["reason"] = reason
+	state["completed"] = true
+
+static func _source(state:Dictionary) -> bool:
+	var status:Dictionary = SessionGeneration.validate_context(state.get("context"))
+	if not status.ok:
+		_refuse(state, status.reason)
+		return false
+	if not is_same(state.get("areas"), MapData.areas) or not is_same(state.get("deck"), MapData.situations):
+		_refuse(state, &"unbound_origin")
+		return false
+	return state.get("ok", false)
 
 static func _resume_activation(state:Dictionary) -> void:
+	if not _source(state): return
 	var situation:BaseSituation = state.situation
-	#规则：所有玩家获得局势牌上印刷的魔力
-	var magic_gain:int = (situation._magic as BaseNumber).number
-	while state.index < state.players.size():
-		var id:int = state.players[state.index]
-		state.index += 1
-		EditMagic.new().exec(null, situation._magic, id)
-		if EffectManager.defer_until_runtime_guard_complete(Callable(SituationResolver, "_resume_activation").bind(state)):
-			return
-	#告诉玩家这次魔力是哪来的：资源变化不说明来源，玩家无法核对自己为什么多了魔力。
-	#文案用局势牌自己的显示名，不写死牌名
-	if magic_gain != 0:
-		EffectManager.push_message("局势牌【%s】：全员魔力 %+d" % [situation.get_shown_name(), magic_gain])
-	#把局势牌效果登记进效果池(挂battle_resolve的属性加成等)
-	_register_situation_effects()
-	#局势牌已亮出：派发本牌亮出时点，让布置类效果（增加事件牌、封锁战区、改席位上限）立刻执行。
-	#不派的话这些效果要等到战斗结算才跑，整个行动阶段玩家都看不到牌面宣告的场地变化，
-	#表现就是"局势牌效果没结算"。威力加成类仍挂 battle_resolve，不受影响
-	#带 source 派发三种卡牌亮出时点：自身、其他、任意。
-	TimePointChecker.card_revealed(situation)
-	if not EffectManager.defer_until_runtime_guard_complete(Callable(SituationResolver, "_dispatch_activated").bind(situation)):
-		_dispatch_activated(situation)
-
-
-static func _dispatch_activated(situation:BaseSituation) -> void:
-	TimePointChecker.global_time_point([TimePoints.SITUATION_ACTIVATED], situation)
-
-
-#回合结束：弃置激活的局势牌
-func clear_all():
-	var situation = MapData.active_situation
-	if situation == null:
+	if not SetCardConcealed.source_is_current(situation, state.context) or not is_same(MapData.active_situation, situation):
+		_refuse(state, &"unbound_origin")
 		return
-	UnregisterObjectEffects.new().exec(situation)
-	#移入局势牌弃牌区而不是销毁：玩家要能回看本局展示过哪些局势牌。
-	#弃牌区在每局开始时统一销毁并清空
+	while state.index < state.players.size():
+		if not _source(state): return
+		var id:int = state.players[state.index]
+		var operation:Dictionary = GameProgress.start_progress_operation("edit_magic", [null, situation._magic, id], state.context)
+		var edited:Dictionary = await GameProgress.wait_progress_operation(operation, false)
+		if not _source(state): return
+		if not edited.ok or (edited.value is bool and edited.value == false):
+			_refuse(state, &"operation_rejected")
+			return
+		state.index += 1
+		while SessionGeneration.validate_context(state.context).ok and (EffectManager.is_running or EffectManager.is_waiting_for_choice()):
+			await GameProgress.get_tree().process_frame
+		if not _source(state): return
+	var gain = situation._magic.number
+	if gain != 0: EffectManager.push_message("局势牌【%s】：全员魔力 %+d" % [situation.get_shown_name(), gain])
+	if not _register_situation_effects(situation, state.context):
+		_refuse(state, &"unbound_origin")
+		return
+	TimePointChecker.card_revealed(situation, state.context)
+	while SessionGeneration.validate_context(state.context).ok and (EffectManager.is_running or EffectManager.is_waiting_for_choice()):
+		await GameProgress.get_tree().process_frame
+	if not _source(state): return
+	TimePointChecker.global_time_point([TimePoints.SITUATION_ACTIVATED], situation, state.context)
+	if not _source(state): return
+	state.completed = true
+
+func _draw_current(context:SessionContext) -> Dictionary:
+	var status:Dictionary = SessionGeneration.validate_context(context)
+	if not status.ok: return {"ok":false, "object":null, "reason":status.reason}
+	if LoadSituation.climax_situations.has(GameProgress.current_round):
+		return MapData.copy_climax(GameProgress.current_round, context)
+	if MapData.situations.is_empty(): return {"ok":true, "object":null}
+	# 非高潮牌堆已经是 runtime；只能继承，不能 configure_template 重签。
+	var copied:Dictionary = CloneContext.new().copy_result(MapData.situations[0], context)
+	if copied.ok: MapData.situations.pop_front()
+	return copied
+
+static func _register_situation_effects(situation:BaseSituation, context:SessionContext) -> bool:
+	if not SetCardConcealed.source_is_current(situation, context): return false
+	var ids:Array = GameDataManager.get_active_player_ids()
+	if ids.is_empty(): return true
+	for effect in situation._effects:
+		if not SessionGeneration.validate_context(context).ok: return false
+		if effect._trigger_player_id == -1 and not EffectManager.register_effect(effect, int(ids[0])): return false
+	return true
+
+func clear_all(context:SessionContext = null) -> Dictionary:
+	var state:Dictionary = {"ok":true, "context":context, "areas":MapData.areas, "deck":MapData.situations}
+	if not _source(state): return state
+	var situation = MapData.active_situation
+	if situation == null: return state
+	if not SetCardConcealed.source_is_current(situation, context):
+		_refuse(state, &"unbound_origin")
+		return state
+	ROUTER.exec_registered("unregister_object_effects", [situation], context)
+	if not _source(state): return state
 	MapData.situation_discard.append(situation)
 	MapData.active_situation = null
-	#封区类局势牌(如身处地狱之门)只在本回合有效：弃置时把被改动的
-	#战区"能否常规进入"按印刷基线还原，防止一回合的封区永久生效
-	RestoreMapAreaMoveFlags.new().exec()
-	#限员类局势牌(如"魔术工房仅限一人部署")同理：弃置时还原席位人数基线
-	RestoreLocationPlNumLimits.new().exec()
-
-
-#抽当前回合的局势牌：1-8抽A1非高潮，高潮回合抽对应高潮牌。
-#挂到激活区的是克隆体，模板留在池里，重开一局还能重新发牌
-func _draw_current():
-	var round:int = GameProgress.current_round
-	if LoadSituation.climax_situations.has(round):
-		var template = LoadSituation.climax_situations[round]
-		return CloneObject.new().exec(template) as BaseSituation
-	if MapData.situations.is_empty():
-		return null
-	var template = MapData.situations.pop_front()
-	return CloneObject.new().exec(template) as BaseSituation
-
-
-#把局势牌效果登记进效果池，归属顺位第一的存活玩家作锚点。
-#锚点玩家只当触发器，效果作用对象由效果内部的get_map_area_by_name等决定
-static func _register_situation_effects():
-	var anchor:int = -1
-	for id in GameDataManager.get_active_player_ids():
-		anchor = id
-		break
-	if anchor == -1:
-		return
-	for effect in MapData.active_situation._effects:
-		if effect._trigger_player_id == -1:
-			EffectManager.register_effect(effect, anchor)
+	ROUTER.exec_registered("restore_map_area_move_flags", [], context)
+	if not _source(state): return state
+	ROUTER.exec_registered("restore_location_pl_num_limits", [], context)
+	_source(state)
+	return state

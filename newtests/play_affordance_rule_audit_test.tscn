@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/play_affordance_rule_audit_test.gd" id="1"]
+
+[node name="PlayAffordanceRuleAudit" type="Node"]
+script = ExtResource("1")

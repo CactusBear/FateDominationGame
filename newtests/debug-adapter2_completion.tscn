@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/debug-adapter2_completion.gd" id="1"]
+
+[node name="DebugAdapter2Completion" type="Node"]
+script = ExtResource("1")

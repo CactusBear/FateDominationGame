@@ -1,59 +1,72 @@
 class_name EventResolver
 extends RefCounted
 
+const ROUTER = preload("res://scripts/system/operation_router.gd")
 
-#事件牌流程：每回合按放置计划抽牌放置，回合结束时清掉场上的事件牌。
-#抽几张、放哪个战场、明置还是暗置全部由plan决定，规则数字不写死
-
-
-#按plan把事件牌放到各战场。plan里每一项是 {"area_name" : String, "concealed" : bool}。
-#从牌库头取模板再把模板移回末尾，牌库不会耗尽，一回合内也不会重复抽到同一张。
-#挂到战场上的是克隆体：效果登记时会写_trigger_player_id，
-#直接挂模板会让同一张牌下次进场时不再被登记
-func place(plan:Array) -> Array:
-	var state:Dictionary = {"plan": plan, "index": 0, "placed": []}
+# 数量、完成、拒绝分开；只消费原来源，不给卡补票。
+func place(plan:Array, context:SessionContext = null) -> Dictionary:
+	var state:Dictionary = {"ok":true, "context":context, "plan":plan.duplicate(true), "index":0,
+		"placed":[], "completed":false, "areas":MapData.areas, "deck":MapData.event_deck}
 	_resume_place(state)
-	return state.placed
-
-
-static func _resume_place(state:Dictionary) -> void:
-	while state.index < state.plan.size():
-		var p = state.plan[state.index]
-		state.index += 1
-		var area = GetMapAreaByName.new().exec(p["area_name"])
-		if area == null:
-			continue
-		#取牌堆头模板克隆挂载的完整链路在 AddEventFromDeck 里，这里只按计划传参
-		var count:int = AddEventFromDeck.new().exec(area, 1, p.get("concealed", false))
-		if count > 0:
-			state.placed.append(true)
-		if EffectManager.defer_until_runtime_guard_complete(Callable(EventResolver, "_resume_place").bind(state)):
-			return
-
-
-#规则：行动阶段开始时展示暗置放置的事件牌（基础规则是"展示位于新都的暗置事件牌"）。
-#"该翻哪个战区"沿用本回合的放置计划里 concealed=true 的那几项：
-#不写死战区名，也不会误翻别处碰巧暗置的牌。返回翻开的张数
-func reveal_planned(plan:Array) -> int:
-	return start_reveal(plan).count
-
-
-## 完成状态与数量共用原游标；暂停消费方不读取部分数量作为最终结果。
-func start_reveal(plan:Array) -> Dictionary:
-	var concealed_areas:Array = []
-	for p in plan:
-		if p.get("concealed", false):
-			concealed_areas.append(str(p.get("area_name", "")))
-	var state:Dictionary = {"areas": MapData.areas, "planned": concealed_areas, "area_index": 0, "event_index": 0, "count": 0, "completed": false}
-	_resume_reveal(state)
-	#翻开即亮出：循环里每张翻开的牌各自派发三种卡牌亮出时点（见 TimePoints.CARD_REVEALED），
-	#让布置类效果立刻执行；一张都没翻开就不派发，避免空时点白跑一轮效果检查
-	#同步调用返回已完成数量；暂停时，剩余流程由显式尾部完成。
 	return state
 
+static func _source(state:Dictionary) -> bool:
+	var valid:Dictionary = SessionGeneration.validate_context(state.get("context"))
+	if not valid.ok:
+		_refuse(state, valid.reason)
+		return false
+	if not is_same(state.get("areas"), MapData.areas):
+		_refuse(state, &"unbound_origin")
+		return false
+	return state.get("ok", false)
+
+static func _refuse(state:Dictionary, reason:StringName) -> void:
+	state["ok"] = false
+	state["reason"] = reason
+	state["completed"] = true
+
+static func _resume_place(state:Dictionary) -> void:
+	if not _source(state): return
+	if not state.has_all(["plan", "index", "placed", "deck"]) or not is_same(state.deck, MapData.event_deck):
+		_refuse(state, &"unbound_origin")
+		return
+	while state.index < state.plan.size():
+		if not _source(state): return
+		var p = state.plan[state.index]
+		var area = GetMapAreaByName.new().exec(p["area_name"])
+		if area == null:
+			state.index += 1
+			continue
+		var operation:Dictionary = GameProgress.start_progress_operation("add_event_from_deck", [area, 1, p.get("concealed", false)], state.context)
+		var outcome:Dictionary = await GameProgress.wait_progress_operation(operation)
+		if not _source(state): return
+		if not outcome.ok:
+			_refuse(state, outcome.reason)
+			return
+		var count = outcome.value
+		if not count is int:
+			_refuse(state, &"invalid_operation_result")
+			return
+		if count > 0: state.placed.append(true)
+		state.index += 1
+	state.completed = true
+
+func reveal_planned(plan:Array, context:SessionContext = null) -> Dictionary:
+	return start_reveal(plan, context)
+
+func start_reveal(plan:Array, context:SessionContext = null) -> Dictionary:
+	var planned:Array = []
+	for p in plan:
+		if p.get("concealed", false): planned.append(str(p.get("area_name", "")))
+	var state:Dictionary = {"ok":true, "context":context, "areas":MapData.areas, "planned":planned,
+		"area_index":0, "event_index":0, "count":0, "completed":false}
+	_resume_reveal(state)
+	return state
 
 static func _resume_reveal(state:Dictionary) -> void:
+	if not _source(state): return
 	while state.area_index < state.areas.size():
+		if not _source(state): return
 		var area:BaseMapArea = state.areas[state.area_index]
 		if not state.planned.has(area._area_name) or state.event_index >= area._events.size():
 			state.area_index += 1
@@ -62,36 +75,49 @@ static func _resume_reveal(state:Dictionary) -> void:
 		var event = area._events[state.event_index]
 		state.event_index += 1
 		if event is BaseEvent and event._is_concealed:
-			SetCardConcealed.new().exec(event, false)
-			state.count += 1
-			EventResolver.new().register_entered(event)
-			if EffectManager.defer_until_runtime_guard_complete(Callable(EventResolver, "_resume_reveal").bind(state)):
+			var flipped = ROUTER.exec_registered("set_card_concealed", [event, false, -1, state.context], state.context)
+			if not _source(state): return
+			if flipped != true:
+				_refuse(state, &"operation_rejected")
 				return
+			state.count += 1
+			if not EventResolver.new().register_entered(event, state.context):
+				_refuse(state, &"unbound_origin")
+				return
+			while SessionGeneration.validate_context(state.context).ok and (EffectManager.is_running or EffectManager.is_waiting_for_choice()):
+				await GameProgress.get_tree().process_frame
+			if not _source(state): return
 	state.completed = true
 
-
-#明置放置（AddEventFromDeck）与暗置翻开（reveal_planned）共用这一条：
-#登记本牌效果，再带 source 派发"本牌亮出时"——只唤醒本牌的效果，不广播给别处监听
-func register_entered(event:BaseEvent):
+# 缺省仅供 AddEventFromDeck 继承已验帧，无帧调用必须显式原来源。
+func register_entered(event:BaseEvent, context:SessionContext = null) -> bool:
+	if context == null:
+		var frame:Dictionary = EffectManager.execution_context()
+		if not frame.ok: return false
+		context = frame.context
+	if not SetCardConcealed.source_is_current(event, context): return false
 	var ids:Array = GameDataManager.get_active_player_ids()
-	if ids.is_empty(): return
+	if ids.is_empty(): return true
 	for effect in event._effects:
-		if effect._trigger_player_id == -1: EffectManager.register_effect(effect, int(ids[0]))
-	TimePointChecker.card_revealed(event)
+		if not SessionGeneration.validate_context(context).ok: return false
+		if effect._trigger_player_id == -1 and not EffectManager.register_effect(effect, int(ids[0])): return false
+	TimePointChecker.card_revealed(event, context)
+	return SessionGeneration.validate_context(context).ok
 
-
-#清掉场上所有事件牌：注销效果、从区域摘下、从对象表删除。
-#事件牌每回合重新抽，用完直接丢弃，不回牌库
-func clear_all():
-	for area:BaseMapArea in MapData.areas:
-		var events:Array = area._events
-		for i in range(events.size() - 1, -1, -1):
-			var event = events[i]
-			#先注销效果：离场的牌不能继续生效
-			UnregisterObjectEffects.new().exec(event)
-			events.remove_at(i)
-			if event is BaseEvent:
-				#移入事件牌弃牌区而不是销毁：玩家要能回看本局出过哪些事件牌。
-				#弃牌区在每局开始时统一销毁并清空，不会跨局累积
-				event.set_concealed(false)
-				MapData.event_discard.append(event)
+func clear_all(context:SessionContext = null) -> Dictionary:
+	var state:Dictionary = {"ok":true, "context":context, "areas":MapData.areas}
+	if not _source(state): return state
+	for area:BaseMapArea in state.areas:
+		for i in range(area._events.size() - 1, -1, -1):
+			if not _source(state): return state
+			var event = area._events[i]
+			if not SetCardConcealed.source_is_current(event, context):
+				_refuse(state, &"unbound_origin")
+				return state
+			ROUTER.exec_registered("unregister_object_effects", [event], context)
+			if not _source(state): return state
+			area._events.remove_at(i)
+			event.set_concealed(false)
+			MapData.event_discard.append(event)
+	state["completed"] = true
+	return state

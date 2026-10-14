@@ -1,0 +1,23 @@
+EXCEPTION pid=4276 tid=32864 first_chance=0 code=0xc0000005 flags=0x0 address=0x7ff65619d042 parameters=2
+WATCH rva=0x66dcc10 address=0x7ff65747cc10 value=0x0
+PARAM 0=0x0
+PARAM 1=0x8
+ module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x53fd042 symbol=NoHotPatch+0x53fa412
+REG RIP=7ff65619d042 RSP=5650dfecb0 RBP=5650dff580 RAX=5f740f7e RBX=8 RCX=1d4e01e33c8 RDX=1 RSI=3 RDI=7ff65b406140
+REG R8=2641ff20 R9=1d4ba8b5fb0 R10=5f740f7e R11=0 R12=0 R13=5650dff330 R14=1d4bbfb8b00 R15=1 EFLAGS=10244
+CODE address=0x7ff65619d032 bytes=942428030000e873b8a8feba01000000488b2b85c00f45d08b43208b3c878954244c89fe4885ed740b8b532485d20f85
+FRAME 0 pc=0x7ff65619d042 module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x53fd042 symbol=NoHotPatch+0x53fa412
+FRAME 1 pc=0x7ff65619d042 sp=0x5650dfecb0 module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x53fd042 symbol=NoHotPatch+0x53fa412
+FRAME 2 pc=0x7ff65252b95c sp=0x5650dfefd0 module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x178b95c symbol=NoHotPatch+0x1788d2c
+FRAME 3 pc=0x7ff652532855 sp=0x5650dff4d0 module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x1792855 symbol=NoHotPatch+0x178fc25
+FRAME 4 pc=0x7ff654bae832 sp=0x5650dff500 module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x3e0e832 symbol=NoHotPatch+0x3e0bc02
+FRAME 5 pc=0x7ff654baea39 sp=0x5650dff5c0 module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x3e0ea39 symbol=NoHotPatch+0x3e0be09
+FRAME 6 pc=0x7ff650e003e2 sp=0x5650dff680 module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x603e2 symbol=NoHotPatch+0x5d7b2
+FRAME 7 pc=0x7ff650df2adf sp=0x5650dff710 module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x52adf symbol=NoHotPatch+0x4feaf
+FRAME 8 pc=0x7ff650df2b7e sp=0x5650dffaf0 module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x52b7e symbol=NoHotPatch+0x4ff4e
+FRAME 9 pc=0x7ff650da10c9 sp=0x5650dffb40 module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x10c9 symbol_error=487
+FRAME 10 pc=0x7ff650da13f6 sp=0x5650dffbe0 module=\\?\D:\Godot4\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64.exe offset=0x13f6 symbol_error=487
+FRAME 11 pc=0x7ff9e693e8d7 sp=0x5650dffc10 module=\\?\C:\Windows\System32\kernel32.dll offset=0x2e8d7 symbol=BaseThreadInitThunk+0x17
+FRAME 12 pc=0x7ff9e7b314fc sp=0x5650dffc40 module=\\?\C:\Windows\System32\ntdll.dll offset=0xb14fc symbol=RtlUserThreadStart+0x2c
+STACK_END error=0
+EXIT pid=4276 code=0xc0000005 timedout=0

@@ -1,11 +1,15 @@
 extends BaseHandCard
 class_name BaseSkill
 
-func clone_data(context):
-	var cloned = BaseSkill.new(_name, _card_img, _attributes.duplicate(), context.copy(_cost), context.copy(_power), _ignore_limit, [])
+func clone_data(context:CloneContext):
+	if not context.is_copying():
+		return context.copy(self)
+	if context.prepare_card(self) == null:
+		return null
+	var cloned = BaseSkill.new(_name, _card_img, _attributes.duplicate(), context.copy(_cost), context.copy(_power), _ignore_limit, [], false)
 	copy_clone_fields(cloned, context)
 	cloned._is_awakened = _is_awakened
-	return cloned
+	return context.finish_card(self, cloned)
 
 
 var _ignore_limit:bool = false
@@ -13,7 +17,7 @@ var _ignore_limit:bool = false
 #由JSON声明，效果可以改写它——谁在什么时候觉醒是数据的事，代码不写死
 var _is_awakened:bool = true
 
-func _init(card_name:String, card_img:String, attributes:Array, cost:BaseNumber = BaseNumber.new(0), power:BaseNumber = BaseNumber.new(0), ignore_limit:bool = false, effects:Array = []):
+func _init(card_name:String, card_img:String, attributes:Array, cost:BaseNumber = BaseNumber.new(0), power:BaseNumber = BaseNumber.new(0), ignore_limit:bool = false, effects:Array = [], register_object:bool = true):
 	_name = card_name
 	_card_img = card_img
 	_attributes = attributes
@@ -24,7 +28,8 @@ func _init(card_name:String, card_img:String, attributes:Array, cost:BaseNumber 
 	
 	numbers.insert(0, cost)
 	numbers.insert(1, power)
-	super.add_object()
+	if register_object:
+		super.add_object()
 
 
 

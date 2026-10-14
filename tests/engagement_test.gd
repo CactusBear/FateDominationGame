@@ -6,6 +6,7 @@ extends Node
 #（例如 3 张令咒）时，可以为每张卡使用一次能力」。
 var failures:Array=[]
 var checks:=0
+var fixture_context:SessionContext
 func check(ok:bool,label:String):
 	checks+=1
 	if not ok: failures.append(label)
@@ -46,9 +47,17 @@ func run():
 	var scene=load("res://assets/scenes/game_scene/tactical_board_ui.tscn").instantiate()
 	get_tree().root.add_child(scene); scene.set_process(false)
 	# UI 开局会随机放置事件；移动测试应在启动后隔离锁区等无关效果。
-	EventResolver.new().clear_all()
-	SituationResolver.new().clear_all()
-	EffectManager.reset_runtime(); GameLog.reset(); GameLog.set_context(1,"outpost")
+	# 在本次启动创建夹具时保存真实 runtime 卡的原来源，后续仅传原句柄。
+	fixture_context = SessionGeneration.origin_of(GameData.player_data_library[0].hand_cards[0]).context
+	var cleared_events:Dictionary = EventResolver.new().clear_all(fixture_context)
+	var cleared_situation:Dictionary = SituationResolver.new().clear_all(fixture_context)
+	check(cleared_events.ok, "S1 engagement event cleanup original source")
+	check(cleared_situation.ok, "S1 engagement situation cleanup original source")
+	if not cleared_events.ok or not cleared_situation.ok:
+		print("RESULT checks=",checks," failures=",failures)
+		get_tree().quit(1)
+		return
+	EffectManager.clear_runtime_in_context(fixture_context); GameLog.reset(); GameLog.set_context(1,"outpost")
 	GameProgress.current_round=1; GameProgress.current_phase_index=1; GameProgress.current_player_id=0
 
 	var ids = [0,1]
@@ -62,11 +71,11 @@ func run():
 	#1. 与对手同处会发生战斗的战场（深山町）＝交战
 	#清空全盘再显式摆位：不能只清深山町，那会留下"人不在席位上、席位仍记着他"的脏状态
 	_wipe_board()
-	Deploy.new().exec(MapData.miyama0, 0)
-	Deploy.new().exec(MapData.miyama2, 1)
+	GameProgress.start_progress_operation("deploy", [MapData.miyama0, 0], fixture_context)
+	GameProgress.start_progress_operation("deploy", [MapData.miyama2, 1], fixture_context)
 	check(IsEngaged.new().exec(0) and IsEngaged.new().exec(1),"two players in a battle area are engaged")
 	var before = GetLocation.new().exec(0)
-	Move.new().exec(BaseNumber.new(1), 0)
+	Move.new().exec(BaseNumber.new(1), 0, false, false, fixture_context)
 	check(GetLocation.new().exec(0) == before,"engaged player cannot make a normal move")
 
 	#2. 出局的玩家不再是"对手"
@@ -76,13 +85,13 @@ func run():
 
 	#3. 效果声明可无视交战时能移动（令咒移动、言峰中立走的是同一条声明）
 	_wipe_board()
-	Deploy.new().exec(MapData.miyama0, 0)
-	Deploy.new().exec(MapData.miyama2, 1)
+	GameProgress.start_progress_operation("deploy", [MapData.miyama0, 0], fixture_context)
+	GameProgress.start_progress_operation("deploy", [MapData.miyama2, 1], fixture_context)
 	GameData.player_data_library[0].ignore_engagement_for_move = true
 	check(IsEngaged.new().exec(0),"still engaged while the exemption is declared")
 	before = GetLocation.new().exec(0)
 	clear_destination_seats(before, 0)
-	Move.new().exec(BaseNumber.new(1), 0)
+	Move.new().exec(BaseNumber.new(1), 0, false, false, fixture_context)
 	check(GetLocation.new().exec(0) != before,"declared exemption lets the player move while engaged")
 	GameData.player_data_library[0].ignore_engagement_for_move = false
 
@@ -91,22 +100,22 @@ func run():
 	MapData.magic_workshop1._players = []
 	MapData.scout0._players = []
 	MapData.scout1._players = []
-	Deploy.new().exec(MapData.magic_workshop0, 0)
-	Deploy.new().exec(MapData.magic_workshop1, 1)
+	var deploy_magic_workshop0_0:Dictionary = GameProgress.start_progress_operation("deploy", [MapData.magic_workshop0, 0], fixture_context)
+	var deploy_magic_workshop1_1:Dictionary = GameProgress.start_progress_operation("deploy", [MapData.magic_workshop1, 1], fixture_context)
 	check(not IsEngaged.new().exec(0),"sharing the workshop is not engagement")
-	SetLocation.new().exec(MapData.scout0, 0, false)
-	SetLocation.new().exec(MapData.scout1, 1, false)
+	SetLocation.new().exec(MapData.scout0, 0, false, false, true, fixture_context)
+	SetLocation.new().exec(MapData.scout1, 1, false, false, true, fixture_context)
 	check(not IsEngaged.new().exec(0),"sharing the scout area is not engagement")
 
 	#5. 独自位于会发生战斗的战场不算交战
 	MapData.shinto0._players = []
 	MapData.shinto1._players = []
 	MapData.shinto2._players = []
-	SetLocation.new().exec(MapData.shinto0, 0, false)
+	SetLocation.new().exec(MapData.shinto0, 0, false, false, true, fixture_context)
 	check(not IsEngaged.new().exec(0),"alone in a battle area is not engagement")
 
 	#6. 战场内不同席位同样算"一起"（规则里地利那段写明摆放于该位置一旁）
-	SetLocation.new().exec(MapData.shinto2, 1, false)
+	SetLocation.new().exec(MapData.shinto2, 1, false, false, true, fixture_context)
 	check(IsEngaged.new().exec(0),"different seats in the same battle area still count as together")
 
 	#7. 令咒按张数限制：同一回合可以用不同张，张数用完即止
@@ -128,12 +137,12 @@ func run():
 	#8. is_battle（本回合参与过战斗结算）不再是移动判据：它不该拦住移动
 	_wipe_board()
 	GameData.player_data_library[0].is_battle = true
-	SetLocation.new().exec(MapData.miyama2, 0, false)
-	SetLocation.new().exec(MapData.shinto0, 1, false)
+	SetLocation.new().exec(MapData.miyama2, 0, false, false, true, fixture_context)
+	SetLocation.new().exec(MapData.shinto0, 1, false, false, true, fixture_context)
 	check(not IsEngaged.new().exec(0),"is_battle alone does not make engagement")
 	before = GetLocation.new().exec(0)
 	clear_destination_seats(before, 0)
-	Move.new().exec(BaseNumber.new(1), 0)
+	Move.new().exec(BaseNumber.new(1), 0, false, false, fixture_context)
 	check(GetLocation.new().exec(0) != before,"is_battle alone does not block a normal move")
 
 	print("RESULT checks=",checks," failures=",failures)

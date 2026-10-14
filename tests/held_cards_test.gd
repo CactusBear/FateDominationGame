@@ -1,4 +1,5 @@
 extends Node
+const FixtureClone = preload("res://newtests/fixture_clone.gd")
 
 var failures: Array = []
 var checks := 0
@@ -75,7 +76,7 @@ func run() -> void:
 	if model is BaseHandCard:
 		var duplicates: Array = []
 		for i in range(3):
-			var copy = CloneObject.new().exec(model)
+			var copy = FixtureClone.clone_template(model, GameStart.startup_context())
 			pl.hand_cards.append(copy)
 			duplicates.append(copy)
 		board.refresh_all_ui()
@@ -92,7 +93,7 @@ func run() -> void:
 			pl.hand_cards.erase(copy)
 		var extras: Array = []
 		for i in range(30):
-			var copy = CloneObject.new().exec(model)
+			var copy = FixtureClone.clone_template(model, GameStart.startup_context())
 			copy._name = "overflow_%d" % i
 			pl.hand_cards.append(copy)
 			extras.append(copy)

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/b31_round_tail_change_order_probe.gd" id="1"]
+
+[node name="B31RoundTailChangeOrderProbe" type="Node"]
+script = ExtResource("1")

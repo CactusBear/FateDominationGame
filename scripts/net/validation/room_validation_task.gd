@@ -11,6 +11,11 @@ var workspace_root: String = "user://room_validation"
 var directory: String = ""
 var approved_files: Array = []
 var _deadline: int = 0
+var _simulation_seconds:float = 0.0
+var _progress_sequence:int = 0
+var _progress_remaining:float = -1.0
+var _progress_received_msec:int = 0
+var _next_progress_poll_msec:int = 0
 
 ## 路径均由本机调用方给出；网络消息不能指定进程参数或报告位置。
 func start(data_directory: String, files: Array, timeout_seconds: float, simulation:Dictionary = {}) -> bool:
@@ -29,6 +34,7 @@ func start(data_directory: String, files: Array, timeout_seconds: float, simulat
 		return false
 	var configured_seconds:float = float(simulation.get("seconds", 0.0))
 	var simulation_seconds:float = configured_seconds if simulation.get("enabled", false) else 0.0
+	_simulation_seconds = simulation_seconds
 	var started_msec:int = Time.get_ticks_msec()
 	if not is_finite(configured_seconds) or configured_seconds < 0 or timeout_seconds + simulation_seconds >= float((9223372036854775807 - started_msec) / 1000):
 		error = "随机模拟时间预算无效"
@@ -47,7 +53,8 @@ func start(data_directory: String, files: Array, timeout_seconds: float, simulat
 		return false
 	manifest.store_string(JSON.stringify(files))
 	manifest.close()
-	var arguments := PackedStringArray(["--headless", "--audio-driver", "Dummy", "--fixed-fps", "60", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(directory.path_join("engine.log")), "--scene", "res://assets/scenes/main_menu/room_data_validation_worker.tscn", "--", "--room-data-validation-worker", ProjectSettings.globalize_path(data_directory), ProjectSettings.globalize_path(directory.path_join("manifest.json")), ProjectSettings.globalize_path(directory.path_join("report.json"))])
+	var engine_arguments := PackedStringArray(["--headless", "--audio-driver", "Dummy", "--fixed-fps", "60", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(directory.path_join("engine.log"))])
+	var role_arguments := PackedStringArray([ProjectSettings.globalize_path(data_directory), ProjectSettings.globalize_path(directory.path_join("manifest.json")), ProjectSettings.globalize_path(directory.path_join("report.json"))])
 	if not simulation.is_empty():
 		var options:Dictionary = simulation.duplicate(true)
 		if options.has("guard"):
@@ -72,8 +79,12 @@ func start(data_directory: String, files: Array, timeout_seconds: float, simulat
 		if write_error != OK:
 			error = "无法完整写入模拟配置"
 			return false
-		arguments.append(ProjectSettings.globalize_path(options_path))
-	process_id = OS.create_process(OS.get_executable_path(), preload("res://scripts/net/server/server_bootstrap.gd").process_arguments(arguments))
+		role_arguments.append(ProjectSettings.globalize_path(options_path))
+	var arguments:PackedStringArray = preload("res://scripts/net/server/server_bootstrap.gd").role_scene_arguments("--room-data-validation-worker", engine_arguments, role_arguments)
+	if arguments.is_empty():
+		error = "无法构造独立数据校验进程参数"
+		return false
+	process_id = OS.create_process(OS.get_executable_path(), arguments)
 	if process_id < 0:
 		error = "无法启动独立数据校验进程"
 		return false
@@ -111,6 +122,7 @@ func poll() -> void:
 	if not running:
 		return
 	if OS.is_process_running(process_id):
+		_poll_progress()
 		if Time.get_ticks_msec() >= _deadline:
 			cancel()
 			if running or process_id >= 0: return
@@ -118,7 +130,53 @@ func poll() -> void:
 		return
 	process_id = -1
 	running = false
+	_clear_progress()
 	_read_report(false)
+
+## 只读取本次独占工作目录的观测文件；不改 report、complete 或截止时间。
+func _poll_progress() -> void:
+	var now:int = Time.get_ticks_msec()
+	if _simulation_seconds <= 0 or now < _next_progress_poll_msec: return
+	_next_progress_poll_msec = now + 1000
+	var path:String = directory.path_join("progress.json")
+	if not FileAccess.file_exists(path): return
+	var input := FileAccess.open(path, FileAccess.READ)
+	if input == null: return
+	var text:String = input.get_as_text()
+	input.close()
+	var parsed := JSON.new()
+	if parsed.parse(text) == OK: _accept_progress(parsed.data, now)
+
+func _accept_progress(value:Variant, received_msec:int) -> bool:
+	if not running or _simulation_seconds <= 0 or not value is Dictionary or value.get("phase") != "simulation": return false
+	for key in ["budget_seconds", "remaining_seconds", "sequence"]:
+		if typeof(value.get(key)) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(value[key])): return false
+	var budget:float = float(value.budget_seconds)
+	var remaining:float = float(value.remaining_seconds)
+	var sequence:float = float(value.sequence)
+	if budget != _simulation_seconds or remaining < 0 or remaining > budget or sequence <= _progress_sequence or sequence != floor(sequence) or sequence >= 9223372036854775807.0: return false
+	if _progress_remaining >= 0 and remaining > _progress_remaining: return false
+	_progress_sequence = int(sequence)
+	_progress_remaining = remaining
+	_progress_received_msec = received_msec
+	return true
+
+func _progress_text(now_msec:int) -> String:
+	if not running or _progress_remaining < 0: return ""
+	var elapsed:float = float(maxi(0, now_msec - _progress_received_msec)) / 1000.0
+	var remaining:float = maxf(0.0, _progress_remaining - elapsed)
+	return "随机模拟预算剩余%d秒" % ceili(remaining) if remaining > 0 else "随机模拟预算已用尽，正在收尾"
+
+func status_text() -> String:
+	var countdown:String = _progress_text(Time.get_ticks_msec())
+	return countdown if not countdown.is_empty() else "正在独立进程中校验所选数据"
+
+func _clear_progress() -> void:
+	_simulation_seconds = 0.0
+	_progress_sequence = 0
+	_progress_remaining = -1.0
+	_progress_received_msec = 0
+	_next_progress_poll_msec = 0
 
 func _read_report(interrupted:bool) -> void:
 	var log_path := directory.path_join("engine.log")
@@ -160,6 +218,7 @@ func cancel() -> void:
 	process_id = -1
 	running = false
 	complete = false
+	_clear_progress()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE and process_id >= 0 and OS.is_process_running(process_id):

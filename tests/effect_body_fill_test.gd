@@ -1,4 +1,10 @@
 extends Node
+const FixtureClone = preload("res://newtests/fixture_clone.gd")
+# 本局原来源取自 reset_runtime 回执；夹具对 operation 显式传入，不从全局补票。
+var ctx: SessionContext = null
+func _reset_ctx() -> SessionContext:
+	var reset: Dictionary = EffectManager.reset_runtime()
+	return reset.get("context") if reset.get("ok", false) else null
 # 「万符必应破戒」（美狄亚）的效果体回归——原先 funcs 为空。
 # 卡面：「【真名解放】〈每局游戏限一次〉行动阶段：你所在战场的一名玩家失去一枚令咒，
 #        若其原本只有一枚或更少的令咒，令其【败北】。若其原本没有令咒，你总威力+10」
@@ -38,7 +44,7 @@ func register_skill_by_effect(effect_key:String, player_id:int) -> BaseEffect:
 					break
 			if !has_it:
 				continue
-			var cloned = CloneObject.new().exec(sk)
+			var cloned = FixtureClone.clone_template(sk, ctx)
 			if cloned == null:
 				continue
 			if cloned is BaseHandCard:
@@ -60,7 +66,7 @@ func register_buff_effect(master_key:String, buff_name:String, player_id:int) ->
 		for buff in m._specials.get("BUFFS", []):
 			if buff == null or str(buff._name) != buff_name:
 				continue
-			var cloned = CloneObject.new().exec(buff)
+			var cloned = FixtureClone.clone_template(buff, ctx)
 			if cloned == null:
 				continue
 			GameData.player_data_library[player_id].buffs.append(cloned)
@@ -71,7 +77,7 @@ func register_buff_effect(master_key:String, buff_name:String, player_id:int) ->
 
 
 func setup() -> void:
-	EffectManager.reset_runtime(); GameLog.reset(); GameLog.set_context(1,"action")
+	ctx = _reset_ctx(); GameLog.reset(); GameLog.set_context(1,"action")
 	GameData.player_data_library.clear()
 	for i in range(2):
 		var d:Dictionary=GameData.new_player_data()
@@ -86,10 +92,10 @@ func setup() -> void:
 	# 两名玩家放到同一战场：两条卡面的目标都是"你所在战场的一名玩家"
 	var area:BaseMapArea = MapData.areas[1]
 	for i in range(2):
-		SetLocation.new().exec(area._locations[i], i, false, true)
+		SetLocation.new().exec(area._locations[i], i, false, true, true, ctx)
 	TimePointChecker.set_phase_time_points([TimePoints.DAY, TimePoints.PHASE, TimePoints.ACTION_PHASE,
 		TimePoints.BATTLE_PHASE, TimePoints.NON_CLIMAX])
-	TimePointChecker.dynamic_time_point([TimePoints.ACTION_PHASE, TimePoints.BATTLE_PHASE], 0)
+	TimePointChecker.dynamic_time_point([TimePoints.ACTION_PHASE, TimePoints.BATTLE_PHASE], 0, null, ctx)
 
 func run():
 	# —— ① 万符必应破戒：目标原有 2 枚令咒 → 只失去 1 枚，不败北 ——

@@ -6,6 +6,17 @@ extends Control
 
 const Codec = preload("res://json_maker/json_codec.gd")
 const Shape = preload("res://json_maker/json_style.gd")
+#独立字段编辑器登记表：控件名 → 脚本（脚本提供 build(ui, row, obj, key, field)）
+const FIELD_EDITORS := {
+	"select_cards": preload("res://json_maker/fields/select_cards_field.gd"),
+	"select_players": preload("res://json_maker/fields/select_players_field.gd"),
+	"select_location": preload("res://json_maker/fields/select_location_field.gd"),
+	"requirements": preload("res://json_maker/fields/requirements_field.gd"),
+	"range": preload("res://json_maker/fields/range_field.gd"),
+	"zoom_kind": preload("res://json_maker/fields/zoom_kind_field.gd"),
+	"dict": preload("res://json_maker/fields/dict_field.gd"),
+	"faces": preload("res://json_maker/fields/faces_field.gd"),
+}
 
 const VAR_COLOR := Color("#77522C")
 const LOOP_ITEM_COLOR := Color("#77602C")
@@ -615,6 +626,7 @@ func _build_card(target_kind:String, label:String) -> void:
 # 只把正在编辑的那张牌（本体或某张子牌）自己的效果解码成积木。
 func _load_effects() -> void:
 	effects_view.clear()
+	field_stacks.clear()
 	var obj = _focus_obj()
 	if not obj is Dictionary:
 		return
@@ -753,8 +765,24 @@ func _add_effect_view(effect:Dictionary, owner:String) -> void:
 	effects_view.append(view)
 
 
+#字段编辑器里的「积木串」（如挑牌/挑玩家的 candidates）：holder[key] 是 operation 描述数组。
+#同一个 holder+key 只解码一次并缓存，_commit 统一写回，字段编辑器不各自管保存。
+var field_stacks:Array = []   # [{holder, key, nodes}]
+
+func field_stack(holder:Dictionary, key:String) -> Array:
+	for entry in field_stacks:
+		if is_same(entry.holder, holder) and entry.key == key:
+			return entry.nodes
+	var nodes:Array = codec.decode_list(holder.get(key, [])) if holder.get(key) is Array else []
+	field_stacks.append({"holder": holder, "key": key, "nodes": nodes})
+	return nodes
+
+
 # 积木 → JSON：把所有效果的积木写回 data。
 func _commit() -> void:
+	for entry in field_stacks:
+		if entry.holder.has(entry.key) or not entry.nodes.is_empty():
+			entry.holder[entry.key] = codec.encode_effect_list(entry.nodes)
 	for view in effects_view:
 		var effect:Dictionary = view.effect
 		_fill_middle_numbers(view, effect)
@@ -894,7 +922,7 @@ func _paint_fields(parent:Node, obj:Dictionary, spec:Dictionary) -> void:
 
 func _field_row(parent:Node, obj:Dictionary, field:Dictionary, is_identity := false) -> void:
 	var key := str(field.key)
-	var known := ["text", "int", "float", "bool", "number", "choice", "search_choice", "image", "attributes", "lines", "time_points", "cost"]
+	var known := ["text", "int", "float", "bool", "number", "choice", "search_choice", "image", "attributes", "lines", "time_points", "cost"] + FIELD_EDITORS.keys()
 	if not known.has(str(field.get("control", "text"))) and not obj.has(key):
 		return
 	var row := HBoxContainer.new()
@@ -1031,8 +1059,15 @@ func _field_row(parent:Node, obj:Dictionary, field:Dictionary, is_identity := fa
 		"cost":
 			_cost_editor(row, obj, key)
 		_:
-			var lab := _label("这一项请在右边 JSON 里看", 12, HINT)
-			row.add_child(lab)
+			#独立字段编辑器：每种控件一个脚本（json_maker/fields/），互不耦合；未登记的才回退到看 JSON
+			if FIELD_EDITORS.has(control):
+				var editor = FIELD_EDITORS[control].new()
+				# 字段编辑器是 RefCounted，回调闭包不持有它；挂在行上，行在它就在（否则 build 返回即被释放，回调失效）
+				row.set_meta("field_editor", editor)
+				editor.build(self, row, obj, key, field)
+			else:
+				var lab := _label("这一项请在右边 JSON 里看", 12, HINT)
+				row.add_child(lab)
 
 
 func _choice_shown(value:String) -> String:
@@ -1602,7 +1637,7 @@ func _effect_script(index:int) -> Control:
 		tools.add_child(to_opt)
 	if not view.lists.has("power_query"):
 		var add_power := Button.new()
-		add_power.text = "加一段威力计算"
+		add_power.text = "＋ 加威力计算"
 		add_power.tooltip_text = "只算威力、不改任何东西的积木，界面和结算随时按它算出当前的威力加成。"
 		add_power.pressed.connect(func():
 			view.lists["power_query"] = []

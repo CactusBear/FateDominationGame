@@ -1,0 +1,36 @@
+{
+  "round": 51,
+  "scope": "native capability source integration",
+  "runtime": "NOTRUN",
+  "formal_dll": "untouched",
+  "isolated_artifact": {
+    "path": "E:/FateNativeBuild-round51-red/process_owner_probe.exe",
+    "size": 340992,
+    "sha256": "c1a3c44ab109121bea5f0d0b624f9c9fbf4e6de38e40ea1bb34f724ef00afcfe"
+  },
+  "toolchain": {
+    "compiler": "MSVC cl from D:/VS2022/VC/Auxiliary/Build/vcvars64.bat",
+    "godot_cpp_dir": "E:/Projects/Godot/FateDominationGame-master/scratch/native-process-ownership-v6/deps/godot-cpp-714c9e2c165db2dcb7e6ea57e62a04204d3cfbfa",
+    "api_policy": "caller-selected checked-in godot-cpp tree; no engine download or minor upgrade",
+    "architecture": "x86_64",
+    "precision": "single",
+    "exceptions": "MSVC /EHsc; SConstruct forces disable_exceptions=false",
+    "standalone_flags": "/nologo /std:c++17 /EHsc /W4 /WX /MT /D_WIN32_WINNT=0x0A00 /I E:/FateNativeBuild-round51-red/src; link bcrypt.lib",
+    "binding_probe_flags": "/nologo /std:c++17 /EHsc /W4 /DGDEXTENSION /D_WIN32_WINNT=0x0A00 with checked-in include, gen/include, gdextension and src"
+  },
+  "source_sha256": {
+    "addons/fate_server_signals/SConstruct": "04c5d39e77f5c1d7ad13e9f8f0f5bc49bb19deeb1d793f037dbcaf316eda7a3c",
+    "addons/fate_server_signals/src/process_owner_core.hpp": "1a004382f7d25a19e52a0459308d47f367ca161883d5fcf070569ea5b00d3168",
+    "addons/fate_server_signals/src/process_owner_core.cpp": "473e40d2de0d8b5a3fa274641e577961d4f06ef32925ef3c7de9465f8f0cde37",
+    "addons/fate_server_signals/src/process_owner_binding.cpp": "7cf222556703e32baa341236e437448a6e4150e9507186107820f1b3d5aae8d3",
+    "addons/fate_server_signals/src/atomic_file_replace_binding.cpp": "35514ae68446bff71e0e4ba547eb0cac3458d7f39edc9389937fd74871b45657"
+  },
+  "verification": {
+    "process_tree_owner_core": "GREEN: python -B tools/tests/test_process_tree_owner_core.py; 5 tests, exit 0",
+    "temporary_cleanup_core": "GREEN: python -B tools/tests/test_temporary_cleanup_core.py; 19 tests, 1 privilege SKIP, exit 0",
+    "production_process_owner_standalone": "GREEN: exact MSVC standalone probe; spawn receipt active=1, root-exit with active descendant blocked release, active=0 release true, post-release lease_unknown; exit 0",
+    "sconstruct": "BLOCKED: isolated SCons build generated source objects but timed out during full checked-in godot-cpp generation before DLL link; no DLL produced",
+    "binding_compile": "BLOCKED: direct binding compile against checked-in headers failed in pre-existing godot-cpp method_bind ABI/header surface (_gde_UnexistingClass/C2440); raw log retained at E:/FateNativeBuild-round51-red/binding-build.raw.log",
+    "godot_runtime": "NOTRUN"
+  }
+}

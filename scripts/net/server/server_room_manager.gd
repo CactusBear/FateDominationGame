@@ -19,11 +19,210 @@ var identity_binding_required:bool = false
 const RecoveryPaths = preload("res://scripts/net/server/recovery_path_safety.gd")
 const AtomicReplace = preload("res://scripts/io/atomic_file_replace.gd")
 const ValidatedContent = preload("res://scripts/io/validated_file_content.gd")
+const Bootstrap = preload("res://scripts/net/server/server_bootstrap.gd")
 ## 只由本机主管设置；绝不从恢复配置接受新的批准根。
 var approved_data_root:String = ""
+const HeartbeatPolicy = preload("res://scripts/net/server/heartbeat_publication_policy.gd")
+const HeartbeatChannel = preload("res://scripts/net/server/server_console_channel.gd")
+var _heartbeat_config:Dictionary = {}
+var _heartbeat_instances:Dictionary = {}
+## 只授权下一次本机 spawn；不读公开 settings 或历史恢复配置。
+var _broadcast_confirmation_capable:bool = false
+
+func configure_deployment_broadcast_confirmation(value:Variant) -> bool:
+	if not value is bool or _active_runtime_count() != 0:
+		error = "播报确认能力须为本机布尔声明，且须先释放既有实例"
+		return false
+	_broadcast_confirmation_capable = value
+	return true
+
+## 配置仅来自本机组合根，不写入/读取历史房间配置，不在运行中清空故障累计。
+func configure_heartbeat_publication(value:Variant) -> bool:
+	if not rooms.is_empty() or not HeartbeatPolicy.valid_config(value): return false
+	_heartbeat_config = value.duplicate(true)
+	return true
+
+func heartbeat_state(id:String) -> Dictionary:
+	var entry:Dictionary = _heartbeat_instances.get(id,{})
+	if entry.is_empty() or not rooms.has(id) or entry.binding.instance_id != rooms[id].get("instance_id"): return {}
+	return entry.projection.duplicate(true).merged({"close_status":entry.get("close_status","not_requested"),"close_request_id":entry.get("request_id",""),"close_error":entry.get("close_error","")})
+
+func _heartbeat_instance(binding:Dictionary) -> Dictionary:
+	if not binding_matches(binding) or binding.pid <= 0: return {}
+	var entry:Dictionary = _heartbeat_instances.get(binding.room,{})
+	if not entry.is_empty() and entry.binding == binding: return entry
+	var policy = HeartbeatPolicy.new()
+	if not policy.configure(binding,_heartbeat_config): return {}
+	entry = {"binding":binding.duplicate(true),"policy":policy,"projection":policy.evaluate(binding,Time.get_ticks_msec())}
+	_heartbeat_instances[binding.room] = entry
+	return entry
+
+func _heartbeat_ready(binding:Dictionary) -> bool:
+	var entry:Dictionary = _heartbeat_instances.get(binding.get("room",""),{})
+	if entry.is_empty() or entry.binding != binding: return true
+	return entry.projection.get("status") != "supervision_failed" and not entry.has("close_status")
+
+func _poll_heartbeat(normal_due:bool) -> void:
+	for id in rooms:
+		var binding:Dictionary = instance_binding(id)
+		var entry:Dictionary = _heartbeat_instance(binding)
+		if entry.is_empty(): continue
+		entry.projection = entry.policy.evaluate(binding,Time.get_ticks_msec())
+		if (normal_due or entry.projection.get("retry_due",false)) and (rooms[id].error.is_empty() or rooms[id].get("close_supervision",false)) and process_state_for_binding(binding) == 1:
+			_write_supervisor(rooms[id])
+			entry.projection = entry.policy.evaluate(binding,Time.get_ticks_msec())
+		if entry.projection.get("status") == "supervision_failed" and not entry.has("close_status"):
+			_start_heartbeat_close(entry)
+		if entry.has("close_status"): _poll_heartbeat_close(entry)
+
+func _start_heartbeat_close(entry:Dictionary) -> void:
+	var binding:Dictionary = entry.binding
+	# 已有人工/全服请求由原消费者收尾，不创建竞争请求、不接管其保存结论。
+	if rooms[binding.room].get("close_supervision",false):
+		entry.close_status = "existing_close_pending"
+		return
+	entry.request_id = Crypto.new().generate_random_bytes(16).hex_encode()
+	entry.close_status = "request_unpublished_unknown"
+	entry.close_error = "安全关闭请求尚未确认发布；保存/退出结果未知"
+	if not hold_process_supervision(binding.room,entry.request_id): return
+	var directory:String = str(rooms[binding.room].directory).path_join("control")
+	entry.response_path = directory.path_join(entry.request_id+".response.json")
+	if not RecoveryPaths.checked(storage_root,directory,true) or DirAccess.make_dir_recursive_absolute(directory) != OK: return
+	var request_path:String = directory.path_join(entry.request_id+".request.json")
+	if not RecoveryPaths.checked(storage_root,request_path,true): return
+	if HeartbeatChannel.write_json(request_path,{"room":binding.room,"pid":binding.pid,"instance":binding.instance_id,"authority_host_mode":binding.authority_host_mode,"action":"close"}) != OK: return
+	entry.close_status = "pending"
+	entry.close_error = ""
+
+func _poll_heartbeat_close(entry:Dictionary) -> void:
+	if entry.close_status in ["existing_close_pending","refused","completed"] or not entry.has("request_id"): return
+	var binding:Dictionary = entry.binding
+	if not binding_matches(binding): return
+	var response:Dictionary = {}
+	var path:String = entry.get("response_path","")
+	if not path.is_empty() and RecoveryPaths.checked(storage_root,path) and FileAccess.file_exists(path):
+		var parser := JSON.new()
+		if parser.parse(FileAccess.get_file_as_string(path)) == OK and parser.data is Dictionary:
+			var candidate:Dictionary = parser.data
+			if candidate.get("room") == binding.room and candidate.get("pid") == binding.pid and candidate.get("instance") == binding.instance_id and candidate.get("authority_host_mode") == binding.authority_host_mode and candidate.get("request_id") == entry.request_id:
+				response = candidate
+	if response.get("ok") is bool and response.ok == false:
+		cancel_process_supervision(binding,entry.request_id)
+		entry.close_status = "refused"
+		entry.close_error = str(response.get("error","保存关闭被拒绝"))
+		return
+	if HeartbeatChannel.saved_close_receipt(response):
+		entry.close_status = "saved_waiting_exit"
+		if process_state_for_binding(binding) == 0 and release_process_for_binding(binding,entry.request_id):
+			entry.close_status = "completed"
+			entry.close_error = ""
+	elif process_state_for_binding(binding) == 0:
+		entry.close_status = "exit_without_receipt_unknown"
+		entry.close_error = "原实例已退出，尚无绑定保存回执；结果未知"
+		# 原请求仍保留供迟到回执读取，不借退出伪造保存成功。
+
+## 本机 dedicated 自动回收策略；缺配置或0秒关闭。不能来自公开房间 settings。
+var room_runtime:Dictionary = {}
+var _idle_attempts:Dictionary = {}
+var _idle_poll_msec:int = -1000
+const EmptyPolicy = preload("res://scripts/net/server/empty_room_policy.gd")
+
+func configure_room_runtime(value:Variant) -> bool:
+	if not EmptyPolicy.valid_config(value):
+		error = "无人房间等待配置无效"
+		return false
+	room_runtime = value.duplicate(true)
+	return true
+
+static func valid_empty_close_receipt(binding:Dictionary, request_id:String, response:Dictionary) -> bool:
+	if not valid_instance_id(binding.get("room")) or not valid_instance_id(binding.get("instance_id")) or not valid_instance_id(request_id) or not binding.get("pid") is int or binding.pid <= 0 or binding.get("authority_host_mode") != "dedicated": return false
+	if response.get("room") != binding.get("room") or response.get("pid") != binding.get("pid") or response.get("instance") != binding.get("instance_id") or response.get("authority_host_mode") != binding.get("authority_host_mode") or response.get("request_id") != request_id: return false
+	if response.get("ok") != true or not response.get("result") is Dictionary: return false
+	return response.result.get("closing") == true and (response.result.get("saved") == true or response.result.get("room_state_saved") == true)
+
+## 当前实例状态只用于发请求；worker执行时再检查无人条件。失败不写room.error、不强杀。
+func poll_idle_rooms(console) -> void:
+	if authority_host_mode != "dedicated" or console == null or room_runtime.is_empty(): return
+	var now:int = Time.get_ticks_msec()
+	if now - _idle_poll_msec < 1000: return
+	_idle_poll_msec = now
+	console._poll_room_closes()
+	for id in _idle_attempts.keys():
+		var attempt:Dictionary = _idle_attempts[id]
+		if not rooms.has(id):
+			_idle_attempts.erase(id)
+			continue
+		var current:Dictionary = instance_binding(id)
+		if current.get("instance_id") != attempt.binding.instance_id or current.get("authority_host_mode") != attempt.binding.authority_host_mode:
+			_idle_attempts.erase(id)
+			continue
+		var response:Dictionary = console._room_result(PackedStringArray([id,attempt.request_id]))
+		if not valid_empty_close_receipt(attempt.binding,attempt.request_id,response): continue
+		# 保存/closing回执不是退出证据；只接受既有consumer确认EXITED/release后的绑定。
+		var historical:Dictionary = attempt.binding.merged({"request_id":attempt.request_id})
+		if closed_binding_for_request(id,attempt.request_id) != historical and retired_binding_for_request(id,attempt.request_id) != historical: continue
+		if rooms[id].pid != -1 or rooms[id].get("process_token","") != "": continue
+		# pid=-1分支只移除活动登记；配置、恢复状态、对局日志和认证不删除。
+		if stop_room(id,-1,attempt.binding.instance_id):
+			_idle_attempts.erase(id)
+			_retired_close_bindings.erase(attempt.request_id)
+	for id in rooms.keys():
+		if not is_ready(id) or rooms[id].get("close_supervision",false): continue
+		var binding:Dictionary = instance_binding(id)
+		var path:String = str(rooms[id].directory).path_join("idle.json")
+		if not RecoveryPaths.checked(storage_root,path): continue
+		var file := FileAccess.open(path,FileAccess.READ)
+		if file == null: continue
+		var text:String = file.get_as_text() if file.get_length() <= 4096 else ""
+		file.close()
+		var state = JSON.parse_string(text)
+		if not state is Dictionary or state.size() != 6 or state.get("room") != binding.room or state.get("pid") != binding.pid or state.get("instance_id") != binding.instance_id or state.get("authority_host_mode") != binding.authority_host_mode or not state.get("eligible") is bool: continue
+		if typeof(state.get("epoch")) not in [TYPE_INT,TYPE_FLOAT] or not is_finite(float(state.epoch)) or state.epoch < 1 or state.epoch > 9007199254740991 or floor(float(state.epoch)) != state.epoch: continue
+		if not state.eligible: continue
+		var previous:Dictionary = _idle_attempts.get(id,{})
+		# 同一次无人周期的拒绝不自动重发，避免填满控制请求预算；重连后新周期可重试。
+		if previous.get("binding",{}).get("instance_id") == binding.instance_id and previous.get("epoch") == int(state.epoch): continue
+		if not binding_matches(binding,true) or not RecoveryPaths.checked(storage_root,path): continue
+		# 不接管人工close；关服入口共享既有pending close并继续按原请求监督。
+		if console._closing_requests.has(id): continue
+		var response:Dictionary = console._room_request(id,"close_empty")
+		if response.get("ok") == true:
+			_idle_attempts[id] = {"binding":binding,"epoch":int(state.epoch),"request_id":response.result.request_id}
 
 func _approved_root() -> String:
-	return approved_data_root if not approved_data_root.is_empty() else LoadHelper.resolve_path(LoadHelper.DATA_DIR_NAME)
+	# 批准根是本机部署入口的授权，不得从默认目录或首次 create 推断。
+	return approved_data_root
+
+func _active_runtime_count(exclude_id:String = "") -> int:
+	var count:int = 0
+	for id in rooms:
+		if id == exclude_id: continue
+		var room:Dictionary = rooms[id]
+		# 运行中、启动中、关闭中未释放，以及无法证明释放的 UNKNOWN 都计入。
+		if int(room.get("pid", -1)) > 0 or not str(room.get("process_token", "")).is_empty(): count += 1
+	return count
+
+func runtime_admission_error(config:Dictionary, exclude_id:String = "") -> String:
+	if approved_data_root.is_empty(): return "批准数据根必须由本机部署入口显式提供"
+	if max_rooms <= 0 or not is_finite(startup_seconds) or startup_seconds <= 0 or not is_finite(supervisor_timeout_seconds) or supervisor_timeout_seconds <= 1 or internal_port_base <= 0 or internal_port_base > 65535 or internal_port_count <= 0 or internal_port_count > 65536 - internal_port_base or authority_host_mode not in AUTHORITY_HOST_MODES:
+		return "服务端当前资源预算无效"
+	if _active_runtime_count(exclude_id) >= max_rooms: return "运行资源配额不足"
+	var port_value = config.get("port")
+	if typeof(port_value) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(port_value)) or floor(float(port_value)) != port_value or int(port_value) < internal_port_base or int(port_value) >= internal_port_base + internal_port_count:
+		return "端口不在当前批准范围"
+	if config.get("authority_host_mode") != authority_host_mode: return "部署模式与当前策略不一致"
+	for id in rooms:
+		var registered:Dictionary = rooms[id]
+		if id != exclude_id and (int(registered.get("pid",-1)) > 0 or not str(registered.get("process_token","")).is_empty()) and registered.get("port") == int(port_value):
+			return "内部端口与未释放实例冲突"
+	if typeof(config.get("supervisor_timeout_seconds")) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(config.supervisor_timeout_seconds)) or float(config.supervisor_timeout_seconds) != supervisor_timeout_seconds:
+		return "监督预算与当前策略不一致"
+	for key in ["transaction_log", "record_matches", "recovery_key_mismatch", "recovery_inheritance"]:
+		if config.get(key) != get(key): return "恢复安全策略与当前策略不一致"
+	var data_root = config.get("data_root")
+	if not data_root is String or not RecoveryPaths.checked(approved_data_root, data_root) or not RecoveryPaths.tree(approved_data_root, data_root, [20000]):
+		return "数据根不在当前批准安全路径"
+	return ""
 
 func _safe_recovery_config(id:String, directory:String, config:Dictionary, maintenance:Callable = Callable()) -> bool:
 	return valid_instance_id(id) and RecoveryPaths.same(directory, storage_root.path_join(id)) and RecoveryPaths.checked(storage_root, directory) and config.get("directory") is String and RecoveryPaths.same(config.directory, directory) and config.get("data_root") is String and RecoveryPaths.checked(_approved_root(), config.data_root) and RecoveryPaths.tree(_approved_root(), config.data_root, [20000], 0, maintenance) and RecoveryPaths.checked(directory, directory.path_join("config.json")) and RecoveryPaths.checked(directory, directory.path_join("recovery.json"), true) and RecoveryPaths.checked(directory, directory.path_join("matches"), true)
@@ -51,6 +250,25 @@ static func valid_instance_id(value:Variant) -> bool:
 
 static func matches_instance(room:Dictionary, pid:int, instance_id:String) -> bool:
 	return room.get("pid") == pid and room.get("instance_id") == instance_id and valid_instance_id(instance_id)
+
+## 对外短码不替代内部身份；仅在当前房间集合内做唯一匹配。
+static func room_code(id:String) -> String:
+	if not valid_instance_id(id): return ""
+	var alphabet:String = "ABCDEFGHJKLMNPQR"
+	var code:String = ""
+	for character in id.left(8):
+		code += alphabet["0123456789abcdef".find(character)]
+	return code
+
+func resolve_room(value:String) -> String:
+	if value.is_empty(): return ""
+	if rooms.has(value): return value
+	var found:String = ""
+	for id in rooms:
+		if room_code(id) == value.to_upper():
+			if not found.is_empty(): return ""
+			found = id
+	return found
 
 ## 主管私有原生所有者；令牌只存于本机内存，不从恢复文件认领 PID。
 var _process_owner:RefCounted
@@ -89,7 +307,7 @@ func binding_matches(binding:Dictionary, require_ready:bool = false) -> bool:
 	if not binding.get("pid") is int or not binding.get("instance_id") is String or room.get("id") != binding.room or binding.get("authority_host_mode") not in AUTHORITY_HOST_MODES: return false
 	if not matches_instance(room,binding.pid,binding.instance_id) or binding.get("authority_host_mode") != room.get("authority_host_mode"): return false
 	if not require_ready: return true
-	return room.get("ready",false) and binding.pid > 0 and process_identity_verified(binding)
+	return room.get("ready",false) and not room.get("supervision_unknown",false) and _heartbeat_ready(binding) and binding.pid > 0 and process_identity_verified(binding)
 
 func process_identity_verified(binding:Dictionary) -> bool:
 	if not process_ownership_available():
@@ -99,6 +317,15 @@ func process_identity_verified(binding:Dictionary) -> bool:
 	var room:Dictionary = rooms[binding.room]
 	if not room.get("process_token") is String: return false
 	return _process_owner.call("verify", room.process_token, binding.pid) == true
+
+## 仅供可信本机管理员入口组合；不保存、不 release、不撤销房间登记。
+## 复用创建时持有的原生句柄；错误/旧实例/UNKNOWN 不能退回裸 PID。
+func terminate_process_for_binding(binding:Dictionary) -> bool:
+	if not process_identity_verified(binding): return false
+	var room:Dictionary = rooms[binding.room]
+	if not _terminate_process(room) or process_state_for_binding(binding) != 0: return false
+	room.ready = false
+	return true
 
 ## UNKNOWN 不等于 EXITED；不允许调用方退回裸 PID 判活。
 func process_state_for_binding(binding:Dictionary) -> int:
@@ -134,6 +361,14 @@ func retire_unconfirmed_close(binding:Dictionary, request_id:String) -> bool:
 	_retired_close_bindings[request_id] = binding.merged({"request_id":request_id})
 	rooms[binding.room].erase("closed_process_binding")
 	return true
+
+## 只提供当前已释放实例的请求身份；不证明保存、不返回 retired 未确认档案。
+## 所有真实性校验仍由既有精确 request 查询承担，返回值为独立副本。
+func current_closed_binding(id:String) -> Dictionary:
+	var closed:Dictionary = rooms.get(id,{}).get("closed_process_binding",{})
+	var request_id:Variant = closed.get("request_id")
+	if not valid_instance_id(request_id): return {}
+	return closed_binding_for_request(id,request_id)
 
 func closed_binding_for_request(id:String, request_id:String) -> Dictionary:
 	var room:Dictionary = rooms.get(id,{})
@@ -189,13 +424,18 @@ var _pulse_version: int = 0
 
 func create_room(name: String, settings: Dictionary, data_root: String) -> String:
 	error = ""
+	if approved_data_root.is_empty():
+		error = "批准数据根必须由本机部署入口显式提供"
+		return ""
+	if _active_runtime_count() >= max_rooms:
+		error = "运行资源配额不足"
+		return ""
 	if not process_ownership_available():
 		error = PROCESS_OWNERSHIP_UNAVAILABLE
 		return ""
 	if not RecoveryPaths.checked(data_root, data_root) or not RecoveryPaths.tree(data_root, data_root, [20000]):
 		error = "批准数据根必须是无链接的规范本机目录"
 		return ""
-	if approved_data_root.is_empty(): approved_data_root = data_root
 	if not RecoveryPaths.checked(_approved_root(), data_root):
 		error = "数据根不在本机批准范围"
 		return ""
@@ -215,7 +455,7 @@ func create_room(name: String, settings: Dictionary, data_root: String) -> Strin
 	if authority_host_mode not in AUTHORITY_HOST_MODES:
 		error = "权威位置必须显式声明为 lan、p2p 或 dedicated"
 		return ""
-	if name.strip_edges().is_empty() or rooms.size() >= max_rooms or not is_finite(startup_seconds) or startup_seconds <= 0 or not is_finite(supervisor_timeout_seconds) or supervisor_timeout_seconds <= 1 or internal_port_base <= 0 or internal_port_base > 65535 or internal_port_count <= 0 or internal_port_count > 65536 - internal_port_base:
+	if name.strip_edges().is_empty() or max_rooms <= 0 or not is_finite(startup_seconds) or startup_seconds <= 0 or not is_finite(supervisor_timeout_seconds) or supervisor_timeout_seconds <= 1 or internal_port_base <= 0 or internal_port_base > 65535 or internal_port_count <= 0 or internal_port_count > 65536 - internal_port_base:
 		error = "房间名称或服务端资源预算无效"
 		return ""
 	var state = preload("res://scripts/net/session/room_state.gd").new()
@@ -230,7 +470,7 @@ func create_room(name: String, settings: Dictionary, data_root: String) -> Strin
 		return ""
 	var port := -1
 	for candidate in range(internal_port_base, internal_port_base + internal_port_count):
-		if not rooms.values().any(func(room): return room.port == candidate):
+		if not rooms.values().any(func(room): return room.get("port") == candidate and (int(room.get("pid",-1)) > 0 or not str(room.get("process_token","")).is_empty())):
 			var probe := PacketPeerUDP.new()
 			var result:Error = probe.bind(candidate, "127.0.0.1")
 			probe.close()
@@ -240,7 +480,14 @@ func create_room(name: String, settings: Dictionary, data_root: String) -> Strin
 	if port < 0:
 		error = "配置的内部端口范围内无可绑定端口"
 		return ""
+	var admission_error:String = runtime_admission_error({"port":port,"authority_host_mode":authority_host_mode,"data_root":data_root,"supervisor_timeout_seconds":supervisor_timeout_seconds,"transaction_log":transaction_log,"record_matches":record_matches,"recovery_key_mismatch":recovery_key_mismatch,"recovery_inheritance":recovery_inheritance})
+	if not admission_error.is_empty():
+		error = admission_error
+		return ""
 	var id: String = Crypto.new().generate_random_bytes(16).hex_encode()
+	if rooms.keys().any(func(existing): return room_code(existing) == room_code(id)):
+		error = "房间码发生冲突，请重新创建"
+		return ""
 	var directory := storage_root.path_join(id)
 	if DirAccess.dir_exists_absolute(directory) or DirAccess.make_dir_recursive_absolute(directory) != OK:
 		error = "无法建立房间专属目录"
@@ -251,44 +498,51 @@ func create_room(name: String, settings: Dictionary, data_root: String) -> Strin
 	stored_settings["_gateway_identity_required"] = identity_binding_required
 	if stored_settings.has("runtime_guard"):
 		stored_settings.runtime_guard = preload("res://scripts/match/rule_budget.gd").encode_json_config(stored_settings.runtime_guard)
-	if not write_configuration(directory.path_join("config.json"), {"id": id, "name": name, "settings": stored_settings, "data_root": ProjectSettings.globalize_path(data_root), "directory": ProjectSettings.globalize_path(directory), "port": port, "supervisor_timeout_seconds": supervisor_timeout_seconds, "record_matches":record_matches, "transaction_log":transaction_log, "recovery_key_mismatch":recovery_key_mismatch, "recovery_inheritance":recovery_inheritance, "authority_host_mode":authority_host_mode, "instance_id":instance_id}):
+	if not write_configuration(directory.path_join("config.json"), {"id": id, "name": name, "settings": stored_settings, "data_root": ProjectSettings.globalize_path(data_root), "directory": ProjectSettings.globalize_path(directory), "port": port, "supervisor_timeout_seconds": supervisor_timeout_seconds, "record_matches":record_matches, "transaction_log":transaction_log, "recovery_key_mismatch":recovery_key_mismatch, "recovery_inheritance":recovery_inheritance, "authority_host_mode":authority_host_mode, "instance_id":instance_id,"room_runtime":room_runtime.duplicate(true),"broadcast_confirmation_capable":_broadcast_confirmation_capable}):
 		error = "无法写入房间启动配置"
 		return ""
-	var arguments := PackedStringArray(["--headless", "--audio-driver", "Dummy", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(log_file), "--scene", "res://assets/scenes/main_menu/server_room_worker.tscn", "--", "--server-room-worker", ProjectSettings.globalize_path(directory.path_join("config.json")), ProjectSettings.globalize_path(_approved_root()), ProjectSettings.globalize_path(storage_root)])
+	var arguments:PackedStringArray = Bootstrap.role_scene_arguments("--server-room-worker", PackedStringArray(["--headless", "--audio-driver", "Dummy", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(log_file)]), PackedStringArray([ProjectSettings.globalize_path(directory.path_join("config.json")), ProjectSettings.globalize_path(_approved_root()), ProjectSettings.globalize_path(storage_root)]))
+	if arguments.is_empty():
+		error = "房间进程职责场景未声明"
+		return ""
 	if not process_ownership_available():
 		error = PROCESS_OWNERSHIP_UNAVAILABLE
 		return ""
 	var startup_deadline:int = _startup_now_msec() + int(startup_seconds * 1000.0)
-	var spawned:Dictionary = _process_owner.call("spawn", OS.get_executable_path(), preload("res://scripts/net/server/server_bootstrap.gd").process_arguments(arguments))
+	var spawned:Dictionary = _process_owner.call("spawn", OS.get_executable_path(), arguments)
 	var pid:int = int(spawned.get("pid", -1))
 	if pid < 0 or not spawned.get("token", "") is String or str(spawned.token).is_empty():
 		error = "无法启动房间子进程"
 		return ""
-	rooms[id] = {"id": id, "name": name, "port": port, "pid": pid, "process_token":str(spawned.get("token", "")), "instance_id":instance_id, "authority_host_mode":authority_host_mode, "directory": directory, "log_file": log_file, "ready": false, "error": "", "deadline": startup_deadline}
+	rooms[id] = {"id": id, "name": name, "port": port, "pid": pid, "process_token":str(spawned.get("token", "")), "instance_id":instance_id, "authority_host_mode":authority_host_mode, "directory": directory, "log_file": log_file, "ready": false, "ever_ready": false, "supervision_unknown": false, "error": "", "deadline": startup_deadline}
 	return id
 
 func poll() -> void:
 	if not process_ownership_available():
 		error = PROCESS_OWNERSHIP_UNAVAILABLE
 		for room in rooms.values():
-			room.ready = false
-			# 能力缺失只撤销 ready；不得留下恢复后触发 terminate 的进程错误。
+			room.supervision_unknown = true
+			# 曾就绪实例保持其生命周期身份；能力未知不等于首次启动失败。
 		return
-	if Time.get_ticks_msec() - _pulse_msec >= 1000:
+	var normal_due:bool = Time.get_ticks_msec() - _pulse_msec >= 1000
+	if normal_due:
 		_pulse_msec = Time.get_ticks_msec()
-		_pulse_version += 1
-		for room in rooms.values():
-			if (room.error.is_empty() or room.get("close_supervision",false)) and _process_state(room) == 1: _write_supervisor(room)
+	_poll_heartbeat(normal_due)
 	for room in rooms.values():
+		if room.pid == -1 and heartbeat_state(room.id).get("close_status") == "completed": continue
 		var process_state:int = _process_state(room)
 		if process_state != 1:
-			room.ready = false
+			room.supervision_unknown = process_state < 0
+			if process_state == 0: room.ready = false
 			# 关闭消费者先读取最终回执，再确认退出并 release，不能提前改 PID。
 			if room.get("close_supervision",false): continue
 			if process_state < 0 and int(room.pid) > 0:
-				error = PROCESS_OWNERSHIP_UNAVAILABLE
+				error = _startup_failure(room,PROCESS_OWNERSHIP_UNAVAILABLE,"native_state_unknown",process_state) if not room.get("ever_ready",false) else PROCESS_OWNERSHIP_UNAVAILABLE
 				continue
 			if process_state == 0 and int(room.pid) > 0 and room.get("process_token", "") is String and not str(room.process_token).is_empty():
+				if room.error.is_empty() and not room.get("ever_ready",false):
+					room.error = _startup_failure(room,"房间进程在就绪前退出","worker_exit_before_ready",process_state)
+					error = room.error
 				if _release_process(room):
 					room.pid = -1
 					room.process_token = ""
@@ -297,6 +551,10 @@ func poll() -> void:
 			if room.error.is_empty():
 				room.error = "房间进程已经退出" if process_state == 0 or room.pid <= 0 else PROCESS_OWNERSHIP_UNAVAILABLE
 			continue
+		# 能力恢复后复验当前 token/PID/binding，失败保持未知，不走旧启动期限。
+		if room.get("supervision_unknown",false):
+			if not process_identity_verified(instance_binding(room.id)): continue
+			room.supervision_unknown = false
 		# 未决关闭由回执消费者收尾，不以启动超时或 transient UNKNOWN 强杀。
 		if room.get("close_supervision",false): continue
 		if not room.error.is_empty():
@@ -304,28 +562,50 @@ func poll() -> void:
 			if not _terminate_process(room): room.error = "无法停止自己的房间进程；保留所有权与原目录"
 			continue
 		if room.ready:
+			room.ever_ready = true
+			room.ready_binding = instance_binding(room.id)
+			continue
+		# 曾就绪的同一binding重新确认身份即可恢复监督，不重新消费历史启动期限。
+		if room.get("ever_ready",false) and room.get("ready_binding",{}) == instance_binding(room.id):
+			room.ready = process_identity_verified(instance_binding(room.id))
 			continue
 		# 先检查墙钟：截止后才看到的报告不能让启动预算失效。
 		if _startup_now_msec() >= room.deadline:
-			room.error = "房间启动超时"
-			if not _terminate_process(room): room.error = "无法停止自己的房间进程；保留所有权与原目录"
+			room.error = _startup_failure(room,"房间启动超时","startup_deadline",process_state)
+			error = room.error
+			if not _terminate_process(room):
+				room.error += "；无法停止自己的房间进程；保留所有权与原目录"
+				error = room.error
 			continue
 		var path: String = room.directory.path_join("ready.json")
 		if FileAccess.file_exists(path):
-			var report = JSON.parse_string(FileAccess.get_file_as_string(path))
+			var parser := JSON.new()
+			# 发布过程中短读不构成完整的无效binding证据；只等既有启动预算，不猜重试期限。
+			if parser.parse(FileAccess.get_file_as_string(path)) != OK: continue
+			var report = parser.data
 			if not valid_ready_report(room, report):
-				room.error = "房间就绪报告无效"
+				room.error = _startup_failure(room,"房间就绪报告无效","ready_report",process_state)
+				error = room.error
 			else:
 				# 日志供审计读取，不同步扫描完整日志阻塞路由；就绪由实例报告确认。
 				room.capabilities = report.capabilities.duplicate(true)
 				room.ready = _process_state(room) == 1 and _startup_now_msec() < room.deadline
+				if room.ready:
+					room.ever_ready = true
+					room.ready_binding = instance_binding(room.id)
 		if not room.ready and _startup_now_msec() >= room.deadline:
-			room.error = "房间启动超时"
+			room.error = _startup_failure(room,"房间启动超时","ready_report_deadline",_process_state(room))
+			error = room.error
 		if not room.error.is_empty():
-			if not _terminate_process(room): room.error = "无法停止自己的房间进程；保留所有权与原目录"
+			if not _terminate_process(room):
+				room.error += "；无法停止自己的房间进程；保留所有权与原目录"
+				error = room.error
 
 func discover_rooms() -> Dictionary:
 	var result:Dictionary = {"registered":[],"errors":{}}
+	if approved_data_root.is_empty():
+		result.errors["approved_data_root"] = "批准数据根必须由本机部署入口显式提供；原目录保留"
+		return result
 	if not DirAccess.dir_exists_absolute(storage_root): return result
 	if not RecoveryPaths.checked(storage_root, storage_root):
 		result.errors["storage_root"] = "存储根不安全；原目录保留"
@@ -367,12 +647,42 @@ func discover_rooms() -> Dictionary:
 		if not valid:
 			result.errors[id] = "恢复状态无效"
 			continue
-		if rooms.values().any(func(room): return room.port == int(port_value)):
-			result.errors[id] = "内部端口与已有登记冲突"
-			continue
 		rooms[id] = {"id":id,"name":config.name,"port":int(port_value),"pid":-1,"instance_id":config.instance_id,"authority_host_mode":config.authority_host_mode,"directory":directory,"log_file":directory.path_join("engine.%s.log" % config.instance_id),"ready":false,"error":"等待原成员恢复","deadline":0}
 		result.registered.append(id)
 	return result
+
+## 仅失败出口的只读投影；不扫描日志/配置，不持久化诊断状态，不授权READY或关闭。
+## 原PID在terminate/release之前写入错误文本，句柄撤销后仍可定位创建实例。
+func _startup_failure(room:Dictionary, reason:String, stage:String, native_state:int) -> String:
+	var report_path:String = str(room.directory).path_join("ready.json")
+	var report_status:String = "missing"
+	if FileAccess.file_exists(report_path):
+		report_status = "path_rejected"
+		if RecoveryPaths.checked(storage_root,report_path):
+			var file := FileAccess.open(report_path,FileAccess.READ)
+			if file == null:
+				report_status = "read_failed"
+			else:
+				# 当前READY是固定小报告；过大输入只诊断，不在失败出口制造大dump/长读取。
+				var text:String = file.get_as_text() if file.get_length() <= 16384 else ""
+				report_status = "oversized" if file.get_length() > 16384 else "parse_error"
+				file.close()
+				var parser := JSON.new()
+				if report_status != "oversized" and parser.parse(text) == OK:
+					var report = parser.data
+					report_status = "invalid_schema_or_capabilities"
+					if report is Dictionary:
+						if valid_ready_report(room,report):
+							report_status = "valid_but_not_accepted"
+						else:
+							for field in [["ok",true],["room_id",room.id],["id",room.id],["pid",room.pid],["port",room.port],["instance_id",room.instance_id],["instance",room.instance_id],["authority_host_mode",room.authority_host_mode]]:
+								if report.get(field[0]) != field[1]:
+									report_status = "mismatch_" + field[0]
+									break
+	var native_label:String = "UNKNOWN"
+	if native_state == 0: native_label = "EXITED"
+	elif native_state == 1: native_label = "RUNNING"
+	return "%s；stage=%s role=--server-room-worker room=%s pid=%d instance=%s mode=%s native_state=%s ready_report=%s report_path=%s" % [reason,stage,room.id,int(room.pid),room.instance_id,room.authority_host_mode,native_label,report_status,report_path]
 
 ## 只观察指定实例；调用方每帧继续 poll，不重置 deadline、不认领新实例。
 ## 已成功启动的 ready 不因历史启动 deadline 到期而撤销。
@@ -399,6 +709,9 @@ func _recovery_binding_current(binding:Dictionary, room:Dictionary) -> bool:
 ## 对局状态恢复由房间工作进程的恢复入口负责，本方法不伪造恢复成功。
 func recover_room(id:String, expected_pid:int = -2, expected_instance_id:String = "", maintenance:Callable = Callable()) -> bool:
 	error = ""
+	if approved_data_root.is_empty():
+		error = "批准数据根必须由本机部署入口显式提供"
+		return false
 	if not process_ownership_available():
 		error = PROCESS_OWNERSHIP_UNAVAILABLE
 		return false
@@ -434,6 +747,19 @@ func recover_room(id:String, expected_pid:int = -2, expected_instance_id:String 
 		error = "房间启动配置不存在"
 		return false
 	var config = JSON.parse_string(FileAccess.get_file_as_string(config_path))
+	if config is Dictionary:
+		# 只有已确认EXITED并成功release才能申请替代实例。
+		if int(room.pid) > 0 or not str(room.get("process_token", "")).is_empty():
+			if _process_state(room) != 0 or not _release_process(room):
+				error = "旧进程所有权未释放；原存档保留"
+				return false
+			room.pid = -1
+			room.process_token = ""
+			recovery_binding = instance_binding(id)
+		var admission_error:String = runtime_admission_error(config)
+		if not admission_error.is_empty():
+			error = admission_error + "；原存档保留，需管理员迁移"
+			return false
 	if not config is Dictionary or not _safe_recovery_config(id, str(room.directory), config, service):
 		error = "恢复配置越过批准路径或包含链接；原存档保留"
 		return false
@@ -452,12 +778,19 @@ func recover_room(id:String, expected_pid:int = -2, expected_instance_id:String 
 	probe.close()
 	var instance_id:String = Crypto.new().generate_random_bytes(16).hex_encode()
 	config.instance_id = instance_id
+	config.room_runtime = room_runtime.duplicate(true)
+	# 恢复的权限取当前组合根声明，旧 config 的 true 永远不是能力来源。
+	config.broadcast_confirmation_capable = _broadcast_confirmation_capable
 	if not _safe_recovery_config(id, str(room.directory), config, service):
 		error = "恢复路径在发布配置前失效；原存档保留"
 		return false
 	service.call()
 	if cancelled[0] or not _recovery_binding_current(recovery_binding,room):
 		error = "恢复请求已取消或实例已更换；原存档保留"
+		return false
+	var final_admission:String = runtime_admission_error(config)
+	if not final_admission.is_empty():
+		error = final_admission + "；原存档保留，需管理员迁移"
 		return false
 	if not write_configuration(config_path, config):
 		error = "恢复启动配置发布失败；原存档保留"
@@ -470,9 +803,14 @@ func recover_room(id:String, expected_pid:int = -2, expected_instance_id:String 
 		error = "无法清除过期就绪报告"
 		return false
 	var log_file:String = str(room.directory).path_join("engine.%s.log" % instance_id)
-	var arguments:=PackedStringArray(["--headless", "--audio-driver", "Dummy", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(log_file), "--scene", "res://assets/scenes/main_menu/server_room_worker.tscn", "--", "--server-room-worker", ProjectSettings.globalize_path(config_path), ProjectSettings.globalize_path(_approved_root()), ProjectSettings.globalize_path(storage_root)])
+	var arguments:PackedStringArray = Bootstrap.role_scene_arguments("--server-room-worker", PackedStringArray(["--headless", "--audio-driver", "Dummy", "--path", ProjectSettings.globalize_path("res://"), "--log-file", ProjectSettings.globalize_path(log_file)]), PackedStringArray([ProjectSettings.globalize_path(config_path), ProjectSettings.globalize_path(_approved_root()), ProjectSettings.globalize_path(storage_root)]))
+	if arguments.is_empty():
+		config.instance_id = room.instance_id
+		write_configuration(config_path, config)
+		error = "房间进程职责场景未声明；原存档保留"
+		return false
 	var startup_deadline:int = _startup_now_msec() + int(startup_seconds * 1000.0)
-	var spawned:Dictionary = _process_owner.call("spawn", OS.get_executable_path(), preload("res://scripts/net/server/server_bootstrap.gd").process_arguments(arguments))
+	var spawned:Dictionary = _process_owner.call("spawn", OS.get_executable_path(), arguments)
 	var pid:int = int(spawned.get("pid", -1))
 	if pid < 0 or not spawned.get("token", "") is String or str(spawned.token).is_empty():
 		config.instance_id = room.instance_id
@@ -491,15 +829,26 @@ func recover_room(id:String, expected_pid:int = -2, expected_instance_id:String 
 	room.instance_id = instance_id
 	room.log_file = log_file
 	room.ready = false
+	room.ever_ready = false
+	room.erase("ready_binding")
+	room.supervision_unknown = false
 	room.error = ""
 	room.deadline = startup_deadline
 	rooms[id] = room
 	return true
 
 func _write_supervisor(room:Dictionary) -> void:
+	# 捕获调用所属实例，不能在完成采样时换成“当前binding”。
+	var binding:Dictionary = {"room":room.id,"pid":room.pid,"instance_id":room.instance_id,"authority_host_mode":room.authority_host_mode}
+	if not binding_matches(binding) or not process_identity_verified(binding): return
+	var entry:Dictionary = _heartbeat_instance(binding)
+	if entry.is_empty(): return
+	_pulse_version += 1
 	var path:String = room.directory.path_join("supervisor.json")
-	if not write_configuration(path, {"id":room.id, "pid":room.pid, "instance_id":room.instance_id, "version":_pulse_version}):
-		error = "无法完整发布房间主管心跳"
+	var published:bool = write_configuration(path, {"id":room.id, "pid":room.pid, "instance_id":room.instance_id, "version":_pulse_version})
+	if not binding_matches(binding) or _heartbeat_instances.get(room.id,{}) != entry: return
+	entry.policy.observe(binding,published,Time.get_ticks_msec())
+	entry.projection = entry.policy.evaluate(binding,Time.get_ticks_msec())
 
 func stop_room(id: String, expected_pid:int = -2, expected_instance_id:String = "") -> bool:
 	if not rooms.has(id):

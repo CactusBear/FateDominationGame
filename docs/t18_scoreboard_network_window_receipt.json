@@ -1,0 +1,431 @@
+{
+  "boundary": "one actual Windows non-headless window; Viewport.push_input GUI events; controlled real Session receiver, NOT ENet/OS hardware/multi-machine",
+  "rehydration_receipt": "E:/scratch/t18-verified-prior-freeze-v8-receipt.json",
+  "rehydration_receipt_sha256": "55fcf53891c423f88f9b2dd3f972dce98c2b6bd097499df4502b3240f0943b6d",
+  "runs": {
+    "core": {
+      "root": "E:\\scratch\\t18-scoreboard-hwnd-core-final\\isolated-0c73bf2286e04be091b25a02014d7a72",
+      "manifest_sha256": "c9fcccee290c98cf3cee030d02641d4284edbd4cca2eeb123e62500591b9822f",
+      "passed": true,
+      "exit": 0,
+      "result": {
+        "checks": 117,
+        "failures": [],
+        "gui_down": 7,
+        "gui_up": 7,
+        "motions": 13,
+        "pressed": 5,
+        "suite": "T18_scoreboard_network_window",
+        "transport": "controlled actual LobbySession transport signal; NOT ENet/multi-machine/hardware",
+        "window": true
+      },
+      "check_count_readback": 117,
+      "false_checks": [],
+      "job0": true,
+      "processes": [
+        {
+          "label": "probe",
+          "command": [
+            "E:\\scratch\\t18-scoreboard-hwnd-core-final\\isolated-0c73bf2286e04be091b25a02014d7a72\\generated\\Godot.exe",
+            "--headless",
+            "--path",
+            "E:\\scratch\\t18-scoreboard-hwnd-core-final\\isolated-0c73bf2286e04be091b25a02014d7a72\\generated\\probe",
+            "--script",
+            "res://probe.gd",
+            "--",
+            "0c73bf2286e04be091b25a02014d7a72",
+            "main",
+            "E:\\scratch\\t18-scoreboard-hwnd-core-final\\isolated-0c73bf2286e04be091b25a02014d7a72\\generated"
+          ],
+          "exited": true,
+          "pid": 37756,
+          "exit_code": 0,
+          "budget_failure": null,
+          "duration_seconds": 1.327,
+          "active_owned_processes": 0,
+          "log_handles_released": true
+        },
+        {
+          "label": "import",
+          "command": [
+            "E:\\scratch\\t18-scoreboard-hwnd-core-final\\isolated-0c73bf2286e04be091b25a02014d7a72\\generated\\Godot.exe",
+            "--headless",
+            "--editor",
+            "--import",
+            "--path",
+            "E:\\scratch\\t18-scoreboard-hwnd-core-final\\isolated-0c73bf2286e04be091b25a02014d7a72\\generated\\project"
+          ],
+          "exited": true,
+          "pid": 25172,
+          "exit_code": 0,
+          "budget_failure": null,
+          "duration_seconds": 76.538,
+          "active_owned_processes": 0,
+          "log_handles_released": true
+        },
+        {
+          "label": "t18_scoreboard_network_window_test",
+          "command": [
+            "E:\\scratch\\t18-scoreboard-hwnd-core-final\\isolated-0c73bf2286e04be091b25a02014d7a72\\generated\\Godot.exe",
+            "--fixed-fps",
+            "60",
+            "--path",
+            "E:\\scratch\\t18-scoreboard-hwnd-core-final\\isolated-0c73bf2286e04be091b25a02014d7a72\\generated\\project",
+            "--scene",
+            "res://newtests/t18_scoreboard_network_window_test.tscn",
+            "--",
+            "window"
+          ],
+          "exited": true,
+          "pid": 31584,
+          "exit_code": 0,
+          "budget_failure": null,
+          "duration_seconds": 20.101,
+          "active_owned_processes": 0,
+          "log_handles_released": true
+        }
+      ],
+      "errors_stdout_stderr": 0,
+      "log_diagnostics": [
+        {
+          "path": "import.stderr.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "import.stdout.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "probe.stderr.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "probe.stdout.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "t18_scoreboard_network_window_test.stderr.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "t18_scoreboard_network_window_test.stdout.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "engine-logs/godot.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "engine-logs/godot2026-10-11T01.23.38.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "engine-logs/godot2026-10-11T01.24.56.log",
+          "errors": 0,
+          "warnings": 0
+        }
+      ],
+      "source_after_copy_drift": {},
+      "source_drift": {},
+      "freeze_drift": {},
+      "native_captures": [
+        {
+          "ok": true,
+          "pid": 31584,
+          "hwnd": 128456596,
+          "path": "E:\\scratch\\t18-scoreboard-hwnd-core-final\\isolated-0c73bf2286e04be091b25a02014d7a72\\evidence\\native-window\\t18-network-open.png",
+          "sha256": "097c69733031305cdaf852af0cb92530ba40cd69fb0dfdfc186a43c16dca8d70",
+          "client_physical": [
+            320,
+            150,
+            1920,
+            1080
+          ],
+          "capture": "PrintWindow PW_CLIENTONLY|PW_RENDERFULLCONTENT; exact owned HWND; no focus/input",
+          "foreground": false,
+          "sha256_readback_matches": true
+        },
+        {
+          "ok": true,
+          "pid": 31584,
+          "hwnd": 128456596,
+          "path": "E:\\scratch\\t18-scoreboard-hwnd-core-final\\isolated-0c73bf2286e04be091b25a02014d7a72\\evidence\\native-window\\t18-network-after-input.png",
+          "sha256": "0e43edc6537b05c0a4b9653ad7679376dca93bc344573c2e2a48ca97563e4750",
+          "client_physical": [
+            320,
+            150,
+            1920,
+            1080
+          ],
+          "capture": "PrintWindow PW_CLIENTONLY|PW_RENDERFULLCONTENT; exact owned HWND; no focus/input",
+          "foreground": true,
+          "sha256_readback_matches": true
+        }
+      ],
+      "native_pixels_reviewed": true,
+      "observations": [
+        "WINDOW {\"display_server\":\"Windows\",\"input\":\"single Viewport.push_input motion/frame/down/frame/up/frame; no warp/emit/direct toggle\",\"pid\":31584,\"user_data\":\"E:/scratch/t18-scoreboard-hwnd-core-final/isolated-0c73bf2286e04be091b25a02014d7a72/generated/appdata/FateDomination\"}",
+        "END_INPUT {\"disabled\":true,\"pressed\":0,\"request_kinds\":[\"preview_group\",\"preview_group\",\"preview_group\"],\"requests_after\":3,\"requests_before\":3,\"state_unchanged\":true}"
+      ],
+      "source_scope": {
+        "scripts/game_scene/battle_board_v2.gd": {
+          "frozen_sha256": "1e183b3dda933944a45d7161053554e6477b4f25e0d436bc892c08d21ea620ee",
+          "live_sha256": "1e183b3dda933944a45d7161053554e6477b4f25e0d436bc892c08d21ea620ee",
+          "live_matches": true
+        },
+        "scripts/net/ui/v2_view_presenter.gd": {
+          "frozen_sha256": "81285a188f225449e7bdac8f3f955a8a3c196d83c79152e0888afd98d94d55f6",
+          "live_sha256": "81285a188f225449e7bdac8f3f955a8a3c196d83c79152e0888afd98d94d55f6",
+          "live_matches": true
+        },
+        "scripts/net/session/lobby_session.gd": {
+          "frozen_sha256": "e07db399d36ac77d8f2458644b1fb75901882a5d39f89d7d6f8770ad16d5c5f3",
+          "live_sha256": "e07db399d36ac77d8f2458644b1fb75901882a5d39f89d7d6f8770ad16d5c5f3",
+          "live_matches": true
+        },
+        "scripts/net/session/client_match_inbox.gd": {
+          "frozen_sha256": "cf9a54204cfc5f5b68ff17742deac4a60882b7b51d1a057a6e5d9d2c2aaf95c2",
+          "live_sha256": "cf9a54204cfc5f5b68ff17742deac4a60882b7b51d1a057a6e5d9d2c2aaf95c2",
+          "live_matches": true
+        },
+        "scripts/match/view_mirror.gd": {
+          "frozen_sha256": "8007a3cc6e2e1ed0bb319ba3e1b3bd21fb825e7b9bc24f3f212a724c514eef20",
+          "live_sha256": "8007a3cc6e2e1ed0bb319ba3e1b3bd21fb825e7b9bc24f3f212a724c514eef20",
+          "live_matches": true
+        },
+        "assets/scenes/game_scene/battle_board_v2.tscn": {
+          "frozen_sha256": "819c08a3db6a88c943849d328dbd0e2bfca0c51bdac9c71f910c89e2451bf512",
+          "live_sha256": "819c08a3db6a88c943849d328dbd0e2bfca0c51bdac9c71f910c89e2451bf512",
+          "live_matches": true
+        }
+      }
+    },
+    "empty_edge": {
+      "root": "E:\\scratch\\t18-scoreboard-hwnd-empty-edge-final\\isolated-44295cddc0284c9c81c8136abee36a3b",
+      "manifest_sha256": "ecd19c5f272cae7ce49dea19b715097e50242c908e3b8127e14dcd3e821551d8",
+      "passed": false,
+      "exit": 1,
+      "result": {
+        "checks": 132,
+        "failures": [
+          "零玩家 生产动画完成"
+        ],
+        "gui_down": 9,
+        "gui_up": 9,
+        "motions": 15,
+        "pressed": 7,
+        "suite": "T18_scoreboard_network_window",
+        "transport": "controlled actual LobbySession transport signal; NOT ENet/multi-machine/hardware",
+        "window": true
+      },
+      "check_count_readback": 132,
+      "false_checks": [
+        "CHECK 零玩家 生产动画完成 false"
+      ],
+      "job0": true,
+      "processes": [
+        {
+          "label": "probe",
+          "command": [
+            "E:\\scratch\\t18-scoreboard-hwnd-empty-edge-final\\isolated-44295cddc0284c9c81c8136abee36a3b\\generated\\Godot.exe",
+            "--headless",
+            "--path",
+            "E:\\scratch\\t18-scoreboard-hwnd-empty-edge-final\\isolated-44295cddc0284c9c81c8136abee36a3b\\generated\\probe",
+            "--script",
+            "res://probe.gd",
+            "--",
+            "44295cddc0284c9c81c8136abee36a3b",
+            "main",
+            "E:\\scratch\\t18-scoreboard-hwnd-empty-edge-final\\isolated-44295cddc0284c9c81c8136abee36a3b\\generated"
+          ],
+          "exited": true,
+          "pid": 34568,
+          "exit_code": 0,
+          "budget_failure": null,
+          "duration_seconds": 4.508,
+          "active_owned_processes": 0,
+          "log_handles_released": true
+        },
+        {
+          "label": "import",
+          "command": [
+            "E:\\scratch\\t18-scoreboard-hwnd-empty-edge-final\\isolated-44295cddc0284c9c81c8136abee36a3b\\generated\\Godot.exe",
+            "--headless",
+            "--editor",
+            "--import",
+            "--path",
+            "E:\\scratch\\t18-scoreboard-hwnd-empty-edge-final\\isolated-44295cddc0284c9c81c8136abee36a3b\\generated\\project"
+          ],
+          "exited": true,
+          "pid": 39388,
+          "exit_code": 0,
+          "budget_failure": null,
+          "duration_seconds": 45.806,
+          "active_owned_processes": 0,
+          "log_handles_released": true
+        },
+        {
+          "label": "t18_scoreboard_network_window_test",
+          "command": [
+            "E:\\scratch\\t18-scoreboard-hwnd-empty-edge-final\\isolated-44295cddc0284c9c81c8136abee36a3b\\generated\\Godot.exe",
+            "--fixed-fps",
+            "60",
+            "--path",
+            "E:\\scratch\\t18-scoreboard-hwnd-empty-edge-final\\isolated-44295cddc0284c9c81c8136abee36a3b\\generated\\project",
+            "--scene",
+            "res://newtests/t18_scoreboard_network_window_test.tscn",
+            "--",
+            "window",
+            "empty-edge"
+          ],
+          "exited": true,
+          "pid": 36748,
+          "exit_code": 1,
+          "budget_failure": null,
+          "duration_seconds": 25.996,
+          "active_owned_processes": 0,
+          "log_handles_released": true
+        }
+      ],
+      "errors_stdout_stderr": 1,
+      "log_diagnostics": [
+        {
+          "path": "import.stderr.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "import.stdout.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "probe.stderr.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "probe.stdout.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "t18_scoreboard_network_window_test.stderr.log",
+          "errors": 1,
+          "warnings": 0
+        },
+        {
+          "path": "t18_scoreboard_network_window_test.stdout.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "engine-logs/godot.log",
+          "errors": 1,
+          "warnings": 0
+        },
+        {
+          "path": "engine-logs/godot2026-10-11T01.25.41.log",
+          "errors": 0,
+          "warnings": 0
+        },
+        {
+          "path": "engine-logs/godot2026-10-11T01.26.31.log",
+          "errors": 0,
+          "warnings": 0
+        }
+      ],
+      "source_after_copy_drift": {},
+      "source_drift": {},
+      "freeze_drift": {},
+      "native_captures": [
+        {
+          "ok": true,
+          "pid": 36748,
+          "hwnd": 7604474,
+          "path": "E:\\scratch\\t18-scoreboard-hwnd-empty-edge-final\\isolated-44295cddc0284c9c81c8136abee36a3b\\evidence\\native-window\\t18-network-open.png",
+          "sha256": "4d6c7763f62767c89ddd1ac1974407808d1e9fc20dbe8df9ac6f9651ef28ef0e",
+          "client_physical": [
+            320,
+            150,
+            1920,
+            1080
+          ],
+          "capture": "PrintWindow PW_CLIENTONLY|PW_RENDERFULLCONTENT; exact owned HWND; no focus/input",
+          "foreground": false,
+          "sha256_readback_matches": true
+        },
+        {
+          "ok": true,
+          "pid": 36748,
+          "hwnd": 7604474,
+          "path": "E:\\scratch\\t18-scoreboard-hwnd-empty-edge-final\\isolated-44295cddc0284c9c81c8136abee36a3b\\evidence\\native-window\\t18-network-after-input.png",
+          "sha256": "0341001e3848e7ccc280ded0df61988f2c95226ba604b6554148b3ea888fab41",
+          "client_physical": [
+            320,
+            150,
+            1920,
+            1080
+          ],
+          "capture": "PrintWindow PW_CLIENTONLY|PW_RENDERFULLCONTENT; exact owned HWND; no focus/input",
+          "foreground": false,
+          "sha256_readback_matches": true
+        }
+      ],
+      "native_pixels_reviewed": false,
+      "observations": [
+        "WINDOW {\"display_server\":\"Windows\",\"input\":\"single Viewport.push_input motion/frame/down/frame/up/frame; no warp/emit/direct toggle\",\"pid\":36748,\"user_data\":\"E:/scratch/t18-scoreboard-hwnd-empty-edge-final/isolated-44295cddc0284c9c81c8136abee36a3b/generated/appdata/FateDomination\"}",
+        "END_INPUT {\"disabled\":true,\"pressed\":0,\"request_kinds\":[\"preview_group\",\"preview_group\",\"preview_group\"],\"requests_after\":3,\"requests_before\":3,\"state_unchanged\":true}",
+        "EDGE_CAUSE {\"accepted\":true,\"expected_ids\":[],\"previous_ids\":[0,1],\"rival_anim_busy\":true,\"source_seq\":5}"
+      ],
+      "source_scope": {
+        "scripts/game_scene/battle_board_v2.gd": {
+          "frozen_sha256": "1e183b3dda933944a45d7161053554e6477b4f25e0d436bc892c08d21ea620ee",
+          "live_sha256": "1e183b3dda933944a45d7161053554e6477b4f25e0d436bc892c08d21ea620ee",
+          "live_matches": true
+        },
+        "scripts/net/ui/v2_view_presenter.gd": {
+          "frozen_sha256": "81285a188f225449e7bdac8f3f955a8a3c196d83c79152e0888afd98d94d55f6",
+          "live_sha256": "81285a188f225449e7bdac8f3f955a8a3c196d83c79152e0888afd98d94d55f6",
+          "live_matches": true
+        },
+        "scripts/net/session/lobby_session.gd": {
+          "frozen_sha256": "e07db399d36ac77d8f2458644b1fb75901882a5d39f89d7d6f8770ad16d5c5f3",
+          "live_sha256": "e07db399d36ac77d8f2458644b1fb75901882a5d39f89d7d6f8770ad16d5c5f3",
+          "live_matches": true
+        },
+        "scripts/net/session/client_match_inbox.gd": {
+          "frozen_sha256": "cf9a54204cfc5f5b68ff17742deac4a60882b7b51d1a057a6e5d9d2c2aaf95c2",
+          "live_sha256": "cf9a54204cfc5f5b68ff17742deac4a60882b7b51d1a057a6e5d9d2c2aaf95c2",
+          "live_matches": true
+        },
+        "scripts/match/view_mirror.gd": {
+          "frozen_sha256": "8007a3cc6e2e1ed0bb319ba3e1b3bd21fb825e7b9bc24f3f212a724c514eef20",
+          "live_sha256": "8007a3cc6e2e1ed0bb319ba3e1b3bd21fb825e7b9bc24f3f212a724c514eef20",
+          "live_matches": true
+        },
+        "assets/scenes/game_scene/battle_board_v2.tscn": {
+          "frozen_sha256": "819c08a3db6a88c943849d328dbd0e2bfca0c51bdac9c71f910c89e2451bf512",
+          "live_sha256": "819c08a3db6a88c943849d328dbd0e2bfca0c51bdac9c71f910c89e2451bf512",
+          "live_matches": true
+        }
+      }
+    }
+  },
+  "files": {
+    "newtests/t18_scoreboard_network_window_test.gd": "2797f5b192a8c68ca5c70410787c6934e5af48d26dc42b22b40f126ad13a2933",
+    "newtests/t18_scoreboard_network_window_test.tscn": "b8c8f0c527446c9c858eeded76a8966cd3991cf6023637ec6a6da68c90babc5a",
+    "newtests/run_t18_scoreboard_network_window.py": "5faca2556e93860a1dcbff6e959dd33ffa4cc1365b3a1df5f0f3f91138588133",
+    "newtests/prepare_t18_prior_freeze.py": "b19a5b36609907da6c2a7a0de32de8c7617be898ac25e1f436f9e14ddf515af2",
+    "newtests/t18_native_window_capture.py": "dfe76bbdb219a71a18e7a28b3629d282167072572fb3879d9c3082299f4e74f1"
+  },
+  "identical_run_inputs": true
+}

@@ -1,0 +1,76 @@
+{
+  "mode": "READ_ONLY_NO_GODOT",
+  "dependency_declaration": {
+    "path": "E:\\FateDiagnostics\\round55-native-build-20261010-4\\manifest.json",
+    "sha256": "9f4477278dcc71967adbb675db692b4b67ebfaae4e94da7b2cdb0fa5864c78ac",
+    "source_pointer": "/sources",
+    "compile_steps": {
+      "addons/fate_server_signals/src/atomic_file_replace_binding.cpp": 18,
+      "addons/fate_server_signals/src/atomic_file_replace_core.cpp": 6,
+      "addons/fate_server_signals/src/collection_identity_binding.cpp": 19,
+      "addons/fate_server_signals/src/process_owner_binding.cpp": 20,
+      "addons/fate_server_signals/src/process_owner_core.cpp": 9,
+      "addons/fate_server_signals/src/process_tree_owner_core.cpp": 10,
+      "addons/fate_server_signals/src/server_signals.cpp": 21,
+      "addons/fate_server_signals/src/temporary_cleanup_core.cpp": 12
+    },
+    "link_step": 22,
+    "checks": [
+      {
+        "pointer": "/commands/22/exit",
+        "equals": 0
+      },
+      {
+        "pointer": "/formal_unchanged",
+        "equals": true
+      },
+      {
+        "pointer": "/frozen_inputs_unchanged",
+        "equals": true
+      },
+      {
+        "pointer": "/runtime",
+        "equals": "NOTRUN"
+      }
+    ]
+  },
+  "native_compile_dependency_readback": {
+    "path": "E:\\FateDiagnostics\\round55-native-build-20261010-4\\manifest.json",
+    "sha256": "9f4477278dcc71967adbb675db692b4b67ebfaae4e94da7b2cdb0fa5864c78ac",
+    "required_sources_checked": 12,
+    "checks": [
+      {
+        "pointer": "/commands/22/exit",
+        "equals": 0
+      },
+      {
+        "pointer": "/formal_unchanged",
+        "equals": true
+      },
+      {
+        "pointer": "/frozen_inputs_unchanged",
+        "equals": true
+      },
+      {
+        "pointer": "/runtime",
+        "equals": "NOTRUN"
+      }
+    ],
+    "source_files": {
+      "addons/fate_server_signals/src/atomic_file_replace_binding.cpp": "35514ae68446bff71e0e4ba547eb0cac3458d7f39edc9389937fd74871b45657",
+      "addons/fate_server_signals/src/atomic_file_replace_core.cpp": "58fb2da8a117e60bba3773bdb676f142f92c853b782796922b1af2e5e3270b19",
+      "addons/fate_server_signals/src/atomic_file_replace_core.hpp": "0ae34bdcf9d15837caa78d09c6a18cce0f35d548a7d362203e6204b859af4fc5",
+      "addons/fate_server_signals/src/collection_identity_binding.cpp": "46761f85b1164c207a104df51f8fa9cedbf4f9a03333f30e3e44e8043945a41e",
+      "addons/fate_server_signals/src/process_owner_binding.cpp": "7cf222556703e32baa341236e437448a6e4150e9507186107820f1b3d5aae8d3",
+      "addons/fate_server_signals/src/process_owner_core.cpp": "473e40d2de0d8b5a3fa274641e577961d4f06ef32925ef3c7de9465f8f0cde37",
+      "addons/fate_server_signals/src/process_owner_core.hpp": "1a004382f7d25a19e52a0459308d47f367ca161883d5fcf070569ea5b00d3168",
+      "addons/fate_server_signals/src/process_tree_owner_core.cpp": "c51a6a352210e2094fae87f62292e094390ae4513c0f69254fc616136ed04c2f",
+      "addons/fate_server_signals/src/process_tree_owner_core.hpp": "e360c86f8ecfc8ec67a522333849ab96f6dc863319c02e0e89da030b51d5c1db",
+      "addons/fate_server_signals/src/server_signals.cpp": "4a09c18a21fb0ff8e06f400012e11516a27a1bb24fb28a78332e14ecb57ed8d0",
+      "addons/fate_server_signals/src/temporary_cleanup_core.cpp": "79127c379c9ce81bfd0cc889f6d97ac4aa1fa53a042e7c24fdd2d63095d6e024",
+      "addons/fate_server_signals/src/temporary_cleanup_core.hpp": "66cf721472e21fdec7f67531c70c472fdda5eb70df222d0a21636e84a3ff24f5"
+    }
+  },
+  "production_dll_sha256": "92a42bd2860af19ca432321400bdaa514a2a9c11f9289a43c76e19a2e2bd68cd",
+  "native_new_runtime": "NOTRUN_UNRELEASED"
+}

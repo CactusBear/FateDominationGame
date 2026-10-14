@@ -146,6 +146,7 @@ const TABLE := {
 	"get_shared_attack_attribute" : { "category": QUERY_EFFECT, "class": "GetSharedAttackAttribute", "summary": "玩家场上攻击的共同属性，无则null" },
 	"can_gain_magic" : { "category": QUERY_EFFECT, "class": "CanGainMagic", "summary": "能否从某来源获得魔力" },
 	"query_log" : { "category": QUERY_LOG, "class": "QueryLog", "summary": "查游戏日志（历史事实）" },
+	"record_log" : { "category": QUERY_LOG, "class": "RecordLog", "summary": "记录一条调用方声明的游戏事实" },
 	"sum_log_data" : { "category": QUERY_LOG, "class": "SumLogData", "summary": "日志里某数值字段求和" },
 	"log_field_values" : { "category": QUERY_LOG, "class": "LogFieldValues", "summary": "日志里某字段的值列成数组" },
 	"is_true_name_released" : { "category": QUERY_LOG, "class": "IsTrueNameReleased", "summary": "查询当前真名是否解放" },
@@ -175,6 +176,7 @@ const TABLE := {
 	"is_null" : { "category": QUERY_COMPARE, "class": "IsNull", "summary": "是否为null" },
 
 	"edit_magic" : { "category": EDIT_PLAYER, "class": "EditMagic", "summary": "改魔力并派发时点" },
+	"pay_magic" : { "category": EDIT_PLAYER, "class": "PayMagic", "summary": "按当时余额支付魔力，缺显式透支声明时不足拒绝" },
 	"edit_score" : { "category": EDIT_PLAYER, "class": "EditScore", "summary": "改战果并派发时点" },
 	"edit_lives" : { "category": EDIT_PLAYER, "class": "EditLives", "summary": "改生命" },
 	"edit_power" : { "category": EDIT_PLAYER, "class": "EditPower", "summary": "改合计威力" },
@@ -238,6 +240,7 @@ const TABLE := {
 
 	"register_object_effects" : { "category": EFFECT, "class": "RegisterObjectEffects", "summary": "登记对象上的效果" },
 	"unregister_object_effects" : { "category": EFFECT, "class": "UnregisterObjectEffects", "summary": "取消登记对象上的效果" },
+	"transfer_object_effects" : { "category": EFFECT, "class": "TransferObjectEffects", "summary": "把对象上的效果改归另一名玩家" },
 	"counter" : { "category": EFFECT, "class": "Counter", "summary": "反制效果或其中一个func" },
 	"close_time_point" : { "category": EFFECT, "class": "CloseTimePoint", "summary": "关闭时点" },
 	"schedule_effect_on_time_point" : { "category": EFFECT, "class": "ScheduleEffectOnTimePoint", "summary": "登记一次性延迟效果" },
@@ -279,6 +282,20 @@ const TABLE := {
 	"show_message" : { "category": MESSAGE, "class": "ShowMessage", "summary": "产生一条提示消息" },
 	"show_cards" : { "category": MESSAGE, "class": "ShowCards", "summary": "把一组牌展示给指定玩家看" }
 }
+
+
+# 常规出牌使用的原语显式声明依赖，供冻结/打包扫描；类名仍由 TABLE 决定。
+const _OPERATION_SCRIPTS := {
+	"RemoveFromArray":preload("res://scripts/system/operations/RemoveFromArray.gd"),
+	"AddToArray":preload("res://scripts/system/operations/AddToArray.gd"),
+	"SetProperty":preload("res://scripts/system/operations/SetProperty.gd"),
+	"RecordLog":preload("res://scripts/system/operations/RecordLog.gd")
+}
+
+
+# 仅创建原语实例，不经过效果执行器，不新增预算、日志或事务边界。
+static func create_instance_of(func_name:String) -> RefCounted:
+	return _OPERATION_SCRIPTS[get_class_name_of(func_name)].new()
 
 
 static func get_entry(func_name:String) -> Dictionary:

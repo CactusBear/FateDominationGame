@@ -1,0 +1,74 @@
+{
+  "mode": "paced-legacy-v2",
+  "command": [
+    "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+    "--headless",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\scratch\\gateway-approved-triage\\paced-legacy-v2\\project",
+    "--scene",
+    "res://tests/net_server_gateway_restart_test.tscn",
+    "--",
+    "E:/scratch/gateway-approved-triage/paced-legacy-v2/fixture"
+  ],
+  "exit": 1,
+  "analysis": {
+    "passed": false,
+    "reasons": [
+      "nonzero_exit",
+      "result_failures",
+      "check_false"
+    ],
+    "result": {
+      "checks": 12,
+      "failures": [
+        "all approved client files assemble and verify before ready"
+      ]
+    }
+  },
+  "job_records": [
+    {
+      "label": "scene",
+      "command": [
+        "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\gateway-approved-triage\\paced-legacy-v2\\project",
+        "--scene",
+        "res://tests/net_server_gateway_restart_test.tscn",
+        "--",
+        "E:/scratch/gateway-approved-triage/paced-legacy-v2/fixture"
+      ],
+      "exited": true,
+      "pid": 24228,
+      "exit_code": 1,
+      "budget_failure": null,
+      "duration_seconds": 96.393,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    }
+  ],
+  "fixture_original_sha256": "ab91d362dbc7588bc2c8fc5e3df796b02e2d7718bb79bd4b05a2a9a11b854e7d",
+  "fixture_observer_sha256": "94ee9ef0243785dd0479920525da57c70f6a11ad408092ab4cf0b93d7c0fdf4e",
+  "observations": [
+    {
+      "active_hash_present": false,
+      "active_index": 88,
+      "bytes": 95949242,
+      "client": 0,
+      "complete": false,
+      "completed_files": 88,
+      "connected": true,
+      "deadline_reached": true,
+      "files": 204,
+      "no_progress_msec": 257,
+      "pending_offset": -1,
+      "running": true,
+      "session_error": "",
+      "sync_error": ""
+    }
+  ]
+}

@@ -54,5 +54,6 @@ static func _digest(challenge:PackedByteArray,profile_context:String) -> PackedB
 	context.start(HashingContext.HASH_SHA256)
 	context.update("FateDomination identity challenge v1\n".to_utf8_buffer())
 	context.update(challenge)
-	context.update(profile_context.to_utf8_buffer())
+	if not profile_context.is_empty():
+		context.update(profile_context.to_utf8_buffer())
 	return context.finish()

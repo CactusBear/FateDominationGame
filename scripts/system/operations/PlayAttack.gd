@@ -3,70 +3,45 @@ extends RefCounted
 
 #常规出牌：检查费用/魔力/出牌数量上限，扣费并把攻击牌计入合计威力。
 #ignore_limit跳过play_limit常规出牌数量检查，供特殊效果(残留牌重新打出等)复用
-func exec(attack:BaseAttack, player_id:int = -1, cost:BaseNumber = null, power:BaseNumber = null, ignore_limit:bool = false) -> bool:
+func exec(attack:BaseAttack, player_id:int = -1, cost:BaseNumber = null, power:BaseNumber = null, ignore_limit:bool = false, allow_magic_overdraft:bool = false) -> bool:
 	if attack == null:
 		return false
 	if cost == null:
 		cost = attack._cost
 	if power == null:
 		power = attack._power
-	# 单卡入口仅供显式特殊出牌；常规出牌必须提交整组。
-	if not ignore_limit and EffectManager.activating_eff == null:
+	# 资格判定统一由公开纯查询承载；这里在通过后才进入费用/入场副作用。
+	var affordance:Dictionary = preload("res://scripts/system/play_affordance_query.gd").new().check(attack, player_id, ignore_limit)
+	if !affordance.get("ok", false):
 		return false
-
-	var id = EffectManager.resolve_player_id(player_id)
-	if !GameData.player_data_library.has(id):
+	var id:int = int(affordance.get("player_id", -1))
+	# 动作在费用回调前捕获已验帧的原来源与两项身份，消费时不刷新。
+	var source:Variant = RegisterObjectEffects.captured_context(null)
+	if not RegisterObjectEffects.source_is_current(source):
 		return false
-	var player_data = GameDataManager.get_player_data(id) as Dictionary
-	if player_data["is_out"]:
+	#带词条的牌入场后必须结算词条；来源不合格时在任何写入前拒绝，避免“已入场却报失败”的半状态。
+	if not attack._keywords.is_empty() and not RegisterObjectEffects.source_is_current(source, attack):
 		return false
-	#带有"无法打出卡牌"效果的buff(如【败北】)会阻止出牌，
-	#但不影响已激活的牌和能力的其他使用。按效果名通用查询，不关心具体buff类型
-	if PlayerBuffsHaveEffect.new().exec(CannotPlayCardsEffect.EFFECT_NAME, id):
-		return false
-	#阶段与行动者限制属于"常规出牌"；只有【效果链驱动的特殊出牌】才放宽，
-	#卡面存在「战斗阶段：从手牌打出一张力量基础攻击」这类要求，写死会让它永远打不出来。
-	#放宽条件必须带 activating_eff：调试工具等非效果链的调用仍按常规出牌约束，
-	#否则它们能绕过阶段限制把牌塞进打出区（牌会同时留在来源区）
-	var effect_driven:bool = ignore_limit and EffectManager.activating_eff != null
-	if !effect_driven:
-		if GameProgress.get_current_phase().get("name", "") != "action":
-			return false
-		if GameProgress.current_player_id != id:
-			return false
-	if attack._is_activating:
-		return false
-	#卡面声明的打出条件(如"魔力需达到8点")与"需追加打出"：条件写在卡的数据里，不在入口写死
-	if !PlayRules.can_play(attack, player_data):
-		return false
-	#局面禁令已由 PlayRules.can_play 统一校验，不因 ignore_limit 绕过。
-
-	var play_limit = player_data["play_limit"] as BaseNumber
-	#本回合已打出的攻击数直接数日志，不再维护一份 played_attacks_this_turn。
-	#口径与界面提示共用 PlayRules.played_count，不在这里另写一份 filter
-	var played_count:int = PlayRules.played_count(id, "attack")
-	if !ignore_limit and EffectManager.activating_eff == null and played_count >= play_limit.number:
+	var player_data:Dictionary = GameDataManager.find_player_data(id)
+	var magic:BaseNumber = player_data.get("magic") as BaseNumber
+	if magic == null:
 		return false
 
 	#最终费用 = 印刷费用 - 玩家层折扣 - 卡牌自身折扣，折扣不会让费用变成负数
 	var attack_cost_discount = player_data["attack_cost_discount"] as BaseNumber
 	var card_cost_discount = attack._cost_discount as BaseNumber
 	# 先派费用计算时点，费用修正才会作用于本次实际扣费。
-	TimePointChecker.dynamic_time_point([TimePoints.CARD_COST_CALCULATED], id, attack)
+	TimePointChecker.dynamic_time_point([TimePoints.CARD_COST_CALCULATED], id, attack, source)
+	# 本同步入口不能把尚未完成的费用监听当作已完成报价。
+	if EffectManager.runtime_guard_status().get("paused", false) or EffectManager.is_waiting_for_choice():
+		return false
 	var final_cost = cost.number - attack_cost_discount.number - card_cost_discount.number
 	if final_cost < 0:
 		final_cost = 0
 
-	var pl_magic = player_data["magic"] as BaseNumber
-	var is_magic_immune = player_data["is_magic_immune"] as bool
-	if !is_magic_immune and pl_magic.number < final_cost:
+	# 支付原语复核当时余额；保留本入口不派 MAGIC_DECREASE 的原有语义。
+	if not PayMagic.new().exec(BaseNumber.new(final_cost), id, "effect_attack", attack, false, allow_magic_overdraft, source, player_data, magic):
 		return false
-
-	if !is_magic_immune:
-		var magic_before = pl_magic.number
-		pl_magic.minus(BaseNumber.new(final_cost))
-		#扣费与 EditMagic 同一套记录口径（本操作不派 MAGIC_DECREASE 时点，保持原有行为）
-		GameLog.record_resource_payment("magic", id, magic_before, pl_magic.number, "effect_attack", attack)
 	attack._is_activating = true
 
 	var playered_cards_arr = player_data["played_cards"] as Array
@@ -82,11 +57,16 @@ func exec(attack:BaseAttack, player_id:int = -1, cost:BaseNumber = null, power:B
 
 	#日志：谁打出了哪张牌（供"本回合我打出了什么"这类历史查询）
 	GameLog.record("play", id, -1, "", attack, ["play"],
-		{"card_name": attack._name, "card_type": "attack", "extra": true})
+		{"card_name": attack._name, "card_type": "attack", "extra": true, "concealed": attack._is_concealed})
 	#词条带来的规则行为（如【真名解放】）在打出时点之前结算：
 	#规则是"使用带此词条的牌后立即解放"，而有些牌监听 self_true_name_release，
 	#顺序反了它们就接不上这次解放
-	ApplyCardKeywords.new().exec(attack, id)
-	TimePointChecker.card_revealed(attack)
-	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, attack)
+	#词条结算显式带本次原来源并消费结果；被拒不能冒称打出成功。
+	#无词条的牌没有规则动作，不经路由（路由在无来源时会拒绝，空操作不应因此失败）。
+	if not attack._keywords.is_empty():
+		var keyword_applied = preload("res://scripts/system/operation_router.gd").exec_registered("apply_card_keywords", [attack, id, source], source)
+		if typeof(keyword_applied) != TYPE_BOOL or not keyword_applied:
+			return false
+	TimePointChecker.card_revealed(attack, source)
+	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], id, attack, source)
 	return true

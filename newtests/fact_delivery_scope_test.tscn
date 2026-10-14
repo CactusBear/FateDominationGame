@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/fact_delivery_scope_test.gd" id="1"]
+
+[node name="FactDeliveryScopeTest" type="Node"]
+script = ExtResource("1")

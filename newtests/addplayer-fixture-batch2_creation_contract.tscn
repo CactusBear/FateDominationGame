@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/addplayer-fixture-batch2_creation_contract.gd" id="1"]
+
+[node name="AddPlayerFixtureBatch2CreationContract" type="Node"]
+script = ExtResource("1")

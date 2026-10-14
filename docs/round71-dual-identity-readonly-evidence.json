@@ -1,0 +1,400 @@
+{
+  "generated_at": "2026-10-10T14:51:20.313331+00:00",
+  "source_evidence": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\evidence.json",
+  "source_sha256": "229489919390511071eabd9952f700b9cc20a619a60e4321990781c1f9453431",
+  "old_artifact": true,
+  "nonfinal": true,
+  "additional_client_launches": 0,
+  "excluded_interrupted_attempt": "E:/Caches/Hermes/cache/scratch/round71-dual-identity-once-23212/evidence.json",
+  "identity_verdict": {
+    "generated_both": false,
+    "paths_disjoint": true,
+    "different_identity_sha": null,
+    "no_identity_overwrite": null,
+    "max_identity_file_counts": {
+      "host": 0,
+      "guest": 0
+    }
+  },
+  "overall_acceptance": false,
+  "launcher_no_reset": {
+    "static": true,
+    "APPDATA_runtime_userdirs_separate": true,
+    "LOCALAPPDATA_runtime_inheritance_observed": false
+  },
+  "protected_pids": [
+    17120,
+    28100
+  ],
+  "protected_not_in_owned_job": true,
+  "current_hashes_match_original": true,
+  "artifact_hashes": {
+    "E:\\Caches\\Hermes\\cache\\scratch\\round71-human-test-candidate-validation-v3\\client\\START-CLIENT.cmd": "379e5ae6f9ea58dc745291edef07de0289ca9316e9da5ce73b6b6f2b1ef798ea",
+    "E:\\Caches\\Hermes\\cache\\scratch\\round71-human-test-candidate-validation-v3\\client\\FateDomination.exe": "8b30b9e04970272ed3d70a4c530838570922550208ae1e1817ccb30cc0458730",
+    "E:\\FateCandidates\\round71-build-only-4f7fb4194e19acdf-91306a82\\artifacts\\client\\FateDomination.exe": "8b30b9e04970272ed3d70a4c530838570922550208ae1e1817ccb30cc0458730"
+  },
+  "binary_pids_by_role": {
+    "host": [
+      33356
+    ],
+    "guest": [
+      34180
+    ]
+  },
+  "roles_commands": {
+    "host": {
+      "APPDATA": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\appdata",
+      "LOCALAPPDATA": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\localappdata",
+      "TEMP": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\temp",
+      "TMP": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\temp",
+      "TMPDIR": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\temp",
+      "cmd": "\"E:\\Caches\\Hermes\\cache\\scratch\\round71-human-test-candidate-validation-v3\\client\\START-CLIENT.cmd\" --headless --audio-driver Dummy --rendering-method gl_compatibility --max-fps 10 --quit-after 180 --log-file \"E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\host.engine.log\"",
+      "engine_log": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\host.engine.log",
+      "stdout_log": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\host.stdout.log",
+      "native_command": "\"C:\\Windows\\system32\\cmd.exe\" /d /s /c \"\"E:\\Caches\\Hermes\\cache\\scratch\\round71-human-test-candidate-validation-v3\\client\\START-CLIENT.cmd\" --headless --audio-driver Dummy --rendering-method gl_compatibility --max-fps 10 --quit-after 180 --log-file \"E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\host.engine.log\"\"",
+      "launcher_pid": 7584,
+      "launcher_exit_code": 0,
+      "log_key_lines": [
+        {
+          "file": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\host.engine.log",
+          "line": 1,
+          "text": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org"
+        },
+        {
+          "file": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\host.stdout.log",
+          "line": 1,
+          "text": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org"
+        }
+      ],
+      "script_error_count": 0,
+      "parse_error_count": 0,
+      "engine_error_count": 0
+    },
+    "guest": {
+      "APPDATA": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\appdata",
+      "LOCALAPPDATA": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\localappdata",
+      "TEMP": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\temp",
+      "TMP": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\temp",
+      "TMPDIR": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\temp",
+      "cmd": "\"E:\\Caches\\Hermes\\cache\\scratch\\round71-human-test-candidate-validation-v3\\client\\START-CLIENT.cmd\" --headless --audio-driver Dummy --rendering-method gl_compatibility --max-fps 10 --quit-after 180 --log-file \"E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\guest.engine.log\"",
+      "engine_log": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\guest.engine.log",
+      "stdout_log": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\guest.stdout.log",
+      "native_command": "\"C:\\Windows\\system32\\cmd.exe\" /d /s /c \"\"E:\\Caches\\Hermes\\cache\\scratch\\round71-human-test-candidate-validation-v3\\client\\START-CLIENT.cmd\" --headless --audio-driver Dummy --rendering-method gl_compatibility --max-fps 10 --quit-after 180 --log-file \"E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\guest.engine.log\"\"",
+      "launcher_pid": 31336,
+      "launcher_exit_code": 0,
+      "log_key_lines": [
+        {
+          "file": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\guest.engine.log",
+          "line": 1,
+          "text": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org"
+        },
+        {
+          "file": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\guest.stdout.log",
+          "line": 1,
+          "text": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org"
+        }
+      ],
+      "script_error_count": 0,
+      "parse_error_count": 0,
+      "engine_error_count": 0
+    }
+  },
+  "observed_process_exit_codes": [
+    {
+      "pid": 7584,
+      "exit_code": 0
+    },
+    {
+      "pid": 31832,
+      "exit_code": 0
+    },
+    {
+      "pid": 33356,
+      "exit_code": 0
+    },
+    {
+      "pid": 31336,
+      "exit_code": 0
+    },
+    {
+      "pid": 25468,
+      "exit_code": 0
+    },
+    {
+      "pid": 34180,
+      "exit_code": 0
+    }
+  ],
+  "job_final": {
+    "total": 6,
+    "active": 0,
+    "terminated": 0
+  },
+  "Job0": true,
+  "watchdog_fired": false,
+  "snapshots_count": 39,
+  "coexist_first_elapsed": 2.154,
+  "coexist_last_elapsed": 20.187,
+  "final_elapsed": 22.228,
+  "original_final_directories": {
+    "host": {
+      "APPDATA": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\appdata",
+      "LOCALAPPDATA": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\localappdata",
+      "user_dir": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\appdata\\FateDomination",
+      "identity_dir": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\appdata\\FateDomination\\net_identity",
+      "user_dir_exists": true,
+      "identity_dir_exists": false,
+      "identity_file_count": 0,
+      "identity_files": [],
+      "runtime_files": {
+        "APPDATA": [
+          {
+            "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\appdata\\FateDomination\\game_data\\stored_jsons.dat",
+            "name": "stored_jsons.dat",
+            "size": 373328
+          }
+        ],
+        "LOCALAPPDATA": []
+      }
+    },
+    "guest": {
+      "APPDATA": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\appdata",
+      "LOCALAPPDATA": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\localappdata",
+      "user_dir": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\appdata\\FateDomination",
+      "identity_dir": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\appdata\\FateDomination\\net_identity",
+      "user_dir_exists": true,
+      "identity_dir_exists": false,
+      "identity_file_count": 0,
+      "identity_files": [],
+      "runtime_files": {
+        "APPDATA": [
+          {
+            "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\appdata\\FateDomination\\game_data\\stored_jsons.dat",
+            "name": "stored_jsons.dat",
+            "size": 373328
+          }
+        ],
+        "LOCALAPPDATA": []
+      }
+    }
+  },
+  "current_directories": {
+    "host": {
+      "APPDATA": {
+        "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\appdata",
+        "exists": true,
+        "file_count": 1,
+        "files": [
+          {
+            "relative_path": "FateDomination\\game_data\\stored_jsons.dat",
+            "name": "stored_jsons.dat",
+            "bytes": 373328,
+            "sha256": "e006f79791e85ea79bc5dc844eb1d80d1ad01ee7074ff3980f9277bbb0f37121"
+          }
+        ]
+      },
+      "LOCALAPPDATA": {
+        "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\localappdata",
+        "exists": true,
+        "file_count": 0,
+        "files": []
+      },
+      "identity_dir": {
+        "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\host\\appdata\\FateDomination\\net_identity",
+        "exists": false,
+        "file_count": 0
+      }
+    },
+    "guest": {
+      "APPDATA": {
+        "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\appdata",
+        "exists": true,
+        "file_count": 1,
+        "files": [
+          {
+            "relative_path": "FateDomination\\game_data\\stored_jsons.dat",
+            "name": "stored_jsons.dat",
+            "bytes": 373328,
+            "sha256": "e006f79791e85ea79bc5dc844eb1d80d1ad01ee7074ff3980f9277bbb0f37121"
+          }
+        ]
+      },
+      "LOCALAPPDATA": {
+        "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\localappdata",
+        "exists": true,
+        "file_count": 0,
+        "files": []
+      },
+      "identity_dir": {
+        "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\test-users\\guest\\appdata\\FateDomination\\net_identity",
+        "exists": false,
+        "file_count": 0
+      }
+    }
+  },
+  "current_process_census": {
+    "command": "Get-CimInstance Win32_Process | Where-Object { $_.Name -match \"Godot|FateDomination|FateServer\" -or $_.ProcessId -in 17120,28100 } | Select-Object ProcessId,ParentProcessId,Name,ExecutablePath | ConvertTo-Json -Depth 3",
+    "exit_code": 0,
+    "processes": [
+      {
+        "ProcessId": 2160,
+        "ParentProcessId": 3936,
+        "Name": "Godot_v4.7.2-stable_win64_console.exe",
+        "ExecutablePath": "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64_console.exe"
+      },
+      {
+        "ProcessId": 33544,
+        "ParentProcessId": 2160,
+        "Name": "Godot_v4.7.2-stable_win64.exe",
+        "ExecutablePath": "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe"
+      },
+      {
+        "ProcessId": 34096,
+        "ParentProcessId": 31216,
+        "Name": "Godot_v4.7.2-stable_win64_console.exe",
+        "ExecutablePath": "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64_console.exe"
+      },
+      {
+        "ProcessId": 15144,
+        "ParentProcessId": 34096,
+        "Name": "Godot_v4.7.2-stable_win64.exe",
+        "ExecutablePath": "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe"
+      },
+      {
+        "ProcessId": 17120,
+        "ParentProcessId": 30764,
+        "Name": "Godot_v4.7.2-stable_win64.exe",
+        "ExecutablePath": "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe"
+      },
+      {
+        "ProcessId": 28100,
+        "ParentProcessId": 36196,
+        "Name": "FateServer.exe",
+        "ExecutablePath": "E:\\FateCandidates\\round52-current-roles-20261010-sa1\\artifacts\\server\\FateServer.exe"
+      },
+      {
+        "ProcessId": 21388,
+        "ParentProcessId": 30960,
+        "Name": "godot-ai.exe",
+        "ExecutablePath": "C:\\Users\\Administrator\\AppData\\Local\\uv\\cache\\archive-v0\\Ie5Dm9vBWDXPBVkyr0mzP\\Scripts\\godot-ai.exe"
+      },
+      {
+        "ProcessId": 21716,
+        "ParentProcessId": 37236,
+        "Name": "godot-ai.exe",
+        "ExecutablePath": "C:\\Users\\Administrator\\AppData\\Local\\uv\\cache\\archive-v0\\Ie5Dm9vBWDXPBVkyr0mzP\\Scripts\\godot-ai.exe"
+      },
+      {
+        "ProcessId": 17804,
+        "ParentProcessId": 25488,
+        "Name": "Godot.exe",
+        "ExecutablePath": "E:\\scratch\\isolated-04d85ad08c0e44368a323e16e9b8ddc7\\generated\\Godot.exe"
+      }
+    ]
+  },
+  "current_candidate_residuals": [],
+  "log_checks": {
+    "host": [
+      {
+        "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\host.engine.log",
+        "line_count": 2,
+        "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+        "script_error_count": 0,
+        "parse_error_count": 0,
+        "engine_error_count": 0,
+        "public_key_lines": [
+          {
+            "line": 1,
+            "text": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org"
+          }
+        ]
+      },
+      {
+        "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\host.stdout.log",
+        "line_count": 2,
+        "sha256": "83cf0b082206af2aa236c83064fbcfa76be1e00a4aa3558574b2f65965d9481c",
+        "script_error_count": 0,
+        "parse_error_count": 0,
+        "engine_error_count": 0,
+        "public_key_lines": [
+          {
+            "line": 1,
+            "text": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org"
+          }
+        ]
+      }
+    ],
+    "guest": [
+      {
+        "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\guest.engine.log",
+        "line_count": 2,
+        "sha256": "6d1c065383a27c36804949b6ffa4b09714470b112e5dacc0bd5aeb7b9c147c4e",
+        "script_error_count": 0,
+        "parse_error_count": 0,
+        "engine_error_count": 0,
+        "public_key_lines": [
+          {
+            "line": 1,
+            "text": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org"
+          }
+        ]
+      },
+      {
+        "path": "E:\\Caches\\Hermes\\cache\\scratch\\round71-dual-identity-once-12796\\guest.stdout.log",
+        "line_count": 2,
+        "sha256": "83cf0b082206af2aa236c83064fbcfa76be1e00a4aa3558574b2f65965d9481c",
+        "script_error_count": 0,
+        "parse_error_count": 0,
+        "engine_error_count": 0,
+        "public_key_lines": [
+          {
+            "line": 1,
+            "text": "Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org"
+          }
+        ]
+      }
+    ]
+  },
+  "launcher_lines": [
+    {
+      "line": 1,
+      "text": "@echo off"
+    },
+    {
+      "line": 2,
+      "text": ""
+    },
+    {
+      "line": 3,
+      "text": "setlocal"
+    },
+    {
+      "line": 4,
+      "text": ""
+    },
+    {
+      "line": 5,
+      "text": "cd /d \"%~dp0\""
+    },
+    {
+      "line": 6,
+      "text": ""
+    },
+    {
+      "line": 7,
+      "text": "rem client; pass only user-approved arguments, no address or credential is guessed."
+    },
+    {
+      "line": 8,
+      "text": ""
+    },
+    {
+      "line": 9,
+      "text": "\"FateDomination.exe\" %*"
+    },
+    {
+      "line": 10,
+      "text": ""
+    }
+  ]
+}

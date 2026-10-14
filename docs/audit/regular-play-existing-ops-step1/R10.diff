@@ -1,0 +1,11 @@
+--- previous/regular_play.gd
++++ R10/regular_play.gd
+@@ -64,7 +64,7 @@
+ static func _take_from_source(d: Dictionary, card) -> void:
+ 	for zone in play_zone_arrays(d):
+ 		_operation("remove_from_array").exec(card, zone)
+-	_operation("remove_from_array").exec(card, d.hand_cards); d.servant_skills.erase(card); d.master_skills.erase(card); d.side.skills.erase(card)
++	_operation("remove_from_array").exec(card, d.hand_cards); _operation("remove_from_array").exec(card, d.servant_skills); d.master_skills.erase(card); d.side.skills.erase(card)
+ 
+ static func completed(id: int) -> bool:
+ 	return not GameLog.query({"type": "regular_play", "actor": id}, 0).is_empty()

@@ -1,0 +1,29 @@
+{
+  "mode": "PYTHON_ONLY_NO_GODOT",
+  "results": [
+    {
+      "command": "TMPDIR='E:/Caches/Hermes/cache/scratch' TEMP='E:/Caches/Hermes/cache/scratch' TMP='E:/Caches/Hermes/cache/scratch' PYTHONDONTWRITEBYTECODE=1 python -B -m unittest tools.tests.test_round56_three_role_freeze -v",
+      "output": "test_build_plan_same_fingerprint_and_supported_signaling (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_build_plan_same_fingerprint_and_supported_signaling) ... ok\r\ntest_changed_declared_report_hash (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_changed_declared_report_hash) ... ok\r\ntest_existing_build_api_signatures_without_processes (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_existing_build_api_signatures_without_processes) ... ok\r\ntest_good_preflight_only_never_creates_root (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_good_preflight_only_never_creates_root) ... ok\r\ntest_gui_failure_is_not_export_excuse (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_gui_failure_is_not_export_excuse) ... ok\r\ntest_mandatory_native_asset_missing (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_mandatory_native_asset_missing) ... ok\r\ntest_missing_ready_token_refuses_without_build (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_missing_ready_token_refuses_without_build) ... ok\r\ntest_missing_shutdown_handoff_report (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_missing_shutdown_handoff_report) ... ok\r\ntest_native_compile_report_without_real_output_refused (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_native_compile_report_without_real_output_refused) ... ok\r\ntest_old_dll_cannot_claim_new_job (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_old_dll_cannot_claim_new_job) ... ok\r\ntest_old_failcache_root_refused (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_old_failcache_root_refused) ... ok\r\ntest_stale_shutdown_source (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_stale_shutdown_source) ... ok\r\ntest_unread_status_report (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_unread_status_report) ... ok\r\ntest_wrong_source_hash (tools.tests.test_round56_three_role_freeze.FreezeGateTests.test_wrong_source_hash) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 14 tests in 7.419s\r\n\r\nOK",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "command": "python -B tools/release/round56_three_role_freeze.py --root E:/FateCandidates/round56-preflight-only-sa-freeze --approved-root E:/FateCandidates",
+      "output": "{\"allow_build\": false, \"status\": \"BLOCKED\", \"reason\": \"READY_TOKEN_REQUIRED\"}",
+      "exit_code": 2,
+      "error": null
+    },
+    {
+      "command": "python -B tools/release/round56_three_role_freeze.py --run-formal",
+      "output": "{\"allow_build\": false, \"runtime\": {\"status\": \"NOTIMPLEMENTED\", \"reason\": \"Existing round54 runner pins an old parent and source-editor client, not formal exported-client acceptance.\", \"required\": [\"formal exported client RSA authentication\", \"server trusted-local status: four classes/13 methods/budget15/pool20\", \"real room save-close then gateway stop exit0 and exact owned-tree accounting\", \"same-freeze signaling create/join/offer/answer and forbidden game messages\", \"signaling missing-config exact exit2 and complete allowed ERROR scopes\"], \"forbidden_substitutions\": [\"old client/server pack plus new signaling pack\", \"diagnostic PCK as formal client\", \"release --script/--path overrides\", \"source headless/GUI report as package runtime PASS\"]}}",
+      "exit_code": 3,
+      "error": null
+    },
+    {
+      "command": "python -B -c \"from pathlib import Path; print('export_root_exists='+str(Path('E:/FateCandidates/round56-preflight-only-sa-freeze').exists()))\"",
+      "output": "export_root_exists=False",
+      "exit_code": 0,
+      "error": null
+    }
+  ]
+}

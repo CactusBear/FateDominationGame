@@ -1,0 +1,75 @@
+{
+  "command": [
+    "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+    "--headless",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\scratch\\gateway-approved-triage\\paced-fixed-v2\\project",
+    "--scene",
+    "res://tests/net_server_gateway_restart_test.tscn",
+    "--",
+    "E:/scratch/gateway-approved-triage/paced-fixed-v2/rollback-fixture"
+  ],
+  "exit": 1,
+  "analysis": {
+    "passed": false,
+    "reasons": [
+      "nonzero_exit",
+      "result_failures",
+      "check_false"
+    ],
+    "result": {
+      "checks": 12,
+      "failures": [
+        "all approved client files assemble and verify before ready"
+      ]
+    }
+  },
+  "job_records": [
+    {
+      "label": "scene",
+      "command": [
+        "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\gateway-approved-triage\\paced-fixed-v2\\project",
+        "--scene",
+        "res://tests/net_server_gateway_restart_test.tscn",
+        "--",
+        "E:/scratch/gateway-approved-triage/paced-fixed-v2/rollback-fixture"
+      ],
+      "exited": true,
+      "pid": 38212,
+      "exit_code": 1,
+      "budget_failure": null,
+      "duration_seconds": 135.492,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    }
+  ],
+  "fixture_before_sha256": "fca632eacb384d98fecc37c192012e6826343a8f9c660829cc4ff55f3b382bd5",
+  "fixture_rollback_sha256": "94ee9ef0243785dd0479920525da57c70f6a11ad408092ab4cf0b93d7c0fdf4e",
+  "observations": [
+    {
+      "active_hash_present": false,
+      "active_index": 71,
+      "bytes": 95949242,
+      "client": 0,
+      "complete": false,
+      "completed_files": 71,
+      "connected": true,
+      "deadline_reached": true,
+      "files": 204,
+      "no_progress_msec": 254,
+      "pending_offset": -1,
+      "running": true,
+      "session_error": "",
+      "sync_error": ""
+    }
+  ],
+  "restored_sha256": "fca632eacb384d98fecc37c192012e6826343a8f9c660829cc4ff55f3b382bd5",
+  "hash_restored": true
+}

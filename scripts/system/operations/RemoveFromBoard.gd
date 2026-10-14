@@ -5,11 +5,19 @@ extends RefCounted
 #只做"离开版图"这一件事：位置置空，并同步从席位的 _players 里摘除——
 #只清 location 不摘 _players 的话，席位人数永远只增不减，部署上限判定与展示都会失真。
 #没有落点，所以不复用 SetLocation（那是"落到某个位置"）
-#返回是否真的从版图上移除了（本来就不在版图上返回 false）
-func exec(player_id:int = -1) -> bool:
+#返回是否真的从版图上移除了；未登记或本来就不在版图上均不创建条目并返回 false。
+func exec(player_id:int = -1, context:Variant = null) -> bool:
+	context = RegisterObjectEffects.captured_context(context)
+	if not RegisterObjectEffects.source_is_current(context):
+		return false
 
-	player_id = EffectManager.resolve_player_id(player_id)
-	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	var resolved:Dictionary = RegisterObjectEffects.resolved_player_id(player_id, context)
+	if not resolved.ok:
+		return false
+	player_id = resolved.id
+	var player_data:Dictionary = GameDataManager.find_player_data(player_id)
+	if player_data.is_empty():
+		return false
 	var loc = player_data.get("location")
 	if loc == null:
 		return false
@@ -19,5 +27,7 @@ func exec(player_id:int = -1) -> bool:
 	#日志：谁离开了哪个战区。供"上回合在哪""本回合是否上过版图"这类历史查询
 	GameLog.record("leave_board", player_id, -1,
 		str(area._area_name) if area != null else "", loc, ["leave_board"], {})
-	TimePointChecker.dynamic_time_point([TimePoints.LEAVE_LOCATION], player_id, loc)
-	return true
+	if not RegisterObjectEffects.source_is_current(context) or not is_same(player_data, GameDataManager.find_player_data(player_id)):
+		return false
+	TimePointChecker.dynamic_time_point([TimePoints.LEAVE_LOCATION], player_id, loc, context)
+	return RegisterObjectEffects.source_is_current(context) and is_same(player_data, GameDataManager.find_player_data(player_id))

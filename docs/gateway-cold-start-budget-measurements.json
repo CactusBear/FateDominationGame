@@ -1,0 +1,816 @@
+{
+  "owner": "E:/scratch/isolated-553062541c5042f1929619170d508e19",
+  "startup_seconds": 600.0,
+  "watchdog_seconds": 1200,
+  "cold_definition": "New room-local application CAS, data and user roots; OS page cache NOT flushed. Other agents not paused.",
+  "measurements": [
+    {
+      "phase": "run",
+      "exit": 0,
+      "result": {
+        "checks": 40,
+        "failures": []
+      },
+      "ready_seconds": 45.567,
+      "worker_first_stage_to_ready_observed_seconds": 36.86376719997497,
+      "worker_first_stage_to_ready_visibility_interval_seconds": [36.80162849999033, 36.92614619998494],
+      "cache_population_seconds": 25.483994100010023,
+      "cache_log_visibility_interval_seconds": [
+        25.41897360002622,
+        25.54382690001512
+      ],
+      "cache_files_after_exit": 203,
+      "cache_file_bytes_after_exit": 95675402,
+      "stage_sequence": [
+        {
+          "stage": "signal_protection",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.0001721000298857689,
+          "sampling_interval_seconds": [
+            -0.06237900000996888,
+            0.06255110003985465
+          ]
+        },
+        {
+          "stage": "launch_arguments",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 2.7200032491236925e-05,
+          "sampling_interval_seconds": [
+            -0.06258959998376667,
+            0.06261680001625791
+          ]
+        },
+        {
+          "stage": "configuration",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.2815479999990202,
+          "sampling_interval_seconds": [
+            1.218011100019794,
+            1.3443375999922864
+          ]
+        },
+        {
+          "stage": "settings",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 4.329998046159744e-05,
+          "sampling_interval_seconds": [
+            -0.06359450001036748,
+            0.06363779999082908
+          ]
+        },
+        {
+          "stage": "selection_mode",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.06726019998313859,
+          "sampling_interval_seconds": [
+            1.2199976481497288e-05,
+            0.13090930000180379
+          ]
+        },
+        {
+          "stage": "catalog_scan",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.8375941999838687,
+          "sampling_interval_seconds": [
+            0.7730510999681428,
+            0.9049140000133775
+          ]
+        },
+        {
+          "stage": "data_plan",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.05789769999682903,
+          "sampling_interval_seconds": [
+            9.349995525553823e-05,
+            0.12420399999246001
+          ]
+        },
+        {
+          "stage": "cache_policy",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.05981090001296252,
+          "sampling_interval_seconds": [
+            3.519997699186206e-05,
+            0.11768240004312247
+          ]
+        },
+        {
+          "stage": "cache_population",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 25.483994100010023,
+          "sampling_interval_seconds": [
+            25.41897360002622,
+            25.54382690001512
+          ]
+        },
+        {
+          "stage": "data_assembly",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 4.055265200033318,
+          "sampling_interval_seconds": [
+            3.993667100032326,
+            4.130642900010571
+          ]
+        },
+        {
+          "stage": "data_validation",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.344148200005293,
+          "sampling_interval_seconds": [
+            1.282477100030519,
+            1.4058096999651752
+          ]
+        },
+        {
+          "stage": "fixed_source_registration",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 2.4300010409206152e-05,
+          "sampling_interval_seconds": [
+            -0.06179479998536408,
+            0.061819099995773286
+          ]
+        },
+        {
+          "stage": "process_content",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.0420058000017889,
+          "sampling_interval_seconds": [
+            0.9851745999767445,
+            1.103832599997986
+          ]
+        },
+        {
+          "stage": "content_environment",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 2.789997961372137e-05,
+          "sampling_interval_seconds": [
+            -0.06185090000508353,
+            0.06187879998469725
+          ]
+        },
+        {
+          "stage": "rules_reload",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.0418733999831602,
+          "sampling_interval_seconds": [
+            0.9850912999827415,
+            1.1037834999733604
+          ]
+        },
+        {
+          "stage": "roster",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.08461759996134788,
+          "sampling_interval_seconds": [
+            2.529995981603861e-05,
+            0.14148150000255555
+          ]
+        },
+        {
+          "stage": "host",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.9000028260052204e-05,
+          "sampling_interval_seconds": [
+            -0.08464610000373796,
+            0.08466510003199801
+          ]
+        },
+        {
+          "stage": "recovery_binding",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 6.999995093792677e-06,
+          "sampling_interval_seconds": [
+            -0.0846723000286147,
+            0.08467930002370849
+          ]
+        },
+        {
+          "stage": "selection_configuration",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 5.779997445642948e-05,
+          "sampling_interval_seconds": [
+            -0.055885600042529404,
+            0.055943400016985834
+          ]
+        },
+        {
+          "stage": "blob_publication",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.5802200000034645,
+          "sampling_interval_seconds": [
+            1.5141846999758855,
+            1.6375114999827929
+          ]
+        },
+        {
+          "stage": "room_asset_installation",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.5706772000412457,
+          "sampling_interval_seconds": [
+            0.5077274999930523,
+            0.6367711000493728
+          ]
+        },
+        {
+          "stage": "startup_pin_release",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 4.0300015825778246e-05,
+          "sampling_interval_seconds": [
+            -0.06301330000860617,
+            0.06305360002443194
+          ]
+        },
+        {
+          "stage": "identity_bridge",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 6.140000186860561e-05,
+          "sampling_interval_seconds": [
+            -0.06255550001515076,
+            0.06261690001701936
+          ]
+        },
+        {
+          "stage": "data_approval",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 9.7999582067132e-06,
+          "sampling_interval_seconds": [
+            -0.06264170003123581,
+            0.06265149998944253
+          ]
+        },
+        {
+          "stage": "transaction_audit",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 5.520001286640763e-05,
+          "sampling_interval_seconds": [
+            -0.06205509998835623,
+            0.06211030000122264
+          ]
+        },
+        {
+          "stage": "ready_publication",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 8.499948307871819e-06,
+          "sampling_interval_seconds": [
+            -0.0621225000359118,
+            0.06213099998421967
+          ]
+        }
+      ],
+      "cpu_percent_min": 100.0,
+      "cpu_percent_mean": 100.0,
+      "cpu_percent_max": 100.0,
+      "memory_percent_min": 45,
+      "memory_percent_max": 48,
+      "load_samples": 53,
+      "process_count_min": 392,
+      "process_count_max": 436,
+      "relevant_images_first": {
+        "godot_v4.7.2-stable_win64_console.exe": 2,
+        "godot_v4.7.2-stable_win64.exe": 3,
+        "python.exe": 18,
+        "node.exe": 2,
+        "godot-ai.exe": 2,
+        "hermes.exe": 6,
+        "pythonw.exe": 1,
+        "godot.exe": 4
+      },
+      "relevant_images_last": {
+        "godot_v4.7.2-stable_win64_console.exe": 3,
+        "godot_v4.7.2-stable_win64.exe": 4,
+        "python.exe": 19,
+        "node.exe": 2,
+        "godot-ai.exe": 2,
+        "hermes.exe": 6,
+        "pythonw.exe": 1,
+        "godot.exe": 2
+      },
+      "max_log_sampling_gap_seconds": 0.08467930002370849,
+      "job_exit": {
+        "label": "run",
+        "command": [
+          "E:\\scratch\\isolated-04d85ad08c0e44368a323e16e9b8ddc7\\generated\\Godot.exe",
+          "--headless",
+          "--fixed-fps",
+          "60",
+          "--path",
+          "E:/scratch/isolated-553062541c5042f1929619170d508e19/generated/project",
+          "--scene",
+          "res://newtests/gateway_cold_start_budget_test.tscn",
+          "--",
+          "--config",
+          "E:/scratch/isolated-553062541c5042f1929619170d508e19/generated/server.cfg"
+        ],
+        "exited": true,
+        "pid": 38740,
+        "exit_code": 0,
+        "budget_failure": null,
+        "duration_seconds": 54.609,
+        "active_owned_processes": 0,
+        "log_handles_released": true
+      },
+      "ready_banner": true,
+      "engine_errors": [],
+      "observer_errors": []
+    },
+    {
+      "phase": "run2",
+      "exit": 0,
+      "result": {
+        "checks": 40,
+        "failures": []
+      },
+      "ready_seconds": 35.189,
+      "worker_first_stage_to_ready_observed_seconds": 26.980243400030304,
+      "worker_first_stage_to_ready_visibility_interval_seconds": [26.91719720000401, 27.035760800004937],
+      "cache_population_seconds": 17.049113399989437,
+      "cache_log_visibility_interval_seconds": [
+        16.98214999999618,
+        17.11412929999642
+      ],
+      "cache_files_after_exit": 203,
+      "cache_file_bytes_after_exit": 95675402,
+      "stage_sequence": [
+        {
+          "stage": "signal_protection",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.00015600002370774746,
+          "sampling_interval_seconds": [
+            -0.05551739997463301,
+            0.055673399998340756
+          ]
+        },
+        {
+          "stage": "launch_arguments",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 6.900000153109431e-05,
+          "sampling_interval_seconds": [
+            -0.06228549999650568,
+            0.06235449999803677
+          ]
+        },
+        {
+          "stage": "configuration",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.030376399983652,
+          "sampling_interval_seconds": [
+            0.9699496999965049,
+            1.0928630999987945
+          ]
+        },
+        {
+          "stage": "settings",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.3199984095990658e-05,
+          "sampling_interval_seconds": [
+            -0.06050399999367073,
+            0.06051719997776672
+          ]
+        },
+        {
+          "stage": "selection_mode",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 9.09995287656784e-06,
+          "sampling_interval_seconds": [
+            -0.06054320000112057,
+            0.060552299953997135
+          ]
+        },
+        {
+          "stage": "catalog_scan",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.6226198999793269,
+          "sampling_interval_seconds": [
+            0.5472976000164635,
+            0.6832371999626048
+          ]
+        },
+        {
+          "stage": "data_plan",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.06369540002197027,
+          "sampling_interval_seconds": [
+            2.6099965907633305e-05,
+            0.13907400000607595
+          ]
+        },
+        {
+          "stage": "cache_policy",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.0399962775409222e-05,
+          "sampling_interval_seconds": [
+            -0.06372270005522296,
+            0.06373310001799837
+          ]
+        },
+        {
+          "stage": "cache_population",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 17.049113399989437,
+          "sampling_interval_seconds": [
+            16.98214999999618,
+            17.11412929999642
+          ]
+        },
+        {
+          "stage": "data_assembly",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 3.8896791000152007,
+          "sampling_interval_seconds": [
+            3.8264926000265405,
+            3.9567034000065178
+          ]
+        },
+        {
+          "stage": "data_validation",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.0831329000066034,
+          "sampling_interval_seconds": [
+            1.0155474999919534,
+            1.1463863999815658
+          ]
+        },
+        {
+          "stage": "fixed_source_registration",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 7.070001447573304e-05,
+          "sampling_interval_seconds": [
+            -0.06769689999055117,
+            0.0677676000050269
+          ]
+        },
+        {
+          "stage": "process_content",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.9005110000143759,
+          "sampling_interval_seconds": [
+            0.8248478999594226,
+            0.9683341000345536
+          ]
+        },
+        {
+          "stage": "content_environment",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.2199976481497288e-05,
+          "sampling_interval_seconds": [
+            -0.0678683000151068,
+            0.0678804999915883
+          ]
+        },
+        {
+          "stage": "rules_reload",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.900322099972982,
+          "sampling_interval_seconds": [
+            0.8247642999631353,
+            0.968228799989447
+          ]
+        },
+        {
+          "stage": "roster",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.00011800002539530396,
+          "sampling_interval_seconds": [
+            -0.07569660001900047,
+            0.07581460004439577
+          ]
+        },
+        {
+          "stage": "host",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 2.570002106949687e-05,
+          "sampling_interval_seconds": [
+            -0.07583460002206266,
+            0.07586030004313216
+          ]
+        },
+        {
+          "stage": "recovery_binding",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 7.299997378140688e-06,
+          "sampling_interval_seconds": [
+            -0.07586830004584044,
+            0.07587560004321858
+          ]
+        },
+        {
+          "stage": "selection_configuration",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 9.7999582067132e-06,
+          "sampling_interval_seconds": [
+            -0.0758991000475362,
+            0.07590890000574291
+          ]
+        },
+        {
+          "stage": "blob_publication",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.3836267000297084,
+          "sampling_interval_seconds": [
+            1.3246859000064433,
+            1.4483324000029825
+          ]
+        },
+        {
+          "stage": "room_asset_installation",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.5805871000047773,
+          "sampling_interval_seconds": [
+            0.5186169999651611,
+            0.639596100023482
+          ]
+        },
+        {
+          "stage": "startup_pin_release",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.06276270002126694,
+          "sampling_interval_seconds": [
+            1.4999997802078724e-05,
+            0.12478850001934916
+          ]
+        },
+        {
+          "stage": "identity_bridge",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 1.610000617802143e-05,
+          "sampling_interval_seconds": [
+            -0.06289090000791475,
+            0.06290700001409277
+          ]
+        },
+        {
+          "stage": "data_approval",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 5.4100004490464926e-05,
+          "sampling_interval_seconds": [
+            -0.05732279998483136,
+            0.05737689998932183
+          ]
+        },
+        {
+          "stage": "transaction_audit",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 7.90000194683671e-06,
+          "sampling_interval_seconds": [
+            -0.05738860002020374,
+            0.057396500022150576
+          ]
+        },
+        {
+          "stage": "ready_publication",
+          "results": [
+            1,
+            0
+          ],
+          "observed_seconds": 0.06300480000209063,
+          "sampling_interval_seconds": [
+            9.999959729611874e-06,
+            0.12040900002466515
+          ]
+        }
+      ],
+      "cpu_percent_min": 100.0,
+      "cpu_percent_mean": 100.0,
+      "cpu_percent_max": 100.0,
+      "memory_percent_min": 44,
+      "memory_percent_max": 49,
+      "load_samples": 43,
+      "process_count_min": 405,
+      "process_count_max": 438,
+      "relevant_images_first": {
+        "godot_v4.7.2-stable_win64_console.exe": 2,
+        "godot_v4.7.2-stable_win64.exe": 4,
+        "python.exe": 18,
+        "node.exe": 2,
+        "godot-ai.exe": 2,
+        "hermes.exe": 6,
+        "pythonw.exe": 1,
+        "godot.exe": 3
+      },
+      "relevant_images_last": {
+        "godot_v4.7.2-stable_win64_console.exe": 2,
+        "godot_v4.7.2-stable_win64.exe": 3,
+        "python.exe": 21,
+        "node.exe": 2,
+        "godot-ai.exe": 2,
+        "hermes.exe": 6,
+        "pythonw.exe": 1,
+        "godot.exe": 7
+      },
+      "max_log_sampling_gap_seconds": 0.07590890000574291,
+      "job_exit": {
+        "label": "run2",
+        "command": [
+          "E:\\scratch\\isolated-04d85ad08c0e44368a323e16e9b8ddc7\\generated\\Godot.exe",
+          "--headless",
+          "--fixed-fps",
+          "60",
+          "--path",
+          "E:/scratch/isolated-553062541c5042f1929619170d508e19/generated/project",
+          "--scene",
+          "res://newtests/gateway_cold_start_budget_test.tscn",
+          "--",
+          "--config",
+          "E:/scratch/isolated-553062541c5042f1929619170d508e19/generated/server.cfg"
+        ],
+        "exited": true,
+        "pid": 20084,
+        "exit_code": 0,
+        "budget_failure": null,
+        "duration_seconds": 43.824,
+        "active_owned_processes": 0,
+        "log_handles_released": true
+      },
+      "ready_banner": true,
+      "engine_errors": [],
+      "observer_errors": []
+    }
+  ],
+  "ready_range_seconds": [
+    35.189,
+    45.567
+  ],
+  "cache_population_range_seconds": [
+    17.049113399989437,
+    25.483994100010023
+  ],
+  "explicit_600s_margin_seconds": 554.433,
+  "explicit_600s_factor_over_measured_max": 13.167423793534795,
+  "frozen_hashes": {
+    "tests/gateway_relisten_acceptance_test.gd": "3681be694b39f0184d9f582beb899b96377c20803640ac8c3eef674fa5c99027",
+    "scripts/net/server/server_room_manager.gd": "ea4f181aacb86400ec4c46143298cf7edab3ceed952a1ba12ba78ef81f9123e4",
+    "scripts/net/server/server_room_worker.gd": "a1d935675ce6d6a3f804ac9000104b15d95c2c279c8cf13c459acdd3920107eb",
+    "scripts/net/server/server_cli.gd": "8ecc943bd496ef2c85e16e66c3495a6b37b63818d56e94e2e398c0a94ddfaf6a",
+    "scripts/net/server/server_bootstrap.gd": "6dbf5dfda785de5b11cab76f01e725317821eff51be37a4fbfba4bae5e978a3b",
+    "scripts/net/content/content_cache.gd": "eb7b3d1dfec6cf017e64ea15eecdfa60d7d9ea44087bd4e527453c2853f5b9de",
+    "scripts/net/content/room_data_assembler.gd": "f39d01f8b8a48a3298c461a69fdcee986e68559066b29e69957e0899f76d282e",
+    "assets/config/server.cfg": "351798e5909021fa472f2206bdc63c1a9271322c5800cbfdffb96e2b491301d5"
+  },
+  "current_source_drift": [
+    "scripts/net/session/lobby_session.gd",
+    "scripts/system/global/effect_manager.gd"
+  ],
+  "critical_source_still_same": {
+    "tests/gateway_relisten_acceptance_test.gd": true,
+    "scripts/net/server/server_room_manager.gd": true,
+    "scripts/net/server/server_room_worker.gd": true,
+    "scripts/net/server/server_cli.gd": true,
+    "scripts/net/server/server_bootstrap.gd": true,
+    "scripts/net/content/content_cache.gd": true,
+    "scripts/net/content/room_data_assembler.gd": true,
+    "assets/config/server.cfg": true
+  }
+}

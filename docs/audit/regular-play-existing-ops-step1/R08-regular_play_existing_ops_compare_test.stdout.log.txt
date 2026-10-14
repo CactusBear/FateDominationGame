@@ -1,0 +1,79 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+CHECK normal group [false, false] true
+CHECK normal [false, false] complete declared rule projection true
+CHECK normal [false, false] full fact payload and object references true
+CHECK normal group [true, false] true
+CHECK normal [true, false] complete declared rule projection true
+CHECK normal [true, false] full fact payload and object references true
+CHECK normal group [true, true] true
+CHECK normal [true, true] complete declared rule projection true
+CHECK normal [true, true] full fact payload and object references true
+CHECK declared array identity and enter order true
+CHECK declared complete declared rule projection true
+CHECK declared full fact payload and object references true
+CHECK servant array identity and enter order true
+CHECK servant complete declared rule projection true
+CHECK servant full fact payload and object references true
+CHECK master array identity and enter order true
+CHECK master complete declared rule projection true
+CHECK master full fact payload and object references true
+CHECK side array identity and enter order true
+CHECK side complete declared rule projection true
+CHECK side full fact payload and object references true
+CHECK alias array identity and enter order true
+CHECK alias complete declared rule projection true
+CHECK alias full fact payload and object references true
+CHECK duplicates array identity and enter order true
+CHECK duplicates complete declared rule projection true
+CHECK duplicates full fact payload and object references true
+CHECK power value/identity 0 2 true true
+CHECK power 0 2 true complete declared rule projection true
+CHECK power 0 2 true full fact payload and object references true
+CHECK power value/identity 0 2 false true
+CHECK power 0 2 false complete declared rule projection true
+CHECK power 0 2 false full fact payload and object references true
+CHECK power value/identity 0.0 3 true true
+CHECK power 0.0 3 true complete declared rule projection true
+CHECK power 0.0 3 true full fact payload and object references true
+CHECK power value/identity 0.0 3 false true
+CHECK power 0.0 3 false complete declared rule projection true
+CHECK power 0.0 3 false full fact payload and object references true
+CHECK power value/identity 2 2 true true
+CHECK power 2 2 true complete declared rule projection true
+CHECK power 2 2 true full fact payload and object references true
+CHECK power value/identity 2 2 false true
+CHECK power 2 2 false complete declared rule projection true
+CHECK power 2 2 false full fact payload and object references true
+CHECK power value/identity 2.5 3 true true
+CHECK power 2.5 3 true complete declared rule projection true
+CHECK power 2.5 3 true full fact payload and object references true
+CHECK power value/identity 2.5 3 false true
+CHECK power 2.5 3 false complete declared rule projection true
+CHECK power 2.5 3 false full fact payload and object references true
+CHECK power value/identity -1 2 true true
+CHECK power -1 2 true complete declared rule projection true
+CHECK power -1 2 true full fact payload and object references true
+CHECK power value/identity -1 2 false true
+CHECK power -1 2 false complete declared rule projection true
+CHECK power -1 2 false full fact payload and object references true
+CHECK immunity unchanged true
+CHECK immune complete declared rule projection true
+CHECK immune full fact payload and object references true
+CHECK incremental first complete declared rule projection true
+CHECK incremental first full fact payload and object references true
+CHECK incremental completion unchanged true
+CHECK incremental complete complete declared rule projection true
+CHECK incremental complete full fact payload and object references true
+CHECK second-card refusal restores prior entry/resources true
+CHECK second-card refusal restores facts true
+CHECK second-card rollback complete declared rule projection true
+CHECK second-card rollback full fact payload and object references true
+CHECK hidden setter deactivates existing source true
+CHECK setter completed complete declared rule projection true
+CHECK setter completed full fact payload and object references true
+CHECK late done continuation complete declared rule projection true
+CHECK late done continuation full fact payload and object references true
+CHECK comparison receipt opened true
+RESULT regular_play_existing_ops_compare checks=75 failures=[]

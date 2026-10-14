@@ -1,4 +1,10 @@
 extends Node
+const FixtureClone = preload("res://newtests/fixture_clone.gd")
+# 本局原来源取自 reset_runtime 回执；夹具对 operation 显式传入，不从全局补票。
+var ctx: SessionContext = null
+func _reset_ctx() -> SessionContext:
+	var reset: Dictionary = EffectManager.reset_runtime()
+	return reset.get("context") if reset.get("ok", false) else null
 
 # 阿尔托莉雅技能牌的规则回归（用正式模板克隆，走真实的手动发动入口）：
 # ① 牌上带阶段的能力每回合只能发动一次（基础规则「能力的使用限制」），换回合后恢复；
@@ -20,7 +26,7 @@ func _ready() -> void:
 
 
 func setup(round:int, climax:bool) -> Dictionary:
-	EffectManager.reset_runtime(); GameLog.reset(); GameLog.set_context(round, "battle")
+	ctx = _reset_ctx(); GameLog.reset(); GameLog.set_context(round, "battle")
 	GameData.player_data_library.clear()
 	for id in range(2):
 		GameData.player_data_library[id] = GameData.new_player_data()
@@ -35,9 +41,9 @@ func setup(round:int, climax:bool) -> Dictionary:
 	for servant in GameData.loaded_servants:
 		if servant._name == "artoria_pendragon":
 			for template in servant._specials.get("SKILLS", []):
-				var card = CloneObject.new().exec(template)
+				var card = FixtureClone.clone_template(template, ctx)
 				skills[card._name] = card
-				RegisterObjectEffects.new().exec(card, 0)
+				RegisterObjectEffects.new().exec(card, 0, ctx)
 	var d:Dictionary = GameData.player_data_library[0]
 	d.servant_skills = skills.values()
 	return skills
@@ -46,7 +52,7 @@ func setup(round:int, climax:bool) -> Dictionary:
 func open_battle_window() -> void:
 	var round_tp:String = TimePoints.CLIMAX if GameProgress.is_climax_round() else TimePoints.NON_CLIMAX
 	TimePointChecker.set_phase_time_points([TimePoints.DAY, TimePoints.PHASE, TimePoints.BATTLE_PHASE, round_tp])
-	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_PHASE, round_tp], 0)
+	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_PHASE, round_tp], 0, null, ctx)
 
 
 func effect_of(card, effect_name:String) -> BaseEffect:
@@ -78,8 +84,8 @@ func run() -> void:
 			area = a
 			break
 	check(area != null, "a battle area with two seats exists")
-	SetLocation.new().exec(area._locations[0], 0, false, true)
-	SetLocation.new().exec(area._locations[1], 1, false, true)
+	SetLocation.new().exec(area._locations[0], 0, false, true, true, ctx)
+	SetLocation.new().exec(area._locations[1], 1, false, true, true, ctx)
 	enemy.played_cards.append_array([
 		BaseAttack.new("probe_strength", "", [Attributes.STRENGTH], BaseNumber.new(0), BaseNumber.new(5)),
 		BaseAttack.new("probe_magic", "", [Attributes.MAGIC], BaseNumber.new(0), BaseNumber.new(3)),
@@ -124,15 +130,15 @@ func run() -> void:
 	d = GameData.player_data_library[0]
 	blade = skills["excalibur"]
 	blade._is_activating = false
-	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], 0)
+	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], 0, null, ctx)
 	check(not bool(d.get("victory_override", false)), "round 11 win does nothing while the blade is not active")
 	blade._is_activating = true
-	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], 0)
+	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], 0, null, ctx)
 	check(bool(d.get("victory_override", false)), "round 11 win grants victory while the blade is active")
 	skills = setup(10, false)
 	d = GameData.player_data_library[0]
 	skills["excalibur"]._is_activating = true
-	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], 0)
+	TimePointChecker.dynamic_time_point([TimePoints.BATTLE_WIN], 0, null, ctx)
 	check(not bool(d.get("victory_override", false)), "winning another round does not grant victory")
 
 	# 审计反例：未打出宝具不能获得宝具绽放战果。

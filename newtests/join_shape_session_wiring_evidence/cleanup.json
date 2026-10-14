@@ -1,0 +1,52 @@
+[
+  {
+    "scope": "E:\\scratch\\pw-27b3ce34",
+    "files": 2834,
+    "bytes": 986273592,
+    "processes": [
+      {
+        "pid": 38420,
+        "exit_code": 0
+      },
+      {
+        "pid": 38916,
+        "exit_code": 0
+      },
+      {
+        "pid": 38916,
+        "exit_code": 0
+      },
+      {
+        "pid": 14676,
+        "exit_code": 1
+      },
+      {
+        "pid": 14676,
+        "exit_code": 1
+      }
+    ],
+    "evidence_archived": true,
+    "deleted": true
+  },
+  {
+    "scope": "E:\\scratch\\pw-b724c513",
+    "files": 2829,
+    "bytes": 986267962,
+    "processes": [
+      {
+        "pid": 20104,
+        "exit_code": 0
+      },
+      {
+        "pid": 26240,
+        "exit_code": 1
+      },
+      {
+        "pid": 26240,
+        "exit_code": 1
+      }
+    ],
+    "evidence_archived": true,
+    "deleted": true
+  }
+]

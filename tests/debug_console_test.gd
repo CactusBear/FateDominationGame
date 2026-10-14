@@ -57,6 +57,75 @@ func has_embedded_input_ancestor(node:Node) -> bool:
 	return false
 
 
+## 使用真实 v2 脚本但不入树，避免启动第二局；费用检查不能依赖旧 UI 私有方法。
+func check_move_magic_preflight() -> void:
+	var driver_source:String = FileAccess.get_file_as_string("res://scripts/match/match_driver.gd")
+	check(!driver_source.contains("res://scripts/game_scene/"), "match driver has no legacy UI query dependency")
+	var driver := MatchDriver.new()
+	var expected:BaseLocation = null
+	for area:BaseMapArea in MapData.areas:
+		expected = AreaActionRules.first_effect_location_target(area, {})
+		if expected != null:
+			break
+	check(driver.ai_pick_effect_location({}) == expected, "driver effect target follows area action rules")
+	var v2_host = load("res://scripts/game_scene/battle_board_v2.gd").new()
+	check(!v2_host.has_method("_estimate_move_cost") and !v2_host.has_method("_is_magic_enough_for_move"),
+		"real v2 host has no legacy private movement queries")
+	var player_id:int = GameData.player_id
+	var data:Dictionary = GameData.player_data_library[player_id]
+	var old_location:BaseLocation = data.get("location")
+	var old_magic = data.magic.number
+	var old_immune = data.get("is_magic_immune", false)
+	var old_discount = data.get("move_cost_discount_per_step")
+	var old_workshop_discount = data.get("move_cost_discount_from_workshop")
+	var old_phase:int = GameProgress.current_phase_index
+	var old_actor:int = GameProgress.current_player_id
+	var origin:BaseLocation = null
+	for area:BaseMapArea in MapData.areas:
+		if area._linked_map_area == null or area._move_cost.number <= 0 or SetLocation.area_locked(area):
+			continue
+		var target:BaseMapArea = area._linked_map_area
+		if !target._can_move_to or SetLocation.area_locked(target) or GetMoveTargetLocation.new().exec(target) == null:
+			continue
+		for location:BaseLocation in area._locations:
+			if location._players.is_empty():
+				origin = location
+				break
+		if origin != null:
+			break
+	check(origin != null, "insufficient magic fixture has a legal positive-cost route")
+	if origin != null:
+		check(SetLocation.new().exec(origin, player_id, false), "insufficient magic fixture places player")
+		data.magic.number = 0
+		data.is_magic_immune = false
+		data.move_cost_discount_per_step = BaseNumber.new(0)
+		data.move_cost_discount_from_workshop = BaseNumber.new(0)
+		for i in range(GameProgress.phases.size()):
+			if str(GameProgress.phases[i].get("name", "")) == "action":
+				GameProgress.current_phase_index = i
+				break
+		GameProgress.current_player_id = player_id
+		check(!IsEngaged.new().exec(player_id) and AreaActionRules.estimate_move_cost(data, 1) > 0,
+			"insufficient magic fixture is unengaged and costs magic")
+		var session := DebugSession.new(v2_host)
+		var result:Dictionary = session.execute_action("map.move", {"player":player_id, "steps":1})
+		check(!bool(result.get("ok", false)) and !bool(result.get("changed", false)), "zero magic move is rejected without change")
+		check(str(result.get("error", "")).contains("魔力不足"), "v2 debug move explains insufficient magic")
+		check(data.location == origin and data.magic.number == 0, "rejected move preserves location and magic")
+		session.shutdown()
+		if old_location != null:
+			SetLocation.new().exec(old_location, player_id, false)
+		else:
+			RemoveFromBoard.new().exec(player_id)
+	data.magic.number = old_magic
+	data.is_magic_immune = old_immune
+	data.move_cost_discount_per_step = old_discount
+	data.move_cost_discount_from_workshop = old_workshop_discount
+	GameProgress.current_phase_index = old_phase
+	GameProgress.current_player_id = old_actor
+	v2_host.free()
+
+
 func run() -> void:
 	mark("run:start")
 	var host = load("res://assets/scenes/game_scene/tactical_board_ui.tscn").instantiate()
@@ -101,6 +170,7 @@ func run() -> void:
 		check(bool(inspect_card.get("ok", false)), "inspect.card resolves an instance without an unrelated player parameter")
 	var deploy_outside_phase:Dictionary = console.session.execute_action("map.deploy", {"player":"local", "area":MapData.areas[0]._area_name})
 	check(!bool(deploy_outside_phase.get("ok", false)), "rule deployment is rejected outside the outpost action boundary")
+	check_move_magic_preflight()
 
 	var local_id:int = GameData.player_id
 	var local_data:Dictionary = GameData.player_data_library[local_id]

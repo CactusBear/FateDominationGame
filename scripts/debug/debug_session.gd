@@ -5,6 +5,8 @@ extends RefCounted
 ## 场景树暂停由控制台界面管理；会话不清空 EffectManager，也不改规则事实日志。
 
 var host
+# 创建者递送的原生命周期回执；不能在动作执行时用当前局替换。
+var source_context:SessionContext
 var registry:DebugCommandRegistry
 var audit:Array = []
 var _pause_tokens:Dictionary = {}
@@ -16,10 +18,11 @@ var _generation:int = 0
 signal action_completed(command_name:String, result:Dictionary)
 
 
-func _init(p_host = null):
+func _init(p_host = null, p_source_context:SessionContext = null):
 	host = p_host
+	source_context = p_source_context
 	_template_baseline = DebugValidate.template_fingerprints()
-	registry = DebugCommandRegistry.new(self)
+	registry = DebugCommandRegistry.new(self, source_context)
 
 
 func acquire_pause(owner:String = "console") -> String:
@@ -51,8 +54,10 @@ func shutdown() -> void:
 	_undo_records.clear()
 	_template_baseline.clear()
 	host = null
+	source_context = null
 	# DebugSession 与 Registry 互相持有；显式断开，避免 RefCounted 强引用环在禁用控制台后残留。
 	if registry != null:
+		registry.source_context = null
 		registry.session = null
 	registry = null
 
@@ -78,7 +83,7 @@ func execute_action(command_name:String, args:Dictionary = {}) -> Dictionary:
 	_next_command_id += 1
 	var spec:Dictionary = registry.schema(command_name)
 	var before := _runtime_snapshot()
-	var result:Dictionary = registry.execute_action(command_name, args)
+	var result:Dictionary = registry.execute_action(command_name, args, source_context)
 	var after := _runtime_snapshot()
 	var validation:Dictionary = {}
 	if not result.get("pending", false) and bool(result.get("ok", false)) and bool(result.get("changed", false)):
@@ -110,9 +115,23 @@ func execute_action(command_name:String, args:Dictionary = {}) -> Dictionary:
 	audit.append(entry)
 	result["command_id"] = command_id
 	if entry.pending:
-		EffectManager.defer_until_runtime_guard_complete(Callable(DebugSession, "_finish_pending_action").bind(weakref(self), _generation, command_name, result, entry))
+		if result.has("state"):
+			_wait_pending_state(weakref(self), _generation, command_name, result, entry, source_context)
+		else:
+			EffectManager.defer_until_runtime_guard_complete(Callable(DebugSession, "_finish_pending_action").bind(weakref(self), _generation, command_name, result, entry))
 	_executing = false
 	return result
+
+
+# 只观察 adapter 保存的原 resolver 回执，不重新派发业务或补当前票。
+static func _wait_pending_state(reference:WeakRef, generation:int, command_name:String, result:Dictionary, entry:Dictionary, context:SessionContext) -> void:
+	var outcome:Dictionary = await GameProgress.wait_progress_state(result.state, context)
+	if not outcome.ok:
+		result.pending = false
+		result.ok = false
+		result.changed = false
+		result["error"] = str(outcome.get("reason", ""))
+	_finish_pending_action(reference, generation, command_name, result, entry)
 
 
 static func _finish_pending_action(reference:WeakRef, generation:int, command_name:String, result:Dictionary, entry:Dictionary) -> void:
@@ -156,7 +175,7 @@ func undo_last() -> Dictionary:
 	var reverse:Dictionary = _reverse_command(record)
 	if reverse.is_empty():
 		return _rejected("当前值已变化或该记录不能安全撤销")
-	var result:Dictionary = registry.execute_action(str(reverse.command), reverse.args)
+	var result:Dictionary = registry.execute_action(str(reverse.command), reverse.args, source_context)
 	if !bool(result.get("ok", false)):
 		return result
 	_undo_records.pop_back()

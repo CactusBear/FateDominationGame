@@ -92,7 +92,10 @@ static func _load_file(dir_path:String, file_name:String) -> void:
 
 
 #按一份令咒数据建牌，图片相对 dir_path，不放进令咒池。读文件与效果里自定义生成的牌共用这一份
-static func build_command_spell(data:Dictionary, dir_path:String) -> BaseCard:
+static func build_command_spell(data:Dictionary, dir_path:String, source_context:Variant = null) -> BaseCard:
+	var source:Dictionary = LoadHelper.validate_source_context(source_context)
+	if not source.ok:
+		return null
 	var card := BaseCard.new()
 	card._name = data["card_name"]
 	card._shown_name = data.get("shown_name", "")
@@ -105,6 +108,8 @@ static func build_command_spell(data:Dictionary, dir_path:String) -> BaseCard:
 		if LoadHelper.texture_exists(img_path):
 			card._card_img = img_path
 	card._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), dir_path, "command_spell")
-	card._effects = LoadHelper.load_effects(data.get("effects", []), card)
+	card._effects = LoadHelper.load_effects(data.get("effects", []), card, source_context)
 	LoadHelper.load_object_extras(card, data)
+	if not LoadHelper.finalize_loaded_card(card, source_context):
+		return null
 	return card

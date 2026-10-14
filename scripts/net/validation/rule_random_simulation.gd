@@ -1,5 +1,8 @@
 extends RefCounted
 
+## 只读时间观测；消费者不能借进度批准数据或改变规则预算。
+signal progress(budget_seconds:float, remaining_seconds:float)
+
 static func room_options(settings:Dictionary, humans:int) -> Dictionary:
 	if not settings.has("random_sim_enabled") or not settings.has("random_sim_budget_sec"): return {}
 	var count:int = maxi(int(settings.minimum), humans + int(settings.ai_count))
@@ -40,6 +43,7 @@ func run(tree:SceneTree, mode_config:Dictionary, player_ids:Array, enabled:bool,
 	GameStart.end_session()
 	var started_msec:int = Time.get_ticks_msec()
 	var deadline:int = started_msec + int(seconds * 1000.0)
+	progress.emit(seconds, seconds)
 	var stream = preload("res://scripts/match/rule_random.gd")
 	while Time.get_ticks_msec() < deadline and (seeds.is_empty() or report.cases.size() < seeds.size()):
 		var match_seed:int = Crypto.new().generate_random_bytes(8).decode_s64(0) if seeds.is_empty() else seeds[report.cases.size()]
@@ -61,6 +65,7 @@ func run(tree:SceneTree, mode_config:Dictionary, player_ids:Array, enabled:bool,
 			authority.step(1.0 / 60.0)
 			entry.steps += 1
 			await tree.process_frame
+			progress.emit(seconds, maxf(0.0, float(deadline - Time.get_ticks_msec()) / 1000.0))
 		entry.rounds = GameProgress.current_round
 		entry.completed = GameProgress.is_game_over
 		if EffectManager.runtime_guard_status().paused:

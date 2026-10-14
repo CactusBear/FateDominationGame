@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource path="res://newtests/a1_25_match_commands_origin_test.gd" type="Script" id="1_a125"]
+
+[node name="A125MatchCommandsOriginTest" type="Node"]
+script = ExtResource("1_a125")

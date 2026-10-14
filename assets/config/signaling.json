@@ -1,0 +1,6 @@
+{
+  "roles": ["relay"],
+  "p2p_signaling": true,
+  "port": 24680,
+  "bind_address": "127.0.0.1"
+}

@@ -527,6 +527,30 @@
 		  ],
 		  "funcs": [
 			{
+			  "func_name": "log_field_values",
+			  "parameters": [
+				{
+				  "type": "time_point",
+				  "tags": "played_card",
+				  "actor": -1
+				},
+				0,
+				"object",
+				1
+			  ],
+			  "var_index": 0
+			},
+			{
+			  "func_name": "get_card_by_index_fr_arr",
+			  "parameters": [
+				0,
+				{
+				  "self_var": 0
+				}
+			  ],
+			  "var_index": 1
+			},
+			{
 			  "func_name": "modify_attack_power_by_attribute",
 			  "parameters": [
 				[
@@ -536,7 +560,9 @@
 				  "number_index": 0
 				},
 				-1,
-				null,
+				{
+				  "self_var": 1
+				},
 				null,
                 "basic"
 			  ],
@@ -653,7 +679,9 @@
 						"is_pure_passive": false,
 						"is_residue": false,
 						"effect_numbers": [],
-						"funcs": [
+						"funcs": [],
+"max_choices": 1,
+"options": [{"shown_option_name": "花费6点魔力，将此牌加入你的攻击中", "funcs": [
 							{
 								"func_name": "get_eff_source_card",
 								"parameters": [],
@@ -715,9 +743,11 @@
 			  "parameters": [],
 			  "var_index": -1
 			}
-						],
+						]}],
 						"need_activate": false,
 						"is_manual": true,
+						"max_total_uses": 1,
+						"reset_counts_each_round": true,
 						"cost": {
 							"number": 6,
 							"can_change": true,

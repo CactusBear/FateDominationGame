@@ -1,0 +1,58 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+CHECK outpost phase has no regular-play modes true
+CHECK first immediately added true
+CHECK first immediately paid and unresolved true
+CHECK below minimum cannot end with path true
+CHECK second added true
+CHECK limit auto finalize true
+CHECK minimum reached below limit true
+CHECK end finalizes at minimum true
+CHECK end recorded completion true
+CHECK no path may end true
+CHECK no path forced completion true
+CHECK snapshot first paid true
+CHECK skill uses flow-start magic snapshot true
+CHECK pending UI rejects a faceup choice that makes the group impossible true
+CHECK pending UI keeps the concealed choice that has a valid completion true
+CHECK battlefield requires faceup even without an opponent true
+CHECK battle first hidden may remain pending true
+CHECK battle second hidden is blocked without a faceup card true
+CHECK battle second hidden remains legal after a faceup card true
+CHECK battle hidden mode kept when faceup completion exists true
+CHECK battle faceup add true
+CHECK battle mixed completes true
+CHECK UI selection has no side effects before confirmation true
+CHECK first card is staged true
+CHECK staged card can be undone true
+CHECK pending cards use independent slots true
+CHECK concealed pending card shows eye overlay true
+CHECK clicking second pending card removes only that card true
+CHECK withdrawing a card closes its obsolete group confirmation true
+CHECK complete staged group asks for confirmation true
+CHECK confirmation blocks further pending cards true
+CHECK group is not broadcast before confirmation true
+CHECK confirmation submits the whole group true
+CHECK confirmed group is broadcast as a completion fact true
+CHECK five pending cards staged true
+CHECK cloned slot keeps its own pending card true
+CHECK cloned pending slot has a card art input target true
+CHECK clicking cloned card art withdraws only that card true
+CHECK clicking a cloned pending slot removes that card only true
+CHECK local prompt suppressed true
+CHECK other player prompt shown true
+CHECK AI incremental play completes true
+CHECK AI plays an available skill card true
+CHECK AI freezes the group count before the first card raises the limit true
+CHECK raised limit applies after the already chosen group true
+CHECK source-bound effect ignores another card true
+CHECK independent listener still observes another card true
+CHECK source-bound effect observes its own card true
+CHECK placeholder effects never produce a success announcement true
+CHECK the skill rack slot is reachable true
+CHECK an actionable skill shows its frame in the action phase true
+CHECK the skill frame is not relit in the outpost phase true
+CHECK the skill hint state follows playability true
+CHECK effect selector preserved true
+RESULT checks=54 failures=[]

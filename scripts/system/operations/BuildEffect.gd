@@ -5,12 +5,13 @@ extends RefCounted
 #只建对象，不挂到牌上也不登记：挂到哪张牌用 add_to_array 放进它的 _effects，
 #让它生效用 register_object_effects，与建牌/入区/登记分开组合的做法一致。
 #owner：效果归属（from），不传就归到发动这条效果的那张牌
-func exec(effect_data:Dictionary, owner = null):
+#context：本局来源，缺省取当前已验执行帧；有来源才建 runtime 效果，否则只是模板（后续登记会被拒）
+func exec(effect_data:Dictionary, owner = null, context:Variant = null):
 
 	if effect_data == null or effect_data.is_empty():
 		return null
 	if owner == null:
 		owner = GetEffSourceCard.new().exec()
 	#每次建一份独立数据：同一块积木重复执行不能共用加载器写过的字典
-	var effects:Array = LoadHelper.load_effects([effect_data.duplicate(true)], owner)
+	var effects:Array = LoadHelper.load_effects([effect_data.duplicate(true)], owner, RegisterObjectEffects.captured_context(context))
 	return effects[0] if !effects.is_empty() else null

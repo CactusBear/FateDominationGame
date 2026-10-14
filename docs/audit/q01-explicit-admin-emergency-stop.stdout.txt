@@ -1,0 +1,64 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+CHECK configure real local console true
+CHECK 实际文件屏障：ready.json true
+CHECK 真实 token/PID 验证及原生句柄 running true
+CHECK 同一真实 token 配错 PID 必须拒绝，不是恒真所有权 true
+CHECK 真实 running 句柄不能由关闭 API 提前 release true
+CHECK 拒绝提前 release 后真实句柄仍 running true
+CHECK 真实 owner 拒绝错误 token，UNKNOWN 不回退 PID 判活 true
+CHECK remote administrator cannot invoke local emergency command true
+SERVER_CONSOLE room emergency-stop ok=false
+CHECK missing explicit risk confirmation cannot kill true
+CHECK missing reason cannot kill true
+SERVER_CONSOLE room emergency-stop ok=false
+CHECK blank reason cannot kill true
+SERVER_CONSOLE room emergency-stop ok=false
+CHECK unconfigured audit directory cannot kill true
+SERVER_CONSOLE room emergency-stop ok=false
+CHECK unverified native ownership cannot kill true
+SERVER_CONSOLE help ok=true
+CHECK help documents explicit risk confirmation true
+SERVER_CONSOLE room emergency-stop ok=false
+CHECK stale PID cannot kill true
+SERVER_CONSOLE room emergency-stop ok=false
+CHECK stale instance cannot kill true
+SERVER_CONSOLE room close ok=true
+CHECK normal close request accepted true
+CHECK 发布子进程时序门：poll true
+CHECK 实际文件屏障：2021c1865f359ecbafe50b4c55ec6b3e.response.json true
+CHECK real unsaved match rejects close and stays alive true
+CHECK failed normal close never automatically invokes emergency stop true
+CHECK submit explicit command via real local CLI transport true
+SERVER_EMERGENCY_STOP_INTENT {"action":"room emergency-stop","audit_id":"4398c7b0008ad6e1fb556c19e5058cdf","binding":{"authority_host_mode":"dedicated","instance_id":"6343f0858d0941b76cf0c00da399f999","pid":38024,"room":"16a59fe8fcc5e55901dddfa3b1696391"},"confirmed_unsaved_risk":true,"reason":"administrator test","requested_at_unix":1791652362.428,"save_confirmed":false,"saved":false,"source":"trusted_local_console","stage":"intent","warning":"紧急强停可能丢失未保存进度；未确认保存成功，不视为已保存"}
+SERVER_EMERGENCY_STOP_RESULT {"action":"room emergency-stop","audit_id":"4398c7b0008ad6e1fb556c19e5058cdf","audit_path":"E:/scratch/emergency-stop-b348d0a03a6a46ba838f241dddb3639f/emergency-6592650/console/emergency-stop/4398c7b0008ad6e1fb556c19e5058cdf.result.json","binding":{"authority_host_mode":"dedicated","instance_id":"6343f0858d0941b76cf0c00da399f999","pid":38024,"room":"16a59fe8fcc5e55901dddfa3b1696391"},"completed_at_unix":1791652362.563,"confirmed_unsaved_risk":true,"intent_path":"E:/scratch/emergency-stop-b348d0a03a6a46ba838f241dddb3639f/emergency-6592650/console/emergency-stop/4398c7b0008ad6e1fb556c19e5058cdf.intent.json","process_exited":true,"reason":"administrator test","requested_at_unix":1791652362.428,"save_confirmed":false,"saved":false,"source":"trusted_local_console","stage":"result","termination_confirmed":true,"warning":"紧急强停可能丢失未保存进度；未确认保存成功，不视为已保存"}
+SERVER_CONSOLE room emergency-stop ok=true
+CHECK explicit administrator emergency stop executes true
+CHECK real native handle confirms EXITED true
+CHECK emergency exit never implies successful save true
+CHECK durable intent binds administrator confirmation reason and process true
+CHECK durable outcome audit can be read back true
+CHECK normal failed-save receipt remains byte-identical true
+CHECK registration retained and no fake saved recovery file true
+CHECK replay local command envelope true
+CHECK existing CLI receipt suppresses duplicate emergency side effects true
+CHECK 持有原生句柄确认实际退出 true
+CHECK 未由关闭消费者释放的夹具，退出后释放原生句柄 true
+CHECK 实际文件屏障：ready.json true
+CHECK 真实 token/PID 验证及原生句柄 running true
+CHECK 同一真实 token 配错 PID 必须拒绝，不是恒真所有权 true
+CHECK 真实 running 句柄不能由关闭 API 提前 release true
+CHECK 拒绝提前 release 后真实句柄仍 running true
+CHECK 真实 owner 拒绝错误 token，UNKNOWN 不回退 PID 判活 true
+SERVER_CONSOLE room close ok=true
+CHECK healthy normal close still submits true
+CHECK 发布子进程时序门：poll true
+CHECK 实际文件屏障：6ff44eb9e243fcc2dcefe731d3ec08c7.response.json true
+CHECK 实际文件屏障：prepared.json true
+CHECK normal close has real saved receipt and file before exit true
+CHECK 发布子进程时序门：exit true
+CHECK 持有原生句柄确认实际退出 true
+CHECK normal close still confirms save plus exit and releases handle true
+CHECK 消费者已 release 的夹具不重复释放 true
+RESULT checks=48 failures=[]

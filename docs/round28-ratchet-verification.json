@@ -1,0 +1,126 @@
+{
+  "unit_tests": {
+    "command": [
+      "C:\\Users\\Administrator\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe",
+      "-m",
+      "unittest",
+      "tools.tests.test_round28_ratchet",
+      "tools.tests.test_check_layer_deps",
+      "-v"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_authorized_root_parent_child_missing (tools.tests.test_round28_ratchet.Round28Ratchet.test_authorized_root_parent_child_missing) ... ok\ntest_ignored_tests_helper_comments_and_deleted_freeze (tools.tests.test_round28_ratchet.Round28Ratchet.test_ignored_tests_helper_comments_and_deleted_freeze) ... ok\ntest_inventory_new_gone_drift_duplicates_bad_utf8 (tools.tests.test_round28_ratchet.Round28Ratchet.test_inventory_new_gone_drift_duplicates_bad_utf8) ... ok\ntest_real_stale_and_duplicate_multiset (tools.tests.test_round28_ratchet.Round28Ratchet.test_real_stale_and_duplicate_multiset) ... ok\ntest_symlink_outside_authorized_root (tools.tests.test_round28_ratchet.Round28Ratchet.test_symlink_outside_authorized_root) ... skipped \"Windows symlink privilege unavailable: [WinError 1314] 客户端没有所需的特权。: 'E:\\\\\\\\Projects\\\\\\\\Godot\\\\\\\\round28-ratchet-rjm3ifs2\\\\\\\\external.gd' -> 'E:\\\\\\\\Projects\\\\\\\\Godot\\\\\\\\round28-ratchet-rjm3ifs2\\\\\\\\authorized\\\\\\\\scripts\\\\\\\\link.gd'\"\ntest_all_plan_directories_and_only_those (tools.tests.test_check_layer_deps.LayerGateTests.test_all_plan_directories_and_only_those) ... ok\ntest_class_names_and_loads_and_route_literals (tools.tests.test_check_layer_deps.LayerGateTests.test_class_names_and_loads_and_route_literals) ... ok\ntest_comments_and_non_reference_strings_are_ignored (tools.tests.test_check_layer_deps.LayerGateTests.test_comments_and_non_reference_strings_are_ignored) ... ok\ntest_e14_expired_route_allowance_is_retired (tools.tests.test_check_layer_deps.LayerGateTests.test_e14_expired_route_allowance_is_retired) ... ok\ntest_each_real_allowlist_occurrence_is_individually_retirable (tools.tests.test_check_layer_deps.LayerGateTests.test_each_real_allowlist_occurrence_is_individually_retirable) ... ok\ntest_line_shift_whitespace_and_inline_comment_keep_anchor (tools.tests.test_check_layer_deps.LayerGateTests.test_line_shift_whitespace_and_inline_comment_keep_anchor) ... ok\ntest_missing_root_is_error_not_success (tools.tests.test_check_layer_deps.LayerGateTests.test_missing_root_is_error_not_success) ... ok\ntest_new_ui_dependency_exits_one (tools.tests.test_check_layer_deps.LayerGateTests.test_new_ui_dependency_exits_one) ... ok\ntest_owners_exempt_only_their_own_members (tools.tests.test_check_layer_deps.LayerGateTests.test_owners_exempt_only_their_own_members) ... ok\ntest_path_dot_segments_do_not_bypass_gate (tools.tests.test_check_layer_deps.LayerGateTests.test_path_dot_segments_do_not_bypass_gate) ... ok\ntest_precise_allowance_does_not_allow_duplicates_or_other_files (tools.tests.test_check_layer_deps.LayerGateTests.test_precise_allowance_does_not_allow_duplicates_or_other_files) ... ok\ntest_private_access_in_any_file (tools.tests.test_check_layer_deps.LayerGateTests.test_private_access_in_any_file) ... ok\ntest_public_watermark_does_not_waive_private_allocator_access (tools.tests.test_check_layer_deps.LayerGateTests.test_public_watermark_does_not_waive_private_allocator_access) ... ok\ntest_real_baseline_copy_cli_pass_new_and_stale (tools.tests.test_check_layer_deps.LayerGateTests.test_real_baseline_copy_cli_pass_new_and_stale) ... ok\ntest_retired_checkpoint_consumer_allowances_are_absent (tools.tests.test_check_layer_deps.LayerGateTests.test_retired_checkpoint_consumer_allowances_are_absent) ... ok\ntest_same_line_duplicate_load_is_counted (tools.tests.test_check_layer_deps.LayerGateTests.test_same_line_duplicate_load_is_counted) ... ok\ntest_stale_allowlist_detected_and_removal_restores_pass (tools.tests.test_check_layer_deps.LayerGateTests.test_stale_allowlist_detected_and_removal_restores_pass) ... ok\ntest_text_modules_reject_ui_and_node_inheritance (tools.tests.test_check_layer_deps.LayerGateTests.test_text_modules_reject_ui_and_node_inheritance) ... ok\n\n----------------------------------------------------------------------\nRan 23 tests in 8.951s\n\nOK (skipped=1)\n"
+  },
+  "layer": {
+    "command": [
+      "C:\\Users\\Administrator\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe",
+      "tools/check_layer_deps.py",
+      "--root",
+      "E:\\Projects\\Godot\\FateDominationGame-master",
+      "--json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"status\": \"PASS\", \"exit_code\": 0, \"root\": \"E:/Projects/Godot/FateDominationGame-master\", \"findings\": 80, \"allowlist\": 80, \"new\": [], \"stale\": [], \"rules\": {\"layer\": 7, \"private\": 73}}\n",
+    "stderr": "",
+    "data": {
+      "status": "PASS",
+      "exit_code": 0,
+      "root": "E:/Projects/Godot/FateDominationGame-master",
+      "findings": 80,
+      "allowlist": 80,
+      "new": [],
+      "stale": [],
+      "rules": {
+        "layer": 7,
+        "private": 73
+      }
+    }
+  },
+  "inventory": {
+    "command": [
+      "C:\\Users\\Administrator\\AppData\\Local\\hermes\\tools\\python-3.14.7+20260901-win32-x64\\python.exe",
+      "tools/check_inventory_drift.py",
+      "--root",
+      "E:\\Projects\\Godot\\FateDominationGame-master",
+      "--json"
+    ],
+    "exit_code": 1,
+    "stdout": "{\"status\": \"FAIL\", \"exit_code\": 1, \"root\": \"E:/Projects/Godot/FateDominationGame-master\", \"inventory\": \"E:/Projects/Godot/FateDominationGame-master/docs/refactoring-coupling-inventory.json\", \"baseline_count\": 383, \"current_count\": 402, \"new\": [\"scripts/game_scene/battle_io/local_battle_commands.gd\", \"scripts/game_scene/battle_io/local_battle_source.gd\", \"scripts/game_scene/battle_io/network_battle_commands.gd\", \"scripts/game_scene/battle_io/network_battle_source.gd\", \"scripts/match/match_command_dispatcher.gd\", \"scripts/match/match_seat_query.gd\", \"scripts/net/identity/client_identity_inbox.gd\", \"scripts/net/server/heartbeat_publication_policy.gd\", \"scripts/net/server/temporary_cleanup_executor.gd\", \"scripts/net/server/temporary_cleanup_ledger.gd\", \"scripts/net/server/temporary_cleanup_policy.gd\", \"scripts/net/session/client_match_inbox.gd\", \"scripts/net/ui/notification_inbox.gd\", \"scripts/system/area_action_rules.gd\", \"scripts/system/global/content_environment.gd\", \"scripts/ui/text/card_desc_text.gd\", \"scripts/ui/text/choice_text.gd\", \"scripts/ui/text/cost_text.gd\", \"scripts/ui/text/game_log_text.gd\"], \"gone\": [], \"drift\": [\"scripts/debug/debug_adapters/debug_map_adapter.gd\", \"scripts/game_scene/battle_board_v2.gd\", \"scripts/game_scene/native_choice_renderer.gd\", \"scripts/game_scene/tactical_board_ui.gd\", \"scripts/match/effect_checkpoint.gd\", \"scripts/match/match_driver.gd\", \"scripts/match/match_replay.gd\", \"scripts/match/net_ids.gd\", \"scripts/match/rule_state.gd\", \"scripts/match/view_builder.gd\", \"scripts/match/view_mirror.gd\", \"scripts/net/authority/match_authority.gd\", \"scripts/net/content/blob_receiver.gd\", \"scripts/net/server/server_bootstrap.gd\", \"scripts/net/server/server_cli.gd\", \"scripts/net/server/server_console_channel.gd\", \"scripts/net/server/server_data_approval.gd\", \"scripts/net/server/server_gateway.gd\", \"scripts/net/server/server_room_manager.gd\", \"scripts/net/server/server_room_worker.gd\", \"scripts/net/server/server_shutdown.gd\", \"scripts/net/session/authority_host_client.gd\", \"scripts/net/session/lobby_session.gd\", \"scripts/net/ui/lobby_screen.gd\", \"scripts/net/ui/network_choice_panel.gd\", \"scripts/net/ui/room_data_panel.gd\", \"scripts/net/ui/v2_view_presenter.gd\", \"scripts/net/validation/room_data_preparation.gd\", \"scripts/net/validation/room_data_validation_worker.gd\", \"scripts/system/ai/temp/dummy_bot.gd\", \"scripts/system/global/climax_resolver.gd\", \"scripts/system/global/effect_manager.gd\", \"scripts/system/global/game_data_manager.gd\", \"scripts/system/global/game_progress.gd\", \"scripts/system/global/load_game.gd\", \"scripts/system/operations/ModifyAttackPowerByAttribute.gd\"]}\n",
+    "stderr": "",
+    "data": {
+      "status": "FAIL",
+      "exit_code": 1,
+      "root": "E:/Projects/Godot/FateDominationGame-master",
+      "inventory": "E:/Projects/Godot/FateDominationGame-master/docs/refactoring-coupling-inventory.json",
+      "baseline_count": 383,
+      "current_count": 402,
+      "new": [
+        "scripts/game_scene/battle_io/local_battle_commands.gd",
+        "scripts/game_scene/battle_io/local_battle_source.gd",
+        "scripts/game_scene/battle_io/network_battle_commands.gd",
+        "scripts/game_scene/battle_io/network_battle_source.gd",
+        "scripts/match/match_command_dispatcher.gd",
+        "scripts/match/match_seat_query.gd",
+        "scripts/net/identity/client_identity_inbox.gd",
+        "scripts/net/server/heartbeat_publication_policy.gd",
+        "scripts/net/server/temporary_cleanup_executor.gd",
+        "scripts/net/server/temporary_cleanup_ledger.gd",
+        "scripts/net/server/temporary_cleanup_policy.gd",
+        "scripts/net/session/client_match_inbox.gd",
+        "scripts/net/ui/notification_inbox.gd",
+        "scripts/system/area_action_rules.gd",
+        "scripts/system/global/content_environment.gd",
+        "scripts/ui/text/card_desc_text.gd",
+        "scripts/ui/text/choice_text.gd",
+        "scripts/ui/text/cost_text.gd",
+        "scripts/ui/text/game_log_text.gd"
+      ],
+      "gone": [],
+      "drift": [
+        "scripts/debug/debug_adapters/debug_map_adapter.gd",
+        "scripts/game_scene/battle_board_v2.gd",
+        "scripts/game_scene/native_choice_renderer.gd",
+        "scripts/game_scene/tactical_board_ui.gd",
+        "scripts/match/effect_checkpoint.gd",
+        "scripts/match/match_driver.gd",
+        "scripts/match/match_replay.gd",
+        "scripts/match/net_ids.gd",
+        "scripts/match/rule_state.gd",
+        "scripts/match/view_builder.gd",
+        "scripts/match/view_mirror.gd",
+        "scripts/net/authority/match_authority.gd",
+        "scripts/net/content/blob_receiver.gd",
+        "scripts/net/server/server_bootstrap.gd",
+        "scripts/net/server/server_cli.gd",
+        "scripts/net/server/server_console_channel.gd",
+        "scripts/net/server/server_data_approval.gd",
+        "scripts/net/server/server_gateway.gd",
+        "scripts/net/server/server_room_manager.gd",
+        "scripts/net/server/server_room_worker.gd",
+        "scripts/net/server/server_shutdown.gd",
+        "scripts/net/session/authority_host_client.gd",
+        "scripts/net/session/lobby_session.gd",
+        "scripts/net/ui/lobby_screen.gd",
+        "scripts/net/ui/network_choice_panel.gd",
+        "scripts/net/ui/room_data_panel.gd",
+        "scripts/net/ui/v2_view_presenter.gd",
+        "scripts/net/validation/room_data_preparation.gd",
+        "scripts/net/validation/room_data_validation_worker.gd",
+        "scripts/system/ai/temp/dummy_bot.gd",
+        "scripts/system/global/climax_resolver.gd",
+        "scripts/system/global/effect_manager.gd",
+        "scripts/system/global/game_data_manager.gd",
+        "scripts/system/global/game_progress.gd",
+        "scripts/system/global/load_game.gd",
+        "scripts/system/operations/ModifyAttackPowerByAttribute.gd"
+      ]
+    }
+  },
+  "sha256": {
+    "tools/check_layer_deps.py": "9cf34abd0bd3126dcbfcb04da1eaaa9e2c8905d1d260ab43bfeb2a5768f08890",
+    "tools/check_inventory_drift.py": "3d23b702d8d4ea4b5aeb3511975b2c887b36d72e3e1c87c7d5d839b14b891d67",
+    "tools/tests/test_round28_ratchet.py": "4f787b7bf941230145bd973bef7f179a23a358f0fdc13b3c34db1a148fb17a4b",
+    "docs/refactoring-coupling-inventory.json": "6876fe2db6fe912c6ff90dc6021628f2e4f496f0d8f9aea421d07d910dbb329a"
+  }
+}

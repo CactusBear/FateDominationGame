@@ -152,7 +152,7 @@
 					"effect_name": "passive",
 					"shown_effect_name": "被动 - 你的力量和敏捷属性的基本牌威力+2",
 					"time_points": [
-						"self_card_revealed"
+						"self_played_card"
 					],
 					"priority": 0,
 					"is_pure_passive": true,
@@ -165,20 +165,50 @@
 						}
 					],
 					"funcs": [
-						{
-							"func_name": "modify_attack_power_by_attribute",
-							"parameters": [
-								[
-									"strength",
-									"agility"
-								],
-								{
-									"number_index": 0
-								}
-							],
-							"var_index": -1
-						}
-					]
+ {
+  "func_name": "log_field_values",
+  "parameters": [
+   {
+    "type": "time_point",
+    "tags": "played_card",
+    "actor": -1
+   },
+   0,
+   "object",
+   1
+  ],
+  "var_index": 0
+ },
+ {
+  "func_name": "get_card_by_index_fr_arr",
+  "parameters": [
+   0,
+   {
+    "self_var": 0
+   }
+  ],
+  "var_index": 1
+ },
+ {
+  "func_name": "modify_attack_power_by_attribute",
+  "parameters": [
+   [
+    "strength",
+    "agility"
+   ],
+   {
+    "number_index": 0
+   },
+   -1,
+   {
+    "self_var": 1
+   },
+   null,
+   "basic"
+  ],
+  "var_index": -1
+ }
+]
 				},
 				{
 					"effect_name": "combat",

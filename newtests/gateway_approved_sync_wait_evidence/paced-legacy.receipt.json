@@ -1,0 +1,94 @@
+{
+  "mode": "paced-legacy",
+  "command": [
+    "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+    "--headless",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\scratch\\gateway-approved-triage\\paced-legacy\\project",
+    "--scene",
+    "res://tests/net_server_gateway_restart_test.tscn",
+    "--",
+    "E:/scratch/gateway-approved-triage/paced-legacy/fixture"
+  ],
+  "exit": 1,
+  "analysis": {
+    "passed": false,
+    "reasons": [
+      "nonzero_exit",
+      "result_failures",
+      "check_false",
+      "check_false",
+      "check_false"
+    ],
+    "result": {
+      "checks": 14,
+      "failures": [
+        "all approved client files assemble and verify before ready",
+        "保存回执及原生EXITED确认后释放；失败不强杀：{ \"ok\": true, \"result\": { \"stage\": \"failed\", \"failures\": { \"fdfe250ced68dc698c10c4c5f4cbad2c\": \"房间此前已经退出，无法确认本次保存\" }, \"pending_rooms\": [], \"stopped\": false } }",
+        "正常或失败结束均释放全部房间登记及进程所有权"
+      ]
+    }
+  },
+  "job_records": [
+    {
+      "label": "scene",
+      "command": [
+        "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\gateway-approved-triage\\paced-legacy\\project",
+        "--scene",
+        "res://tests/net_server_gateway_restart_test.tscn",
+        "--",
+        "E:/scratch/gateway-approved-triage/paced-legacy/fixture"
+      ],
+      "exited": true,
+      "pid": 38932,
+      "exit_code": 1,
+      "budget_failure": null,
+      "duration_seconds": 67.819,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    }
+  ],
+  "fixture_original_sha256": "ab91d362dbc7588bc2c8fc5e3df796b02e2d7718bb79bd4b05a2a9a11b854e7d",
+  "fixture_observer_sha256": "1fe85be66308e2899404488c4808fa160ba8e3f57c001b6cdbeb5934e2357485",
+  "observations": [
+    {
+      "active_hash_present": false,
+      "active_index": 204,
+      "bytes": 95949242,
+      "client": 0,
+      "complete": true,
+      "completed_files": 204,
+      "connected": true,
+      "deadline_reached": false,
+      "files": 204,
+      "no_progress_msec": 3852,
+      "pending_offset": -1,
+      "running": false,
+      "session_error": "",
+      "sync_error": ""
+    },
+    {
+      "active_hash_present": false,
+      "active_index": 9,
+      "bytes": 95949242,
+      "client": 1,
+      "complete": false,
+      "completed_files": 9,
+      "connected": true,
+      "deadline_reached": false,
+      "files": 204,
+      "no_progress_msec": 66463,
+      "pending_offset": -1,
+      "running": true,
+      "session_error": "房间连接已断开",
+      "sync_error": ""
+    }
+  ]
+}

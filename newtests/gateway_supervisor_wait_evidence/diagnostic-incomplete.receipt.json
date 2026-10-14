@@ -1,0 +1,51 @@
+{
+  "command": [
+    "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+    "--headless",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\scratch\\gateway-supervisor-triage\\diagnostic\\project",
+    "--scene",
+    "res://tests/net_server_gateway_restart_test.tscn",
+    "--",
+    "E:/scratch/gateway-supervisor-triage/diagnostic/fixture"
+  ],
+  "exit": 1,
+  "analysis": {
+    "passed": false,
+    "reasons": [
+      "nonzero_exit",
+      "expected_one_stdout_result"
+    ],
+    "result": null
+  },
+  "job_records": [
+    {
+      "label": "scene",
+      "command": [
+        "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\gateway-supervisor-triage\\diagnostic\\project",
+        "--scene",
+        "res://tests/net_server_gateway_restart_test.tscn",
+        "--",
+        "E:/scratch/gateway-supervisor-triage/diagnostic/fixture"
+      ],
+      "exited": true,
+      "pid": 9516,
+      "exit_code": 1,
+      "budget_failure": null,
+      "duration_seconds": 50.809,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    }
+  ],
+  "check_true": 6,
+  "check_false": 0,
+  "error_count": 0,
+  "fixture_input_sha256": "a3dedfd5e6d886d1df47fb0478956f132173d58c770b4e480a3bc66959ec020c"
+}

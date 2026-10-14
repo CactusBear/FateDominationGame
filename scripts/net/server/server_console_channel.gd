@@ -1,5 +1,12 @@
 extends RefCounted
 
+const RequestCodec = preload("res://scripts/net/server/server_admin_request_codec.gd")
+const NativeCapabilityView = preload("res://scripts/io/native_capability_view.gd")
+const NativeMethodContract = preload("res://scripts/io/native_method_contract.gd")
+## 与 bootstrap 校验引用同一显式合同；不枚举原生新增接口，也不赋予授权。
+const NATIVE_METHOD_CONTRACT:Dictionary = NativeMethodContract.REQUIRED_METHODS
+var request_codec:RefCounted = RequestCodec.new()
+
 ## 本机管理通道，只接收白名单命令；不注册到网络消息入口。
 var directory:String = ""
 var max_request_bytes:int = 4096
@@ -11,6 +18,56 @@ var commands:Dictionary = {}
 var instance_id:String = ""
 ## 包括单房间 close；直到最终拒绝或成功回执+真实退出才移除。
 var _closing_requests:Dictionary = {}
+## 仅由本机部署显式启用；未配置既不登记也不自动清理。
+var _cleanup_ledger:RefCounted
+var _cleanup_schedule:Dictionary = {}
+var _cleanup_last_seconds:int = -1
+
+## 当前组合根缺跨进程文件锁和全实例登记；调度只生成候选，绝不升级为删除。
+func configure_cleanup_schedule(value:Variant) -> bool:
+	_cleanup_schedule = {}
+	_cleanup_ledger = null
+	_cleanup_last_seconds = -1
+	var config:Variant = load("res://scripts/net/server/server_cli.gd").deployment_cleanup_config(value)
+	if not config is Dictionary: return false
+	if not config.enabled: return true
+	if not configure_cleanup_ledger(config.ledger_path): return false
+	_cleanup_schedule = config.duplicate(true)
+	return true
+
+func poll_cleanup_schedule(now_seconds:int) -> Dictionary:
+	if _cleanup_schedule.is_empty() or _cleanup_ledger == null: return {"ok":false,"error":"cleanup_not_configured","due":false,"removed_files":0}
+	if now_seconds < 0: return {"ok":false,"error":"invalid_clock","due":false,"removed_files":0}
+	# 时间回退也不加速重试；消费确认与这里同用 Unix 秒，不混用 ticks/msec。
+	if _cleanup_last_seconds >= 0 and (now_seconds < _cleanup_last_seconds or now_seconds - _cleanup_last_seconds < _cleanup_schedule.interval_seconds): return {"ok":true,"due":false,"removed_files":0}
+	_cleanup_last_seconds = now_seconds
+	var observed:Array = []
+	var instances:Array = []
+	if gateway != null and gateway.manager != null:
+		for id in gateway.manager.rooms:
+			var binding:Dictionary = gateway.manager.instance_binding(id)
+			var state:int = gateway.manager.process_state_for_binding(binding)
+			observed.append({"binding":binding,"process_state":state})
+			# UNKNOWN 和 EXITED 尚未释放都保守计入；不读取目录推断实例。
+			if not binding.is_empty() and not instances.has(binding.instance_id): instances.append(binding.instance_id)
+	var result:Dictionary = _cleanup_ledger.preview(_cleanup_schedule,now_seconds,instances)
+	result.due = true
+	result.blocked = true
+	result.removed_files = 0
+	result.observed_bindings = observed
+	result.missing_capabilities = ["complete_instance_registry","cross_process_file_exclusion"]
+	return result
+
+func configure_cleanup_ledger(path:String) -> bool:
+	_cleanup_ledger = null
+	var ledger:RefCounted = load("res://scripts/net/server/temporary_cleanup_ledger.gd").new()
+	if not ledger.configure(path): return false
+	_cleanup_ledger = ledger
+	return true
+
+func cleanup_temporary(config:Dictionary, now:int, lifecycle_snapshot:Callable) -> Dictionary:
+	if _cleanup_ledger == null: return {"ok":false,"error":"cleanup_not_configured"}
+	return _cleanup_ledger.cleanup(config, now, lifecycle_snapshot)
 
 func configure(root:String,game,relay) -> Error:
 	directory = root
@@ -38,10 +95,12 @@ func configure(root:String,game,relay) -> Error:
 		"room save":{"arguments":1,"handler":_room_save},
 		"room seed":{"arguments":1,"handler":_room_seed},
 		"room close":{"arguments":1,"handler":_room_close},
+		"room emergency-stop":{"arguments":5,"handler":_room_emergency_stop},
 		"room pause":{"arguments":1,"handler":_room_pause},
 		"room resume":{"arguments":1,"handler":_room_resume},
 		"room kick":{"arguments":2,"handler":_room_kick},
-		"room result":{"arguments":2,"handler":_room_result},
+		"room result":{"arguments":2,"handler":_room_result_for_admin},
+		"room consumed":{"arguments":3,"handler":_room_consumed},
 		"room forget":{"arguments":2,"handler":_room_forget},
 		"room legacy-approve":{"arguments":5,"handler":_room_legacy_approve},
 		"room legacy-reject":{"arguments":3,"handler":_room_legacy_reject},
@@ -61,28 +120,14 @@ func configure(root:String,game,relay) -> Error:
 	return write_json(control_path,{"instance":instance_id,"pid":OS.get_process_id()})
 
 func execute(line:String, trusted_local:bool = true) -> Dictionary:
-	if line.to_utf8_buffer().size() > max_request_bytes: return {"ok":false,"error":"命令超过长度预算"}
-	var parsed:Dictionary = preload("res://scripts/net/server/server_command_line.gd").parse(line)
+	var parsed:Dictionary = request_codec.decode_command(line,max_request_bytes)
 	if not parsed.ok: return parsed
-	var parts:PackedStringArray = parsed.tokens
-	if parts.is_empty(): return {"ok":false,"error":"命令为空"}
-	var command:String = parts[0]
-	var offset:int = 1
-	if command in ["relay","whitelist"] and parts.size() > 1:
-		command += " " + parts[1]
-		offset = 2
-	elif command == "room" and parts.size() > 1 and parts[1] == "create":
-		command += " create"
-		offset = 2
-	elif command == "room" and parts.size() > 2:
-		command += " " + parts[2]
-		parts = PackedStringArray([parts[0],parts[2],parts[1]]) + parts.slice(3)
-		offset = 2
+	var command:String = parsed.action
 	if not commands.has(command): return {"ok":false,"error":"未知命令，请输入 help"}
-	if command in ["room legacy-approve","room legacy-reject"] and not trusted_local:
-		return {"ok":false,"error":"旧档迁移仅允许可信本机控制台"}
-	var arguments:PackedStringArray = parts.slice(offset)
-	if arguments.size() != commands[command].arguments: return {"ok":false,"error":"命令参数数量无效"}
+	if command in ["status","room legacy-approve","room legacy-reject","room consumed","room emergency-stop"] and not trusted_local:
+		return {"ok":false,"error":"此操作仅允许可信本机控制台"}
+	var arguments:PackedStringArray = parsed.args
+	if not RequestCodec.valid_arguments(arguments,commands[command].arguments): return {"ok":false,"error":"命令参数数量无效"}
 	var response:Dictionary = commands[command].handler.call(arguments)
 	print("SERVER_CONSOLE ",command," ok=",response.get("ok",false))
 	return response
@@ -115,21 +160,21 @@ func poll() -> void:
 		if not valid_id(id): continue
 		count += 1
 		var path:String = directory.path_join(filename)
+		var response_path:String = directory.path_join(id+".response.json")
+		# 与 worker 通道相同：已有回执即已处理，不覆盖回执、不重放副作用。
+		if FileAccess.file_exists(response_path):
+			DirAccess.remove_absolute(path)
+			continue
 		var file := FileAccess.open(path,FileAccess.READ)
 		var response:Dictionary = {"ok":false,"error":"本机命令请求无效"}
-		if file != null and file.get_length() <= max_request_bytes:
-			var parser := JSON.new()
-			if parser.parse(file.get_as_text()) == OK and parser.data is Dictionary and parser.data.size() == 2 and parser.data.get("instance") == instance_id and parser.data.get("command") is String:
-				response = execute(parser.data.command)
+		var decoded:Dictionary = request_codec.read_request(file,instance_id,max_request_bytes)
 		if file != null: file.close()
-		if write_json(directory.path_join(id+".response.json"),response) == OK:
+		if decoded.ok: response = execute(decoded.command)
+		if write_json(response_path,response) == OK:
 			DirAccess.remove_absolute(path)
 
 static func valid_id(id:String) -> bool:
-	if id.length() != 32: return false
-	for character in id:
-		if character not in "0123456789abcdef": return false
-	return true
+	return RequestCodec.valid_id(id)
 
 static func write_json(path:String,value:Dictionary) -> Error:
 	var temporary:String = path+".tmp"
@@ -149,7 +194,9 @@ func _help(_args:PackedStringArray) -> Dictionary:
 		if command == "room create": line += " <name> <settings_json>"
 		elif command.begins_with("room "):
 			line = "room <id> " + command.trim_prefix("room ")
-			if command in ["room result","room forget"]: line += " <request_id>"
+			if command == "room emergency-stop": line += " <pid> <instance_id> --confirm-unsaved-risk '<reason>'（可能丢失未保存进度）"
+			elif command in ["room result","room forget"]: line += " <request_id>"
+			elif command == "room consumed": line += " <request_id> <response_sha256>"
 			elif command == "room kick": line += " <connection_id>"
 			elif command == "room legacy-approve": line += " <pid> <instance_id> legacy_approved '<member_to_connection_json>'"
 			elif command == "room legacy-reject": line += " <pid> <instance_id>"
@@ -161,7 +208,12 @@ func _help(_args:PackedStringArray) -> Dictionary:
 	return {"ok":true,"result":Array(usage)}
 
 func _status(_args:PackedStringArray) -> Dictionary:
-	return {"ok":true,"result":{"game_port":gateway.transport.bound_port,"rooms":gateway.manager.rooms.size(),"attached_clients":gateway.routes.size(),"pending_clients":gateway._pending.size(),"relay_port":signaling.port,"server_name":gateway.server_name,"motd":gateway.motd}}
+	var result:Dictionary = {"game_port":gateway.transport.bound_port,"rooms":gateway.manager.rooms.size(),"attached_clients":gateway.routes.size(),"pending_clients":gateway._pending.size(),"relay_port":signaling.port,"server_name":gateway.server_name,"motd":gateway.motd}
+	result.native_capabilities = NativeCapabilityView.observe(NATIVE_METHOD_CONTRACT)
+	result.validation_policy = NativeCapabilityView.validation_policy(gateway.manager.data_settings)
+	# 声明读回不是实时线程利用率；缺声明不能猜默认容量。
+	result.worker_pool = {"max_threads":ProjectSettings.get_setting("threading/worker_pool/max_threads") if ProjectSettings.has_setting("threading/worker_pool/max_threads") else "unknown"}
+	return {"ok":true,"result":result}
 
 func _rooms(_args:PackedStringArray) -> Dictionary:
 	var result:Array = []
@@ -182,7 +234,7 @@ func _say(args:PackedStringArray) -> Dictionary:
 	return gateway.broadcast_notice(args[0])
 
 func _kick(args:PackedStringArray) -> Dictionary:
-	if not args[0].is_valid_int() or args[0].to_int() <= 1 or args[0].to_int() > 2147483647: return {"ok":false,"error":"连接编号必须是有效整数"}
+	if not RequestCodec.integer_in_range(args[0],2,2147483647): return {"ok":false,"error":"连接编号必须是有效整数"}
 	return gateway.kick_connection(args[0].to_int())
 
 func _room_create(args:PackedStringArray) -> Dictionary:
@@ -203,7 +255,7 @@ func _room_info(args:PackedStringArray) -> Dictionary:
 
 func _room_kick(args:PackedStringArray) -> Dictionary:
 	if not gateway.manager.rooms.has(args[0]): return {"ok":false,"error":"房间不存在"}
-	if not args[1].is_valid_int(): return {"ok":false,"error":"连接编号必须是有效整数"}
+	if not RequestCodec.valid_integer(args[1]): return {"ok":false,"error":"连接编号必须是有效整数"}
 	var connection:int = args[1].to_int()
 	if gateway.routes.get(connection,{}).get("room","") != args[0]: return {"ok":false,"error":"连接不属于指定房间"}
 	return _kick(PackedStringArray([args[1]]))
@@ -222,13 +274,13 @@ func _relay_status(_args:PackedStringArray) -> Dictionary:
 	return {"ok":true,"result":{"port":signaling.port,"clients":signaling._clients.size(),"rooms":signaling._rooms.size(),"registrations":registrations,"signal_rate_limit":signaling.max_messages_per_second,"rooms_per_ip":signaling.rooms_per_ip}}
 
 func _room_legacy_approve(args:PackedStringArray) -> Dictionary:
-	if not args[1].is_valid_int() or str(args[1].to_int()) != args[1]: return {"ok":false,"error":"PID 格式无效"}
+	if not RequestCodec.valid_integer(args[1],true): return {"ok":false,"error":"PID 格式无效"}
 	var parsed:Dictionary = preload("res://scripts/net/identity/legacy_identity_migration.gd").parse_approval(args[3],args[4])
 	if not parsed.ok: return parsed
 	return gateway.console_legacy_migration(args[0],args[1].to_int(),args[2],true,parsed.selected)
 
 func _room_legacy_reject(args:PackedStringArray) -> Dictionary:
-	if not args[1].is_valid_int() or str(args[1].to_int()) != args[1]: return {"ok":false,"error":"PID 格式无效"}
+	if not RequestCodec.valid_integer(args[1],true): return {"ok":false,"error":"PID 格式无效"}
 	return gateway.console_legacy_migration(args[0],args[1].to_int(),args[2],false,{})
 
 func _room_save(args:PackedStringArray) -> Dictionary:
@@ -236,6 +288,49 @@ func _room_save(args:PackedStringArray) -> Dictionary:
 
 func _room_seed(args:PackedStringArray) -> Dictionary:
 	return _room_request(args[0],"seed")
+
+## closing 仅声明关服意图；保存证据必须来自明确布尔成功字段。
+static func saved_close_receipt(response:Dictionary) -> bool:
+	var result:Variant = response.get("result")
+	if not response.get("ok") is bool or not response.ok or not result is Dictionary: return false
+	if not result.get("closing") is bool or not result.closing: return false
+	return (result.get("saved") is bool and result.saved) or (result.get("room_state_saved") is bool and result.room_state_saved)
+
+## 独立于正常保存关断；只有本机显式确认风险的命令进入此函数。
+## 意图落盘且读回后才执行；退出不是保存，原回执/存档/登记均保留。
+func _room_emergency_stop(args:PackedStringArray) -> Dictionary:
+	var warning:String = "紧急强停可能丢失未保存进度；未确认保存成功，不视为已保存"
+	if args[3] != "--confirm-unsaved-risk" or args[4].strip_edges().is_empty():
+		return {"ok":false,"error":"必须显式确认未保存风险并提供原因；"+warning}
+	if directory.is_empty(): return {"ok":false,"error":"本机审计目录未配置；未执行强停"}
+	if not RequestCodec.valid_integer(args[1],true) or not RequestCodec.valid_id(args[2]):
+		return {"ok":false,"error":"必须提供当前 PID 与实例编号；未执行强停"}
+	var binding:Dictionary = gateway.manager.instance_binding(args[0])
+	if binding.is_empty() or binding.pid != args[1].to_int() or binding.instance_id != args[2] or not gateway.manager.process_identity_verified(binding):
+		return {"ok":false,"error":"进程实例或原生所有权未确认；未执行强停"}
+	var audit_id:String = Crypto.new().generate_random_bytes(16).hex_encode()
+	var audit_root:String = directory.path_join("emergency-stop")
+	if DirAccess.make_dir_recursive_absolute(audit_root) != OK: return {"ok":false,"error":"审计目录不可写；未执行强停"}
+	var intent_path:String = audit_root.path_join(audit_id+".intent.json")
+	var audit_path:String = audit_root.path_join(audit_id+".result.json")
+	var intent:Dictionary = {"audit_id":audit_id,"stage":"intent","action":"room emergency-stop","source":"trusted_local_console","binding":binding,"reason":args[4],"confirmed_unsaved_risk":true,"saved":false,"save_confirmed":false,"warning":warning,"requested_at_unix":Time.get_unix_time_from_system()}
+	if write_json(intent_path,intent) != OK: return {"ok":false,"error":"强停意图审计写入失败；未执行强停"}
+	if FileAccess.get_file_as_string(intent_path) != JSON.stringify(intent): return {"ok":false,"error":"强停意图审计读回失败；未执行强停"}
+	print("SERVER_EMERGENCY_STOP_INTENT ",JSON.stringify(intent))
+	var terminated:bool = gateway.manager.terminate_process_for_binding(binding)
+	var exited:bool = gateway.manager.process_state_for_binding(binding) == 0
+	var outcome:Dictionary = intent.duplicate(true)
+	outcome.stage = "result"
+	outcome["termination_confirmed"] = terminated
+	outcome["process_exited"] = exited
+	outcome["completed_at_unix"] = Time.get_unix_time_from_system()
+	outcome["intent_path"] = intent_path
+	outcome["audit_path"] = audit_path
+	print("SERVER_EMERGENCY_STOP_RESULT ",JSON.stringify(outcome))
+	if write_json(audit_path,outcome) != OK: return {"ok":false,"error":"强停结果审计写入失败；"+warning,"result":outcome}
+	if FileAccess.get_file_as_string(audit_path) != JSON.stringify(outcome): return {"ok":false,"error":"强停结果审计读回失败；"+warning,"result":outcome}
+	if not terminated or not exited: return {"ok":false,"error":"未确认强停完成；保留原生所有权和证据；"+warning,"result":outcome}
+	return {"ok":true,"result":outcome}
 
 func _room_close(args:PackedStringArray) -> Dictionary:
 	return _room_request(args[0],"close")
@@ -252,31 +347,32 @@ func _poll_room_closes() -> void:
 		var request:Dictionary = _closing_requests[room_id]
 		var response:Dictionary = _room_result(PackedStringArray([room_id,request.request_id]))
 		# 本地读错、pending、错实例都不是 worker 的最终拒绝。
-		if response.get("room") != request.binding.room or response.get("pid") != request.binding.pid or response.get("instance") != request.binding.instance_id or response.get("authority_host_mode") != request.binding.authority_host_mode or response.get("request_id") != request.request_id:
+		if not RequestCodec.response_matches(response,request.binding.room,request.request_id,request.binding):
 			if gateway.manager.process_state_for_binding(request.binding) == 0 and gateway.manager.retire_unconfirmed_close(request.binding,request.request_id): _closing_requests.erase(room_id)
 			continue
 		if response.get("ok") == false:
 			if gateway.manager.cancel_process_supervision(request.binding,request.request_id): _closing_requests.erase(room_id)
 			continue
-		if response.get("ok") != true or not response.get("result",{}).get("closing",false): continue
+		if not saved_close_receipt(response): continue
 		if gateway.manager.closed_binding_for_request(room_id,request.request_id) == request.binding.merged({"request_id":request.request_id}):
 			_closing_requests.erase(room_id)
 		elif gateway.manager.process_state_for_binding(request.binding) == 0 and gateway.manager.release_process_for_binding(request.binding,request.request_id):
 			_closing_requests.erase(room_id)
 
 func _room_request(room_id:String,action:String) -> Dictionary:
-	if action == "close":
+	if action in ["close","close_empty"]:
 		_poll_room_closes()
 		if _closing_requests.has(room_id): return {"ok":true,"result":{"status":"pending","request_id":_closing_requests[room_id].request_id}}
 	if not gateway.manager.rooms.has(room_id) or not gateway.manager.is_ready(room_id): return {"ok":false,"error":"房间不存在或未就绪"}
 	var room:Dictionary = gateway.manager.rooms[room_id]
-	var parser := JSON.new()
 	var ready_path:String = str(room.directory).path_join("ready.json")
-	if not FileAccess.file_exists(ready_path) or parser.parse(FileAccess.get_file_as_string(ready_path)) != OK or not parser.data is Dictionary:
+	if not FileAccess.file_exists(ready_path): return {"ok":false,"error":"房间就绪报告不可读"}
+	var decoded_ready:Dictionary = RequestCodec.parse_object(FileAccess.get_file_as_string(ready_path))
+	if not decoded_ready.ok:
 		return {"ok":false,"error":"房间就绪报告不可读"}
-	if parser.data.get("id") != room_id or parser.data.get("pid") != room.pid or not valid_id(str(parser.data.get("instance",""))):
+	if not RequestCodec.ready_matches(decoded_ready.value,room_id,room.pid):
 		return {"ok":false,"error":"房间实例不匹配，不提交管理请求"}
-	var instance:String = parser.data.instance
+	var instance:String = decoded_ready.value.instance
 	var root:String = str(room.directory).path_join("control")
 	if DirAccess.make_dir_recursive_absolute(root) != OK: return {"ok":false,"error":"无法建立房间管理目录"}
 	var requests:Dictionary = {}
@@ -288,11 +384,15 @@ func _room_request(room_id:String,action:String) -> Dictionary:
 	if requests.size() >= max_room_requests: return {"ok":false,"error":"房间管理请求已达预算，请先清理已完成回执"}
 	var id:String = Crypto.new().generate_random_bytes(16).hex_encode()
 	var binding:Dictionary = gateway.manager.instance_binding(room_id)
-	if action == "close" and not gateway.manager.hold_process_supervision(room_id,id): return {"ok":false,"error":"无法持有关闭监督；未提交关闭请求"}
+	if action in ["close","close_empty"] and not gateway.manager.hold_process_supervision(room_id,id): return {"ok":false,"error":"无法持有关闭监督；未提交关闭请求"}
 	if write_json(root.path_join(id+".request.json"),{"room":room_id,"pid":room.pid,"instance":instance,"authority_host_mode":room.get("authority_host_mode",""),"action":action}) != OK:
-		if action == "close": gateway.manager.cancel_process_supervision(binding,id)
+		if action in ["close","close_empty"]: gateway.manager.cancel_process_supervision(binding,id)
 		return {"ok":false,"error":"无法提交房间管理请求"}
-	if action == "close": _closing_requests[room_id] = {"binding":binding,"request_id":id}
+	if action in ["close","close_empty"]: _closing_requests[room_id] = {"binding":binding,"request_id":id}
+	# 只登记本通道实际提交的 close；落账失败不升级为清理许可，关闭监督继续。
+	if action in ["close","close_empty"] and _cleanup_ledger != null:
+		var registered:Dictionary = _cleanup_ledger.register_close(id,binding,root)
+		if not registered.ok: print("TEMPORARY_LEDGER registration refused: ",registered.get("error",""))
 	var result:Dictionary = {"status":"pending","request_id":id}
 	if action == "save": result["saved"] = false
 	return {"ok":true,"result":result}
@@ -306,24 +406,47 @@ func _room_result(args:PackedStringArray) -> Dictionary:
 		var process_state:int = gateway.manager.process_state_for_binding(gateway.manager.instance_binding(args[0]))
 		if process_state != 1: return {"ok":false,"error":"原生句柄不可用或房间已退出，未确认操作成功"}
 		return {"ok":true,"result":{"status":"pending"}} if FileAccess.file_exists(root.path_join(args[1]+".request.json")) else {"ok":false,"error":"房间管理请求不存在"}
-	var parser := JSON.new()
-	if parser.parse(FileAccess.get_file_as_string(path)) != OK or not parser.data is Dictionary or parser.data.get("request_id") != args[1]: return {"ok":false,"error":"房间保存回执无效"}
-	var response:Dictionary = parser.data
+	var decoded_response:Dictionary = RequestCodec.parse_object(FileAccess.get_file_as_string(path))
+	if not decoded_response.ok or decoded_response.value.get("request_id") != args[1]: return {"ok":false,"error":"房间保存回执无效"}
+	var response:Dictionary = decoded_response.value
 	var binding:Dictionary = gateway.manager.instance_binding(args[0])
 	var retired:Dictionary = gateway.manager.retired_binding_for_request(args[0],args[1])
 	if not retired.is_empty(): binding = retired
 	var closed:Dictionary = gateway.manager.closed_binding_for_request(args[0],args[1])
 	if not closed.is_empty():
-		if response.get("ok") != true or not response.get("result",{}).get("closing",false): return {"ok":false,"error":"最终关闭回执无效"}
+		if not saved_close_receipt(response): return {"ok":false,"error":"最终关闭回执缺少保存成功证据"}
 		binding = closed
-	if response.get("room") != args[0] or response.get("pid") != binding.get("pid") or response.get("instance") != binding.get("instance_id") or response.get("authority_host_mode") != binding.get("authority_host_mode"): return {"ok":false,"error":"房间保存回执的进程实例不匹配"}
+	if not RequestCodec.binding_matches(response,args[0],binding): return {"ok":false,"error":"房间保存回执的进程实例不匹配"}
 	var request_path:String = root.path_join(args[1]+".request.json")
 	if FileAccess.file_exists(request_path):
-		var request_parser := JSON.new()
-		if request_parser.parse(FileAccess.get_file_as_string(request_path)) != OK or not request_parser.data is Dictionary: return {"ok":false,"error":"房间管理请求无效"}
-		var request:Dictionary = request_parser.data
-		if request.get("room") != args[0] or request.get("pid") != binding.get("pid") or request.get("instance") != binding.get("instance_id") or request.get("authority_host_mode") != binding.get("authority_host_mode"): return {"ok":false,"error":"房间管理请求的进程实例不匹配"}
+		var decoded_request:Dictionary = RequestCodec.parse_object(FileAccess.get_file_as_string(request_path))
+		if not decoded_request.ok: return {"ok":false,"error":"房间管理请求无效"}
+		var request:Dictionary = decoded_request.value
+		if not RequestCodec.binding_matches(request,args[0],binding): return {"ok":false,"error":"房间管理请求的进程实例不匹配"}
 	return response
+
+## 摘要只为显式消费确认提供绑定，不把结果读取当作确认。
+func _room_result_for_admin(args:PackedStringArray) -> Dictionary:
+	var response:Dictionary = _room_result(args)
+	if not saved_close_receipt(response): return response
+	var delivered:Dictionary = response.duplicate(true)
+	var response_path:String = str(gateway.manager.rooms[args[0]].directory).path_join("control").path_join(args[1]+".response.json")
+	delivered["consumption_sha256"] = FileAccess.get_sha256(response_path)
+	return delivered
+
+## 显式确认已经消费结果；result 返回/内部泵送本身不授权删除。
+func _room_consumed(args:PackedStringArray) -> Dictionary:
+	return acknowledge_close_result(PackedStringArray([args[0],args[1]]),args[2],int(Time.get_unix_time_from_system()))
+
+func acknowledge_close_result(args:PackedStringArray, expected_sha256:String, consumed_at:int) -> Dictionary:
+	if _cleanup_ledger == null: return {"ok":false,"error":"cleanup_not_configured"}
+	if args.size() != 2: return {"ok":false,"error":"invalid_consumption_arguments"}
+	var response:Dictionary = _room_result(args)
+	if not saved_close_receipt(response): return {"ok":false,"error":"save_unconfirmed"}
+	var response_path:String = str(gateway.manager.rooms[args[0]].directory).path_join("control").path_join(args[1]+".response.json")
+	if expected_sha256.length() != 64 or FileAccess.get_sha256(response_path) != expected_sha256: return {"ok":false,"error":"consumption_digest_mismatch"}
+	var closed:Dictionary = gateway.manager.closed_binding_for_request(args[0],args[1])
+	return _cleanup_ledger.consume_close(args[1],response,closed,consumed_at)
 
 func _room_forget(args:PackedStringArray) -> Dictionary:
 	if not gateway.manager.rooms.has(args[0]) or not valid_id(args[1]): return {"ok":false,"error":"房间或请求编号无效"}

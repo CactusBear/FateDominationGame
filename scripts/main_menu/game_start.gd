@@ -7,12 +7,15 @@ const MAIN_MENU_SCENE := "res://assets/scenes/main_menu/main_menu.tscn"
 var masters_can_use:Array = []
 var servants_can_use:Array = []
 var _started:bool = false
+# 只保存成功开局实际使用的原回执；调试创建者读取时不签发或重建来源。
+var _startup_context:SessionContext
 
 
 #负责从主菜单进入对局，不负责御主/从者的具体效果绑定。
 func game_start(player_ids:Array = [0, 1], assignments:Dictionary = {}, initial_order:Array = [], runtime_guard:Dictionary = {}) -> bool:
 	if _started:
 		return false
+	_startup_context = null
 	if not runtime_guard.is_empty() and not preload("res://scripts/match/rule_budget.gd").new().configure(runtime_guard):
 		return false
 
@@ -37,14 +40,30 @@ func game_start(player_ids:Array = [0, 1], assignments:Dictionary = {}, initial_
 			return false
 		ordered_ids.append(id)
 
+	# 本地启动是随机流生产边界；已由权威/重放声明的流保持原 seed/state。
+	# 不把 unknown 的取样消费口改成自动生成，也不覆盖显式 none 声明。
+	if not declare_local_random_stream():
+		return false
+	# 配置预检全部通过后才撤旧签新；清理、角色绑定和开局共享此原始来源。
+	var generation:Dictionary = preload("res://scripts/system/session_generation.gd").begin_generation(&"GameStart.game_start")
+	if not generation.ok:
+		return false
+	var derived:Dictionary = preload("res://scripts/system/session_generation.gd").derive_context(generation.token, &"GameStart.startup")
+	if not derived.ok:
+		preload("res://scripts/system/session_generation.gd").invalidate_generation(&"GameStart.context_unavailable")
+		return false
+	var context:SessionContext = derived.context
 	_started = true
 	masters_can_use = get_masters_can_use()
 	servants_can_use = get_servants_can_use()
-	GameData.reset_game_session(ids)
+	var prepared:Dictionary = GameData.reset_game_session(ids, context)
+	if not prepared.ok or not _startup_is_current(context):
+		return _reject_startup(context)
 	# 重置会清除旧预算；新配置须在任何开局规则开始前显式应用。
 	if not runtime_guard.is_empty() and not EffectManager.configure_runtime_guard(runtime_guard):
-		_started = false
-		return false
+		return _reject_startup(context)
+	if not _startup_is_current(context):
+		return _reject_startup(context)
 
 	#本地玩家的默认组合由 GameData 声明：先把声明的那两个模板从池里取出，
 	#其余玩家再按加载顺序分剩下的。声明为空或找不到模板时退化为纯顺序分配（不猜、不报错）
@@ -54,6 +73,8 @@ func game_start(player_ids:Array = [0, 1], assignments:Dictionary = {}, initial_
 	var next_servant:int = 0
 
 	for i in ids.size():
+		if not _startup_is_current(context):
+			return _reject_startup(context)
 		var id:int = int(ids[i])
 		var player_data = GameDataManager.get_player_data(id) as Dictionary
 		player_data["is_out"] = false
@@ -83,13 +104,65 @@ func game_start(player_ids:Array = [0, 1], assignments:Dictionary = {}, initial_
 		if servant != null:
 			player_data["servant"] = servant
 			GameLog.record("servant_assigned", id, -1, "", servant, ["servant_assigned"], {"effect_name": ""})
-		MasterManager.bind_master_effects(id)
-		MasterManager.deal_initial_master_cards(id)
-		MasterManager.bind_command_spell_effects(id)
-		ServantManager.bind_servant_effects(id)
+		if not _startup_is_current(context):
+			return _reject_startup(context)
+		if not MasterManager.bind_master_effects(id, context):
+			return _reject_startup(context)
+		if not _startup_is_current(context):
+			return _reject_startup(context)
+		if not MasterManager.deal_initial_master_cards(id, context):
+			return _reject_startup(context)
+		if not _startup_is_current(context):
+			return _reject_startup(context)
+		if not MasterManager.bind_command_spell_effects(id, context):
+			return _reject_startup(context)
+		if not _startup_is_current(context):
+			return _reject_startup(context)
+		if not ServantManager.bind_servant_effects(id, context):
+			return _reject_startup(context)
+		if not _startup_is_current(context):
+			return _reject_startup(context)
 
-	GameProgress.start_game()
+	var started:Dictionary = GameProgress.start_game(context)
+	if not started.ok or not _startup_is_current(context):
+		return _reject_startup(context)
+	_startup_context = context
 	return true
+
+
+## 创建层交接：只递送保存的成功启动原值；失效后返回空，不从当前局补来源。
+func startup_context() -> SessionContext:
+	return _startup_context if _startup_is_current(_startup_context) else null
+
+
+## 本地选人/直接开局的可信生产边界：真实熵显式声明一次新流。
+## RuleRandom 自身永不由 unknown 自动补种子；失败无默认值、无全局 RNG。
+func declare_local_random_stream() -> bool:
+	const RandomStream = preload("res://scripts/match/rule_random.gd")
+	if RandomStream.is_known():
+		return true
+	if RandomStream.capability().mode != "unknown":
+		return false
+	var entropy:PackedByteArray = Crypto.new().generate_random_bytes(8)
+	if entropy.size() != 8:
+		return false
+	RandomStream.start_seed(entropy.decode_s64(0))
+	return RandomStream.is_known()
+
+
+# 只验外层捕获的来源；运行期工厂仍由角色管理器负责，不在消费口补票。
+func _startup_is_current(context:SessionContext) -> bool:
+	return preload("res://scripts/system/session_generation.gd").validate_context(context).ok
+
+
+func _reject_startup(context:SessionContext) -> bool:
+	_startup_context = null
+	# 仅关闭本次失败的启动域，不撤销清理回调显式建立的另一权威域。
+	var current:Dictionary = preload("res://scripts/system/session_generation.gd").current_token()
+	if not current.ok or is_same(current.token, context.token()):
+		preload("res://scripts/system/session_generation.gd").invalidate_generation(&"GameStart.startup_failed")
+	_started = false
+	return false
 
 
 ## 此入口只验证完整角色归属；职阶池等模式规则由选人模式负责。
@@ -128,6 +201,7 @@ func _take_named(pool:Array, wanted:String):
 
 
 func reset():
+	_startup_context = null
 	_started = false
 
 
@@ -136,12 +210,24 @@ func reset():
 #先释放整局对象图（卡牌、效果、玩家数据与各加载器缓存），再复位进度/地图/模板加载器。
 #模板必须重载，因为 release_game_objects 连已加载的御主/从者模板一起释放了
 func end_session() -> void:
+	_startup_context = null
+	preload("res://scripts/system/session_generation.gd").invalidate_generation(&"GameStart.end_session")
 	preload("res://scripts/match/rule_random.gd").stop_tracking()
 	GameData.release_game_objects()
-	GameProgress.reset_progress()
+	if preload("res://scripts/system/session_generation.gd").current_token().ok:
+		return
+	var cleared:Dictionary = GameProgress.reset_progress(false, null, &"invalidate")
+	if not cleared.ok or preload("res://scripts/system/session_generation.gd").current_token().ok:
+		return
 	MapData.reset_board()
+	if preload("res://scripts/system/session_generation.gd").current_token().ok:
+		return
 	LoadGame.reload_game()
+	if preload("res://scripts/system/session_generation.gd").current_token().ok:
+		return
 	GameData.setup_players()
+	if preload("res://scripts/system/session_generation.gd").current_token().ok:
+		return
 	masters_can_use.clear()
 	servants_can_use.clear()
 	reset()

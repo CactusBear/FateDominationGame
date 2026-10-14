@@ -1,0 +1,26 @@
+{
+  "status": "planned",
+  "execution_status": "notrun",
+  "godot_launch_count": 0,
+  "cold_import_count": 0,
+  "business_suites_executed": 0,
+  "final_artifacts": [
+    {"path": "E:/scratch/current-regression-inventory-plan-v4.json", "sha256": "e7d9d6efc2deb98f6eeab70003b59c9b57a50f27a34f9a4125658f39ccd0ad4c"},
+    {"path": "docs/current-regression-inventory-plan-v4.md", "sha256": "455eeec823972bd16c0a64fde0bfd8ba2521f6f234dce6a569be91a00c166b0a"},
+    {"path": "tools/generate_regression_plan_inventory.py", "sha256": "d4e8b15152687ca1aa2961761301b618136d4dfadca3e6a81085162ef3dc6066"},
+    {"path": "tools/tests/test_regression_plan_inventory.py", "sha256": "ac498da281c05480ef53285e54b310d11d69ae50a9c117a083cc972cdb8ae241"}
+  ],
+  "validation_commands": [
+    {"command": "TMPDIR=E:/scratch TEMP=E:/scratch TMP=E:/scratch python -B tools/generate_regression_plan_inventory.py --parser-only E:/scratch/current-regression-inventory-plan-v4.json", "exit_code": 0, "scope": "actual prepared-validator structural/hash gate + normal headless execution gate + actual entry argparse intercepted before executor"},
+    {"command": "TMPDIR=E:/scratch TEMP=E:/scratch TMP=E:/scratch python -B tools/tests/test_regression_plan_inventory.py", "exit_code": 0, "static_test_count": 3},
+    {"command": "TMPDIR=E:/scratch TEMP=E:/scratch TMP=E:/scratch python -B tools/tests/test_round29_integrated_evidence.py --parser-only", "exit_code": 0, "scope": "existing RESULT protocol parser; not plan execution"}
+  ],
+  "counts": {"formal_scenes": 103, "headless_scenes": 101, "native_standalone": 2, "programs": 105, "parallel_allowed_suites": 5, "long_correctness": 2},
+  "boundaries": [
+    "Final command executes the complete 101-scene headless selection only. GUI2/native standalone2/supplementary GUI1/independent loader modes2/required extracted harness1 are explicitly separate planned/notrun contracts.",
+    "Final JSON was independently re-read and statically validated with exit0. It is not a source freeze copy; subsequent source/executor changes require regeneration.",
+    "No package export or regression execution here. Export first; wait for user notification before executing.",
+    "v1/v2/v3 plan JSONs remain at E:/scratch as invalidated drafts because concurrent source writes caused hash mismatches. docs/current-regression-inventory-plan.md is explicitly marked obsolete. Use v4 only.",
+    "No production or pre-existing tool modifications. Existing protected PIDs and secrets were not accessed."
+  ]
+}

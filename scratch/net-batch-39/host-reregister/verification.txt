@@ -1,2 +1,0 @@
-gdtoolkit parser: 3 *.gd.txt PARSE_OK; exit_code=0.
-No Godot invocation. No GDScript runtime RESULT. No production patch applied.

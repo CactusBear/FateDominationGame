@@ -11,7 +11,10 @@ var phase_time_points:Array
 
 
 #阶段推进时由GameProgress设置。换阶段会清掉上一阶段残留的动态时点
-func set_phase_time_points(time_points:Array):
+func set_phase_time_points(time_points:Array, context:Variant = null):
+	context = RegisterObjectEffects.captured_context(context)
+	if not RegisterObjectEffects.source_is_current(context):
+		return
 	phase_time_points = time_points.duplicate()
 	for id in EffectManager.get_all_players_id():
 		var pl_data = GameDataManager.get_player_data(id) as Dictionary
@@ -23,7 +26,10 @@ func set_phase_time_points(time_points:Array):
 
 #派发一个不属于任何玩家的时点(阶段开始/结束、回合开始/结束等)。
 #所有玩家拿到的都是原始时点，没有self_/others_之分
-func global_time_point(time_points:Array, source = null):
+func global_time_point(time_points:Array, source = null, context:Variant = null) -> bool:
+	context = RegisterObjectEffects.captured_context(context)
+	if not RegisterObjectEffects.source_is_current(context, source):
+		return false
 	if time_points.has(TimePoints.DAY_END):
 		AbilityRestrictions.round_ended()
 	for id in EffectManager.get_all_players_id():
@@ -35,7 +41,10 @@ func global_time_point(time_points:Array, source = null):
 	#日志：全局时点（不属于任何玩家，actor 记 -1）
 	GameLog.record("time_point", -1, -1, "", source, ["global"] + time_points.duplicate(),
 		{"time_points": time_points.duplicate()})
-	EffectManager.run_time_point(source)
+	if not EffectManager.run_time_point(source, -1, context): return false
+	#同步效果可能换局；旧派发尾部不得读取/清理新局时点表。
+	if not RegisterObjectEffects.source_is_current(context, source):
+		return false
 	#Entry is a transient event, not a lasting phase window.
 	if source != null:
 		for id in EffectManager.get_all_players_id():
@@ -47,14 +56,21 @@ func global_time_point(time_points:Array, source = null):
 #派发卡牌亮出事件，同时提供三种可声明的时点：任意、自身、其他。
 #source 是实际亮出的卡牌；EffectManager 根据 effect.from 与 source 的关系
 #筛选 SELF_CARD_REVEALED / OTHERS_CARD_REVEALED，CARD_REVEALED 不做来源筛选。
-func card_revealed(source):
+	return true
+
+
+
+func card_revealed(source, context:Variant = null) -> bool:
+	context = RegisterObjectEffects.captured_context(context)
+	if not RegisterObjectEffects.source_is_current(context, source):
+		return false
 	if source == null:
-		return
-	global_time_point([
+		return false
+	return global_time_point([
 		TimePoints.CARD_REVEALED,
 		TimePoints.SELF_CARD_REVEALED,
 		TimePoints.OTHERS_CARD_REVEALED
-	], source)
+	], source, context)
 
 
 #清掉所有玩家身上"玩家级"(self_/others_)的旧动态时点。
@@ -62,7 +78,10 @@ func card_revealed(source):
 #不清的话，上一个玩家的 self_action_phase / others_action_phase 会留到下一个玩家身上，
 #同一个人会同时满足"自己的行动阶段"和"他人的行动阶段"两个互斥的效果窗口。
 #只按前缀过滤，不写死具体时点名（BATTLE、PLAYED_CARD 这类由效果自己用完即清的时点不受影响）
-func clear_player_scope_time_points():
+func clear_player_scope_time_points(context:Variant = null):
+	context = RegisterObjectEffects.captured_context(context)
+	if not RegisterObjectEffects.source_is_current(context):
+		return
 	var pl_ids = EffectManager.get_all_players_id() as Array
 	for id in pl_ids:
 		var pl_data = GameDataManager.get_player_data(id) as Dictionary
@@ -107,11 +126,27 @@ func is_persistent_player_window(time_point:String) -> bool:
 #派发一个由玩家操作/效果引发的动态时点。
 #触发者拿到"self_xx"，其他人拿到"others_xx"，这样同一个时点对不同玩家有不同含义，
 #效果只要写self_/others_前缀就能自动区分是不是自己的回合
-func dynamic_time_point(time_points:Array, current_player_id:int, source = null):
-	var current_player_data:Dictionary = GameDataManager.get_player_data(current_player_id)
+func dynamic_time_point(time_points:Array, current_player_id:int, source = null, context:Variant = null) -> bool:
+	return _dynamic_time_point(time_points, current_player_id, source, true, context)
+
+
+#只派发玩家级变体，不重复派发原始时点。
+#阶段全局开始/结束已经由global_time_point派发；玩家自己的开始/结束不能再次触发原始监听。
+func player_time_point(time_points:Array, current_player_id:int, source = null, context:Variant = null) -> bool:
+	return _dynamic_time_point(time_points, current_player_id, source, false, context)
+
+
+func _dynamic_time_point(time_points:Array, current_player_id:int, source, include_unscoped:bool, context:Variant = null) -> bool:
+	context = RegisterObjectEffects.captured_context(context)
+	if not RegisterObjectEffects.source_is_current(context, source):
+		return false
+	var current_player_data:Dictionary = GameDataManager.find_player_data(current_player_id)
+	if current_player_data.is_empty():
+		return false
 	var current_dtp_arr:Array = current_player_data["dynamic_time_points"] as Array
 	for tp in time_points:
-		current_dtp_arr.append(tp)
+		if include_unscoped:
+			current_dtp_arr.append(tp)
 		current_dtp_arr.append(TimePoints.SELF_PREFIX + str(tp))
 	current_player_data["current_time_points"] = phase_time_points + current_dtp_arr
 
@@ -121,19 +156,23 @@ func dynamic_time_point(time_points:Array, current_player_id:int, source = null)
 		var other_player_data:Dictionary = GameDataManager.get_player_data(id)
 		var other_dtp_arr:Array = other_player_data["dynamic_time_points"] as Array
 		for tp in time_points:
-			other_dtp_arr.append(tp)
+			if include_unscoped:
+				other_dtp_arr.append(tp)
 			other_dtp_arr.append(TimePoints.OTHERS_PREFIX + str(tp))
 		other_player_data["current_time_points"] = phase_time_points + other_dtp_arr
 
 	#日志：谁在什么时点被派发（历史查询最基础的一条事实）
 	GameLog.record("time_point", current_player_id, -1, "", source, time_points.duplicate(),
 		{"time_points": time_points.duplicate()})
-	EffectManager.run_time_point(source, current_player_id)
+	return EffectManager.run_time_point(source, current_player_id, context)
 
 
 #时点表更新完后统一走这里。效果的发现、询问、结算全在EffectManager里
-func time_point_check():
-	EffectManager.run_time_point()
+func time_point_check(context:Variant = null) -> bool:
+	context = RegisterObjectEffects.captured_context(context)
+	if not RegisterObjectEffects.source_is_current(context):
+		return false
+	return EffectManager.run_time_point(null, -1, context)
 
 
 func time_point_update():

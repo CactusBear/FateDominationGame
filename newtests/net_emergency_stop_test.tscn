@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/net_emergency_stop_test.gd" id="1"]
+
+[node name="EmergencyStopTest" type="Node"]
+script = ExtResource("1")

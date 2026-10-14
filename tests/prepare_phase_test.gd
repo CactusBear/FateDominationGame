@@ -1,4 +1,9 @@
 extends Node
+# 本局原来源取自 reset_runtime 回执；夹具对 operation 显式传入，不从全局补票。
+var ctx: SessionContext = null
+func _reset_ctx() -> SessionContext:
+	var reset: Dictionary = EffectManager.reset_runtime()
+	return reset.get("context") if reset.get("ok", false) else null
 var failures:Array=[]
 var checks:=0
 func check(ok:bool,label:String):
@@ -9,7 +14,7 @@ func make_card(i:int) -> BaseAttack:
 	return BaseAttack.new("t%d"%i,"",[],BaseNumber.new(1),BaseNumber.new(2))
 func _ready(): call_deferred("run")
 func run():
-	EffectManager.reset_runtime(); GameLog.reset(); GameLog.set_context(1,"")
+	ctx = _reset_ctx(); GameLog.reset(); GameLog.set_context(1,"")
 	GameData.player_data_library.clear()
 	for i in range(3): GameData.player_data_library[i]=GameData.new_player_data()
 	#规则：准备阶段把手牌补充到手牌上限
@@ -33,18 +38,18 @@ func run():
 	d.deck = []
 	d.discard = []
 	check(RefillHand.new().exec(0, BaseNumber.new(3)) == 0,"empty deck and discard stops safely")
-	check(ReshuffleDiscard.new().exec(0) == false,"reshuffle without discard returns false")
+	check(ReshuffleDiscard.new().exec(0, ctx) == false,"reshuffle without discard returns false")
 	#规则：回合结束时把御主移除版图
 	MapData.miyama0._players = []
 	var p1 = GameDataManager.get_player_data(1)
 	p1.is_out = false
-	Deploy.new().exec(MapData.miyama0, 1)
+	Deploy.new().exec(MapData.miyama0, 1, false, ctx)
 	check(p1.location == MapData.miyama0,"deployed onto the board")
 	check(MapData.miyama0._players.has(1),"seat records the player")
-	check(RemoveFromBoard.new().exec(1),"remove from board succeeds")
+	check(RemoveFromBoard.new().exec(1, ctx),"remove from board succeeds")
 	check(p1.location == null,"location cleared")
 	check(not MapData.miyama0._players.has(1),"seat no longer holds the player")
-	check(RemoveFromBoard.new().exec(1) == false,"removing again reports nothing to do")
+	check(RemoveFromBoard.new().exec(1, ctx) == false,"removing again reports nothing to do")
 	print("RESULT checks=",checks," failures=",failures)
 	var f=FileAccess.open("res://prepare_phase_result.json",FileAccess.WRITE)
 	f.store_string(JSON.stringify({"checks":checks,"failures":failures})); f.close()

@@ -30,6 +30,7 @@ var _pending: Dictionary = {}
 var _creators: Dictionary = {}
 var _disconnected_routes: Array[Dictionary] = []
 var _deferred_peer_detaches: Array[int] = []
+var _close_requested:bool = false
 
 func _init() -> void:
 	transport.message_received.connect(_receive)
@@ -38,12 +39,22 @@ func _init() -> void:
 	send_failed.connect(_log_transport_diagnostic)
 
 func listen(port: int, address: String, root: String) -> Error:
-	close()
+	# 旧实例或保存监督未结束时，不能替换仍需泵送的传输、绕过管理关停。
+	var closed:Dictionary = close()
+	if not closed.get("ok",false):
+		error = "房间仍需安全关闭监督，不能重新监听"
+		return ERR_BUSY
 	if not DirAccess.dir_exists_absolute(root):
 		error = "服务端本机数据目录不存在"
 		return ERR_INVALID_PARAMETER
 	data_root = root
-	return transport.listen(port, address, max_clients)
+	var result:Error = transport.listen(port, address, max_clients)
+	if result == OK:
+		# 只有显式调用且真实监听成功，才开始新的入房生命周期。
+		error = ""
+		_close_requested = false
+		accepting_rooms = true
+	return result
 
 func poll() -> void:
 	transport.poll()
@@ -92,7 +103,7 @@ func poll() -> void:
 		# poll 可能同步触发旧回调或清理；后续不得再操作失效路由。
 		if not _route_is_current(peer,route): continue
 		if not route.attached and route.link.is_connected_to_host():
-			if _send_client(peer, {"kind": "server_attached", "room": route.room, "peer_id": route.link.peer_id()}, 0, "attach_notice") == OK:
+			if _send_client(peer, {"kind": "server_attached", "room": route.room, "code": manager.room_code(route.room), "peer_id": route.link.peer_id()}, 0, "attach_notice") == OK:
 				route.attached = true
 			else:
 				_fail(peer, "房间绑定通知发送失败，请重新连接")
@@ -155,7 +166,7 @@ func _receive(peer: int, message: Dictionary) -> void:
 	if kind == "server_list":
 		var visible: Array = []
 		for room in manager.rooms.values():
-			visible.append({"id": room.id, "name": room.name, "ready": manager.is_ready(room.id), "failed": not room.error.is_empty()})
+			visible.append({"id": room.id, "code": manager.room_code(room.id), "name": room.name, "ready": manager.is_ready(room.id), "failed": not room.error.is_empty()})
 		if _send_client(peer, {"kind": "server_rooms", "rooms": visible, "server_name":server_name, "motd":motd}, 0, "room_list") != OK:
 			_fail(peer, "房间列表发送失败")
 		return
@@ -184,6 +195,11 @@ func _receive(peer: int, message: Dictionary) -> void:
 			_creators[id] = creator
 			_pending[peer] = binding
 	elif kind == "server_join":
+		if not args.get("room") is String or args.room.strip_edges().is_empty():
+			_fail(peer, "请输入房间码")
+			return
+		args = args.duplicate(true)
+		args.room = manager.resolve_room(args.room.strip_edges())
 		if not accepting_rooms:
 			_fail(peer,"服务端正在关闭，不再接受加入")
 			return
@@ -201,7 +217,7 @@ func _receive(peer: int, message: Dictionary) -> void:
 			_fail(peer,"房间实例绑定无效")
 			return
 		if not manager.binding_matches(binding,true):
-			if not _valid_room_resume(args.room, args.get("resume"),peer):
+			if (args.has("resume") and args.resume == null) or not _valid_room_resume(args.room, args.get("resume"),peer):
 				_fail(peer, "未就绪房间只能由原成员凭据恢复")
 				return
 			# 生命周期 poll 负责确认退出并登记 pid=-1，不能靠裸 PID 存活决定恢复。
@@ -220,11 +236,29 @@ func _receive(peer: int, message: Dictionary) -> void:
 	else:
 		_fail(peer, "未知服务端请求")
 
-## Native service only: no packet decoding, gateway.poll or route/session poll here.
+## 恢复期间只服务已存在内部 route 的 native peer；不进入 route.poll，不解码或派发业务。
+## 每次 keep_alive 前后都重验 route 绑定，任何断线/换代立即 fail closed。
+func _service_existing_route_native() -> bool:
+	var captured:Array[Dictionary] = []
+	for peer in routes.keys():
+		if not routes.has(peer): return false
+		var route:Dictionary = routes[peer]
+		if not _route_is_current(peer,route): return false
+		captured.append({"peer":peer,"route":route.duplicate()})
+	for item in captured:
+		var peer:int = item.peer
+		var route:Dictionary = item.route
+		if not _route_is_current(peer,route): return false
+		if not route.link.keep_alive(): return false
+		if not _route_is_current(peer,route): return false
+	return true
+
+## Native service only: no packet decoding, outer pump reentry or route/session poll here.
 ## Queued disconnect is a sticky epoch barrier even if the same numeric peer reconnects.
 func _recovery_maintenance(peer:int, native:MultiplayerPeer, identity:String, identity_required:bool) -> bool:
 	if not is_same(transport._peer,native): return false
 	if not transport.keep_alive(): return false
+	if not _service_existing_route_native(): return false
 	if not is_same(transport._peer,native) or not accepting_rooms or _deferred_peer_detaches.has(peer) or not transport._connected_peers.has(peer): return false
 	if identity_required != (not identity_registry.path.is_empty()): return false
 	return not identity_required or (authenticated_identities.get(peer,"") == identity and identity_registry.can_access(identity))
@@ -248,6 +282,10 @@ static func _public_room_request(source: Dictionary) -> Dictionary:
 		if not source.get("args") is Dictionary: return {}
 		var allowed_args: Array = []
 		match kind:
+			# 严格参数命令保留完整 args；由 session 拒绝额外字段，不能过滤后放行。
+			"match_finished_lobby", "broadcast_confirm_absent":
+				result["args"] = source.args.duplicate(true)
+				return result
 			"join": allowed_args = ["name", "spectator", "password", "resume"]
 			"identity_inherit": allowed_args = ["target_member", "successor_member", "revision"]
 			"room_password": allowed_args = ["password"]
@@ -290,15 +328,26 @@ func _room_inheritance_context(peer:int) -> Dictionary:
 
 func _valid_room_resume(id:String,ticket:Variant,peer:int = 0) -> bool:
 	if not manager.rooms.has(id): return false
-	if not ticket is Dictionary or not ticket.get("member") is int or ticket.member <= 0 or not ticket.get("token") is String or ticket.token.length() != 64: return false
-	for character in ticket.token:
-		if character not in "0123456789abcdef": return false
+	# null 表示未提交票据；格式错误的显式票据不得降级为同密钥恢复。
+	if ticket != null:
+		if not ticket is Dictionary or not ticket.get("member") is int or ticket.member <= 0 or not ticket.get("token") is String or ticket.token.length() != 64: return false
+		for character in ticket.token:
+			if character not in "0123456789abcdef": return false
 	var path:String = str(manager.rooms[id].directory).path_join("recovery.json")
 	if not FileAccess.file_exists(path): return false
 	var state = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if not state is Dictionary or not state.get("resume_hashes") is Dictionary or not state.get("resume_previous", {}) is Dictionary: return false
-	var member:String = str(ticket.member)
 	if not preload("res://scripts/net/identity/member_identity_bindings.gd").valid_state(state,not identity_registry.path.is_empty()): return false
+	if ticket == null:
+		# 这里只允许原认证身份唤醒旧 worker；最终席位授权仍由 worker 再次校验。
+		# 崩溃前落盘的 connected 不是当前在线事实，不据此拒绝恢复进程。
+		var identity:String = authenticated_identities.get(peer,"")
+		if identity_registry.path.is_empty() or not identity_registry.can_access(identity) or not state.get("identity_binding_required",false): return false
+		var matches:Array = []
+		for candidate in state.member_identities:
+			if state.member_identities[candidate] == identity: matches.append(candidate)
+		return matches.size() == 1 and preload("res://scripts/net/identity/player_registry.gd").valid_id(state.resume_hashes.get(matches[0],""))
+	var member:String = str(ticket.member)
 	if not identity_registry.path.is_empty() or state.get("identity_binding_required",false):
 		var identity:String = authenticated_identities.get(peer,"")
 		if identity_registry.path.is_empty() or not identity_registry.can_access(identity) or not state.get("member_identities") is Dictionary or state.member_identities.get(member) != identity: return false
@@ -395,8 +444,8 @@ func _detach(peer: int, stop_owned_room: bool = true) -> void:
 	_admin_sequences.erase(peer)
 	_identity_challenges.erase(peer)
 	authenticated_identities.erase(peer)
+	var pending_binding:Dictionary = _pending.get(peer,{})
 	_pending.erase(peer)
-	# 先取创建者再撤销路由，以免同步 close 回调改变清理目标。
 	var owned:Array[Dictionary] = []
 	for id in _creators.keys():
 		if _creators[id].get("peer") == peer:
@@ -404,8 +453,19 @@ func _detach(peer: int, stop_owned_room: bool = true) -> void:
 			_creators.erase(id)
 	if routes.has(peer): _detach_route(peer,routes[peer])
 	for binding in owned:
-		if stop_owned_room and manager.binding_matches(binding) and manager.process_identity_verified(binding):
+		if stop_owned_room and _startup_failure_cleanup_allowed(binding,pending_binding):
 			manager.stop_room(binding.room,binding.pid,binding.instance_id)
+
+## 创建者断线不是房间状态证明。仅清理尚未建立、明确启动失败且句柄已确认退出的孤儿。
+## ready/ever_ready 或 UNKNOWN 的实例一律保留给安全关闭/恢复监督，不能凭 creator 强杀。
+func _startup_failure_cleanup_allowed(binding:Dictionary,pending_binding:Dictionary = {}) -> bool:
+	if binding.is_empty() or pending_binding.is_empty() or binding.get("room") != pending_binding.get("room") or binding.get("pid") != pending_binding.get("pid") or binding.get("instance_id") != pending_binding.get("instance_id") or binding.get("authority_host_mode") != pending_binding.get("authority_host_mode"): return false
+	if not manager.rooms.has(binding.get("room","")): return false
+	var room:Dictionary = manager.rooms[binding.room]
+	if room.get("ready",false) or room.get("ever_ready",false): return false
+	if not room.get("error","") is String or room.error.is_empty(): return false
+	if manager.process_state_for_binding(binding) != 0: return false
+	return not manager.binding_matches(binding,true)
 
 ## OK 仅证明本机发送入队；不证明客机收到或业务执行完成。
 func _send_client(peer:int, message:Dictionary, channel:int = 0, stage:String = "client_response") -> Error:
@@ -475,7 +535,9 @@ func broadcast_notice(text:String) -> Dictionary:
 func _channel(kind: String) -> int:
 	return 2 if kind in ["room_files", "room_files_part", "blob_request", "blob_chunk", "blob_error", "provider_blob_request", "provider_blob_error", "server_data_catalog", "server_data_catalog_part", "server_data_status"] else 0
 
-func close() -> void:
+func close() -> Dictionary:
+	accepting_rooms = false
+	_close_requested = true
 	admin_console = null
 	_identity_admin_flags.clear()
 	_admin_sequences.clear()
@@ -484,13 +546,30 @@ func close() -> void:
 	_identity_attempts = 0
 	authenticated_identities.clear()
 	for peer in routes.keys():
-		_detach(peer)
+		_detach(peer,false)
 	_pending.clear()
 	_creators.clear()
 	_disconnected_routes.clear()
-	transport.close()
 	_deferred_peer_detaches.clear()
+	var active:bool = false
+	for id in manager.rooms:
+		var binding:Dictionary = manager.instance_binding(id)
+		var state:int = manager.process_state_for_binding(binding)
+		# 已保存、确认退出并 release 后句柄已撤销；只能由当前实例的关闭历史证明完成。
+		# 无句柄/裸 pid=-1 本身仍是 UNKNOWN，不能据此放宽关闭安全门。
+		var recorded = manager.rooms[id].get("closed_process_binding")
+		var confirmed_closed:bool = false
+		if recorded is Dictionary and recorded.get("request_id") is String and manager.has_method("closed_binding_for_request"):
+			var closed_binding:Dictionary = manager.closed_binding_for_request(id,recorded.request_id)
+			confirmed_closed = not closed_binding.is_empty() and closed_binding.get("room") == id and closed_binding.get("instance_id") == binding.get("instance_id") and closed_binding.get("authority_host_mode") == binding.get("authority_host_mode")
+		if manager.rooms[id].get("close_supervision",false) or (state != 0 and not confirmed_closed):
+			active = true
+	if active:
+		# 不能绕过 manager 持有的 close request；保留 transport 供 console/shutdown poll。
+		return {"ok":false,"error":"房间仍需安全关闭监督","result":{"status":"pending","pumpable":true}}
+	transport.close()
 	manager.close()
+	return {"ok":true,"result":{"status":"closed","pumpable":false}}
 
 func _receive_identity(peer:int,message:Dictionary) -> void:
 	if identity_registry.path.is_empty() or message.get("v") != 1 or not message.get("args") is Dictionary:

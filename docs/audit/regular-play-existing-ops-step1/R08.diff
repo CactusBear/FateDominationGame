@@ -1,0 +1,18 @@
+--- previous/regular_play.gd
++++ R08/regular_play.gd
+@@ -56,10 +56,14 @@
+ 			return true
+ 	return false
+ 
++# 只从注册表取得已有原语；不经过效果执行器，避免新增预算、日志或事务边界。
++static func _operation(func_name:String) -> RefCounted:
++	return load("res://scripts/system/operations/%s.gd" % AllOperations.get_class_name_of(func_name)).new()
++
+ #打出时从来源区移除：出牌区与技能区都查，不假设牌来自手牌
+ static func _take_from_source(d: Dictionary, card) -> void:
+ 	for zone in play_zone_arrays(d):
+-		zone.erase(card)
++		_operation("remove_from_array").exec(card, zone)
+ 	d.hand_cards.erase(card); d.servant_skills.erase(card); d.master_skills.erase(card); d.side.skills.erase(card)
+ 
+ static func completed(id: int) -> bool:

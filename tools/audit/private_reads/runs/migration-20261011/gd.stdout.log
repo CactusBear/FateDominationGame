@@ -1,0 +1,69 @@
+{
+  "root": ".",
+  "gd_files": 1808,
+  "production_files": 423,
+  "diagnostic_files": 811,
+  "lexical_candidates": 8920,
+  "excluded": {
+    "私有方法调用排除": 2526,
+    "纯赋值排除": 1297,
+    "owner自己访问": 2
+  },
+  "state_read_total": 4574,
+  "active_state_read_total": 3933,
+  "historical_state_read_total": 641,
+  "categories": {
+    "需要新增公开能力": 4342,
+    "应保留许可（不可等价）": 230,
+    "可立即替换": 2
+  },
+  "active_categories": {
+    "需要新增公开能力": 3750,
+    "应保留许可（不可等价）": 181,
+    "可立即替换": 2
+  },
+  "by_scope": {
+    "现行测试诊断": 3907,
+    "历史证据副本": 641,
+    "scratch诊断": 26
+  },
+  "gate_owner_reads": 3,
+  "outside_gate_owner_reads": 4571,
+  "private_callable_references_separate": 83,
+  "unresolved_candidates": 438,
+  "resolution_counts": {
+    "声明/类型/资源路径": 3829,
+    "成员组合静态推断": 622,
+    "唯一生产符号（静态归属推断）": 123
+  },
+  "observation_read_total": 4089,
+  "observation_categories": {
+    "需要新增公开能力": 3881,
+    "应保留许可（不可等价）": 206,
+    "可立即替换": 2
+  },
+  "active_observation_read_total": 3513,
+  "active_observation_categories": {
+    "需要新增公开能力": 3354,
+    "应保留许可（不可等价）": 157,
+    "可立即替换": 2
+  },
+  "mode_counts": {
+    "读取": 3797,
+    "反射读取": 39,
+    "对象/容器读取后修改": 474,
+    "容器下标读取": 253,
+    "读改写": 11
+  },
+  "changed_during_scan": [],
+  "unresolved_with_production_declarations": 386,
+  "unresolved_by_scope": {
+    "旧工作树": 14,
+    "第三方插件": 28,
+    "现行测试诊断": 330,
+    "历史证据副本": 58,
+    "scratch诊断": 8
+  }
+}
+REPORT E:\Projects\Godot\FateDominationGame-master\tools\audit\private_reads\runs\migration-20261011\gd\report.md
+INVENTORY E:\Projects\Godot\FateDominationGame-master\tools\audit\private_reads\runs\migration-20261011\gd\inventory.json

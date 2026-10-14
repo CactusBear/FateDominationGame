@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+CHECK an engaged player counts as being on a battlefield true
+CHECK first card may be concealed on a battlefield true
+CHECK second card cannot also be concealed on a battlefield true
+CHECK only faceup remains legal for the last card true
+CHECK faceup second card completes the group true
+CHECK group completed with one faceup card true
+CHECK unopposed battlefield is still a battlefield true
+CHECK unopposed battlefield rejects two concealed cards when faceup is possible true
+CHECK unopposed battlefield allows mixed group true
+CHECK opponent leaving does not change battlefield classification true
+CHECK faceup first card true
+CHECK concealed allowed once a faceup card exists true
+CHECK workshop is not a battlefield true
+CHECK first concealed card off battlefield true
+CHECK second concealed card allowed off battlefield true
+CHECK two concealed cards complete off battlefield true
+CHECK scout is not a battlefield true
+CHECK scout permits two concealed cards true
+CHECK shared workshop still permits two concealed cards true
+CHECK UI case: first concealed card played true
+CHECK UI reads live modes: second card still concealable true
+CHECK stale cached modes are recomputed each frame true
+CHECK no location is not a battlefield true
+CHECK concealed event effect stays inactive true
+CHECK revealed event effect becomes active true
+RESULT checks=25 failures=[]

@@ -1,0 +1,42 @@
+--- before/scripts/system/regular_play.gd
++++ after/scripts/system/regular_play.gd
+@@ -56,16 +56,9 @@
+ 			return true
+ 	return false
+ 
+-# 显式依赖供冻结/打包扫描；选择仍以注册表的类名为准。
+-const _OPERATION_SCRIPTS := {
+-	"RemoveFromArray":preload("res://scripts/system/operations/RemoveFromArray.gd"),
+-	"AddToArray":preload("res://scripts/system/operations/AddToArray.gd"),
+-	"SetProperty":preload("res://scripts/system/operations/SetProperty.gd")
+-}
+-
+ # 不经过效果执行器，避免新增预算、日志或事务边界。
+ static func _operation(func_name:String) -> RefCounted:
+-	return _OPERATION_SCRIPTS[AllOperations.get_class_name_of(func_name)].new()
++	return AllOperations.create_instance_of(func_name)
+ 
+ #打出时从来源区移除：出牌区与技能区都查，不假设牌来自手牌
+ static func _take_from_source(d: Dictionary, card) -> void:
+--- before/scripts/system/global/all_operations.gd
++++ after/scripts/system/global/all_operations.gd
+@@ -282,6 +282,19 @@
+ }
+ 
+ 
++# 常规出牌使用的原语显式声明依赖，供冻结/打包扫描；类名仍由 TABLE 决定。
++const _OPERATION_SCRIPTS := {
++	"RemoveFromArray":preload("res://scripts/system/operations/RemoveFromArray.gd"),
++	"AddToArray":preload("res://scripts/system/operations/AddToArray.gd"),
++	"SetProperty":preload("res://scripts/system/operations/SetProperty.gd")
++}
++
++
++# 仅创建原语实例，不经过效果执行器，不新增预算、日志或事务边界。
++static func create_instance_of(func_name:String) -> RefCounted:
++	return _OPERATION_SCRIPTS[get_class_name_of(func_name)].new()
++
++
+ static func get_entry(func_name:String) -> Dictionary:
+ 	return TABLE.get(func_name, {})
+ 

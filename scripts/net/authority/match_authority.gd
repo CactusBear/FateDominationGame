@@ -3,6 +3,7 @@ extends RefCounted
 
 var driver = preload("res://scripts/match/match_driver.gd").new()
 var builder = preload("res://scripts/match/view_builder.gd").new()
+var seat_query = preload("res://scripts/match/match_seat_query.gd").new(builder)
 var commands = preload("res://scripts/match/match_commands.gd").new()
 var controllers: Dictionary = {}
 var error: String = ""
@@ -13,16 +14,51 @@ var _revision: int = 0
 var _restart_selection:Dictionary = {}
 var _restart_guard:Dictionary = {}
 var _restart_seed = null
+var _context: SessionContext = null
 var recorder
 var _archive_pulse_running:bool = false
 var _archive_changed:bool = false
 var _archive_serial:int = 0
 static var _start_busy:bool = false
+var _notification_instance: String = MatchViewBuilder.new_notification_epoch()
+var _notification_generation: int = 0
+var _notification_boundaries: Dictionary = {}
+var _broadcast_confirmation: bool = false
+var _broadcast_batch: int = 0
+var _broadcast_ai_elapsed: float = 0.0
+var _management_folder: String = ""
+var _management_journal
+const BROADCAST_AI_CONFIRM_STEP: float = 0.28
+
+## 只读权威修订水位；中止对局不归零，不签发视图或推进规则。
+func current_revision() -> int:
+	return _revision
+
+## 调用方在 start 前声明消费/确认能力；不以 AI/headless 或有连接推测。
+## session/worker 共享文件由其所有者显式调用，未调用保持非阻塞默认。
+func declare_broadcast_confirmation(enabled: bool) -> bool:
+	if started: return false
+	_broadcast_confirmation = enabled
+	return true
+
+## 仅由认证绑定/恢复提交调用；不是首 view，也不是普通 changed。
+## 不回滚的分配器水位涵盖已经移出队列的旧记录。
+func bind_notification_boundary(peer: int) -> void:
+	var cutoff: int = EffectManager.latest_allocated_message_serial()
+	_notification_boundaries[peer] = {"generation": _notification_generation,
+		"observer": observer_for(peer), "serial": cutoff}
+	_issued.erase(peer)
+
+## 只在成功接纳新的规则生命周期后推进；不使用规则协程号或 view.seq。
+func _begin_notification_lifecycle() -> void:
+	_notification_boundaries.clear()
+	_notification_generation += 1
+	builder.set_notification_epoch("%s-%d" % [_notification_instance, _notification_generation])
 
 ## 权威提交闸：审计故障不可转换为动作/管理成功，也不可退回无录制推进。
 func confirm_audit() -> bool:
 	if preload("res://scripts/match/match_journal.gd").flush_audit(): return true
-	EffectManager._guard_audit_failed(EffectManager.runtime_guard_effect())
+	EffectManager.mark_guard_audit_failed(EffectManager.runtime_guard_effect())
 	_issued.clear()
 	return _reject("事务审计不可用，操作未确认")
 
@@ -59,6 +95,11 @@ func _start(selection, runtime_guard:Dictionary, archive_folder:String, maintena
 			if previous_random.get("known", false): random_stream.restore(previous_random)
 			else: random_stream.stop_tracking()
 			return _reject("引擎拒绝启动对局")
+		_context = MatchDriver.capture_runtime_context()
+		if not SessionGeneration.validate_context(_context).get("ok", false):
+			GameStart.end_session()
+			return _reject("开局未建立可验证的规则来源")
+		driver = MatchDriver.new(null, _context)
 	else:
 		var candidate = preload("res://scripts/match/match_replay.gd").new()
 		var kinds:Dictionary = {}
@@ -69,10 +110,17 @@ func _start(selection, runtime_guard:Dictionary, archive_folder:String, maintena
 			return _reject(candidate.error)
 		recorder = candidate
 		driver = recorder.driver
+		_context = driver.source_context
+		if not SessionGeneration.validate_context(_context).get("ok", false):
+			recorder.close()
+			return _reject("录制开局未建立可验证的规则来源")
 	if not confirm_audit():
 		return _reject("事务审计写入失败，启动未确认")
 	_configure_controllers(selection.controllers)
+	if not _apply_broadcast_declaration(): return false
+	_begin_notification_lifecycle()
 	started = true
+	_management_folder = archive_folder
 	_restart_selection = {"player_ids":selection.rules.player_ids.duplicate(), "assignments":names,
 		"order":selection.rules.get_initial_order().duplicate(), "controllers":controllers.duplicate()}
 	_restart_guard = runtime_guard.duplicate(true)
@@ -89,16 +137,153 @@ func observer_for(peer: int) -> int:
 
 func _configure_controllers(seats:Dictionary) -> void:
 	controllers = seats.duplicate()
+	_broadcast_batch = 0
+	_broadcast_ai_elapsed = 0.0
+	# 报价在构造时按来源捕获；每次开局/重开/恢复后用本局来源重建，旧局或建权威时的空报价不得沿用。
+	seat_query = preload("res://scripts/match/match_seat_query.gd").new(builder, _context)
 	driver.seats.default_kind = driver.seats.VACANT
 	for seat in controllers:
 		driver.seats.set_kind(seat, driver.seats.AI if controllers[seat] == 0 else driver.seats.REMOTE)
 
+## 声明变化是规则写入；录制与审计失败不得冒充启动成功。
+func _apply_broadcast_declaration() -> bool:
+	if recorder != null and recorder._recording:
+		_run_recorded_driver("set_broadcast_enabled", [_broadcast_confirmation])
+		if not recorder.error.is_empty(): return false
+	else:
+		GameProgress.battle_broadcast_requires_confirm = _broadcast_confirmation
+	return confirm_audit()
+
 func view_for(peer: int) -> Dictionary:
-	if not started:
+	if not started or not SessionGeneration.validate_context(_context).get("ok", false):
 		return {}
-	var view: Dictionary = builder.build(observer_for(peer))
-	_issued[peer] = {"seq": view.seq, "revision": _revision}
+	var boundary: Dictionary = _notification_boundaries.get(peer, {})
+	var cutoff: int = -1
+	if not boundary.is_empty() and boundary.generation == _notification_generation:
+		if boundary.observer != observer_for(peer):
+			_reject("通知观察席位已变更，须重新绑定")
+			return {}
+		cutoff = boundary.serial
+	var view: Dictionary = builder.build(observer_for(peer), cutoff)
+	if view.is_empty():
+		_reject(builder.notification_error)
+		return {}
+	_issued[peer] = {"seq": view.seq, "revision": _revision, "observer": observer_for(peer), "context": _context}
 	return view
+
+## 仅收尾已自然终局的规则运行态；房主/在线/房间阶段授权由 session 先行校验。
+## peer 是已认证稳定成员 ID，sequence 是该成员最近签发视图的 seq，不是请求序号。
+func finish_match_to_lobby(peer: int, sequence: int) -> Dictionary:
+	error = ""
+	if not started:
+		return _finish_rejected("not_started", "当前没有已启动对局")
+	if not GameProgress.is_game_over:
+		return _finish_rejected("not_game_over", "对局尚未结束")
+	if not _issued.has(peer):
+		return _finish_rejected("missing_view", "连接没有当前对局视图")
+	var issued:Dictionary = _issued[peer]
+	if sequence != issued.seq or issued.revision != _revision:
+		return _finish_rejected("stale_view", "视图已过期")
+	if issued.get("observer", -2) != observer_for(peer):
+		return _finish_rejected("observer_changed", "视图观察席位已变更")
+	if _archive_pulse_running:
+		return _finish_rejected("archive_busy", "正在结算回合，请等待最新视图")
+	# 档案提交失败不得释放规则对象，也不得向 session 声称可发布大厅。
+	if not close_archive():
+		var reason:String = error
+		if reason.is_empty() and recorder != null: reason = recorder.error
+		return _finish_rejected("archive_error", reason if not reason.is_empty() else "终局档案关闭失败")
+	GameStart.end_session()
+	driver = preload("res://scripts/match/match_driver.gd").new()
+	_context = null
+	started = false
+	controllers.clear()
+	_issued.clear()
+	_restart_selection.clear()
+	_restart_guard.clear()
+	_restart_seed = null
+	recorder = null
+	_revision += 1
+	return {"ok": true, "code": "finished", "reason": ""}
+
+func _finish_rejected(code:String, reason:String) -> Dictionary:
+	_reject(reason)
+	return {"ok": false, "code": code, "reason": reason}
+
+## 仅 Session 管理授权使用；不得由本人 dispatcher 或客户端参数直接调用。
+## seats 已由 Session 证明离线，权威仍整批复核规则资格，再同步执行。
+## 纯查询：仅提供当前批次中仍需要确认的真人控制席；不授予管理权限，也不替代最终整批复验。
+func absent_broadcast_candidates(batch_id: int) -> Array:
+	var candidates: Array = []
+	if not started or not _broadcast_confirmation or not GameProgress.is_battle_broadcast_pending() or batch_id != GameProgress.battle_broadcast_batch_id():
+		return candidates
+	for seat in controllers:
+		var controller = controllers[seat]
+		if seat is int and controller is int and controller > 0 and GameProgress.can_confirm_battle_broadcast(seat, batch_id):
+			candidates.append(seat)
+	candidates.sort()
+	return candidates
+
+func confirm_absent_broadcast(member: int, sequence: int, batch_id: int, seats: Array) -> Dictionary:
+	error = ""
+	var actor: int = observer_for(member)
+	if not started or not _broadcast_confirmation or not _issued.has(member):
+		return _finish_rejected("not_started", "当前没有可确认的对局视图")
+	var issued: Dictionary = _issued[member]
+	if sequence != issued.seq or issued.revision != _revision:
+		return _finish_rejected("stale_view", "视图已过期")
+	if issued.observer != actor:
+		return _finish_rejected("observer_changed", "视图观察席位已变更")
+	if _archive_pulse_running or EffectManager.runtime_guard_status().paused:
+		return _finish_rejected("paused", "规则正在结算或已暂停")
+	if recorder != null and (not recorder._recording or not recorder.error.is_empty()):
+		return _finish_rejected("archive_error", "存档录制不可用，管理操作未确认")
+	if seats.is_empty() or not GameProgress.is_battle_broadcast_pending() or batch_id != GameProgress.battle_broadcast_batch_id():
+		return _finish_rejected("stale_batch", "确认批次无效或已过期")
+	var seen: Dictionary = {}
+	for seat in seats:
+		if not seat is int or seen.has(seat) or not controllers.get(seat) is int or controllers.get(seat, 0) <= 0 or not GameProgress.can_confirm_battle_broadcast(seat, batch_id):
+			return _finish_rejected("invalid_seats", "整批席位必须为未确认的离线真人")
+		seen[seat] = true
+	if not confirm_audit(): return _finish_rejected("audit_error", error)
+	var fact: Dictionary = {"action":"broadcast_confirm_absent", "actor":actor,
+		"member":member, "seats":seats.duplicate(), "batch_id":batch_id, "view_seq":sequence}
+	# 独立 sidecar 不混入 replay 命令序列/规则哈希；意图先持久化，成功再留完成事实。
+	if not _record_broadcast_management(fact, "intent"):
+		return _finish_rejected("audit_error", error)
+	for seat in seats:
+		_run_command("confirm_battle_broadcast", [seat])
+		if not error.is_empty():
+			_revision += 1
+			return _finish_rejected("audit_error", error)
+		var seat_fact: Dictionary = fact.duplicate(true)
+		seat_fact["seat"] = seat
+		if not _record_broadcast_management(seat_fact, "seat_confirmed"):
+			_revision += 1
+			_issued.clear()
+			return _finish_rejected("audit_error", error)
+		if recorder == null:
+			GameLog.record("room_management_seat", actor, seat, "", null, ["broadcast_confirm_absent"], seat_fact)
+	_revision += 1
+	# GameLog 在 RuleState 哈希内；录制局只写 sidecar，不能注入无法 replay 的规则事实。
+	if recorder == null:
+		GameLog.record("room_management", actor, -1, "", null, ["broadcast_confirm_absent"], fact)
+	if not _record_broadcast_management(fact, "completed") or not confirm_audit():
+		_issued.clear()
+		return _finish_rejected("audit_error", error)
+	return {"ok":true, "code":"confirmed", "reason":""}
+
+func _record_broadcast_management(fact: Dictionary, stage: String) -> bool:
+	if _management_folder.is_empty(): return confirm_audit()
+	if _management_journal == null:
+		_management_journal = preload("res://scripts/match/match_journal.gd").new()
+		if not _management_journal.create(_management_folder.path_join("broadcast_management.log"), {"kind":"broadcast_management", "format":1}):
+			return _reject("管理审计创建失败：" + _management_journal.error)
+	var record: Dictionary = fact.duplicate(true)
+	record["stage"] = stage
+	if not _management_journal.append(record) or not _management_journal.flush():
+		return _reject("管理审计写入失败：" + _management_journal.error)
+	return true
 
 func submit(peer: int, sequence: int, kind: String, args: Dictionary) -> bool:
 	error = ""
@@ -113,190 +298,30 @@ func submit(peer: int, sequence: int, kind: String, args: Dictionary) -> bool:
 
 func _submit(peer: int, sequence: int, kind: String, args: Dictionary) -> bool:
 	error = ""
+	if not SessionGeneration.validate_context(_context).get("ok", false):
+		return _reject("对局来源已失效")
 	var seat := observer_for(peer)
 	if not started or seat < 0 or not _issued.has(peer):
 		return _reject("连接没有可操作座位")
 	if sequence != _issued[peer].seq or _issued[peer].revision != _revision:
 		return _reject("视图已过期")
+	if not is_same(_issued[peer].get("context"), _context):
+		return _reject("请求来源已变更")
+	if _issued[peer].get("observer", -2) != seat:
+		return _reject("视图观察席位已变更")
 	if _archive_pulse_running:
 		return _reject("正在结算回合，请等待最新视图")
 	if EffectManager.runtime_guard_status().paused:
 		return _reject("规则执行已暂停，等待房主处理")
-	if kind == "cancel_choice":
-		if args.size() != 1 or not args.get("effect") is int:
-			return _reject("取消参数无效")
-		var effect = builder.ids.object_for(args.effect)
-		if not effect is BaseEffect or effect._trigger_player_id != seat:
-			return _reject("不能取消其他玩家的选择")
-		if not _run_command("cancel_pending_choice", [effect]):
-			return _reject("该选择当前不允许取消")
-		_revision += 1
-		return true
-	if kind == "location_choice":
-		if args.size() != 2 or not args.get("effect") is int or not args.get("area") is int:
-			return _reject("位置选择格式无效")
-		var pending: Dictionary = EffectManager.get_pending_location_selection()
-		var effect = builder.ids.object_for(args.effect)
-		if not effect is BaseEffect or pending.get("effect") != effect or effect._trigger_player_id != seat:
-			return _reject("当前位置选择不属于该座位")
-		var locations: Dictionary = _location_candidates(pending)
-		if not locations.has(args.area):
-			return _reject("目标战区不满足位置选择规则")
-		var accepted: bool = bool(_run_command("submit_location_selection", [effect, locations[args.area]]))
-		_revision += 1
-		return accepted
-	if kind == "activate":
-		if args.size() != 1 or not args.get("effect") is int:
-			return _reject("发动参数无效")
-		var effect = builder.ids.object_for(args.effect)
-		if not effect is BaseEffect or not EffectManager.can_manual_activate(effect, seat):
-			return _reject("该能力当前不可发动")
-		var accepted: bool = bool(_run_command("request_manual_activation", [effect, seat]))
-		_revision += 1
-		return accepted
-	if kind == "player_choice":
-		if args.size() != 2 or not args.get("effect") is int or not args.get("players") is Array:
-			return _reject("目标选择格式无效")
-		var pending: Dictionary = EffectManager.get_pending_player_selection()
-		var effect = builder.ids.object_for(args.effect)
-		if not effect is BaseEffect or pending.get("effect") != effect or effect._trigger_player_id != seat:
-			return _reject("当前目标选择不属于该座位")
-		var low: int = int(pending.spec.get("min", 1))
-		var high: int = int(pending.spec.get("max", low))
-		if args.players.size() < low or (high != -1 and args.players.size() > high):
-			return _reject("目标数量不符合声明")
-		var picked: Array = []
-		for id in args.players:
-			if not id is int or not pending.candidates.has(id) or picked.has(id):
-				return _reject("目标不在候选集或重复")
-			picked.append(id)
-		var accepted: bool = bool(_run_command("submit_player_selection", [effect, picked]))
-		_revision += 1
-		return accepted
-	if kind == "card_choice":
-		if args.size() != 2 or not args.get("effect") is int or not args.get("cards") is Array:
-			return _reject("选牌答复格式无效")
-		var pending: Dictionary = EffectManager.get_pending_card_selection()
-		var effect = builder.ids.object_for(args.effect)
-		if not effect is BaseEffect or pending.get("effect") != effect or effect._trigger_player_id != seat:
-			return _reject("当前选牌不属于该座位")
-		var cards: Array = []
-		for id in args.cards:
-			if not id is int:
-				return _reject("候选 ID 类型无效")
-			var card = builder.ids.object_for(id)
-			if not card is BaseCard:
-				return _reject("候选卡牌不存在")
-			cards.append(card)
-		if not EffectManager._is_card_selection_valid(pending, pending.cards, cards, pending.required_cards):
-			return _reject("选牌不满足当前候选或数量要求")
-		var accepted: bool = bool(_run_command("submit_card_selection", [effect, cards]))
-		_revision += 1
-		return accepted
-	if kind == "option_choice":
-		if args.size() != 2 or not args.get("effect") is int or not args.get("choices") is Array:
-			return _reject("选项答复格式无效")
-		var effect = builder.ids.object_for(args.effect)
-		if not effect is BaseEffect or effect != EffectManager.get_pending_active_effect() or effect._trigger_player_id != seat:
-			return _reject("当前效果不等待该座位答复")
-		var selection: Dictionary = {}
-		var quantities: Dictionary = {}
-		for choice in args.choices:
-			if not choice is Dictionary or not choice.get("index") is int or not choice.get("count") is int:
-				return _reject("选项次数格式无效")
-			var index: int = choice.index
-			if index < 0 or index >= effect._options.size() or selection.has(index) or choice.count <= 0:
-				return _reject("选项下标或次数无效")
-			var option: Dictionary = effect._options[index]
-			if option.has("quantity_range"):
-				var bounds = option.quantity_range
-				if not bounds is Array or bounds.size() != 2 or not choice.get("quantity") is int:
-					return _reject("缺少声明要求的数量")
-				if choice.quantity < bounds[0] or choice.quantity > bounds[1]:
-					return _reject("数量超出声明范围")
-				quantities[index] = choice.quantity
-			elif choice.has("quantity"):
-				return _reject("选项未声明数量")
-			selection[index] = choice.count
-		if selection.is_empty():
-			return _reject("取消应通过放弃入口提交")
-		if not EffectManager.validate_selection(effect, selection):
-			return _reject("选项次数不满足现有规则")
-		var accepted: bool = bool(_run_command("submit_option_choice", [effect, selection, quantities]))
-		_revision += 1
-		return accepted
-	if kind == "active_choice":
-		if args.size() != 2 or not args.get("effect") is int or not args.get("activate") is bool:
-			return _reject("效果答复格式无效")
-		var effect = builder.ids.object_for(args.effect)
-		if not effect is BaseEffect or effect != EffectManager.get_pending_active_effect() or effect._trigger_player_id != seat:
-			return _reject("当前效果不等待该座位答复")
-		# 选项类发动必须另走明确的选项提交，不用布尔确认绕过选项。
-		if args.activate and effect.has_options():
-			return _reject("必须提交具体选项")
-		var accepted: bool = bool(_run_command("submit_active_choice", [effect, args.activate]))
-		_revision += 1
-		return accepted
-	if kind == "set_concealed":
-		if args.size() != 2 or not args.get("card") is int or not args.get("concealed") is bool:
-			return _reject("翻面参数无效")
-		var card = builder.ids.object_for(args.card)
-		if not _flip_modes(seat, card).has(args.concealed):
-			return _reject("该牌当前不允许翻面")
-		_run_command("set_card_concealed", [card, args.concealed, seat])
-		_revision += 1
-		return true
-	if GameProgress.current_player_id != seat:
-		return _reject("尚未轮到该座位")
-	match kind:
-		"move":
-			if args.size() != 1 or not args.get("area") is int or EffectManager.is_waiting_for_choice() or not GameProgress.is_phase_for(seat, "action"):
-				return _reject("当前不能常规移动")
-			var target = builder.ids.object_for(args.area)
-			if not target is BaseMapArea or not MapData.areas.has(target):
-				return _reject("移动目标不存在")
-			var target_index: int = MapData.areas.find(target)
-			var reason: String = driver.LocationQuery.area_action_block_reason_for(seat, target_index)
-			if not reason.is_empty():
-				return _reject(reason)
-			var data: Dictionary = GameDataManager.get_player_data(seat)
-			var origin: BaseLocation = data.get("location")
-			var steps: int = target_index - MapData.areas.find(origin.get_from())
-			_run_command("move", [steps, seat])
-			_revision += 1
-			return data.get("location") != origin
-		"play_group":
-			if args.size() != 2 or not args.get("cards") is Array or not args.get("hidden") is Array or EffectManager.is_waiting_for_choice():
-				return _reject("出牌参数无效或正在等待效果")
-			if args.cards.is_empty() or args.cards.size() != args.hidden.size():
-				return _reject("牌组与明暗数量不匹配")
-			var cards: Array = []
-			for index in range(args.cards.size()):
-				if not args.cards[index] is int or not args.hidden[index] is bool:
-					return _reject("牌组字段类型无效")
-				var card = builder.ids.object_for(args.cards[index])
-				if not card is BaseHandCard or cards.has(card):
-					return _reject("牌对象无效或重复")
-				cards.append(card)
-			if not _run_command("submit_group", [seat, cards, args.hidden]):
-				return _reject("牌组不满足现有出牌规则")
-		"end_action":
-			if not args.is_empty() or not _run_command("end_current_player_action", []):
-				return _reject("当前不能结束行动")
-		"deploy":
-			if args.size() != 1 or not args.get("area") is int or EffectManager.is_waiting_for_choice():
-				return _reject("部署参数无效或正在等待效果")
-			if not GameProgress.is_phase_for(seat, "outpost") or GameDataManager.get_player_data(seat).get("location") != null:
-				return _reject("当前不能部署")
-			var area = builder.ids.object_for(args.area)
-			if not area is BaseMapArea or not DeployRules.deployable_areas().has(area):
-				return _reject("目标战区不可部署")
-			if not _run_command("deploy_to_area", [area, seat]):
-				return _reject("部署失败")
-		_:
-			return _reject("不支持该对局指令")
-	_revision += 1
-	return true
+	# 连接与版本闸属于权威端；业务校验与执行仅分派一次。
+	var dispatcher = preload("res://scripts/match/match_command_dispatcher.gd").new(
+		EffectManager.is_card_selection_valid, EffectManager.location_option_origin_allowed)
+	var result: Dictionary = dispatcher.dispatch(seat, kind, args, builder.ids, _run_command, _context)
+	_revision += int(result.revision_delta)
+	# 执行路径的审计/录制错误优先，不以业务拒绝覆盖故障原因。
+	if error.is_empty():
+		error = str(result.reason)
+	return bool(result.ok)
 
 ## 房间管理权由会话按真实连接校验，此处只校验对局与续行版本。
 func guard_diagnostic() -> Dictionary:
@@ -307,9 +332,9 @@ func guard_diagnostic() -> Dictionary:
 	var origin = EffectManager.runtime_guard_root_effect()
 	if source == null and origin != null and origin != effect:
 		source = GetEffSourceCard.new().exec(origin)
-	var pid:int = EffectManager._effect_fact_actor_id(effect)
+	var pid:int = EffectManager.effect_fact_actor_id(effect)
 	var data:Dictionary = GameData.player_data_library.get(pid, {})
-	var source_name:String = source.get_shown_name() if source != null else EffectManager._effect_source_name(effect)
+	var source_name:String = source.get_shown_name() if source != null else EffectManager.effect_source_name(effect)
 	return {"player":pid, "player_name":str(data.get("player_name", "未归属玩家")),
 		"card":source_name if not source_name.is_empty() else "无来源卡牌",
 		"effect":effect.get_shown_name(), "can_restart":not _restart_selection.is_empty(),
@@ -325,6 +350,7 @@ func restart_guarded_match() -> bool:
 		return false
 	GameStart.end_session()
 	driver = preload("res://scripts/match/match_driver.gd").new()
+	_context = null
 	_issued.clear()
 	started = false
 	# 结束会话会重载模板；只使用重载后的对象，不复用旧局引用。
@@ -334,9 +360,16 @@ func restart_guarded_match() -> bool:
 	preload("res://scripts/match/rule_random.gd").start_seed(_restart_seed)
 	if not GameStart.game_start(_restart_selection.player_ids, assignments, _restart_selection.order, _restart_guard):
 		return _reject("引擎拒绝重开对局")
+	_context = MatchDriver.capture_runtime_context()
+	if not SessionGeneration.validate_context(_context).get("ok", false):
+		GameStart.end_session()
+		return _reject("重开未建立可验证的规则来源")
+	driver = MatchDriver.new(null, _context)
 	if not confirm_audit():
 		return _reject("事务审计写入失败，重开未确认")
 	_configure_controllers(_restart_selection.controllers)
+	if not _apply_broadcast_declaration(): return false
+	_begin_notification_lifecycle()
 	started = true
 	_revision += 1
 	return true
@@ -382,6 +415,7 @@ func continue_runtime_guard(peer: int, sequence: int, action:String = "guard_con
 	elif action == "guard_lobby":
 		GameStart.end_session()
 		driver = preload("res://scripts/match/match_driver.gd").new()
+		_context = null
 		started = false
 		controllers.clear()
 		_issued.clear()
@@ -420,6 +454,8 @@ func _step(delta: float) -> bool:
 		return true
 	if not started or EffectManager.runtime_guard_status().paused:
 		return false
+	if GameProgress.is_battle_broadcast_pending():
+		return _step_broadcast_confirmation(delta)
 	var changed:bool = false
 	if recorder == null or not recorder._recording:
 		changed = driver.answer_pending_for_bots()
@@ -445,12 +481,39 @@ func _step(delta: float) -> bool:
 		_revision += 1
 	return changed
 
-func _run_command(kind:String, args:Array):
+## 屏障期间只处理显式 AI 控制席；真人、断线真人、未知控制声明均不托管。
+func _step_broadcast_confirmation(delta: float) -> bool:
+	if not _broadcast_confirmation: return false
+	var batch: int = GameProgress.battle_broadcast_batch_id()
+	if batch != _broadcast_batch:
+		_broadcast_batch = batch
+		_broadcast_ai_elapsed = 0.0
+	_broadcast_ai_elapsed += maxf(0.0, delta)
+	if _broadcast_ai_elapsed < BROADCAST_AI_CONFIRM_STEP: return false
+	for seat in GameProgress.battle_broadcast_confirmers():
+		if not controllers.has(seat) or not controllers[seat] is int or controllers[seat] != 0: continue
+		if not GameProgress.can_confirm_battle_broadcast(seat, batch): continue
+		_broadcast_ai_elapsed = 0.0
+		_run_command("confirm_battle_broadcast", [seat])
+		_revision += 1
+		return true
+	return false
+
+func _run_command(kind:String, args:Array, requested_context:Variant = null):
 	var audit = preload("res://scripts/match/match_journal.gd")
+	var source: SessionContext = requested_context as SessionContext if requested_context != null else _context
+	if not SessionGeneration.validate_context(source).get("ok", false):
+		return _reject("对局来源已失效")
 	if not confirm_audit(): return _reject("事务审计不可用，操作未确认")
 	var result
 	if recorder == null or not recorder._recording:
-		result = commands.callv(kind, args)
+		if kind == "end_current_player_action":
+			result = GameProgress.end_current_player_action(source)
+		else:
+			var forwarded: Array = args.duplicate()
+			if kind in ["submit_group", "request_manual_activation", "set_card_concealed", "deploy", "move", "deploy_to_area", "submit_option_choice", "submit_active_choice", "cancel_pending_choice", "submit_card_selection", "submit_player_selection", "submit_location_selection"]:
+				forwarded.append(source)
+			result = commands.callv(kind, forwarded)
 	else:
 		result = _run_recorded_driver(kind, args)
 	if not confirm_audit():
@@ -490,6 +553,10 @@ func _advance_archive_frames() -> void:
 
 func close_archive() -> bool:
 	var confirmed:bool = confirm_audit()
+	if _management_journal != null:
+		if not _management_journal.flush(): confirmed = false
+		_management_journal.close()
+		_management_journal = null
 	_archive_serial += 1
 	if recorder != null and not recorder.close(): confirmed = false
 	_archive_pulse_running = false
@@ -512,8 +579,7 @@ func restore_archive(source:String, bindings:Dictionary, target:String, maintena
 	var journal_script = preload("res://scripts/match/match_journal.gd")
 	if GameStart._started or journal_script.audit_writer != null or journal_script.audit_replaying:
 		return _reject("全局规则或录制器仍活跃，拒绝覆盖原局")
-	var previous_root:String = LoadHelper.session_data_dir
-	var previous_cache:String = LoadGame.stored_jsons_path
+	var previous_environment:Dictionary = ContentEnvironment.install(LoadHelper.session_data_dir, LoadGame.stored_jsons_path)
 	var candidate = preload("res://scripts/match/match_replay.gd").new()
 	_restore_stage("replay_begin")
 	var accepted:bool = await candidate.restore(source, maintenance)
@@ -531,19 +597,36 @@ func restore_archive(source:String, bindings:Dictionary, target:String, maintena
 		if reason.is_empty(): reason = "事务审计写入失败，恢复未确认"
 		candidate.close()
 		restore_failed_closed = true
-		LoadHelper.session_data_dir = previous_root
-		LoadGame.stored_jsons_path = previous_cache
+		ContentEnvironment.restore(previous_environment)
 		GameStart.end_session()
 		journal_script.reset_audit_memory()
 		return _reject(reason)
 	recorder = candidate
 	driver = recorder.driver
+	_context = driver.source_context
+	if not SessionGeneration.validate_context(_context).get("ok", false):
+		candidate.close()
+		restore_failed_closed = true
+		ContentEnvironment.restore(previous_environment)
+		GameStart.end_session()
+		journal_script.reset_audit_memory()
+		return _reject("恢复未建立可验证的规则来源")
 	builder = preload("res://scripts/match/view_builder.gd").new()
+	seat_query = preload("res://scripts/match/match_seat_query.gd").new(builder)
 	_configure_controllers(bindings)
+	_management_folder = target
+	if not _apply_broadcast_declaration():
+		candidate.close()
+		restore_failed_closed = true
+		ContentEnvironment.restore(previous_environment)
+		GameStart.end_session()
+		journal_script.reset_audit_memory()
+		return _reject("播报能力声明审计失败，恢复未确认")
 	_issued.clear()
 	_restart_selection = {"player_ids":header.players.duplicate(), "assignments":header.assignments.duplicate(true), "order":header.order.duplicate(), "controllers":bindings.duplicate()}
 	_restart_guard = header.get("runtime_guard", {}).duplicate(true)
 	_restart_seed = header.seed
+	_begin_notification_lifecycle()
 	started = true
 	_revision += 1
 	return true
@@ -554,118 +637,37 @@ func _restore_stage(stage:String) -> void:
 
 func pending_for(peer: int) -> Dictionary:
 	var seat := observer_for(peer)
-	var location_pending: Dictionary = EffectManager.get_pending_location_selection()
-	if started and seat >= 0 and not location_pending.is_empty() and location_pending.effect._trigger_player_id == seat:
-		return {"kind": "location_choice", "effect": builder.ids.id_for(location_pending.effect), "label": location_pending.effect.get_shown_name(), "areas": _location_candidates(location_pending).keys(), "allow_cancel": location_pending.allow_cancel}
-	var player_pending: Dictionary = EffectManager.get_pending_player_selection()
-	if started and seat >= 0 and not player_pending.is_empty() and player_pending.effect._trigger_player_id == seat:
-		var low: int = int(player_pending.spec.get("min", 1))
-		return {"kind": "player_choice", "effect": builder.ids.id_for(player_pending.effect), "label": player_pending.effect.get_shown_name(), "players": player_pending.candidates.duplicate(), "min": low, "max": int(player_pending.spec.get("max", low)), "allow_cancel": player_pending.allow_cancel}
-	var card_pending: Dictionary = EffectManager.get_pending_card_selection()
-	if started and seat >= 0 and not card_pending.is_empty() and card_pending.effect._trigger_player_id == seat:
-		var cards: Array = []
-		var required: Array = []
-		for card in card_pending.cards:
-			cards.append(builder.ids.id_for(card))
-		for card in card_pending.required_cards:
-			required.append(builder.ids.id_for(card))
-		return {"kind": "card_choice", "effect": builder.ids.id_for(card_pending.effect), "label": str(card_pending.shown_name), "cards": cards, "required": required, "min": card_pending.min, "max": card_pending.max, "allow_cancel": card_pending.allow_cancel}
-	var effect: BaseEffect = EffectManager.get_pending_active_effect()
-	if not started or seat < 0 or effect == null or effect._trigger_player_id != seat:
+	if not started or seat < 0:
 		return {}
-	var options: Array = []
-	for index in range(effect._options.size()):
-		var option: Dictionary = effect._options[index]
-		var item := {"index": index, "label": str(option.get("shown_option_name", "")), "available": EffectManager.is_option_available(effect, index)}
-		if option.has("quantity_range"):
-			item.quantity_range = option.quantity_range.duplicate()
-		options.append(item)
-	return {"kind": "active_choice", "effect": builder.ids.id_for(effect), "label": effect.get_shown_name(), "allow_cancel": EffectManager.choice_allows_cancel(effect), "options": options}
+	return seat_query.pending(seat)
 
 ## 提示仅用于呈现；所有提交仍执行当前时刻的规则校验。
 func preview_group(peer: int, sequence: int, card_ids: Array, hidden: Array) -> Dictionary:
 	var seat := observer_for(peer)
 	if not started or seat < 0 or not _issued.has(peer):
 		return {"ok": false}
-	if sequence != _issued[peer].seq or _issued[peer].revision != _revision or GameProgress.current_player_id != seat:
+	if sequence != _issued[peer].seq or _issued[peer].revision != _revision:
 		return {"ok": false}
-	if EffectManager.is_waiting_for_choice() or not GameProgress.is_phase_for(seat, "action") or card_ids.size() != hidden.size():
+	if card_ids.size() != hidden.size():
 		return {"ok": false}
-	var available: Array = RegularPlay.candidates(seat)
 	var cards: Array = []
 	var flags: Array = []
 	for index in range(card_ids.size()):
 		if not card_ids[index] is int or not hidden[index] is bool:
 			return {"ok": false}
 		var card = builder.ids.object_for(card_ids[index])
-		if not available.has(card) or cards.has(card):
-			return {"ok": false}
 		cards.append(card)
 		flags.append(hidden[index])
-	var candidates: Array = []
-	for card in available:
-		if cards.has(card):
-			continue
-		var modes: Array = RegularPlay.pending_modes(seat, cards, flags, card)
-		if not modes.is_empty():
-			candidates.append({"id": builder.ids.id_for(card), "modes": modes})
-	return {"ok": true, "view_seq": sequence, "candidates": candidates, "can_submit": RegularPlay.can_submit_group(seat, cards, flags)}
+	var result:Dictionary = seat_query.preview(seat, cards, flags)
+	if result.get("ok", false): result.view_seq = sequence
+	return result
 
 func actions_for(peer: int) -> Dictionary:
 	var seat := observer_for(peer)
-	if not started or seat < 0 or GameProgress.is_game_over:
+	if not started or seat < 0:
 		return {}
-	var result := {"deploy_areas": [], "move_areas": [], "move_costs": {}, "cards": [], "effects": [], "flip_cards": [], "can_end": false}
-	if EffectManager.is_waiting_for_choice():
-		return result
-	for effect in EffectManager.manual_activations(seat):
-		result.effects.append({"id": builder.ids.id_for(effect), "label": effect.get_shown_name()})
-	for card in RegularPlay.candidates(seat):
-		var flip_modes: Array = _flip_modes(seat, card)
-		if not flip_modes.is_empty():
-			result.flip_cards.append({"id": builder.ids.id_for(card), "modes": flip_modes})
-	if GameProgress.current_player_id != seat:
-		return result
-	result.can_end = GameProgress.can_end_current_player_action()
-	var data: Dictionary = GameDataManager.get_player_data(seat)
-	if GameProgress.is_phase_for(seat, "outpost") and data.get("location") == null:
-		for area in DeployRules.deployable_areas():
-			result.deploy_areas.append(builder.ids.id_for(area))
-	if GameProgress.is_phase_for(seat, "action"):
-		for area in MapData.areas:
-			if driver.LocationQuery.area_action_block_reason_for(seat, MapData.areas.find(area)).is_empty():
-				result.move_areas.append(builder.ids.id_for(area))
-				var origin: BaseLocation = data.get("location")
-				var steps: int = MapData.areas.find(area) - MapData.areas.find(origin.get_from())
-				result.move_costs[str(builder.ids.id_for(area))] = driver.LocationQuery._estimate_move_cost(data, steps)
-		for card in RegularPlay.candidates(seat):
-			var modes: Array = RegularPlay.modes(seat, card)
-			if not modes.is_empty():
-				result.cards.append({"id": builder.ids.id_for(card), "modes": modes})
-	return result
+	return seat_query.actions(seat)
 
 func _reject(reason: String) -> bool:
 	error = reason
 	return false
-
-func _flip_modes(seat: int, card) -> Array:
-	if GameProgress.is_game_over or EffectManager.is_waiting_for_choice() or not RegularPlay.candidates(seat).has(card):
-		return []
-	if card is BaseAttack and RegularPlay.in_play_zone(GameDataManager.get_player_data(seat), card):
-		return [false, true]
-	if card is BaseSkill and card._is_concealed and card._is_awakened:
-		return [false]
-	return []
-
-func _location_candidates(pending: Dictionary) -> Dictionary:
-	var result: Dictionary = {}
-	if not EffectManager._location_option_origin_allowed(pending.effect, pending.spec):
-		return result
-	var forbidden: Array = pending.spec.get("forbidden_target_areas", [])
-	for area in MapData.areas:
-		if forbidden.has(str(area._area_name)):
-			continue
-		var location = driver.LocationQuery._first_effect_location_target(area, pending.spec)
-		if location != null:
-			result[builder.ids.id_for(area)] = location
-	return result

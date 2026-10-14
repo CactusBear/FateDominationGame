@@ -1,4 +1,10 @@
 extends Node
+# 本局原来源取自 reset_runtime 回执；夹具对 operation 显式传入，不从全局补票。
+var ctx: SessionContext = null
+func _reset_ctx() -> SessionContext:
+	var reset: Dictionary = EffectManager.reset_runtime()
+	return reset.get("context") if reset.get("ok", false) else null
+const FixtureClone = preload("res://newtests/fixture_clone.gd")
 var failures:Array = []
 var checks:int = 0
 func check(ok:bool, label:String):
@@ -11,7 +17,7 @@ func template(pool:Array, key:String):
 		if card._name == key: return card
 	return null
 func setup():
-	EffectManager.reset_runtime()
+	ctx = _reset_ctx()
 	GameLog.reset()
 	GameProgress.current_round = 1
 	GameLog.set_context(1, "action")
@@ -94,7 +100,7 @@ func run():
 	GameData.player_data_library[0].power.number = 2
 	var migrated:int = 0
 	for source in LoadEvent.events + LoadSituation.situations + LoadSituation.climax_situations.values():
-		var cloned = CloneObject.new().exec(source)
+		var cloned = FixtureClone.clone_template(source, ctx)
 		if cloned is BaseEvent:
 			area._events.assign([cloned])
 			cloned.from = area
@@ -118,7 +124,7 @@ func run():
 	var power_skill := BaseSkill.new("power_skill", "", ["noble_phantasm"], BaseNumber.new(0), BaseNumber.new(5))
 	owner_data.played_cards = [power_skill]
 	owner_data.power.number = 5
-	var contain = CloneObject.new().exec(template(LoadEvent.events, "contain_third_party"))
+	var contain = FixtureClone.clone_template(template(LoadEvent.events, "contain_third_party"), ctx)
 	contain.from = skill_area
 	skill_area._events = [contain]
 	check(BoardPowerQuery.total(0) == 1 and GetPlayerTotalPower.new().exec(0) == 6,
@@ -134,7 +140,7 @@ func run():
 	GameData.player_data_library[0].played_cards = [card]
 	GameData.player_data_library[0].power.number = 2
 	area._events.clear()
-	MapData.active_situation = CloneObject.new().exec(template(LoadSituation.situations, "outrage"))
+	MapData.active_situation = FixtureClone.clone_template(template(LoadSituation.situations, "outrage"), ctx)
 	check(GetPlayerTotalPower.new().exec(0) == 4, "situation applies during action")
 	card._is_concealed = true
 	GameData.player_data_library[0].power.number = 0
@@ -142,9 +148,9 @@ func run():
 	card._is_concealed = false
 	GameData.player_data_library[0].power.number = 2
 	MapData.active_situation = null
-	var fate = CloneObject.new().exec(template(LoadEvent.events, "fate_battle"))
+	var fate = FixtureClone.clone_template(template(LoadEvent.events, "fate_battle"), ctx)
 	fate.from = area
-	area._events.assign([fate, CloneObject.new().exec(fate)])
+	area._events.assign([fate, FixtureClone.clone_template(fate, ctx)])
 	check(GetPlayerTotalPower.new().exec(0) == 5, "fate battle matches JSON numeric printed power")
 	#Verify set-value composition remains non-mutating even when two copies match the same card.
 	for ev in area._events:

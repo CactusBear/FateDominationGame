@@ -11,12 +11,22 @@ extends RefCounted
 #任何区域时会取到 null 并崩溃）
 #返回是否真正落位。调用方（如 Deploy）据此决定要不要记"部署成功"这类后续事实，
 #不能无条件记——位置满/不可移入时实际没动，却记一条部署会把失败当成功
-func exec(setted_location:BaseLocation, player_id:int = -1, is_move:bool = true, ignore_limit:bool = false, check_area_lock:bool = true) -> bool:
-
+func exec(setted_location:BaseLocation, player_id:int = -1, is_move:bool = true, ignore_limit:bool = false, check_area_lock:bool = true, context:Variant = null) -> bool:
+	context = RegisterObjectEffects.captured_context(context)
+	if not RegisterObjectEffects.source_is_current(context):
+		return false
 	if setted_location == null:
 		return false
-	player_id = EffectManager.resolve_player_id(player_id)
-	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+	var resolved:Dictionary = RegisterObjectEffects.resolved_player_id(player_id, context)
+	if not resolved.ok:
+		return false
+	player_id = resolved.id
+	var origin:Dictionary = capture_location_origin(player_id, context)
+	if origin.is_empty():
+		return false
+	var player_data:Dictionary = origin.player
+	if not current_map_location(setted_location):
+		return false
 	if !ignore_limit and setted_location._pl_num_limit != -1 and setted_location._pl_num_limit <= setted_location._players.size():
 		#show("目标位置已满")
 		return false
@@ -36,6 +46,11 @@ func exec(setted_location:BaseLocation, player_id:int = -1, is_move:bool = true,
 	#离开旧位置：把玩家从旧位置的_players里摘掉，否则旧位置的人数永远只增不减，
 	#部署上限判定(_pl_num_limit)和"该位置有几人"的展示都会失真
 	var old_location = player_data.get("location") as BaseLocation
+	# 成员与两端地点必须仍属于当前对象图；落位不承担实体创建。
+	if not location_origin_is_current(origin, old_location) \
+			or not current_map_location(setted_location) \
+			or (old_location != null and not current_map_location(old_location)):
+		return false
 	if old_location != null:
 		old_location._players.erase(player_id)
 	player_data["location"] = setted_location
@@ -54,11 +69,69 @@ func exec(setted_location:BaseLocation, player_id:int = -1, is_move:bool = true,
 	GameLog.record("move", player_id, -1,
 		str(area._area_name) if area != null else "", null,
 		["move"], {"is_move": is_move, "from_area": old_area_name})
+	#日志与时点都可同步重入；来源失效只拒旧尾部，不回滚已经写入的对象图。
+	if not location_origin_is_current(origin, setted_location):
+		return false
 	#进入/离开地点是比常规移动更宽的事实（部署、效果搬运都算），带落点/旧位置作来源派发
 	if old_location != setted_location:
 		if old_location != null:
-			TimePointChecker.dynamic_time_point([TimePoints.LEAVE_LOCATION], player_id, old_location)
-		TimePointChecker.dynamic_time_point([TimePoints.ENTER_LOCATION], player_id, setted_location)
+			TimePointChecker.dynamic_time_point([TimePoints.LEAVE_LOCATION], player_id, old_location, context)
+		# LEAVE 可重入并换局/换位置，不把旧链的 ENTER 派给新的主体。
+		if not location_origin_is_current(origin, setted_location):
+			return false
+		TimePointChecker.dynamic_time_point([TimePoints.ENTER_LOCATION], player_id, setted_location, context)
+		if not location_origin_is_current(origin, setted_location):
+			return false
+	return true
+
+
+#仅保存本次调用的原引用，不签票、不克隆规则状态，也不是可恢复事务。
+#SetLocation/MoveLocation 共用；额外席位在入口前已声明即进入同一原图。
+static func capture_location_origin(player_id:int, context:Variant) -> Dictionary:
+	if not RegisterObjectEffects.source_is_current(context):
+		return {}
+	var player:Dictionary = GameDataManager.find_player_data(player_id)
+	if player.is_empty():
+		return {}
+	var areas:Array = []
+	for area:BaseMapArea in MapData.areas:
+		var locations:Array = []
+		for location:BaseLocation in area._locations:
+			locations.append({"location":location, "seats":location._players, "area":location.get_from()})
+		areas.append({"area":area, "locations":area._locations, "items":locations})
+	return {"context":context, "id":player_id, "player":player,
+		"library":GameData.player_data_library, "members":GameData.player_data_library.duplicate(),
+		"map":MapData.areas, "areas":areas}
+
+
+#只消费原来源和容器 identity；expected_location 区分首写前/合法落位后。
+#不按等值字典或等值数组迁移，不从当前局刷新快照；席位内容仍由原落位规则维护。
+static func location_origin_is_current(origin:Dictionary, expected_location:BaseLocation) -> bool:
+	if origin.is_empty() or not RegisterObjectEffects.source_is_current(origin.context):
+		return false
+	if not is_same(origin.library, GameData.player_data_library) \
+			or not is_same(origin.map, MapData.areas) \
+			or origin.members.size() != GameData.player_data_library.size() \
+			or origin.areas.size() != MapData.areas.size():
+		return false
+	for id in origin.members:
+		if not is_same(origin.members[id], GameDataManager.find_player_data(id)):
+			return false
+	if not is_same(origin.player, GameDataManager.find_player_data(origin.id)) \
+			or origin.player.get("location") != expected_location:
+		return false
+	for index:int in range(origin.areas.size()):
+		var entry:Dictionary = origin.areas[index]
+		var area:BaseMapArea = entry.area
+		if not is_same(area, MapData.areas[index]) or not is_same(entry.locations, area._locations) \
+				or entry.items.size() != area._locations.size():
+			return false
+		for slot:int in range(entry.items.size()):
+			var item:Dictionary = entry.items[slot]
+			var location:BaseLocation = item.location
+			if not is_same(location, area._locations[slot]) or not is_same(item.seats, location._players) \
+					or not is_same(item.area, location.get_from()):
+				return false
 	return true
 
 
@@ -74,10 +147,23 @@ static func area_locked(area:BaseMapArea) -> bool:
 	return MapAreaHasEffect.new().exec(area, AREA_LOCKED)
 
 
+# 地点来源只认当前地图对象，不以战区名字或席位序号认证旧实例。
+static func current_map_location(location:BaseLocation) -> bool:
+	if location == null:
+		return false
+	var area := location.get_from() as BaseMapArea
+	return area != null and MapData.areas.has(area) and area._locations.has(location)
+
+
 #玩家从当前位置移动到目标战区时挡住他的那块被锁战区：出发战区优先，其次目标战区；没有被挡返回 null。
 #与 exec 的锁判定同一口径（目标被锁不能进入，出发地被锁不能离开）。部署不是移动，不走这里
+# 这里读取字面传入 ID（包括 -1），不解析哨兵；null 不是有效成员证明。
+# 消费者必须先验证实际 trigger_id，不能以“没有锁”授权未知主体。
 static func locked_area_for_move(player_id:int, target_area:BaseMapArea) -> BaseMapArea:
-	var loc = GameDataManager.get_player_data(player_id).get("location")
+	var player_data:Dictionary = GameDataManager.find_player_data(player_id)
+	if player_data.is_empty():
+		return null
+	var loc = player_data.get("location")
 	var origin:BaseMapArea = loc.get_from() as BaseMapArea if loc is BaseLocation else null
 	if area_locked(origin):
 		return origin

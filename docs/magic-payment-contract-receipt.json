@@ -1,0 +1,884 @@
+{
+  "final_manifest": "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\manifest.json",
+  "red_manifest": "E:\\scratch\\magic-payment-focused\\isolated-1f519ce7a6354641a996fc3f47cbe75c\\manifest.json",
+  "hashes": [
+    {
+      "path": "scripts/system/operations/EditMagic.gd",
+      "before": "6578c2e92535b9f62ecc3c25dd7a00027daeaa3f1ebe5f62c71ae09162fa5ecf",
+      "after": "7403e2a0f2a3949147a7f726345eacd319930611f3c6dfe611d6e24940df4a8b"
+    },
+    {
+      "path": "scripts/system/operations/PlayAttack.gd",
+      "before": "94385a0532baab8222cdd21a22b56c97525b513474667f1f3eb6e40571cb7c04",
+      "after": "b2e42b80d1602fa0d52c4c4b59bd00baae3d063870e49880bfe9c95431489444"
+    },
+    {
+      "path": "scripts/system/regular_play.gd",
+      "before": "f6fce80464730c6a259bc188b5d252efe7da5ab70cafecb9901cbabfdb825d27",
+      "after": "40ad584c500f5a327b248b528175b33ffe9574b9b3998ed36aec700b09eec064"
+    },
+    {
+      "path": "scripts/system/operations/PayMagic.gd",
+      "before": null,
+      "after": "f2dc69593ab7ad442e250e6a5afaf904cd4ce2c4db06e9da73e17a9c155dadd1"
+    },
+    {
+      "path": "scripts/system/global/all_operations.gd",
+      "before": "5449d6373ea3e52823fe0c5f2c6e71a9260e71de0594ec95aa9ceec17e3ad787",
+      "after": "8f39c2dfa98a2989a79040fba436d69bc93c8e6c93a86e7f3664e0f44fbd775a"
+    },
+    {
+      "path": "tests/magic_payment_contract_test.gd",
+      "before": null,
+      "after": "fe80c259f7a7c0c9e5fdbffd5e7e429d2c6b33654c875e4990684d43d86e0377"
+    },
+    {
+      "path": "tests/magic_payment_contract_test.tscn",
+      "before": null,
+      "after": "8a611c65ce4344b65cf2f893a5030623a012d1949578e6f1ea7645d9c9df12a2"
+    }
+  ],
+  "suite_count": 13,
+  "checks": 552,
+  "suites": [
+    {
+      "scene": "tests/magic_payment_contract_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "suite": "magic_overdraft_declaration",
+          "checks": 219,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 219,
+      "Job0": true
+    },
+    {
+      "scene": "tests/regular_play_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 54,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 54,
+      "Job0": true
+    },
+    {
+      "scene": "tests/battle_command_adapter_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 29,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 29,
+      "Job0": true
+    },
+    {
+      "scene": "tests/mana_spend_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 45,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 45,
+      "Job0": true
+    },
+    {
+      "scene": "tests/piercing_cost_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 11,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 11,
+      "Job0": true
+    },
+    {
+      "scene": "tests/card_effect_runtime_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 80,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 80,
+      "Job0": true
+    },
+    {
+      "scene": "tests/extra_play_limit_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 22,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 22,
+      "Job0": true
+    },
+    {
+      "scene": "tests/ui_refresh_cost_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 25,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 25,
+      "Job0": true
+    },
+    {
+      "scene": "tests/magic_limit_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 8,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 8,
+      "Job0": true
+    },
+    {
+      "scene": "tests/servant_skill_eight_magic_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 26,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 26,
+      "Job0": true
+    },
+    {
+      "scene": "tests/rule_guard_situation_magic_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 6,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 6,
+      "Job0": true
+    },
+    {
+      "scene": "tests/rule_guard_regular_group_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 9,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 9,
+      "Job0": true
+    },
+    {
+      "scene": "tests/rule_guard_regular_add_test.tscn",
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "checks": 18,
+          "failures": []
+        }
+      },
+      "errors": [],
+      "exit": 0,
+      "CHECK_count": 18,
+      "Job0": true
+    }
+  ],
+  "processes": [
+    {
+      "label": "probe",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\probe",
+        "--script",
+        "res://probe.gd",
+        "--",
+        "2b9bdfe6da304ed0849607d365dd99b4",
+        "main",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated"
+      ],
+      "exited": true,
+      "pid": 16032,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 1.708,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "import",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--editor",
+        "--import",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project"
+      ],
+      "exited": true,
+      "pid": 39504,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 41.072,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "magic_payment_contract_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/magic_payment_contract_test.tscn"
+      ],
+      "exited": true,
+      "pid": 19008,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 7.672,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "regular_play_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/regular_play_test.tscn"
+      ],
+      "exited": true,
+      "pid": 29880,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 10.126,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "battle_command_adapter_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/battle_command_adapter_test.tscn"
+      ],
+      "exited": true,
+      "pid": 12448,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 5.926,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "mana_spend_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/mana_spend_test.tscn"
+      ],
+      "exited": true,
+      "pid": 14540,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 9.715,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "piercing_cost_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/piercing_cost_test.tscn"
+      ],
+      "exited": true,
+      "pid": 13412,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 5.704,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "card_effect_runtime_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/card_effect_runtime_test.tscn"
+      ],
+      "exited": true,
+      "pid": 37852,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 5.004,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "extra_play_limit_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/extra_play_limit_test.tscn"
+      ],
+      "exited": true,
+      "pid": 3920,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 8.466,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "ui_refresh_cost_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/ui_refresh_cost_test.tscn"
+      ],
+      "exited": true,
+      "pid": 29748,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 23.096,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "magic_limit_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/magic_limit_test.tscn"
+      ],
+      "exited": true,
+      "pid": 39564,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 4.148,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "servant_skill_eight_magic_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/servant_skill_eight_magic_test.tscn"
+      ],
+      "exited": true,
+      "pid": 7488,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 8.273,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "rule_guard_situation_magic_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/rule_guard_situation_magic_test.tscn"
+      ],
+      "exited": true,
+      "pid": 39720,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 5.24,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "rule_guard_regular_group_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/rule_guard_regular_group_test.tscn"
+      ],
+      "exited": true,
+      "pid": 32344,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 6.454,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "rule_guard_regular_add_test",
+      "command": [
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-payment-focused\\isolated-2b9bdfe6da304ed0849607d365dd99b4\\generated\\project",
+        "--scene",
+        "res://tests/rule_guard_regular_add_test.tscn"
+      ],
+      "exited": true,
+      "pid": 38936,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 5.772,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    }
+  ],
+  "source_drift": [],
+  "data_changed": [],
+  "data_call_count": 16,
+  "data_calls": [
+    {
+      "path": "data/command_spells/normal_command_spell.json",
+      "pointer": "/effects/0/options/0/funcs/0",
+      "effect": "command_spell_use",
+      "description": "令咒",
+      "numbers": [
+        {
+          "number": 4,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        {
+          "number": 2,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        null,
+        {
+          "number_index": 0
+        },
+        -1
+      ]
+    },
+    {
+      "path": "data/servants/00005_medea/00005_medea.json",
+      "pointer": "/specials/SKILLS/0/effects/1/funcs/3",
+      "effect": "base_construction_deploy_workshop_gain",
+      "description": "残留：当你部署于魔术工房时，获得1点魔力和2点战果",
+      "numbers": [
+        {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        {
+          "number": 2,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        null,
+        {
+          "number_index": 0
+        }
+      ]
+    },
+    {
+      "path": "data/servants/00006_sasaki_kojirou/00006_sasaki_kojirou.json",
+      "pointer": "/specials/SKILLS/0/effects/1/options/0/funcs/5",
+      "effect": "ichi_no_tachi_close_and_play_strength",
+      "description": "战斗阶段：关闭此牌，然后从手牌打出一张力量基础攻击。",
+      "numbers": [
+        {
+          "number": 2,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        null,
+        {
+          "number_index": 0
+        },
+        -1
+      ]
+    },
+    {
+      "path": "data/servants/00008_angra_mainyu/00008_angra_mainyu.json",
+      "pointer": "/specials/SKILLS/0/effects/0/options/0/funcs/10",
+      "effect": "angra_left_right",
+      "description": "你拥有的魔力少于8点也可使用此牌。\n行动阶段：若你位于的战场存在对手，抽2张牌。若你独自位于一处战场，获得4点魔力。",
+      "numbers": [
+        {
+          "number": 2,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        {
+          "number": 4,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        null,
+        {
+          "number_index": 1
+        },
+        -1
+      ]
+    },
+    {
+      "path": "data/masters/00001_emiya_shirou/00001_emiya_shirou.json",
+      "pointer": "/effects/0/funcs/0",
+      "effect": "inexperienced",
+      "description": "未熟 - 你的魔力初始值为2",
+      "numbers": [
+        {
+          "number": 2,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        {
+          "number_index": 0
+        }
+      ]
+    },
+    {
+      "path": "data/masters/00001_emiya_shirou/00001_emiya_shirou.json",
+      "pointer": "/effects/2/funcs/1",
+      "effect": "avalon",
+      "description": "远离尘世的理想乡 - 当你首次被淘汰时你将失去所有的魔力来继续游戏",
+      "numbers": [
+        {
+          "number": 0,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        {
+          "number_index": 0
+        }
+      ]
+    },
+    {
+      "path": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "pointer": "/effects/2/funcs/4",
+      "effect": "placeholder_absolute_order_penalty",
+      "description": "绝对服从的命令 - 若你以该令咒获得了魔力，战斗阶段结束后，你失去4点魔力",
+      "numbers": [
+        {
+          "number": -4,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        null,
+        {
+          "number_index": 0
+        },
+        -1
+      ]
+    },
+    {
+      "path": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "pointer": "/specials/BUFFS/0/effects/0/options/0/funcs/6",
+      "effect": "jewel_sorcery_action",
+      "description": "行动阶段：选择一项本回合没有选择过的选项",
+      "numbers": [
+        {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        null,
+        {
+          "number_index": 0
+        }
+      ]
+    },
+    {
+      "path": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "pointer": "/specials/BUFFS/0/effects/1/options/0/funcs/6",
+      "effect": "jewel_sorcery_climax",
+      "description": "高潮回合的行动阶段：可以选择相同的选项，每个选项至多3次，共计9次",
+      "numbers": [],
+      "parameters": [
+        null,
+        {
+          "number_index": 0
+        }
+      ]
+    },
+    {
+      "path": "data/masters/00002_tohsaka_rin/00002_tohsaka_rin.json",
+      "pointer": "/upgrade_skill/0/effects/1/options/0/funcs/1",
+      "effect": "placeholder_jewel_sword_drain",
+      "description": "行动阶段 - 获得本回合所有玩家花费的魔力。战斗结束后，将此牌移除游戏",
+      "numbers": [],
+      "parameters": [
+        null,
+        {
+          "self_var": 0
+        },
+        -1
+      ]
+    },
+    {
+      "path": "data/masters/00003_matou_shinji/00003_matou_shinji.json",
+      "pointer": "/effects/0/funcs/3",
+      "effect": "absorb_magic_command",
+      "description": "吸魔命令 - 进入深山町时，获得1点魔力",
+      "numbers": [
+        {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        null,
+        {
+          "number_index": 0
+        },
+        -1
+      ]
+    },
+    {
+      "path": "data/masters/00003_matou_shinji/00003_matou_shinji.json",
+      "pointer": "/specials/BUFFS/0/effects/0/funcs/18",
+      "effect": "false_servant_book_master_replace",
+      "description": "替代品 - 间桐樱不在场时，当你第一次失去所有令咒，该回合结束时将你的御主替换为【间桐樱】，重置魔力，获得2令咒，保持战果不变",
+      "numbers": [
+        {
+          "number": 2,
+          "can_change": true,
+          "is_pure_number": true
+        },
+        {
+          "number": 4,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        {
+          "number_index": 1
+        }
+      ]
+    },
+    {
+      "path": "data/masters/00005_illyasviel_von_einzbern/00005_illyasviel_von_einzbern.json",
+      "pointer": "/effects/0/funcs/0",
+      "effect": "artificial_life_initial_magic",
+      "description": "人工生命体 - 你的魔力初始值为6",
+      "numbers": [
+        {
+          "number": 6,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        {
+          "number_index": 0
+        }
+      ]
+    },
+    {
+      "path": "data/masters/00005_illyasviel_von_einzbern/00005_illyasviel_von_einzbern.json",
+      "pointer": "/effects/3/funcs/4",
+      "effect": "all_conceal_magic_gain",
+      "description": "小圣杯 - 回合结束时，若你本回合打出的攻击均为暗置，获得1点魔力",
+      "numbers": [
+        {
+          "number": 1,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        null,
+        {
+          "number_index": 0
+        }
+      ]
+    },
+    {
+      "path": "data/masters/00006_kotomine_kirei/00006_kotomine_kirei.json",
+      "pointer": "/specials/BUFFS/0/effects/1/options/0/funcs/10",
+      "effect": "overseer_neutral_move",
+      "description": "中立 - 行动阶段：你可以无视交战状态，花费2魔力移动至侦察",
+      "numbers": [
+        {
+          "number": 2,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        null,
+        {
+          "self_var": 7
+        },
+        -1,
+        "move",
+        {
+          "self_var": 2
+        }
+      ]
+    },
+    {
+      "path": "data/events/origin/ley_line/ley_line.json",
+      "pointer": "/effects/0/funcs/3/parameters/0/0",
+      "effect": "ley_line_magic_plus_2",
+      "description": "位于此战场的玩家在此战场发生战斗后获得2点魔力",
+      "numbers": [
+        {
+          "number": 2,
+          "can_change": true,
+          "is_pure_number": true
+        }
+      ],
+      "parameters": [
+        null,
+        {
+          "number_index": 0
+        },
+        null
+      ]
+    }
+  ],
+  "overdraft_declarations": [],
+  "minimal_diff": "E:\\scratch\\magic-payment-focused\\minimal.diff",
+  "limits": [
+    "PlaySkill direct debit remains outside authorized writer scope",
+    "untracked legacy global random stream cannot be restored by generic object checkpoint",
+    "json_maker/types.json new operation metadata not changed outside scope"
+  ]
+}

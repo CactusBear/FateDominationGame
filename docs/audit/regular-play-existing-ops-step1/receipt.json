@@ -1,0 +1,1414 @@
+{
+  "status": "OPS_PASS_REGISTRY_OWNER_HANDOFF_PENDING_LIVE_DEPENDENCIES_DRIFTED",
+  "baseline_sha256": "40ad584c500f5a327b248b528175b33ffe9574b9b3998ed36aec700b09eec064",
+  "after_sha256": "1f7ffbabf1c9556bca4d33622a8a45d5b1bd00b15079cd042c55870dfd94394e",
+  "minimal_diff_sha256": "cf8153f483e2c7a62ce04f4b980c2480b7d436162eab31577d14f3f43a476d17",
+  "baseline_compare_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+  "after_compare_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+  "stages": [
+    {
+      "label": "baseline",
+      "suites": [
+        {
+          "scene": "newtests/regular_play_existing_ops_compare_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "regular_play_existing_ops_compare",
+              "checks": 75,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 75,
+          "Job0": true
+        },
+        {
+          "scene": "tests/regular_play_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 54,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 54,
+          "Job0": true
+        },
+        {
+          "scene": "tests/magic_payment_contract_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "magic_overdraft_declaration",
+              "checks": 219,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 219,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_group_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 9,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 9,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_add_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 18,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 18,
+          "Job0": true
+        }
+      ],
+      "compare": null,
+      "sha256": "40ad584c500f5a327b248b528175b33ffe9574b9b3998ed36aec700b09eec064",
+      "production_sha256": "40ad584c500f5a327b248b528175b33ffe9574b9b3998ed36aec700b09eec064",
+      "passed": true
+    },
+    {
+      "label": "R08",
+      "suites": [
+        {
+          "scene": "newtests/regular_play_existing_ops_compare_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "regular_play_existing_ops_compare",
+              "checks": 75,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 75,
+          "Job0": true
+        },
+        {
+          "scene": "tests/regular_play_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 54,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 54,
+          "Job0": true
+        },
+        {
+          "scene": "tests/magic_payment_contract_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "magic_overdraft_declaration",
+              "checks": 219,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 219,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_group_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 9,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 9,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_add_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 18,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 18,
+          "Job0": true
+        }
+      ],
+      "compare": {
+        "cases": 25,
+        "same_count": true,
+        "baseline_equal": true,
+        "mismatches": [],
+        "baseline_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "after_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "previous_equal": true
+      },
+      "sha256": "421c811ebe9f196c4138a77e33d63308864724f98047df412fc36f4b9ed89c18",
+      "production_sha256": "421c811ebe9f196c4138a77e33d63308864724f98047df412fc36f4b9ed89c18",
+      "passed": true
+    },
+    {
+      "label": "R09",
+      "suites": [
+        {
+          "scene": "newtests/regular_play_existing_ops_compare_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "regular_play_existing_ops_compare",
+              "checks": 75,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 75,
+          "Job0": true
+        },
+        {
+          "scene": "tests/regular_play_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 54,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 54,
+          "Job0": true
+        },
+        {
+          "scene": "tests/magic_payment_contract_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "magic_overdraft_declaration",
+              "checks": 219,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 219,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_group_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 9,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 9,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_add_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 18,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 18,
+          "Job0": true
+        }
+      ],
+      "compare": {
+        "cases": 25,
+        "same_count": true,
+        "baseline_equal": true,
+        "mismatches": [],
+        "baseline_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "after_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "previous_equal": true
+      },
+      "sha256": "25aaba3ea182d8e1621fd6d90b1fb9df07dcad11928ba95d2087567c680d13b5",
+      "production_sha256": "25aaba3ea182d8e1621fd6d90b1fb9df07dcad11928ba95d2087567c680d13b5",
+      "passed": true
+    },
+    {
+      "label": "R10",
+      "suites": [
+        {
+          "scene": "newtests/regular_play_existing_ops_compare_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "regular_play_existing_ops_compare",
+              "checks": 75,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 75,
+          "Job0": true
+        },
+        {
+          "scene": "tests/regular_play_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 54,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 54,
+          "Job0": true
+        },
+        {
+          "scene": "tests/magic_payment_contract_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "magic_overdraft_declaration",
+              "checks": 219,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 219,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_group_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 9,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 9,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_add_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 18,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 18,
+          "Job0": true
+        }
+      ],
+      "compare": {
+        "cases": 25,
+        "same_count": true,
+        "baseline_equal": true,
+        "mismatches": [],
+        "baseline_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "after_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "previous_equal": true
+      },
+      "sha256": "c25c49af4c70f46eaafc30d84335f4652ddc28d48891507a297d0787ae8a1117",
+      "production_sha256": "c25c49af4c70f46eaafc30d84335f4652ddc28d48891507a297d0787ae8a1117",
+      "passed": true
+    },
+    {
+      "label": "R11",
+      "suites": [
+        {
+          "scene": "newtests/regular_play_existing_ops_compare_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "regular_play_existing_ops_compare",
+              "checks": 75,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 75,
+          "Job0": true
+        },
+        {
+          "scene": "tests/regular_play_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 54,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 54,
+          "Job0": true
+        },
+        {
+          "scene": "tests/magic_payment_contract_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "magic_overdraft_declaration",
+              "checks": 219,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 219,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_group_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 9,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 9,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_add_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 18,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 18,
+          "Job0": true
+        }
+      ],
+      "compare": {
+        "cases": 25,
+        "same_count": true,
+        "baseline_equal": true,
+        "mismatches": [],
+        "baseline_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "after_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "previous_equal": true
+      },
+      "sha256": "f8189203453fa9bc5354a18fa61a9630321c0d1c9e0d06360f07db2d15c05fd8",
+      "production_sha256": "f8189203453fa9bc5354a18fa61a9630321c0d1c9e0d06360f07db2d15c05fd8",
+      "passed": true
+    },
+    {
+      "label": "R12",
+      "suites": [
+        {
+          "scene": "newtests/regular_play_existing_ops_compare_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "regular_play_existing_ops_compare",
+              "checks": 75,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 75,
+          "Job0": true
+        },
+        {
+          "scene": "tests/regular_play_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 54,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 54,
+          "Job0": true
+        },
+        {
+          "scene": "tests/magic_payment_contract_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "magic_overdraft_declaration",
+              "checks": 219,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 219,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_group_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 9,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 9,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_add_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 18,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 18,
+          "Job0": true
+        }
+      ],
+      "compare": {
+        "cases": 25,
+        "same_count": true,
+        "baseline_equal": true,
+        "mismatches": [],
+        "baseline_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "after_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "previous_equal": true
+      },
+      "sha256": "c5c90dfc2c3379da71691f6e10c2a2f82738753f005ccde957d4b2bb59434930",
+      "production_sha256": "c5c90dfc2c3379da71691f6e10c2a2f82738753f005ccde957d4b2bb59434930",
+      "passed": true
+    },
+    {
+      "label": "R13",
+      "suites": [
+        {
+          "scene": "newtests/regular_play_existing_ops_compare_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "regular_play_existing_ops_compare",
+              "checks": 75,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 75,
+          "Job0": true
+        },
+        {
+          "scene": "tests/regular_play_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 54,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 54,
+          "Job0": true
+        },
+        {
+          "scene": "tests/magic_payment_contract_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "magic_overdraft_declaration",
+              "checks": 219,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 219,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_group_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 9,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 9,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_add_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 18,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 18,
+          "Job0": true
+        }
+      ],
+      "compare": {
+        "cases": 25,
+        "same_count": true,
+        "baseline_equal": true,
+        "mismatches": [],
+        "baseline_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "after_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "previous_equal": true
+      },
+      "sha256": "e9e98c546ca07422b6ce40cb3d8e55cac6075b38a20ced23a71d954e29e0ae0f",
+      "production_sha256": "e9e98c546ca07422b6ce40cb3d8e55cac6075b38a20ced23a71d954e29e0ae0f",
+      "passed": true
+    },
+    {
+      "label": "R06",
+      "suites": [
+        {
+          "scene": "newtests/regular_play_existing_ops_compare_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "regular_play_existing_ops_compare",
+              "checks": 75,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 75,
+          "Job0": true
+        },
+        {
+          "scene": "tests/regular_play_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 54,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 54,
+          "Job0": true
+        },
+        {
+          "scene": "tests/magic_payment_contract_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "magic_overdraft_declaration",
+              "checks": 219,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 219,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_group_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 9,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 9,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_add_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 18,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 18,
+          "Job0": true
+        }
+      ],
+      "compare": {
+        "cases": 25,
+        "same_count": true,
+        "baseline_equal": true,
+        "mismatches": [],
+        "baseline_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "after_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "previous_equal": true
+      },
+      "sha256": "225685773a376d7714d4a955da7e1c24c70b31049b44ef10815e6a3c341145db",
+      "production_sha256": "225685773a376d7714d4a955da7e1c24c70b31049b44ef10815e6a3c341145db",
+      "passed": true
+    },
+    {
+      "label": "R07",
+      "suites": [
+        {
+          "scene": "newtests/regular_play_existing_ops_compare_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "regular_play_existing_ops_compare",
+              "checks": 75,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 75,
+          "Job0": true
+        },
+        {
+          "scene": "tests/regular_play_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 54,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 54,
+          "Job0": true
+        },
+        {
+          "scene": "tests/magic_payment_contract_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "magic_overdraft_declaration",
+              "checks": 219,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 219,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_group_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 9,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 9,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_add_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 18,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 18,
+          "Job0": true
+        }
+      ],
+      "compare": {
+        "cases": 25,
+        "same_count": true,
+        "baseline_equal": true,
+        "mismatches": [],
+        "baseline_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "after_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "previous_equal": true
+      },
+      "sha256": "ceb4a8ce73354e9e2d6452742759f52bfebcf30c25ff641865a3d73b19ba250a",
+      "production_sha256": "ceb4a8ce73354e9e2d6452742759f52bfebcf30c25ff641865a3d73b19ba250a",
+      "passed": true
+    },
+    {
+      "label": "R14",
+      "suites": [
+        {
+          "scene": "newtests/regular_play_existing_ops_compare_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "regular_play_existing_ops_compare",
+              "checks": 75,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 75,
+          "Job0": true
+        },
+        {
+          "scene": "tests/regular_play_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 54,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 54,
+          "Job0": true
+        },
+        {
+          "scene": "tests/magic_payment_contract_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "magic_overdraft_declaration",
+              "checks": 219,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 219,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_group_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 9,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 9,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_add_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 18,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 18,
+          "Job0": true
+        },
+        {
+          "scene": "tests/battlefield_conceal_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 25,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 25,
+          "Job0": true
+        },
+        {
+          "scene": "tests/extra_play_limit_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 22,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 22,
+          "Job0": true
+        },
+        {
+          "scene": "tests/mana_spend_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 45,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 45,
+          "Job0": true
+        }
+      ],
+      "compare": {
+        "cases": 25,
+        "same_count": true,
+        "baseline_equal": true,
+        "mismatches": [],
+        "baseline_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "after_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "previous_equal": true
+      },
+      "sha256": "a6149d0682df1432700df9cad01beec842c9b2b691c205c00a717a6e6d493b0b",
+      "production_sha256": "a6149d0682df1432700df9cad01beec842c9b2b691c205c00a717a6e6d493b0b",
+      "passed": true
+    },
+    {
+      "label": "explicit-preload",
+      "suites": [
+        {
+          "scene": "newtests/regular_play_existing_ops_compare_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "regular_play_existing_ops_compare",
+              "checks": 75,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 75,
+          "Job0": true
+        },
+        {
+          "scene": "tests/regular_play_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 54,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 54,
+          "Job0": true
+        },
+        {
+          "scene": "tests/magic_payment_contract_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "suite": "magic_overdraft_declaration",
+              "checks": 219,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 219,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_group_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 9,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 9,
+          "Job0": true
+        },
+        {
+          "scene": "tests/rule_guard_regular_add_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 18,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 18,
+          "Job0": true
+        },
+        {
+          "scene": "tests/battlefield_conceal_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 25,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 25,
+          "Job0": true
+        },
+        {
+          "scene": "tests/extra_play_limit_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 22,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 22,
+          "Job0": true
+        },
+        {
+          "scene": "tests/mana_spend_test.tscn",
+          "analysis": {
+            "passed": true,
+            "reasons": [],
+            "result": {
+              "checks": 45,
+              "failures": []
+            }
+          },
+          "errors": [],
+          "exit": 0,
+          "CHECK_count": 45,
+          "Job0": true
+        }
+      ],
+      "compare": {
+        "cases": 25,
+        "same_count": true,
+        "baseline_equal": true,
+        "mismatches": [],
+        "baseline_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "after_sha256": "bbbac51f0858a17d9e4690ff8ce3b249193b5289899334f435ac3a04cf40388b",
+        "previous_equal": true
+      },
+      "sha256": "1f7ffbabf1c9556bca4d33622a8a45d5b1bd00b15079cd042c55870dfd94394e",
+      "production_sha256": "1f7ffbabf1c9556bca4d33622a8a45d5b1bd00b15079cd042c55870dfd94394e",
+      "passed": true
+    }
+  ],
+  "step_diffs": [
+    {
+      "label": "R08",
+      "diff_sha256": "8283b4a2327d540c748071cb844a6f42b2aa5371fadec0d62eee2eb7dcd3b0a4"
+    },
+    {
+      "label": "R09",
+      "diff_sha256": "0194aa52a9f1302371f387855c3311e4f823e946a5dd13bcf9e4ea5d5505fc50"
+    },
+    {
+      "label": "R10",
+      "diff_sha256": "bb630d3b2b8515476dfb4390e444fdf229180b914e184d7e7783b69620eca0b7"
+    },
+    {
+      "label": "R11",
+      "diff_sha256": "3aacb65d7148ada06405c022b6f83a031f60a5653ca097a54d600285402b5630"
+    },
+    {
+      "label": "R12",
+      "diff_sha256": "b408c5505f590da5dcb2ea920660fb7f11153c1474126ae12cd60b7206185687"
+    },
+    {
+      "label": "R13",
+      "diff_sha256": "c65f0217e0a4f04c2a66cf704da3440753f4b8f869d025a78dc409434c3a2be9"
+    },
+    {
+      "label": "R06",
+      "diff_sha256": "6776c98719547892f8e74ae4bea5dede97722ca977dcf7b7df1e6146e1829073"
+    },
+    {
+      "label": "R07",
+      "diff_sha256": "17fb2a38a1cc31cb68a60b8c622b8de6a5403c00dfa43739e0de7ddd63a9bb2d"
+    },
+    {
+      "label": "R14",
+      "diff_sha256": "103c98aba8c80179bac4d46f882a7f9cd089078ce899b6d4c39ac9cfc21d28ed"
+    },
+    {
+      "label": "explicit-preload",
+      "diff_sha256": "0164ab654146042d3d0052920bf1f34bf263134322f2727b5e943f73f983aa9f"
+    }
+  ],
+  "total_suite_runs": 61,
+  "total_checks": 4309,
+  "final_checks": 467,
+  "all_processes_Job0": true,
+  "production_drift_observed": [
+    "scripts/net/server/server_console_channel.gd",
+    "scripts/net/server/server_room_manager.gd",
+    "scripts/system/global/game_progress.gd",
+    "scripts/system/global/time_point_checker.gd"
+  ],
+  "registry_lines": {
+    "restrict_abilities": 51,
+    "get_all_players_id": 52,
+    "get_active_players_id": 53,
+    "get_pl_id_using_eff": 54,
+    "get_player_name": 55,
+    "get_player_master": 56,
+    "get_player_servant": 57,
+    "get_player_lives": 58,
+    "get_data_number": 59,
+    "get_player_data_value": 60,
+    "get_player_ids_by_data_value": 61,
+    "get_players_field": 62,
+    "get_rank_by_data_number": 63,
+    "get_phase_order": 64,
+    "get_current_round": 65,
+    "get_game_data_value": 66,
+    "get_player_power_breakdown": 67,
+    "get_player_deck": 69,
+    "get_player_discard": 70,
+    "get_player_hand_cards": 71,
+    "get_player_played_cards": 72,
+    "get_player_master_skills": 73,
+    "get_player_servant_skills": 74,
+    "get_player_buffs": 75,
+    "get_player_command_spell": 76,
+    "get_pl_skills_side": 77,
+    "get_pl_buffs_side": 78,
+    "get_pl_deck_side": 79,
+    "get_pl_discard_side": 80,
+    "get_pl_command_spell_side": 81,
+    "get_pl_master_side": 82,
+    "get_pl_servant_side": 83,
+    "get_pl_others_side": 84,
+    "get_pl_attacks_out_game": 85,
+    "get_pl_skills_out_game": 86,
+    "get_pl_buffs_out_game": 87,
+    "get_pl_command_spell_out_game": 88,
+    "get_pl_master_out_game": 89,
+    "get_pl_servant_out_game": 90,
+    "get_pl_others_out_game": 91,
+    "find_player_array_containing": 92,
+    "get_card_attributes": 94,
+    "get_attack_printed_cost": 95,
+    "get_attack_printed_power": 96,
+    "get_skill_printed_cost": 97,
+    "get_skill_printed_power": 98,
+    "get_printed_num": 99,
+    "get_printed_nums": 100,
+    "get_eff_source_card": 101,
+    "card_counts_power": 102,
+    "card_has_effect": 103,
+    "has_attribute": 104,
+    "get_cards_by_name_fr_arr": 105,
+    "get_cards_by_attributes_fr_arr": 106,
+    "get_cards_by_tag_fr_arr": 107,
+    "get_card_by_index_fr_arr": 108,
+    "get_objects_by_name_fr_arr": 109,
+    "get_buff_by_name_fr_arr": 110,
+    "get_by_tag": 111,
+    "get_extreme_by_property": 112,
+    "filter_by_property": 113,
+    "get_property": 114,
+    "get_location": 116,
+    "get_location_magic": 117,
+    "get_location_benefit": 118,
+    "get_effective_location_benefit": 119,
+    "get_player_location_benefit": 120,
+    "is_engaged": 121,
+    "get_location_map_area": 122,
+    "get_map_area_by_name": 123,
+    "get_map_area_score": 124,
+    "get_map_area_score_need_win": 125,
+    "get_map_area_buffs": 126,
+    "get_move_cost": 127,
+    "get_move_target_location": 128,
+    "get_events": 129,
+    "get_event_printed_score": 130,
+    "get_situations": 131,
+    "get_situation_printed_magic": 132,
+    "get_pls_in_location": 133,
+    "get_num_of_pl_in_map_area": 134,
+    "get_players_in_same_area": 135,
+    "get_players_in_map_area": 136,
+    "get_map_data_value": 137,
+    "get_activating_eff": 139,
+    "get_effect_number": 140,
+    "get_effect_using_nums": 141,
+    "get_player_time_points": 142,
+    "player_buffs_have_effect": 143,
+    "board_has_effect": 144,
+    "map_area_has_effect": 145,
+    "get_shared_attack_attribute": 146,
+    "can_gain_magic": 147,
+    "query_log": 148,
+    "sum_log_data": 149,
+    "log_field_values": 150,
+    "is_true_name_released": 151,
+    "log_exists": 152,
+    "get_round_battle_wins": 153,
+    "get_area_round_winners": 154,
+    "get_area_round_participants": 155,
+    "when": 156,
+    "array_length": 158,
+    "is_in_array": 159,
+    "has": 160,
+    "get_dictionary_value": 161,
+    "array_difference": 162,
+    "merge_arrays": 163,
+    "add_to_array": 164,
+    "remove_from_array": 165,
+    "set_dictionary_value": 166,
+    "if_func": 168,
+    "if_else_func": 169,
+    "compare_number": 170,
+    "and_func": 171,
+    "or_func": 172,
+    "not_func": 173,
+    "match_func": 174,
+    "is_null": 175,
+    "edit_magic": 177,
+    "pay_magic": 178,
+    "edit_score": 179,
+    "edit_lives": 180,
+    "edit_power": 181,
+    "edit_data_number": 182,
+    "set_player_data": 183,
+    "change_pl_order": 184,
+    "sync_power": 185,
+    "modify_attack_power_by_attribute": 186,
+    "zero_attribute_power": 187,
+    "edit_card_power": 189,
+    "edit_card_cost": 190,
+    "edit_card_attributes": 191,
+    "set_card_concealed": 192,
+    "close_card": 193,
+    "set_property": 194,
+    "flip_card_face": 195,
+    "edit_location_magic": 197,
+    "edit_location_benefit": 198,
+    "edit_map_area_score": 199,
+    "edit_map_area_move_cost": 200,
+    "add_map_area_events": 201,
+    "add_event_from_deck": 202,
+    "add_map_area_buff": 203,
+    "add_situations": 204,
+    "set_location": 205,
+    "remove_from_board": 206,
+    "set_map_area_can_move_to": 207,
+    "restore_map_area_move_flags": 208,
+    "set_location_pl_num_limit": 209,
+    "restore_location_pl_num_limits": 210,
+    "restore_location_benefits": 211,
+    "add_map_area": 212,
+    "set_battle_result": 213,
+    "draw_card_from_pl_deck_to_hand": 215,
+    "reshuffle_discard": 216,
+    "draw_card_by_card": 217,
+    "draw_card_by_index": 218,
+    "add_skill_to_skill_zone": 219,
+    "discard_played_cards": 220,
+    "play_attack": 222,
+    "play_skill": 223,
+    "add_attack": 224,
+    "add_skill": 225,
+    "deploy": 226,
+    "move": 227,
+    "move_location": 228,
+    "deal_player_cards": 229,
+    "refill_hand": 230,
+    "played_cards": 231,
+    "end_game": 232,
+    "add_player": 233,
+    "manage_buff": 235,
+    "defeat": 236,
+    "awaken_skill": 237,
+    "remove_defeat": 238,
+    "register_object_effects": 240,
+    "unregister_object_effects": 241,
+    "counter": 242,
+    "close_time_point": 243,
+    "schedule_effect_on_time_point": 244,
+    "emit_time_point": 245,
+    "queue_optional_effect_for_players": 246,
+    "build_effect": 247,
+    "activate_effect": 248,
+    "cancel_pending_action": 249,
+    "edit_pending_action": 250,
+    "get_pending_action_value": 251,
+    "ask_player_option": 252,
+    "ask_player_number": 253,
+    "ask_players_secret_option": 254,
+    "release_true_name": 255,
+    "apply_card_keywords": 256,
+    "get_player_total_power": 257,
+    "hide_true_name": 258,
+    "create_buff": 260,
+    "create_base_number": 261,
+    "create_func": 262,
+    "clone_object": 263,
+    "create_card": 264,
+    "build_card": 265,
+    "location": 266,
+    "tag": 267,
+    "shuffle_array": 268,
+    "for_func": 270,
+    "foreach_func": 271,
+    "store_value": 272,
+    "while_func": 273,
+    "do_nothing": 274,
+    "edit_num_and_return": 276,
+    "calculate_number": 277,
+    "random_int": 278,
+    "random_float": 279,
+    "show_message": 280,
+    "show_cards": 281
+  },
+  "registry_handoff": "E:/scratch/regular-play-existing-ops/registry-writer-handoff.md",
+  "privacy_audit": {
+    "command": "python -B tools/release/role_privacy_audit.py",
+    "exit": 0,
+    "stdout": {
+      "status": "PRIVACY_PACKAGE_CONSUMER_WIRED_AUDIT_NOTRUN",
+      "fixture_case_count": 17,
+      "evidence": "tools\\release\\evidence\\role-privacy",
+      "godot_invoked": false,
+      "checks_removed": []
+    }
+  },
+  "limits": [
+    "No frontend modifications or window acceptance.",
+    "Rule projection includes player/card graph, array alias identity, complete facts, restrictions, time points and random state; not entire arbitrary active engine stack.",
+    "Guarded continuation and payment rollback tested in existing affected suites.",
+    "Call-site explicit preloads are interim only; registry file remains outside delegated write scope.",
+    "Frozen dependency suite results must not be applied to the newer drifted production dependency tree."
+  ]
+}

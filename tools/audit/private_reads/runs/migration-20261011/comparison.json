@@ -1,0 +1,1548 @@
+{
+  "commands": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python tools/audit/private_reads/scan_private_reads.py --root . --output tools/audit/private_reads/runs/migration-20261011/gd",
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "tools/audit/private_reads/runs/migration-20261011/gd.stdout.log",
+      "stderr": "tools/audit/private_reads/runs/migration-20261011/gd.stderr.log"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python tools/audit/private_reads/scan_embedded_reads.py --root . --core tools/audit/private_reads/runs/migration-20261011/gd/inventory.json --output tools/audit/private_reads/runs/migration-20261011/embedded",
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "tools/audit/private_reads/runs/migration-20261011/embedded.stdout.log",
+      "stderr": "tools/audit/private_reads/runs/migration-20261011/embedded.stderr.log"
+    }
+  ],
+  "outside_cwd_default_root_repeat": [
+    {
+      "label": "gd",
+      "exit_code": 0,
+      "default_root": true,
+      "cwd_outside_repository": true,
+      "arguments": [
+        "--output",
+        "tools/audit/private_reads/runs/repro-20261011/gd"
+      ]
+    },
+    {
+      "label": "embedded",
+      "exit_code": 0,
+      "default_root": true,
+      "cwd_outside_repository": true,
+      "arguments": [
+        "--core",
+        "tools/audit/private_reads/runs/repro-20261011/gd/inventory.json",
+        "--output",
+        "tools/audit/private_reads/runs/repro-20261011/embedded"
+      ]
+    }
+  ],
+  "negative_output_boundary_tests": [
+    {
+      "command": "python tools/audit/private_reads/scan_private_reads.py --root . --output docs/invalid-audit-output",
+      "exit_code": 1,
+      "expected": "outputs must be under tools/audit/private_reads/runs"
+    },
+    {
+      "command": "python tools/audit/private_reads/scan_embedded_reads.py --root . --core tools/audit/private_reads/baseline/audit/gd/inventory.json --output docs/invalid-audit-output",
+      "exit_code": 1,
+      "expected": "outputs must be under tools/audit/private_reads/runs"
+    }
+  ],
+  "original_vs_repository_rerun": [
+    {
+      "scope": "GD",
+      "metric": "active_categories.可立即替换",
+      "original": 11,
+      "rerun": 2,
+      "delta": -9,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "active_categories.应保留许可（不可等价）",
+      "original": 179,
+      "rerun": 181,
+      "delta": 2,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "active_categories.需要新增公开能力",
+      "original": 3684,
+      "rerun": 3750,
+      "delta": 66,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "active_observation_categories.可立即替换",
+      "original": 11,
+      "rerun": 2,
+      "delta": -9,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "active_observation_categories.应保留许可（不可等价）",
+      "original": 155,
+      "rerun": 157,
+      "delta": 2,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "active_observation_categories.需要新增公开能力",
+      "original": 3291,
+      "rerun": 3354,
+      "delta": 63,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "active_observation_read_total",
+      "original": 3457,
+      "rerun": 3513,
+      "delta": 56,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "active_state_read_total",
+      "original": 3874,
+      "rerun": 3933,
+      "delta": 59,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "by_scope.scratch诊断",
+      "original": 27,
+      "rerun": 26,
+      "delta": -1,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "by_scope.历史证据副本",
+      "original": 641,
+      "rerun": 641,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD",
+      "metric": "by_scope.现行测试诊断",
+      "original": 3847,
+      "rerun": 3907,
+      "delta": 60,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "categories.可立即替换",
+      "original": 11,
+      "rerun": 2,
+      "delta": -9,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "categories.应保留许可（不可等价）",
+      "original": 228,
+      "rerun": 230,
+      "delta": 2,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "categories.需要新增公开能力",
+      "original": 4276,
+      "rerun": 4342,
+      "delta": 66,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "diagnostic_files",
+      "original": 801,
+      "rerun": 811,
+      "delta": 10,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "excluded.owner自己访问",
+      "original": 2,
+      "rerun": 2,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD",
+      "metric": "excluded.私有方法调用排除",
+      "original": 2478,
+      "rerun": 2526,
+      "delta": 48,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "excluded.纯赋值排除",
+      "original": 1285,
+      "rerun": 1297,
+      "delta": 12,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "gate_owner_reads",
+      "original": 3,
+      "rerun": 3,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD",
+      "metric": "gd_files",
+      "original": 1797,
+      "rerun": 1808,
+      "delta": 11,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "historical_state_read_total",
+      "original": 641,
+      "rerun": 641,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD",
+      "metric": "lexical_candidates",
+      "original": 8791,
+      "rerun": 8920,
+      "delta": 129,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "mode_counts.反射读取",
+      "original": 39,
+      "rerun": 39,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD",
+      "metric": "mode_counts.容器下标读取",
+      "original": 247,
+      "rerun": 253,
+      "delta": 6,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "mode_counts.对象/容器读取后修改",
+      "original": 472,
+      "rerun": 474,
+      "delta": 2,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "mode_counts.读取",
+      "original": 3747,
+      "rerun": 3797,
+      "delta": 50,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "mode_counts.读改写",
+      "original": 10,
+      "rerun": 11,
+      "delta": 1,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "observation_categories.可立即替换",
+      "original": 11,
+      "rerun": 2,
+      "delta": -9,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "observation_categories.应保留许可（不可等价）",
+      "original": 204,
+      "rerun": 206,
+      "delta": 2,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "observation_categories.需要新增公开能力",
+      "original": 3818,
+      "rerun": 3881,
+      "delta": 63,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "observation_read_total",
+      "original": 4033,
+      "rerun": 4089,
+      "delta": 56,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "outside_gate_owner_reads",
+      "original": 4512,
+      "rerun": 4571,
+      "delta": 59,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "private_callable_references_separate",
+      "original": 74,
+      "rerun": 83,
+      "delta": 9,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "production_files",
+      "original": 423,
+      "rerun": 423,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD",
+      "metric": "resolution_counts.唯一生产符号（静态归属推断）",
+      "original": 122,
+      "rerun": 123,
+      "delta": 1,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "resolution_counts.声明/类型/资源路径",
+      "original": 3791,
+      "rerun": 3829,
+      "delta": 38,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "resolution_counts.成员组合静态推断",
+      "original": 602,
+      "rerun": 622,
+      "delta": 20,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "state_read_total",
+      "original": 4515,
+      "rerun": 4574,
+      "delta": 59,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "unresolved_by_scope.scratch诊断",
+      "original": 8,
+      "rerun": 8,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD",
+      "metric": "unresolved_by_scope.历史证据副本",
+      "original": 58,
+      "rerun": 58,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD",
+      "metric": "unresolved_by_scope.旧工作树",
+      "original": 14,
+      "rerun": 14,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD",
+      "metric": "unresolved_by_scope.现行测试诊断",
+      "original": 329,
+      "rerun": 330,
+      "delta": 1,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "unresolved_by_scope.第三方插件",
+      "original": 28,
+      "rerun": 28,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD",
+      "metric": "unresolved_candidates",
+      "original": 437,
+      "rerun": 438,
+      "delta": 1,
+      "equal": false
+    },
+    {
+      "scope": "GD",
+      "metric": "unresolved_with_production_declarations",
+      "original": 385,
+      "rerun": 386,
+      "delta": 1,
+      "equal": false
+    },
+    {
+      "scope": "Python embedded",
+      "metric": "categories.需要新增公开能力",
+      "original": 18,
+      "rerun": 18,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Python embedded",
+      "metric": "excluded.私有方法调用排除",
+      "original": 5,
+      "rerun": 5,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Python embedded",
+      "metric": "excluded.纯赋值排除",
+      "original": 1,
+      "rerun": 1,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Python embedded",
+      "metric": "observation_categories.需要新增公开能力",
+      "original": 15,
+      "rerun": 15,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Python embedded",
+      "metric": "observation_reads",
+      "original": 15,
+      "rerun": 15,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Python embedded",
+      "metric": "state_reads",
+      "original": 18,
+      "rerun": 18,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Python embedded",
+      "metric": "unresolved",
+      "original": 4,
+      "rerun": 4,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Combined",
+      "metric": "active_observation_categories.可立即替换",
+      "original": 11,
+      "rerun": 2,
+      "delta": -9,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "active_observation_categories.应保留许可（不可等价）",
+      "original": 155,
+      "rerun": 157,
+      "delta": 2,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "active_observation_categories.需要新增公开能力",
+      "original": 3306,
+      "rerun": 3369,
+      "delta": 63,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "active_observation_total",
+      "original": 3472,
+      "rerun": 3528,
+      "delta": 56,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "active_state_categories.可立即替换",
+      "original": 11,
+      "rerun": 2,
+      "delta": -9,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "active_state_categories.应保留许可（不可等价）",
+      "original": 179,
+      "rerun": 181,
+      "delta": 2,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "active_state_categories.需要新增公开能力",
+      "original": 3702,
+      "rerun": 3768,
+      "delta": 66,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "active_state_total",
+      "original": 3892,
+      "rerun": 3951,
+      "delta": 59,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "observation_categories.可立即替换",
+      "original": 11,
+      "rerun": 2,
+      "delta": -9,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "observation_categories.应保留许可（不可等价）",
+      "original": 204,
+      "rerun": 206,
+      "delta": 2,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "observation_categories.需要新增公开能力",
+      "original": 3833,
+      "rerun": 3896,
+      "delta": 63,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "observation_total",
+      "original": 4048,
+      "rerun": 4104,
+      "delta": 56,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "state_categories.可立即替换",
+      "original": 11,
+      "rerun": 2,
+      "delta": -9,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "state_categories.应保留许可（不可等价）",
+      "original": 228,
+      "rerun": 230,
+      "delta": 2,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "state_categories.需要新增公开能力",
+      "original": 4294,
+      "rerun": 4360,
+      "delta": 66,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "state_total",
+      "original": 4533,
+      "rerun": 4592,
+      "delta": 59,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "unresolved_total",
+      "original": 441,
+      "rerun": 442,
+      "delta": 1,
+      "equal": false
+    },
+    {
+      "scope": "Combined",
+      "metric": "unresolved_with_production",
+      "original": 389,
+      "rerun": 390,
+      "delta": 1,
+      "equal": false
+    }
+  ],
+  "first_vs_outside_cwd_repeat": [
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "active_categories.可立即替换",
+      "original": 2,
+      "rerun": 2,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "active_categories.应保留许可（不可等价）",
+      "original": 181,
+      "rerun": 181,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "active_categories.需要新增公开能力",
+      "original": 3750,
+      "rerun": 3756,
+      "delta": 6,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "active_observation_categories.可立即替换",
+      "original": 2,
+      "rerun": 2,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "active_observation_categories.应保留许可（不可等价）",
+      "original": 157,
+      "rerun": 157,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "active_observation_categories.需要新增公开能力",
+      "original": 3354,
+      "rerun": 3358,
+      "delta": 4,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "active_observation_read_total",
+      "original": 3513,
+      "rerun": 3517,
+      "delta": 4,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "active_state_read_total",
+      "original": 3933,
+      "rerun": 3939,
+      "delta": 6,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "by_scope.scratch诊断",
+      "original": 26,
+      "rerun": 26,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "by_scope.历史证据副本",
+      "original": 641,
+      "rerun": 641,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "by_scope.现行测试诊断",
+      "original": 3907,
+      "rerun": 3913,
+      "delta": 6,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "categories.可立即替换",
+      "original": 2,
+      "rerun": 2,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "categories.应保留许可（不可等价）",
+      "original": 230,
+      "rerun": 230,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "categories.需要新增公开能力",
+      "original": 4342,
+      "rerun": 4348,
+      "delta": 6,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "diagnostic_files",
+      "original": 811,
+      "rerun": 812,
+      "delta": 1,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "excluded.owner自己访问",
+      "original": 2,
+      "rerun": 2,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "excluded.私有方法调用排除",
+      "original": 2526,
+      "rerun": 2526,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "excluded.纯赋值排除",
+      "original": 1297,
+      "rerun": 1301,
+      "delta": 4,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "gate_owner_reads",
+      "original": 3,
+      "rerun": 3,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "gd_files",
+      "original": 1808,
+      "rerun": 1809,
+      "delta": 1,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "historical_state_read_total",
+      "original": 641,
+      "rerun": 641,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "lexical_candidates",
+      "original": 8920,
+      "rerun": 8930,
+      "delta": 10,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "mode_counts.反射读取",
+      "original": 39,
+      "rerun": 39,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "mode_counts.容器下标读取",
+      "original": 253,
+      "rerun": 253,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "mode_counts.对象/容器读取后修改",
+      "original": 474,
+      "rerun": 476,
+      "delta": 2,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "mode_counts.读取",
+      "original": 3797,
+      "rerun": 3801,
+      "delta": 4,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "mode_counts.读改写",
+      "original": 11,
+      "rerun": 11,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "observation_categories.可立即替换",
+      "original": 2,
+      "rerun": 2,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "observation_categories.应保留许可（不可等价）",
+      "original": 206,
+      "rerun": 206,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "observation_categories.需要新增公开能力",
+      "original": 3881,
+      "rerun": 3885,
+      "delta": 4,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "observation_read_total",
+      "original": 4089,
+      "rerun": 4093,
+      "delta": 4,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "outside_gate_owner_reads",
+      "original": 4571,
+      "rerun": 4577,
+      "delta": 6,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "private_callable_references_separate",
+      "original": 83,
+      "rerun": 83,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "production_files",
+      "original": 423,
+      "rerun": 423,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "resolution_counts.唯一生产符号（静态归属推断）",
+      "original": 123,
+      "rerun": 123,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "resolution_counts.声明/类型/资源路径",
+      "original": 3829,
+      "rerun": 3833,
+      "delta": 4,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "resolution_counts.成员组合静态推断",
+      "original": 622,
+      "rerun": 624,
+      "delta": 2,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "state_read_total",
+      "original": 4574,
+      "rerun": 4580,
+      "delta": 6,
+      "equal": false
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "unresolved_by_scope.scratch诊断",
+      "original": 8,
+      "rerun": 8,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "unresolved_by_scope.历史证据副本",
+      "original": 58,
+      "rerun": 58,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "unresolved_by_scope.旧工作树",
+      "original": 14,
+      "rerun": 14,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "unresolved_by_scope.现行测试诊断",
+      "original": 330,
+      "rerun": 330,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "unresolved_by_scope.第三方插件",
+      "original": 28,
+      "rerun": 28,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "unresolved_candidates",
+      "original": 438,
+      "rerun": 438,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "GD first vs outside-cwd repeat",
+      "metric": "unresolved_with_production_declarations",
+      "original": 386,
+      "rerun": 386,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "active_observation_categories.可立即替换",
+      "original": 2,
+      "rerun": 2,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "active_observation_categories.应保留许可（不可等价）",
+      "original": 157,
+      "rerun": 157,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "active_observation_categories.需要新增公开能力",
+      "original": 3369,
+      "rerun": 3373,
+      "delta": 4,
+      "equal": false
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "active_observation_total",
+      "original": 3528,
+      "rerun": 3532,
+      "delta": 4,
+      "equal": false
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "active_state_categories.可立即替换",
+      "original": 2,
+      "rerun": 2,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "active_state_categories.应保留许可（不可等价）",
+      "original": 181,
+      "rerun": 181,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "active_state_categories.需要新增公开能力",
+      "original": 3768,
+      "rerun": 3774,
+      "delta": 6,
+      "equal": false
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "active_state_total",
+      "original": 3951,
+      "rerun": 3957,
+      "delta": 6,
+      "equal": false
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "observation_categories.可立即替换",
+      "original": 2,
+      "rerun": 2,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "observation_categories.应保留许可（不可等价）",
+      "original": 206,
+      "rerun": 206,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "observation_categories.需要新增公开能力",
+      "original": 3896,
+      "rerun": 3900,
+      "delta": 4,
+      "equal": false
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "observation_total",
+      "original": 4104,
+      "rerun": 4108,
+      "delta": 4,
+      "equal": false
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "state_categories.可立即替换",
+      "original": 2,
+      "rerun": 2,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "state_categories.应保留许可（不可等价）",
+      "original": 230,
+      "rerun": 230,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "state_categories.需要新增公开能力",
+      "original": 4360,
+      "rerun": 4366,
+      "delta": 6,
+      "equal": false
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "state_total",
+      "original": 4592,
+      "rerun": 4598,
+      "delta": 6,
+      "equal": false
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "unresolved_total",
+      "original": 442,
+      "rerun": 442,
+      "delta": 0,
+      "equal": true
+    },
+    {
+      "scope": "Combined first vs outside-cwd repeat",
+      "metric": "unresolved_with_production",
+      "original": 390,
+      "rerun": 390,
+      "delta": 0,
+      "equal": true
+    }
+  ],
+  "original_combined": {
+    "observation_total": 4048,
+    "observation_categories": {
+      "需要新增公开能力": 3833,
+      "应保留许可（不可等价）": 204,
+      "可立即替换": 11
+    },
+    "active_observation_total": 3472,
+    "active_observation_categories": {
+      "需要新增公开能力": 3306,
+      "应保留许可（不可等价）": 155,
+      "可立即替换": 11
+    },
+    "state_total": 4533,
+    "state_categories": {
+      "需要新增公开能力": 4294,
+      "应保留许可（不可等价）": 228,
+      "可立即替换": 11
+    },
+    "active_state_total": 3892,
+    "active_state_categories": {
+      "需要新增公开能力": 3702,
+      "应保留许可（不可等价）": 179,
+      "可立即替换": 11
+    },
+    "unresolved_with_production": 389,
+    "unresolved_total": 441
+  },
+  "repository_rerun_combined": {
+    "observation_total": 4104,
+    "observation_categories": {
+      "需要新增公开能力": 3896,
+      "应保留许可（不可等价）": 206,
+      "可立即替换": 2
+    },
+    "active_observation_total": 3528,
+    "active_observation_categories": {
+      "需要新增公开能力": 3369,
+      "应保留许可（不可等价）": 157,
+      "可立即替换": 2
+    },
+    "state_total": 4592,
+    "state_categories": {
+      "需要新增公开能力": 4360,
+      "应保留许可（不可等价）": 230,
+      "可立即替换": 2
+    },
+    "active_state_total": 3951,
+    "active_state_categories": {
+      "需要新增公开能力": 3768,
+      "应保留许可（不可等价）": 181,
+      "可立即替换": 2
+    },
+    "unresolved_with_production": 390,
+    "unresolved_total": 442
+  },
+  "outside_cwd_repeat_combined": {
+    "observation_total": 4108,
+    "observation_categories": {
+      "需要新增公开能力": 3900,
+      "应保留许可（不可等价）": 206,
+      "可立即替换": 2
+    },
+    "active_observation_total": 3532,
+    "active_observation_categories": {
+      "需要新增公开能力": 3373,
+      "应保留许可（不可等价）": 157,
+      "可立即替换": 2
+    },
+    "state_total": 4598,
+    "state_categories": {
+      "需要新增公开能力": 4366,
+      "应保留许可（不可等价）": 230,
+      "可立即替换": 2
+    },
+    "active_state_total": 3957,
+    "active_state_categories": {
+      "需要新增公开能力": 3774,
+      "应保留许可（不可等价）": 181,
+      "可立即替换": 2
+    },
+    "unresolved_with_production": 390,
+    "unresolved_total": 442
+  },
+  "source_drift": {
+    "added_indexed_sources": [
+      "newtests/choice_submit_real_execution_test.gd",
+      "newtests/four_kind_real_execution_test.gd",
+      "newtests/host_close_save_guard_test.gd",
+      "newtests/magic_overdraft_declaration_test.gd",
+      "newtests/match_journal_test.gd",
+      "newtests/net_server_shutdown_failure_test.gd",
+      "newtests/net_shutdown_owned_worker.gd",
+      "newtests/replay_maintenance_cause_probe.gd",
+      "tests/d15_board_flip_wiring_test.gd",
+      "tools/release/fixtures/role-privacy/inventory-fixture/scripts/net/server/recovery_save_diagnostic.gd"
+    ],
+    "removed_indexed_sources": [],
+    "changed_indexed_sources": [
+      {
+        "path": "newtests/pending_announcements_projection_test.gd",
+        "old_sha256": "5cdb32ed37728354f4f407e1e08d04263f46624fc0ee66cb0979f36729c9c56c",
+        "new_sha256": "a1ac43ad33b0cf17f447689eb2d19671d554462a4a515211fcd8ecad2479044f"
+      },
+      {
+        "path": "newtests/play_affordance_rule_audit_test.gd",
+        "old_sha256": "32c27a860c02edb90aedf2af342e23ee3f876f625b08fc3441092774aec10302",
+        "new_sha256": "fa11eb29a52a29eed20a2761f5600fa7d9403ee19f56570892cfb8db1f88b404"
+      },
+      {
+        "path": "scratch/transaction-return-consumers/transaction_return_consumers_test.gd",
+        "old_sha256": "535c8b56dd43606ace9f5c13e7465aa9381812f40a074a92257fd906fb1cbad5",
+        "new_sha256": "59f6a72cd1512e17bf4177d96825e61cb6bbb25c20b7190f4f23fde2a03b7bb1"
+      },
+      {
+        "path": "scripts/game_scene/battle_board_v2.gd",
+        "old_sha256": "9f1cece2079691fae275fa7c588ef542142c06e85276e50739a9ec9f36ed0d2f",
+        "new_sha256": "1e183b3dda933944a45d7161053554e6477b4f25e0d436bc892c08d21ea620ee"
+      },
+      {
+        "path": "scripts/net/session/authority_host_client.gd",
+        "old_sha256": "74d79bf1ee5fc08a61555ad722a49aca9189e8c1760290604e787e7cfe00c746",
+        "new_sha256": "4a145ffa7f6960aa8b9e808fa3539686d4d23ab2cd366316a1684c1d67098d75"
+      },
+      {
+        "path": "scripts/net/session/lobby_session.gd",
+        "old_sha256": "7a192df75e82ca608c330f4a417b5d19b7e2203911b56d45c4a03994d1bc8cb1",
+        "new_sha256": "e07db399d36ac77d8f2458644b1fb75901882a5d39f89d7d6f8770ad16d5c5f3"
+      },
+      {
+        "path": "scripts/net/ui/v2_view_presenter.gd",
+        "old_sha256": "daa158678c2d7542c65ba4b4390955193186127986e59203fa05c4b735a6f2ca",
+        "new_sha256": "81285a188f225449e7bdac8f3f955a8a3c196d83c79152e0888afd98d94d55f6"
+      },
+      {
+        "path": "tests/battle_command_adapter_test.gd",
+        "old_sha256": "2f137a1a6a2c81e731d621849c53901f2da003fcb90af0281e63fea7f2367488",
+        "new_sha256": "fabcd02eb3f786b60cf8b4edf0a8748fb979d966479ccd3fa3d05a889cdaa25d"
+      },
+      {
+        "path": "tests/climax_gated_ability_test.gd",
+        "old_sha256": "638f827688cf28ffaa19910cc96ec8d87ce0d469e41cd596ba3d0a3e6706af62",
+        "new_sha256": "1bf260e3b0cbd96d8ecf667ec527c7ea5bc10f9a0e5c7a66105edcacab2b6360"
+      },
+      {
+        "path": "tests/match_finished_authority_test.gd",
+        "old_sha256": "a1ecfb78c144607a52deb77795d1285fd5967d924951fd6ea4325ac0138ffb06",
+        "new_sha256": "7e0de23a0ff0e9d2a119faab24b7d655d53e91a951858b7b4c7551c28dd8b5dd"
+      },
+      {
+        "path": "tests/refactor_net_area_diagnostic.gd",
+        "old_sha256": "a0964fdf276e12326bf63eddb9ea719943de0c5070b65e08d216f078837e0fd3",
+        "new_sha256": "e7eb3f96da06646e4920c51b5f6f25910e864bb55e4bbdb56f7cc9dc89ace557"
+      },
+      {
+        "path": "tests/resume_failure_atomic_test.gd",
+        "old_sha256": "c54732b2b6c86d70f2921140ffe8999102273838e0ce55e652f7c9cc8d48cf55",
+        "new_sha256": "a88232a21b92902218b24f8017be41a2108a090434dbde1c95644be57511fa94"
+      },
+      {
+        "path": "tests/servant_skill_eight_magic_test.gd",
+        "old_sha256": "8758eadfc12064ba6109a338f7005dc13ee91e35747f674c26d0ae13d1a3a861",
+        "new_sha256": "489814c473f58f66f1d8b3246c52b7d5cb05ebcdde0fc2a098e9ce55fe5b9a95"
+      }
+    ],
+    "changed_since_current_scan": []
+  },
+  "between_reruns_added_indexed_sources": [
+    "tests/magic_payment_contract_test.gd"
+  ],
+  "semantic_state_row_signature_delta": {
+    "keys": [
+      "path",
+      "receiver",
+      "member",
+      "owner",
+      "kind",
+      "syntax",
+      "mode",
+      "scope",
+      "category"
+    ],
+    "added": 68,
+    "removed": 9,
+    "added_by_path": {
+      "newtests/choice_submit_real_execution_test.gd": 4,
+      "newtests/four_kind_real_execution_test.gd": 11,
+      "newtests/host_close_save_guard_test.gd": 10,
+      "newtests/magic_overdraft_declaration_test.gd": 6,
+      "newtests/net_server_shutdown_failure_test.gd": 17,
+      "newtests/replay_maintenance_cause_probe.gd": 3,
+      "tests/d15_board_flip_wiring_test.gd": 15,
+      "tests/resume_failure_atomic_test.gd": 2
+    },
+    "removed_by_path": {
+      "newtests/play_affordance_rule_audit_test.gd": 1,
+      "scratch/transaction-return-consumers/transaction_return_consumers_test.gd": 1,
+      "tests/climax_gated_ability_test.gd": 1,
+      "tests/match_finished_authority_test.gd": 4,
+      "tests/refactor_net_area_diagnostic.gd": 1,
+      "tests/servant_skill_eight_magic_test.gd": 1
+    }
+  },
+  "semantic_observation_row_signature_delta": {
+    "added": 65,
+    "removed": 9,
+    "added_by_path": {
+      "newtests/choice_submit_real_execution_test.gd": 4,
+      "newtests/four_kind_real_execution_test.gd": 11,
+      "newtests/host_close_save_guard_test.gd": 10,
+      "newtests/magic_overdraft_declaration_test.gd": 4,
+      "newtests/net_server_shutdown_failure_test.gd": 17,
+      "newtests/replay_maintenance_cause_probe.gd": 2,
+      "tests/d15_board_flip_wiring_test.gd": 15,
+      "tests/resume_failure_atomic_test.gd": 2
+    }
+  },
+  "gate_sha256": {
+    "original_audit": "a8271e946890cbc1a58dcdf54b75ecc8078542be55c838df33d093f284d2be05",
+    "original_replacement": "5dabf762ded90d5e0a6151ba1a50468c14f9029c3f2478ef996c9f6fb6bcf0be",
+    "migration_start": "5dabf762ded90d5e0a6151ba1a50468c14f9029c3f2478ef996c9f6fb6bcf0be",
+    "first_run": "5dabf762ded90d5e0a6151ba1a50468c14f9029c3f2478ef996c9f6fb6bcf0be",
+    "second_run": "5dabf762ded90d5e0a6151ba1a50468c14f9029c3f2478ef996c9f6fb6bcf0be",
+    "readback": "5dabf762ded90d5e0a6151ba1a50468c14f9029c3f2478ef996c9f6fb6bcf0be"
+  },
+  "checks": {
+    "baseline_evidence_byte_identical": true,
+    "analysis_ast_identical": true,
+    "helper_functions_ast_identical_count": 15,
+    "exclusion_rules_changed": false,
+    "embedded_templates_unchanged": true,
+    "embedded_source_sha256_unchanged": true,
+    "replacement_consumers_match_receipt": true,
+    "gate_owner_sites_in_original_11": 0,
+    "between_run_content_equal": false,
+    "between_run_embedded_content_equal": true
+  },
+  "copied_original_assets": [
+    {
+      "path": "tools/audit/private_reads/scan_private_reads.py",
+      "sha256": "b5373b5d08947dbf5c0f2cde2262b3a6cf1e178b9cbaca5a104bc2561c1c090b",
+      "source_asset": "scan_private_reads.py",
+      "source_group": "audit"
+    },
+    {
+      "path": "tools/audit/private_reads/scan_embedded_reads.py",
+      "sha256": "a822aa917878d5fc29d65b8cf8a90431ca6d7a0d05d14e9927895097577c6605",
+      "source_asset": "scan_embedded_reads.py",
+      "source_group": "audit"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/audit/SUMMARY.md",
+      "sha256": "ac6d2c435612753d876e7a3cd84c000422a6d924ed074c069210c1390a446c61",
+      "source_asset": "SUMMARY.md",
+      "source_group": "audit"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/audit/gd/report.md",
+      "sha256": "25bdcd1c2fe8d26146acd54761817fbef01a8ffc406e9e001d18115c5f48a819",
+      "source_asset": "latest/report.md",
+      "source_group": "audit"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/audit/gd/inventory.json",
+      "sha256": "5bbdcfbeb48a390e02351ceccb444042353d96c12d78366a6e192959d2d09162",
+      "source_asset": "latest/inventory.json",
+      "source_group": "audit"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/audit/embedded/report.md",
+      "sha256": "342dae894b4da3cd8bc4df0f97900db98299a27067d77f0dcfe817bce0fda867",
+      "source_asset": "embedded-latest/report.md",
+      "source_group": "audit"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/audit/embedded/inventory.json",
+      "sha256": "109b2a481e983d970d4d9f382304b94c9dc241b0bd130d99f1b34da55e02a999",
+      "source_asset": "embedded-latest/inventory.json",
+      "source_group": "audit"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/REPORT.md",
+      "sha256": "d673034e76ac780d3cf16cfd6ea6e66a7ce5ee4c2a1feee3c00940251b837c20",
+      "source_asset": "REPORT.md",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/receipt.json",
+      "sha256": "074438dc9593f4d191076e9f155bdb6eb3ff97b0ac1d22884e0943d0661ea8b7",
+      "source_asset": "receipt.json",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/before.json",
+      "sha256": "9317afe9f7462d24d2af1bc9776ef668276ecf951cf611bf8f073cafc51c7cc5",
+      "source_asset": "before.json",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/changes.json",
+      "sha256": "ea8dea2e06e0619dccf37036afb4efe497e0ddfc4ef20cb1af29b4842ab07fb6",
+      "source_asset": "changes.json",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/migration.patch",
+      "sha256": "9f79aa7f7ead273604576e4be706c453f607d838dcd5bf95db452635e2918e00",
+      "source_asset": "migration.patch",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/manifest.json",
+      "sha256": "2acb673500068acffed2defb786314a7b67d7cbbf129fa05f337dbcfcd7a88e5",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/manifest.json",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/authority_revision_query_test.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/authority_revision_query_test.stderr.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/authority_revision_query_test.stdout.log",
+      "sha256": "e72847f6635969b9aa01b9b47d95566db5b7779ef0ea73b9948e2fbca77f62db",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/authority_revision_query_test.stdout.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/climax_gated_ability_test.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/climax_gated_ability_test.stderr.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/climax_gated_ability_test.stdout.log",
+      "sha256": "b38d066294731dea5981d3a8a544a0da6ea2dc08af10a56d20b3156cc35f0a51",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/climax_gated_ability_test.stdout.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/import.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/import.stderr.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/import.stdout.log",
+      "sha256": "b86b6e2288e8df539d88acc1cb4665eab49fe1cf450b6a1212b2795248c8b5e4",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/import.stdout.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/match_finished_authority_test.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/match_finished_authority_test.stderr.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/match_finished_authority_test.stdout.log",
+      "sha256": "8560a4d5a2e4490bfad3d45292240feb14387a09a5d0997cc208f57731ef75b2",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/match_finished_authority_test.stdout.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/play_affordance_rule_audit_test.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/play_affordance_rule_audit_test.stderr.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/play_affordance_rule_audit_test.stdout.log",
+      "sha256": "503bd431b06dcb507cf13afc55b0ce2a96d87852abef0474f17ea080ab792fc9",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/play_affordance_rule_audit_test.stdout.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/refactor_net_area_diagnostic.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/refactor_net_area_diagnostic.stderr.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/refactor_net_area_diagnostic.stdout.log",
+      "sha256": "e99390d951d5b6a54b00314dcc069074f741159087ffff050c5191f995ee8093",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/refactor_net_area_diagnostic.stdout.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/servant_skill_eight_magic_test.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/servant_skill_eight_magic_test.stderr.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/servant_skill_eight_magic_test.stdout.log",
+      "sha256": "807d665f375b5197128009ceef1a917563a0a29684ebd3996f513264f08b9f45",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/servant_skill_eight_magic_test.stdout.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/transaction_return_consumers_test.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/transaction_return_consumers_test.stderr.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/transaction_return_consumers_test.stdout.log",
+      "sha256": "33de4e40caecc88a55588f307d8ca804b83fe12240d982533ddc828025bac3dd",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/transaction_return_consumers_test.stdout.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/user-probe.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/user-probe.stderr.log",
+      "source_group": "replacement"
+    },
+    {
+      "path": "tools/audit/private_reads/baseline/replacement/execution/evidence/user-probe.stdout.log",
+      "sha256": "299261fb68c829c47720349a7783ae09e6c6d22d8d802ea1729c62d7e6f1c6e8",
+      "source_asset": "selected-082e42f9c79b4ce0b772276292acb817/evidence/user-probe.stdout.log",
+      "source_group": "replacement"
+    }
+  ],
+  "scope": "Static lexical snapshots, not a frozen whole-tree/exhaustive runtime proof. No Godot launched. No production/frontend/gate/allowlist/test assertions edited in this migration."
+}

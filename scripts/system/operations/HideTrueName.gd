@@ -8,15 +8,20 @@ extends RefCounted
 #而"解放"和"隐藏"各自还有不同的展示范围与时点。
 #要盖回去哪些区域由 hidden_areas 传入，默认与解放时展示的区域一致。
 #返回是否真的发生了隐藏（本来就没解放时返回false）
-func exec(player_id:int = -1, hidden_areas:Array = ["servant_skills", "master_skills", "master._specials.SKILLS", "side.skills"]) -> bool:
+const DEFAULT_HIDDEN_AREAS:Array = ["servant_skills", "master_skills", "master._specials.SKILLS", "side.skills"]
 
-	var id = EffectManager.resolve_player_id(player_id)
+func exec(player_id:int = -1, hidden_areas:Array = DEFAULT_HIDDEN_AREAS, context:Variant = null) -> bool:
+	#缺省只继承已验证函数帧；隐藏与解放各自保存原来源，不合并业务。
+	context = RegisterObjectEffects.captured_context(context)
+	var resolved:Dictionary = RegisterObjectEffects.resolved_player_id(player_id, context)
+	if not resolved.ok:
+		return false
+	var id:int = resolved.id
 	if !GameData.player_data_library.has(id):
 		return false
 	if !ReleaseTrueName.is_released(id):
 		return false
 	var player_data = GameDataManager.get_player_data(id) as Dictionary
-	var hidden_count:int = 0
 	var seen:Array = []
 	for area_key in hidden_areas:
 		var cards = player_data
@@ -30,10 +35,38 @@ func exec(player_id:int = -1, hidden_areas:Array = ["servant_skills", "master_sk
 			if card is BaseSkill and not seen.has(card):
 				seen.append(card)
 	for card in seen:
+		if not card._is_concealed and not SetCardConcealed.source_is_current(card, context):
+			return false
+	var state:Dictionary = {"id": id, "cards": seen, "index": 0, "hidden_count": 0,
+		"context": context, "member": player_data, "phase": "hide"}
+	_resume_hide(state)
+	#与解放一致，待续不冒称最终完成；同步拒绝仍沿原 bool 返回 false。
+	return state.phase != "rejected"
+
+
+#不重新搜区域；重复/迟到续行不能再翻牌或发成功事实。
+static func _resume_hide(state:Dictionary) -> void:
+	if state.phase != "hide":
+		return
+	var id:int = state.id
+	while state.index < state.cards.size():
+		if not ReleaseTrueName._source_member_is_current(state):
+			state.phase = "rejected"
+			return
+		var card = state.cards[state.index]
+		state.index += 1
 		if not card._is_concealed:
-			SetCardConcealed.new().exec(card, true, id)
-			hidden_count += 1
+			var hidden = preload("res://scripts/system/operation_router.gd").exec_registered("set_card_concealed", [card, true, id, state.context], state.context)
+			if typeof(hidden) != TYPE_BOOL or not hidden:
+				state.phase = "rejected"
+				return
+			state.hidden_count += 1
+			if EffectManager.defer_until_runtime_guard_complete(Callable(HideTrueName, "_resume_hide").bind(state), state.context):
+				return
+	if not ReleaseTrueName._source_member_is_current(state):
+		state.phase = "rejected"
+		return
+	state.phase = "done"
 	GameLog.record("true_name_hidden", id, -1, "", null, [TimePoints.TRUE_NAME_HIDDEN],
-		{"hidden_count": hidden_count})
-	TimePointChecker.dynamic_time_point([TimePoints.TRUE_NAME_HIDDEN], id)
-	return true
+		{"hidden_count": state.hidden_count})
+	TimePointChecker.dynamic_time_point([TimePoints.TRUE_NAME_HIDDEN], id, null, state.context)

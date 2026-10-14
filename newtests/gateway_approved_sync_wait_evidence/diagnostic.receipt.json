@@ -1,0 +1,98 @@
+{
+  "mode": "diagnostic",
+  "command": [
+    "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+    "--headless",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\scratch\\gateway-approved-triage\\diagnostic\\project",
+    "--scene",
+    "res://tests/net_server_gateway_restart_test.tscn",
+    "--",
+    "E:/scratch/gateway-approved-triage/diagnostic/fixture"
+  ],
+  "exit": 1,
+  "analysis": {
+    "passed": false,
+    "reasons": [
+      "nonzero_exit",
+      "result_failures",
+      "check_false",
+      "check_false",
+      "check_false",
+      "check_false",
+      "check_false"
+    ],
+    "result": {
+      "checks": 46,
+      "failures": [
+        "恢复失败后立即停止，不进入后续长时间镜像等待",
+        "中局恢复失败后立即短路，不级联等待至测试预算耗尽",
+        "保存回执及原生EXITED确认后释放；失败不强杀：{ \"ok\": true, \"result\": { \"stage\": \"failed\", \"failures\": { \"e112e0cf6048b31772a3458aeafef266\": \"房间不存在或未就绪\" }, \"pending_rooms\": [], \"stopped\": false } }",
+        "正常或失败结束均释放全部房间登记及进程所有权",
+        "清理后公开实例查询不再报告工作进程存活"
+      ]
+    }
+  },
+  "job_records": [
+    {
+      "label": "scene",
+      "command": [
+        "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\gateway-approved-triage\\diagnostic\\project",
+        "--scene",
+        "res://tests/net_server_gateway_restart_test.tscn",
+        "--",
+        "E:/scratch/gateway-approved-triage/diagnostic/fixture"
+      ],
+      "exited": true,
+      "pid": 35848,
+      "exit_code": 1,
+      "budget_failure": null,
+      "duration_seconds": 90.698,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    }
+  ],
+  "fixture_original_sha256": "ab91d362dbc7588bc2c8fc5e3df796b02e2d7718bb79bd4b05a2a9a11b854e7d",
+  "fixture_observer_sha256": "34f3f6eb907e816b5c228bb4f86a370045d8f7755c0e284a9211285a84be9655",
+  "observations": [
+    {
+      "active_hash_present": false,
+      "active_index": 204,
+      "bytes": 95949242,
+      "client": 0,
+      "complete": true,
+      "completed_files": 204,
+      "connected": true,
+      "deadline_reached": false,
+      "files": 204,
+      "no_progress_msec": 2467,
+      "pending_offset": -1,
+      "running": false,
+      "session_error": "",
+      "sync_error": ""
+    },
+    {
+      "active_hash_present": false,
+      "active_index": 204,
+      "bytes": 95949242,
+      "client": 1,
+      "complete": true,
+      "completed_files": 204,
+      "connected": true,
+      "deadline_reached": false,
+      "files": 204,
+      "no_progress_msec": 50817,
+      "pending_offset": -1,
+      "running": false,
+      "session_error": "",
+      "sync_error": ""
+    }
+  ]
+}

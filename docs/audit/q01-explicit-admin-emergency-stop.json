@@ -1,0 +1,167 @@
+{
+  "files": [
+    {
+      "path": "scripts/net/server/server_console_channel.gd",
+      "sha256": "18a3926a755a5cdc0e48a32c168bce7b8c03a9b90fbe81fa5946a7412fee4116"
+    },
+    {
+      "path": "scripts/net/server/server_room_manager.gd",
+      "sha256": "86fd5726bcdca4ecbcf8ac7577fdc90200afa3c30c770c0a37d815cdf52a18fd"
+    },
+    {
+      "path": "newtests/net_emergency_stop_test.gd",
+      "sha256": "c6f87e4a8ef7e121a4d81d2945c65d7a100ad84e941bca5855b6c8223911fe05"
+    },
+    {
+      "path": "newtests/net_emergency_stop_test.tscn",
+      "sha256": "6a71336e379157a18664736a2b6c59ac601e82114c2a5aac862201aba4aaf6d8"
+    },
+    {
+      "path": "newtests/run_emergency_stop.py",
+      "sha256": "9db79acd2c45979f64d240e93efafa1a4648c018f205e64cacb3eeeab64dc0af"
+    }
+  ],
+  "tested_source_matches": true,
+  "manifest": {
+    "run_id": "9d8000ac21e54ec697680ca0cdcc88a3",
+    "root": "E:\\scratch\\emergency-stop-b348d0a03a6a46ba838f241dddb3639f",
+    "generated": "E:\\scratch\\emergency-stop-b348d0a03a6a46ba838f241dddb3639f\\isolated-9d8000ac21e54ec697680ca0cdcc88a3\\generated",
+    "project": "E:\\scratch\\emergency-stop-b348d0a03a6a46ba838f241dddb3639f\\generated\\snapshot",
+    "scene": "res://newtests/net_emergency_stop_test.tscn",
+    "godot": "E:\\scratch\\adapter-lifecycle-contract-20261010-r2\\generated\\Godot.exe",
+    "budgets": {
+      "seconds": 600.0,
+      "bytes": 2147483648,
+      "min_free": 1073741824
+    },
+    "freeze": false,
+    "processes": [
+      {
+        "label": "probe",
+        "command": [
+          "E:\\scratch\\adapter-lifecycle-contract-20261010-r2\\generated\\Godot.exe",
+          "--fixed-fps",
+          "60",
+          "--headless",
+          "--path",
+          "E:\\scratch\\emergency-stop-b348d0a03a6a46ba838f241dddb3639f\\isolated-9d8000ac21e54ec697680ca0cdcc88a3\\generated\\probe",
+          "--script",
+          "res://probe.gd",
+          "--",
+          "9d8000ac21e54ec697680ca0cdcc88a3",
+          "main",
+          "E:\\scratch\\emergency-stop-b348d0a03a6a46ba838f241dddb3639f\\isolated-9d8000ac21e54ec697680ca0cdcc88a3\\generated"
+        ],
+        "exited": true,
+        "pid": 34500,
+        "exit_code": 0,
+        "budget_failure": null,
+        "duration_seconds": 1.001,
+        "active_owned_processes": 0,
+        "log_handles_released": true
+      },
+      {
+        "label": "scene",
+        "command": [
+          "E:\\scratch\\adapter-lifecycle-contract-20261010-r2\\generated\\Godot.exe",
+          "--headless",
+          "--fixed-fps",
+          "60",
+          "--path",
+          "E:\\scratch\\emergency-stop-b348d0a03a6a46ba838f241dddb3639f\\generated\\snapshot",
+          "--scene",
+          "res://newtests/net_emergency_stop_test.tscn"
+        ],
+        "exited": true,
+        "pid": 35280,
+        "exit_code": 0,
+        "budget_failure": null,
+        "duration_seconds": 20.354,
+        "active_owned_processes": 0,
+        "log_handles_released": true
+      }
+    ],
+    "passed": true,
+    "cleanup": "generated_removed",
+    "source_files": [],
+    "user_probes": [
+      {
+        "path": "E:/scratch/emergency-stop-b348d0a03a6a46ba838f241dddb3639f/isolated-9d8000ac21e54ec697680ca0cdcc88a3/generated/appdata/FateDomination",
+        "pid": 34500,
+        "role": "main",
+        "token": "9d8000ac21e54ec697680ca0cdcc88a3",
+        "worker_pool_max_threads": 20,
+        "physical_path": "E:\\scratch\\emergency-stop-b348d0a03a6a46ba838f241dddb3639f\\isolated-9d8000ac21e54ec697680ca0cdcc88a3\\generated\\appdata\\FateDomination",
+        "probe_sha256": "08ebda9f76b284f295ec49159fc7ccaba94bb345c37ee7ebb4c12e61e257c906",
+        "receipt_sha256": "76179e464581855526a95a7a7241500680bb4dadb6d5067f3656f7518c88188b"
+      },
+      {
+        "path": "E:/scratch/emergency-stop-b348d0a03a6a46ba838f241dddb3639f/isolated-9d8000ac21e54ec697680ca0cdcc88a3/generated/appdata/FateDomination",
+        "pid": 37744,
+        "role": "worker",
+        "token": "9d8000ac21e54ec697680ca0cdcc88a3",
+        "worker_pool_max_threads": 20,
+        "physical_path": "E:\\scratch\\emergency-stop-b348d0a03a6a46ba838f241dddb3639f\\isolated-9d8000ac21e54ec697680ca0cdcc88a3\\generated\\appdata\\FateDomination",
+        "probe_sha256": "08ebda9f76b284f295ec49159fc7ccaba94bb345c37ee7ebb4c12e61e257c906",
+        "receipt_sha256": "88d90494b865904fd8cede8a0cbad145557e61685fd8b9a3130a111000a6a361"
+      }
+    ],
+    "probe_config_sha256": "f166fbdb2d33218cf6ff5513f74e16cbeca581ad77b7027e61957a72c6a97ad2",
+    "analysis": {
+      "passed": true,
+      "reasons": [],
+      "result": {
+        "checks": 48,
+        "failures": []
+      }
+    },
+    "logs": [
+      {
+        "path": "probe.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "probe.stdout.log",
+        "bytes": 797,
+        "sha256": "d2531a30980a7af553e5db7b2009cc646a01d231c23449af05e207c7f4d4841e"
+      },
+      {
+        "path": "scene.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "scene.stdout.log",
+        "bytes": 4880,
+        "sha256": "a2f22e727fe1d91f32cb33fda837e536b7cd38fa1ec36a79498c72ccd3d98aa2"
+      }
+    ]
+  },
+  "import_processes": [
+    {
+      "label": "import",
+      "command": [
+        "E:\\scratch\\adapter-lifecycle-contract-20261010-r2\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--editor",
+        "--import",
+        "--path",
+        "E:\\scratch\\emergency-stop-b348d0a03a6a46ba838f241dddb3639f\\generated\\snapshot"
+      ],
+      "exited": true,
+      "pid": 29712,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 55.169,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    }
+  ],
+  "child_log_check": {
+    "error_logs": []
+  },
+  "error_logs": []
+}

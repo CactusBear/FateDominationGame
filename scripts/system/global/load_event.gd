@@ -30,7 +30,7 @@ static func _load_dir(dir_path:String) -> void:
 		file_name = dir.get_next()
 
 
-static func load_event_file(dir_path:String, file_name:String) -> BaseEvent:
+static func load_event_file(dir_path:String, file_name:String, source_context:Variant = null) -> BaseEvent:
 	var file := FileAccess.open(dir_path + "/" + file_name, FileAccess.READ)
 	if file == null:
 		return null
@@ -38,19 +38,26 @@ static func load_event_file(dir_path:String, file_name:String) -> BaseEvent:
 	file.close()
 	if !(parsed is Dictionary):
 		return null
-	return build_event(parsed, dir_path)
+	return build_event(parsed, dir_path, source_context)
 
 
 #按一份事件牌数据建牌，图片相对 dir_path。读文件与效果里自定义生成的牌共用这一份
-static func build_event(data:Dictionary, dir_path:String) -> BaseEvent:
+static func build_event(data:Dictionary, dir_path:String, source_context:Variant = null) -> BaseEvent:
+	var source:Dictionary = LoadHelper.validate_source_context(source_context)
+	if not source.ok:
+		return null
 	var event := BaseEvent.new(
 		data["card_name"],
 		dir_path + "/" + data["card_img"],
-		LoadHelper.load_number(data["score"])
+		LoadHelper.load_number(data["score"]),
+		[],
+		source.context == null
 	)
 	event._shown_name = data.get("shown_name", "")
 	event._zoom_kind = LoadHelper.resolve_zoom_kind(data, "card_img")
-	event._effects = LoadHelper.load_effects(data.get("effects", []), event)
+	event._effects = LoadHelper.load_effects(data.get("effects", []), event, source_context)
 	event._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), dir_path, "event")
 	LoadHelper.load_object_extras(event, data)
+	if not LoadHelper.finalize_loaded_card(event, source_context):
+		return null
 	return event

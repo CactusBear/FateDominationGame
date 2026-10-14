@@ -102,10 +102,10 @@ func _clear_choices() -> void:
 		choices.remove_child(child)
 		child.queue_free()
 
-func begin_selection() -> void:
+func begin_selection() -> bool:
 	_refresh_roster()
 	if begin_button.disabled or mode_picker.selected < 0:
-		return
+		return false
 	var config: Dictionary = modes[mode_picker.selected]
 	session = load(str(config.script)).new()
 	var ids: Array = []
@@ -119,10 +119,15 @@ func begin_selection() -> void:
 	if not session.setup(ids, GameStart.get_masters_can_use(), GameStart.get_servants_can_use(), config):
 		status.text = session.error
 		session = null
-		return
+		return false
+	# 合法本地 setup 后、任何选主前声明；复用可信启动边界，不在抽取口补种子。
+	if not GameStart.declare_local_random_stream():
+		session = null
+		return false
 	_next_player = 0
 	enter_button.disabled = true
 	_show_choices()
+	return true
 
 func _show_choices() -> void:
 	_clear_choices()

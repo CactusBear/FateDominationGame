@@ -1,14 +1,18 @@
 extends BaseCard
 class_name BaseHandCard
 
-func clone_data(context):
+func clone_data(context:CloneContext):
+	if not context.is_copying():
+		return context.copy(self)
+	if context.prepare_card(self) == null:
+		return null
 	var cloned = BaseHandCard.new()
 	copy_clone_fields(cloned, context)
 	cloned._cost = context.copy(_cost)
 	cloned._power = context.copy(_power)
 	cloned.numbers = [cloned._cost, cloned._power]
-	cloned.add_object()
-	return cloned
+
+	return context.finish_card(self, cloned)
 
 func copy_clone_fields(cloned, context) -> void:
 	super.copy_clone_fields(cloned, context)

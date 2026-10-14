@@ -1,4 +1,9 @@
 extends Node
+# 本局原来源取自 reset_runtime 回执；夹具对 operation 显式传入，不从全局补票。
+var ctx: SessionContext = null
+func _reset_ctx() -> SessionContext:
+	var reset: Dictionary = EffectManager.reset_runtime()
+	return reset.get("context") if reset.get("ok", false) else null
 #地利修正的回归测试。
 #用户现象："远隔操作的地利翻倍没有结算"。
 #机制：效果链用 edit_location_benefit 改席位的 _benefit，而地利查询原先只读
@@ -12,7 +17,7 @@ func check(ok:bool,label:String):
 	if not ok: failures.append(label)
 	print("CHECK ",label," ",ok)
 func setup() -> void:
-	EffectManager.reset_runtime(); GameLog.reset(); GameLog.set_context(1,"action")
+	ctx = _reset_ctx(); GameLog.reset(); GameLog.set_context(1,"action")
 	GameData.player_data_library.clear()
 	for i in range(3):
 		GameData.player_data_library[i]=GameData.new_player_data()
@@ -28,7 +33,7 @@ func run():
 	check(printed > 0,"the seat has printed terrain benefit")
 
 	#部署到地利位：拿到印刷地利
-	Deploy.new().exec(loc, 0)
+	Deploy.new().exec(loc, 0, false, ctx)
 	check(GetLocation.new().exec(0) == loc,"deployed onto the terrain seat")
 	check(GetEffectiveLocationBenefit.new().exec(0) == printed,"printed benefit counts after deploy")
 
@@ -58,14 +63,14 @@ func run():
 	#反例一：没有部署、只是移动过去的玩家不享有地利（修正也不该让他拿到）
 	setup()
 	EditLocationBenefit.new().exec(loc, BaseNumber.new(printed * 2))
-	SetLocation.new().exec(loc, 1, false)
+	SetLocation.new().exec(loc, 1, false, false, true, ctx)
 	check(GetLocation.new().exec(1) == loc,"player placed without deploying")
 	check(GetEffectiveLocationBenefit.new().exec(1) == 0,"arriving without deploy grants no benefit even when doubled")
 	RestoreLocationBenefits.new().exec()
 
 	#反例二：战区声明不提供地利时，倍率也无效
 	setup()
-	Deploy.new().exec(loc, 0)
+	Deploy.new().exec(loc, 0, false, ctx)
 	EditLocationBenefit.new().exec(loc, BaseNumber.new(printed * 2))
 	var blocker := NoLocationBenefitEffect.new()
 	#BaseBuff 的构造只收 名字 + 图；层数/效果/激活状态是构造后再设的字段

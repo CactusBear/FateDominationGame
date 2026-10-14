@@ -1,5 +1,7 @@
 extends Node
 
+const DeploymentValidation = preload("res://scripts/net/server/server_deployment_validation.gd")
+
 var _system_signals
 
 # 配置角色通过检查之后才构造游戏网关；relay-only 不进入游戏组件链。
@@ -30,9 +32,12 @@ func _ready() -> void:
 	if not configuration is Dictionary:
 		_fail("服务端配置无效，CFG 只接受 server、data 与 relay 段")
 		return
-	var configuration_error:String = preload("res://scripts/net/server/server_bootstrap.gd").configuration_error(configuration)
+	var configuration_error:String = deployment_configuration_error(configuration)
 	if not configuration_error.is_empty():
 		_fail(configuration_error)
+		return
+	if not console.configure_cleanup_schedule(configuration.get("temporary_cleanup",{})):
+		_fail("temporary_cleanup 本机配置或台账不可用；未启用清理")
 		return
 	for key in ["port", "max_rooms", "max_clients", "internal_port_base", "internal_port_count"]:
 		if configuration.has(key):
@@ -69,11 +74,23 @@ func _ready() -> void:
 	if var_to_bytes({"kind":"server_rooms","rooms":[],"server_name":gateway.server_name,"motd":gateway.motd}).size() > gateway.transport.max_packet_bytes:
 		_fail("服务器信息超过单消息预算")
 		return
+	if not gateway.manager.configure_room_runtime(configuration.get("room_runtime",{})):
+		_fail(gateway.manager.error)
+		return
+	if not configure_deployment_heartbeat(configuration.get("heartbeat_publication",{})):
+		_fail("heartbeat_publication 必须显式声明合法的正整数毫秒预算")
+		return
 	gateway.manager.data_settings = data.duplicate(true)
+	if not gateway.manager.configure_deployment_broadcast_confirmation(configuration.get("broadcast_confirmation_capable",false)):
+		_fail("broadcast_confirmation_capable 必须是本机显式布尔声明")
+		return
 	if not configuration.get("relay",{}) is Dictionary or not signaling.configure(configuration.get("relay",{})):
 		_fail("信令配置无效：" + signaling.error)
 		return
 	if roles.has("game"): gateway.manager.storage_root = configuration.storage_root
+	if not configure_deployment_data_root(configuration.data_root):
+		_fail("服务端本机批准数据目录无效或包含链接")
+		return
 	if not configuration.get("record_matches", true) is bool:
 		_fail("record_matches 必须是显式布尔开关")
 		return
@@ -120,7 +137,7 @@ func _ready() -> void:
 			_fail("身份登记库读取失败："+gateway.identity_registry.error)
 			return
 	gateway.manager.identity_binding_required = roles.has("game") and not configuration.get("identity_registry","").is_empty()
-	if roles.has("game") and gateway.listen(int(configuration.port), configuration.get("bind_address", "*"), LoadHelper.resolve_path(configuration.data_root)) != OK:
+	if roles.has("game") and gateway.listen(int(configuration.port), configuration.get("bind_address", "*"), gateway.manager.approved_data_root) != OK:
 		_fail("服务端外部入口监听失败")
 		return
 	if roles.has("relay"):
@@ -211,6 +228,28 @@ func _reload_configuration(_args:PackedStringArray) -> Dictionary:
 	_configuration_snapshot = candidate.duplicate(true)
 	return {"ok":true,"result":"名称、公告和信令配置已重载；当前对局数据未改变"}
 
+## 只接受管理员本次部署声明；历史房间配置和公开 settings 不参与授权。
+static func deployment_configuration_error(configuration:Dictionary) -> String:
+	return DeploymentValidation.configuration_error(configuration)
+
+## 只接受本机声明；实例集合和互斥证明不能由配置伪造。
+static func deployment_cleanup_config(value:Variant) -> Variant:
+	return DeploymentValidation.cleanup_config(value)
+
+static func deployment_heartbeat_config(value:Variant) -> Variant:
+	return DeploymentValidation.heartbeat_config(value)
+
+func configure_deployment_heartbeat(value:Variant) -> bool:
+	var config = deployment_heartbeat_config(value)
+	return gateway != null and config is Dictionary and gateway.manager.configure_heartbeat_publication(config)
+
+func configure_deployment_data_root(path:String) -> bool:
+	var paths = preload("res://scripts/net/server/recovery_path_safety.gd")
+	var root:String = paths.absolute(path)
+	if root.is_empty() or not paths.checked(root, root): return false
+	gateway.manager.approved_data_root = root
+	return true
+
 static func configured_roles(configuration:Dictionary) -> Array:
 	return preload("res://scripts/net/server/server_bootstrap.gd").configured_roles(configuration)
 
@@ -245,6 +284,10 @@ func _process(_delta: float) -> void:
 	if gateway != null: gateway.poll()
 	signaling.poll()
 	console.poll()
+	if shutdown.stage == "idle":
+		var cleanup_report:Dictionary = console.poll_cleanup_schedule(int(Time.get_unix_time_from_system()))
+		if cleanup_report.get("due",false): print("TEMPORARY_CLEANUP_DIAGNOSTIC ",JSON.stringify(cleanup_report))
+	if gateway != null and shutdown.stage == "idle": gateway.manager.poll_idle_rooms(console)
 	shutdown.poll()
 
 func _fail(reason: String) -> void:

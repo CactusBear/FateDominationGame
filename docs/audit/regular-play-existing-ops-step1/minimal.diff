@@ -1,0 +1,47 @@
+--- before/scripts/system/regular_play.gd
++++ after/scripts/system/regular_play.gd
+@@ -56,11 +56,22 @@
+ 			return true
+ 	return false
+ 
++# 显式依赖供冻结/打包扫描；选择仍以注册表的类名为准。
++const _OPERATION_SCRIPTS := {
++	"RemoveFromArray":preload("res://scripts/system/operations/RemoveFromArray.gd"),
++	"AddToArray":preload("res://scripts/system/operations/AddToArray.gd"),
++	"SetProperty":preload("res://scripts/system/operations/SetProperty.gd")
++}
++
++# 不经过效果执行器，避免新增预算、日志或事务边界。
++static func _operation(func_name:String) -> RefCounted:
++	return _OPERATION_SCRIPTS[AllOperations.get_class_name_of(func_name)].new()
++
+ #打出时从来源区移除：出牌区与技能区都查，不假设牌来自手牌
+ static func _take_from_source(d: Dictionary, card) -> void:
+ 	for zone in play_zone_arrays(d):
+-		zone.erase(card)
+-	d.hand_cards.erase(card); d.servant_skills.erase(card); d.master_skills.erase(card); d.side.skills.erase(card)
++		_operation("remove_from_array").exec(card, zone)
++	_operation("remove_from_array").exec(card, d.hand_cards); _operation("remove_from_array").exec(card, d.servant_skills); _operation("remove_from_array").exec(card, d.master_skills); _operation("remove_from_array").exec(card, d.side.skills)
+ 
+ static func completed(id: int) -> bool:
+ 	return not GameLog.query({"type": "regular_play", "actor": id}, 0).is_empty()
+@@ -380,11 +391,15 @@
+ 				if not PayMagic.new().exec(BaseNumber.new(paid), id, "regular_play", card, false, state.allow_magic_overdraft):
+ 					_reject_group(state)
+ 					return
+-				card._is_concealed = hidden
+-				card._is_activating = not hidden
++				_operation("set_property").exec(card, "_is_concealed", hidden)
++				_operation("set_property").exec(card, "_is_activating", not hidden)
+ 				_take_from_source(d, card)
+-				d.played_cards.append(card)
+-				if CardCountsPower.new().exec(card, id): d.power.add(card._power)
++				_operation("add_to_array").exec(card, d.played_cards, -1)
++				if CardCountsPower.new().exec(card, id):
++					var power:BaseNumber = d.power
++					var increment:BaseNumber = card._power
++					if power.can_change:
++						_operation("set_property").exec(power, "number", power.number + increment.number)
+ 				GameLog.record("play", id, -1, "", card, ["play"], {"card_name":card._name, "card_type":"attack" if card is BaseAttack else "skill", "extra":state.extra_cards.has(card), "concealed":hidden})
+ 				if hidden:
+ 					state.index += 1

@@ -1,0 +1,42 @@
+{
+  "hashes": {
+    "scripts/game_scene/battle_board_v2.gd": "6b3b47815db65c11dffd9c3655f14bacd238751066c6d0c2a51fc20242647d08",
+    "scripts/net/ui/v2_view_presenter.gd": "93c9c254540feaa2f346ac745b1f498212cd3cc3e83deac895db36360ac2e5a9",
+    "scripts/match/view_builder.gd": "9a7ed25688ded565bce41b0a8b7473f8067553b55629fbb7d7ce88a276ec831e",
+    "scripts/match/view_mirror.gd": "8007a3cc6e2e1ed0bb319ba3e1b3bd21fb825e7b9bc24f3f212a724c514eef20",
+    "assets/scenes/game_scene/battle_board_v2.tscn": "39a681e1f00578e2a2d7278b241262a72a78afe99937d99553c6ebf615c0fb6d",
+    "newtests/round74_scoreboard_toggle_test.gd": "d8733b52d13e4325c0f230e99b58468fa25f91b4b0317f36577ebc318b3bcffe",
+    "newtests/round74_scoreboard_toggle_test.tscn": "56bc0afe93e1cb9bdc2976575b380d364a6abfade60aa1b64031623922abfd2d",
+    "newtests/run_round74_scoreboard.py": "df883521c6a4623cce1efc3da37487213c8562240eaf760a28998656a5bbbd36"
+  },
+  "diff": "--- a/scripts/game_scene/battle_board_v2.gd\n+++ b/scripts/game_scene/battle_board_v2.gd\n@@ -360,10 +360,7 @@\n \t_main.hide()\n \t_events.hide()\n \t_seats.hide()\n-\t_top.get_node(\"BoardButton\").pressed.connect(func() -> void:\n-\t\t_board.visible = not _board.visible\n-\t\t_bind_board()\n-\t)\n+\t_top.get_node(\"BoardButton\").pressed.connect(_toggle_scoreboard)\n \t# 行动横幅是提示层：它排在卷轴之前会被卷轴里的出牌区盖住（牌压住横幅头像）。\n \t# 提到最后一位保证横幅在上，同时忽略鼠标，避免它吃掉底下的地图点击\n \t_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE\n@@ -3159,6 +3156,11 @@\n \t\t\t\tslot.rotation = slot.get_meta(\"rest_rotation\")\n \n \n+func _toggle_scoreboard() -> void:\n+\t_board.visible = not _board.visible\n+\t_bind_board()\n+\n+\n func _bind_board() -> void:\n \t_update_board_return_controls()\n \tif not _board.visible:\n--- a/scripts/net/ui/v2_view_presenter.gd\n+++ b/scripts/net/ui/v2_view_presenter.gd\n@@ -54,7 +54,7 @@\n \tselection.bind_session(session)\n \tselection.changed.connect(_selection_changed)\n \tboard.get_node(\"Top/LogButton\").pressed.connect(open_log)\n-\tboard.get_node(\"Top/BoardButton\").pressed.connect(toggle_scoreboard)\n+\tboard.get_node(\"Top/BoardButton\").pressed.connect(board._toggle_scoreboard)\n \tvar out_button: Button = board._opponent_drawer.get_node(\"VBox/BtnOutOfGame\")\n \tif out_button.pressed.is_connected(board._on_drawer_out_of_game_pressed):\n \t\tout_button.pressed.disconnect(board._on_drawer_out_of_game_pressed)\n@@ -81,13 +81,6 @@\n \tboard._check_game_over()\n \t_game_over_presented = board._game_over_shown\n \n-\n-func toggle_scoreboard() -> void:\n-\tvar panel: Control = board.get_node(\"Board\")\n-\tpanel.visible = not panel.visible\n-\tif not panel.visible:\n-\t\treturn\n-\tboard._bind_board()\n \n func browse_input(event: InputEvent) -> bool:\n \tfor overlay in [board._hover_zoom, board._hover_desc]:\n",
+  "unchanged": {
+    "_native_modal_visible": true,
+    "_handle_scroll_hover": true,
+    "_input": true,
+    "_open_game_log": true,
+    "_bind_board": true
+  },
+  "frozen_match": {
+    "scripts/game_scene/battle_board_v2.gd": true,
+    "scripts/net/ui/v2_view_presenter.gd": true,
+    "scripts/match/view_builder.gd": true,
+    "scripts/match/view_mirror.gd": true,
+    "assets/scenes/game_scene/battle_board_v2.tscn": true,
+    "newtests/round74_scoreboard_toggle_test.gd": true,
+    "newtests/round74_scoreboard_toggle_test.tscn": true
+  },
+  "green_manifest_hash": "fa730cab70f08dccf65fc53a979a441a0192780e2ec41c3cb1c8d96e0db58799",
+  "red_manifest_hash": "4d403aca0602a59bd618216bde97fd6d5efa4af892401c2f49694c4cb72bc960",
+  "green": "E:\\scratch\\round74-scoreboard-green\\isolated-b17d0e01c25548bfaf44c7895b8d8d8b\\manifest.json",
+  "red": "E:\\scratch\\round74-scoreboard-red\\isolated-b52bd694f3d148d2b4ddb4dc3d92a4da\\manifest.json",
+  "engine_sha256": "ab1824f85bfd8e0e4128182c000c4003a3e042245b2967848d089b2a04b22424",
+  "signal_dll_hashes": {
+    "addons/fate_server_signals/bin/libfate_server_signals.windows.template_release.x86_64.dll": "92a42bd2860af19ca432321400bdaa514a2a9c11f9289a43c76e19a2e2bd68cd",
+    "addons/webrtc_native/lib/libwebrtc_native.windows.template_release.arm64.dll": "2244daf5331df924b96b20a28dcb0952e687dbbd64ccd035a6476aca65d1da30",
+    "addons/webrtc_native/lib/libwebrtc_native.windows.template_release.x86_32.dll": "46bf492e9e77cfe84e53e534c23f06ccd27c2e01f0072db2771dc5662b5f83c8",
+    "addons/webrtc_native/lib/libwebrtc_native.windows.template_release.x86_64.dll": "3a8053d325a874493f596630b0f165f3a83e265c61d9fd87d82da6cb4c2a81fd"
+  },
+  "checks": 64,
+  "trace_count": 13
+}

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/a4-core-e2_binding.gd" id="1"]
+
+[node name="CoreE2Binding" type="Node"]
+script = ExtResource("1")

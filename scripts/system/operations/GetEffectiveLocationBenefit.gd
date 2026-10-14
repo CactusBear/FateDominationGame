@@ -15,7 +15,8 @@ extends RefCounted
 func exec(player_id:int = -1) -> int:
 
 	var id = EffectManager.resolve_player_id(player_id)
-	var loc = GetLocation.new().exec(id)
+	var player_data:Dictionary = GameDataManager.get_player_data_readonly(id)
+	var loc = player_data.get("location")
 	if loc == null:
 		return 0
 	var area := loc.get_from() as BaseMapArea
@@ -33,7 +34,7 @@ func exec(player_id:int = -1) -> int:
 		benefit += current_benefit(seat)
 	if !has_deployment:
 		return 0
-	var bonus = (GameDataManager.get_player_data(id) as Dictionary).get("location_benefit_bonus")
+	var bonus = player_data.get("location_benefit_bonus")
 	return benefit + (int(bonus.number) if bonus is BaseNumber else 0)
 
 

@@ -87,7 +87,7 @@ const BROADCAST_BACKDROP_FADE := 0.30   # 遮罩淡入
 const BROADCAST_OPEN_DELAY := 3.0       # 最后一人战斗阶段结束后等待再显示结算
 const BROADCAST_TITLE_SECONDS := 0.55   # 标题缩放回弹入场
 const BROADCAST_CARD_STEP := 0.18       # 每个战场块淡入单段时长
-const BROADCAST_AI_CONFIRM_STEP := 0.28 # AI 玩家逐人确认间隔（让 n/7 可见地累加）
+
 ## 换人时金框从旧行动者脱离、平移到新行动者的飞行时长（顿挫：金框先飞，卡片后移）
 ## 加上传送带 HANDOFF_SLIDE_SECONDS 就是一次换人的总时长；两者一起调，比例保持不变（约 0.65 : 1）。
 const GOLD_FRAME_FLY_SECONDS := 0.15
@@ -101,9 +101,9 @@ const ROUND_SLIDE_SECONDS := 0.55
 ## 轮次变更：首位下抽离开顺位横列的纵向下沉量（相对卡高）
 const ROUND_DROP_RATIO := 1.15
 ## 轮次变更：被抽出的首位卡会越过顶栏叠进战区卷轴范围，用这个图层抬到卷轴之上（落位后归零）
-const ROUND_LIFTED_Z := 100
-## 提示横幅的图层：要压过被抽出的卡片，避免卡片平移经过时盖住"XX 的行动"
-const BANNER_Z := 120
+const ROUND_LIFTED_Z := 80
+## 棋盘动画 < 提示横幅 < 原生浏览器(100)：压过抽出的卡片，不越过浏览/日志/播报层。
+const BANNER_Z := 85
 
 
 ## 卷轴出牌区：所有比例都相对"卡高"，随可用区域与牌数动态求解，不写死某个牌数
@@ -147,12 +147,31 @@ var _commands = preload("res://scripts/match/match_commands.gd").new()
 ## 由大厅在入树前传入；网络显示不进入单机引擎路径。
 var network_session = null
 var _network_presenter = null
-var _network_session_transferred:bool = false
-var _returning_network_lobby:bool = false
+## source 在 ready 选定；共同投影负责 BUFF、牌堆、资源、顺位、阶段、残留与战区。
+var _source = null
+## 与本地 source/query 共享的公开 ID 表；只适配旧对象输入，不执行规则。
+var _held_action_ids = null
+var _source_is_local := false
+## D15：实例代际与 UI attempt 分离；发送 OK 不结算。
+var _battle_commands = null
+var _battle_command_epoch: int = 0
+var _battle_command_result: Callable
+var _battle_command_observer: int = -1
+var _battle_commands_retiring: bool = false
+var _battle_commands_invalidating: bool = false
+var _battle_commands_stopped: bool = false
+var _end_command_attempt: Dictionary = {}
+var _host_lifecycle = null
 var _local_player_id: int = -1:
 	set(value):
+		if _local_player_id == value:
+			return
 		_local_player_id = value
 		_seat_controller.set_single_local(value)
+		if _source_is_local and _source != null:
+			_source.set_seat(value)
+			_retire_battle_commands("座位已变化，执行结果未知")
+			_rebuild_battle_commands()
 var _main_area_index: int = -1
 
 ## 当前放大卡图对应的展示位：鼠标移到卡图上时用它调出右键说明
@@ -190,6 +209,8 @@ var _hand_drawer_open := 0.0
 @onready var _ops: Control = $Ops
 @onready var _board: Control = $Board
 @onready var _toast: Control = $Toast
+var _toast_hide_tween: Tween
+var _toast_generation: int = 0
 ## 模块集中开关：以下功能默认关闭，需要打开时手动置 true
 var enable_old_features := false
 
@@ -239,8 +260,10 @@ var _banner_initialized := false
 var _banner_tween: Tween
 ## 横幅节奏缩放：上一次横幅没演完就又切人了就调小（动画缩短），演完了慢慢回到 1.0
 var _banner_pace: float = 1.0
-## 上一次绑定的阶段下标：变了就播阶段更迭横幅（首次进入第 0 阶段不播）
+## 旧专项夹具写入兼容；生产阶段判断只读共享 key，不回退本机下标。
 var _last_phase_index: int = -1
+var _shared_phase_key: Array = []
+var _shared_phase_observer: int = -1
 ## 阶段更迭横幅播放期间冻结行动
 var _phase_anim_busy: bool = false
 ## 阶段横幅独立素材（不复用行动者 Banner），懒创建
@@ -252,13 +275,12 @@ var _phase_tween: Tween = null
 var _turn_presentation_key: Array = []
 var _turn_read_remaining := 0.0
 ## 战斗胜利播报：结算后弹出的全屏遮罩层状态
-var _broadcast_registered := false
+var _broadcast_batch_id: int = 0
 var _broadcast_node: Control = null
 var _broadcast_active := false
 var _broadcast_wait_elapsed := 0.0
 var _broadcast_reveal_done := false
-var _broadcast_ai_queue: Array = []
-var _broadcast_ai_timer := 0.0
+
 var _broadcast_avatar_mat: ShaderMaterial = null
 var _broadcast_font_regular: Font = null
 var _broadcast_font_bold: Font = null
@@ -276,7 +298,7 @@ const ZOOM_PREVIEW_HEIGHT := 460.0
 const ZOOM_PREVIEW_MAX_WIDTH := 760.0
 const ZOOM_KEEPALIVE_SECONDS := 0.18       ## 从源卡移向预览时跨过间隙的保活时间
 const ZOOM_HOVER_DELAY_SECONDS := 0.45     ## 悬浮停留多久才弹放大图，短暂划过不触发
-const TacticalBoardUI = preload("res://scripts/game_scene/tactical_board_ui.gd")
+
 
 @onready var _tactical_confirm: Control = $ModalLayer/TacticalConfirm
 @onready var _effect_modal: Control = $ModalLayer/EffectChoice
@@ -291,19 +313,35 @@ const TacticalBoardUI = preload("res://scripts/game_scene/tactical_board_ui.gd")
 
 
 func _ready() -> void:
+	_ops.get_node("EndButton").pressed.connect(_on_end_phase_pressed)
+	_bind_host_lifecycle()
+	_bind_board_return_controls()
 	_bind_tactical_confirmation()
 	_bind_card_view_controls()
 	_bind_pause_menu_controls()
 	_bind_fly_layer()
 	$CardBrowser/Panel/Close.pressed.connect(_close_card_browser)
 	$LogBrowser/Panel/Close.pressed.connect(func() -> void: $LogBrowser.hide())
+	$CardModificationHistory/Panel/Close.pressed.connect(_close_card_modification_history)
 	var drawer_box := _opponent_drawer.get_node("VBox") as Control
 	drawer_box.set_meta("layout_insets", Vector4(drawer_box.offset_left, drawer_box.offset_top, drawer_box.offset_right, drawer_box.offset_bottom))
 	var spell_scroll := _self.get_node("Spells/SpecialScroll") as ScrollContainer
 	spell_scroll.gui_input.connect(_on_hscroll_wheel.bind(spell_scroll))
+	if _opponent_drawer != null:
+		var btn_oog := _opponent_drawer.get_node_or_null("VBox/BtnOutOfGame") as Button
+		if btn_oog and not btn_oog.pressed.is_connected(_on_drawer_out_of_game_pressed):
+			btn_oog.pressed.connect(_on_drawer_out_of_game_pressed)
 	if network_session != null:
+		_source = preload("res://scripts/game_scene/battle_io/network_battle_source.gd").new(network_session)
+		_bind_event_discard_controls("公共事件弃牌 · %s", false)
+		_bind_discard_browsing_controls()
 		_network_presenter = preload("res://scripts/net/ui/v2_view_presenter.gd").new(self, network_session)
+		_source.bind_group_selection(_network_presenter.selection)
+		network_session.request_associations_invalidated.connect(_on_battle_commands_invalidated)
+		_rebuild_battle_commands()
 		_network_presenter.refresh()
+		_update_board_return_controls()
+		_select_scroll(_default_area_index())
 		return
 	_driver.state_changed.connect(refresh_all_ui)
 	_driver.ai_turn_started.connect(_clear_ai_play_prompt)
@@ -311,28 +349,34 @@ func _ready() -> void:
 	_local_player_id = GameData.player_id
 	if !GameStart._started:
 		GameStart.game_start([0, 1, 2, 3, 4, 5, 6])
+	# 本地成功开局的创建边界只交接原来源；AI 延期入口不补票。
+	_driver.source_context = GameStart.startup_context()
+	var builder = create_local_view_builder()
+	var query = preload("res://scripts/match/match_seat_query.gd").new(builder)
+	_held_action_ids = builder.ids
+	_source = preload("res://scripts/game_scene/battle_io/local_battle_source.gd").new(_local_player_id, builder, query)
+	_source_is_local = true
+	_bind_event_discard_controls("%s · 事件弃牌", true)
+	_rebuild_battle_commands()
 	# 原主图作为各卷轴的内容模板；所有地图初始收起。
+	if not _declare_local_broadcast_confirmation():
+		_stop_battle_commands()
+		set_process(false)
+		_say("播报确认能力声明失败，已停止本地推进；请返回菜单重新开局")
+		return
 	_main.hide()
 	_events.hide()
 	_seats.hide()
-	_top.get_node("BoardButton").pressed.connect(func() -> void:
-		_board.visible = not _board.visible
-		_bind_board()
-	)
+	_top.get_node("BoardButton").pressed.connect(_toggle_scoreboard)
 	# 行动横幅是提示层：它排在卷轴之前会被卷轴里的出牌区盖住（牌压住横幅头像）。
 	# 提到最后一位保证横幅在上，同时忽略鼠标，避免它吃掉底下的地图点击
 	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	move_child(_banner, get_child_count() - 1)
 	# 轮次变更时被抽出的卡会抬到卷轴之上，横幅要再高一层才不会被它平移时盖住
 	_banner.z_index = BANNER_Z
-	_ops.get_node("EndButton").pressed.connect(_on_end_phase_pressed)
 	_ops.get_node("PlayButton").pressed.connect(_confirm_held_cards)
 	_top.get_node("LogButton").pressed.connect(_open_game_log)
-	_piles.get_node("EventPile/Open").pressed.connect(func() -> void:
-		$EventDiscardMenu.visible = not $EventDiscardMenu.visible
-	)
-	for entry in [["Shinto", "新都", MapData.shinto], ["Miyama", "深山町", MapData.miyama], ["Other", "其他", null]]:
-		$EventDiscardMenu.get_node("Choices/" + entry[0]).pressed.connect(_open_event_discard.bind(entry[1], entry[2]))
+
 	# ModalLayer 弹窗接线（用旧控制器的同源判据，规则不变）
 
 	if _effect_modal != null:
@@ -353,16 +397,17 @@ func _ready() -> void:
 		var btn_cs_cancel := _card_select_panel.get_node_or_null("Box/ButtonsRow/BtnCancelSelect") as Button
 		if btn_cs_cancel and not btn_cs_cancel.pressed.is_connected(_on_card_select_cancelled):
 			btn_cs_cancel.pressed.connect(_on_card_select_cancelled)
-	if _opponent_drawer != null:
-		var btn_oog := _opponent_drawer.get_node_or_null("VBox/BtnOutOfGame") as Button
-		if btn_oog and not btn_oog.pressed.is_connected(_on_drawer_out_of_game_pressed):
-			btn_oog.pressed.connect(_on_drawer_out_of_game_pressed)
 
 	if _board != null:
 		_board.visible = false
 	set_debug_console_enabled(_debug_console_enabled_on_start)
 	refresh_all_ui()
 	_select_scroll(_default_area_index())
+
+
+## 本地组合根的单职责构建器工厂；query/source/commands 沿用同一身份表。
+func create_local_view_builder() -> RefCounted:
+	return preload("res://scripts/match/view_builder.gd").new()
 
 
 func _bind_fly_layer() -> void:
@@ -377,15 +422,20 @@ func _bind_fly_layer() -> void:
 
 
 func _exit_tree() -> void:
-	if network_session != null:
-		if _network_presenter != null:
-			_network_presenter.release()
-			_network_presenter = null
-		if not _network_session_transferred:
-			network_session.close()
-	if _broadcast_registered:
-		GameProgress.unregister_battle_broadcast_consumer(self)
-		_broadcast_registered = false
+	_stop_battle_commands()
+	if _source != null:
+		if _source_is_local:
+			_source.invalidate()
+		else:
+			_source.close()
+		_source = null
+	if _network_presenter != null:
+		_network_presenter.release()
+		_network_presenter = null
+	if _host_lifecycle != null:
+		_host_lifecycle.close()
+		_host_lifecycle = null
+
 
 
 func _open_game_log() -> void:
@@ -414,39 +464,90 @@ func _default_area_index() -> int:
 
 
 func _return_to_network_lobby() -> void:
-	if not is_inside_tree() or network_session == null:
+	if _host_lifecycle != null and _host_lifecycle.lobby_available():
+		_host_lifecycle.request_lobby()
+
+
+## 组合根显式声明协议/场景以及两种查询；组件不猜 UI 或规则状态。
+func _bind_host_lifecycle() -> void:
+	if network_session == null:
 		return
-	var lobby = preload("res://assets/scenes/main_menu/multiplayer_lobby.tscn").instantiate()
-	lobby.session = network_session
-	_network_session_transferred = true
-	set_process(false)
-	get_tree().root.add_child(lobby)
-	get_tree().current_scene = lobby
-	queue_free()
+	_host_lifecycle = preload("res://scripts/game_scene/battle_io/battle_host_lifecycle.gd").new(
+		self, network_session, preload("res://assets/scenes/main_menu/multiplayer_lobby.tscn"),
+		"match_finished_lobby", _read_finished_lobby_request, _read_network_lobby_state)
+	_host_lifecycle.changed.connect(_update_board_return_controls)
+	_host_lifecycle.notice.connect(_say)
+	_host_lifecycle.transferring.connect(_stop_battle_commands)
+
+func _network_lobby_available() -> bool:
+	return _host_lifecycle != null and _host_lifecycle.lobby_available()
+
+func _read_network_lobby_state() -> bool:
+	return network_session != null and network_session.view.get("phase", "") == "lobby" and network_session.read_match().is_empty()
+
+func _read_finished_lobby_request() -> Dictionary:
+	if network_session == null:
+		return {}
+	var state: Dictionary = network_session.read_match()
+	if network_session.view.get("phase") != "playing" or network_session.view.get("owner") != network_session.peer_id() or not state.get("game_over", false) or not state.get("seq") is int or network_session.read_actions().get("management_paused", false):
+		return {}
+	return {"view_seq":state.seq}
+
+func _request_finished_lobby() -> void:
+	if _host_lifecycle != null:
+		_host_lifecycle.request_lobby()
+
+
+func _bind_board_return_controls() -> void:
+	if _board == null:
+		return
+	for item in [["ReturnActions/ReturnToLobby", _request_finished_lobby], ["ReturnActions/ReturnToMainMenu", _return_to_main_menu]]:
+		var button := _board.get_node_or_null(item[0]) as Button
+		if button != null and not button.pressed.is_connected(item[1]):
+			button.pressed.connect(item[1])
+	_update_board_return_controls()
+
+
+func _update_board_return_controls() -> void:
+	if _board == null:
+		return
+	var ended: bool = bool(network_session.read_match().get("game_over", false)) if network_session != null else GameProgress.is_game_over
+	if _host_lifecycle != null and (_host_lifecycle.pending() or _host_lifecycle.outcome_unknown()):
+		ended = ended or _game_over_shown
+	var main_menu := _board.get_node_or_null("ReturnActions/ReturnToMainMenu") as Button
+	if main_menu != null:
+		main_menu.visible = ended
+	var lobby := _board.get_node_or_null("ReturnActions/ReturnToLobby") as Button
+	if lobby != null:
+		var completed:bool = _network_lobby_available()
+		var owner:bool = network_session != null and network_session.view.get("owner") == network_session.peer_id()
+		var pending:bool = _host_lifecycle != null and _host_lifecycle.pending()
+		var unknown:bool = _host_lifecycle != null and _host_lifecycle.outcome_unknown()
+		lobby.visible = completed or (network_session != null and ended)
+		lobby.disabled = not completed and (not owner or pending or unknown or network_session.view.get("phase") != "playing" or network_session.read_actions().get("management_paused",false))
+		lobby.text = "返回房间大厅" if completed or (owner and not pending and not unknown) else ("执行结果未知" if unknown else ("正在返回大厅…" if owner else "等待房主返回大厅"))
 
 func _process(delta: float) -> void:
+	_refresh_card_modification_history()
 	if network_session != null:
-		network_session.poll(delta)
-		if network_session.view.get("phase") == "lobby" and network_session.read_match().is_empty():
-			if not _returning_network_lobby:
-				_returning_network_lobby = true
-				call_deferred("_return_to_network_lobby")
+		if _host_lifecycle == null or not _host_lifecycle.poll(delta):
 			return
+		_rebuild_battle_commands()
 		_network_presenter.refresh()
+		_update_board_return_controls()
 		_update_fly_sizes(delta)
 		_update_held_cards(delta)
 		_update_power_badges()
 		_update_hover_zoom_keepalive(delta)
 		_update_event_fan(delta, get_global_mouse_position())
 		_update_local_spell_box(delta)
+		_update_default_area(delta)
+		_update_breathing()
+		_update_battle_broadcast(delta)
 		return
 	var _t0 := Time.get_ticks_usec()
 	_update_fly_sizes(delta)
-	#首次运行本帧循环即登记为胜利播报消费者：被动实例化（测试里 set_process(false)）不走到这里，
-	#也就不会在战斗结算后阻塞推进。
-	if not _broadcast_registered:
-		_broadcast_registered = true
-		GameProgress.register_battle_broadcast_consumer(self)
+
 	# 帧率/耗时诊断（定位完可关）：_fade_debug 为假时整段不累加、不打印
 	if _fade_debug:
 		_fps_t += delta
@@ -465,20 +566,7 @@ func _process(delta: float) -> void:
 	_update_event_fan(delta, get_global_mouse_position())
 
 	_update_local_spell_box(delta)
-	if _main_area_index >= 0:
-		var scroll := _strips.get_child(_main_area_index) as Control
-		var over_seats := false
-		for row_name in ["MeleeScroll", "SeatScroll"]:
-			var row := scroll.get_node("Seats/" + row_name) as Control
-			over_seats = over_seats or (row.visible and row.get_global_rect().has_point(get_global_mouse_position()))
-		if scroll.get_global_rect().has_point(get_global_mouse_position()) or over_seats:
-			_scroll_leave_time = 0.0
-		else:
-			_scroll_leave_time += delta
-			if _scroll_leave_time >= SCROLL_LEAVE_SECONDS and not _scroll_is_animating():
-				_select_scroll(_default_area_index())
-	elif not _scroll_is_animating():
-		_select_scroll(_default_area_index())
+	_update_default_area(delta)
 	_refresh_accum += delta
 	if _refresh_accum >= REFRESH_INTERVAL:
 		_refresh_accum = 0.0
@@ -496,10 +584,7 @@ func _process(delta: float) -> void:
 	if _board.visible:
 		_refresh_opponent_resource_icons()
 	
-	var alpha := BREATH_MIN_ALPHA + (1.0 - BREATH_MIN_ALPHA) * (0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / BREATH_PERIOD))
-	for frame in _breathing:
-		if is_instance_valid(frame):
-			frame.modulate.a = alpha
+	_update_breathing()
 	# 测完整 _process 耗时（之前只在 _update_fly_sizes 后累加，测到的几乎为空，
 	# 后半段重活全漏掉了，导致误判"逻辑不耗时"）
 	if _fade_debug:
@@ -507,7 +592,32 @@ func _process(delta: float) -> void:
 		_proc_n += 1
 
 
+func _update_breathing() -> void:
+	var alpha := BREATH_MIN_ALPHA + (1.0 - BREATH_MIN_ALPHA) * (0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / BREATH_PERIOD))
+	for frame in _breathing:
+		if is_instance_valid(frame):
+			frame.modulate.a = alpha
+
+func _update_default_area(delta:float) -> void:
+	if _main_area_index >= 0 and _main_area_index < _strips.get_child_count():
+		var scroll := _strips.get_child(_main_area_index) as Control
+		var over_seats := false
+		for row_name in ["MeleeScroll", "SeatScroll"]:
+			var row := scroll.get_node("Seats/" + row_name) as Control
+			over_seats = over_seats or (row.visible and row.get_global_rect().has_point(get_global_mouse_position()))
+		if scroll.get_global_rect().has_point(get_global_mouse_position()) or over_seats:
+			_scroll_leave_time = 0.0
+		else:
+			_scroll_leave_time += delta
+			if _scroll_leave_time >= SCROLL_LEAVE_SECONDS and not _scroll_is_animating():
+				_select_scroll(_default_area_index())
+	elif not _scroll_is_animating():
+		_select_scroll(_default_area_index())
+
 func refresh_all_ui() -> void:
+	if _source_is_local and _source != null:
+		_source.invalidate()
+	_update_board_return_controls()
 	if network_session != null:
 		if _network_presenter != null:
 			_network_presenter.refresh()
@@ -520,12 +630,6 @@ func refresh_all_ui() -> void:
 		_turn_presentation_key = key
 	_main_area_index = clampi(_main_area_index, -1, MapData.areas.size() - 1)
 	_breathing.clear()
-	# 阶段更迭：先播提示横幅，动画期间冻结行动（首次进入第 0 阶段不播）
-	if GameProgress.current_phase_index != _last_phase_index:
-		var first_phase := _last_phase_index < 0
-		_last_phase_index = GameProgress.current_phase_index
-		if not first_phase and GameProgress.current_phase_index >= 0:
-			_show_phase_banner(GameProgress.current_phase_index)
 	_bind_top()
 	_bind_rivals()
 	_bind_situation_and_piles()
@@ -542,7 +646,21 @@ func refresh_all_ui() -> void:
 ## ---------- 数据读取（全部走引擎，界面不自己判规则） ----------
 
 func _pl(id: int) -> Dictionary:
-	return GameDataManager.get_player_data(id) if GameData.player_data_library.has(id) else {}
+	return GameDataManager.find_player_data(id)
+
+
+## 对应玩家的已过滤 BUFF；不从规则对象自行重建展示字段。
+## 抽屉可由独立点击触发，显式开启新读取周期以免使用上次整屏刷新快照。
+func _projected_buffs(id: int, fresh: bool = false) -> Array:
+	if _source == null:
+		return []
+	if fresh and _source_is_local:
+		_source.invalidate()
+	var view: Dictionary = _source.read_view()
+	for player in view.get("players", []):
+		if player is Dictionary and int(player.get("id", -1)) == id:
+			return player.get("buffs", [])
+	return []
 
 
 func _num(v) -> int:
@@ -565,8 +683,11 @@ func _shown(obj) -> String:
 
 
 func _player_name(id: int) -> String:
-	var shown := _shown(_pl(id).get("master"))
-	return shown if shown != "" else "玩家 %d" % id
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	for player in view.get("players", []):
+		if int(player.id) == id:
+			return str(player.get("master", {}).get("name", player.get("player_name", "")))
+	return ""
 
 
 ## 玩家名（玩家数据字段 player_name，开局由 GameStart 按号位写入默认名）。
@@ -594,9 +715,10 @@ func _ordered_ids() -> Array:
 
 
 func _score_sorted_ids() -> Array:
-	var ids := _ordered_ids()
-	ids.sort_custom(func(a, b): return _num(_pl(a).get("score")) > _num(_pl(b).get("score")))
-	return ids
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	var players: Array = view.get("players", []).duplicate()
+	players.sort_custom(func(a, b): return a.get("score", 0) > b.get("score", 0))
+	return players.map(func(player): return int(player.id))
 
 
 func _players_in_area(area: BaseMapArea) -> Array:
@@ -837,7 +959,8 @@ func _special_command_spells(spell_list: Array) -> Array:
 
 
 func _bind_sigils(row: Control, count: int, spell_list: Array) -> void:
-	var specials := _special_command_spells(spell_list)
+	# 调用方只传 builder 已声明的特殊令咒，不用本机模板重新分类。
+	var specials := spell_list
 	_sync_items(row, "SpellSummary", 1 if specials.is_empty() else 2)
 	for i in range(row.get_child_count()):
 		var summary := row.get_child(i) as Control
@@ -848,44 +971,55 @@ func _bind_sigils(row: Control, count: int, spell_list: Array) -> void:
 		summary.modulate.a = 1.0 if i > 0 or count > 0 else 0.4
 
 
-## 本地完整卡框独立绑定，顶栏小图标继续使用 _bind_sigils。
-func _bind_local_spell_box(box: Control, master, servant, count: int) -> void:
-	var cards := LoadCommandSpell.resolve_player_command_spells(master, servant)
-	var normal := box.get_node("SpellCard") as Control
-	var normal_img := str(master.get("_command_spell_img")) if master != null else ""
-	_bind_card(normal, normal_img)
-	bind_zoom_for_card(normal, LoadCommandSpell.get_normal())
-	if normal_img != "" and not bool(normal.get_meta("zoom_disabled", true)):
-		normal.set_meta("zoom_img", normal_img)
-	normal.modulate = Color.WHITE
-	_bind_command_spell_entry(normal)
-	_set_text(_self, "CountBadge/Label", str(count))
-	var row := box.get_node("SpecialScroll/Cards") as HBoxContainer
-	var specials := _special_command_spells(cards)
-	_sync_items(row, "SpellCard", specials.size())
-	for i in range(specials.size()):
-		var slot := row.get_child(i) as Control
-		var card = specials[i]
-		slot.set_meta("card", card)
-		_bind_card(slot, str(card.get("_card_img")))
-		bind_zoom_for_card(slot, card)
-		# 完整卡图的点击只发动它自己的显式效果，不误转发到普通令咒。
-		if not slot.has_meta("spell_effect_bound"):
-			slot.set_meta("spell_effect_bound", true)
-			_bind_effect_button(slot)
-			slot.gui_input.connect(_on_local_special_spell_input.bind(slot))
-	if specials.is_empty():
+
+## 完整令咒仅消费本人过滤卡面，主卡/特殊卡按声明顺序，不解析本机模板。
+func _bind_spell_box(box: Control, player: Dictionary) -> void:
+	var spells: Array = player.get("command_spells", [])
+	box.visible = not spells.is_empty()
+	_self.get_node("CountBadge").visible = not spells.is_empty()
+	_set_text(_self, "CountBadge/Label", BaseNumber.display_text(player.get("command_spell_count", 0)))
+	var primary := box.get_node("SpellCard") as Control
+	_bind_spell_view_slot(primary, spells[0] if not spells.is_empty() else {}, int(player.get("id", -1)))
+	var row := box.get_node("SpecialScroll/Cards") as Control
+	_sync_items(row, "SpellCard", maxi(0, spells.size() - 1))
+	for i in range(row.get_child_count()):
+		_bind_spell_view_slot(row.get_child(i), spells[i + 1], int(player.get("id", -1)))
+	if row.get_child_count() == 0:
 		box.set_meta("open", 0.0)
 		box.get_node("SpecialScroll").hide()
 		box.size.x = SPELL_BOX_SIZE.x
 
+func _bind_spell_view_slot(slot: Control, card: Dictionary, owner: int = -1) -> void:
+	slot.set_meta("command_spell_owner", owner)
+	slot.set_meta("card", card)
+	_bind_card(slot, card.get("image", "") if card.get("visible", false) and not card.get("concealed", true) else card.get("back_image", ""))
+	bind_zoom_for_card(slot, card)
+	var effects := _manual_effects_of(card)
+	slot.set_meta("manual_effects", effects)
+	slot.modulate = Color.WHITE if not effects.is_empty() else Color(0.55, 0.55, 0.55)
+	if not slot.has_meta("spell_view_bound"):
+		slot.set_meta("spell_view_bound", true)
+		for child in slot.find_children("*", "Control", true, false):
+			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slot.mouse_filter = Control.MOUSE_FILTER_STOP
+		_bind_effect_button(slot)
+		slot.gui_input.connect(_on_local_special_spell_input.bind(slot))
+
 
 func _on_local_special_spell_input(event: InputEvent, slot: Control) -> void:
-	if _is_progress_blocked() or not _held_input_available():
+	if not (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
 		return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_on_held_effect_pressed(slot)
-		slot.accept_event()
+	slot.accept_event()
+	# 本人资源区入口先核权威候选；无权限不弹窗、不写暂存、不提示副作用。
+	if _source == null or _is_progress_blocked() or not _held_input_available() or not _battle_command_input_available("activate"):
+		return
+	if _source_is_local:
+		_source.invalidate()
+	var owner = slot.get_meta("command_spell_owner", -1)
+	if owner != _source.read_view().get("observer", -1) or owner != _local_player_id or owner != _battle_command_observer \
+			or not _source.read_pending().is_empty() or _manual_effects_of(slot.get_meta("card", {})).is_empty():
+		return
+	_on_held_effect_pressed(slot)
 
 
 ## 卡框与展开条共用连续命中区，向右最多展示一张特殊卡，其余横向无条滚动。
@@ -893,6 +1027,16 @@ func _update_local_spell_box(delta: float) -> void:
 	var box := _self.get_node("Spells") as Control
 	var scroll := box.get_node("SpecialScroll") as ScrollContainer
 	var row := scroll.get_node("Cards") as Control
+	# 令咒不在手牌列表中，但共用同一个候选声明与发动按钮，不另建网络路由。
+	var slots: Array = [box.get_node("SpellCard")]
+	slots.append_array(row.get_children())
+	var hovered := get_viewport().gui_get_hovered_control()
+	var actions: Dictionary = _source.read_actions() if _source != null else {}
+	for slot: Control in slots:
+		var effects := _manual_effects_of(slot.get_meta("card", {}), actions)
+		var enabled := slot.is_visible_in_tree() and not _is_progress_blocked() and _battle_command_input_available("activate")
+		slot.set_meta("manual_effects", effects if enabled else [])
+		_update_held_effect_button(slot, hovered == slot or (hovered != null and slot.is_ancestor_of(hovered)), delta)
 	var hover := box.get_global_rect().has_point(get_global_mouse_position())
 	var open := move_toward(float(box.get_meta("open", 0.0)), 1.0 if hover and row.get_child_count() > 0 else 0.0, delta / SCROLL_LEAVE_SECONDS)
 	box.set_meta("open", open)
@@ -909,73 +1053,121 @@ func _breathe(frame: Control) -> void:
 
 
 ## 席位模板（Seat / StripSeat 内的 Seat）：环色、空席数值或占位头像与角标
-func _bind_seat(seat: Control, loc: BaseLocation, with_label: bool) -> void:
-	var is_mana := _num(loc._magic) > 0
-	var benefit := GetEffectiveLocationBenefit.current_benefit(loc)
+func _bind_seat(seat: Control, loc: Dictionary, with_label: bool) -> void:
+	var magic = loc.get("magic", 0)
+	var benefit = loc.get("benefit", 0)
+	var is_mana: bool = magic > 0
 	seat.get_node("Ring").mana = is_mana
-	var occupants: Array = loc._players
-	var val := seat.get_node("ValueNum") as Label
-	var empty := seat.get_node("ValueEmpty") as Label
-	var avatar := seat.get_node("Avatar") as Control
-	var badge := seat.get_node("Badge") as Control
-	val.visible = false
-	empty.visible = false
-	avatar.visible = false
-	badge.visible = false
+	var occupants: Array = loc.get("players", [])
+	for path in ["ValueNum", "ValueEmpty", "Avatar", "Badge"]:
+		seat.get_node(path).hide()
+	var value := seat.get_node("ValueNum") as Label
 	if occupants.is_empty():
-		if is_mana:
-			val.text = "+%d" % _num(loc._magic)
-			val.theme_type_variation = "Mana"
-			val.visible = true
-		elif benefit > 0:
-			val.text = str(benefit)
-			val.theme_type_variation = "Gold2"
-			val.visible = true
-		else:
-			empty.visible = true
+		value.visible = is_mana or benefit > 0
+		value.text = "+" + BaseNumber.display_text(magic) if is_mana else BaseNumber.display_text(benefit)
+		value.theme_type_variation = "Mana" if is_mana else "Gold2"
+		seat.get_node("ValueEmpty").visible = not value.visible
 	else:
-		var pid := int(occupants[0])
-		avatar.visible = true
-		_bind_avatar(avatar, _header_img(pid), "AvatarMana" if pid == _local_player_id else "AvatarGold2")
-		if is_mana:
-			_bind_badge(badge, "+%d" % _num(loc._magic), "BadgeMana")
-		elif benefit > 0:
-			_bind_badge(badge, str(benefit), "BadgeGold")
+		var pid: int = int(occupants[0])
+		var avatar := seat.get_node("Avatar") as Control
+		avatar.show()
+		var view: Dictionary = _source.read_view() if _source != null else {}
+		var image := ""
+		for player in view.get("players", []):
+			if player.id == pid:
+				image = str(player.get("avatar", ""))
+		_bind_avatar(avatar, image, "AvatarMana" if pid == _local_player_id else "AvatarGold2")
+		if is_mana or benefit > 0:
+			_bind_badge(seat.get_node("Badge"), "+" + BaseNumber.display_text(magic) if is_mana else BaseNumber.display_text(benefit), "BadgeMana" if is_mana else "BadgeGold")
 	if with_label:
-		_set_text(seat, "Label", _seat_kind(loc, false))
+		_set_text(seat, "Label", "魔力席" if is_mana else ("地利 " + BaseNumber.display_text(benefit) if benefit > 0 else "席位"))
 
 
 func _say(text: String) -> void:
+	_toast_generation += 1
+	if _toast_hide_tween != null and _toast_hide_tween.is_valid():
+		_toast_hide_tween.kill()
 	_set_text(_toast, "Label", text)
 	_toast.visible = true
-	var tween := _toast.create_tween()
-	tween.tween_interval(TOAST_SECONDS)
-	tween.tween_callback(func() -> void: _toast.visible = false)
+	_toast_hide_tween = _toast.create_tween()
+	_toast_hide_tween.tween_interval(TOAST_SECONDS)
+	_toast_hide_tween.tween_callback(_hide_toast.bind(_toast_generation))
+
+func _hide_toast(generation: int) -> void:
+	if generation == _toast_generation:
+		_toast.visible = false
+		_toast_hide_tween = null
 
 
 ## ---------- 0 顶栏 ----------
 
 func _bind_top() -> void:
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	_bind_shared_phase_view(view)
+
+## 同源生命周期：首次及 observer/恢复重绑不播；同 key 不重播，终局终止。
+func _bind_shared_phase_view(view: Dictionary) -> void:
+	if view.is_empty():
+		_clear_shared_phase_residue_visuals()
+		return
+	var observer := int(view.get("observer", -1))
+	if observer != _shared_phase_observer:
+		_clear_shared_phase_residue_visuals()
+		_shared_phase_observer = observer
+	_bind_phase_timeline(int(view.get("round", 0)), str(view.get("phase", "")), view.get("state", {}))
+	var key: Array = [view.get("round", 0), view.get("phase", ""), view.get("game_over", false)]
+	if key == _shared_phase_key:
+		return
+	if bool(view.get("game_over", false)):
+		if _phase_tween != null:
+			_phase_tween.kill()
+		if _phase_banner != null:
+			_phase_banner.hide()
+		_phase_anim_busy = false
+	elif not _shared_phase_key.is_empty() and str(view.get("phase", "")) != "":
+		_phase_anim_busy = network_session == null
+		_play_phase_banner(str(view.phase), _finish_local_phase_banner if network_session == null else Callable())
+	_shared_phase_key = key
+
+## 展示退出只清视觉，不操作规则；presenter 自行失效传输/手牌缓存。
+func _clear_shared_phase_residue_visuals() -> void:
+	_shared_phase_key.clear()
+	_shared_phase_observer = -1
+	_phase_anim_busy = false
+	for path in ["Self", "Master", "Hand"]:
+		get_node(path).hide()
+	_bind_spell_box(_self.get_node("Spells"), {})
+	_on_close_opponent_drawer_pressed()
+	if _phase_tween != null:
+		_phase_tween.kill()
+	if _phase_banner != null:
+		_phase_banner.hide()
+	var local := get_node_or_null("LocalResiduePile") as Control
+	if local != null:
+		local.hide()
+	for child in _rivals.get_children():
+		var pile := child.get_node_or_null("ResiduePile") as Control
+		if pile != null:
+			pile.hide()
+
+## 纯视觉入口：单人规则与网络过滤视图共用模板与状态颜色。
+func _bind_phase_timeline(cur: int, current: String, state: Dictionary) -> void:
 	var center := _top.get_node("Center")
-	_set_text(center, "RoundLabel", "第 %d 回合" % GameProgress.current_round)
-	var climax := _climax_rounds()
-	var total := _num(GameProgress.total_rounds)
-	var cur := GameProgress.current_round
+	_set_text(center, "RoundLabel", "第 %d 回合" % cur)
+	var climax: Array = state.get("climax_rounds", [])
+	var total: int = int(state.get("total_rounds", 0))
 	_set_text(center, "NightLabel", "高潮回合" if climax.has(cur) else "夜 %d / %d" % [cur, total])
-	# 四阶段标签：来自 GameProgress.phases，当前金底，已过灰亮，未到灰暗
 	var phases := center.get_node("Phases")
 	_clear(phases)
 	var passed := true
-	var current := _phase_name()
-	for phase in GameProgress.phases:
-		var key := str(phase.get("name", ""))
-		var on := key == current
+	for key in state.get("phases", []):
+		var on: bool = key == current
 		if on:
 			passed = false
 		var tag := _spawn("PhaseOn" if on else ("PhasePassed" if passed else "PhasePending"), phases)
 		_set_text(tag, "Label", "%s阶段" % _phase_cn(key))
-	# 夜点阵：总数与高潮回合读数据
 	var dots := center.get_node("Dots")
+	dots.show()
 	_clear(dots)
 	for i in range(1, total + 1):
 		var dot := _spawn("Dot", dots)
@@ -991,17 +1183,22 @@ func _bind_top() -> void:
 ## ---------- 1 顺位横列 ----------
 
 func _bind_rivals() -> void:
-	var actual_ids := _ordered_ids()
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	_local_player_id = int(view.get("observer", -1))
+	_rivals.visible = not view.is_empty()
+	var ids: Array = view.get("players", []).map(func(player): return int(player.id))
+	_bind_rival_order(ids, -1 if view.get("game_over", false) else int(view.get("current_player", -1)), int(view.get("round", 0)), _bind_single_rival)
+
+func _bind_rival_order(actual_ids:Array, actor:int, current_round:int, bind_player:Callable) -> void:
 	var ids := actual_ids.duplicate()
 	# 从行动者起循环展示真实顺位：已行动者回到队尾，不改规则顺位和编号。
-	var actor := GameProgress.current_player_id
 	var actor_index := ids.find(actor)
 	if actor_index > 0:
 		ids = ids.slice(actor_index) + ids.slice(0, actor_index)
 	var old_positions: Dictionary = {}
 	var order_changed := not _rival_order_snapshot.is_empty() and ids != _rival_order_snapshot
 	# 轮次变更：回合号变化。换人交接：回合号不变、仅行动者变化。首次绑定两者都不触发。
-	var round_changed := _last_round != -1 and GameProgress.current_round != _last_round
+	var round_changed := _last_round != -1 and current_round != _last_round
 	if order_changed:
 		_rival_anim_generation += 1
 		_pending_rival_highlight_id = -1 if round_changed else actor
@@ -1038,12 +1235,13 @@ func _bind_rivals() -> void:
 				slot.set_meta("self_slot", true)
 			if slot.get_index() != order - 1:
 				_rivals.move_child(slot, order - 1)
+			# "我方"槽与对手卡共用同一份取数：只显示我方头像（头像在上、文字在下，由场景节点定义）
+			var self_player: Dictionary = _view_player_in(_source.read_view() if _source != null else {}, id)
+			_bind_avatar(slot.get_node("Avatar"), self_player.get("avatar", ""), "AvatarMana")
 			_set_text(slot, "Order/Label", str(actual_ids.find(id) + 1))
 			# 轮到自己时与其它玩家用同一套高亮；换人交接期间先不亮，等金框飞到再亮
-			_set_acting_highlight(slot, _is_acting(id) and id != _pending_rival_highlight_id)
+			_set_acting_highlight(slot, id == actor and id != _pending_rival_highlight_id)
 			continue
-		var pl := _pl(id)
-		var acting := _is_acting(id)
 		var card: Control = existing.get(id)
 		if card == null:
 			card = _spawn("RivalCard", _rivals)
@@ -1054,22 +1252,9 @@ func _bind_rivals() -> void:
 			card.gui_input.connect(_on_opponent_gui_input.bind(card))
 		if card.get_index() != order - 1:
 			_rivals.move_child(card, order - 1)
-		card.modulate = Color(0.6, 0.6, 0.6, 0.45) if bool(pl.get("is_out", false)) else Color.WHITE
-		# 飞行阶段（包括周期刷新）目标玩家保持未亮
-		_set_acting_highlight(card, acting and id != _pending_rival_highlight_id)
+		_set_acting_highlight(card, id == actor and id != _pending_rival_highlight_id)
 		_set_text(card, "Order/Label", str(actual_ids.find(id) + 1))
-		_bind_avatar(card.get_node("Avatar"), _header_img(id))
-		_set_text(card, "Name", _player_name(id))
-		_set_text(card, "Class", _class_shown(id))
-		_set_text(card, "Loc", _seat_summary(id))
-		var magic := _num(pl.get("magic"))
-		var limit := _num(GameData.player_magic_limit(id))
-		card.get_node("MagicSigil").set_value(magic, limit)
-		_set_text(card, "Stats/PowerStat/V", str(int(GetPlayerTotalPower.breakdown(id).get("total", 0))))
-		_set_text(card, "Stats/ScoreStat/V", str(_num(pl.get("score"))))
-		_bind_sigils(card.get_node("Stats/Spells"), _num(pl.get("command_spell_count")), LoadCommandSpell.resolve_player_command_spells(pl.get("master"), pl.get("servant")))
-		# 双图标保留在玩家卡的可点击边界内，单图标仍保留原有间距。
-		card.get_node("Stats").add_theme_constant_override("separation", 2 if card.get_node("Stats/Spells").get_child_count() > 1 else 10)
+		bind_player.call(card, id)
 	_rival_order_snapshot = ids.duplicate()
 	# move_child 会让 HBoxContainer 在本次布局里立刻把卡片排到新顺序的位置，而动画的 _pin_cards_to
 	# 要等下一帧才执行——中间那一帧整排卡片提前跳到位，就是"所有玩家信息一瞬间的错位"。
@@ -1082,7 +1267,38 @@ func _bind_rivals() -> void:
 	elif order_changed:
 		_rival_anim_busy = true
 		_animate_actor_handoff(old_positions, ids.duplicate(), previous_ids)
-	_last_round = GameProgress.current_round
+	_last_round = current_round
+
+func _bind_single_rival(card: Control, id: int) -> void:
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	var player: Dictionary = _view_player_in(view, id)
+	if player.is_empty():
+		return
+	card.modulate = Color(0.6, 0.6, 0.6, 0.45) if player.get("is_out", false) else Color.WHITE
+	_bind_avatar(card.get_node("Avatar"), player.get("avatar", ""))
+	_set_text(card, "Name", player.get("master", {}).get("name", player.get("player_name", "")))
+	_set_text(card, "Class", player.get("servant_class", ""))
+	var area_name := ""
+	for area in view.get("areas", []):
+		for location in area.get("locations", []):
+			if location.id == player.get("location", 0):
+				area_name = str(area.name)
+	_set_text(card, "Loc", area_name)
+	card.get_node("MagicSigil").set_value(player.get("magic", 0), player.get("magic_limit", 0))
+	_set_text(card, "Stats/PowerStat/V", BaseNumber.display_text(player.get("total_power", 0)))
+	_set_text(card, "Stats/ScoreStat/V", BaseNumber.display_text(player.get("score", 0)))
+	_bind_sigils(card.get_node("Stats/Spells"), int(player.get("command_spell_count", 0)), player.get("special_command_spells", []))
+	card.get_node("Stats").add_theme_constant_override("separation", 2 if card.get_node("Stats/Spells").get_child_count() > 1 else 10)
+
+
+## 从给定视图里按玩家 id 取玩家字典（找不到返回空字典）。
+## 顺位栏的"我方"槽与对手卡共用这一份取数逻辑，避免两处各写一遍查找；
+## 视图由调用方读一次后传入，不在这里重复读取。
+func _view_player_in(view: Dictionary, id: int) -> Dictionary:
+	for candidate in view.get("players", []):
+		if int(candidate.id) == id:
+			return candidate
+	return {}
 
 ## 按玩家 id 找顺位横列里的卡片节点
 func _rival_card(id: int) -> Control:
@@ -1168,9 +1384,56 @@ func _layout_positions(ids: Array) -> Dictionary:
 	return result
 
 
+## 动画只对同一组、非空且无重复的顺位序列生效；玩家加入/退出及空投影由绑定结果直接呈现。
+## 这样既保留合法单元素交接，也不让异常输入进入依赖首元素的传送带路径。
+func _rival_animation_inputs_are_compatible(expected_ids: Array, previous_ids: Array) -> bool:
+	if expected_ids.is_empty() or previous_ids.is_empty() or expected_ids.size() != previous_ids.size():
+		return false
+	var expected_set: Dictionary = {}
+	var previous_set: Dictionary = {}
+	for raw_id in expected_ids:
+		var id := int(raw_id)
+		if expected_set.has(id):
+			return false
+		expected_set[id] = true
+	for raw_id in previous_ids:
+		var id := int(raw_id)
+		if previous_set.has(id):
+			return false
+		previous_set[id] = true
+	if expected_set.size() != previous_set.size():
+		return false
+	for id in expected_set:
+		if not previous_set.has(id):
+			return false
+	return true
+
+
+## 无法动画的投影不应留下上一代 busy、tween 或 pending 高亮。
+func _clear_rival_animation_state() -> void:
+	_rival_anim_generation += 1
+	_rival_anim_busy = false
+	_pending_rival_highlight_id = -1
+	if _rival_shift_tween != null and _rival_shift_tween.is_running():
+		_rival_shift_tween.kill()
+	_rival_shift_tween = null
+	if _gold_frame_tween != null and _gold_frame_tween.is_running():
+		_gold_frame_tween.kill()
+	_gold_frame_tween = null
+	if _gold_frame_node != null:
+		_gold_frame_node.visible = false
+		_breathing.erase(_gold_frame_node)
+	for tween in _rival_wrap_tweens:
+		if tween.is_running():
+			tween.kill()
+	_rival_wrap_tweens.clear()
+
+
 ## 传送带：从当前视觉位置并排左移到目标位置，队首卡左出右进绕到队尾。
 ## 调用前卡片已钉在旧位置；await 到所有平移完成，供调用方串行。
 func _shift_cards(targets: Dictionary, expected_ids: Array, previous_ids: Array, seconds: float) -> void:
+	if not _rival_animation_inputs_are_compatible(expected_ids, previous_ids):
+		return
 	var wrap_count := previous_ids.find(expected_ids[0])
 	var cyclic := wrap_count > 0 and previous_ids.size() == expected_ids.size() and targets.size() == expected_ids.size()
 	if cyclic:
@@ -1205,6 +1468,9 @@ func _shift_cards(targets: Dictionary, expected_ids: Array, previous_ids: Array,
 
 ## 换人交接：金框先从旧行动者脱离、平移到新行动者原位（顿挫），再播传送带左移。
 func _animate_actor_handoff(old_positions: Dictionary, expected_ids: Array, previous_ids: Array) -> void:
+	if not _rival_animation_inputs_are_compatible(expected_ids, previous_ids):
+		_clear_rival_animation_state()
+		return
 	var gen := _rival_anim_generation
 	await get_tree().process_frame
 	if not is_inside_tree() or _rival_order_snapshot != expected_ids or gen != _rival_anim_generation:
@@ -1245,6 +1511,9 @@ func _animate_actor_handoff(old_positions: Dictionary, expected_ids: Array, prev
 
 ## 轮次变更：最后行动者先整体左移回到规则顺位，再由上一回合首位下抽绕到末位。
 func _animate_round_change(old_positions: Dictionary, expected_ids: Array, previous_ids: Array) -> void:
+	if not _rival_animation_inputs_are_compatible(expected_ids, previous_ids):
+		_clear_rival_animation_state()
+		return
 	var gen := _rival_anim_generation
 	await get_tree().process_frame
 	if not is_inside_tree() or _rival_order_snapshot != expected_ids or gen != _rival_anim_generation:
@@ -1411,12 +1680,21 @@ func _phase_banner_node() -> Control:
 ## 阶段更迭提示：金线向中间展开、大字过冲回弹，随后淡出；期间冻结行动。
 ## 动画结束后补上行动者提示（当前阶段的首位玩家）。
 func _show_phase_banner(phase_index: int) -> void:
-	var phase_name := str(GameProgress.phases[phase_index].get("name", ""))
+	_phase_anim_busy = true
+	_play_phase_banner(str(GameProgress.phases[phase_index].get("name", "")), _finish_local_phase_banner)
+
+func _finish_local_phase_banner() -> void:
+	_phase_anim_busy = false
+	var curr := GameProgress.current_player_id
+	if curr >= 0:
+		_show_banner_actor(curr)
+
+## 网络可直接调用的纯视觉动画，不访问本机规则，不冻结远端权威。
+func _play_phase_banner(phase_name: String, completed: Callable = Callable()) -> void:
 	if phase_name == "":
 		return
 	var pb := _phase_banner_node()
 	_phase_banner_label.text = "%s阶段" % _phase_cn(phase_name)
-	_phase_anim_busy = true
 	if _phase_tween != null:
 		_phase_tween.kill()
 	pb.visible = true
@@ -1437,47 +1715,60 @@ func _show_phase_banner(phase_index: int) -> void:
 	_phase_tween.tween_callback(func() -> void:
 		pb.visible = false
 		_phase_banner_label.scale = Vector2.ONE
-		_phase_anim_busy = false
-		# 阶段动画演完后补上行动者提示（当前阶段的首位玩家）
-		var curr := GameProgress.current_player_id
-		if curr >= 0:
-			_show_banner_actor(curr)
+		if completed.is_valid():
+			completed.call()
 	)
 
 
 ## ---------- 12 局势 / 弃牌 / 17 路线 ----------
 
 func _bind_situation_and_piles() -> void:
-	var situ = MapData.active_situation
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	var situ: Dictionary = view.get("situation", {})
+	_situation.visible = not view.is_empty()
+	_piles.visible = not view.is_empty()
 	var situ_card := _situation.get_node("SituCard") as Control
-	situ_card.visible = situ != null
-	_situation.get_node("Empty").visible = situ == null
-	if situ != null:
-		_bind_card(situ_card, str(situ.get("_card_img")))
+	situ_card.visible = not situ.is_empty()
+	_situation.get_node("Empty").visible = situ.is_empty()
+	if not situ.is_empty():
+		_bind_card(situ_card, situ.get("image", "") if situ.get("visible", false) and not situ.get("concealed", true) else situ.get("back_image", ""))
 		bind_zoom_for_card(situ_card, situ)
-	_bind_pile(_piles.get_node("EventPile"), _back("event"), MapData.event_discard.size())
-	_bind_pile(_piles.get_node("SituationPile"), _back("situation"), MapData.situation_discard.size())
+	else:
+		_disable_card_zoom(situ_card)
+	_bind_pile(_piles.get_node("EventPile"), _back("event"), view.get("event_discard", []).size())
+	_bind_pile(_piles.get_node("SituationPile"), _back("situation"), view.get("situation_discard", []).size())
+	var mine: Dictionary = {}
+	for player in view.get("players", []):
+		if player.id == view.get("observer", -1):
+			mine = player
+	_bind_pile(_ops.get_node("Deck"), _back("attack"), int(mine.get("deck_count", 0)))
+	var discard: Array = mine.get("discard", [])
+	var face := _back("attack")
+	if not discard.is_empty():
+		var card: Dictionary = discard.back()
+		face = card.get("image", "") if card.get("visible", false) and not card.get("concealed", true) else card.get("back_image", "")
+	_bind_pile(_ops.get_node("Discard"), face, discard.size())
 	var row := _route.get_node("Row")
-	var count := MapData.areas.size()
-	# 路线按节点、箭头交替排列；刷新只增减数量，保留已有控件。
-	var needed := maxi(0, count * 2 - 1)
+	var areas: Array = view.get("areas", [])
+	var needed := maxi(0, areas.size() * 2 - 1)
 	while row.get_child_count() > needed:
 		var last := row.get_child(row.get_child_count() - 1)
 		row.remove_child(last)
 		last.queue_free()
 	while row.get_child_count() < needed:
 		_spawn("RouteNode" if row.get_child_count() % 2 == 0 else "RouteArrow", row)
-	for i in range(count):
-		var area: BaseMapArea = MapData.areas[i]
+	for i in areas.size():
+		var area: Dictionary = areas[i]
 		var on := i == _main_area_index
 		var node := row.get_child(i * 2) as Control
 		_bind_avatar(node.get_node("Circle"), _area_image(i), "AvatarGold2" if on else "AvatarThin")
-		var name_lbl := node.get_node("Name") as Label
-		name_lbl.text = str(area._area_name)
-		name_lbl.theme_type_variation = "Gold2" if on else "Text"
-		if i < count - 1:
-			var arrow := row.get_child(i * 2 + 1) as Control
-			_set_text(arrow, "Cost", "魔力 %d" % _num(area._move_cost))
+		_set_text(node, "Name", str(area.get("name", "")))
+		node.get_node("Name").theme_type_variation = "Gold2" if on else "Text"
+		if i < areas.size() - 1:
+			# builder 未声明 move_cost；禁止用本机规则补齐网络/本地投影。
+			var cost := row.get_child(i * 2 + 1).get_node("Cost") as Label
+			cost.visible = area.has("move_cost")
+			cost.text = "魔力 " + BaseNumber.display_text(area.move_cost) if cost.visible else ""
 
 
 func _bind_pile(pile: Control, back: String, count: int) -> void:
@@ -1486,16 +1777,60 @@ func _bind_pile(pile: Control, back: String, count: int) -> void:
 	_set_text(pile, "Count/Label", str(count))
 
 
-## 每次打开都读取共享弃牌区，来源对象由引擎在事件入场时记录并在弃牌后保留。
-func _open_event_discard(category: String, area: BaseMapArea) -> void:
-	var cards: Array = MapData.event_discard.filter(func(card):
-		if not card is BaseEvent:
-			return false
-		var source = card.get_from()
-		return source == area if area != null else source != MapData.shinto and source != MapData.miyama
-	)
+## 组合根保留原有标题与按钮开合约定；浏览逻辑不感知传输或规则对象。
+func _bind_event_discard_controls(title_format: String, toggle: bool) -> void:
+	_piles.get_node("EventPile/Open").pressed.connect(_open_event_discard_menu.bind(toggle))
+	for entry in [["Shinto", "shinto", "新都"], ["Miyama", "miyama", "深山町"], ["Other", "other", "其他"]]:
+		$EventDiscardMenu.get_node("Choices/" + entry[0]).pressed.connect(_open_event_discard.bind(entry[1], title_format % entry[2]))
+
+
+func _open_event_discard_menu(toggle: bool) -> void:
+	$EventDiscardMenu.visible = not $EventDiscardMenu.visible if toggle else true
+	if $EventDiscardMenu.visible:
+		_raise_modal($EventDiscardMenu)
+
+
+## 分类、公开权限与数组顺序由 source 声明；缺字段为空，不回查本机 MapData。
+func _open_event_discard(category: String, title: String) -> void:
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	var grouped: Dictionary = view.get("event_discard_by_source", {})
 	$EventDiscardMenu.hide()
-	_show_card_browser(category + " · 事件弃牌", cards)
+	_show_card_browser(title, grouped.get(category, []))
+
+
+## 当前只有网络组合根开放这两个入口；不改变本地牌堆的既有能力。
+func _bind_discard_browsing_controls() -> void:
+	for entry in [["Ops/Discard", "我方弃牌", true], ["Piles/SituationPile", "公共局势弃牌", false]]:
+		var pile: Control = get_node(entry[0])
+		pile.mouse_filter = Control.MOUSE_FILTER_STOP
+		pile.gui_input.connect(_on_discard_browse_input.bind(pile, entry[1], entry[2]))
+		for child in pile.find_children("*", "Control", true, false):
+			child.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _on_discard_browse_input(event: InputEvent, pile: Control, title: String, personal: bool) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_open_discard_browser(title, personal)
+		pile.accept_event()
+
+
+## 只消费当前 source：本人按 observer 精确选择；不缓存、不排序、不合并相同 ID。
+func _open_discard_browser(title: String, personal: bool) -> void:
+	if _source_is_local and _source != null:
+		_source.invalidate()
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	var cards: Array = []
+	if personal:
+		var observer: int = int(view.get("observer", -1))
+		if observer >= 0:
+			for player in view.get("players", []):
+				if int(player.get("id", -1)) == observer:
+					cards = player.get("discard", [])
+					break
+	else:
+		cards = view.get("situation_discard", [])
+	$EventDiscardMenu.hide()
+	_show_card_browser(title, cards)
 
 
 ## 只读查看与效果选牌分离；复用现有事件卡模板和贴图绑定，不提交任何规则动作。
@@ -1552,40 +1887,46 @@ func _bind_events() -> void:
 
 ## ---------- 3 主战区内容，复用同一场景模板 ----------
 
-func _bind_main(area: BaseMapArea, content: Control) -> void:
-	_set_text(content, "Latin", str(AREA_LATIN.get(str(area._area_name), "")))
-	_set_text(content, "Name", str(area._area_name))
+func _bind_main(area: Dictionary, content: Control) -> void:
+	_set_text(content, "Latin", str(AREA_LATIN.get(str(area.get("name", "")), "")))
+	_set_text(content, "Name", str(area.get("name", "")))
 	_bind_groups(area, content)
 
 
 ## 席位两排：下排 = 战区固定席位（含空席），上排 = 无固定席位（混战区）玩家头像。
 ## 两排都放在 ScrollContainer 里，内容超宽时用滚轮横向滚动；滚动位置在刷新间保留
-func _bind_seat_rows(area: BaseMapArea, seats: Control) -> void:
+func _bind_seat_rows(area: Dictionary, seats: Control) -> void:
+	var locations: Array = area.get("locations", [])
 	var seat_sc := seats.get_node("SeatScroll") as ScrollContainer
 	var melee_sc := seats.get_node("MeleeScroll") as ScrollContainer
 	var seat_row := seat_sc.get_node("Row")
 	var melee_row := melee_sc.get_node("Row")
-	var fixed: Array = area._locations.filter(func(loc): return loc._pl_num_limit >= 0)
+	var fixed: Array = locations.filter(func(loc): return loc.has("capacity") and loc.capacity >= 0)
 	var unseated: Array = []
-	for loc: BaseLocation in area._locations:
-		if loc._pl_num_limit < 0:
-			for pid in loc._players:
+	for loc in locations:
+		if loc.has("capacity") and loc.capacity < 0:
+			for pid in loc.get("players", []):
 				unseated.append({"pid": int(pid), "loc": loc})
 	_sync_items(seat_row, "SeatSlot", fixed.size())
 	_sync_items(melee_row, "MeleeSeat", unseated.size())
-	for i in range(fixed.size()):
-		var loc: BaseLocation = fixed[i]
+	for i in fixed.size():
+		var loc: Dictionary = fixed[i]
 		var slot := seat_row.get_child(i) as Control
 		_bind_seat(slot.get_node("Seat"), loc, true)
-		slot.set_meta("compact", Vector2(13, 148 + area._locations.find(loc) * 64))
-	for i in range(unseated.size()):
+		slot.set_meta("compact", Vector2(13, 148 + locations.find(loc) * 64))
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	for i in unseated.size():
 		var entry: Dictionary = unseated[i]
-		var loc: BaseLocation = entry.loc
+		var loc: Dictionary = entry.loc
 		var seat := melee_row.get_child(i) as Control
-		_bind_avatar(seat.get_node("Avatar"), _header_img(entry.pid), "AvatarMana" if entry.pid == _local_player_id else "AvatarGold2")
-		_set_text(seat, "Label", _seat_kind(loc, false))
-		var slot: int = loc._players.find(entry.pid)
-		seat.set_meta("compact", Vector2(4 + (slot % 3) * 22, 148 + area._locations.find(loc) * 64 + (slot / 3) * 24))
+		var image := ""
+		for player in view.get("players", []):
+			if player.id == entry.pid:
+				image = str(player.get("avatar", ""))
+		_bind_avatar(seat.get_node("Avatar"), image, "AvatarMana" if entry.pid == _local_player_id else "AvatarGold2")
+		_set_text(seat, "Label", "混战区")
+		var slot: int = loc.players.find(entry.pid)
+		seat.set_meta("compact", Vector2(4 + (slot % 3) * 22, 148 + locations.find(loc) * 64 + (slot / 3) * 24))
 	melee_sc.visible = not unseated.is_empty()
 	seat_sc.visible = not fixed.is_empty()
 
@@ -1690,6 +2031,8 @@ func _scroll_is_animating() -> bool:
 
 
 func _input(event: InputEvent) -> void:
+	if _card_modification_history_input(event):
+		return
 	if network_session != null:
 		if _network_presenter.browse_input(event):
 			return
@@ -1747,6 +2090,8 @@ func _input(event: InputEvent) -> void:
 func _handle_scroll_hover(event: InputEvent) -> void:
 	if not event is InputEventMouseMotion or event.relative.is_zero_approx():
 		return
+	if _native_modal_visible():
+		return
 	if (_pause_menu != null and _pause_menu.visible) or (_debug_console != null and _debug_console.is_panel_open()):
 		return
 	if _board.visible:
@@ -1766,7 +2111,7 @@ func _handle_scroll_hover(event: InputEvent) -> void:
 
 
 func _scroll_target(index: int) -> Rect2:
-	var count := _strips.get_child_count() if network_session != null else MapData.areas.size()
+	var count := _strips.get_child_count()
 	var narrow := (_tpl.get_node("Strip") as Control).size.x
 	var width := maxf(narrow, size.x - SCROLL_MARGIN * 2 - (count - 1) * STRIP_STEP)
 	var x := (size.x - (count - 1) * STRIP_STEP - narrow) * 0.5 + index * STRIP_STEP
@@ -1837,16 +2182,21 @@ func _sync_items(parent: Node, template: String, count: int) -> void:
 		_spawn(template, parent)
 
 func _bind_strips() -> void:
-	_sync_items($Background, "AreaBackdrop", MapData.areas.size())
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	var areas: Array = view.get("areas", [])
+	var actions: Dictionary = _source.read_actions() if _source != null else {}
+	var pending: Dictionary = _source.read_pending() if _source != null else {}
+	_sync_items($Background, "AreaBackdrop", areas.size())
 	var previous_count := _strips.get_child_count()
-	_sync_items(_strips, "Strip", MapData.areas.size())
-	for i in range(MapData.areas.size()):
-		var area: BaseMapArea = MapData.areas[i]
+	_sync_items(_strips, "Strip", areas.size())
+	for i in range(areas.size()):
+		var area: Dictionary = areas[i]
 		var strip := _strips.get_child(i) as Control
 		if not strip.has_node("Main"):
 			var content := _main.duplicate() as Control
 			strip.add_child(content)
 			content.show()
+			_clear(content.get_node("Groups/List"))
 			strip.move_child(content, 2)
 			strip.position = _scroll_target(i).position
 			strip.size = _scroll_target(i).size
@@ -1857,21 +2207,24 @@ func _bind_strips() -> void:
 			for row_name in ["MeleeScroll", "SeatScroll"]:
 				var sc := seats.get_node(row_name) as ScrollContainer
 				sc.gui_input.connect(_on_hscroll_wheel.bind(sc))
+		strip.set_meta("area_id", area.get("id", 0))
+		strip.set_meta("area_name", area.get("name", ""))
+		strip.set_meta("location_count", area.get("locations", []).size())
 		_set_img(strip, "Background", _area_image(i))
 		($Background.get_child(i) as TextureRect).texture = (strip.get_node("Background") as TextureRect).texture
 		_bind_main(area, strip.get_node("Main"))
 		_bind_seat_rows(area, strip.get_node("Seats"))
 		var chars := PackedStringArray()
-		for ch in str(area._area_name):
+		for ch in str(area.name):
 			chars.append(ch)
 		_set_text(strip, "Col/Vertical", "\n".join(chars))
-		_set_text(strip, "Col/Latin", str(AREA_LATIN.get(str(area._area_name), "")).left(6))
+		_set_text(strip, "Col/Latin", str(AREA_LATIN.get(str(area.name), "")).left(6))
 
 		var ev_items := strip.get_node("EventIcons")
-		var events := _area_events(area)
+		var events: Array = area.get("events", [])
 		_bind_area_event_cards(ev_items, events)
-		strip.get_node("Score").visible = _area_score(area) != 0
-		_set_text(strip, "Score/Num", str(_area_score(area)))
+		strip.get_node("Score").visible = area.has("score") and area.get("score", 0) != 0
+		_set_text(strip, "Score/Num", BaseNumber.display_text(area.get("score", 0)))
 		# 地图战区点击：战区本体接收 gui_input；命中后消费等待中的位置选择 / 部署 / 移动
 		if not strip.has_meta("area_idx"):
 			strip.set_meta("area_idx", i)
@@ -1879,10 +2232,9 @@ func _bind_strips() -> void:
 		else:
 			strip.set_meta("area_idx", i)
 		# 当前战区是否可操作，就能沿卷轴外缘亮一圈流动金框（判据与点击入口共用）
-		var blocked: String = TacticalBoardUI.area_action_block_reason_for(_local_player_id, i)
 		var flow := strip.get_node_or_null("FlowBorder") as Control
 		if flow != null:
-			flow.visible = blocked == ""
+			flow.visible = pending.get("areas", []).has(area.get("id")) if pending.get("kind") == "location_choice" else actions.get("deploy_areas", []).has(area.get("id")) or actions.get("move_areas", []).has(area.get("id"))
 			_bind_flow_border(flow)
 		_layout_scroll(strip, float(strip.get_meta("open", 0.0)))
 	if previous_count != _strips.get_child_count() and previous_count > 0:
@@ -1960,7 +2312,7 @@ func _layout_scroll(strip: Control, openness: float) -> void:
 			var who := grp.get_node("Who") as Control
 			_update_avatar_scroll_reveal(who, who.get_node("Avatar") as Control)
 	refs["col"].modulate.a = 1.0 - openness
-	var count: int = int(strip.get_meta("location_count", 0)) if network_session != null else MapData.areas[strip.get_index()]._locations.size()
+	var count: int = int(strip.get_meta("location_count", 0))
 	var events := refs["events"] as Control
 	var score := refs["score"] as Control
 	var compact_step := minf(64, (strip.size.y - 144 - (64 if events.visible else 0) - (52 if score.visible else 0)) / maxf(1, count))
@@ -2053,12 +2405,10 @@ func _bind_hint() -> void:
 			sub_text += " · 位于 " + str(area._area_name)
 		sub_text += " · 等待对方完成"
 	# 等待选位置：在提示条上常驻说明，不重复弹窗打扰
-	var pending_loc: Dictionary = EffectManager.get_pending_location_selection()
-	if not pending_loc.is_empty():
-		var loc_eff: BaseEffect = pending_loc.get("effect")
-		if loc_eff != null and loc_eff._trigger_player_id == _local_player_id:
-			main_text = "请点击要选定的战区"
-			sub_text = _pending_location_hint(pending_loc)
+	var pending_loc: Dictionary = _source.read_pending() if _source != null else {}
+	if pending_loc.get("kind") == "location_choice":
+		main_text = "请点击要选定的战区"
+		sub_text = str(pending_loc.get("label", "")) + " · 请选择目标地点"
 	_set_text(_hint, "Main", main_text)
 	_set_text(_hint, "Sub", sub_text)
 	_banner.position.x = (size.x - _banner.size.x) / 2
@@ -2087,47 +2437,52 @@ func _bind_hint() -> void:
 ## ---------- 4/5 本方面板 ----------
 
 func _bind_self() -> void:
-	var pl := _pl(_local_player_id)
-	var servant = pl.get("servant")
-	var master = pl.get("master")
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	var player: Dictionary = {}
+	for candidate in view.get("players", []):
+		if candidate.id == view.get("observer", -1):
+			player = candidate
+	_self.visible = not player.is_empty()
+	if player.is_empty():
+		# 网络威力由 presenter 在本轮 observer/seq 绑定后统一清空。
+		if network_session == null:
+			preload("res://scripts/game_scene/battle_io/shared_view_sections.gd").render_self_power(_self.get_node("Stats"), {}, {}, false)
+		return
+	var servant: Dictionary = player.get("servant", {})
 	var sv := _self.get_node("ServantCard") as Control
-	_bind_card(sv, str(servant.get("_servant_card_img")) if servant != null else "")
-	bind_zoom_for_card(sv, servant, "_servant_card_img")
-	_set_text(sv, "Class", _servant_class(_local_player_id).to_upper())
-	_set_text(sv, "HiddenTag/Label", "真名解放" if ReleaseTrueName.is_released(_local_player_id) else "真名隐藏")
+	sv.visible = not servant.is_empty()
+	_bind_card(sv, servant.get("image", "") if servant.get("visible", false) and not servant.get("concealed", true) else servant.get("back_image", ""))
+	bind_zoom_for_card(sv, servant)
+	_set_text(sv, "Class", str(player.get("servant_class", "")).to_upper())
+	_set_text(sv, "HiddenTag/Label", "真名解放" if player.get("servant_released", false) else "真名隐藏")
 	var stats := _self.get_node("Stats")
-	_set_text(stats, "ScoreRow/Score", str(_num(pl.get("score"))))
-	_set_text(stats, "ScoreRow/Rank", "名次 %d" % (_score_sorted_ids().find(_local_player_id) + 1))
-	var magic := _num(pl.get("magic"))
-	var limit := _num(GameData.player_magic_limit(_local_player_id))
-	stats.get_node("MagicSigil").set_value(magic, limit)
-	# 选择待打出的牌仍未写入真实 power；这里把它们作为只读预览传给统一威力查询，
-	# 因此数字会随选牌/撤回立即变化，而不会污染结算状态。
-	var preview_cards: Array = _selected_cards.duplicate()
-	var preview_hidden: Array = _selected_cards_hidden()
-	var preview_power: int = _selected_cards_power()
-	var brk: Dictionary = GetPlayerTotalPower.breakdown(
-		_local_player_id, preview_power, preview_cards, preview_hidden
-	)
+	_set_text(stats, "ScoreRow/Score", BaseNumber.display_text(player.get("score", 0)))
+	var rank := 1
+	for other in view.get("players", []):
+		if other.get("score", 0) > player.get("score", 0):
+			rank += 1
+	_set_text(stats, "ScoreRow/Rank", "名次 %d" % rank)
+	stats.get_node("MagicSigil").set_value(player.get("magic", 0), player.get("magic_limit", 0))
 	var power_label := stats.get_node("PowerRow/Power") as Control
-	_set_text(stats, "PowerRow/Power", str(int(brk.get("total", 0))))
 	_bind_power_hover(power_label, _local_player_id, true)
-	var parts: Array[String] = ["出牌 %d" % (int(brk.get("power", 0)) + int(brk.get("preview", 0)))]
-	for key_label in [["location_benefit", "地利"], ["board", "场上"], ["bonus", "加成"]]:
-		if int(brk.get(key_label[0], 0)) != 0:
-			parts.append("%s %d" % [key_label[1], int(brk.get(key_label[0], 0))])
-	_set_text(stats, "PowerRow/BreakScroll/Break", " + ".join(parts))
-	var spells := _self.get_node("Spells")
-	_bind_local_spell_box(spells, master, servant, _num(pl.get("command_spell_count")))
+	if network_session == null:
+		var brk: Dictionary = player.get("power_breakdown", {})
+		# 本地选牌仍使用原规则查询；网络只消费 presenter 的私有预览。
+		if not _selected_cards.is_empty():
+			brk = GetPlayerTotalPower.breakdown(_local_player_id, _selected_cards_power(), _selected_cards.duplicate(), _selected_cards_hidden())
+		preload("res://scripts/game_scene/battle_io/shared_view_sections.gd").render_self_power(stats, player, brk, false)
+	_bind_spell_box(_self.get_node("Spells"), player)
 	var me := _self.get_node("Me")
-	_bind_avatar(me.get_node("Avatar"), _header_img(_local_player_id))
-	_set_text(me, "PlayerName", _player_name_data(_local_player_id))
-	_set_text(me, "Name", _player_name(_local_player_id))
+	me.show()
+	_bind_avatar(me.get_node("Avatar"), player.get("avatar", ""))
+	_set_text(me, "PlayerName", str(player.get("player_name", "")))
+	_set_text(me, "Name", str(player.get("master", {}).get("name", "")))
 
 
 ## ---------- 8 御主卡 ----------
 
 func _bind_master() -> void:
+	_master.show()
 	var master = _pl(_local_player_id).get("master")
 	_set_img(_master, "Frame/Img", str(master.get("_master_card_img")) if master != null else "")
 	var portrait := _master.get_node("Frame/Img") as TextureRect
@@ -2150,6 +2505,7 @@ func _bind_master() -> void:
 ## ---------- 11 御主下方的手牌抽屉与椭圆两侧的技能卡 ----------
 
 func _bind_hand() -> void:
+	_hand.show()
 	var pl := _pl(_local_player_id)
 
 	var zone_entries := _zone_hand_entries(pl)
@@ -2272,10 +2628,7 @@ func _layout_held_group(entries: Array, template: String, left: float, right: fl
 		badge.visible = entry.stack_count > 1
 		badge.text = "x%d" % entry.stack_count if badge.visible else ""
 
-## 手牌"可出"提示的重算签名。规则搜索是深度组合搜索（实测 5~8 张牌一轮约 4ms，
-## 占掉 120FPS 预算的一半），不能每帧跑；但也不能只在定时刷新时更新，
-## 否则阶段/回合/选牌/魔力一变，金色呼吸描边会滞后。这里用这几项做轻量签名，
-## 只有真的变了才重算，平时零成本
+## 卡面数据适配不参与动作合法性。
 func _held_visual_data(card) -> Dictionary:
 	if card is Dictionary:
 		return card
@@ -2283,12 +2636,41 @@ func _held_visual_data(card) -> Dictionary:
 		"concealed": card._is_concealed, "cost": _num(card._cost) if card is BaseHandCard else 0,
 		"power": _num(card._power) if card is BaseHandCard else 0}
 
-func _held_playable_signature() -> String:
-	if network_session != null:
-		return _network_presenter.playable_signature()
-	var pl := _pl(_local_player_id)
-	return "%d|%d|%d|%d|%d" % [_selected_cards.size(), GameProgress.current_player_id,
-		GameProgress.current_phase_index, GameProgress.current_round, _num(pl.get("magic"))]
+## 组合快照与主动效果共同决定提示；独立 cards 不代表可加入当前组。
+func _held_playable_signature(actions = null, group = null) -> String:
+	if actions == null:
+		actions = _source.read_actions() if _source != null else {}
+	if group == null:
+		group = _read_group_preview()
+	return var_to_str([group, actions.get("effects", [])])
+
+func _read_group_preview() -> Dictionary:
+	return _source.read_group_preview(_selected_cards, _selected_cards_hidden()) if _source != null else {}
+
+static func _group_preview_ready(group: Dictionary) -> bool:
+	return not group.get("waiting", false) and not group.get("submitted", false) and bool(group.get("preview", {}).get("ok", false))
+
+func _held_action_card_id(card) -> int:
+	if card is Dictionary:
+		return int(card.get("id", 0))
+	return _held_action_ids.id_for(card) if card is BaseCard and _held_action_ids != null else 0
+
+## 授权 view 已包含牌及关联 BUFF 的效果 ID，不在 UI 重建规则关系。
+func _held_action_card_view(card) -> Dictionary:
+	if card is Dictionary:
+		return card
+	var id := _held_action_card_id(card)
+	if id <= 0 or _source == null:
+		return {}
+	var view: Dictionary = _source.read_view()
+	for player in view.get("players", []):
+		for entry in player.get("held_cards", []):
+			if int(entry.card.get("id", 0)) == id:
+				return entry.card
+		for played in player.get("played_cards", []):
+			if int(played.get("id", 0)) == id:
+				return played
+	return {}
 
 
 ## 手牌悬浮判据：鼠标确实落在牌上（over 来自真实 GUI 命中），且抽屉已开始展开（含上升过程中）。
@@ -2343,26 +2725,25 @@ func _update_held_cards(delta: float) -> void:
 		if str(slot.get_meta("held_group", "")) == "hand":
 			_hand.move_child(slot, -1)
 	slots = by_x
-	# 状态变了才重算可出提示：选牌/阶段/回合/当前玩家/魔力任一变化都会换签名
-	var sig := _held_playable_signature()
+	# 同次更新只读一份 actions；不跨刷新缓存动作合法性。
+	var actions: Dictionary = _source.read_actions() if _source != null else {}
+	var group := _read_group_preview()
+	var sig := _held_playable_signature(actions, group)
 	if str(_hand.get_meta("playable_sig", "")) != sig:
 		_hand.set_meta("playable_sig", sig)
 		for slot: Control in slots:
 			if slot.has_meta("card"):
-				slot.set_meta("held_playable", _held_card_playable(_meta_or(slot, "card", null)) or not (slot.get_meta("manual_effects", []) as Array).is_empty())
+				var effects := _manual_effects_of(_meta_or(slot, "card", null), actions)
+				slot.set_meta("manual_effects", effects)
+				slot.set_meta("held_playable", _held_card_playable(_meta_or(slot, "card", null), actions, group))
 	for slot: Control in slots:
 		if not slot.has_meta("rest_position"):
 			continue
 		var card = slot.get_meta("card")
-		var playable: bool = bool(slot.get_meta("held_playable", false)) and _held_input_available()
-		var breath := slot.get_node("Breath") as Control
-		var selected := slot.get_node("Selected") as Control
-		selected.visible = _network_presenter.is_selected(card) if network_session != null else _selected_cards.has(card)
-		if selected.visible and not _breathing.has(selected):
-			_breathing.append(selected)
-		breath.visible = playable and not selected.visible
-		if breath.visible and not _breathing.has(breath):
-			_breathing.append(breath)
+		var input_available := _held_input_available()
+		var playable: bool = bool(slot.get_meta("held_playable", false)) and input_available
+		var manual_available := input_available and not (slot.get_meta("manual_effects", []) as Array).is_empty()
+		_sync_held_affordance_frames(slot, playable, manual_available, group.get("cards", []).has(_held_action_card_id(card)))
 		var over := hovered == slot or (hovered != null and slot.is_ancestor_of(hovered))
 		_update_held_effect_button(slot, over, delta)
 		var is_hand: bool = slot.get_meta("held_group", "") == "hand"
@@ -2422,8 +2803,19 @@ func _bind_effect_button(slot: Control) -> void:
 
 
 func _on_held_card_input(event: InputEvent, slot: Control) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+		if not _held_input_available() or not _battle_command_input_available("set_concealed"): return
+		var held = _meta_or(slot, "card", null)
+		var card_id: int = int(held.get("id", -1)) if held is Dictionary else (_held_action_ids.id_for(held) if held is BaseCard and _held_action_ids != null else -1)
+		var concealed: bool = bool(held.get("concealed", false)) if held is Dictionary else (held._is_concealed if held is BaseCard else false)
+		for entry in _source.read_actions().get("flip_cards", []):
+			if entry.get("id") == card_id and entry.get("modes", []).has(not concealed):
+				_submit_battle_command("set_concealed", {"card": card_id, "concealed": not concealed})
+				break
+		slot.accept_event()
+		return
 	if network_session != null:
-		_network_presenter.card_input(event, slot)
+		_network_presenter.card_input(event, slot, _battle_commands.submit if _battle_command_input_available("set_concealed") else Callable())
 		return
 	if not event is InputEventMouseButton or not event.pressed or not _held_input_available():
 		return
@@ -2448,9 +2840,6 @@ func _on_held_card_input(event: InputEvent, slot: Control) -> void:
 		else:
 			_selected_cards.append(card)
 
-	elif event.button_index == MOUSE_BUTTON_RIGHT:
-		# 朝向编辑与出牌资格分离；暗置技能能否打出仍由提交规则校验。
-		_commands.set_card_concealed(card, not card._is_concealed, _local_player_id)
 	else:
 		return
 	slot.accept_event()
@@ -2462,6 +2851,13 @@ func _update_held_effect_button(slot: Control, over: bool, delta: float) -> void
 	var button := slot.get_node("EffectButton") as Button
 	var popup := button.get_node("Effects") as PopupMenu
 	var available := _held_input_available() and not (slot.get_meta("manual_effects", []) as Array).is_empty()
+	# 失去候选/生命周期可用性时没有残留的可见发动入口；离开悬浮仍保留滑出动画。
+	if not available:
+		button.set_meta("slide", 0.0)
+		button.hide()
+		button.disabled = true
+		popup.hide()
+		return
 	var progress := move_toward(float(button.get_meta("slide", 0.0)), 1.0 if available and (over or popup.visible) else 0.0, delta * HELD_HOVER_SPEED)
 	button.set_meta("slide", progress)
 	button.disabled = not available
@@ -2479,7 +2875,7 @@ func _update_held_effect_button(slot: Control, over: bool, delta: float) -> void
 func _on_held_effect_pressed(slot: Control) -> void:
 	if not _held_input_available():
 		return
-	var effects := _manual_effects_of(_meta_or(slot, "card", null))
+	var effects := _manual_effects_of(_meta_or(slot, "card_object", _meta_or(slot, "card", null)) if network_session == null else _meta_or(slot, "card", null))
 	if effects.is_empty():
 		return
 	if effects.size() == 1:
@@ -2490,7 +2886,7 @@ func _on_held_effect_pressed(slot: Control) -> void:
 	popup.clear()
 	button.set_meta("choices", effects)
 	for i in range(effects.size()):
-		popup.add_item(str(effects[i].label) if network_session != null else _shown(effects[i]), i)
+		popup.add_item(str(effects[i].label) if effects[i] is Dictionary else _shown(effects[i]), i)
 	popup.position = Vector2i(button.global_position + Vector2(0, button.size.y))
 	popup.popup()
 
@@ -2504,68 +2900,78 @@ func _on_held_effect_choice(index: int, slot: Control) -> void:
 
 
 func _request_held_effect(effect) -> void:
-	if network_session != null:
-		_network_presenter.request_effect(effect)
+	if not _battle_command_input_available() or not _held_input_available():
 		return
-	# 点击时再次由引擎校验；悬浮期间资源或时机可能已经变化。
-	_commands.request_manual_activation(effect, _local_player_id)
-	refresh_all_ui()
+	if _source_is_local:
+		_source.invalidate()
+	var id = effect.get("id") if effect is Dictionary else (_held_action_ids.id_for(effect) if effect is BaseEffect and _held_action_ids != null else null)
+	if not id is int or id <= 0 or not _source.read_pending().is_empty():
+		return
+	if _activation_effect_ids().has(id):
+		_submit_battle_command("activate", {"effect": id})
 
-
-## 返回卡牌及其关联状态上此刻可以主动发动的效果。
-## 主动能力的可用性完全交给 EffectManager，界面只负责提供点击入口。
-func _manual_effects_of(card) -> Array:
-	if network_session != null:
-		return _network_presenter.manual_effects_of(card) if card is Dictionary else []
-	var result: Array = []
-	if card == null:
-		return result
-	var holders: Array = [card]
-	var related = card.get("_relate_buff")
-	if related != null:
-		holders.append(related)
-	for holder in holders:
-		var effects = holder.get("_effects")
-		if not effects is Array:
+## 合法性只来自 actions，身份只来自本人实际 view 的牌面效果 ID。
+func _activation_effect_ids(spells_only: bool = false) -> Array:
+	var declared: Array = []
+	for player in _source.read_view().get("players", []):
+		if player.get("id") != _battle_command_observer:
 			continue
-		for effect in effects:
-			if effect is BaseEffect and EffectManager.can_manual_activate(effect, _local_player_id) and not result.has(effect):
-				result.append(effect)
+		var cards: Array = player.get("command_spells", []).duplicate()
+		if not spells_only:
+			for entry in player.get("held_cards", []):
+				cards.append(entry.card)
+			cards.append_array(player.get("played_cards", []))
+			for entry in player.get("zone_hand_entries", []):
+				cards.append(entry.card)
+		for card in cards:
+			for id in card.get("effects", []):
+				if id is int and id > 0 and not declared.has(id):
+					declared.append(id)
+	var allowed: Array = []
+	for effect in _source.read_actions().get("effects", []):
+		var id = effect.get("id")
+		if id is int and declared.has(id) and not allowed.has(id):
+			allowed.append(id)
+	return allowed
+
+
+## 卡面声明的效果 ID 与只读 actions 相交；对象解析仅兼容旧本地命令输入。
+func _manual_effects_of(card, actions = null) -> Array:
+	var result: Array = []
+	if actions == null:
+		actions = _source.read_actions() if _source != null else {}
+	var card_view := _held_action_card_view(card)
+	var seen: Array = []
+	for effect in actions.get("effects", []):
+		var id: int = int(effect.get("id", 0))
+		if id <= 0 or seen.has(id) or not card_view.get("effects", []).has(id):
+			continue
+		seen.append(id)
+		if card is Dictionary:
+			result.append(effect.duplicate(true))
+		elif _held_action_ids != null:
+			var object = _held_action_ids.object_for(id)
+			if object is BaseEffect:
+				result.append(object)
 	return result
 
 
-func _held_card_playable(card) -> bool:
-	if network_session != null:
-		return _network_presenter.card_playable(card)
-	if not card is BaseHandCard or not _held_input_available():
+## 已选牌看整组可提交；未选牌只看当前组 preview.candidates，绝不回退独立候选。
+func _held_card_playable(card, _actions = null, group = null) -> bool:
+	if group == null:
+		group = _read_group_preview()
+	if not _group_preview_ready(group):
 		return false
-	var proposed := _selected_cards.duplicate()
-	if not proposed.has(card):
-		# 金框表示存在合法方式；已选同伴和确认入口仍按真实朝向校验。
-		var candidate_cards := proposed.duplicate()
-		candidate_cards.append(card)
-		for hidden in [false, true]:
-			var candidate_hidden := _held_hidden(proposed)
-			candidate_hidden.append(hidden)
-			if candidate_cards.size() + RegularPlay.played_count(_local_player_id) >= RegularPlay.minimum(_local_player_id):
-				if RegularPlay.can_submit_group(_local_player_id, candidate_cards, candidate_hidden):
-					return true
-			elif RegularPlay.pending_modes(_local_player_id, proposed, _held_hidden(proposed), card).has(hidden):
-				return true
+	var id := _held_action_card_id(card)
+	if id <= 0:
 		return false
-	for chosen in proposed:
-		if not chosen is BaseHandCard:
-			return false
-	# 完整组合使用提交入口的同一校验；未满组逐步复用 pending_modes，
-	# 同时复核已选牌当前状态，避免其中一张失效后其他牌仍显示旧金框。
-	if proposed.size() + RegularPlay.played_count(_local_player_id) >= RegularPlay.minimum(_local_player_id):
-		return RegularPlay.can_submit_group(_local_player_id, proposed, _held_hidden(proposed))
-	var pending: Array = []
-	for chosen in proposed:
-		if not RegularPlay.pending_modes(_local_player_id, pending, _held_hidden(pending), chosen).has(chosen._is_concealed):
-			return false
-		pending.append(chosen)
-	return true
+	var preview: Dictionary = group.get("preview", {})
+	if group.get("cards", []).has(id):
+		return bool(preview.get("can_submit", false))
+	for candidate in preview.get("candidates", []):
+		if int(candidate.get("id", 0)) == id:
+			return not candidate.get("modes", []).is_empty()
+	return false
 
 
 ## 牌面翻转动画：绕垂直中线折到最窄时执行 on_mid（换贴图/换遮罩由调用方决定），再展开。
@@ -2613,6 +3019,7 @@ func _finish_card_flip(id: int) -> void:
 
 
 func _bind_hand_card(node: Control, card, kind: String, count: int, mine: bool, show_conceal_mark: bool = true) -> void:
+	_sync_card_modification_badge(node, card, mine)
 	if network_session != null:
 		_network_presenter.bind_hand_card(node, card, show_conceal_mark)
 		return
@@ -2630,15 +3037,15 @@ func _bind_hand_card(node: Control, card, kind: String, count: int, mine: bool, 
 	_bind_hand_face(frame, face_img, mark)
 	if kind == "升华技":
 		_set_variation(frame, "CardUpgrade")
-	var playable := awakened and _held_card_playable(card)
-	var manual_effects: Array = _manual_effects_of(card) if awakened and mine else []
-	var actionable := playable or not manual_effects.is_empty()
+	var actions: Dictionary = _source.read_actions() if _source != null else {}
+	var playable := awakened and _held_card_playable(card, actions)
+	var manual_effects: Array = _manual_effects_of(card, actions) if awakened and mine else []
 	var pl := _pl(_local_player_id)
 	var need := _num(GameData.skill_zone_magic_limit)
 	var locked := awakened and mine and not playable and not (pl.get("hand_cards", []) as Array).has(card) \
 		and _num(pl.get("magic")) < need \
 		and not bool(pl.get("ignore_skill_zone_magic_limit", false)) and not bool(pl.get("is_magic_immune", false))
-	_bind_hand_availability(node, manual_effects, actionable, mine and awakened, locked)
+	_bind_hand_availability(node, manual_effects, playable, mine and awakened, locked)
 	# 牌面不附说明文字：牌名、属性与底部底条都改由放大卡图与右键说明承担
 
 	# 放大与右键说明绑在卡位自身：Frame 及其子节点都被设为不接收鼠标，绑在它们上面收不到事件。
@@ -2648,14 +3055,243 @@ func _bind_hand_card(node: Control, card, kind: String, count: int, mine: bool, 
 	else:
 		_disable_card_zoom(node)
 
-func _bind_hand_availability(node: Control, effects: Array, actionable: bool, dim_unavailable: bool, locked: bool) -> void:
+## 两种来源共用徽标与只读模态；网络只能消费当前完整快照的本人记录。
+var _modification_slots: Array[WeakRef] = []
+
+func _strict_modification_records(card: Dictionary) -> bool:
+	if typeof(card.get("visible")) != TYPE_BOOL or not card.visible \
+			or typeof(card.get("concealed")) != TYPE_BOOL or card.concealed \
+			or typeof(card.get("modification_history")) != TYPE_ARRAY:
+		return false
+	for record in card.modification_history:
+		if typeof(record) != TYPE_DICTIONARY or record.size() != 2 or not record.has_all(["type", "detail"]) \
+				or typeof(record.type) != TYPE_STRING or typeof(record.detail) != TYPE_STRING:
+			return false
+	return true
+
+## 只查当前observer自己的展示集合；controller/visible不能代替历史授权。
+func _network_modification_card(card, channel: String) -> Dictionary:
+	if _source_is_local or network_session == null or _source == null or not card is Dictionary \
+			or typeof(card.get("id")) != TYPE_INT or not _strict_modification_records(card):
+		return {}
+	var view: Dictionary = _source.read_view()
+	if typeof(view.get("observer")) != TYPE_INT or view.observer < 0 \
+			or view.observer != _local_player_id or typeof(view.get("seq")) != TYPE_INT:
+		return {}
+	var channels: Array = [channel] if not channel.is_empty() else ["held_cards", "hand_cards", "master_skills", "servant_skills", "zone_hand_entries"]
+	for player in view.get("players", []):
+		if typeof(player.get("id")) != TYPE_INT or player.id != view.observer:
+			continue
+		for key in channels:
+			for entry in player.get(key, []):
+				var current = entry.get("card", {}) if key in ["held_cards", "zone_hand_entries"] else entry
+				if current is Dictionary and typeof(current.get("id")) == TYPE_INT and current.id == card.id:
+					return current if _strict_modification_records(current) else {}
+	return {}
+
+func _modification_records(card, channel: String = "") -> Array:
+	if card is Dictionary:
+		return _network_modification_card(card, channel).get("modification_history", [])
+	return card.get_modification_details() if _local_modification_card_allowed(card) else []
+
+func _same_modification_target(a, b) -> bool:
+	if a is Dictionary and b is Dictionary:
+		return typeof(a.get("id")) == TYPE_INT and typeof(b.get("id")) == TYPE_INT and a.id == b.id
+	if a is Dictionary or b is Dictionary:
+		return false
+	return a == b
+
+## 本地沿用真实对象权限；网络绝不落入本机对象分支。
+func _local_modification_card_allowed(card) -> bool:
+	if network_session != null or not _source_is_local or not card is BaseHandCard:
+		return false
+	if card._is_concealed or (card is BaseSkill and not card._is_awakened):
+		return false
+	# 查询不创建玩家；按当前持有集合验证，离区/换观察者即失效。
+	var pl: Dictionary = GameData.player_data_library.get(_local_player_id, {})
+	if pl.is_empty():
+		return false
+	if pl.get("hand_cards", []).has(card) or pl.get("played_cards", []).has(card):
+		return true
+	return _zone_hand_entries(pl).any(func(entry): return entry.card == card)
+
+func _sync_card_modification_badge(slot: Control, card, authorized: bool, channel: String = "") -> void:
+	var badge := slot.get_node_or_null("CardModificationBadge") as Button
+	if badge == null:
+		return
+	if not slot.has_meta("modification_tracked"):
+		slot.set_meta("modification_tracked", true)
+		_modification_slots.append(weakref(slot))
+	var records := _modification_records(card, channel) if authorized else []
+	badge.mouse_filter = Control.MOUSE_FILTER_STOP
+	badge.visible = not records.is_empty()
+	badge.set_meta("mod_target_card", card if badge.visible else null)
+	badge.set_meta("mod_authorized", authorized)
+	badge.set_meta("mod_channel", channel)
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	badge.set_meta("mod_observer", view.get("observer", -1) if card is Dictionary else _local_player_id)
+	badge.set_meta("mod_seq", view.get("seq", -1) if card is Dictionary else -1)
+	if not badge.pressed.is_connected(_on_card_modification_pressed.bind(slot)):
+		badge.pressed.connect(_on_card_modification_pressed.bind(slot))
+	var reader := get_node("CardModificationHistory") as Control
+	var source: WeakRef = _meta_or(reader, "history_source", null)
+	if reader.visible and source != null and source.get_ref() == slot:
+		if not badge.visible or not _same_modification_target(_meta_or(reader, "history_card", null), card) \
+				or reader.get_meta("history_observer", -1) != badge.get_meta("mod_observer", -1):
+			_close_card_modification_history()
+		else:
+			reader.set_meta("history_card", card)
+			reader.set_meta("history_seq", badge.get_meta("mod_seq", -1))
+			_render_card_modification_history(card, channel)
+
+func _on_card_modification_pressed(slot: Control) -> void:
+	var badge := slot.get_node("CardModificationBadge") as Button
+	var card = _meta_or(badge, "mod_target_card", null)
+	var channel: String = badge.get_meta("mod_channel", "")
+	var observer: int = _source.read_view().get("observer", -1) if card is Dictionary and _source != null else _local_player_id
+	if not badge.is_visible_in_tree() or not bool(badge.get_meta("mod_authorized", false)) \
+			or badge.get_meta("mod_observer", -1) != observer or _modification_records(card, channel).is_empty():
+		_close_card_modification_history()
+		return
+	var reader := get_node("CardModificationHistory") as Control
+	reader.set_meta("history_source", weakref(slot))
+	reader.set_meta("history_card", card)
+	reader.set_meta("history_observer", observer)
+	reader.set_meta("history_seq", badge.get_meta("mod_seq", -1))
+	_render_card_modification_history(card, channel)
+	(reader.get_node("Panel/Entries") as RichTextLabel).scroll_to_line(0)
+	reader.show()
+	_raise_modal(reader)
+
+func _render_card_modification_history(card, channel: String = "") -> void:
+	var lines: PackedStringArray = []
+	for record in _modification_records(card, channel):
+		# 真实记录只有type/detail；不解释BBCode，不补时间、来源或前后值。
+		if record is Dictionary and record.get("detail") is String:
+			lines.append("• " + record.detail)
+	var title: String = _network_modification_card(card, channel).get("name", "") if card is Dictionary else card.get_shown_name()
+	_set_text($CardModificationHistory/Panel, "Title", "【%s】修改记录" % title)
+	var entries := $CardModificationHistory/Panel/Entries as RichTextLabel
+	entries.bbcode_enabled = false
+	var rendered := "\n\n".join(lines)
+	if entries.text != rendered:
+		entries.text = rendered
+
+func _refresh_card_modification_history() -> void:
+	# 即使面板未打开也每帧撤销旧徽标；只保留WeakRef，不持有已离树的卡位。
+	for index in range(_modification_slots.size() - 1, -1, -1):
+		var tracked = _modification_slots[index].get_ref()
+		if not is_instance_valid(tracked) or not tracked.is_inside_tree() or tracked.is_queued_for_deletion():
+			_modification_slots.remove_at(index)
+			continue
+		var target_badge: Button = tracked.get_node("CardModificationBadge")
+		var target = _meta_or(target_badge, "mod_target_card", null)
+		if target == null:
+			continue
+		var channel: String = target_badge.get_meta("mod_channel", "")
+		var observer: int = _source.read_view().get("observer", -1) if target is Dictionary and _source != null else _local_player_id
+		if target_badge.get_meta("mod_observer", -1) != observer or not tracked.is_visible_in_tree():
+			_sync_card_modification_badge(tracked, null, false, channel)
+		else:
+			var current = _network_modification_card(target, channel) if target is Dictionary else target
+			_sync_card_modification_badge(tracked, current, bool(target_badge.get_meta("mod_authorized", false)), channel)
+	var reader := get_node("CardModificationHistory") as Control
+	if not reader.visible:
+		return
+	var source: WeakRef = _meta_or(reader, "history_source", null)
+	var slot = source.get_ref() if source != null else null
+	if not is_instance_valid(slot) or not slot.is_inside_tree() or slot.is_queued_for_deletion() or not slot.is_visible_in_tree():
+		_close_card_modification_history()
+		return
+	var card = _meta_or(reader, "history_card", null)
+	var badge := slot.get_node("CardModificationBadge") as Button
+	var channel: String = badge.get_meta("mod_channel", "")
+	if not badge.visible or not bool(badge.get_meta("mod_authorized", false)) \
+			or not _same_modification_target(_meta_or(badge, "mod_target_card", null), card) or _modification_records(card, channel).is_empty():
+		_close_card_modification_history()
+		return
+	_render_card_modification_history(card, channel)
+
+func _close_card_modification_history() -> void:
+	var reader := get_node("CardModificationHistory") as Control
+	reader.hide()
+	reader.remove_meta("history_source")
+	reader.remove_meta("history_card")
+	reader.remove_meta("history_observer")
+	reader.remove_meta("history_seq")
+	_set_text(reader, "Panel/Title", "修改记录")
+	(reader.get_node("Panel/Entries") as RichTextLabel).text = ""
+
+func _card_modification_history_input(event: InputEvent) -> bool:
+	if not $CardModificationHistory.visible:
+		return false
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		_close_card_modification_history()
+		get_viewport().set_input_as_handled()
+	elif event is InputEventMouseButton and event.pressed \
+			and event.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT] \
+			and not ($CardModificationHistory/Panel as Control).get_global_rect().has_point(event.position):
+		_close_card_modification_history()
+		get_viewport().set_input_as_handled()
+	# 面板内交给预置控件；全局地图/抽屉悬浮逻辑不再处理本事件。
+	return true
+
+## 两种意图独立：选牌时金框原位变白；点选发动时紫框原位变白。
+func _sync_held_affordance_frames(node: Control, playable: bool, manual_available: bool, selected: bool) -> void:
+	# 金/白共用同一个节点，保留原位与呼吸相位；发动选择只控制外侧紫/白框。
+	var play_frame := node.get_node("Breath") as Panel
+	var play_style := _meta_or(play_frame, "selected_outline" if selected else "available_outline", null) as StyleBox
+	if play_style != null and play_frame.get_theme_stylebox("panel") != play_style:
+		play_frame.add_theme_stylebox_override("panel", play_style)
+	node.get_node("Selected").hide()
+	var effect_selected := _held_effect_intent_selected(node)
+	var effect_frame := node.get_node("EffectBreath") as Panel
+	var effect_style := _meta_or(effect_frame, "selected_outline" if effect_selected else "available_outline", null) as StyleBox
+	if effect_style != null and effect_frame.get_theme_stylebox("panel") != effect_style:
+		effect_frame.add_theme_stylebox_override("panel", effect_style)
+	for entry in [[play_frame, playable or selected], [effect_frame, manual_available or effect_selected]]:
+		var outline: Control = entry[0]
+		outline.visible = entry[1]
+		if outline.visible and not _breathing.has(outline):
+			_breathe(outline)
+
+## 只读既有菜单/命令/权威等待；不把hover、选牌或旧卡位metadata当发动选择。
+func _held_effect_intent_selected(node: Control) -> bool:
+	if _source == null:
+		return false
+	var card = _meta_or(node, "card", null)
+	var declared: Array = _held_action_card_view(card).get("effects", [])
+	if declared.is_empty():
+		return false
+	var pending_id = _source.read_pending().get("effect")
+	if pending_id is int and declared.has(pending_id):
+		return true
+	var requested_id = _end_command_attempt.get("args", {}).get("effect")
+	if requested_id is int and declared.has(requested_id):
+		return true
+	var button := node.get_node_or_null("EffectButton") as Button
+	if button == null or not (button.get_node("Effects") as PopupMenu).visible:
+		return false
+	var choices: Array = button.get_meta("choices", [])
+	for effect in _manual_effects_of(card):
+		var id = effect.get("id") if effect is Dictionary else (_held_action_ids.id_for(effect) if effect is BaseEffect and _held_action_ids != null else null)
+		if not id is int or not declared.has(id):
+			continue
+		for choice in choices:
+			var choice_id = choice.get("id") if choice is Dictionary else (_held_action_ids.id_for(choice) if choice is BaseEffect and _held_action_ids != null else null)
+			if choice_id == id:
+				return true
+	return false
+
+func _bind_hand_availability(node: Control, effects: Array, playable: bool, dim_unavailable: bool, locked: bool) -> void:
 	node.set_meta("manual_effects", effects)
-	node.set_meta("held_playable", actionable)
+	node.set_meta("held_playable", playable)
+	var actionable := playable or not effects.is_empty()
 	var frame: Control = node.get_node("Frame")
 	frame.modulate = Color(0.55, 0.55, 0.55) if dim_unavailable and not actionable else Color.WHITE
-	node.get_node("Breath").hide()
-	if actionable:
-		_breathe(node.get_node("Breath"))
+	var input_available := _held_input_available()
+	var selected: bool = _read_group_preview().get("cards", []).has(_held_action_card_id(node.get_meta("card")))
+	_sync_held_affordance_frames(node, playable and input_available, not effects.is_empty() and input_available, selected)
 	node.get_node("Lock").visible = locked
 
 func _bind_hand_face(frame: Control, face_img: String, mark: bool) -> void:
@@ -2670,17 +3306,13 @@ func _bind_hand_face(frame: Control, face_img: String, mark: bool) -> void:
 		_sync_overlay(frame, mark, "ConcealOverlay", CONCEAL_COLOR, CONCEAL_ICON)
 
 func _bind_ops() -> void:
-	var pl := _pl(_local_player_id)
-	_bind_mana_cost_preview(pl)
+	_bind_mana_cost_preview()
 	(_ops.get_node("PlayButton") as Button).disabled = not _can_confirm_held_cards()
-	(_ops.get_node("EndButton") as Button).disabled = not _is_acting(_local_player_id)
+	_update_end_command_button()
 	var list := _ops.get_node("BuffBox/List")
-	var buffs: Array = (pl.get("buffs", []) as Array).filter(func(b): return b is BaseBuff)
+	var buffs: Array = _projected_buffs(_local_player_id)
 	(list.get_node("None") as Control).visible = _fill_buff_rows(list, buffs, ["None"]) == 0
-	var deck: Array = pl.get("deck", [])
-	var discard: Array = pl.get("discard", [])
-	_bind_pile(_ops.get_node("Deck"), _back("attack"), deck.size())
-	_bind_pile(_ops.get_node("Discard"), str(discard.back().get("_card_img")) if not discard.is_empty() else _back("attack"), discard.size())
+	# 牌堆由 _bind_situation_and_piles 统一消费 source 投影。
 
 
 ## 说明常驻、图可选的展示位绑定（buff 这类对象常常没有图，但点开要看得到效果说明）：
@@ -2690,12 +3322,27 @@ func _bind_entry_info(node: Control, obj, img_field: String = "") -> void:
 	if node == null or obj == null:
 		return
 	bind_zoom_for_card(node, obj, img_field)
+	if obj is Dictionary:
+		# 只允许传输视图明确授权、正面且有说明的条目退回说明模式。
+		if obj.get("visible", false) and not obj.get("concealed", true) and bool(node.get_meta("zoom_disabled", true)):
+			node.set_meta("zoom_disabled", false)
+			node.set_meta("zoom_img", "")
+			node.set_meta("zoom_obj", obj)
+			node.set_meta("zoom_title", obj.get("name", ""))
+			node.set_meta("zoom_desc", obj.get("description", ""))
+			node.set_meta("zoom_right_action", "desc")
+			node.mouse_filter = Control.MOUSE_FILTER_STOP
+			if not node.has_meta("zoom_bound"):
+				node.set_meta("zoom_bound", true)
+				node.gui_input.connect(_on_zoom_target_gui_input.bind(node))
+		_bind_desc_click(node)
+		return
 	if bool(node.get_meta("zoom_disabled", true)):
 		node.set_meta("zoom_disabled", false)
 		node.set_meta("zoom_img", "")
 		node.set_meta("zoom_obj", obj)
 		node.set_meta("zoom_title", _object_shown_name(obj))
-		node.set_meta("zoom_desc", TacticalBoardUI._build_token_desc(obj))
+		node.set_meta("zoom_desc", CardDescText.token_desc(obj))
 		node.set_meta("zoom_right_action", "desc")
 		node.mouse_filter = Control.MOUSE_FILTER_STOP
 		if not node.has_meta("zoom_bound"):
@@ -2728,18 +3375,22 @@ func _fill_buff_rows(row: Node, buffs: Array, keep: Array = []) -> int:
 	_clear(row, keep)
 	var count := 0
 	for b in buffs:
-		if not (b is BaseBuff):
+		if not b is Dictionary:
+			continue
+		var card: Dictionary = b.get("card", {})
+		if not card.get("visible", false) or card.get("concealed", true):
 			continue
 		var entry := _spawn("BuffRow", row)
-		_set_variation(entry, "BuffActive" if bool(b._is_active) else "BuffInactive")
-		var img := str(b.get("_buff_img"))
-		var avatar := entry.get_node("H/Avatar") as Control
-		avatar.visible = img != "" and LoadHelper.texture_exists(img)
+		var active: bool = bool(b.get("active", false))
+		_set_variation(entry, "BuffActive" if active else "BuffInactive")
+		var avatar: Control = entry.get_node("H/Avatar")
+		var image: String = card.get("image", "")
+		avatar.visible = not image.is_empty() and LoadHelper.texture_exists(image)
 		if avatar.visible:
-			_bind_avatar(avatar, img)
-		_bind_entry_info(entry, b, "_buff_img")
-		_set_text(entry, "H/Name", _shown(b))
-		entry.get_node("H/Inactive").visible = not bool(b._is_active)
+			_bind_avatar(avatar, image)
+		_bind_entry_info(entry, card)
+		_set_text(entry, "H/Name", card.get("name", ""))
+		entry.get_node("H/Inactive").visible = not active
 		count += 1
 	return count
 
@@ -2769,6 +3420,10 @@ func _selected_cards_power() -> int:
 
 
 func _held_input_available() -> bool:
+	if $CardModificationHistory.visible:
+		return false
+	if not _end_command_attempt.is_empty():
+		return false
 	if network_session != null:
 		return _network_presenter.input_available()
 	return not _submitting and not $LogBrowser.visible and not $CardBrowser.visible and not $EventDiscardMenu.visible \
@@ -2776,28 +3431,29 @@ func _held_input_available() -> bool:
 
 
 func _can_confirm_held_cards() -> bool:
-	if network_session != null:
-		return _held_input_available() and _network_presenter.selection.can_confirm()
-	return _held_input_available() and RegularPlay.can_submit_group(_local_player_id, _selected_cards, _held_hidden(_selected_cards))
+	var group := _read_group_preview()
+	return _held_input_available() and _group_preview_ready(group) and bool(group.get("preview", {}).get("can_submit", false))
 
 
 func _confirm_held_cards() -> void:
-	if network_session != null:
-		if _can_confirm_held_cards():
-			_network_presenter.selection.confirm()
-		return
 	if not _can_confirm_held_cards():
 		return
-	# 对象与当前明暗状态在确认时一同快照；提交入口仍执行完整规则校验。
-	var cards := _selected_cards.duplicate()
-	var hidden := _held_hidden(cards)
-	_submitting = true
-	var submitted: bool = _commands.submit_group(_local_player_id, cards, hidden)
-	if submitted:
-		_selected_cards.clear()
-	_submitting = false
-	refresh_all_ui()
-	if submitted:
+	var group: Dictionary = _read_group_preview()
+	_submit_battle_command("play_group", {"cards": group.get("cards", []).duplicate(), "hidden": group.get("hidden", []).duplicate()})
+
+func _complete_held_group(attempt: Dictionary) -> void:
+	var ids: Array = attempt.get("args", {}).get("cards", [])
+	if not _source_is_local:
+		# 暂选只是 UI 状态；只在权威成功后移除本次提交的牌，不调用旧 confirm。
+		for id in ids: _network_presenter.selection.remove(id)
+		return
+	var cards: Array = []
+	for id in ids:
+		var card = _held_action_ids.object_for(id)
+		if card != null:
+			cards.append(card)
+			_selected_cards.erase(card)
+	if not cards.is_empty():
 		# 打出与阶段能力发动是两次操作；只提示此刻引擎确认仍可发动的牌。
 		for card in cards:
 			if not _manual_effects_of(card).is_empty():
@@ -2809,40 +3465,50 @@ func _confirm_held_cards() -> void:
 				slot.rotation = slot.get_meta("rest_rotation")
 
 
+func _toggle_scoreboard() -> void:
+	_board.visible = not _board.visible
+	_bind_board()
+
+
 func _bind_board() -> void:
+	_update_board_return_controls()
 	if not _board.visible:
 		return
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	var players: Array = view.get("players", []).duplicate()
+	players.sort_custom(func(a, b): return a.get("score", 0) > b.get("score", 0))
 	var rows := _board.get_node("Rows") as Control
-	_clear(rows)
-	var ids := _score_sorted_ids()
+	_sync_items(rows, "BoardRow", players.size())
 	var row_h := 0.0
-	for i in range(ids.size()):
-		var id: int = ids[i]
-		var row := _spawn("BoardRow", rows)
+	for i in players.size():
+		var player: Dictionary = players[i]
+		var row := rows.get_child(i) as Control
 		row_h = row.custom_minimum_size.y
-		var variation := "Mana" if id == _local_player_id else "Text"
-		var rank := row.get_node("Rank") as Label
-		rank.text = str(i + 1)
-		rank.theme_type_variation = variation
-		_bind_avatar(row.get_node("Avatar"), _header_img(id))
-		var nm := row.get_node("Name") as Label
-		nm.text = _player_name(id)
-		nm.theme_type_variation = variation
-		_set_text(row, "Class", _class_shown(id))
-		_set_text(row, "Score", str(_num(_pl(id).get("score"))))
-	_board.size.y = 40.0 + ids.size() * row_h + 12.0
+		var variation := "Mana" if player.id == view.get("observer", -1) else "Text"
+		_set_text(row, "Rank", str(i + 1))
+		_set_variation(row.get_node("Rank"), variation)
+		_bind_avatar(row.get_node("Avatar"), player.get("avatar", ""))
+		_set_text(row, "Name", player.get("master", {}).get("name", player.get("player_name", "")))
+		_set_variation(row.get_node("Name"), variation)
+		_set_text(row, "Class", player.get("servant_class", ""))
+		_set_text(row, "Score", BaseNumber.display_text(player.get("score", 0)))
+	_board.size.y = 52.0 + players.size() * row_h
 
-
-# -----------------------------------------------------------------------------
-# 本批新增：与 ModalLayer 配套的等待输入 / 弹窗 / AI 推进 / 出牌区新排版
-# -----------------------------------------------------------------------------
+# 等待输入状态与既有 AI 推进节拍（不属于榜单投影）。
 var _card_select_request: Dictionary = {}
 var _card_select_hidden: Dictionary = {}
 var _card_select_submit: Callable = Callable()
 var _card_select_effect: BaseEffect = null
+## card_choice 使用 source 的稳定声明；不把 raw pending 对象带入本地展示或回执。
+var _card_choice_prompt: Dictionary = {}
+var _card_choice_generation: int = 0
+var _card_choice_command_epoch: int = -1
 var _card_select_picked: Array = []
 var _card_select_cards: Array = []
 var _player_select_effect: BaseEffect = null
+var _player_choice_prompt: Dictionary = {}
+var _player_choice_generation: int = 0
+var _player_choice_command_epoch: int = -1
 var _player_select_panel_ready: bool = false
 var _pending_tactical_action: Dictionary = {}
 var _pending_confirm_desc: String = ""
@@ -2867,25 +3533,26 @@ func _process_waiting_inputs(_delta: float) -> void:
 
 
 # --- 等待效果发动 / 放弃 ---
+var _active_choice_prompt: Dictionary = {}
+var _active_choice_generation: int = 0
+var _active_choice_command_epoch: int = -1
+
 func _check_waiting_effects() -> void:
-	if not EffectManager.is_waiting_for_choice():
-		if _effect_modal != null and _effect_modal.visible:
-			_effect_modal.visible = false
-			_current_waiting_effect = null
+	# raw 只用于显式 AI 的身份适配；展示和真人答复只读 source 声明。
+	var raw: BaseEffect = EffectManager.get_pending_active_effect()
+	if raw != null and _seat_controller.is_ai(raw._trigger_player_id):
+		await _driver.answer_effect_async(raw,get_tree())
+		if _source != null: _source.invalidate()
+	var prompt: Dictionary = _source.read_pending() if _source != null else {}
+	if prompt.get("kind") != "active_choice":
+		if not _active_choice_prompt.is_empty(): _active_choice_generation += 1
+		_active_choice_prompt = {}
+		_current_waiting_effect = null
+		if _effect_modal != null: _effect_modal.hide()
 		return
-	var pending: BaseEffect = EffectManager.get_pending_active_effect()
-	if pending == null:
-		return
-	var trigger_id: int = pending._trigger_player_id
-	if _seat_controller.is_ai(trigger_id):
-		_driver.answer_effect(pending)
-		refresh_all_ui()
-		return
-	if trigger_id >= 0 and not _seat_controller.is_local(trigger_id):
-		return
-	if pending != _current_waiting_effect:
-		_current_waiting_effect = pending
-		_show_effect_modal(pending)
+	if prompt != _active_choice_prompt or _active_choice_command_epoch != _battle_command_epoch or not _effect_modal.visible:
+		_show_effect_modal(raw)
+	_refresh_active_choice_lock()
 
 
 # --- 令咒入口：把已持有令咒之一做成可点击，规则与旧控制器同源 ---
@@ -2901,27 +3568,15 @@ func _bind_command_spell_entry(card: Control) -> void:
 
 
 func _command_spell_block_reason() -> String:
-	if GameData.player_data_library.has(_local_player_id):
-		var pl: Dictionary = GameDataManager.get_player_data(_local_player_id)
-		var cards: Array = GetPlCommandSpellOutGame.new().exec(_local_player_id)
-		var can_use := false
-		for c in cards:
-			var effs = c.get("_effects") if c != null else null
-			if not (effs is Array):
-				continue
-			for e in effs:
-				if EffectManager.can_manual_activate(e, _local_player_id):
-					can_use = true
-					break
-			if can_use:
-				break
-		if can_use:
-			return ""
-		var cnt: int = _num(pl.get("command_spell_count"))
-		if cnt <= 0:
-			return "没有令咒可用"
-	if EffectManager.is_waiting_for_choice() or EffectManager.is_waiting_for_card_selection():
+	if _source == null or not _battle_command_input_available():
+		return "当前命令尚未确认或会话不可操作"
+	if not _source.read_pending().is_empty():
 		return "请先处理当前待你答复的效果"
+	if not _activation_effect_ids(true).is_empty():
+		return ""
+	for player in _source.read_view().get("players", []):
+		if player.get("id") == _battle_command_observer and player.get("command_spell_count", 0) <= 0:
+			return "没有令咒可用"
 	return "现在不能发动令咒"
 
 
@@ -2944,82 +3599,129 @@ func _on_command_spell_clicked(event: InputEvent) -> void:
 		return
 	if _effect_modal != null and _effect_modal.visible:
 		return
+	if _source_is_local and _source != null:
+		_source.invalidate()
 	var reason := _command_spell_block_reason()
 	if reason != "":
 		_say(reason)
 		return
-	var cards: Array = GetPlCommandSpellOutGame.new().exec(_local_player_id)
-	for c in cards:
-		var effs = c.get("_effects") if c != null else null
-		if not (effs is Array):
-			continue
-		for e in effs:
-			if EffectManager.can_manual_activate(e, _local_player_id):
-				if _commands.request_manual_activation(e, _local_player_id):
-					refresh_all_ui()
-					return
+	var effects: Array = _activation_effect_ids(true)
+	if not effects.is_empty():
+		_request_held_effect({"id": effects[0]})
 
 
 # --- 等待选牌 ---
 func _check_waiting_card_selection() -> void:
 	var pending: Dictionary = EffectManager.get_pending_card_selection()
-	if pending.is_empty():
-		if _card_select_panel != null and _card_select_panel.visible:
-			_card_select_panel.visible = false
-		_card_select_effect = null
-		_card_select_picked = []
-		return
-	var eff: BaseEffect = pending.get("effect")
-	if eff == null:
-		return
-	var trigger_id: int = eff._trigger_player_id
-	if _seat_controller.is_ai(trigger_id):
-		_driver.answer_card(pending)
+	var raw_effect: BaseEffect = pending.get("effect")
+	# AI 仍由本地规则 driver 直接答复；真人/网络视图只消费 source 声明。
+	if raw_effect != null and _seat_controller.is_ai(raw_effect._trigger_player_id):
+		await _driver.answer_selection_async("cards",pending,get_tree())
 		refresh_all_ui()
 		return
-	if trigger_id >= 0 and not _seat_controller.is_local(trigger_id):
-		return
-	if _card_select_effect != eff or _card_select_panel == null or not _card_select_panel.visible:
-		_card_select_effect = eff
+	var declaration: Dictionary = _source.read_pending() if _source != null else {}
+	if declaration.get("kind") != "card_choice":
+		if not _card_choice_prompt.is_empty(): _card_choice_generation += 1
+		_card_choice_prompt = {}
+		_card_select_effect = null
+		if _card_select_panel != null and _card_select_panel.visible:
+			_card_select_panel.visible = false
 		_card_select_picked = []
-		_show_card_select_panel(pending)
-	elif pending != _card_select_request:
-		_card_select_picked = _card_select_picked.filter(func(card): return pending.cards.has(card))
-		_show_card_select_panel(pending)
+		return
+	if not _card_choice_same(_card_choice_prompt, declaration) or _card_choice_command_epoch != _battle_command_epoch or _card_select_panel == null or not _card_select_panel.visible:
+		_card_choice_generation += 1
+		_card_choice_prompt = declaration.duplicate(true)
+		_card_choice_command_epoch = _battle_command_epoch
+		_card_select_picked = []
+		_show_card_select_panel(_card_choice_display(declaration))
+	elif _card_choice_declaration_changed(_card_select_request, declaration):
+		_card_select_picked = _card_select_picked.filter(func(card): return _card_choice_ids(_card_select_request.get("cards", [])).has(_card_choice_id(card)))
+		_show_card_select_panel(_card_choice_display(declaration))
+	else:
+		_refresh_card_select_confirm(_card_select_request)
+
+func _card_choice_id(card) -> int:
+	return int(card) if card is int else (int(card.get("id", -1)) if card is Dictionary else (_held_action_ids.id_for(card) if _held_action_ids != null and card is BaseCard else -1))
+
+func _card_choice_ids(cards: Array) -> Array:
+	var ids: Array = []
+	for card in cards:
+		var id := _card_choice_id(card)
+		if id >= 0 and not ids.has(id): ids.append(id)
+	return ids
+
+func _card_choice_display(declaration: Dictionary) -> Dictionary:
+	var views: Array = declaration.get("card_views", []).duplicate(true)
+	var required_ids: Array = declaration.get("required", []).duplicate()
+	return {"cards": views, "required_cards": views.filter(func(card): return required_ids.has(_card_choice_id(card))), "shown_name": declaration.get("label", "请选择牌"), "min": int(declaration.get("min", 1)), "max": int(declaration.get("max", -1)), "allow_cancel": bool(declaration.get("allow_cancel", false)), "verb": str(declaration.get("verb", "选择")), "secret": bool(declaration.get("secret", false)), "confirm_text": str(declaration.get("confirm_text", "确认选择"))}
+
+func _card_choice_declaration_changed(display: Dictionary, declaration: Dictionary) -> bool:
+	return _card_choice_ids(display.get("cards", [])) != _card_choice_ids(declaration.get("card_views", [])) or display.get("min") != declaration.get("min") or display.get("max") != declaration.get("max") or display.get("required_cards", []).size() != declaration.get("required", []).size()
+
+func _card_choice_same(a: Dictionary, b: Dictionary) -> bool:
+	if a.is_empty() or b.is_empty(): return false
+	return int(a.get("effect", -1)) == int(b.get("effect", -1)) and _card_choice_ids(a.get("card_views", [])) == _card_choice_ids(b.get("card_views", [])) and _card_choice_ids(a.get("required", [])) == _card_choice_ids(b.get("required", [])) and int(a.get("min", 1)) == int(b.get("min", 1)) and int(a.get("max", -1)) == int(b.get("max", -1)) and bool(a.get("allow_cancel", false)) == bool(b.get("allow_cancel", false)) and str(a.get("verb", "")) == str(b.get("verb", "")) and bool(a.get("secret", false)) == bool(b.get("secret", false)) and str(a.get("confirm_text", "")) == str(b.get("confirm_text", ""))
 
 
 # --- 等待选玩家 ---
 func _check_waiting_player_selection() -> void:
-	var pending: Dictionary = EffectManager.get_pending_player_selection()
-	if pending.is_empty():
-		if _player_select_panel != null and _player_select_panel.visible:
-			_player_select_panel.visible = false
+	# raw 只进入显式 AI 控制席的原 driver，绝不作为本地展示声明。
+	var raw: Dictionary = EffectManager.get_pending_player_selection()
+	var effect: BaseEffect = raw.get("effect")
+	if effect != null and _seat_controller.is_ai(effect._trigger_player_id):
+		await _driver.answer_selection_async("players",raw,get_tree())
+	var prompt: Dictionary = _source.read_pending() if _source != null else {}
+	if prompt.get("kind") != "player_choice":
+		if not _player_choice_prompt.is_empty(): _player_choice_generation += 1
+		_player_choice_prompt = {}
 		_player_select_effect = null
+		if _player_select_panel != null: _player_select_panel.hide()
 		return
-	var eff: BaseEffect = pending.get("effect")
-	if eff == null:
-		return
-	var trigger_id: int = eff._trigger_player_id
-	if _seat_controller.is_ai(trigger_id):
-		_driver.answer_player(pending)
-		return
-	if trigger_id >= 0 and not _seat_controller.is_local(trigger_id):
-		return
-	if _player_select_effect != eff or _player_select_panel == null or not _player_select_panel.visible:
-		_show_player_select_panel(pending)
+	if prompt != _player_choice_prompt or _player_choice_command_epoch != _battle_command_epoch or not _player_select_panel.visible:
+		_show_player_select_panel(prompt)
+	_refresh_player_choice_lock()
 
 
 # --- 等待选位置 ---
+var _location_choice_prompt: Dictionary = {}
+var _location_choice_generation: int = 0
+var _location_choice_command_epoch: int = -1
+
 func _check_waiting_location_selection() -> void:
-	var pending: Dictionary = EffectManager.get_pending_location_selection()
-	if pending.is_empty():
+	if not _source_is_local: return
+	# AI 的对象身份适配与真人声明消费分开；不把 raw 候选传入展示。
+	var raw: Dictionary = EffectManager.get_pending_location_selection()
+	if not raw.is_empty() and _seat_controller.is_ai(raw.effect._trigger_player_id):
+		await _driver.answer_selection_async("location",raw,get_tree())
+	var declaration: Dictionary = _source.read_pending() if _source != null else {}
+	if declaration.get("kind") != "location_choice":
+		if not _location_choice_prompt.is_empty(): _location_choice_generation += 1
+		_location_choice_prompt = {}
+		get_node("Hint/LocationCancel").hide()
 		return
-	var eff: BaseEffect = pending.get("effect")
-	if eff == null:
-		return
-	var trigger_id: int = eff._trigger_player_id
-	if _seat_controller.is_ai(trigger_id):
-		_driver.answer_location(pending)
+	if declaration != _location_choice_prompt or _location_choice_command_epoch != _battle_command_epoch:
+		_location_choice_generation += 1
+		_location_choice_prompt = declaration.duplicate(true)
+		_location_choice_command_epoch = _battle_command_epoch
+		var cancel: Button = get_node("Hint/LocationCancel")
+		for connection in cancel.pressed.get_connections(): cancel.pressed.disconnect(connection.callable)
+		preload("res://scripts/game_scene/native_choice_renderer.gd").location(self,str(declaration.label),bool(declaration.allow_cancel),_cancel_location_choice.bind(declaration.duplicate(true),_location_choice_generation,_battle_command_epoch))
+	get_node("Hint/LocationCancel").disabled = not _battle_command_input_available()
+
+func _location_choice_current(declaration: Dictionary, generation: int, epoch: int) -> bool:
+	if not _source_is_local or _source == null or generation != _location_choice_generation or epoch != _battle_command_epoch: return false
+	if declaration.is_empty() or declaration != _location_choice_prompt or declaration != _source.read_pending():
+		_check_waiting_location_selection()
+		return false
+	return true
+
+func _submit_location_choice(area: int, declaration: Dictionary, generation: int, epoch: int) -> void:
+	if not _location_choice_current(declaration,generation,epoch) or not declaration.get("areas",[]).has(area): return
+	_submit_battle_command("location_choice", {"effect":declaration.effect,"area":area})
+
+func _cancel_location_choice(declaration: Dictionary = {}, generation: int = -1, epoch: int = -1) -> void:
+	if not _location_choice_current(declaration,generation,epoch) or not declaration.get("allow_cancel",false): return
+	_submit_battle_command("cancel_choice", {"effect":declaration.effect})
 
 
 # --- AI 推进 ---
@@ -3031,11 +3733,15 @@ func _check_and_step_ai(delta: float) -> void:
 	if _effect_result_modal != null and _effect_result_modal.visible:
 		return
 	_driver.step_interval = AI_STEP_INTERVAL
-	_driver.step(delta)
+	var action:String = _driver.prepare_step(delta)
+	if action == "ai_turn":
+		await _driver.run_bot_turn_async(GameProgress.current_player_id,get_tree())
+	elif action == "end_current_player_action":
+		GameProgress.end_current_player_action(_driver.source_context)
 
 
 func _run_dummy_bot_turn(bot_id: int) -> void:
-	_driver.run_bot_turn(bot_id)
+	await _driver.run_bot_turn_async(bot_id,get_tree())
 
 
 func _clear_ai_play_prompt(_bot_id: int) -> void:
@@ -3062,16 +3768,21 @@ func _on_ai_played_card(bot_id: int, card: BaseCard) -> void:
 # --- 终局展示 ---
 ## 对局结束时打开战果榜一次并报出胜者；只展示一次，不会被刷新重复弹出
 func _check_game_over() -> void:
-	if _game_over_shown or not GameProgress.is_game_over:
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	if not view.get("game_over", false):
+		_game_over_shown = false
+		return
+	if _game_over_shown:
 		return
 	_game_over_shown = true
 	if _board != null:
-		_board.visible = true
+		_board.show()
 		_bind_board()
-	var ids := _score_sorted_ids()
-	if not ids.is_empty():
-		_say("对局结束 · 战果最高 %s" % _player_name(int(ids[0])))
-	refresh_all_ui()
+	var winners := PackedStringArray()
+	for player in view.get("players", []):
+		if player.get("is_victory", false):
+			winners.append(str(player.get("master", {}).get("name", player.get("player_name", ""))))
+	_say("对局结束" if winners.is_empty() else "对局结束 · 胜者 " + "、".join(winners))
 
 
 # --- 调试控制台（与旧控制器同源） ---
@@ -3095,6 +3806,10 @@ func _bind_pause_menu_controls() -> void:
 	(_pause_menu.get_node("Box/BtnQuit") as Button).pressed.connect(get_tree().quit)
 
 func _handle_escape() -> void:
+	if $CardModificationHistory.visible:
+		_close_card_modification_history()
+		get_viewport().set_input_as_handled()
+		return
 	var had_overlay: bool = $EventDiscardMenu.visible or $CardBrowser.visible or $LogBrowser.visible \
 			or (_hover_zoom != null and _hover_zoom.visible) or (_hover_desc != null and _hover_desc.visible)
 	$EventDiscardMenu.hide()
@@ -3124,16 +3839,21 @@ func _close_pause_menu() -> void:
 ## 作废本局：先停掉本界面的帧循环（避免切场景前再推进一次 AI/刷新），
 ## 再由 GameStart 统一结束会话并复位引擎，最后切回主菜单
 func _return_to_main_menu() -> void:
+	_stop_battle_commands()
 	set_process(false)
 	_close_pause_menu()
 	if network_session != null:
-		network_session.close()
+		if _host_lifecycle != null:
+			_host_lifecycle.close()
 	else:
 		GameStart.end_session()
 	get_tree().change_scene_to_file(GameStart.MAIN_MENU_SCENE)
 
 
 func set_debug_console_enabled(enabled: bool) -> void:
+	# 联机客户端没有本地权威调试许可，不能初始化规则编辑会话。
+	if network_session != null and enabled:
+		return
 	if enabled:
 		if is_debug_console_enabled():
 			return
@@ -3199,41 +3919,32 @@ func _show_tactical_confirm(desc_str: String, is_alert: bool = false) -> void:
 	_confirm_alert_mode = is_alert
 	if not is_alert:
 		_pending_confirm_desc = desc_str
+		_pending_tactical_action["command_epoch"] = _battle_command_epoch
 	_open_confirmation_panel(_tactical_confirm)
 
 
 func _on_tactical_confirm_execute() -> void:
-	if _is_progress_blocked():
+	if _is_progress_blocked() or not _battle_command_input_available():
 		return
-	if _tactical_confirm != null:
-		_tactical_confirm.visible = false
 	var act_type: String = _pending_tactical_action.get("type", "")
-	if network_session != null:
-		_network_presenter.confirm_area(_pending_tactical_action)
-		_pending_tactical_action = {}
+	if act_type not in ["deploy", "move"]:
 		return
-	if act_type == "deploy":
-		var target_loc = _pending_tactical_action.get("target_loc")
-		if target_loc is BaseLocation:
-			if not _commands.deploy(target_loc, _local_player_id):
-				_show_tactical_confirm("无法部署至目标席位", true)
-			else:
-				_commands.end_current_player_action()
-	elif act_type == "move":
-		var step: int = _pending_tactical_action.get("step_diff", 0)
-		var before_loc = GameDataManager.get_player_data(_local_player_id).get("location")
-		if step > 0:
-			_commands.move(step, _local_player_id)
-		var after_loc = GameDataManager.get_player_data(_local_player_id).get("location")
-		if after_loc == before_loc:
-			var target_name: String = str(_pending_tactical_action.get("target_area_name", "目标战区"))
-			var msgs: Array = EffectManager.pop_messages(_local_player_id)
-			if msgs.is_empty():
-				_show_tactical_confirm("无法移动至【%s】" % target_name, true)
-			else:
-				_show_tactical_confirm("\n".join(msgs.map(func(m): return str(m))), true)
+	if _pending_tactical_action.get("command_epoch", _battle_command_epoch) != _battle_command_epoch or (not _source_is_local and _pending_tactical_action.get("view_seq", -1) != _read_battle_command_sequence()):
+		_pending_tactical_action.clear()
+		_tactical_confirm.hide()
+		_say("局面已更新，请重新选择战区并确认")
+		return
+	var area_id: int = int(_pending_tactical_action.get("area", -1))
+	if _source_is_local and not _pending_tactical_action.has("area"):
+		if act_type == "deploy":
+			var target_loc = _pending_tactical_action.get("target_loc")
+			if target_loc is BaseLocation: area_id = _held_action_ids.id_for(target_loc.get_from())
+		else:
+			var index: int = int(_pending_tactical_action.get("target_area_idx", -1))
+			if index >= 0 and index < MapData.areas.size(): area_id = _held_action_ids.id_for(MapData.areas[index])
+	_tactical_confirm.hide()
 	_pending_tactical_action.clear()
-	refresh_all_ui()
+	_submit_battle_command(act_type, {"area": area_id}, act_type == "deploy")
 
 
 func _on_tactical_confirm_cancel() -> void:
@@ -3251,88 +3962,25 @@ func _on_tactical_confirm_cancel() -> void:
 # --- 主动效果发动弹窗 ---
 ## 选项类效果(单选/多选)动态生成勾选行；声明了 quantity_range 的选项额外带数量选择器；
 ## 无选项效果显示消耗资源行。判据走同一个引擎入口，界面不自己判规则
-func _show_effect_modal(effect: BaseEffect) -> void:
-	if _effect_modal == null:
-		return
-	var desc_lbl := _effect_modal.get_node_or_null("Box/Desc") as Label
-	var options_row := _effect_modal.get_node_or_null("Box/OptionsRow") as VBoxContainer
-	var btn_confirm := _effect_modal.get_node_or_null("Box/ButtonsRow/BtnConfirm") as Button
-	var btn_cancel := _effect_modal.get_node_or_null("Box/ButtonsRow/BtnCancel") as Button
-	if desc_lbl == null:
-		return
-	var eff_name: String = effect._shown_name if effect._shown_name != "" else "未知效果"
-	if btn_cancel:
-		btn_cancel.visible = EffectManager.choice_allows_cancel(effect)
-	if effect.has_options():
-		var is_multi: bool = effect.allows_multi_choice()
-		desc_lbl.text = _attach_effect_cost_line("发动【%s】\n%s" % [eff_name, ("请选择要发动的效果，可多选" if is_multi else "请选择要发动的效果")], effect)
-		if options_row:
-			for child in options_row.get_children():
-				child.queue_free()
-			options_row.visible = true
-			for i in range(effect._options.size()):
-				var opt: Dictionary = effect._options[i]
-				var opt_name: String = str(opt.get("shown_option_name", "选项%d" % (i + 1)))
-				var available: bool = EffectManager.is_option_available(effect, i)
-				if not available:
-					# 用尽或不可选：写明原因并禁用；界面文案不加括号补充
-					var opt_max: int = int(opt.get("max_uses", -1))
-					opt_name += " · 已用完" if opt_max != -1 else " · 不可选"
-				var has_qty: bool = opt.has("quantity_range")
-				if is_multi:
-					var row := HBoxContainer.new()
-					row.name = "OptRow_%d" % i
-					var cb := CheckBox.new()
-					cb.text = opt_name
-					cb.name = "Opt_%d" % i
-					cb.disabled = not available
-					cb.toggled.connect(_refresh_effect_confirm_state.bind(options_row, btn_confirm))
-					row.add_child(cb)
-					if has_qty and available:
-						row.add_child(_build_quantity_spinbox(opt["quantity_range"], i))
-					options_row.add_child(row)
-				elif has_qty:
-					# 单选带数量：选好数量再点确认，不是点了就走
-					var row := HBoxContainer.new()
-					row.name = "OptRow_%d" % i
-					var lbl := Label.new()
-					lbl.text = opt_name
-					row.add_child(lbl)
-					var spin := _build_quantity_spinbox(opt["quantity_range"], i)
-					row.add_child(spin)
-					var confirm_btn := Button.new()
-					confirm_btn.text = "确认"
-					confirm_btn.disabled = not available
-					confirm_btn.pressed.connect(_on_effect_option_picked_with_quantity.bind(i, spin))
-					row.add_child(confirm_btn)
-					options_row.add_child(row)
-				else:
-					var opt_btn := Button.new()
-					opt_btn.text = opt_name
-					opt_btn.custom_minimum_size = Vector2(0, 38)
-					opt_btn.disabled = not available
-					opt_btn.pressed.connect(_on_effect_option_picked.bind(i))
-					options_row.add_child(opt_btn)
-		if btn_confirm:
-			btn_confirm.visible = is_multi
-			btn_confirm.text = "确认发动"
-			_refresh_effect_confirm_state(options_row, btn_confirm)
-	else:
-		if options_row:
-			options_row.visible = false
-			for child in options_row.get_children():
-				child.queue_free()
-		if btn_confirm:
-			btn_confirm.visible = true
-			btn_confirm.disabled = false
-			btn_confirm.text = "确认发动"
-		desc_lbl.text = _attach_effect_cost_line("发动【%s】" % eff_name, effect)
-	_open_confirmation_panel(_effect_modal)
+func _show_effect_modal(_effect: BaseEffect) -> void:
+	var prompt: Dictionary = _source.read_pending() if _source != null else {}
+	if prompt.get("kind") != "active_choice": return
+	_active_choice_generation += 1
+	_active_choice_command_epoch = _battle_command_epoch
+	_active_choice_prompt = prompt.duplicate(true)
+	var declaration: Dictionary = prompt.duplicate(true)
+	preload("res://scripts/game_scene/native_choice_renderer.gd").active(self, declaration, _active_pick.bind(declaration, _active_choice_generation, _battle_command_epoch), _active_pick_quantity.bind(declaration, _active_choice_generation, _battle_command_epoch))
+	var confirm: Button = _effect_modal.get_node("Box/ButtonsRow/BtnConfirm")
+	var cancel: Button = _effect_modal.get_node("Box/ButtonsRow/BtnCancel")
+	for connection in confirm.pressed.get_connections(): confirm.pressed.disconnect(connection.callable)
+	for connection in cancel.pressed.get_connections(): cancel.pressed.disconnect(connection.callable)
+	confirm.pressed.connect(_active_confirm.bind(declaration, _active_choice_generation, _battle_command_epoch))
+	cancel.pressed.connect(_active_cancel.bind(declaration, _active_choice_generation, _battle_command_epoch))
 
 
-## 效果消耗行：复用旧控制器的成本格式化，界面不另写一套资源名
+## 效果消耗行：复用独立成本文本模块，界面不另写一套资源名
 func _attach_effect_cost_line(base_text: String, effect: BaseEffect) -> String:
-	return TacticalBoardUI._attach_cost_line(base_text, TacticalBoardUI._resolve_effect_cost_items(effect))
+	return CostText.attach_line(base_text, CostText.effect_cost_items(effect))
 
 
 ## 通用数量选择器：min~max 的 SpinBox，供声明了 quantity_range 的选项复用
@@ -3348,95 +3996,97 @@ func _build_quantity_spinbox(range_arr: Array, option_index: int) -> SpinBox:
 	return spin
 
 
-## 单选带数量：先记录数量再提交该选项
-func _on_effect_option_picked_with_quantity(option_index: int, spin: SpinBox) -> void:
-	if _current_waiting_effect:
-		var eff: BaseEffect = _current_waiting_effect
-		var qty: int = int(spin.value) if spin != null else 1
-		_current_waiting_effect = null
-		if _effect_modal != null:
-			_effect_modal.visible = false
-		_commands.submit_option_choice(eff, [option_index], {option_index: qty})
-		refresh_all_ui()
+## 兼容入口只转声明命令；数量不写入规则对象。
+func _on_effect_option_picked_with_quantity(index: int, spin: SpinBox) -> void:
+	_active_pick_quantity(index, spin, _active_choice_prompt.duplicate(true))
 
-
-func _refresh_effect_confirm_state(options_row: Control, btn_confirm: Button) -> void:
-	if btn_confirm == null or options_row == null:
-		return
-	var any_checked: bool = false
-	for i in range(options_row.get_child_count()):
-		var row := options_row.get_child(i)
-		var cb := row.get_node_or_null("Opt_%d" % i) as CheckBox
-		if cb == null:
-			cb = row as CheckBox
-		if cb and cb.button_pressed:
-			any_checked = true
-			break
-	btn_confirm.disabled = not any_checked
-
-
-func _on_effect_option_picked(option_index: int) -> void:
-	if _current_waiting_effect:
-		var eff: BaseEffect = _current_waiting_effect
-		_current_waiting_effect = null
-		if _effect_modal != null:
-			_effect_modal.visible = false
-		_commands.submit_option_choice(eff, [option_index])
-		refresh_all_ui()
-
+func _on_effect_option_picked(index: int) -> void:
+	_active_pick(index, _active_choice_prompt.duplicate(true))
 
 func _on_effect_modal_confirm() -> void:
-	if _current_waiting_effect:
-		var eff: BaseEffect = _current_waiting_effect
-		_current_waiting_effect = null
-		if _effect_modal != null:
-			_effect_modal.visible = false
-		if eff.has_options() and eff.allows_multi_choice():
-			var picked: Array = []
-			var quantities: Dictionary = {}
-			var options_row := _effect_modal.get_node_or_null("Box/OptionsRow") as VBoxContainer
-			if options_row:
-				for i in range(options_row.get_child_count()):
-					var row := options_row.get_child(i)
-					var cb := row.get_node_or_null("Opt_%d" % i) as CheckBox
-					if cb == null:
-						cb = row as CheckBox
-					if cb and cb.button_pressed:
-						picked.append(i)
-						var spin := row.get_node_or_null("Qty_%d" % i) as SpinBox
-						if spin != null:
-							quantities[i] = int(spin.value)
-			_commands.submit_option_choice(eff, picked, quantities)
-		else:
-			_commands.submit_active_choice(eff, true)
-		refresh_all_ui()
-
+	_active_confirm(_active_choice_prompt.duplicate(true))
 
 func _on_effect_modal_cancel() -> void:
-	if not EffectManager.choice_allows_cancel(_current_waiting_effect):
+	_active_cancel(_active_choice_prompt.duplicate(true))
+
+func _active_choice_current(declaration: Dictionary, generation: int = -1, epoch: int = -1) -> bool:
+	if generation >= 0 and generation != _active_choice_generation: return false
+	if epoch >= 0 and epoch != _battle_command_epoch: return false
+	if not _source_is_local or _source == null or declaration.get("kind") != "active_choice": return false
+	if declaration != _source.read_pending():
+		_check_waiting_effects()
+		return false
+	return _battle_command_input_available() and not _is_paused()
+
+func _active_pick(index: int, declaration: Dictionary, generation: int = -1, epoch: int = -1) -> void:
+	if not _active_choice_current(declaration, generation, epoch): return
+	if index < 0 or index >= declaration.options.size(): return
+	var option: Dictionary = declaration.options[index]
+	if not option.available or option.has("quantity_range"): return
+	_submit_battle_command("option_choice", {"effect":declaration.effect, "choices":[{"index":option.index, "count":1}]})
+
+func _active_pick_quantity(index: int, spin: SpinBox, declaration: Dictionary, generation: int = -1, epoch: int = -1) -> void:
+	if not _active_choice_current(declaration, generation, epoch): return
+	if spin == null or index < 0 or index >= declaration.options.size(): return
+	var option: Dictionary = declaration.options[index]
+	if not option.available or not option.has("quantity_range"): return
+	spin.apply()
+	var quantity: int = int(spin.value)
+	if quantity < option.quantity_range[0] or quantity > option.quantity_range[1]: return
+	_submit_battle_command("option_choice", {"effect":declaration.effect, "choices":[{"index":option.index, "count":1, "quantity":quantity}]})
+
+func _active_confirm(declaration: Dictionary, generation: int = -1, epoch: int = -1) -> void:
+	if not _active_choice_current(declaration, generation, epoch): return
+	if declaration.options.is_empty():
+		_submit_battle_command("active_choice", {"effect":declaration.effect, "activate":true})
 		return
-	if _current_waiting_effect:
-		var eff: BaseEffect = _current_waiting_effect
-		_current_waiting_effect = null
-		if _effect_modal != null:
-			_effect_modal.visible = false
-		_commands.submit_active_choice(eff, false)
-		refresh_all_ui()
+	if not declaration.multi: return
+	var choices: Array = preload("res://scripts/game_scene/native_choice_renderer.gd").active_choices(self, declaration)
+	if not choices.is_empty(): _submit_battle_command("option_choice", {"effect":declaration.effect, "choices":choices})
+
+func _active_cancel(declaration: Dictionary, generation: int = -1, epoch: int = -1) -> void:
+	if not _active_choice_current(declaration, generation, epoch) or not declaration.allow_cancel: return
+	_submit_battle_command("cancel_choice", {"effect":declaration.effect})
+
+func _refresh_effect_confirm_state(options_row: Control, btn_confirm: Button) -> void:
+	if btn_confirm == null or options_row == null: return
+	var selected: bool = false
+	for row in options_row.get_children():
+		for child in row.get_children():
+			if child is CheckBox and child.button_pressed and not child.disabled: selected = true
+	btn_confirm.disabled = not selected or not _end_command_attempt.is_empty()
+
+func _refresh_active_choice_lock() -> void:
+	if _effect_modal == null or not _effect_modal.visible: return
+	var locked: bool = not _battle_command_input_available()
+	for button in _effect_modal.find_children("*", "Button", true, false):
+		if locked and not button.has_meta("active_choice_disabled"): button.set_meta("active_choice_disabled", button.disabled)
+		if locked: button.disabled = true
+		elif button.has_meta("active_choice_disabled"):
+			button.disabled = bool(button.get_meta("active_choice_disabled"))
+			button.remove_meta("active_choice_disabled")
 
 
 # --- 发动结果 / 消息 ---
-func _bind_mana_cost_preview(pl: Dictionary) -> void:
+func _bind_mana_cost_preview(_pl: Dictionary = {}) -> void:
+	_render_group_cost_preview(_read_group_preview(), _held_input_available())
+
+## 只渲染既有预览数值；等待、拒绝、字段缺失均收起，不用卡面补算。
+func _render_group_cost_preview(group: Dictionary, input_available: bool) -> void:
 	var panel := get_node("ManaCostPreview") as Control
-	panel.visible = not _selected_cards.is_empty() and _is_acting(_local_player_id)
+	var preview: Dictionary = group.get("preview", {})
+	panel.visible = input_available and not group.get("cards", []).is_empty() and _group_preview_ready(group) and preview.has_all(["mana_cost", "remaining_magic"])
 	if not panel.visible:
 		return
-	var cost := 0.0
-	if not bool(pl.get("is_magic_immune", false)):
-		for card in _selected_cards:
-			if card is BaseHandCard and not card._is_concealed:
-				cost += RegularPlay.cost(card, pl)
-	_set_text(panel, "Box/Cost", "魔力消耗 %s" % BaseNumber.display_text(cost))
-	_set_text(panel, "Box/Remaining", "剩余魔力 %s" % BaseNumber.display_text(pl.magic.number - cost))
+	_set_text(panel, "Box/Cost", "魔力消耗 %s" % BaseNumber.display_text(preview.mana_cost))
+	_set_text(panel, "Box/Remaining", "剩余魔力 %s" % BaseNumber.display_text(preview.remaining_magic))
+	_layout_mana_cost_preview(panel)
+
+
+## 仅定位；单人与联机共用，不读取规则和资源。
+func _layout_mana_cost_preview(panel: Control) -> void:
+	if _strips.get_child_count() == 0:
+		return
 	var self_rect := _self.get_global_rect()
 	var master_rect := (_master.get_node("Frame") as Control).get_global_rect()
 	var left := self_rect.end.x + HELD_GAP
@@ -3585,8 +4235,12 @@ func _show_card_select_panel(pending: Dictionary) -> void:
 		cancel.visible = bool(pending.get("allow_cancel", true))
 	_card_select_cards = pending.get("cards", [])
 	_card_select_request = pending.duplicate()
-	for card in pending.get("required_cards", []):
-		if not _card_select_picked.has(card):
+	if pending.get("regular", false):
+		_card_select_request["command_epoch"] = _battle_command_epoch
+		_card_select_request["view_seq"] = _read_battle_command_sequence()
+	var required_ids: Array = _card_choice_ids(pending.get("required_cards", []))
+	for card in pending.get("cards", []):
+		if required_ids.has(_card_choice_id(card)) and not _card_select_picked.any(func(picked): return _card_choice_id(picked) == _card_choice_id(card)):
 			_card_select_picked.append(card)
 	var vp := get_viewport_rect().size
 	_card_select_panel.position = Vector2(maxf(0.0, (vp.x - 820.0) * 0.5), vp.y * 0.16)
@@ -3607,7 +4261,7 @@ func _show_card_select_panel(pending: Dictionary) -> void:
 		rect.mouse_filter = Control.MOUSE_FILTER_STOP
 		rect.set_meta("select_card", card)
 		rect.gui_input.connect(_on_select_card_input.bind(rect))
-		_render_card_face(rect, card, true)
+		preload("res://scripts/game_scene/native_choice_renderer.gd").choice_card(self,rect,card)
 		row.add_child(rect)
 	_card_select_panel.visible = true
 	_raise_modal(_card_select_panel)
@@ -3618,6 +4272,7 @@ func _show_card_select_panel(pending: Dictionary) -> void:
 func _select_card_title(pending: Dictionary) -> String:
 	var eff = pending.get("effect")
 	var base_name := str(pending.get("shown_name", "请选择牌"))
+	if pending.get("secret",false): return base_name
 	if eff != null and (eff._options[int(pending.get("option_index", 0))] as Dictionary).get("tags", []).has("secret_choice"):
 		return base_name
 	var low: int = int(pending.get("min", 1))
@@ -3628,17 +4283,13 @@ func _select_card_title(pending: Dictionary) -> String:
 
 ## 选牌面板"确认"按钮文案：动词来自选项 declaration.verb，缺省按数据语义"确认弃置/确认选择"
 func _select_card_confirm_text(pending: Dictionary) -> String:
-	var verb: String = str(pending.get("verb", ""))
-	if verb != "":
-		return "确认%s" % verb
-	var eff = pending.get("effect")
-	if eff != null:
-		var opt_idx := int(pending.get("option_index", 0))
-		if opt_idx >= 0 and opt_idx < eff._options.size():
-			var opt_v: String = str(eff._options[opt_idx].get("shown_option_name", ""))
-			if opt_v != "":
-				return "确认 %s" % opt_v
-	return "确认弃置"
+	if pending.has("confirm_text"): return str(pending.confirm_text)
+	var option_label: String = ""
+	var effect = pending.get("effect")
+	var index: int = int(pending.get("option_index",0))
+	if effect != null and index >= 0 and index < effect._options.size():
+		option_label = str(effect._options[index].get("shown_option_name",""))
+	return preload("res://scripts/game_scene/native_choice_renderer.gd").card_confirm(str(pending.get("verb","")),option_label)
 
 
 func _refresh_card_select_confirm(pending: Dictionary) -> void:
@@ -3649,8 +4300,8 @@ func _refresh_card_select_confirm(pending: Dictionary) -> void:
 	if row != null:
 		for slot in row.get_children():
 			var card = slot.get_meta("select_card", null)
-			_set_card_selected_mark(slot, _card_select_picked.has(card))
-			slot.tooltip_text = "必选：保留原手牌" if pending.get("required_cards", []).has(card) else ""
+			_set_card_selected_mark(slot, _card_select_picked.any(func(picked): return _card_choice_id(picked) == _card_choice_id(card)))
+			slot.tooltip_text = "必选：保留原手牌" if _card_choice_ids(pending.get("required_cards", [])).has(_card_choice_id(card)) else ""
 	if hint:
 		var eff2 = pending.get("effect")
 		var opt_idx := int(pending.get("option_index", 0))
@@ -3660,7 +4311,7 @@ func _refresh_card_select_confirm(pending: Dictionary) -> void:
 			var tags_v = opt_dict.get("tags", [])
 			if tags_v is Array:
 				opt_tags = tags_v
-		var is_secret: bool = opt_tags.has("secret_choice")
+		var is_secret: bool = bool(pending.get("secret",false)) or opt_tags.has("secret_choice")
 		if is_secret:
 			hint.text = "已选 %d" % _card_select_picked.size()
 		else:
@@ -3687,7 +4338,7 @@ func _on_select_card_input(ev: InputEvent, slot: Control) -> void:
 	var card = _meta_or(slot, "select_card", null)
 	if card == null:
 		return
-	if _card_select_request.get("required_cards", []).has(card):
+	if _card_choice_ids(_card_select_request.get("required_cards", [])).has(_card_choice_id(card)):
 		return
 	if _card_select_picked.has(card):
 		_card_select_picked.erase(card)
@@ -3721,24 +4372,53 @@ func _set_card_selected_mark(node: Control, selected: bool) -> void:
 	mark.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
+func _card_choice_current(declaration: Dictionary, generation: int, command_epoch: int) -> bool:
+	if generation != _card_choice_generation or command_epoch != _battle_command_epoch or _source == null or not _source_is_local: return false
+	var current: Dictionary = _source.read_pending()
+	if not _card_choice_same(declaration, current):
+		_check_waiting_card_selection()
+		return false
+	return _battle_command_input_available() and not _is_paused()
+
+
 func _on_card_select_confirmed() -> void:
-	if _card_select_submit.is_valid():
-		_card_select_submit.call(_card_select_picked.duplicate(), _card_select_hidden.values())
+	if _card_select_request.get("regular", false):
+		if not _battle_command_input_available("play_group") or _is_paused(): return
+		# network source 的预览只绑定 held selection，不接受独立 regular draft。
+		# 缺少显式 draft 预览接口时失败关闭，不能错发另一组暂选。
+		if not _source_is_local:
+			_say("独立常规选牌尚未绑定权威预览，请使用持有区出牌")
+			return
+		if _card_select_request.get("command_epoch") != _battle_command_epoch or _card_select_request.get("view_seq") != _read_battle_command_sequence(): return
+		var cards: Array = _card_select_picked.duplicate()
+		var hidden: Array = []
+		for card in cards:
+			hidden.append(bool(_card_select_hidden.get(card, card.get("concealed", false) if card is Dictionary else card._is_concealed)))
+		var group: Dictionary = _source.read_group_preview(cards, hidden)
+		if not _group_preview_ready(group) or not group.get("preview", {}).get("can_submit", false): return
+		_submit_battle_command("play_group", {"cards": group.cards, "hidden": group.hidden})
 		return
-	var eff: BaseEffect = _card_select_effect
-	if eff == null:
+	if not _card_choice_prompt.is_empty():
+		if not _card_choice_current(_card_choice_prompt, _card_choice_generation, _card_choice_command_epoch): return
+		var ids: Array = _card_choice_ids(_card_select_picked)
+		var low := int(_card_choice_prompt.get("min", 1))
+		var high := int(_card_choice_prompt.get("max", -1))
+		if ids.size() < low or (high != -1 and ids.size() > high): return
+		for required in _card_choice_prompt.get("required", []):
+			if not ids.has(int(required)): return
+		_submit_battle_command("card_choice", {"effect": int(_card_choice_prompt.get("effect", -1)), "cards": ids})
 		return
-	var picks: Array = _card_select_picked.duplicate()
-	_card_select_effect = null
-	_card_select_picked = []
-	if _card_select_panel != null:
-		_card_select_panel.visible = false
-	_commands.submit_card_selection(eff, picks)
-	refresh_all_ui()
+	# 没有声明的旧 effect 回退不执行规则；重读真实 pending 后重新接线。
+	_check_waiting_card_selection()
 
 
 func _on_card_select_cancelled() -> void:
+	if not _battle_command_input_available() or _is_paused(): return
 	if not bool(_card_select_request.get("allow_cancel", true)):
+		return
+	if not _card_choice_prompt.is_empty():
+		if not _card_choice_current(_card_choice_prompt, _card_choice_generation, _card_choice_command_epoch) or not _card_choice_prompt.get("allow_cancel", false): return
+		_submit_battle_command("cancel_choice", {"effect": int(_card_choice_prompt.get("effect", -1))})
 		return
 	if _card_select_request.get("regular", false):
 		_card_select_request = {}
@@ -3747,54 +4427,50 @@ func _on_card_select_cancelled() -> void:
 		_card_select_hidden = {}
 		_card_select_panel.hide()
 		return
-	var eff: BaseEffect = _card_select_effect
-	_card_select_effect = null
-	_card_select_picked = []
-	if _card_select_panel != null:
-		_card_select_panel.visible = false
-	if eff != null:
-		_commands.submit_card_selection(eff, [])
-	refresh_all_ui()
+	_check_waiting_card_selection()
 
 
 # --- 选人浮层 ---
 func _show_player_select_panel(pending: Dictionary) -> void:
-	var eff: BaseEffect = pending.get("effect")
-	if eff == null:
-		return
-	_player_select_effect = eff
-	if _player_select_panel == null:
-		return
-	var vp := get_viewport_rect().size
-	_player_select_panel.position = Vector2(maxf(0.0, (vp.x - 520.0) * 0.5), vp.y * 0.2)
-	var title := _player_select_panel.get_node_or_null("Box/Title") as Label
-	if title:
-		title.text = str(eff._shown_name)
-	var row := _player_select_panel.get_node_or_null("Box/NameRow") as HBoxContainer
-	if row == null:
-		return
-	for child in row.get_children():
-		child.queue_free()
-	for raw_id in pending.get("candidates", []):
-		var pid: int = int(raw_id)
-		var btn := Button.new()
-		btn.custom_minimum_size = Vector2(120, 44)
-		btn.text = _player_name(pid)
-		btn.pressed.connect(func(): _on_player_target_picked(pid))
-		row.add_child(btn)
-	_player_select_panel.visible = true
-	_raise_modal(_player_select_panel)
+	_player_choice_generation += 1
+	_player_choice_command_epoch = _battle_command_epoch
+	_player_choice_prompt = pending.duplicate(true)
+	var declaration: Dictionary = _player_choice_prompt.duplicate(true)
+	var names: Dictionary = {}
+	for pid in declaration.players: names[pid] = _player_name(pid)
+	preload("res://scripts/game_scene/native_choice_renderer.gd").players(self, declaration, names, _submit_player_choice.bind(declaration, _player_choice_generation, _battle_command_epoch), _cancel_player_choice.bind(declaration, _player_choice_generation, _battle_command_epoch))
+
+func _player_choice_current(declaration: Dictionary, generation: int = -1, command_epoch: int = -1) -> bool:
+	if generation >= 0 and generation != _player_choice_generation: return false
+	if command_epoch >= 0 and command_epoch != _battle_command_epoch: return false
+	if _source == null or not _source_is_local or declaration.is_empty(): return false
+	if declaration != _source.read_pending():
+		_check_waiting_player_selection()
+		return false
+	return _battle_command_input_available() and not _is_paused()
+
+func _submit_player_choice(picks: Array, declaration: Dictionary, generation: int = -1, command_epoch: int = -1) -> void:
+	if not _player_choice_current(declaration, generation, command_epoch): return
+	_submit_battle_command("player_choice", {"effect": declaration.effect, "players": picks.duplicate()})
+
+func _cancel_player_choice(declaration: Dictionary, generation: int = -1, command_epoch: int = -1) -> void:
+	if not _player_choice_current(declaration, generation, command_epoch) or not declaration.get("allow_cancel", false): return
+	_submit_battle_command("cancel_choice", {"effect": declaration.effect})
+
+func _refresh_player_choice_lock() -> void:
+	if _player_select_panel == null or not _player_select_panel.visible: return
+	var locked: bool = not _battle_command_input_available()
+	for button in _player_select_panel.find_children("*", "Button", true, false):
+		if locked and not button.has_meta("player_choice_disabled"):
+			button.set_meta("player_choice_disabled", button.disabled)
+		if locked: button.disabled = true
+		elif button.has_meta("player_choice_disabled"):
+			button.disabled = bool(button.get_meta("player_choice_disabled"))
+			button.remove_meta("player_choice_disabled")
 
 
 func _on_player_target_picked(player_id: int) -> void:
-	if _player_select_effect == null:
-		return
-	var eff: BaseEffect = _player_select_effect
-	_player_select_effect = null
-	if _player_select_panel != null:
-		_player_select_panel.visible = false
-	_commands.submit_player_selection(eff, [player_id])
-	refresh_all_ui()
+	_submit_player_choice([player_id], _player_choice_prompt.duplicate(true))
 
 
 # --- 战报 ---
@@ -3822,7 +4498,7 @@ func _battle_result_line(area_name: String, detail: Dictionary) -> String:
 	var names := PackedStringArray()
 	for wid in winners:
 		names.append(_player_name(int(wid)))
-	return "【%s】胜者：%s，最高威力 %d" % [area_name, "、".join(names), int(detail.get("highest_power", 0))]
+	return "【%s】胜者：%s，最高威力 %s" % [area_name, "、".join(names), BaseNumber.display_text(detail.get("highest_power", 0))]
 
 
 # --- 战斗胜利播报 ---
@@ -3837,15 +4513,23 @@ func _battle_broadcast_node() -> Control:
 	var btn := _broadcast_node.get_node("ContinueBtn") as Button
 	if btn != null and not btn.pressed.is_connected(_on_broadcast_continue_pressed):
 		btn.pressed.connect(_on_broadcast_continue_pressed)
+	var absent := _broadcast_node.get_node("ConfirmAbsentBtn") as Button
+	if not absent.pressed.is_connected(_on_broadcast_absent_pressed):
+		absent.pressed.connect(_on_broadcast_absent_pressed)
 	_broadcast_node.hide()
 	return _broadcast_node
 
 
 ## 每帧检查：结算暂停后等待再弹出；AI 只在入场完成后确认，全部确认后放行。
 func _update_battle_broadcast(delta: float) -> void:
-	if GameProgress == null:
-		return
-	var pending := GameProgress.is_battle_broadcast_pending()
+	var declaration := _read_broadcast_declaration()
+	var pending: bool = declaration.get("pending", false)
+	var batch: int = declaration.get("batch_id", 0)
+	if batch != _broadcast_batch_id:
+		_hide_broadcast()
+		_broadcast_wait_elapsed = 0.0
+		_broadcast_reveal_done = false
+		_broadcast_batch_id = batch
 	if not pending:
 		_broadcast_wait_elapsed = 0.0
 	if pending and not _broadcast_active:
@@ -3856,8 +4540,22 @@ func _update_battle_broadcast(delta: float) -> void:
 		# 兜底：引擎已放行但播报还挂着（如外部直接全部确认），收起
 		_hide_broadcast()
 	if _broadcast_active:
-		_tick_broadcast_ai_confirm(delta)
+		if _source_is_local and _broadcast_reveal_done and _battle_command_input_available("confirm_broadcast"):
+			if _battle_commands.tick_broadcast_confirmation(delta): _source.invalidate()
 		_refresh_broadcast_continue()
+
+## UI 只消费显式屏障声明，不从核心补齐资格。
+func _read_broadcast_declaration() -> Dictionary:
+	return _source.read_view().get("battle_broadcast", {}) if _source != null else {}
+
+## reset 完成后、首次推进前调用；名单来自 driver 控制声明。
+func _declare_local_broadcast_confirmation() -> bool:
+	if not _source_is_local or _battle_commands == null: return false
+	var ai_seats: Array = []
+	for seat in GameData.player_data_library:
+		if seat is int and _driver.seats.is_ai(seat): ai_seats.append(seat)
+	ai_seats.sort()
+	return _battle_commands.declare_broadcast_confirmation(true, ai_seats)
 
 
 ## 弹出播报：逐战场生成明细块，再播放标题 + 分块入场。
@@ -3865,19 +4563,24 @@ func _show_battle_broadcast() -> void:
 	var overlay := _battle_broadcast_node()
 	if overlay == null:
 		return
-	var res: Dictionary = GameProgress.last_battle_result if GameProgress else {}
-	var details: Dictionary = res.get("details_by_area", {})
+	var view: Dictionary = _source.read_view()
+	var details: Dictionary = GameProgress.last_battle_result.get("details_by_area", {}) if _source_is_local else view.get("battle_result", {})
 	var list := overlay.get_node("AreaScroll/List") as VBoxContainer
 	_clear(list)
 	# 按地图从左到右的顺序（MapData.areas）从上到下排列
-	for area: BaseMapArea in MapData.areas:
-		var area_name := str(area._area_name)
+	for area in view.get("areas", []):
+		var area_name := str(area.get("name", ""))
 		if details.has(area_name):
-			list.add_child(_build_broadcast_area_row(area_name, details[area_name]))
+			if _source_is_local:
+				list.add_child(_build_broadcast_area_row(area_name, details[area_name]))
+			else:
+				var summary := Label.new()
+				summary.text = _battle_result_line(area_name, details[area_name])
+				summary.theme_type_variation = &"Gold2"
+				summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				list.add_child(summary)
 	_broadcast_active = true
 	_broadcast_reveal_done = false
-	_broadcast_ai_queue = []
-	_broadcast_ai_timer = 0.0
 	overlay.modulate.a = 0.0
 	overlay.visible = true
 	move_child(overlay, get_child_count() - 1)
@@ -3915,30 +4618,8 @@ func _play_broadcast_open(overlay: Control, list: VBoxContainer) -> void:
 		_broadcast_reveal_tween.tween_property(r, "modulate:a", 1.0, BROADCAST_CARD_STEP)
 	_broadcast_reveal_tween.tween_callback(func() -> void:
 		_broadcast_reveal_done = true
-		_queue_ai_confirmations()
 	)
 
-
-## 只有 AI 自动确认；远程真人不能因为不在本机而被代答。
-func _queue_ai_confirmations() -> void:
-	_broadcast_ai_queue = []
-	if GameProgress == null:
-		return
-	for id in GameProgress.battle_broadcast_confirmers():
-		if _seat_controller.is_ai(int(id)):
-			_broadcast_ai_queue.append(int(id))
-	_broadcast_ai_timer = 0.0
-
-
-## AI 玩家逐人确认：让「已确认 n/7」可见地累加，而不是瞬间跳满。
-func _tick_broadcast_ai_confirm(delta: float) -> void:
-	if not _broadcast_reveal_done or _broadcast_ai_queue.is_empty():
-		return
-	_broadcast_ai_timer += delta
-	if _broadcast_ai_timer < BROADCAST_AI_CONFIRM_STEP:
-		return
-	_broadcast_ai_timer = 0.0
-	_commands.confirm_battle_broadcast(int(_broadcast_ai_queue.pop_front()))
 
 
 ## 亮起「继续」按钮并实时刷新「已确认 n/7」提示。
@@ -3947,6 +4628,9 @@ func _refresh_broadcast_continue() -> void:
 	if overlay == null:
 		return
 	var btn := overlay.get_node("ContinueBtn") as Button
+	var absent := overlay.get_node("ConfirmAbsentBtn") as Button
+	absent.visible = _broadcast_reveal_done and not _broadcast_absent_declaration().is_empty()
+	absent.disabled = not _battle_command_input_available("broadcast_confirm_absent")
 	if not _broadcast_reveal_done:
 		return
 	if not btn.visible:
@@ -3954,15 +4638,42 @@ func _refresh_broadcast_continue() -> void:
 		btn.modulate.a = 0.0
 		var tw := btn.create_tween()
 		tw.tween_property(btn, "modulate:a", 1.0, 0.3)
-	var confirmed := GameProgress.battle_broadcast_confirmed_count()
-	var total := GameProgress.battle_broadcast_confirmers().size()
-	btn.text = "继续（已确认 %d/%d）" % [confirmed, total]
+	var declaration := _read_broadcast_declaration()
+	var confirmed: Array = declaration.get("confirmed", [])
+	var confirmers: Array = declaration.get("confirmers", [])
+	btn.text = "继续（已确认 %d/%d）" % [confirmed.size(), confirmers.size()]
+	btn.disabled = not _broadcast_confirm_available(declaration)
 
 
 ## 「继续」按钮：本地玩家确认自己；AI 玩家由上面的逐人自动确认补齐。
 func _on_broadcast_continue_pressed() -> void:
-	if GameProgress != null and GameProgress.is_battle_broadcast_pending():
-		_commands.confirm_battle_broadcast(_local_player_id)
+	var declaration := _read_broadcast_declaration()
+	if not _broadcast_confirm_available(declaration): return
+	_submit_battle_command("confirm_broadcast", {"batch_id": declaration.batch_id})
+
+func _broadcast_confirm_available(declaration: Dictionary) -> bool:
+	return _broadcast_reveal_done and declaration.get("pending", false) and declaration.get("batch_id") == _broadcast_batch_id and declaration.get("confirmers", []).has(_battle_command_observer) and not declaration.get("confirmed", []).has(_battle_command_observer) and _battle_command_input_available("confirm_broadcast")
+
+## 尚无此授权投影，缺字段保持隐藏，不拿 connection_wait 充当授权。
+## 交接 schema: actions.broadcast_confirm_absent = {can_confirm:bool, view_seq:int, batch_id:int, seats:Array[int]}。
+func _broadcast_absent_declaration() -> Dictionary:
+	if _source_is_local or network_session == null or _source == null: return {}
+	var view: Dictionary = _source.read_view()
+	var broadcast: Dictionary = view.get("battle_broadcast", {})
+	var declared = _source.read_actions().get("broadcast_confirm_absent")
+	if not declared is Dictionary or declared.get("can_confirm") != true or not declared.get("view_seq") is int or not declared.get("batch_id") is int or not declared.get("seats") is Array: return {}
+	if not broadcast.get("pending", false) or declared.view_seq != view.get("seq") or declared.batch_id != broadcast.get("batch_id") or declared.seats.is_empty(): return {}
+	if network_session.view.get("owner") != network_session.peer_id(): return {}
+	var seats: Array = []
+	for seat in declared.seats:
+		if not seat is int or seats.has(seat) or not broadcast.get("confirmers", []).has(seat) or broadcast.get("confirmed", []).has(seat): return {}
+		seats.append(seat)
+	return {"view_seq":declared.view_seq, "batch_id":declared.batch_id, "seats":seats}
+
+func _on_broadcast_absent_pressed() -> void:
+	var declaration := _broadcast_absent_declaration()
+	if not _broadcast_reveal_done or declaration.is_empty(): return
+	_submit_battle_command("broadcast_confirm_absent", declaration)
 
 
 func _hide_broadcast() -> void:
@@ -4214,6 +4925,8 @@ func _sync_overlay(node: Control, show_overlay: bool, overlay_name: String, colo
 
 # --- 放大 / 说明面板 ---
 func _show_zoom_for(card: Control) -> void:
+	if _native_modal_visible():
+		return
 	if not is_instance_valid(card) or not card.is_visible_in_tree() or bool(card.get_meta("zoom_disabled", true)):
 		return
 	var img_path := str(card.get_meta("zoom_img", ""))
@@ -4299,14 +5012,16 @@ func bind_zoom_for_card(node: Control, obj, img_field: String = "", right_action
 	if not kind in [LoadHelper.ZOOM_KIND_CARD, LoadHelper.ZOOM_KIND_AVATAR, LoadHelper.ZOOM_KIND_TOKEN]:
 		_disable_card_zoom(node)
 		return
-	var img = obj.get(img_field) if img_field != "" else obj.get("_card_img")
-	var has_img: bool = img != null and str(img) != "" and LoadHelper.texture_exists(str(img))
 	var concealed := obj is BaseCard and bool(obj.get("_is_concealed"))
+	# 与网络展示字典一致：暗置只能使用对象声明的卡背，不能把正面交给浮图。
+	# 这里先重绑当前查看数据，旧owner由_bind_zoom_data立即失效，不等翻面tween中点。
+	var img = obj.get("_card_back_img") if concealed else (obj.get(img_field) if img_field != "" else obj.get("_card_img"))
+	var has_img: bool = img != null and str(img) != "" and LoadHelper.texture_exists(str(img))
 	var desc := ""
 	if kind == LoadHelper.ZOOM_KIND_CARD and not concealed:
 		desc = _build_card_desc(obj)
 	elif kind == LoadHelper.ZOOM_KIND_TOKEN and not concealed:
-		desc = TacticalBoardUI._build_token_desc(obj)
+		desc = CardDescText.token_desc(obj)
 	_bind_zoom_data(node, obj, kind, str(img) if has_img else "", concealed, _object_shown_name(obj), desc, right_action)
 
 
@@ -4314,16 +5029,38 @@ func bind_zoom_for_card(node: Control, obj, img_field: String = "", right_action
 ## 用每帧命中判定而不是 mouse_entered 脉冲：子节点抢命中、子像素进出、布局变化引起的
 ## 进入/离开抖动都不会误触发放大。
 func _bind_card_view_controls() -> void:
+	# 原生弹窗本身拥有生命周期；show/hide/visible 的全部本地及网络入口共用，
+	# 不复制选择外壳，也不把只读 CardBrowser（允许看牌）当成禁止放大的选择窗。
+	_modal_blockers.assign([_tactical_confirm, _effect_modal, _effect_result_modal, _card_select_panel, _player_select_panel, _pause_menu, $CardModificationHistory])
+	for panel in _modal_blockers:
+		if panel != null and not panel.visibility_changed.is_connected(_on_native_modal_visibility_changed):
+			panel.visibility_changed.connect(_on_native_modal_visibility_changed)
+	if _native_modal_visible():
+		_hide_event_zoom()
 	if _hover_zoom != null and not _hover_zoom.gui_input.is_connected(_on_hover_zoom_gui_input):
 		_hover_zoom.gui_input.connect(_on_hover_zoom_gui_input)
 	var close: Button = _hover_desc.get_node("Close")
 	if not close.pressed.is_connected(_close_card_desc):
 		close.pressed.connect(_close_card_desc)
 
+func _native_modal_visible() -> bool:
+	for panel in _modal_blockers:
+		if is_instance_valid(panel) and panel.is_visible_in_tree():
+			return true
+	return false
+
+func _on_native_modal_visibility_changed() -> void:
+	# 开/关均作废旧owner、悬浮候选和保活计时；关闭后只由新的真实GUI命中重新计时。
+	# zoom本身没有异步tween；不要添加另一套延时或吞掉关闭后的新地图点击。
+	_hide_event_zoom()
+
 func _bind_zoom_data(node: Control, obj, kind: String, image: String, concealed: bool, title: String, description: String, right_action: String) -> void:
 	if kind not in LoadHelper.ZOOM_KINDS:
 		_disable_card_zoom(node)
 		return
+	# 同一展示槽重绑卡背/新卡面时，旧浮图不能继续保留先前的公开图片。
+	if node == _hover_zoom_source and str(node.get_meta("zoom_img", "")) != image:
+		_hide_event_zoom(false)
 	node.set_meta("zoom_disabled", false)
 	node.set_meta("zoom_img", image)
 	node.set_meta("zoom_obj", obj)
@@ -4338,6 +5075,8 @@ func _bind_zoom_data(node: Control, obj, kind: String, image: String, concealed:
 		node.gui_input.connect(_on_zoom_target_gui_input.bind(node))
 
 func _zoom_hover_candidate() -> Control:
+	if _native_modal_visible():
+		return null
 	var node := get_viewport().gui_get_hovered_control()
 	while node != null:
 		if node.has_meta("zoom_bound") and not bool(node.get_meta("zoom_disabled", true)):
@@ -4380,7 +5119,7 @@ func _is_zoom_overlay(ctrl: Control) -> bool:
 ## 放大图与说明面板属于同一个「查看卡片」状态：鼠标落在源卡、放大图或说明面板上都保持，
 ## 三者全部离开后一起收起，说明不会在放大图消失后孤立残留在屏幕上。
 func _update_hover_zoom_keepalive(delta: float) -> void:
-	if _hover_zoom == null:
+	if _hover_zoom == null or _native_modal_visible():
 		return
 	if _hover_zoom.visible and (not is_instance_valid(_hover_zoom_source) or _hover_zoom_source.is_queued_for_deletion() \
 			or not _hover_zoom_source.is_visible_in_tree() or bool(_hover_zoom_source.get_meta("zoom_disabled", false))):
@@ -4394,12 +5133,13 @@ func _update_hover_zoom_keepalive(delta: float) -> void:
 		_zoom_hover_candidate_id = 0
 		_zoom_hover_elapsed = 0.0
 	elif _is_desc_only(candidate):
-		# 只给说明的展示位（buff 这类没有图）：鼠标停在它上面期间说明不许被收。
-		# 这类展示位没有放大图可放，走下面的悬浮计时分支会被 _show_zoom_for 反过来
-		# 清掉候选与计时，永远到不了稳定态，最后落进保活倒计时把刚点开的说明收掉
+		# 只给说明的展示位（buff 这类没有图）：悬浮稳定后直接显示说明，
+		# 不走放大图分支；鼠标停在展示位或说明面板上期间保持可见。
 		_zoom_hover_candidate_id = candidate.get_instance_id()
 		_zoom_hover_elapsed = ZOOM_HOVER_DELAY_SECONDS
 		_zoom_hide_remaining = -1.0
+		if not (_hover_desc.visible and _desc_source_id == candidate.get_instance_id()):
+			_show_desc_for(candidate)
 		return
 	else:
 		# 换到别的展示位要重新计时：扫过一排牌时不该依次弹出
@@ -4448,6 +5188,8 @@ func _can_show_card_desc(node: Control) -> bool:
 
 ## 显示展示位的说明面板：卡位右键与放大卡图右键共用同一入口
 func _show_desc_for(node: Control) -> bool:
+	if _native_modal_visible():
+		return false
 	if not _can_show_card_desc(node):
 		if is_instance_valid(node) and _desc_source_id == node.get_instance_id():
 			_close_card_desc()
@@ -4489,7 +5231,7 @@ func _object_shown_name(obj) -> String:
 
 
 func _build_card_desc(obj) -> String:
-	return TacticalBoardUI._build_card_desc(obj)
+	return CardDescText.card_desc(obj)
 
 
 # --- 顶栏与对手抽屉接线 ---
@@ -4507,6 +5249,8 @@ func _on_opponent_gui_input(event: InputEvent, opponent_card: Control) -> void:
 		else:
 			_selected_opponent = opponent_card
 			_selected_opponent_id = pid
+			_hide_event_zoom(false)
+			_close_card_desc()
 			opponent_card.set_meta("turn_order_player_id", pid)
 			# 先显示再刷新：分区行的高度要等布局算完，刷新里的"下一帧补算"才排得上
 			_opponent_drawer.visible = true
@@ -4523,125 +5267,95 @@ func _on_close_opponent_drawer_pressed() -> void:
 		_opponent_drawer.visible = false
 
 
-func _update_drawer_visuals(opponent_card: Control) -> void:
-	if network_session != null:
-		_network_presenter.update_drawer(opponent_card)
-		return
+func _update_drawer_visuals(opponent: Control) -> void:
 	if _opponent_drawer == null:
 		return
-	var bot_id: int = _selected_opponent_id
-	if opponent_card != null and opponent_card.has_meta("turn_order_player_id"):
-		bot_id = int(opponent_card.get_meta("turn_order_player_id"))
-	if bot_id < 0:
+	if _source_is_local and _source != null:
+		_source.invalidate()
+	var pid: int = int(opponent.get_meta("turn_order_player_id", -1)) if is_instance_valid(opponent) else _selected_opponent_id
+	var player: Dictionary = {}
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	for item in view.get("players", []):
+		if item.id == pid:
+			player = item
+	if player.is_empty():
+		_on_close_opponent_drawer_pressed()
 		return
-	_selected_opponent_id = bot_id
-	_selected_opponent = opponent_card
-	var pl_data: Dictionary = GameDataManager.get_player_data(bot_id)
-	var master_obj = pl_data.get("master")
-	var servant_obj = pl_data.get("servant")
-	# 头像直接按玩家数据取：来源卡既可能是顺位 RivalCard（Avatar 是 Panel），
-	# 也可能是其他形态的卡位，不依赖调用方的节点结构
-	var sel_avatar := _opponent_drawer.get_node_or_null("VBox/HeaderBar/SelectedAvatarFrame/Avatar") as TextureRect
-	if sel_avatar != null:
-		sel_avatar.texture = LoadHelper.load_texture(_header_img(bot_id))
-		bind_zoom_for_card(sel_avatar, master_obj, "_header_img")
-	var badge := _opponent_drawer.get_node_or_null("VBox/HeaderBar/OrderBadge") as Label
-	if badge:
-		badge.text = "%s · %s\n战果 %d" % [_player_name(bot_id), _class_shown(bot_id), _num(pl_data.get("score"))]
-	var loc = pl_data.get("location") as BaseLocation
-	var area = loc.get_from() if loc != null else null
-	var area_name: String = str(area._area_name) if (area != null and "_area_name" in area) else ""
-	var marker := _opponent_drawer.get_node_or_null("VBox/ResourceVisuals/BattleMarker") as Label
-	if marker:
-		if area_name == "":
-			marker.text = "未部署"
-		else:
-			marker.text = area_name + (" · 交战" if bool(pl_data.get("is_battle", false)) else "")
-	# 可见分区纵向铺满面板，新增特殊令咒也参与同一套尺寸分配。
-	# 每行都给整幅宽度；某行没有内容时整行收起，把高度让给其余行
+	_selected_opponent_id = pid
+	_selected_opponent = opponent
+	var drawer: Control = _opponent_drawer
+	_set_img(drawer, "VBox/HeaderBar/SelectedAvatarFrame/Avatar", player.avatar)
+	# 头像路径本身是已授权的快照字段；不加载本机御主模板。
+	bind_zoom_for_card(drawer.get_node("VBox/HeaderBar/SelectedAvatarFrame/Avatar"), {"visible": true, "concealed": false, "zoom_kind": "avatar", "image": player.avatar, "name": player.master.get("name", ""), "description": ""})
+	_set_text(drawer, "VBox/HeaderBar/OrderBadge", "%s · %s\n战果 %s" % [player.master.get("name", player.player_name), player.servant_class, BaseNumber.display_text(player.score)])
+	var hint: Label = drawer.get_node("VBox/IdentityHint")
+	hint.text = "真名已解放" if player.get("servant_released", false) else "真名未解放"
+	hint.theme_type_variation = "Gold2" if player.get("servant_released", false) else "Dim2"
+	_set_text(drawer, "VBox/ResourceVisuals/MagicH/Magic", "魔力 " + BaseNumber.display_text(player.magic))
+	_set_text(drawer, "VBox/ResourceVisuals/CommandSpells", "令咒 ×" + BaseNumber.display_text(player.command_spell_count))
+	_set_text(drawer, "VBox/ResourceVisuals/Power", "合计威力 " + BaseNumber.display_text(player.total_power))
+	var area_name: String = "未部署"
+	for area in view.get("areas", []):
+		for loc in area.locations:
+			if loc.id == player.location:
+				area_name = area.name
+	_set_text(drawer, "VBox/ResourceVisuals/BattleMarker", area_name + (" · 交战" if player.is_battle else ""))
 	var rows: Array = _drawer_rows()
-	var master_row: Control = rows[0] if rows.size() > 0 else null
-	var played_row: Control = rows[1] if rows.size() > 1 else null
-	var skills_row: Control = rows[2] if rows.size() > 2 else null
-	var buffs_row: Control = rows[3] if rows.size() > 3 else null
-	var card_size: Vector2 = _drawer_card_size(master_row if master_row != null else played_row)
-	# 1 御主卡与从者卡：从者未解放只给卡背，不给内容
-	if master_row != null:
-		var master_card := master_row.get_node_or_null("Scroll/CardsH/MasterCard") as TextureRect
-		var servant_card := master_row.get_node_or_null("Scroll/CardsH/ServantCard") as TextureRect
-		if master_card != null:
-			master_card.custom_minimum_size = card_size
-		if servant_card != null:
-			servant_card.custom_minimum_size = card_size
-		if master_card != null and master_obj != null:
-			master_card.texture = LoadHelper.load_texture(str(master_obj.get("_master_card_img")))
-			bind_zoom_for_card(master_card, master_obj, "_master_card_img")
-		if servant_card != null and servant_obj != null:
-			if ReleaseTrueName.is_released(bot_id):
-				servant_card.texture = LoadHelper.load_texture(str(servant_obj.get("_servant_card_img")))
-				bind_zoom_for_card(servant_card, servant_obj, "_servant_card_img")
+	var size: Vector2 = _drawer_card_size(rows[0])
+	var identities: Control = rows[0].get_node("Scroll/CardsH")
+	for key in ["master", "servant"]:
+		var slot: TextureRect = identities.get_node("MasterCard" if key == "master" else "ServantCard")
+		slot.custom_minimum_size = size
+		slot.visible = not player[key].is_empty()
+		if slot.visible:
+			var card_image: String = player[key].get("image", "") if player[key].get("visible", false) and not player[key].get("concealed", true) else (_back("servant") if key == "servant" and player[key].get("placeholder_kind") == "servant" else "")
+			slot.texture = LoadHelper.load_texture(card_image)
+			if player[key].get("visible", false) and not player[key].get("concealed", true):
+				bind_zoom_for_card(slot, player[key])
 			else:
-				servant_card.texture = LoadHelper.load_texture(LoadHelper.resolve_card_back("", "", "servant"))
-				_disable_card_zoom(servant_card)
-		master_row.visible = master_obj != null or servant_obj != null
-	# 2 已打出牌：标题按该对手真实所在战区与合计威力生成
-	if played_row != null:
-		var played: Array = pl_data.get("played_cards", [])
-		_set_text(played_row, "Title", "⚔ %s 已打出牌 · 威力 %d" % [
-			(area_name if area_name != "" else "未部署"), GetPlayerTotalPower.new().exec(bot_id)])
-		played_row.visible = not played.is_empty()
-		var played_cards_row := _drawer_row_cards(played_row)
-		if played_cards_row != null:
-			# 已打出牌不合并同名：每张都是独立的一次出牌（与旧抽屉同一口径）
-			_fill_card_row_from_list(played_cards_row, played, false, false, false, card_size)
-	# 3 技能与附加牌（从者技能牌 / 御主技能牌 / 御主自带技能与攻击牌 / 附带物 / 升华技）：
-	# 与本地御主两侧的名单共用同一份采集
-	if skills_row != null:
-		var uncataloged: Array = _zone_hand_entries(pl_data).map(func(e): return e["card"])
-		skills_row.visible = not uncataloged.is_empty()
-		var skills_cards_row := _drawer_row_cards(skills_row)
-		if skills_cards_row != null:
-			_fill_card_row_from_list(skills_cards_row, uncataloged, false, false, true, card_size)
-	# 4 状态：与本地资源栏共用同一套 BuffRow 渲染
-	var command_row := _opponent_drawer.get_node("VBox/Sections/Row_CommandSpells") as Control
-	var special_spells := _special_command_spells(LoadCommandSpell.resolve_player_command_spells(master_obj, servant_obj))
-	command_row.visible = not special_spells.is_empty()
-	_fill_card_row_from_list(_drawer_row_cards(command_row), special_spells, false, false, false, card_size)
-	if buffs_row != null:
-		var buffs_list := buffs_row.get_node_or_null("Scroll/Buffs") as Control
-		buffs_row.visible = _fill_buff_rows(buffs_list, pl_data.get("buffs", [])) > 0
-		var buffs_scroll := buffs_row.get_node_or_null("Scroll") as Control
-		if buffs_scroll != null:
-			# 状态多时最多占一格平分份额，少时按内容收缩，省下的高度归卡行
-			var title := buffs_row.get_node("Title") as Control
-			buffs_scroll.custom_minimum_size.y = minf(buffs_list.get_combined_minimum_size().y,
-				maxf(0.0, _drawer_row_share(rows) - title.get_combined_minimum_size().y - buffs_row.get_theme_constant("separation"))) if buffs_row.visible else 0.0
-	_refresh_drawer_out_of_game(pl_data)
-	var drawer_box := _opponent_drawer.get_node("VBox") as Control
-	var insets: Vector4 = drawer_box.get_meta("layout_insets")
-	drawer_box.offset_left = insets.x
-	drawer_box.offset_top = insets.y
-	drawer_box.offset_right = insets.z
-	drawer_box.offset_bottom = insets.w
+				_disable_card_zoom(slot)
+		else:
+			slot.texture = null
+			_disable_card_zoom(slot)
+	rows[0].visible = identities.get_node("MasterCard").visible or identities.get_node("ServantCard").visible
+	var sources: Array = []
+	for entry in player.get("zone_hand_entries", []):
+		if entry is Dictionary and entry.get("card", {}).get("visible", false):
+			sources.append(entry.card)
+	for i in [1, 2]:
+		var cards: Array = player.played_cards if i == 1 else sources
+		rows[i].visible = not cards.is_empty()
+		_fill_card_row_from_list(_drawer_row_cards(rows[i]), cards, false, player.own, i == 2, size)
+	_set_text(rows[1], "Title", "%s 已打出牌 · 威力 %s" % [area_name, BaseNumber.display_text(player.total_power)])
+	_bind_drawer_buffs(rows[3], player.get("buffs", []))
+	var spell_row: Control = drawer.get_node("VBox/Sections/Row_CommandSpells")
+	var special_spells: Array = player.get("special_command_spells", [])
+	spell_row.visible = not special_spells.is_empty()
+	_fill_card_row_from_list(_drawer_row_cards(spell_row), special_spells, false, player.own, true, size)
+	drawer.get_node("VBox/Sections/Row_CommandSpells").visible = not special_spells.is_empty()
+	var out_button: Button = drawer.get_node("VBox/BtnOutOfGame")
+	if not out_button.has_meta("base_text"):
+		out_button.set_meta("base_text", out_button.text)
+	var removed: Array = player.get("out_of_game_cards", [])
+	out_button.visible = not removed.is_empty()
+	out_button.text = "%s ×%d" % [str(out_button.get_meta("base_text")), removed.size()]
+	_bind_power_hover(drawer.get_node("VBox/ResourceVisuals/Power"), pid)
+	var box: Control = drawer.get_node("VBox")
+	var insets: Vector4 = box.get_meta("layout_insets")
+	box.offset_left = insets.x
+	box.offset_top = insets.y
+	box.offset_right = insets.z
+	box.offset_bottom = insets.w
 	for row in rows:
 		_bind_drawer_row_remeasure(row)
-	_queue_drawer_remeasure(opponent_card)
-	var magic_lbl := _opponent_drawer.get_node_or_null("VBox/ResourceVisuals/MagicH/Magic") as Label
-	if magic_lbl:
-		magic_lbl.text = "魔力 %d" % _num(pl_data.get("magic"))
-	var cs_lbl := _opponent_drawer.get_node_or_null("VBox/ResourceVisuals/CommandSpells") as Label
-	if cs_lbl:
-		cs_lbl.text = "令咒 ×%d" % _num(pl_data.get("command_spell_count"))
-	var power_lbl := _opponent_drawer.get_node_or_null("VBox/ResourceVisuals/Power") as Label
-	if power_lbl:
-		power_lbl.text = "合计威力 %d" % int(GetPlayerTotalPower.breakdown(bot_id).get("total", 0))
-		_bind_power_hover(power_lbl, bot_id)
-	var hint_lbl := _opponent_drawer.get_node_or_null("VBox/IdentityHint") as Label
-	if hint_lbl:
-		var revealed := ReleaseTrueName.is_released(bot_id)
-		hint_lbl.text = "真名解放" if revealed else "真名未解放"
-		_set_variation(hint_lbl, "Gold2" if revealed else "Dim2")
+	_queue_drawer_remeasure(opponent)
 
+func _bind_drawer_buffs(row: Control, buffs: Array) -> void:
+	var list: Control = row.get_node("Scroll/Buffs")
+	_fill_buff_rows(list, buffs)
+	row.visible = not buffs.is_empty()
+	var title: Control = row.get_node("Title")
+	row.get_node("Scroll").custom_minimum_size.y = minf(list.get_combined_minimum_size().y, maxf(0.0, _drawer_row_share(_drawer_rows()) - title.get_combined_minimum_size().y - row.get_theme_constant("separation"))) if row.visible else 0.0
 
 ## 抽屉分区行，顺序与 DRAWER_ROWS 一致。
 func _drawer_rows() -> Array:
@@ -4761,28 +5475,19 @@ func _drawer_layout_ready() -> bool:
 	return false
 
 
-## 抽屉的"游戏外"入口：数量取自该玩家自己的游戏外牌区，没有卡时整条收起（与旧抽屉同一口径）
-func _refresh_drawer_out_of_game(pl_data: Dictionary) -> void:
-	if _opponent_drawer == null:
-		return
-	var btn := _opponent_drawer.get_node_or_null("VBox/BtnOutOfGame") as Button
-	if btn == null:
-		return
-	# 按钮文案以场景声明的那句为准，这里只补数量，不在脚本里另写一份文案
-	if not btn.has_meta("base_text"):
-		btn.set_meta("base_text", btn.text)
-	var cards := _out_of_game_cards(pl_data)
-	btn.visible = not cards.is_empty()
-	btn.text = "%s ×%d" % [str(btn.get_meta("base_text")), cards.size()]
-
-
-## 打开游戏外卡牌浏览：跟按钮同一次刷新里的身份与数据，不缓存某次刷新结果
+## 两种来源共用当前过滤投影；不读取规则玩家，也不补全缺失的卡面声明。
 func _on_drawer_out_of_game_pressed() -> void:
 	if _opponent_drawer == null or _selected_opponent_id < 0:
 		return
+	if _source_is_local and _source != null:
+		_source.invalidate()
+	var view: Dictionary = _source.read_view() if _source != null else {}
 	var btn := _opponent_drawer.get_node_or_null("VBox/BtnOutOfGame") as Button
-	var title := str(btn.get_meta("base_text")) if btn != null else ""
-	_show_card_browser(title, _out_of_game_cards(_pl(_selected_opponent_id)))
+	var title := str(btn.get_meta("base_text", btn.text)) if btn != null else ""
+	for player in view.get("players", []):
+		if int(player.get("id", -1)) == _selected_opponent_id:
+			_show_card_browser(title, player.get("out_of_game_cards", []))
+			return
 
 
 ## 合计威力标签：悬浮显示威力构成明细（复用场景里的 PowerTooltip 与引擎的明细接口，
@@ -4797,7 +5502,7 @@ func _bind_power_hover(label: Control, player_id: int, include_selected_preview:
 	label.set_meta("power_hover_bound", true)
 	label.mouse_entered.connect(func():
 		var pid := int(label.get_meta("power_hover_player_id", -1))
-		if pid < 0 or not GameData.player_data_library.has(pid):
+		if pid < 0 or (network_session == null and not GameData.player_data_library.has(pid)):
 			return
 		var preview_power := 0
 		var preview_cards: Array = []
@@ -4806,7 +5511,7 @@ func _bind_power_hover(label: Control, player_id: int, include_selected_preview:
 			preview_power = _selected_cards_power()
 			preview_cards = _selected_cards.duplicate()
 			preview_hidden = _selected_cards_hidden()
-		var lines := GetPlayerTotalPower.breakdown_lines(pid, preview_power, preview_cards, preview_hidden)
+		var lines: Array = _network_presenter.power_lines(_network_presenter.player_view(pid)) if network_session != null else GetPlayerTotalPower.breakdown_lines(pid, preview_power, preview_cards, preview_hidden)
 		_set_text(_power_tooltip, "VBox/Desc", "\n".join(lines) if not lines.is_empty() else "当前无威力")
 		var rect := label.get_global_rect()
 		var panel_size := _power_tooltip.size
@@ -4957,6 +5662,27 @@ func _fill_card_row_from_list(row: Control, cards: Array, clickable: bool, owned
 func _group_repeated_cards(cards: Array) -> Array:
 	var out: Array = []
 	for card in cards:
+		if card is Dictionary:
+			# 不依赖规则对象 _name；隐藏条目不按空名称合并。
+			var match_index: int = -1
+			if card.get("visible", false):
+				for i in out.size():
+					var existing = out[i].get("card")
+					if not existing is Dictionary or not existing.get("visible", false):
+						continue
+					var same: bool = true
+					for field in ["name", "image", "back_image", "concealed", "cost", "power", "description", "zoom_kind"]:
+						if existing.get(field) != card.get(field):
+							same = false
+							break
+					if same:
+						match_index = i
+						break
+			if match_index >= 0:
+				out[match_index]["count"] += 1
+			else:
+				out.append({"card": card, "count": 1})
+			continue
 		var found := -1
 		for i in range(out.size()):
 			if out[i].get("card", null)._name == card._name:
@@ -4969,31 +5695,25 @@ func _group_repeated_cards(cards: Array) -> Array:
 	return out
 
 
-# --- 镜像旧日志格式（供战报 / 日志弹窗复用） ---
+# --- 共用独立日志文本模块（供战报 / 日志弹窗复用） ---
 static func _format_game_log_line(e: Dictionary) -> String:
-	return preload("res://scripts/game_scene/tactical_board_ui.gd")._format_game_log_line(e)
+	return GameLogText.line(e)
 
 
 # --- 战区点击（消费位置等待 / 部署 / 移动） ---
 func _on_battlefield_clicked(target_area_idx: int) -> void:
 	if _is_progress_blocked():
 		return
-	var pending_loc: Dictionary = EffectManager.get_pending_location_selection()
-	if not pending_loc.is_empty():
-		if target_area_idx < 0 or target_area_idx >= MapData.areas.size():
-			return
-		var spec: Dictionary = pending_loc.get("spec", {})
-		#被锁战区（固有结界等）不能作为效果移动的目标：与金框共用 area_action_block_reason_for，点击直接给原因
-		var pending_block: String = _area_action_block_reason(target_area_idx)
-		if pending_block != "":
-			_show_tactical_confirm(pending_block, true)
-			return
-		var selected: BaseLocation = TacticalBoardUI._first_effect_location_target(MapData.areas[target_area_idx], spec)
-		if selected == null:
-			_show_tactical_confirm("【%s】没有可用的位置" % MapData.areas[target_area_idx]._area_name, true)
-			return
-		_commands.submit_location_selection(pending_loc["effect"], selected)
-		refresh_all_ui()
+	var pending_loc: Dictionary = _source.read_pending() if _source != null else {}
+	if pending_loc.get("kind") == "location_choice":
+		var areas: Array = _source.read_view().get("areas", [])
+		if target_area_idx < 0 or target_area_idx >= areas.size(): return
+		var area: int = int(areas[target_area_idx].get("id", -1))
+		if not _source_is_local:
+			get_node("NetworkChoices/Panel").choose_area(area)
+		else:
+			_check_waiting_location_selection()
+			_submit_location_choice(area,_location_choice_prompt,_location_choice_generation,_battle_command_epoch)
 		return
 	var blocked: String = _area_action_block_reason(target_area_idx)
 	if blocked != "":
@@ -5007,7 +5727,7 @@ func _on_battlefield_clicked(target_area_idx: int) -> void:
 
 
 func _area_action_block_reason(target_area_idx: int) -> String:
-	return TacticalBoardUI.area_action_block_reason_for(_local_player_id, target_area_idx)
+	return AreaActionRules.block_reason(_local_player_id, target_area_idx)
 
 
 func _prepare_battlefield_deploy_confirm(target_area_idx: int) -> void:
@@ -5033,7 +5753,7 @@ func _prepare_battlefield_move_confirm(target_area_idx: int) -> void:
 	if IsEngaged.new().exec(_local_player_id):
 		_show_tactical_confirm("处于交战状态，无法移动", true)
 		return
-	var curr_area: BaseMapArea = TacticalBoardUI._local_current_area(pl_data)
+	var curr_area: BaseMapArea = AreaActionRules.current_area(pl_data)
 	if curr_area == null:
 		return
 	var current_idx: int = MapData.areas.find(curr_area)
@@ -5044,8 +5764,8 @@ func _prepare_battlefield_move_confirm(target_area_idx: int) -> void:
 		_show_tactical_confirm("移动只能沿单方向前进", true)
 		return
 	var target_area_name: String = MapData.areas[target_area_idx]._area_name
-	var cost: int = TacticalBoardUI._estimate_move_cost(pl_data, step_diff)
-	if not TacticalBoardUI._is_magic_enough_for_move(pl_data, cost):
+	var cost: int = AreaActionRules.estimate_move_cost(pl_data, step_diff)
+	if not AreaActionRules.magic_enough_for_move(pl_data, cost):
 		_show_tactical_confirm("移动至【%s】\n所需资源：魔力 %d\n当前魔力不足" % [target_area_name, cost], true)
 		return
 	_pending_tactical_action = {"type": "move", "step_diff": step_diff, "target_area_idx": target_area_idx, "target_area_name": target_area_name}
@@ -5070,19 +5790,200 @@ func _pending_location_hint(pending: Dictionary) -> String:
 	return "出发地需为 %s" % " 或 ".join(names)
 
 
-# --- 结束行动：直接走引擎 ---
+# --- 结束行动：共同 source/command，不迁移部署后的结束链 ---
 func _on_end_phase_pressed() -> void:
-	if _is_progress_blocked():
+	if not _end_command_available():
 		return
-	if GameProgress.current_player_id != _local_player_id:
+	_submit_battle_command("end_action", {})
+
+## 同步本地/host 与异步 guest 复用同一个单请求 attempt。
+func _submit_battle_command(kind: String, args: Dictionary, end_after_deploy: bool = false) -> void:
+	if not _battle_command_input_available(kind):
 		return
-	if GameProgress.is_phase_for(_local_player_id, "action"):
-		var block := ActionRules.block_reason(_local_player_id)
-		if block != "":
-			_show_tactical_confirm(block, true)
+	var adapter = _battle_commands
+	var epoch: int = _battle_command_epoch
+	var attempt: Dictionary = {"epoch": epoch, "kind": kind, "request_id": 0, "buffer": [], "settled": false, "end_after_deploy": end_after_deploy, "args": args.duplicate(true)}
+	if kind == "play_group" and _card_select_request.get("regular", false):
+		attempt["regular_prompt"] = _card_select_request.duplicate(true)
+	_end_command_attempt = attempt
+	_update_end_command_button()
+	_refresh_player_choice_lock()
+	_refresh_active_choice_lock()
+	_refresh_broadcast_continue()
+	if kind == "broadcast_confirm_absent":
+		var sent: Error = network_session.request(kind, args, _register_broadcast_absent_attempt.bind(attempt))
+		if sent != OK and not attempt.settled:
+			_settle_end_command(attempt, false, "代确认请求发送失败：" + error_string(sent))
+		return
+	var request_id: int = adapter.submit(kind, args)
+	if attempt.settled or epoch != _battle_command_epoch or adapter != _battle_commands:
+		return
+	attempt.request_id = request_id
+	for reply in attempt.buffer:
+		if reply[0] == request_id:
+			_settle_end_command(attempt, reply[1], reply[2])
+			break
+	attempt.buffer.clear()
+
+func _register_broadcast_absent_attempt(sequence: int, attempt: Dictionary) -> void:
+	if attempt.settled or attempt.epoch != _battle_command_epoch or _end_command_attempt != attempt: return
+	attempt.request_id = sequence
+
+func _on_broadcast_management_result(sequence: int, ok: bool, reason: String) -> void:
+	if not _end_command_attempt.is_empty() and _end_command_attempt.get("kind") == "broadcast_confirm_absent" and _end_command_attempt.get("request_id") == sequence:
+		_settle_end_command(_end_command_attempt, ok, reason)
+
+func _run_battle_command(method: String, argv: Array, context: SessionContext):
+	# dispatcher 唯一规则执行桥：显式契约，不通过反射掩盖不支持的命令。
+	match method:
+		"submit_group": return _commands.submit_group(argv[0], argv[1], argv[2], context)
+		"request_manual_activation": return _commands.request_manual_activation(argv[0], argv[1])
+		"set_card_concealed": _commands.set_card_concealed(argv[0], argv[1], argv[2])
+		"move": _commands.move(argv[0], argv[1])
+		"deploy_to_area": return _commands.deploy_to_area(argv[0], argv[1])
+		"submit_option_choice": return _commands.submit_option_choice(argv[0], argv[1], argv[2])
+		"submit_active_choice": return _commands.submit_active_choice(argv[0], argv[1])
+		"cancel_pending_choice": return _commands.cancel_pending_choice(argv[0])
+		"submit_card_selection": return _commands.submit_card_selection(argv[0], argv[1])
+		"submit_player_selection": return _commands.submit_player_selection(argv[0], argv[1])
+		"submit_location_selection": return _commands.submit_location_selection(argv[0], argv[1])
+		"confirm_battle_broadcast": _commands.confirm_battle_broadcast(argv[0])
+		"end_current_player_action": return _commands.end_current_player_action()
+	return false
+
+func _read_battle_command_sequence():
+	return _source.read_view().get("seq") if _source != null else null
+
+## 生命周期通知栈之外显式构造；普通快照不退休/结算。
+func _rebuild_battle_commands() -> void:
+	if _battle_commands_stopped or _battle_commands_retiring or _battle_commands_invalidating or _source == null:
+		return
+	var observer: int = _local_player_id
+	if not _source_is_local:
+		var view: Dictionary = _source.read_view()
+		observer = int(view.get("observer", -1))
+		if _battle_commands != null and observer != _battle_command_observer:
+			_retire_battle_commands("观察座位已变化，执行结果未知")
+		if network_session == null or network_session.view.get("phase") != "playing" or observer < 0 or not view.get("seq") is int or not _network_battle_input_available("confirm_broadcast"):
+			_update_end_command_button()
 			return
-	_commands.end_current_player_action()
-	refresh_all_ui()
+	if _battle_commands != null:
+		return
+	_battle_command_epoch += 1
+	_battle_command_observer = observer
+	if _source_is_local:
+		var dispatcher = preload("res://scripts/match/match_command_dispatcher.gd").new(EffectManager.is_card_selection_valid, EffectManager.location_option_origin_allowed)
+		_battle_commands = preload("res://scripts/game_scene/battle_io/local_battle_commands.gd").new(observer, _held_action_ids, dispatcher, _run_battle_command, GameStart.startup_context())
+	else:
+		_battle_commands = preload("res://scripts/game_scene/battle_io/network_battle_commands.gd").new(network_session, _read_battle_command_sequence)
+		if not network_session.request_completed.is_connected(_on_broadcast_management_result):
+			network_session.request_completed.connect(_on_broadcast_management_result)
+	_battle_command_result = _on_battle_command_result.bind(_battle_commands, _battle_command_epoch)
+	_battle_commands.result.connect(_battle_command_result)
+	_update_end_command_button()
+
+func _on_battle_command_result(request_id: int, ok: bool, reason: String, adapter, epoch: int) -> void:
+	if adapter != _battle_commands or epoch != _battle_command_epoch or _end_command_attempt.is_empty():
+		return
+	if _end_command_attempt.get("kind") == "broadcast_confirm_absent": return
+	var attempt: Dictionary = _end_command_attempt
+	if attempt.settled:
+		return
+	if attempt.request_id == 0:
+		attempt.buffer.append([request_id, ok, reason])
+	elif attempt.request_id == request_id:
+		_settle_end_command(attempt, ok, reason)
+
+func _settle_end_command(attempt: Dictionary, ok: bool, reason: String) -> void:
+	if attempt.settled:
+		return
+	attempt.settled = true
+	_end_command_attempt = {}
+	if ok and not _battle_commands_stopped and not _battle_commands_retiring and attempt.get("kind") == "play_group":
+		_complete_held_group(attempt)
+		if attempt.has("regular_prompt") and attempt.regular_prompt == _card_select_request:
+			_card_select_request = {}
+			_card_select_picked = []
+			_card_select_hidden = {}
+			_card_select_submit = Callable()
+			_card_select_panel.hide()
+	if _source_is_local and not _battle_commands_stopped and not _battle_commands_retiring and attempt.get("kind") in ["player_choice", "card_choice", "location_choice", "cancel_choice", "option_choice", "active_choice"]:
+		if _source != null: _source.invalidate()
+		_check_waiting_player_selection()
+		_check_waiting_card_selection()
+		_check_waiting_location_selection()
+		_check_waiting_effects()
+	if not ok and not _battle_commands_stopped:
+		_say(reason if not reason.is_empty() else "操作未确认，请查看当前局面")
+	if not _battle_commands_stopped and not _battle_commands_retiring:
+		refresh_all_ui()
+		if _source_is_local and attempt.get("kind") == "activate":
+			_process_waiting_inputs(0.0)
+	_update_end_command_button()
+	_refresh_broadcast_continue()
+	# 部署成功与结束是两条独立权威命令；拒绝、退休、退出均不续发。
+	if ok and attempt.get("kind") == "deploy" and attempt.get("end_after_deploy", false) and attempt.get("epoch") == _battle_command_epoch and _end_command_available():
+		_submit_battle_command("end_action", {})
+
+func _retire_battle_commands(reason: String) -> void:
+	_battle_commands_retiring = true
+	if _battle_commands != null:
+		if not _source_is_local:
+			_battle_commands.close()
+		if not _end_command_attempt.is_empty():
+			_settle_end_command(_end_command_attempt, false, reason)
+		if _battle_commands.result.is_connected(_battle_command_result):
+			_battle_commands.result.disconnect(_battle_command_result)
+	_battle_commands = null
+	_battle_command_result = Callable()
+	_battle_command_epoch += 1
+	_battle_commands_retiring = false
+	_update_end_command_button()
+
+func _on_battle_commands_invalidated(_generation: int, _reason: String) -> void:
+	_battle_commands_invalidating = true
+	_retire_battle_commands("会话请求关联已失效，执行结果未知；不自动重发")
+	# session 正在同步重置，不在其通知栈中用旧视图建实例。
+	call_deferred("_resume_battle_command_rebuild", _battle_command_epoch)
+
+func _resume_battle_command_rebuild(epoch: int) -> void:
+	if epoch != _battle_command_epoch or _battle_commands_stopped:
+		return
+	_battle_commands_invalidating = false
+	_rebuild_battle_commands()
+
+func _stop_battle_commands() -> void:
+	_battle_commands_stopped = true
+	_retire_battle_commands("界面退出，执行结果未知；不自动重发")
+	if network_session != null and network_session.request_associations_invalidated.is_connected(_on_battle_commands_invalidated):
+		network_session.request_associations_invalidated.disconnect(_on_battle_commands_invalidated)
+	if network_session != null and network_session.request_completed.is_connected(_on_broadcast_management_result):
+		network_session.request_completed.disconnect(_on_broadcast_management_result)
+
+func _battle_command_input_available(kind: String = "") -> bool:
+	if _battle_commands_stopped or _battle_commands_retiring or _battle_commands_invalidating or _battle_commands == null or _source == null or not _end_command_attempt.is_empty():
+		return false
+	if not _source_is_local:
+		var view: Dictionary = _source.read_view()
+		if network_session.view.get("phase") != "playing" or int(view.get("observer", -1)) != _battle_command_observer or _battle_command_observer < 0 or not view.get("seq") is int or not _network_battle_input_available(kind):
+			return false
+	return true
+
+## 本人确认/显式管理确认允许断线等待；普通行动保持原可用性闸门。
+func _network_battle_input_available(kind: String) -> bool:
+	if network_session == null: return false
+	if kind not in ["confirm_broadcast", "broadcast_confirm_absent"]:
+		return network_session.match_commands_available()
+	if not network_session.transport.is_connected_to_host(): return false
+	var actions: Dictionary = _source.read_actions()
+	return not actions.get("guard", {}).get("paused", false) and not actions.get("management_paused", false)
+
+func _end_command_available() -> bool:
+	return _battle_command_input_available() and bool(_source.read_actions().get("can_end", false)) and _source.read_pending().is_empty()
+
+func _update_end_command_button() -> void:
+	if _ops != null:
+		(_ops.get_node("EndButton") as Button).disabled = not _end_command_available()
 
 
 # -----------------------------------------------------------------------------
@@ -5112,11 +6013,24 @@ func _on_residue_toggle(pile: Control) -> void:
 
 
 func _bind_residue_piles() -> void:
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	_bind_residue_entries(view.get("players", []), int(view.get("observer", -1)), true)
+
+## 只接已判定牌区；网络输入为权威过滤卡视图，布局与输入仍走原模板。
+func _bind_residue_entries(entries: Array, observer: int, network: bool) -> void:
+	_local_player_id = observer
+	var active: Array = []
+	for entry in entries:
+		active.append(entry.id)
+	var local := get_node_or_null("LocalResiduePile") as Control
+	if local != null and not active.has(observer):
+		local.hide()
 	# 绘制 z_index 不改变鼠标命中顺序，顺位栏须排在卷轴之后。
 	if _rivals.get_index() < _strips.get_index():
 		move_child(_rivals, _strips.get_index() + 1)
-	for id in _ordered_ids():
-		var cards: Array = (_pl(id).get("played_cards", []) as Array).filter(_is_residue_card)
+	for entry in entries:
+		var id: int = entry.id
+		var cards: Array = entry.get("residue_cards", [])
 		var parent := self as Control if id == _local_player_id else _rival_card(id)
 		if parent == null:
 			continue
@@ -5126,7 +6040,7 @@ func _bind_residue_piles() -> void:
 		var pile := _residue_pile(parent, node_name)
 		pile.visible = not cards.is_empty()
 		pile.set_meta("player_id", id)
-		_bind_played_cards_row(pile.get_node("Cards/Row"), cards, id)
+		_bind_played_cards_row(pile.get_node("Cards/Row"), cards, id, network)
 		if cards.is_empty():
 			pile.set_meta("expanded", false)
 			continue
@@ -5167,17 +6081,23 @@ func _layout_residue_pile(pile: Control) -> void:
 		_tween_vec(slot, &"position", Vector2(i * step, 0), "residue_position")
 
 
-func _bind_groups(area: BaseMapArea, content: Control) -> void:
+func _bind_groups(area: Dictionary, content: Control) -> void:
 	var region := content.get_node_or_null("Groups/List") as Control
 	if region == null:
 		region = content.get_node_or_null("Groups") as Control
 		if region == null:
 			return
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	var occupants: Array = []
+	for location in area.get("locations", []):
+		occupants.append_array(location.get("players", []))
 	var active_keys: Array[String] = []
-	for pid: int in _players_in_area(area):
-		var played := _current_played_cards(pid)
-		if played.is_empty():
+	for player in view.get("players", []):
+		var residue_ids: Array = player.get("residue_cards", []).map(func(card): return card.id)
+		var played: Array = player.get("played_cards", []).filter(func(card): return not residue_ids.has(card.id))
+		if not occupants.has(player.id) or played.is_empty():
 			continue
+		var pid: int = int(player.id)
 		var key := "Player_%d" % pid
 		active_keys.append(key)
 		var grp := region.get_node_or_null(key) as Control
@@ -5195,7 +6115,6 @@ func _bind_groups(area: BaseMapArea, content: Control) -> void:
 		if not active_keys.has(str(grp.name)):
 			region.remove_child(grp)
 			grp.queue_free()
-	# 首次整理完场上已有牌之后再武装动画：之后新出现的牌才播入场
 	_fly_armed = true
 
 
@@ -5235,15 +6154,21 @@ func _bind_player_row(grp: Control, pid: int) -> void:
 		grp.set_meta("shown", true)
 		grp.set_meta("shown_at", Time.get_ticks_msec() / 1000.0)
 	grp.modulate.a = 1.0 if grp.has_meta("shown") else 0.0
-	var played := _current_played_cards(pid)
+	var view: Dictionary = _source.read_view() if _source != null else {}
+	var player: Dictionary = {}
+	for candidate in view.get("players", []):
+		if candidate.id == pid:
+			player = candidate
+	var residue_ids: Array = player.get("residue_cards", []).map(func(card): return card.id)
+	var played: Array = player.get("played_cards", []).filter(func(card): return not residue_ids.has(card.id))
 	var who := grp.get_node("Who") as Control
 	var expanded := bool(grp.get_meta("expanded", false))
 	who.get_node("Avatar/CollapseHint").visible = expanded
 	who.tooltip_text = "点击头像收起牌堆" if expanded else "点击牌堆或头像展开"
 	# 已启动的头像由卷轴自身裁切并随其移动，不在展开结束时重新显现。
 	var avatar := who.get_node("Avatar") as Control
-	_bind_avatar(avatar, _header_img(pid), "AvatarMana" if pid == _local_player_id else "AvatarGold3")
-	var head_img: String = _header_img(pid)
+	_bind_avatar(avatar, str(player.get("avatar", "")), "AvatarMana" if pid == _local_player_id else "AvatarGold3")
+	var head_img: String = str(player.get("avatar", ""))
 	if first_reveal:
 		avatar.set_meta("last_head", head_img)
 		_play_avatar_entrance(avatar, who.get_node("Total") as Control)
@@ -5254,7 +6179,7 @@ func _bind_player_row(grp: Control, pid: int) -> void:
 		fade.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		fade.tween_property(avatar, "modulate:a", 1.0, FADE_SECONDS)
 	# 威力徽章只显示数字（剑图标已去掉）
-	_set_text(who, "Total/Text", "%d" % int(GetPlayerTotalPower.breakdown(pid).get("total", 0)))
+	_set_text(who, "Total/Text", BaseNumber.display_text(player.get("total_power", 0)))
 	var cards_box := grp.get_node("Cards") as Control
 	var cards_row := cards_box.get_node("Row") as Control
 	_bind_played_cards_row(cards_row, played, pid, true)
@@ -5280,9 +6205,30 @@ func _bind_played_cards_row(cards_row: Control, played: Array, pid: int, animate
 			image = _back("attack" if card is BaseAttack else "skill") if concealed else str(card.get("_card_img"))
 		_bind_card(slot, image)
 		_sync_overlay(slot, false, "ConcealOverlay", CONCEAL_COLOR, CONCEAL_ICON)
-		slot.set_meta("card_object", card)
+		var input_card = card
+		if _source_is_local and card is Dictionary:
+			input_card = null
+			var view: Dictionary = _source.read_view()
+			for player in view.get("players", []):
+				if player.id != pid:
+					continue
+				var projected: Array = player.get("played_cards", [])
+				var objects: Array = (_pl(pid).get("played_cards", []) as Array).filter(func(item): return item is BaseCard)
+				# MatchViewBuilder.cards 保序且只过滤非 BaseCard。仅供既有本地输入，不能用于牌面。
+				if projected.size() == objects.size():
+					for j in projected.size():
+						if projected[j].id == card.id:
+							input_card = objects[j]
+				break
+		slot.set_meta("card_object", input_card)
 		slot.set_meta("card", card)
 		slot.set_meta("card_owner", pid)
+		# 本地投影仅复用当前会话已绑定的本人对象；网络绝不反查本机。
+		var history_authorized := _source_is_local and network_session == null and pid == _local_player_id
+		if card is Dictionary:
+			history_authorized = history_authorized and card.get("visible", false) and not concealed \
+				and input_card is BaseHandCard and _held_action_ids != null and _held_action_ids.id_for(input_card) == card.id
+		_sync_card_modification_badge(slot, input_card, history_authorized if _source_is_local else pid == _local_player_id, "played_cards")
 		slot.visible = true
 		if not (card is BaseCard or card is Dictionary):
 			_disable_card_zoom(slot)
@@ -5298,6 +6244,8 @@ func _bind_played_cards_row(cards_row: Control, played: Array, pid: int, animate
 func _same_card(card, existing) -> bool:
 	if card is Dictionary and existing is Dictionary:
 		return card.has("id") and existing.has("id") and card.id == existing.id
+	if card is Dictionary or existing is Dictionary:
+		return false
 	return card == existing
 
 func _played_card_slot(cards_row: Control, card) -> Control:
@@ -5338,6 +6286,7 @@ func _on_played_card_input(event: InputEvent, slot: Control) -> void:
 			_on_held_effect_pressed(slot)
 			slot.accept_event()
 		return
+	card = _meta_or(slot, "card_object", null)
 	if not (_pl(_local_player_id).get("played_cards", []) as Array).has(card):
 		return
 	_on_held_effect_pressed(slot)
@@ -5639,7 +6588,7 @@ func _play_takeoff(slot: Control, card, pid: int, strip_idx: int) -> void:
 	fly.size = slot.get_meta("layout_size_target", slot.size)
 	fly.set_meta("spawn_at", Time.get_ticks_msec() / 1000.0)
 	fly.set_meta("strip_idx", strip_idx)
-	var start_pos := _takeoff_origin(pid, card)
+	var start_pos := _takeoff_origin(pid, _meta_or(slot, "card_object", card) if _source_is_local else card)
 	fly.global_position = start_pos
 	fly.scale = Vector2.ONE * FLY_START_SCALE
 	fly.visible = _strip_open(_strip_by_index(strip_idx))
@@ -5723,8 +6672,19 @@ func _played_card_aspect(rows: Array) -> float:
 	return tpl.size.x / maxf(1.0, tpl.size.y)
 
 
+## 小签的负左锚点与最小宽度都可能向外伸出；只为正式出牌行预留所需内边距。
+func _played_badge_left_padding(card_width: float) -> float:
+	var badge := _tpl.get_node("PlayedCard/CardModificationBadge") as Control
+	var anchored_width := (badge.anchor_right - badge.anchor_left) * card_width + badge.offset_right - badge.offset_left
+	var extra_width := maxf(0.0, badge.get_combined_minimum_size().x - anchored_width)
+	var grow_left := extra_width if badge.grow_horizontal == Control.GROW_DIRECTION_BEGIN else 0.0
+	if badge.grow_horizontal == Control.GROW_DIRECTION_BOTH:
+		grow_left = extra_width * 0.5
+	return ceilf(maxf(0.0, -badge.anchor_left * card_width - badge.offset_left + grow_left))
+
+
 ## 各玩家组按实际宽高装箱，每行整体居中；求解与最终布局共用这些矩形。
-func _packed_play_rows(units: Array[Vector2], card_h: float, avail_w: float, max_per_row: int) -> Array[Rect2]:
+func _packed_play_rows(units: Array[Vector2], card_h: float, avail_w: float, max_per_row: int, left_padding := 0.0) -> Array[Rect2]:
 	var side_gap := maxf(card_h * PLAYED_SIDE_GAP_RATIO, PLAYED_SIDE_GAP_MIN)
 	var result: Array[Rect2] = []
 	var line_start := 0
@@ -5734,7 +6694,7 @@ func _packed_play_rows(units: Array[Vector2], card_h: float, avail_w: float, max
 	var remaining_rows := ceili(float(units.size()) / maxi(1, max_per_row))
 	var line_limit := ceili(float(units.size()) / maxi(1, remaining_rows))
 	for unit in units:
-		var grp_w := card_h * (PLAYED_AVATAR_W_RATIO + unit.x) + side_gap
+		var grp_w := card_h * (PLAYED_AVATAR_W_RATIO + unit.x) + side_gap + left_padding
 		if cur_x > 0.0 and (cur_x + grp_w > avail_w or result.size() - line_start >= line_limit):
 			var shift := maxf(0.0, (avail_w - cur_x + side_gap) * 0.5)
 			for j in range(line_start, result.size()):
@@ -5754,7 +6714,7 @@ func _packed_play_rows(units: Array[Vector2], card_h: float, avail_w: float, max
 	return result
 
 ## 同时检验全部组的宽高，求可用区域内最大的统一卡高。
-func _band_card_h(band: Rect2, units: Array[Vector2], max_per_row: int) -> float:
+func _band_card_h(band: Rect2, units: Array[Vector2], max_per_row: int, card_aspect := 0.0) -> float:
 	if units.is_empty() or band.size.x <= 1.0 or band.size.y <= 1.0:
 		return 0.0
 	var low := 0.0
@@ -5762,7 +6722,8 @@ func _band_card_h(band: Rect2, units: Array[Vector2], max_per_row: int) -> float
 	for iteration in range(18):
 		var height := (low + high) * 0.5
 		var fits := true
-		for placed in _packed_play_rows(units, height, band.size.x, max_per_row):
+		var left_padding := _played_badge_left_padding(height * card_aspect) if card_aspect > 0.0 else 0.0
+		for placed in _packed_play_rows(units, height, band.size.x, max_per_row, left_padding):
 			if placed.end.x > band.size.x or placed.end.y > band.size.y:
 				fits = false
 				break
@@ -5835,7 +6796,7 @@ func _played_layout_bands(strip: Control, origin: Vector2, extent: Vector2) -> A
 
 
 ## 枚举左右人数相差不超过一人的分配，取可容纳最大卡面的方案。
-func _solve_played_bands(bands: Array[Rect2], units: Array[Vector2]) -> Dictionary:
+func _solve_played_bands(bands: Array[Rect2], units: Array[Vector2], card_aspect := 0.0) -> Dictionary:
 	var best_height := 0.0
 	var best_counts: Array[int] = []
 	for left_count in range(units.size() + 1):
@@ -5848,7 +6809,7 @@ func _solve_played_bands(bands: Array[Rect2], units: Array[Vector2]) -> Dictiona
 			var height := INF
 			for i in range(bands.size()):
 				if counts[i] > 0:
-					height = minf(height, _band_card_h(bands[i], units.slice(start, start + counts[i]), 1))
+					height = minf(height, _band_card_h(bands[i], units.slice(start, start + counts[i]), 1, card_aspect))
 				start += counts[i]
 			if height > best_height:
 				best_height = height
@@ -5857,7 +6818,8 @@ func _solve_played_bands(bands: Array[Rect2], units: Array[Vector2]) -> Dictiona
 	var start := 0
 	for i in range(best_counts.size()):
 		var batch := units.slice(start, start + best_counts[i])
-		var local_rects := _packed_play_rows(batch, best_height, bands[i].size.x, 1)
+		var left_padding := _played_badge_left_padding(best_height * card_aspect) if card_aspect > 0.0 else 0.0
+		var local_rects := _packed_play_rows(batch, best_height, bands[i].size.x, 1, left_padding)
 		for placed in local_rects:
 			placed.position = bands[i].position + Vector2(0, placed.position.y)
 			placements.append(placed)
@@ -5921,7 +6883,7 @@ func _layout_play_groups(groups: Control) -> void:
 	if str(groups.get_meta("layout_sig", "")) == sig:
 		return
 	groups.set_meta("layout_sig", sig)
-	var solution := _solve_played_bands(bands, units)
+	var solution := _solve_played_bands(bands, units, aspect)
 	var placements: Array[Rect2] = solution.placements
 	if placements.size() != row_count:
 		return
@@ -5929,6 +6891,7 @@ func _layout_play_groups(groups: Control) -> void:
 	groups.set_meta("layout_band_counts", solution.counts)
 	var card_h: float = solution.height
 	var card_w := card_h * aspect
+	var badge_left_padding := _played_badge_left_padding(card_w)
 	var avatar_w := card_h * PLAYED_AVATAR_W_RATIO
 	var side_gap := maxf(card_h * PLAYED_SIDE_GAP_RATIO, PLAYED_SIDE_GAP_MIN)
 	var row_gap := card_h * PLAYED_ROW_GAP_RATIO
@@ -5950,7 +6913,7 @@ func _layout_play_groups(groups: Control) -> void:
 		# 之前用 FADE_SECONDS*1.5 当窗口，淡入一放慢就把变化动画整段吃掉了
 		var settling: bool = not grp.has_meta("shown")
 		var step := card_h * _played_step_ratio(grp, n, aspect)
-		var cards_width := card_h * units[i].x
+		var cards_width := card_h * units[i].x + badge_left_padding
 		var group_height := card_h * units[i].y
 		var grp_w := placements[i].size.x
 		var x := placements[i].position.x
@@ -6013,7 +6976,7 @@ func _layout_play_groups(groups: Control) -> void:
 			var card_row := k / columns if expanded else 0
 			var row_cards := mini(columns, n - card_row * columns) if expanded else n
 			var row_width := card_w + maxi(0, row_cards - 1) * step
-			var slot_pos := Vector2(maxf(0.0, (cards_width - row_width) * 0.5) + column * step, card_row * (card_h + row_gap))
+			var slot_pos := Vector2(badge_left_padding + maxf(0.0, (cards_width - badge_left_padding - row_width) * 0.5) + column * step, card_row * (card_h + row_gap))
 			_tween_vec(slot, &"position", slot_pos, "lay_slot_pos", settling)
 			var target_size := Vector2(card_w, card_h)
 			_play_card_target_size = target_size

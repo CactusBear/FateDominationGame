@@ -53,10 +53,9 @@ func move(player_id:int, steps:int, ignore_limit:bool = false, ignore_battle:boo
 	if steps <= 0:
 		return _fail("常规移动只接受正向步数")
 	var data:Dictionary = GameData.player_data_library[player_id]
-	if host != null and host.has_method("_estimate_move_cost") and host.has_method("_is_magic_enough_for_move"):
-		var cost:int = int(host.call("_estimate_move_cost", data, steps))
-		if !bool(host.call("_is_magic_enough_for_move", data, cost)):
-			return _fail("魔力不足，不能执行常规移动")
+	var cost:int = AreaActionRules.estimate_move_cost(data, steps)
+	if !AreaActionRules.magic_enough_for_move(data, cost):
+		return _fail("魔力不足，不能执行常规移动")
 	var before = GameData.player_data_library[player_id].get("location")
 	Move.new().exec(BaseNumber.new(steps), player_id, ignore_limit, ignore_battle)
 	var after = GameData.player_data_library[player_id].get("location")
@@ -126,14 +125,14 @@ func extra_play(player_id:int, card_id:int, kind:String) -> Dictionary:
 		"error":"" if ok else "出牌原语拒绝了这次追加打出（阶段、行动者或卡面条件不满足）"}
 
 
-func release_name(player_id:int) -> Dictionary:
-	var ok:bool = ReleaseTrueName.new().exec(player_id)
+func release_name(player_id:int, context:SessionContext = null) -> Dictionary:
+	var ok:bool = ReleaseTrueName.new().exec(player_id, ReleaseTrueName.DEFAULT_SHOWN_AREAS, context)
 	return {"ok":ok, "changed":ok, "player_id":player_id, "value":ReleaseTrueName.is_released(player_id),
 		"error":"" if ok else "原语未执行（已处于真名解放状态或缺卡）"}
 
 
-func hide_name(player_id:int) -> Dictionary:
-	var ok:bool = HideTrueName.new().exec(player_id)
+func hide_name(player_id:int, context:SessionContext = null) -> Dictionary:
+	var ok:bool = HideTrueName.new().exec(player_id, HideTrueName.DEFAULT_HIDDEN_AREAS, context)
 	return {"ok":ok, "changed":ok, "player_id":player_id, "value":ReleaseTrueName.is_released(player_id),
 		"error":"" if ok else "原语未执行（当前不处于可隐藏的状态）"}
 

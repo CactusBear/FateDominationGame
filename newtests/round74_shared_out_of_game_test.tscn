@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/round74_shared_out_of_game_test.gd" id="1"]
+
+[node name="Round74SharedOutOfGame" type="Node"]
+script = ExtResource("1")

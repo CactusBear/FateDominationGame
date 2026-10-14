@@ -1,0 +1,26 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+CHECK ordinary pair committed true
+CHECK console moves third card true
+CHECK move preserves ordinary completion and count true
+CHECK no ordinary selection after pair and moved extra true
+CHECK no second ordinary group after moved extra true
+CHECK extra moved before ordinary selection true
+CHECK UI still limits pending ordinary pair alongside extra true
+CHECK pair plus moved extra stays three true
+CHECK incremental first ordinary card true
+CHECK move extra during incomplete ordinary flow true
+CHECK pending group counts previously committed ordinary card true
+CHECK mixed entrances cannot exceed ordinary limit true
+CHECK remaining single ordinary card can complete flow true
+CHECK remaining ordinary card submitted true
+CHECK mixed entrances preserve pair plus extra true
+CHECK completion records total ordinary count true
+CHECK declared higher limit accepts first card true
+CHECK effect extra accepted during ordinary flow true
+CHECK declared higher limit still permits remaining three true
+CHECK higher limit group completes true
+CHECK effect extra does not spend ordinary allowance true
+CHECK higher limit remains enforced after extra true
+RESULT checks=22 failures=[]

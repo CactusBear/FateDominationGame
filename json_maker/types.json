@@ -34,6 +34,12 @@
           "zoom": "header_img_zoom_kind"
         },
         {
+          "key": "header_img_zoom_kind",
+          "shown": "头像的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
+        },
+        {
           "key": "master_card_img",
           "shown": "御主卡图",
           "file_name": "{folder}_cd",
@@ -42,12 +48,24 @@
           "zoom": "master_card_img_zoom_kind"
         },
         {
+          "key": "master_card_img_zoom_kind",
+          "shown": "御主卡图的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
+        },
+        {
           "key": "command_spell_img",
           "shown": "令咒图",
           "file_name": "{folder}_cs",
           "control": "image",
           "required": true,
           "zoom": "command_spell_img_zoom_kind"
+        },
+        {
+          "key": "command_spell_img_zoom_kind",
+          "shown": "令咒图的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
         },
         {
           "key": "card_back_img",
@@ -166,12 +184,24 @@
           "zoom": "header_img_zoom_kind"
         },
         {
+          "key": "header_img_zoom_kind",
+          "shown": "头像的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
+        },
+        {
           "key": "servant_card_img",
           "shown": "从者卡图",
           "file_name": "{folder}_cd",
           "control": "image",
           "required": true,
           "zoom": "servant_card_img_zoom_kind"
+        },
+        {
+          "key": "servant_card_img_zoom_kind",
+          "shown": "从者卡图的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
         },
         {
           "key": "card_back_img",
@@ -280,6 +310,12 @@
           "zoom": "zoom_kind"
         },
         {
+          "key": "zoom_kind",
+          "shown": "卡图的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
+        },
+        {
           "key": "card_back_img",
           "shown": "特殊卡背",
           "file_name": "{identity}_back",
@@ -321,6 +357,20 @@
           "shown": "词条",
           "control": "lines",
           "help": "卡面带的词条，一行一个，例如 true_name_release（真名解放）。"
+        },
+        {
+          "key": "alias_names",
+          "shown": "别名",
+          "control": "lines",
+          "advanced": true,
+          "help": "其他效果按名字找牌时也认这些名字，一行一个。"
+        },
+        {
+          "key": "faces",
+          "shown": "其他面",
+          "control": "faces",
+          "advanced": true,
+          "help": "双面/多面牌的其他面，每一面是一份完整卡面数据；翻面效果按下标切换。"
         }
       ],
       "lists": [
@@ -357,6 +407,12 @@
           "control": "image",
           "required": true,
           "zoom": "zoom_kind"
+        },
+        {
+          "key": "zoom_kind",
+          "shown": "卡图的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
         },
         {
           "key": "attributes",
@@ -414,6 +470,27 @@
           "shown": "词条",
           "control": "lines",
           "help": "卡面带的词条，一行一个，例如 true_name_release（真名解放）。"
+        },
+        {
+          "key": "alias_names",
+          "shown": "别名",
+          "control": "lines",
+          "advanced": true,
+          "help": "其他效果按名字找牌时也认这些名字，一行一个。"
+        },
+        {
+          "key": "faces",
+          "shown": "其他面",
+          "control": "faces",
+          "advanced": true,
+          "help": "双面/多面牌的其他面，每一面是一份完整卡面数据；翻面效果按下标切换。"
+        },
+        {
+          "key": "values",
+          "shown": "自定义数值",
+          "control": "dict",
+          "advanced": true,
+          "help": "给效果读写的键值（如 awaken_last_round=4）。效果用「读属性 _values」取。"
         }
       ],
       "lists": [
@@ -477,11 +554,31 @@
           "zoom": "zoom_kind"
         },
         {
+          "key": "zoom_kind",
+          "shown": "卡图的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
+        },
+        {
           "key": "card_back_img",
           "shown": "特殊卡背",
           "file_name": "{identity}_back",
           "control": "image",
           "help": "不选就用同类牌的通用卡背。"
+        },
+        {
+          "key": "alias_names",
+          "shown": "别名",
+          "control": "lines",
+          "advanced": true,
+          "help": "其他效果按名字找牌时也认这些名字，一行一个。"
+        },
+        {
+          "key": "faces",
+          "shown": "其他面",
+          "control": "faces",
+          "advanced": true,
+          "help": "双面/多面牌的其他面，每一面是一份完整卡面数据；翻面效果按下标切换。"
         }
       ],
       "lists": [
@@ -543,11 +640,31 @@
           "zoom": "zoom_kind"
         },
         {
+          "key": "zoom_kind",
+          "shown": "卡图的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
+        },
+        {
           "key": "card_back_img",
           "shown": "特殊卡背",
           "file_name": "{identity}_back",
           "control": "image",
           "help": "不选就用同类牌的通用卡背。"
+        },
+        {
+          "key": "alias_names",
+          "shown": "别名",
+          "control": "lines",
+          "advanced": true,
+          "help": "其他效果按名字找牌时也认这些名字，一行一个。"
+        },
+        {
+          "key": "faces",
+          "shown": "其他面",
+          "control": "faces",
+          "advanced": true,
+          "help": "双面/多面牌的其他面，每一面是一份完整卡面数据；翻面效果按下标切换。"
         }
       ],
       "lists": [
@@ -586,11 +703,31 @@
           "zoom": "zoom_kind"
         },
         {
+          "key": "zoom_kind",
+          "shown": "卡图的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
+        },
+        {
           "key": "card_back_img",
           "shown": "特殊卡背",
           "file_name": "{identity}_back",
           "control": "image",
           "help": "不选就用同类牌的通用卡背。"
+        },
+        {
+          "key": "alias_names",
+          "shown": "别名",
+          "control": "lines",
+          "advanced": true,
+          "help": "其他效果按名字找牌时也认这些名字，一行一个。"
+        },
+        {
+          "key": "faces",
+          "shown": "其他面",
+          "control": "faces",
+          "advanced": true,
+          "help": "双面/多面牌的其他面，每一面是一份完整卡面数据；翻面效果按下标切换。"
         }
       ],
       "lists": [
@@ -628,6 +765,12 @@
           "zoom": "zoom_kind"
         },
         {
+          "key": "zoom_kind",
+          "shown": "图标的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
+        },
+        {
           "key": "is_active",
           "shown": "已激活",
           "control": "bool",
@@ -645,6 +788,20 @@
           "key": "related_effect_names",
           "shown": "关联效果名",
           "control": "lines"
+        },
+        {
+          "key": "alias_names",
+          "shown": "别名",
+          "control": "lines",
+          "advanced": true,
+          "help": "其他效果按名字找牌时也认这些名字，一行一个。"
+        },
+        {
+          "key": "values",
+          "shown": "自定义数值",
+          "control": "dict",
+          "advanced": true,
+          "help": "给效果读写的键值（如 awaken_last_round=4）。效果用「读属性 _values」取。"
         }
       ],
       "lists": [
@@ -684,6 +841,12 @@
           "zoom": "zoom_kind"
         },
         {
+          "key": "zoom_kind",
+          "shown": "卡图的放大方式",
+          "control": "zoom_kind",
+          "help": "点卡图放大时怎么显示：card 卡牌 / avatar 头像 / token 标记。不填等于还没选图。"
+        },
+        {
           "key": "card_back_img",
           "shown": "特殊卡背",
           "file_name": "{identity}_back",
@@ -695,6 +858,27 @@
           "shown": "对应状态",
           "control": "text",
           "help": "这张卡展示的是哪个状态（填状态的内部名）。卡面会按那个状态是否激活来显示。"
+        },
+        {
+          "key": "count",
+          "shown": "张数",
+          "control": "int",
+          "default": 1,
+          "help": "这张附带物一共有几张（每张独立，效果按张拿走）。不填就是 1 张；填 0 表示一张都没有。"
+        },
+        {
+          "key": "alias_names",
+          "shown": "别名",
+          "control": "lines",
+          "advanced": true,
+          "help": "其他效果按名字找牌时也认这些名字，一行一个。"
+        },
+        {
+          "key": "faces",
+          "shown": "其他面",
+          "control": "faces",
+          "advanced": true,
+          "help": "双面/多面牌的其他面，每一面是一份完整卡面数据；翻面效果按下标切换。"
         }
       ],
       "lists": [
@@ -862,6 +1046,13 @@
           "default": "!is_pure_passive"
         },
         {
+          "key": "allow_while_concealed",
+          "shown": "事件暗置时也能结算",
+          "control": "bool",
+          "help": "只影响事件牌：不勾时暗置不结算；勾上允许暗置结算，但不绕过禁用、失去文字、来源和次数限制。手牌激活规则不变。",
+          "default": false
+        },
+        {
           "key": "is_manual",
           "shown": "玩家点牌才发动",
           "control": "bool",
@@ -968,9 +1159,16 @@
           "default": -1
         },
         {
+          "key": "allow_cancel",
+          "shown": "允许放弃",
+          "control": "bool",
+          "help": "关掉后玩家必须做完这一项（例如必须弃 4 张）。默认允许。"
+        },
+        {
           "key": "quantity_range",
           "shown": "数量范围",
-          "control": "range"
+          "control": "range",
+          "help": "玩家可以为这一项额外选一个数量（最小～最大）；效果用「这一项选定的数量」读取。"
         },
         {
           "key": "tags",
@@ -980,17 +1178,20 @@
         {
           "key": "select_cards",
           "shown": "挑牌",
-          "control": "select_cards"
+          "control": "select_cards",
+          "help": "玩家挑牌：候选牌由一串积木算出（最后一块给出的列表就是能挑的牌），另可设必选牌、最少/最多张。"
         },
         {
           "key": "select_location",
           "shown": "挑地点",
-          "control": "select_location"
+          "control": "select_location",
+          "help": "玩家挑席位：限定出发区域、目标格类型、禁止去的区域。"
         },
         {
           "key": "select_players",
           "shown": "挑玩家",
-          "control": "select_players"
+          "control": "select_players",
+          "help": "玩家挑目标：候选玩家由一串积木算出（最后给出玩家编号列表），另设最少/最多人。"
         }
       ],
       "lists": [
@@ -1058,6 +1259,12 @@
     "token"
   ],
   "param_names": {
+    "actor": "行动者（-1 不限）",
+    "data": "附加数据条件",
+    "after": "之后的值",
+    "has_out": "含出局的",
+    "extra": "是否追加打出",
+    "type": "日志类型",
     "player_id": "玩家",
     "amount": "数量",
     "card": "牌",
@@ -1177,7 +1384,9 @@
     "area_data": "战区内容",
     "link_from": "从哪个战区指过来",
     "link_to": "指向哪个战区",
-    "reveal": "选完公开"
+    "reveal": "选完公开",
+    "tags": "标签",
+    "purpose": "用途"
   },
   "cost_types": [
     {
@@ -2119,6 +2328,11 @@
       "help": "将对象上的效果逐条从结算池注销；不会删除对象里的原始效果列表。",
       "result": "none"
     },
+    "transfer_object_effects": {
+      "say": "把 {object} 上的效果改归 {player_id}",
+      "help": "把对象上本局的效果整体改登记给另一名玩家；只改归属，不移动牌。任一效果不合格则全部不改。",
+      "result": "bool"
+    },
     "counter": {
       "say": "反制 {effect}",
       "help": "未指定具体操作时反制整条效果；指定操作时只跳过那一步，其余步骤仍结算。",
@@ -2405,6 +2619,17 @@
       "help": "按写好的战区内容新增一个战区并接进地图。两个指向都空着时按内容里写的下一战区接线、不改旧箭头（高级）。",
       "advanced": true,
       "result": "BaseMapArea"
+    },
+    "pay_magic": {
+      "say": "让 {player_id} 支付 {amount} 点魔力",
+      "help": "按规则支付魔力（会检查魔力是否够、派发魔力减少）；不够时失败并返回否。",
+      "result": "bool"
+    },
+    "record_log": {
+      "say": "记下一条事实 {type}",
+      "help": "往游戏日志里记一条自己声明的事实（类型、谁、对谁、在哪、对象、标签、附加数据），之后可以用「查日志」「有没有发生过」读出来。",
+      "advanced": true,
+      "result": "Dictionary"
     }
   },
   "categories": [
@@ -2603,13 +2828,34 @@
   },
   "kind_choices": {
     "servant_class": [
-      {"v": "saber", "shown": "剑士 Saber"},
-      {"v": "archer", "shown": "弓兵 Archer"},
-      {"v": "lancer", "shown": "枪兵 Lancer"},
-      {"v": "rider", "shown": "骑兵 Rider"},
-      {"v": "caster", "shown": "魔术师 Caster"},
-      {"v": "assassin", "shown": "暗杀者 Assassin"},
-      {"v": "berserker", "shown": "狂战士 Berserker"}
+      {
+        "v": "saber",
+        "shown": "剑士 Saber"
+      },
+      {
+        "v": "archer",
+        "shown": "弓兵 Archer"
+      },
+      {
+        "v": "lancer",
+        "shown": "枪兵 Lancer"
+      },
+      {
+        "v": "rider",
+        "shown": "骑兵 Rider"
+      },
+      {
+        "v": "caster",
+        "shown": "魔术师 Caster"
+      },
+      {
+        "v": "assassin",
+        "shown": "暗杀者 Assassin"
+      },
+      {
+        "v": "berserker",
+        "shown": "狂战士 Berserker"
+      }
     ],
     "player": [
       {
@@ -3639,20 +3885,48 @@
   },
   "internal_name_sources": {
     "card_name": {
-      "fields": ["attack_name", "skill_name", "card_name", "thing_name"],
-      "kinds": ["attack", "event", "situation", "command_spell"]
+      "fields": [
+        "attack_name",
+        "skill_name",
+        "card_name",
+        "thing_name"
+      ],
+      "kinds": [
+        "attack",
+        "event",
+        "situation",
+        "command_spell"
+      ]
     },
     "buff_name": {
-      "fields": ["buff_name"],
+      "fields": [
+        "buff_name"
+      ],
       "kinds": []
     },
     "effect_name": {
-      "fields": ["effect_name"],
+      "fields": [
+        "effect_name"
+      ],
       "kinds": []
     },
     "object_name": {
-      "fields": ["master_name", "servant_name", "attack_name", "skill_name", "card_name", "buff_name", "thing_name", "effect_name"],
-      "kinds": ["attack", "event", "situation", "command_spell"]
+      "fields": [
+        "master_name",
+        "servant_name",
+        "attack_name",
+        "skill_name",
+        "card_name",
+        "buff_name",
+        "thing_name",
+        "effect_name"
+      ],
+      "kinds": [
+        "attack",
+        "event",
+        "situation",
+        "command_spell"
+      ]
     }
   },
   "property_sources": {
@@ -3814,5 +4088,34 @@
       "set_player_data",
       "show_message"
     ]
+  },
+  "requirement_types": {
+    "min_magic": {
+      "shown": "魔力需达到",
+      "params": [
+        {
+          "key": "value",
+          "shown": "魔力",
+          "control": "int",
+          "default": 0
+        }
+      ]
+    },
+    "extra_with_batch": {
+      "shown": "需追加打出",
+      "params": [
+        {
+          "key": "attributes",
+          "shown": "属性",
+          "control": "attributes"
+        },
+        {
+          "key": "count",
+          "shown": "张数",
+          "control": "int",
+          "default": 1
+        }
+      ]
+    }
   }
 }

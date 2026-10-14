@@ -21,6 +21,8 @@ static func can_see_servant_class(observer_id:int, target_id:int) -> bool:
 
 
 func get_player_data(id:int):
+	# D 只读已认证成员；未知 id 不借 getter 建库。
+	if SessionGeneration.in_private_frame(): return find_player_data(id)
 	#按需建立玩家数据，避免访问尚未初始化的玩家时拿到null
 	if !GameData.player_data_library.has(id):
 		GameData.player_data_library[id] = GameData.new_player_data()
@@ -28,10 +30,20 @@ func get_player_data(id:int):
 	return player_data
 
 
+#只查询已存在的玩家；未知 id 返回空字典，不建立玩家数据。已有数据仍返回原字典引用。
+func find_player_data(id:int) -> Dictionary:
+	return GameData.player_data_library.get(id, {})
+
+
+#只读入口：缺失返回空字典，绝不按需建立玩家；已有数据保留原字典引用。
+func get_player_data_readonly(id:int) -> Dictionary:
+	return find_player_data(id)
+
+
 #返回本局仍在场的玩家，顺序与当前顺位一致
 func get_active_player_ids() -> Array:
 	var result:Array = []
-	for id in EffectManager.get_player_order_ids():
+	for id in get_domain_ordered_player_ids():
 		var player_data = get_player_data(id) as Dictionary
 		if !player_data["is_out"]:
 			result.append(id)
@@ -79,3 +91,19 @@ func get_board_player_ids() -> Array:
 	controlled.sort()
 	result.append_array(controlled)
 	return result
+
+# 顺位唯一实现：只排独立玩家（分身/NPC 不占顺位），order 相同按 id 兜底保证全序可复现。
+# 缺 order 声明不猜默认值：报错并返回空数组（用户裁定 2026-10-13，fail-closed）。
+func get_domain_ordered_player_ids() -> Array:
+	var ids:Array = []
+	for id in GameData.player_data_library:
+		if not is_independent(int(id)): continue
+		if not find_player_data(int(id)).get("order") is BaseNumber:
+			push_error("玩家 %s 缺少 order 顺位声明，无法排顺位" % str(id))
+			return []
+		ids.append(id)
+	ids.sort_custom(func(a, b):
+		var l:float = float(find_player_data(int(a)).order.number)
+		var r:float = float(find_player_data(int(b)).order.number)
+		return l < r if l != r else int(a) < int(b))
+	return ids

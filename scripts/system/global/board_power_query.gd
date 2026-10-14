@@ -33,12 +33,17 @@ static func supports_descriptor(name: String) -> bool:
 var effect:BaseEffect
 var player_id:int
 var contribution:int = 0
+var contribution_entries:Array = []
 var card_values:Dictionary = {}
 var played_cards_view:Array = []
 var concealed_overrides:Dictionary = {}
 
 static func total(id:int, preview_cards:Array = [], preview_hidden:Array = []) -> int:
-	if not GameData.player_data_library.has(id): return 0
+	return int(breakdown(id, preview_cards, preview_hidden).get("total", 0))
+
+static func breakdown(id:int, preview_cards:Array = [], preview_hidden:Array = []) -> Dictionary:
+	if not GameData.player_data_library.has(id):
+		return {"total": 0, "entries": []}
 	#Keep object identity but never append to the real zone or change card concealment.
 	var played:Array = []
 	for card in GameData.player_data_library[id].played_cards:
@@ -54,9 +59,10 @@ static func total(id:int, preview_cards:Array = [], preview_hidden:Array = []) -
 	for area in MapData.areas: cards.append_array(area._events)
 	var result:int = 0
 	var values:Dictionary = {}
-	for card in cards:
-		if card._is_concealed: continue
-		for eff in card._effects:
+	var entries:Array = []
+	for source in cards:
+		if source._is_concealed: continue
+		for eff in source._effects:
 			if eff._power_query.is_empty(): continue
 			var query = BoardPowerQuery.new()
 			query.effect = eff
@@ -66,7 +72,17 @@ static func total(id:int, preview_cards:Array = [], preview_hidden:Array = []) -
 			query.concealed_overrides = hidden
 			query.evaluate(eff._power_query)
 			result += query.contribution
-	return result
+			for contribution_entry in query.contribution_entries:
+				entries.append({
+					"source": source,
+					"effect": eff,
+					"value": int(contribution_entry),
+				})
+	return {"total": result, "entries": entries}
+
+func _add_contribution(value:int) -> void:
+	contribution += value
+	contribution_entries.append(value)
 
 func counts_power(card) -> bool:
 	if not card is BaseHandCard or not played_cards_view.has(card): return false
@@ -124,7 +140,7 @@ func evaluate_one(desc:Dictionary):
 		result = not GameLog.query(filter, params[2] if params.size() > 2 else 0, 1).is_empty()
 	elif name == "power_contribution":
 		if params.size() > 2 and params[2] != null and int(params[2]) == player_id:
-			contribution += int(number(params[1]))
+			_add_contribution(int(number(params[1])))
 	elif name == "attack_power_contribution":
 		if params.size() < 3 or params[2] == null or int(params[2]) != player_id: return
 		for card in played_cards_view:
@@ -143,7 +159,7 @@ func evaluate_one(desc:Dictionary):
 						matched = true
 						break
 				if not matched: continue
-			contribution += int(number(params[1]))
+			_add_contribution(int(number(params[1])))
 	elif name == "card_power_contribution":
 		if params.size() < 4 or params[3] == null or int(params[3]) != player_id: return
 		var card = params[0]
@@ -153,7 +169,7 @@ func evaluate_one(desc:Dictionary):
 		var current:int = int(number(params[2])) if params[2] != null else old
 		current += int(number(params[1]))
 		card_values[card] = current
-		contribution += current - old
+		_add_contribution(current - old)
 	elif READERS.has(name):
 		#Malformed legacy foreach slots stay malformed rather than silently changing targets.
 		#Do not call player readers with null/-1: those can create fallback player state.

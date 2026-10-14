@@ -1,0 +1,64 @@
+{
+  "command": [
+    "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+    "--headless",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\scratch\\gateway-supervisor-triage\\paced-fixed-v2\\project",
+    "--scene",
+    "res://tests/net_server_gateway_restart_test.tscn",
+    "--",
+    "E:/scratch/gateway-supervisor-triage/paced-fixed-v2/fixture"
+  ],
+  "exit": 1,
+  "analysis": {
+    "passed": false,
+    "reasons": [
+      "nonzero_exit",
+      "result_failures",
+      "check_false",
+      "check_false",
+      "check_false",
+      "check_false"
+    ],
+    "result": {
+      "checks": 46,
+      "failures": [
+        "恢复失败后立即停止，不进入后续长时间镜像等待",
+        "中局恢复失败后立即短路，不级联等待至测试预算耗尽",
+        "保存回执及原生EXITED确认后释放；失败不强杀：{ \"ok\": true, \"result\": { \"stage\": \"failed\", \"failures\": { \"88152fb9b31d92f8106afd3413e42498\": \"原生进程句柄不可用，无法确认本次保存\" }, \"pending_rooms\": [], \"stopped\": false } }",
+        "正常或失败结束均释放全部房间登记及进程所有权"
+      ]
+    }
+  },
+  "job_records": [
+    {
+      "label": "scene",
+      "command": [
+        "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\gateway-supervisor-triage\\paced-fixed-v2\\project",
+        "--scene",
+        "res://tests/net_server_gateway_restart_test.tscn",
+        "--",
+        "E:/scratch/gateway-supervisor-triage/paced-fixed-v2/fixture"
+      ],
+      "exited": true,
+      "pid": 19384,
+      "exit_code": 1,
+      "budget_failure": null,
+      "duration_seconds": 166.6,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    }
+  ],
+  "check_true": 42,
+  "check_false": 4,
+  "error_count": 0,
+  "fixture_sha256": "fc014f485c38e317a1915e47ce03070e189cfad49927d14b8cee8cf09351a353",
+  "helper_sha256": "a785bf7274d8513d5b9b0f0c993ac502d4ba46caec79713f0f755938b253080c"
+}

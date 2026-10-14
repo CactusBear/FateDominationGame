@@ -1,0 +1,398 @@
+{
+  "passed": false,
+  "error": null,
+  "suites": [
+    {
+      "scene": "newtests/magic_overdraft_declaration_test.tscn",
+      "command": [
+        "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\generated\\project",
+        "--scene",
+        "res://newtests/magic_overdraft_declaration_test.tscn"
+      ],
+      "exit_code": 0,
+      "analysis": {
+        "passed": true,
+        "reasons": [],
+        "result": {
+          "suite": "magic_overdraft_declaration",
+          "checks": 148,
+          "failures": []
+        }
+      }
+    }
+  ],
+  "source_drift": {
+    "scripts/system/global/effect_manager.gd": [
+      "1755ff077e675105844d3d6ec33645bc3f701a48aa1cdf8dc2b11c8a6b5340c1",
+      "4af166bd7d5f71732af924d963ab4f632840917742ae2e68a308b623756e20d3"
+    ]
+  },
+  "freeze_drift": {},
+  "log_diagnostics": [
+    {
+      "path": "import.stderr.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "import.stdout.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "magic_overdraft_declaration_test.stderr.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "magic_overdraft_declaration_test.stdout.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "probe.stderr.log",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "path": "probe.stdout.log",
+      "errors": 0,
+      "warnings": 0
+    }
+  ],
+  "processes": [
+    {
+      "label": "probe",
+      "command": [
+        "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\generated\\probe",
+        "--script",
+        "res://probe.gd",
+        "--",
+        "0bf332d1ddf7476cada0064814bd2f7c",
+        "main",
+        "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\generated"
+      ],
+      "exited": true,
+      "pid": 9288,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 4.259,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "import",
+      "command": [
+        "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--editor",
+        "--import",
+        "--path",
+        "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\generated\\project"
+      ],
+      "exited": true,
+      "pid": 35484,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 76.944,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    },
+    {
+      "label": "magic_overdraft_declaration_test",
+      "command": [
+        "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\generated\\Godot.exe",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--path",
+        "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\generated\\project",
+        "--scene",
+        "res://newtests/magic_overdraft_declaration_test.tscn"
+      ],
+      "exited": true,
+      "pid": 36100,
+      "exit_code": 0,
+      "budget_failure": null,
+      "duration_seconds": 4.977,
+      "active_owned_processes": 0,
+      "log_handles_released": true
+    }
+  ],
+  "traces": [
+    {
+      "accepted": true,
+      "cap": 12,
+      "case": "static exact",
+      "entered": 2,
+      "final_first_cost": 2.0,
+      "group_completed": true,
+      "initial_cost": 2.0,
+      "initial_magic": 2,
+      "injected_overcap_state": false,
+      "magic_after": 0.0,
+      "path": "RegularPlay.submit_group",
+      "pre_event_group_allowed": true
+    },
+    {
+      "accepted": true,
+      "cap": 12,
+      "case": "static exact",
+      "entered": 1,
+      "final_first_cost": 2.0,
+      "group_completed": false,
+      "initial_cost": 2.0,
+      "initial_magic": 2,
+      "injected_overcap_state": false,
+      "magic_after": 0.0,
+      "path": "PlayAttack(ignore_limit=true)",
+      "pre_event_group_allowed": true
+    },
+    {
+      "accepted": false,
+      "cap": 12,
+      "case": "static short one",
+      "entered": 0,
+      "final_first_cost": 2.0,
+      "group_completed": false,
+      "initial_cost": 2.0,
+      "initial_magic": 1,
+      "injected_overcap_state": false,
+      "magic_after": 1,
+      "path": "RegularPlay.submit_group",
+      "pre_event_group_allowed": false
+    },
+    {
+      "accepted": false,
+      "cap": 12,
+      "case": "static short one",
+      "entered": 0,
+      "final_first_cost": 2.0,
+      "group_completed": false,
+      "initial_cost": 2.0,
+      "initial_magic": 1,
+      "injected_overcap_state": false,
+      "magic_after": 1,
+      "path": "PlayAttack(ignore_limit=true)",
+      "pre_event_group_allowed": false
+    },
+    {
+      "accepted": false,
+      "cap": 12,
+      "case": "static cost above cap",
+      "entered": 0,
+      "final_first_cost": 13.0,
+      "group_completed": false,
+      "initial_cost": 13.0,
+      "initial_magic": 12,
+      "injected_overcap_state": false,
+      "magic_after": 12,
+      "path": "RegularPlay.submit_group",
+      "pre_event_group_allowed": false
+    },
+    {
+      "accepted": false,
+      "cap": 12,
+      "case": "static cost above cap",
+      "entered": 0,
+      "final_first_cost": 13.0,
+      "group_completed": false,
+      "initial_cost": 13.0,
+      "initial_magic": 12,
+      "injected_overcap_state": false,
+      "magic_after": 12,
+      "path": "PlayAttack(ignore_limit=true)",
+      "pre_event_group_allowed": false
+    },
+    {
+      "accepted": true,
+      "cap": 12,
+      "case": "event exact",
+      "entered": 2,
+      "final_first_cost": 3.0,
+      "group_completed": true,
+      "initial_cost": 2.0,
+      "initial_magic": 3,
+      "injected_overcap_state": false,
+      "magic_after": 0.0,
+      "path": "RegularPlay.submit_group",
+      "pre_event_group_allowed": true
+    },
+    {
+      "accepted": true,
+      "cap": 12,
+      "case": "event exact",
+      "entered": 1,
+      "final_first_cost": 3.0,
+      "group_completed": false,
+      "initial_cost": 2.0,
+      "initial_magic": 3,
+      "injected_overcap_state": false,
+      "magic_after": 0.0,
+      "path": "PlayAttack(ignore_limit=true)",
+      "pre_event_group_allowed": true
+    },
+    {
+      "accepted": true,
+      "cap": 12,
+      "case": "event short one RED",
+      "entered": 2,
+      "final_first_cost": 3.0,
+      "group_completed": true,
+      "initial_cost": 2.0,
+      "initial_magic": 2,
+      "injected_overcap_state": false,
+      "magic_after": -1.0,
+      "path": "RegularPlay.submit_group",
+      "pre_event_group_allowed": true
+    },
+    {
+      "accepted": false,
+      "cap": 12,
+      "case": "event short one RED",
+      "entered": 0,
+      "final_first_cost": 3.0,
+      "group_completed": false,
+      "initial_cost": 2.0,
+      "initial_magic": 2,
+      "injected_overcap_state": false,
+      "magic_after": 2,
+      "path": "PlayAttack(ignore_limit=true)",
+      "pre_event_group_allowed": true
+    },
+    {
+      "accepted": true,
+      "cap": 12,
+      "case": "event cost above cap RED",
+      "entered": 2,
+      "final_first_cost": 13.0,
+      "group_completed": true,
+      "initial_cost": 12.0,
+      "initial_magic": 12,
+      "injected_overcap_state": false,
+      "magic_after": -1.0,
+      "path": "RegularPlay.submit_group",
+      "pre_event_group_allowed": true
+    },
+    {
+      "accepted": false,
+      "cap": 12,
+      "case": "event cost above cap RED",
+      "entered": 0,
+      "final_first_cost": 13.0,
+      "group_completed": false,
+      "initial_cost": 12.0,
+      "initial_magic": 12,
+      "injected_overcap_state": false,
+      "magic_after": 12,
+      "path": "PlayAttack(ignore_limit=true)",
+      "pre_event_group_allowed": true
+    },
+    {
+      "accepted": false,
+      "cap": 1,
+      "case": "injected overcap state path difference",
+      "entered": 0,
+      "final_first_cost": 2.0,
+      "group_completed": false,
+      "initial_cost": 2.0,
+      "initial_magic": 20,
+      "injected_overcap_state": true,
+      "magic_after": 20,
+      "path": "RegularPlay.submit_group",
+      "pre_event_group_allowed": false
+    },
+    {
+      "accepted": true,
+      "cap": 1,
+      "case": "injected overcap state path difference",
+      "entered": 1,
+      "final_first_cost": 2.0,
+      "group_completed": false,
+      "initial_cost": 2.0,
+      "initial_magic": 20,
+      "injected_overcap_state": true,
+      "magic_after": 18.0,
+      "path": "PlayAttack(ignore_limit=true)",
+      "pre_event_group_allowed": false
+    },
+    {
+      "accepted": true,
+      "cap": 12,
+      "case": "two-card aggregate event overflow RED",
+      "entered": 2,
+      "final_first_cost": 7.0,
+      "group_completed": true,
+      "initial_cost": 6.0,
+      "initial_magic": 12,
+      "injected_overcap_state": false,
+      "magic_after": -2.0,
+      "path": "RegularPlay.submit_group",
+      "pre_event_group_allowed": true
+    },
+    {
+      "accepted": true,
+      "cap": 12,
+      "case": "two-card aggregate event overflow RED",
+      "entered": 1,
+      "final_first_cost": 7.0,
+      "group_completed": false,
+      "initial_cost": 6.0,
+      "initial_magic": 12,
+      "injected_overcap_state": false,
+      "magic_after": 5.0,
+      "path": "PlayAttack(ignore_limit=true)",
+      "pre_event_group_allowed": true
+    }
+  ],
+  "cleanup": "generated_removed",
+  "physical_probes": [
+    {
+      "path": "E:/scratch/magic-overdraft-declaration-focused-01/isolated-0bf332d1ddf7476cada0064814bd2f7c/generated/appdata/FateDomination",
+      "pid": 9288,
+      "role": "main",
+      "token": "0bf332d1ddf7476cada0064814bd2f7c",
+      "worker_pool_max_threads": 20,
+      "physical_path": "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\generated\\appdata\\FateDomination",
+      "probe_sha256": "3f6090101f8cf270a714e96681a7d60598ebb95f620eaa0d88fb5e9f6265bbd1",
+      "receipt_sha256": "9d8cc18d382c3603f05fe4b928b2edd7373500458add071c96c49526ee37c90a"
+    },
+    {
+      "path": "E:/scratch/magic-overdraft-declaration-focused-01/isolated-0bf332d1ddf7476cada0064814bd2f7c/generated/appdata/FateDomination",
+      "pid": 35132,
+      "role": "worker",
+      "token": "0bf332d1ddf7476cada0064814bd2f7c",
+      "worker_pool_max_threads": 20,
+      "physical_path": "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\generated\\appdata\\FateDomination",
+      "probe_sha256": "3f6090101f8cf270a714e96681a7d60598ebb95f620eaa0d88fb5e9f6265bbd1",
+      "receipt_sha256": "98a9465d1d5c4b41399f9938a1d096a65e2e4e6dfeab8bc74e1de246a405fafd"
+    }
+  ],
+  "artifact_readback": true,
+  "manifest": "E:\\scratch\\magic-overdraft-declaration-focused-01\\isolated-0bf332d1ddf7476cada0064814bd2f7c\\manifest.json",
+  "runner_exit": 1,
+  "diagnostic_only": true,
+  "declaration_json_vs_freeze_drift": {},
+  "actual_check_lines": 148,
+  "false_check_lines": 0,
+  "frozen_key_hashes": {
+    "newtests/magic_overdraft_declaration_test.gd": "caf9ffe4603f5ac1aec2b4d3853fcac300bbdc2990d3f5b259b6321d6fc6d6eb",
+    "scripts/system/global/effect_manager.gd": "1755ff077e675105844d3d6ec33645bc3f701a48aa1cdf8dc2b11c8a6b5340c1",
+    "scripts/system/global/game_data.gd": "6d7c4f67a05cbc8da61f831cc32253e23565f510e7b7b7ca838e7ed460aafbe2",
+    "scripts/system/operations/EditMagic.gd": "6578c2e92535b9f62ecc3c25dd7a00027daeaa3f1ebe5f62c71ae09162fa5ecf",
+    "scripts/system/operations/PlayAttack.gd": "94385a0532baab8222cdd21a22b56c97525b513474667f1f3eb6e40571cb7c04",
+    "scripts/system/regular_play.gd": "f6fce80464730c6a259bc188b5d252efe7da5ab70cafecb9901cbabfdb825d27"
+  }
+}

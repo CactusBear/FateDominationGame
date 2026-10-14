@@ -1,7 +1,12 @@
 extends RefCounted
 
 ## 仅准备并隔离校验显式选择的数据；是否批准、何时采用由调用方决定。
-var session
+const BlobReceiver = preload("res://scripts/net/content/blob_receiver.gd")
+var _settings:Callable
+var _humans:Callable
+var _blobs:BlobReceiver
+var _publish:Callable
+var _download:Callable
 var source_root:String = ""
 ## 可选本机隔离根；服务端使用已校验的房间目录，客户端保留 user 默认。
 var workspace_root:String = ""
@@ -28,19 +33,30 @@ var _generation:int = 0
 var _catalog = preload("res://scripts/net/content/data_catalog.gd").new()
 var _assembler = preload("res://scripts/net/content/room_data_assembler.gd").new()
 
+## 只注入所需能力；不持有大厅，也不查询大厅的内部字段。
+func _init(settings:Callable = Callable(), humans:Callable = Callable(), blobs:BlobReceiver = null, publish:Callable = Callable(), download:Callable = Callable()) -> void:
+	_settings = settings
+	_humans = humans
+	_blobs = blobs
+	_publish = publish
+	_download = download
+
+func _dependencies_valid() -> bool:
+	return _settings.is_valid() and _humans.is_valid() and _blobs != null and _publish.is_valid() and _download.is_valid()
+
 func start(selected:Array, base:Array, seconds:float) -> bool:
 	if _polling: return false
 	cancel()
 	error = ""
-	if session == null or not is_finite(seconds) or seconds <= 0 or seconds >= 9223372036854775.0 or files_per_poll <= 0:
-		error = "数据准备会话或时间预算无效"
+	if not _dependencies_valid() or not is_finite(seconds) or seconds <= 0 or seconds >= 9223372036854775.0 or files_per_poll <= 0:
+		error = "数据准备依赖或时间预算无效"
 		return false
 	plan = preload("res://scripts/net/content/room_data_plan.gd").new().build(selected, base)
 	if not plan.ok:
 		error = plan.error + "\n" + JSON.stringify(plan.conflicts if not plan.conflicts.is_empty() else plan.dependencies)
 		return false
 	_seconds = seconds
-	_simulation = preload("res://scripts/net/validation/rule_random_simulation.gd").room_options(session.room.settings, session.room._humans())
+	_simulation = preload("res://scripts/net/validation/rule_random_simulation.gd").room_options(_settings.call(), _humans.call())
 	_index = 0
 	var preparation_root:String = "user://net_session" if workspace_root.is_empty() else workspace_root
 	_assembled = preparation_root.path_join("%d-%d/data" % [OS.get_process_id(), Time.get_ticks_usec()])
@@ -87,14 +103,15 @@ func _poll_work(generation:int) -> void:
 				if input == null:
 					_fail("无法读取所选文件：" + source.path)
 					return
-				if input.get_length() != file.size or file.size > session.blobs.cache.max_file_bytes:
+				if input.get_length() != file.size or file.size > _blobs.cache.max_file_bytes:
 					input.close()
 					_fail("所选文件大小已变化：" + source.path)
 					return
 				content = input.get_buffer(file.size)
 				input.close()
 			else:
-				content = session.blobs.cache.fetch(file.hash)
+				if _download_key != file.hash or _blobs.offset_for(_download_provider, file.hash) < 0:
+					content = _blobs.cache.fetch(file.hash)
 				if not preparing or generation != _generation: return
 				if content.size() != file.size or content.is_empty():
 					if _download_key != file.hash:
@@ -102,10 +119,10 @@ func _poll_work(generation:int) -> void:
 						_download_key = file.hash
 						_download_offset = -1
 						_download_progress = Time.get_ticks_msec()
-						if not session.download_provider_blob(_download_provider, file.hash, file.size):
+						if not _download.call(_download_provider, file.hash, file.size):
 							_fail("无法从所选提供者获取文件：" + source.path)
 							return
-					var offset:int = session.blobs.offset_for(_download_provider, file.hash)
+					var offset:int = _blobs.offset_for(_download_provider, file.hash)
 					if offset > _download_offset:
 						_download_offset = offset
 						_download_progress = Time.get_ticks_msec()
@@ -115,9 +132,9 @@ func _poll_work(generation:int) -> void:
 					break
 				_download_key = ""
 				_download_provider = -1
-			var stored:bool = content.size() == file.size and session.blobs.cache.store(file.hash, content)
+			var stored:bool = content.size() == file.size and _blobs.cache.store(file.hash, content)
 			if not preparing or generation != _generation: return
-			var published:bool = stored and session.publish_blob(content) == file.hash
+			var published:bool = stored and _publish.call(content) == file.hash
 			if not preparing or generation != _generation: return
 			if not published:
 				_fail("所选文件已变化或无法发布：" + source.path)
@@ -131,7 +148,7 @@ func _poll_work(generation:int) -> void:
 		return
 	if validation.running:
 		validation.poll()
-		status = "正在独立进程中校验所选数据"
+		status = validation.status_text()
 		if not validation.running and not validation.complete:
 			_fail(validation.error)
 
@@ -140,7 +157,7 @@ func _verify_step(generation:int) -> void:
 	for _unused in range(files_per_poll):
 		if not preparing or generation != _generation: return
 		if _entry_index == plan.entries.size():
-			if not _assembler.start(_assembled, plan.files, session.blobs.cache):
+			if not _assembler.start(_assembled, plan.files, _blobs.cache):
 				_fail(_assembler.error)
 			else:
 				_phase = "assemble"
@@ -149,11 +166,11 @@ func _verify_step(generation:int) -> void:
 		var entry:Dictionary = plan.entries[_entry_index]
 		var ok:bool
 		if _entry_file_index < entry.files.size():
-			ok = _catalog.verify_content_file(entry.files[_entry_file_index], session.blobs.cache)
+			ok = _catalog.verify_content_file(entry.files[_entry_file_index], _blobs.cache)
 			if generation != _generation: return
 			_entry_file_index += 1
 		else:
-			ok = _catalog.verify_content_identity(entry, session.blobs.cache)
+			ok = _catalog.verify_content_identity(entry, _blobs.cache)
 			if generation != _generation: return
 			_entry_index += 1
 			_entry_file_index = 0
@@ -163,9 +180,9 @@ func _verify_step(generation:int) -> void:
 	status = "正在逐文件核验批准数据：%d / %d" % [_entry_index, plan.entries.size()]
 
 func simulation_is_current() -> bool:
-	if session == null: return false
+	if not _dependencies_valid(): return false
 	var original:Dictionary = _simulation.duplicate(true)
-	var current:Dictionary = preload("res://scripts/net/validation/rule_random_simulation.gd").room_options(session.room.settings, session.room._humans())
+	var current:Dictionary = preload("res://scripts/net/validation/rule_random_simulation.gd").room_options(_settings.call(), _humans.call())
 	# 随机采样人数不是数据来源资质；已收齐校验的候补不因提供者掉线而失效。
 	original.erase("player_ids")
 	current.erase("player_ids")
@@ -180,8 +197,8 @@ func cancel() -> void:
 	_phase = "idle"
 	_assembler.cancel()
 	preparing = false
-	if session != null and _download_provider >= 0 and not _download_key.is_empty():
-		session.blobs.cancel_blob(_download_provider, _download_key)
+	if _blobs != null and _download_provider >= 0 and not _download_key.is_empty():
+		_blobs.cancel_blob(_download_provider, _download_key)
 	_download_provider = -1
 	_download_key = ""
 	validation.cancel()

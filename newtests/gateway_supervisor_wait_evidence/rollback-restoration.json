@@ -1,0 +1,71 @@
+{
+  "before_sha256": "fc014f485c38e317a1915e47ce03070e189cfad49927d14b8cee8cf09351a353",
+  "rollback_source_sha256": "a3dedfd5e6d886d1df47fb0478956f132173d58c770b4e480a3bc66959ec020c",
+  "observer_sha256": "6b320d52d83cb7e4ef882271b41ba9a1aee9ef422f7036444e068db2ff2b6f34",
+  "observer_only_change": "return super._route_is_current unchanged; scalar log on false",
+  "injected_sha256": "eda8e53fd255c6af840d83a01556a3ebe31fe7cf7bf4db5ac29575953157d571",
+  "execution": {
+    "command": [
+      "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+      "--headless",
+      "--fixed-fps",
+      "60",
+      "--path",
+      "E:\\scratch\\gateway-supervisor-triage\\paced-fixed-v2\\project",
+      "--scene",
+      "res://tests/net_server_gateway_restart_test.tscn",
+      "--",
+      "E:/scratch/gateway-supervisor-triage/paced-fixed-v2/rollback-fixture"
+    ],
+    "exit": 1,
+    "analysis": {
+      "passed": false,
+      "reasons": [
+        "nonzero_exit",
+        "result_failures",
+        "check_false",
+        "check_false",
+        "check_false"
+      ],
+      "result": {
+        "checks": 14,
+        "failures": [
+          "all approved client files assemble and verify before ready",
+          "保存回执及原生EXITED确认后释放；失败不强杀：{ \"ok\": true, \"result\": { \"stage\": \"failed\", \"failures\": { \"e260f67f94bffa55cb002397d196ff69\": \"原生进程句柄不可用，无法确认本次保存\" }, \"pending_rooms\": [], \"stopped\": false } }",
+          "正常或失败结束均释放全部房间登记及进程所有权"
+        ]
+      }
+    },
+    "job_records": [
+      {
+        "label": "rollback",
+        "command": [
+          "D:\\Godot4\\Godot_v4.7.2-stable_win64.exe\\Godot_v4.7.2-stable_win64.exe",
+          "--headless",
+          "--fixed-fps",
+          "60",
+          "--path",
+          "E:\\scratch\\gateway-supervisor-triage\\paced-fixed-v2\\project",
+          "--scene",
+          "res://tests/net_server_gateway_restart_test.tscn",
+          "--",
+          "E:/scratch/gateway-supervisor-triage/paced-fixed-v2/rollback-fixture"
+        ],
+        "exited": true,
+        "pid": 35800,
+        "exit_code": 1,
+        "budget_failure": null,
+        "duration_seconds": 77.202,
+        "active_owned_processes": 0,
+        "log_handles_released": true
+      }
+    ],
+    "check_true": 11,
+    "check_false": 3,
+    "error_count": 1,
+    "fixture_sha256": "eda8e53fd255c6af840d83a01556a3ebe31fe7cf7bf4db5ac29575953157d571",
+    "helper_sha256": "a785bf7274d8513d5b9b0f0c993ac502d4ba46caec79713f0f755938b253080c"
+  },
+  "restored_sha256": "fc014f485c38e317a1915e47ce03070e189cfad49927d14b8cee8cf09351a353",
+  "restored": true
+}

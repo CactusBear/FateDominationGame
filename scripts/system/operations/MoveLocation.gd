@@ -1,14 +1,22 @@
 class_name MoveLocation
 extends RefCounted
 
-#沿地图链算出移动后的落点并返回总费用，不扣魔力（扣魔力由 Move 负责）。
-#只做"算目标区域 + 算费用"这件事：落地（改变 location、同步落点 _players）交给
-#SetLocation，与部署/效果搬运共用同一份落地逻辑，不在这里重复实现。
-func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false):
-
-	player_id = EffectManager.resolve_player_id(player_id)
-	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
+#沿地图链计算落点与费用，实际调用 SetLocation 落位；不扣魔力（扣款由 Move 负责）。
+func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false, context:Variant = null):
+	context = RegisterObjectEffects.captured_context(context)
+	if not RegisterObjectEffects.source_is_current(context):
+		return null
+	var resolved:Dictionary = RegisterObjectEffects.resolved_player_id(player_id, context)
+	if not resolved.ok:
+		return null
+	player_id = resolved.id
+	var origin:Dictionary = SetLocation.capture_location_origin(player_id, context)
+	if origin.is_empty():
+		return null
+	var player_data:Dictionary = origin.player
 	var location:BaseLocation = player_data["location"]
+	if location != null and not SetLocation.current_map_location(location):
+		return null
 	if location == null:
 		EffectManager.push_message("当前位置不在任何战区上，无法移动", player_id)
 		return null
@@ -67,7 +75,13 @@ func exec(move_num:BaseNumber, player_id:int = -1, ignore_limit:bool = false):
 	if not player_data.get("is_magic_immune", false) and player_data.magic.number < total_cost.number:
 		EffectManager.push_message("魔力不足，无法移动", player_id)
 		return null
-	if !SetLocation.new().exec(target_location, player_id, true, ignore_limit):
+	if not SetLocation.location_origin_is_current(origin, location):
+		return null
+	var placed:bool = SetLocation.new().exec(target_location, player_id, true, ignore_limit, true, context)
+	#SetLocation 可同步派发效果；旧链不能把拒绝当报价成功，也不向新局写拒绝消息。
+	if not SetLocation.location_origin_is_current(origin, target_location if placed else location):
+		return null
+	if not placed:
 		EffectManager.push_message("无法在【%s】落位" % area._area_name, player_id)
 		return null
 

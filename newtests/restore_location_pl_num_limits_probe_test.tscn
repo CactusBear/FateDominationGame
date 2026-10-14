@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/restore_location_pl_num_limits_probe_test.gd" id="1"]
+
+[node name="RestoreLocationPlNumLimitsProbeTest" type="Node"]
+script = ExtResource("1")

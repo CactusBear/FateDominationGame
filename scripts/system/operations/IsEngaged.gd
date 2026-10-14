@@ -14,7 +14,8 @@ extends RefCounted
 func exec(player_id:int = -1) -> bool:
 
 	var id = EffectManager.resolve_player_id(player_id)
-	var loc = GetLocation.new().exec(id)
+	var player_data:Dictionary = GameDataManager.get_player_data_readonly(id)
+	var loc = player_data.get("location")
 	if loc == null:
 		return false
 	var area := loc.get_from() as BaseMapArea
@@ -26,10 +27,10 @@ func exec(player_id:int = -1) -> bool:
 		var other_id:int = int(other)
 		if other_id == id or GameDataManager.represented_id(other_id) == self_rep:
 			continue
-		var other_data:Dictionary = GameDataManager.get_player_data(other_id)
+		var other_data:Dictionary = GameDataManager.get_player_data_readonly(other_id)
 		if bool(other_data.get("is_out", false)):
 			continue
-		var other_loc = GetLocation.new().exec(other_id)
+		var other_loc = other_data.get("location")
 		if other_loc != null and other_loc.get_from() == area:
 			return true
 	return false

@@ -19,14 +19,14 @@ func exec(player_id:int = -1):
 		card._is_activating = false
 		if card is BaseSkill:
 			#技能牌回合结束保持明置并放回技能区，不进入弃牌堆
-			SetCardConcealed.new().exec(card, false, id)
+			preload("res://scripts/system/operation_router.gd").exec_registered("set_card_concealed", [card, false, id])
 			cards_arr.erase(card)
-			AddSkillToSkillZone.new().exec(card, id)
+			preload("res://scripts/system/operation_router.gd").exec_registered("add_skill_to_skill_zone", [card, id])
 			continue
 		#普通攻击牌弃置前暗置，再进入弃牌堆
 		if card is BaseAttack:
-			SetCardConcealed.new().exec(card, true, id)
-		DrawCardByCard.new().exec(card, cards_arr, discard, BaseNumber.new(0))
+			preload("res://scripts/system/operation_router.gd").exec_registered("set_card_concealed", [card, true, id])
+		preload("res://scripts/system/operation_router.gd").exec_registered("draw_card_by_card", [card, cards_arr, discard, BaseNumber.new(0)])
 
 
 #禁止系效果

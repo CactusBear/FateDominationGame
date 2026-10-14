@@ -46,11 +46,16 @@ func run():
 	check(d.servant!=null and d.servant._name==GameData.default_servant,"new local game uses the declared default servant")
 
 	# —— ② 前哨阶段：未部署就不能结束行动 ——
+	# 公开复位取消旧局协程；正常阶段初始化同时建立日志、时点与行动者游标。
+	var fixture_round:int=GameProgress.current_round
+	GameProgress.reset_progress()
+	GameProgress.current_round=fixture_round
 	GameProgress.current_phase_index=1
-	GameProgress.current_player_id=local
-	GameProgress._phase_end_pending=false
-	GameProgress._phase_end_running=false
-	GameLog.set_context(GameProgress.current_round,"outpost")
+	GameProgress.current_phase_player_index=GameProgress.get_ordered_player_ids().find(local)
+	GameProgress.begin_phase()
+	check(GameProgress.current_player_id == local and GameProgress.current_phase_player_index == GameProgress.get_ordered_player_ids().find(local) + 1,"outpost fixture selects actor through phase lifecycle")
+	check(TimePointChecker.phase_time_points.has(TimePoints.OUTPOST_PHASE) and not TimePointChecker.phase_time_points.has(TimePoints.PREPARE_PHASE),"outpost fixture establishes matching fixed phase window")
+	check(d.current_time_points.has(TimePoints.SELF_PREFIX + TimePoints.OUTPOST_PHASE) and not d.current_time_points.has(TimePoints.SELF_PREFIX + TimePoints.PREPARE_PHASE),"outpost fixture establishes matching self phase window")
 	RemoveFromBoard.new().exec(local)
 	d.magic.number=4
 	var before_magic:int=d.magic.number

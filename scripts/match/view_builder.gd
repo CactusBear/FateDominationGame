@@ -1,15 +1,35 @@
 class_name MatchViewBuilder
 extends RefCounted
 
-const CardText := preload("res://scripts/game_scene/tactical_board_ui.gd")
+const CardDescFormatter := preload("res://scripts/ui/text/card_desc_text.gd")
+const LogFormatter := preload("res://scripts/ui/text/game_log_text.gd")
 
 ## 传输视图只按白名单生成，绝不反射规则对象。-1 为公共观战。
 const Ids = preload("res://scripts/match/net_ids.gd")
 var ids = Ids.new()
 var sequence: int = 0
 var _held_origins: Dictionary = {}
+var _notification_epoch: String = ""
+var notification_error: String = ""
 
-func build(observer: int = -1) -> Dictionary:
+## 本地 builder 的生命周期是实例；跨本地新局须重建或显式设置新 epoch。
+## 权威必须自行注入生命周期，不从 seq、规则协程或通知内容推测。
+func _init() -> void:
+	_notification_epoch = new_notification_epoch()
+
+static func new_notification_epoch() -> String:
+	return Crypto.new().generate_random_bytes(16).hex_encode()
+
+func set_notification_epoch(epoch: String) -> bool:
+	if epoch.is_empty(): return false
+	for character in epoch:
+		if not character in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-": return false
+	_notification_epoch = epoch
+	return true
+
+func build(observer: int = -1, after_serial: int = -1) -> Dictionary:
+	var notifications: Array = notifications_for(observer, after_serial)
+	if not notification_error.is_empty(): return {}
 	sequence += 1
 	var players: Array = []
 	for pid in EffectManager.get_player_order_ids():
@@ -33,13 +53,23 @@ func build(observer: int = -1) -> Dictionary:
 		player["total_power"] = player["power_breakdown"]["total"]
 		player["master"] = identity(master, "_master_card_img", own)
 		var servant = data.get("servant")
-		player["servant"] = identity(servant, "_servant_card_img", own) if own or released else {}
+		player["servant_present"] = servant != null
+		player["servant"] = identity(servant, "_servant_card_img", own) if own or released else servant_placeholder(servant)
 		player["servant_class"] = str(servant._servant_class) if servant != null and (own or GameDataManager.can_see_servant_class(observer, pid)) else ""
 		player["deck_count"] = data.get("deck", []).size()
 		player["hand_count"] = data.get("hand_cards", []).size()
-		player["hand_cards"] = cards(data.get("hand_cards", []), true) if own else []
-		player["command_spells"] = cards(data.get("out_of_game", {}).get("command_spell", []), true) if own else []
-		player["discard"] = cards(data.get("discard", []), own)
+		player["hand_cards"] = cards(data.get("hand_cards", []), true, observer) if own else []
+		player["command_spells"] = cards(data.get("out_of_game", {}).get("command_spell", []), true, observer) if own else []
+		# 特殊令咒是公开的牌种类；普通令咒卡仍只给持有者。
+		var public_special_spells: Array = []
+		var resolved_spells = LoadCommandSpell.resolve_player_command_spells(master, data.get("servant")) if master != null else []
+		for spell in resolved_spells:
+			if spell != LoadCommandSpell.get_normal() and spell is BaseCard:
+				var public_spell := card_view(spell, false)
+				if public_spell.get("visible", false):
+					public_special_spells.append(public_spell)
+		player["special_command_spells"] = public_special_spells
+		player["discard"] = cards(data.get("discard", []), own, observer)
 		player["buffs"] = buff_views(data.get("buffs", []), own)
 		# 与现有游戏外浏览契约一致：仅攻击、技能、其他，不混入令咒。
 		var removed: Array = []
@@ -47,11 +77,13 @@ func build(observer: int = -1) -> Dictionary:
 			for card in data.get("out_of_game", {}).get(key, []):
 				if card is BaseCard and not removed.has(card):
 					removed.append(card)
-		player["out_of_game_cards"] = cards(removed, own)
-		player["played_cards"] = cards(data.get("played_cards", []), own)
-		player["held_cards"] = held_cards(data, pid) if own else []
-		player["master_skills"] = cards(data.get("master_skills", []), own)
-		player["servant_skills"] = cards(data.get("servant_skills", []), own) if own or released else []
+		player["out_of_game_cards"] = cards(removed, own, observer)
+		player["zone_hand_entries"] = zone_hand_entries(data, pid, own, observer)
+		player["played_cards"] = cards(data.get("played_cards", []), own, observer)
+		player["residue_cards"] = residue_cards(data.get("played_cards", []), own, observer)
+		player["held_cards"] = held_cards(data, pid, observer) if own else []
+		player["master_skills"] = cards(data.get("master_skills", []), own, observer)
+		player["servant_skills"] = cards(data.get("servant_skills", []), own, observer) if own or released else []
 		var loc = data.get("location")
 		player["location"] = ids.id_for(loc) if loc != null else 0
 		players.append(player)
@@ -61,10 +93,91 @@ func build(observer: int = -1) -> Dictionary:
 		for loc in area._locations:
 			locations.append({"id": ids.id_for(loc), "magic": number(loc._magic), "benefit": GetEffectiveLocationBenefit.current_benefit(loc), "capacity": loc._pl_num_limit, "players": loc._players.duplicate()})
 		areas.append({"id": ids.id_for(area), "name": str(area._area_name), "locations": locations, "events": cards(area._events, false)})
-	return {"v": 1, "seq": sequence, "observer": observer, "round": GameProgress.current_round, "phase": str(GameProgress.get_current_phase().get("name", "")), "current_player": GameProgress.current_player_id, "game_over": GameProgress.is_game_over, "players": players, "areas": areas, "situation": card_view(MapData.active_situation, false), "public_log": public_log(), "event_discard": cards(MapData.event_discard, false)}
+	return {"v": 1, "seq": sequence, "observer": observer, "round": GameProgress.current_round, "phase": str(GameProgress.get_current_phase().get("name", "")), "current_player": GameProgress.current_player_id, "game_over": GameProgress.is_game_over, "players": players, "areas": areas, "situation": card_view(MapData.active_situation, false), "public_log": public_log(), "event_discard": cards(MapData.event_discard, false), "event_discard_by_source": event_discard_by_source(), "situation_discard": cards(MapData.situation_discard, false), "battle_result": public_battle_result(), "state": timeline_state(), "notifications": notifications, "battle_broadcast": broadcast_view()}
+
+## 仅公共屏障状态与席位；不传消费者、controllers peer、规则对象或诊断。
+static func broadcast_view() -> Dictionary:
+	return {"pending": GameProgress.is_battle_broadcast_pending(),
+		"batch_id": GameProgress.battle_broadcast_batch_id(),
+		"confirmers": GameProgress.battle_broadcast_confirmers(),
+		"confirmed": GameProgress.battle_broadcast_confirmed()}
+
+## 仅权威读取显式残留声明；与 DiscardPlayedCards 同源，不改变牌区或规则。
+func residue_cards(source: Array, own: bool, observer: int = -1) -> Array:
+	var result: Array = []
+	for card in source:
+		if not card is BaseHandCard or card._is_closed or card._is_concealed:
+			continue
+		if not card._effects.any(func(effect): return effect._is_residue):
+			continue
+		var entry := card_view(card, own, observer)
+		if entry.get("visible", false) and not entry.get("concealed", true):
+			result.append(entry)
+	return result
+
+func timeline_state() -> Dictionary:
+	var names: Array = []
+	for phase in GameProgress.phases:
+		names.append(str(phase.get("name", "")))
+	return {"phases": names, "total_rounds": int(number(GameProgress.total_rounds)), "climax_rounds": LoadSituation.climax_situations.keys()}
+
+## 对手抽屉复用单人 _zone_hand_entries 的权威来源映射；客户端只消费结果。
+func zone_hand_entries(data: Dictionary, pid: int, own: bool, observer: int = -1) -> Array:
+	var result: Array = []
+	var seen: Array = []
+	var master = data.get("master")
+	var servant = data.get("servant")
+	var sources: Array = []
+	sources.append({"cards": data.get("servant_skills", []), "group": "servant", "label": "从者技能"})
+	for card in data.get("side", {}).get("skills", []):
+		var source = card.get_from() if card is BaseCard else null
+		sources.append({"cards": [card], "group": "servant" if source == servant else "master" if source == master else "other", "label": "从者技能" if source == servant else "御主牌" if source == master else "附带物"})
+	sources.append({"cards": data.get("master_skills", []), "group": "master", "label": "御主牌"})
+	if master != null:
+		var specials = master.get("_specials")
+		if specials is Dictionary:
+			sources.append({"cards": specials.get("SKILLS", []), "group": "master", "label": "御主牌"})
+			sources.append({"cards": specials.get("ATTACKS", []), "group": "master", "label": "御主牌"})
+		sources.append({"cards": master._other_things, "group": "other", "label": "附带物"})
+		sources.append({"cards": master._upgrade_skill, "group": "upgrade", "label": "升华技"})
+	var removed: Array = []
+	for key in ["hand_cards", "deck", "discard", "played_cards"]:
+		removed.append_array(data.get(key, []))
+	removed.append_array(data.get("out_of_game", {}).get("attacks", []))
+	removed.append_array(data.get("out_of_game", {}).get("skills", []))
+	removed.append_array(data.get("out_of_game", {}).get("others", []))
+	for source in sources:
+		for card in source.cards:
+			if not card is BaseCard or seen.has(card) or removed.has(card):
+				continue
+			var view := card_view(card, own, observer)
+			if not view.get("visible", false):
+				continue
+			seen.append(card)
+			result.append({"card": view, "group": source.group, "label": source.label})
+	return result
+
+## 公共弃牌按规则对象来源归类，保持原三按钮：新都、深山町、其他。
+func event_discard_by_source() -> Dictionary:
+	var result := {"shinto": [], "miyama": [], "other": []}
+	for card in MapData.event_discard:
+		if not card is BaseEvent:
+			continue
+		var source = card.get_from()
+		var key := "shinto" if source == MapData.shinto else "miyama" if source == MapData.miyama else "other"
+		result[key].append(card_view(card, false))
+	return result
+
+func public_battle_result() -> Dictionary:
+	var result: Dictionary = {}
+	var raw: Dictionary = GameProgress.last_battle_result if GameProgress else {}
+	for area_name in raw.get("details_by_area", {}).keys():
+		var detail: Dictionary = raw.details_by_area[area_name]
+		result[str(area_name)] = {"winners": detail.get("winners", []).duplicate(), "needs_win": bool(detail.get("needs_win", true)), "highest_power": float(detail.get("highest_power", 0)) if typeof(detail.get("highest_power", 0)) in [TYPE_INT, TYPE_FLOAT] else 0.0}
+	return result
 
 ## 持有展示来源由权威显式声明；不将升华技混入普通出牌卡位。
-func held_cards(data: Dictionary, pid: int) -> Array:
+func held_cards(data: Dictionary, pid: int, observer: int = -1) -> Array:
 	var result: Array = []
 	var seen: Array = []
 	var master = data.get("master")
@@ -79,7 +192,7 @@ func held_cards(data: Dictionary, pid: int) -> Array:
 				continue
 			if played.has(card) and not card is BaseSkill:
 				continue
-			var view: Dictionary = card_view(card, true)
+			var view: Dictionary = card_view(card, true, observer)
 			if not view.get("visible", false):
 				continue
 			seen.append(card)
@@ -129,7 +242,7 @@ func public_log() -> Array:
 		if entry.get("type") == "play":
 			public_entry["object"] = null
 			public_entry["data"] = {"concealed": bool(entry.get("data", {}).get("concealed", false))}
-		var line: String = CardText._format_game_log_line(public_entry)
+		var line: String = LogFormatter.line(public_entry)
 		if not line.is_empty():
 			result.append(line)
 	return result
@@ -153,33 +266,105 @@ func buff_views(source: Array, own: bool) -> Array:
 	for buff in source:
 		if not buff is BaseBuff or (not own and not publicly_identifiable(buff)):
 			continue
-		result.append({"card": identity(buff, "_buff_img", own), "active": bool(buff._is_active)})
+		var detail: Dictionary = identity(buff, "_buff_img", own)
+		if own:
+			# 与单人 BUFF 完整说明一致；只有所属方允许读取关联效果与层数。
+			detail["description"] = CardDescFormatter.token_desc(buff)
+		result.append({"card": detail, "active": bool(buff._is_active)})
 	return result
 
-func cards(source: Array, own: bool) -> Array:
+## E01 serial + 显式生命周期；构造失败拒绝整份 view，不消耗消息或补号。
+func notifications_for(observer: int, after_serial: int = -1) -> Array:
+	notification_error = ""
+	if _notification_epoch.is_empty():
+		notification_error = "通知生命周期未配置"
+		return []
+	var result: Array = []
+	var seen: Dictionary = {}
+	for lane in ["effect_results", "messages"]:
+		var queue: Array = EffectManager.get(lane)
+		for notice in queue:
+			if not notice is Dictionary or not notice.get("player_id") is int or not notice.get("text") is String:
+				notification_error = "通知记录字段无效"
+				return []
+			var recipient: int = notice.player_id
+			if recipient != -1 and recipient != observer: continue
+			if not notice.get("serial") is int or notice.serial < 0:
+				notification_error = "通知记录缺少合法 serial"
+				return []
+			if notice.serial <= after_serial: continue
+			var id: String = "%s:%d" % [_notification_epoch, notice.serial]
+			if seen.has(id):
+				notification_error = "通知身份重复"
+				return []
+			seen[id] = true
+			result.append({"id":id, "recipient":recipient, "text":notice.text})
+	return result
+
+## 候选自身的权威牌面。仅自己实际拥有的牌可读私有面，别人的仍走公开过滤。
+func choice_cards(source: Array, observer: int) -> Array:
+	var data: Dictionary = GameData.player_data_library.get(observer,{})
+	var result: Array = []
+	for card in source:
+		if not card is BaseCard:
+			continue
+		result.append(card_view(card, _choice_owned(data,card)))
+	return result
+
+func _choice_owned(data: Dictionary, card: BaseCard) -> bool:
+	if _contains_choice_card(data,card): return true
+	var source = card
+	var seen: Array = []
+	while source is BaseObject and not seen.has(source):
+		if source == data.get("master") or source == data.get("servant"): return true
+		seen.append(source)
+		source = source.get_from()
+	return false
+
+## 玩家数据是混合容器；仅卡牌叶节点参与对象身份比较，元数据不授予归属。
+func _contains_choice_card(value, card: BaseCard) -> bool:
+	if value is BaseCard:
+		return value == card
+	elif value is Array:
+		for item in value:
+			if _contains_choice_card(item,card): return true
+	elif value is Dictionary:
+		for item in value.values():
+			if _contains_choice_card(item,card): return true
+	return false
+
+func cards(source: Array, own: bool, observer: int = -1) -> Array:
 	var result: Array = []
 	for card in source:
 		if card is BaseCard:
-			result.append(card_view(card, own))
+			result.append(card_view(card, own, observer))
 	return result
 
-func card_view(card, own: bool) -> Dictionary:
+func card_view(card, own: bool, observer: int = -1) -> Dictionary:
 	if card == null:
 		return {}
 	var concealed: bool = card._is_concealed
 	var visible: bool = own or (not concealed and publicly_identifiable(card))
 	if card is BaseSkill and not card._is_awakened:
 		visible = false
-	# 隐藏牌不携带专属卡背路径（其中可能包含从者名/职阶/来源目录）。
-	var result := {"id": ids.id_for(card), "concealed": concealed, "visible": visible, "back_image": str(card._card_back_img) if visible or own else ""}
+	# 所有牌均保留模型已声明的自身卡背；缺声明保持空，不按类型或图片路径猜测。
+	var result := {"id": ids.id_for(card), "concealed": concealed, "visible": visible, "back_image": str(card._card_back_img)}
 	if visible:
 		result["name"] = card.get_shown_name()
 		result["zoom_kind"] = card.get_zoom_kind()
-		result["description"] = CardText._build_card_desc(card) if own else public_description(card)
+		result["description"] = CardDescFormatter.card_desc(card) if own else public_description(card)
 		result["image"] = str(card._card_img)
 		result["kind"] = "skill" if card is BaseSkill else ("attack" if card is BaseAttack else "card")
 		result["cost"] = number(card.get("_cost"))
 		result["power"] = number(card.get("_power"))
+		# own 是旧牌面权限，可能包含 controller；历史只授予当前牌区所属席位。
+		# 无记录省略整个字段，不发数量/修改标志，不从原来源或明置推定授权。
+		if own and not concealed and observer >= 0 and card is BaseHandCard and CardZones.owner_of(card) == observer:
+			var history: Array[Dictionary] = []
+			for record in card.get_modification_details():
+				history.append({"type": record.type, "detail": record.detail})
+			if not history.is_empty():
+				result["modification_history"] = history
 		result["effects"] = []
 		var holders: Array = [card]
 		var related = card.get("_relate_buff")
@@ -191,10 +376,15 @@ func card_view(card, own: bool) -> Dictionary:
 					result.effects.append(ids.id_for(effect))
 	return result
 
+func servant_placeholder(servant) -> Dictionary:
+	if servant == null:
+		return {}
+	return {"present": true, "visible": false, "concealed": true, "placeholder_kind": "servant"}
+
 func identity(object, image_field: String, own: bool = false) -> Dictionary:
 	if object == null:
 		return {}
-	return {"name": object.get_shown_name(), "image": str(object.get(image_field)), "visible": true, "concealed": false, "zoom_kind": object.get_zoom_kind(image_field), "description": CardText._build_card_desc(object) if own else public_description(object)}
+	return {"name": object.get_shown_name(), "image": str(object.get(image_field)), "visible": true, "concealed": false, "zoom_kind": object.get_zoom_kind(image_field), "description": CardDescFormatter.card_desc(object) if own else public_description(object)}
 
 ## 按原规则对象来源判定，不依赖当前位置；转到出牌/弃牌区不能公开真名。
 func publicly_identifiable(card) -> bool:
@@ -222,7 +412,7 @@ static func public_description(object) -> String:
 	for field in ["_cost", "_power"]:
 		var value = object.get(field)
 		if value is BaseNumber:
-			lines.append("%s：%s" % ["费用" if field == "_cost" else "威力", BaseNumber.display_text(value.number)])
+			lines.append("%s：%s" % ["魔力消耗" if field == "_cost" else "威力", BaseNumber.display_text(value.number)])
 	var attributes = object.get("_attributes")
 	if attributes is Array:
 		var labels: Array[String] = []
@@ -233,8 +423,8 @@ static func public_description(object) -> String:
 		if not labels.is_empty():
 			lines.append("属性：" + "、".join(labels))
 	var category = object.get("_category")
-	if category is String and CardText.ATTACK_CATEGORY_LABELS.has(category):
-		lines.append("类别：" + str(CardText.ATTACK_CATEGORY_LABELS[category]))
+	if category is String and CardDescFormatter.ATTACK_CATEGORY_LABELS.has(category):
+		lines.append("类别：" + str(CardDescFormatter.ATTACK_CATEGORY_LABELS[category]))
 	var notes = object.get("_shown_notes")
 	if notes is Array:
 		for note in notes:

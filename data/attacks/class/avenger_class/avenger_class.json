@@ -24,7 +24,10 @@
 				"self_battle_phase"
 			],
 			"priority": 0,
-			"is_pure_passive": true,
+			"is_pure_passive": false,
+ "is_manual": true,
+ "max_total_uses": 1,
+ "reset_counts_each_round": true,
 			"is_residue": false,
 			"effect_numbers": [
 				{
@@ -33,7 +36,9 @@
 					"is_pure_number": true
 				}
 			],
-			"funcs": [
+			"funcs": [],
+"max_choices": 1,
+"options": [{"shown_option_name": "你的其余攻击威力+1", "funcs": [
 				{
 					"func_name": "get_eff_source_card",
 					"parameters": [],
@@ -54,7 +59,7 @@
 					],
 					"var_index": -1
 				}
-			],
+			]}],
 						"need_activate": true
 		},
 		{

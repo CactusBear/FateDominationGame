@@ -1,4 +1,9 @@
 extends Node
+# 本局原来源取自 reset_runtime 回执；夹具对 operation 显式传入，不从全局补票。
+var ctx: SessionContext = null
+func _reset_ctx() -> SessionContext:
+	var reset: Dictionary = EffectManager.reset_runtime()
+	return reset.get("context") if reset.get("ok", false) else null
 #高潮淘汰的规则测试。规则原文：
 #第8天回合结束时，除战果前4名外全部淘汰；第9天前3名；第10天前2名。
 #战果并列（或因效果免于淘汰）的玩家都不淘汰。
@@ -10,7 +15,7 @@ func check(ok:bool,label:String):
 	if not ok: failures.append(label)
 	print("CHECK ",label," ",ok)
 func setup(count:int) -> void:
-	EffectManager.reset_runtime(); GameLog.reset(); GameLog.set_context(1,"")
+	ctx = _reset_ctx(); GameLog.reset(); GameLog.set_context(1,"")
 	GameData.player_data_library.clear()
 	for i in range(count):
 		GameData.player_data_library[i]=GameData.new_player_data()
@@ -30,7 +35,7 @@ func run():
 	for r in keep_rounds:
 		setup(7)
 		var keep:BaseNumber = GameProgress.climax_keep_counts[r]
-		var kept:Array = ClimaxResolver.new().exec(keep)
+		var kept:Array = ClimaxResolver.new().exec(keep, ctx)
 		var active:Array = GameDataManager.get_active_player_ids()
 		check(active.size() == keep.number,
 			"round %d keeps %d players" % [int(r), keep.number])
@@ -38,26 +43,26 @@ func run():
 
 	#连续两个高潮日都要继续淘汰：先淘到4人，再淘到3人
 	setup(7)
-	var r1:Array = ClimaxResolver.new().exec(BaseNumber.new(4))
+	var r1:Array = ClimaxResolver.new().exec(BaseNumber.new(4), ctx)
 	check(GameDataManager.get_active_player_ids().size() == 4,"first climax day cuts to four")
-	var r2:Array = ClimaxResolver.new().exec(BaseNumber.new(3))
+	var r2:Array = ClimaxResolver.new().exec(BaseNumber.new(3), ctx)
 	check(GameDataManager.get_active_player_ids().size() == 3,"second climax day keeps cutting")
-	var r3:Array = ClimaxResolver.new().exec(BaseNumber.new(2))
+	var r3:Array = ClimaxResolver.new().exec(BaseNumber.new(2), ctx)
 	check(GameDataManager.get_active_player_ids().size() == 2,"third climax day keeps cutting")
 
 	#规则：战果并列的玩家都不淘汰（保留线上的同分全部保留）
 	setup(5)
 	for i in range(5):
 		GameData.player_data_library[i].score.set_num(BaseNumber.new(3))
-	ClimaxResolver.new().exec(BaseNumber.new(2))
+	ClimaxResolver.new().exec(BaseNumber.new(2), ctx)
 	check(GameDataManager.get_active_player_ids().size() == 5,"all tied players survive the cut")
 
 	#淘汰要留下事实日志，并把人移出版图
 	setup(3)
 	MapData.miyama0._players = []
-	Deploy.new().exec(MapData.miyama0, 0)
+	Deploy.new().exec(MapData.miyama0, 0, false, ctx)
 	check(GameDataManager.get_player_data(0).location == MapData.miyama0,"player deployed before the cut")
-	ClimaxResolver.new().exec(BaseNumber.new(2))
+	ClimaxResolver.new().exec(BaseNumber.new(2), ctx)
 	check(GameDataManager.get_player_data(0).is_out,"lowest score player is out")
 	check(GameDataManager.get_player_data(0).location == null,"eliminated player left the board")
 	check(not MapData.miyama0._players.has(0),"seat no longer holds the eliminated player")

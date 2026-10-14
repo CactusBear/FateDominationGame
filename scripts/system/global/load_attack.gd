@@ -47,52 +47,60 @@ static func _load_json(full_path:String) -> Dictionary:
 
 
 #按数据新建攻击牌实例。图片路径取 JSON 文件所在目录，与从者/御主卡牌的相对图片约定一致。
-static func _create_attack(data:Dictionary) -> BaseAttack:
+static func _create_attack(data:Dictionary, source_context:Variant = null) -> BaseAttack:
+	var source:Dictionary = LoadHelper.validate_source_context(source_context)
+	if not source.ok:
+		return null
+	var register_object:bool = source.context == null
 	var attack := BaseAttack.new(
 		data["attack_name"],
 		data["_dir_path"] + "/" + data["attack_card_img"],
 		data["attributes"],
 		LoadHelper.load_number(data["cost"]),
-		LoadHelper.load_number(data["power"])
+		LoadHelper.load_number(data["power"]),
+		[],
+		register_object
 	)
 	attack._shown_name = data.get("shown_attack_name", "")
 	attack._zoom_kind = LoadHelper.resolve_zoom_kind(data, "attack_card_img")
 	attack._category = data.get("category", BaseAttack.CATEGORY_NON_BASIC)
-	attack._effects = LoadHelper.load_effects(data.get("effects", []), attack)
+	attack._effects = LoadHelper.load_effects(data.get("effects", []), attack, source_context)
 	attack._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), data["_dir_path"], "attack")
 	LoadHelper.load_object_extras(attack, data)
+	if not LoadHelper.finalize_loaded_card(attack, source_context):
+		return null
 	return attack
 
 
 #按属性+威力查找攻击卡（力量/敏捷/魔术）。基础牌优先于职阶牌，
 #与牌库引用"attribute:power"的原语义一致（如 magic:4 匹配基础高位魔术而非月之癌）。
-static func find_by_attribute_power(attribute:String, power:int) -> BaseAttack:
+static func find_by_attribute_power(attribute:String, power:int, source_context:Variant = null) -> BaseAttack:
 	for data:Dictionary in _attack_datas:
 		if data.get("category", "") != BaseAttack.CATEGORY_BASIC:
 			continue
 		if attribute in data["attributes"] and int(data["power"]["number"]) == power:
-			return _create_attack(data)
+			return _create_attack(data, source_context)
 	for data:Dictionary in _attack_datas:
 		if data.get("category", "") == BaseAttack.CATEGORY_BASIC:
 			continue
 		if attribute in data["attributes"] and int(data["power"]["number"]) == power:
-			return _create_attack(data)
+			return _create_attack(data, source_context)
 	return null
 
 
 #按内部名查找特殊攻击卡（如 surveil / luck / preparation）。找不到返回 null。
-static func find_special(attack_name:String) -> BaseAttack:
+static func find_special(attack_name:String, source_context:Variant = null) -> BaseAttack:
 	for data:Dictionary in _attack_datas:
 		if data["attack_name"] == attack_name:
-			return _create_attack(data)
+			return _create_attack(data, source_context)
 	return null
 
 
 #解析牌库构成条目："attribute:power"（如 strength:2）或 "special:name"（如 special:surveil）。
-static func resolve(entry:String) -> BaseAttack:
+static func resolve(entry:String, source_context:Variant = null) -> BaseAttack:
 	var parts:Array = entry.split(":")
 	if parts.size() != 2:
 		return null
 	if parts[0] == "special":
-		return find_special(parts[1])
-	return find_by_attribute_power(parts[0], int(parts[1]))
+		return find_special(parts[1], source_context)
+	return find_by_attribute_power(parts[0], int(parts[1]), source_context)

@@ -1,0 +1,48 @@
+{
+  "label": "join-green",
+  "scene": "res://newtests/join_shape_session_wiring_test.tscn",
+  "command": [
+    "E:\\scratch\\pw-27b3ce34\\engine\\Godot_v4.7.2-stable_win64_console.exe",
+    "--headless",
+    "--fixed-fps",
+    "60",
+    "--path",
+    "E:\\scratch\\pw-27b3ce34\\project",
+    "--scene",
+    "res://newtests/join_shape_session_wiring_test.tscn"
+  ],
+  "pid": 38916,
+  "exit_code": 0,
+  "timeout": false,
+  "analysis": {
+    "passed": true,
+    "reasons": [],
+    "result": {
+      "checks": 42,
+      "failures": [],
+      "suite": "join_shape_session_wiring"
+    }
+  },
+  "environment": {
+    "APPDATA": "E:\\scratch\\pw-27b3ce34\\appdata",
+    "LOCALAPPDATA": "E:\\scratch\\pw-27b3ce34\\localappdata",
+    "TEMP": "E:\\scratch\\pw-27b3ce34\\temp",
+    "TMP": "E:\\scratch\\pw-27b3ce34\\tmp",
+    "TMPDIR": "E:\\scratch\\pw-27b3ce34\\tmpdir"
+  },
+  "engine_sha256": "c8f0a6bc45a19b33541501e57f6f7cd972ab18453743266339d495cbbe846643",
+  "stdout_sha256": "956772dff35f5a92b43e00b780757d7669ec015e32b47ae69446f6ef42727dfd",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "compare": null,
+  "process_ownership": {
+    "kind": "Windows Job Object",
+    "created_suspended": true,
+    "active_owned_processes": 0,
+    "log_handles_released": true
+  },
+  "frozen_source_sha256": {
+    "scripts/net/session/lobby_session.gd": "f79786169f0b655196dcf775bd6cf1790a4de53692fec5a24986657620f20019",
+    "scripts/net/session/host_match_request_inbox.gd": "117606acb067bb56f5ad77f0bfc34de9ab51ae3d463ebd0c2aa630aa52524273"
+  },
+  "native_dll_sha256": "92a42bd2860af19ca432321400bdaa514a2a9c11f9289a43c76e19a2e2bd68cd"
+}

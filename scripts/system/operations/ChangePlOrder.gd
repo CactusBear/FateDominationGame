@@ -3,9 +3,9 @@ extends RefCounted
 
 func exec(set_order:BaseNumber = null, vary_order:BaseNumber = BaseNumber.new(0), player_id = -1):
 
-	player_id = EffectManager.resolve_player_id(player_id)
-	var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 	if set_order != null and set_order.number is int:
+		player_id = EffectManager.resolve_player_id(player_id)
+		var player_data:Dictionary = GameDataManager.get_player_data(player_id)
 		var current_order = player_data["order"] as BaseNumber
 		var pl_ids = GetAllPlayersId.new().exec()
 		if set_order.number < current_order.number:

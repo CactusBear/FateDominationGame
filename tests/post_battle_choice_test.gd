@@ -4,6 +4,8 @@ extends Node
 var failures:Array = []
 var checks:int = 0
 const CHOICE_NAME:String = "contain_third_party_restore_seal_choice"
+# 生命周期返回的原值：旧场景清理先消费旧值，重置后才保存新值。
+var fixture_context:SessionContext = null
 
 func check(ok:bool, label:String) -> void:
 	checks += 1
@@ -15,6 +17,9 @@ func _ready() -> void:
 	call_deferred("run")
 
 func run() -> void:
+	var initial:Dictionary = EffectManager.reset_runtime()
+	check(initial.ok, "fixture establishes original lifecycle context")
+	fixture_context = initial.get("context")
 	# 交换两位胜者的决定，排除锚点玩家代答或选择状态被共用。
 	await _test_post_battle_choices({1: 0, 2: 1}, "first restores")
 	await _test_post_battle_choices({1: 1, 2: 0}, "second restores")
@@ -22,9 +27,13 @@ func run() -> void:
 	get_tree().quit(0 if failures.is_empty() else 1)
 
 func _setup() -> BaseEvent:
-	EventResolver.new().clear_all()
-	SituationResolver.new().clear_all()
-	EffectManager.reset_runtime()
+	check(EventResolver.new().clear_all(fixture_context).ok, "fixture clears events with original context")
+	check(SituationResolver.new().clear_all(fixture_context).ok, "fixture clears situations with original context")
+	var reset:Dictionary = EffectManager.reset_runtime()
+	check(reset.ok, "fixture resets runtime and retains returned context")
+	fixture_context = reset.get("context")
+	if fixture_context == null:
+		return null
 	GameLog.reset()
 	GameData.player_data_library.clear()
 	GameData.player_id = 0
@@ -52,7 +61,7 @@ func _setup() -> BaseEvent:
 		data.power.number = 0 if id == 0 else 20
 		GameData.player_data_library[id] = data
 		# 效果落位不记部署，避免席位不同的地利破坏并列胜者夹具。
-		check(SetLocation.new().exec(MapData.miyama._locations[0], id, false, true), "fixture places participant %d" % id)
+		check(SetLocation.new().exec(MapData.miyama._locations[0], id, false, true, true, fixture_context), "fixture places participant %d" % id)
 	var template:BaseEvent = null
 	for card in LoadEvent.events:
 		if card._name == "contain_third_party":
@@ -61,14 +70,18 @@ func _setup() -> BaseEvent:
 	check(template != null, "fixture loads the real contain_third_party event")
 	if template == null:
 		return null
-	var event:BaseEvent = CloneObject.new().exec(template) as BaseEvent
+	# 正式模板不补票；C0 只在模板转运行实例的创建边界授权深复制图。
+	var cloner:CloneContext = CloneContext.new()
+	check(cloner.configure_template(fixture_context, [template]), "fixture authorizes real event template")
+	var copied:Dictionary = cloner.copy_result(template, fixture_context)
+	var event:BaseEvent = copied.object as BaseEvent
 	check(event != null, "fixture clones the event")
 	if event == null:
 		return null
 	AddMapAreaEvents.new().exec(MapData.miyama, event)
-	EventResolver.new().register_entered(event)
+	check(EventResolver.new().register_entered(event, fixture_context), "fixture registers event with original context")
 	# begin_phase 建立真实阶段时点和首位行动者，不直接伪造战后选择。
-	GameProgress.begin_phase()
+	GameProgress.begin_phase(fixture_context)
 	return event
 
 func _test_post_battle_choices(options:Dictionary, label:String) -> void:
@@ -76,12 +89,12 @@ func _test_post_battle_choices(options:Dictionary, label:String) -> void:
 	if event == null:
 		return
 	check(GameProgress.current_player_id == 0, label + ": first battle actor")
-	check(GameProgress.end_current_player_action(), label + ": first actor finishes")
+	check(GameProgress.end_current_player_action(fixture_context), label + ": first actor finishes")
 	check(GameProgress.current_player_id == 1, label + ": second battle actor")
-	check(GameProgress.end_current_player_action(), label + ": second actor finishes")
+	check(GameProgress.end_current_player_action(fixture_context), label + ": second actor finishes")
 	check(GameProgress.current_player_id == 2, label + ": last battle actor")
 	check(_battle_entries().is_empty(), label + ": no battle before last actor finishes")
-	check(GameProgress.end_current_player_action(), label + ": last actor triggers settlement")
+	check(GameProgress.end_current_player_action(fixture_context), label + ": last actor triggers settlement")
 	var battles:Array = _battle_entries()
 	check(battles.size() == 3, label + ": one battle fact per participant")
 	for entry in battles:
@@ -107,7 +120,7 @@ func _test_post_battle_choices(options:Dictionary, label:String) -> void:
 			return
 		# 模拟 UI 重复尝试自动推进及跨帧等待；均不能取消/重建选择。
 		for attempt in range(2):
-			check(not GameProgress.end_current_player_action(), label + ": pending choice blocks advance %d" % attempt)
+			check(not GameProgress.end_current_player_action(fixture_context), label + ": pending choice blocks advance %d" % attempt)
 			await get_tree().process_frame
 			check(EffectManager.get_pending_active_effect() == pending, label + ": pending identity survives wait")
 			_check_wait_boundary(event, label + ": waiting for %d" % winner)
@@ -124,7 +137,7 @@ func _test_post_battle_choices(options:Dictionary, label:String) -> void:
 	# 允许提交后自动续行，或由现有 UI 的推进入口续行；绝不直接 end_phase/重派时点。
 	await get_tree().process_frame
 	if GameProgress.current_round == 1 and str(GameProgress.get_current_phase().get("name", "")) == "battle":
-		check(GameProgress.end_current_player_action(), label + ": public entry resumes completed settlement")
+		check(GameProgress.end_current_player_action(fixture_context), label + ": public entry resumes completed settlement")
 	await get_tree().process_frame
 	check(GameProgress.current_round == 2 and str(GameProgress.get_current_phase().get("name", "")) == "prepare", label + ": resumes at next round prepare")
 	check(not GameProgress.is_game_over, label + ": continuation does not end game")

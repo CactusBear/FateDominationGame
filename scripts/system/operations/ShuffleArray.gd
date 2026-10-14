@@ -3,14 +3,13 @@ extends RefCounted
 
 const RuleRandom = preload("res://scripts/match/rule_random.gd")
 
-#就地洗乱传入的数组，不另建新数组。算法不绑定牌库或弃牌堆，任何数组都能用。
-func exec(arr:Array):
+# 只读预检供可信工厂在创建克隆之前拒绝；不声明/消耗随机流。
+static func can_shuffle() -> bool:
+	return RuleRandom.is_known()
 
-	if arr == null or arr.size() <= 1:
-		return arr
-	for i in range(arr.size() - 1, 0, -1):
-		var j:int = RuleRandom.int_in_range(0, i)
-		var tmp = arr[i]
-		arr[i] = arr[j]
-		arr[j] = tmp
+# 成功仍返回原数组；未声明随机流返回 null，数组保持原样（包括空/单元素）。
+# 复用 RuleRandom 的失败关闭洗牌，不在消费口取全局随机或声明流。
+func exec(arr:Array):
+	if arr == null or not RuleRandom.shuffle(arr):
+		return null
 	return arr

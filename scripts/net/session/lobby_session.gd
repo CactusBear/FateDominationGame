@@ -3,24 +3,53 @@ extends RefCounted
 
 const Transport = preload("res://scripts/net/transport/enet_transport.gd")
 const Room = preload("res://scripts/net/session/room_state.gd")
+const HostIdentityRequestCodec = preload("res://scripts/net/identity/host_identity_request_codec.gd")
+const ContentEnvironmentScope = preload("res://scripts/system/global/content_environment.gd")
 const RECOVERY_SCHEMA_VERSION:int = 2
 const APPROVED_DATA_SNAPSHOT_VERSION:int = 1
+const MATCH_COMMAND_RESULT_VERSION:int = 1
+const MATCH_RECEIPT_REQUEST_KINDS = ["match_command", "broadcast_confirm_absent", "match_finished_lobby"]
 signal changed
 signal catalogs_changed
 signal data_management_requested(actor:int, action:String, args:Dictionary)
 signal rejected(reason: String)
 ## 仅有明确请求序号的拒绝可用于解除该请求的锁。
 signal request_rejected(sequence: int, reason: String)
+signal request_completed(sequence: int, ok: bool, reason: String)
+## 同步发布于旧请求登记清除/seq 复用之前；不表示权威执行失败。
+signal request_associations_invalidated(generation: int, reason: String)
+var _request_generation: int = 0
+var _request_reset_in_progress: bool = false
+## 会话内保留已消费标记，避免旧 error 与新回执或重放重复解除请求锁。
+var _match_request_results: Dictionary = {}
 signal group_preview_received(request_id: int, result: Dictionary)
 var transport = Transport.new()
 var connection_driver: RefCounted
 ## 仅普通房主 UI 使用；worker 内部 host()/host_peer() 契约保持不变。
 var authority_host: RefCounted
+## 本机组合根部署策略，默认 false；不从规则消费声明或网络 settings 推断。
+## close 只结束连接，不撤销组合根声明；下次创建前可在空闲期显式重配。
+var _deployment_broadcast_confirmation: bool = false
+
+func configure_deployment_broadcast_confirmation(value:Variant) -> bool:
+	if not value is bool or authority_host != null or _host or transport.is_connected_to_host() or transport.is_connecting() or match_authority.started or _restore_failed_closed or _restore_in_progress or _begin_in_progress or _request_reset_in_progress: return false
+	_deployment_broadcast_confirmation = value
+	return true
+
+## 两种房主入口共享的具体构造入口；配置拒绝时不能继续 start。
+func _new_configured_authority_host_client() -> RefCounted:
+	var client = load("res://scripts/net/session/authority_host_client.gd").new()
+	if not client.configure_deployment_broadcast_confirmation(_deployment_broadcast_confirmation):
+		error = "本机权威播报确认部署声明被拒绝"
+		client.close()
+		return null
+	return client
 
 func host_authority(port:int, name:String, settings:Dictionary, bind_address:String = "*") -> Error:
-	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
+	if _request_reset_in_progress or _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
 	close()
-	var client = load("res://scripts/net/session/authority_host_client.gd").new()
+	var client = _new_configured_authority_host_client()
+	if client == null: return ERR_UNAVAILABLE
 	var result:Error = client.start(self, name, settings, "lan", port, bind_address)
 	if result != OK:
 		error = client.error
@@ -30,9 +59,10 @@ func host_authority(port:int, name:String, settings:Dictionary, bind_address:Str
 	return OK
 
 func host_authority_peer(peer:MultiplayerPeer, name:String, settings:Dictionary) -> Error:
-	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
+	if _request_reset_in_progress or _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
 	close()
-	var client = load("res://scripts/net/session/authority_host_client.gd").new()
+	var client = _new_configured_authority_host_client()
+	if client == null: return ERR_UNAVAILABLE
 	var result:Error = client.start(self, name, settings, "p2p", 0, "*", peer)
 	if result != OK:
 		error = client.error
@@ -49,10 +79,21 @@ var room = Room.new()
 var selection = preload("res://scripts/net/authority/selection_authority.gd").new()
 var selection_view: Dictionary = {}
 var match_authority = preload("res://scripts/net/authority/match_authority.gd").new()
-var _mirror = preload("res://scripts/match/view_mirror.gd").new()
-var _match_bound: bool = false
-var _pending_view: Dictionary = {}
-var _action_view: Dictionary = {}
+## 实际消费端显式声明；普通 headless host 与旧夹具默认无能力。
+var _broadcast_confirmation_capable: bool = false
+
+func declare_broadcast_confirmation(enabled: bool) -> bool:
+	if match_authority.started or _restore_in_progress or _begin_in_progress or _request_reset_in_progress: return false
+	_broadcast_confirmation_capable = enabled
+	return true
+
+var _match_inbox = preload("res://scripts/net/session/client_match_inbox.gd").new()
+var _host_room_inbox = preload("res://scripts/net/session/host_room_inbox.gd").new()
+var _host_content_inbox = preload("res://scripts/net/session/host_content_inbox.gd").new()
+var _host_guard_inbox = preload("res://scripts/net/session/host_guard_inbox.gd").new()
+var _host_match_request_inbox = preload("res://scripts/net/session/host_match_request_inbox.gd").new()
+var _host_room_password_request = preload("res://scripts/net/session/host_room_password_request.gd").new()
+var _host_identity_request_codec = HostIdentityRequestCodec.new()
 var _selection_config: Dictionary = {}
 var _masters: Array = []
 var _servants: Array = []
@@ -68,7 +109,9 @@ var room_files: Array = []
 var _manifest_transfer = preload("res://scripts/net/transport/room_manifest_transfer.gd").new()
 var _catalog_transfer = preload("res://scripts/net/transport/catalog_message_transfer.gd").new()
 var catalogs: Dictionary = {}
-var server_data:Dictionary = {}
+var _server_data_inbox = preload("res://scripts/net/session/server_data_status_inbox.gd").new()
+var server_data:Dictionary:
+	get: return _server_data_inbox.data
 var selection_modes:Array = []
 var data_revision: int = 0
 var _data_confirmed: Dictionary = {}
@@ -76,6 +119,7 @@ var _assets = preload("res://scripts/net/content/room_assets.gd").new()
 var require_room_data: bool = false
 var dedicated: bool = false
 var server_room_id: String = ""
+var server_room_code: String = ""
 var server_rooms: Array = []
 var server_info:Dictionary = {}
 signal server_notice_received(text:String)
@@ -85,6 +129,10 @@ var _server_peer_id: int = 0
 var _rules_revision: int = 0
 var _room_rules_active: bool = false
 var _restore_in_progress:bool = false
+var _restore_trace_id:int = 0
+var _restore_trace_snapshot:Dictionary = {}
+var _restore_trace_poll:int = 0
+var _restore_checkpoint_reason:String = ""
 var _restore_cancelled:bool = false
 var _begin_in_progress:bool = false
 var _begin_cancelled:bool = false
@@ -96,6 +144,7 @@ var management_paused:bool = false
 var join_password:String = ""
 var room_password = preload("res://scripts/net/identity/room_password.gd").new()
 var player_identity = preload("res://scripts/net/identity/player_identity.gd").new()
+var _identity_inbox = preload("res://scripts/net/identity/client_identity_inbox.gd").new()
 var identity_profile:Dictionary = {}
 var identity_authenticated:bool = false
 var identity_is_admin:bool = false
@@ -126,16 +175,32 @@ var _member_by_peer:Dictionary = {}
 var _peer_by_member:Dictionary = {}
 var _join_endpoint:Dictionary = {}
 var _resume_inflight:bool = false
-var _previous_data_root: String = ""
-var _previous_cache_path: String = ""
+var _previous_content_environment: Dictionary = {}
 
 func _init() -> void:
+	# 实例方法 Callable 不捕获 RefCounted 强引用，避免 session→inbox→闭包→session。
+	_match_inbox.changed.connect(_inbox_changed)
+	_match_inbox.group_preview_received.connect(_inbox_group_preview)
+	_match_inbox.selection_received.connect(_inbox_selection)
+	_match_inbox.selection_reset.connect(_inbox_selection_reset)
 	transport.message_received.connect(_receive)
 	transport.peer_connected.connect(_connected)
 	transport.peer_disconnected.connect(_disconnected)
 
+func _inbox_changed() -> void:
+	changed.emit()
+
+func _inbox_group_preview(id: int, result: Dictionary) -> void:
+	group_preview_received.emit(id, result)
+
+func _inbox_selection(state: Dictionary) -> void:
+	selection_view = state
+
+func _inbox_selection_reset() -> void:
+	selection_view.clear()
+
 func host(port: int, name: String, settings: Dictionary, bind_address: String = "*") -> Error:
-	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
+	if _request_reset_in_progress or _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
 	close()
 	var result: Error = transport.listen(port, bind_address)
 	if result != OK:
@@ -154,7 +219,7 @@ func _initialize_host(name: String, settings: Dictionary) -> Error:
 	return OK
 
 func host_peer(peer: MultiplayerPeer, name: String, settings: Dictionary) -> Error:
-	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
+	if _request_reset_in_progress or _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
 	if peer == null or peer.get_unique_id() != 1:
 		return ERR_INVALID_PARAMETER
 	close()
@@ -162,7 +227,7 @@ func host_peer(peer: MultiplayerPeer, name: String, settings: Dictionary) -> Err
 	return _initialize_host(name, settings) if result == OK else result
 
 func join_peer(peer: MultiplayerPeer, name: String, spectator: bool = false) -> Error:
-	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
+	if _request_reset_in_progress or _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
 	if peer == null or peer.get_unique_id() <= 1:
 		return ERR_INVALID_PARAMETER
 	close()
@@ -170,7 +235,7 @@ func join_peer(peer: MultiplayerPeer, name: String, spectator: bool = false) -> 
 	return transport.attach_peer(peer)
 
 func join(address: String, port: int, name: String, spectator: bool = false) -> Error:
-	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
+	if _request_reset_in_progress or _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
 	close()
 	_hello = {"name": name, "spectator": spectator}
 	_join_endpoint = {"address":address,"port":port}
@@ -191,6 +256,7 @@ func has_resume_identity() -> bool:
 	return not _host and not _resume_ticket.is_empty()
 
 func can_reconnect() -> bool:
+	if _request_reset_in_progress: return false
 	if not has_resume_identity() or transport.is_connected_to_host() or transport.is_connecting(): return false
 	if connection_driver != null and connection_driver.has_method("can_reconnect_session"):
 		return connection_driver.can_reconnect_session(self)
@@ -211,6 +277,8 @@ func fail_reconnect(reason:String) -> void:
 	changed.emit()
 
 func _prepare_reconnect() -> void:
+	if _request_reset_in_progress: return
+	_begin_request_reset("prepare_reconnect")
 	identity_is_admin = false
 	identity_authenticated = false
 	_identity_sent = false
@@ -221,11 +289,12 @@ func _prepare_reconnect() -> void:
 	_blob_sends.clear()
 	_hello["resume"] = _resume_ticket.duplicate(true)
 	_hello_sent = false
-	_seq = 0
-	_match_bound = false
-	_mirror.reset(-1)
+	# 同一 Session 不复用已退休的 seq；旧连接结果不能关联新代请求。
+	_match_request_results.clear()
+	_match_inbox.reconnect_reset()
 	_resume_inflight = true
 	error = ""
+	_request_reset_in_progress = false
 
 func reconnect() -> Error:
 	if not can_reconnect(): return ERR_UNAVAILABLE
@@ -245,6 +314,7 @@ func reconnect() -> Error:
 ## 崩溃恢复已由 authority_host_client 完成原 worker 校验、换代和 _prepare_reconnect。
 ## 成功后必须等待 authority_host.poll() 接入新 loopback，不能再次调用 reconnect()。
 func reconnect_after_worker_crash() -> Error:
+	if _request_reset_in_progress: return ERR_UNAVAILABLE
 	if authority_host != null and authority_host.has_method("diagnostics"):
 		var diagnostic:Dictionary = authority_host.diagnostics()
 		if diagnostic.get("worker_crash_waiting", false):
@@ -258,6 +328,7 @@ func reconnect_after_worker_crash() -> Error:
 
 ## 调用方重新完成 P2P 握手后接入新直连，不使用信令转发对局。
 func resume_peer(peer:MultiplayerPeer) -> Error:
+	if _request_reset_in_progress: return ERR_UNAVAILABLE
 	if not has_resume_identity() or transport.is_connected_to_host() or peer == null or peer.get_unique_id() <= 1:
 		return ERR_INVALID_PARAMETER
 	_prepare_reconnect()
@@ -266,11 +337,11 @@ func resume_peer(peer:MultiplayerPeer) -> Error:
 	return result
 
 func _send(member:int, message:Dictionary, channel:int = 0) -> Error:
-	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
+	if _request_reset_in_progress or _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
 	return transport.send(int(_peer_by_member.get(member,member)) if _host else member,message,channel)
 
 func send_catalog_message(member:int, message:Dictionary, channel:int = 0) -> Error:
-	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
+	if _request_reset_in_progress or _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
 	var parts:Array = _catalog_transfer.encode(message, transport.max_packet_bytes)
 	if parts.is_empty():
 		error = _catalog_transfer.error
@@ -288,6 +359,7 @@ func _new_resume_token() -> String:
 ## 返回值仅表示持久化提交；发送失败撤销连接授权，调用者须检查成员在线状态。
 ## 票据交付只能发生在持久化成功之后；不能依赖第二次写盘回滚已提交的哈希。
 func _accept_identity(connection:int, member:int, token:String, previous:String = "") -> bool:
+	_restore_trace("identity_accept_enter", {"connection":connection,"member":member})
 	var old_peer_by_member:Dictionary = _peer_by_member.duplicate()
 	var old_member_by_peer:Dictionary = _member_by_peer.duplicate()
 	var old_peers:Array = _peers.duplicate()
@@ -316,6 +388,7 @@ func _accept_identity(connection:int, member:int, token:String, previous:String 
 		_peers = old_peers
 		room.mark_disconnected(member)
 		error = "恢复身份已保存但票据发送失败，可用原票据重试：" + error_string(sent) if not previous.is_empty() else "新成员身份已保存但票据发送失败，尚未交付恢复凭据：" + error_string(sent)
+	_restore_trace("identity_accept_return", {"connection":connection,"member":member,"sent":sent})
 	return true
 
 func _join_identity(connection:int, args:Dictionary) -> bool:
@@ -347,18 +420,36 @@ func _join_identity(connection:int, args:Dictionary) -> bool:
 			for member in room.members:
 				if not _member_identities.has(member): return room._reject("旧房间缺少成员密钥绑定，拒绝认证恢复")
 			require_identity = true
+	# 无票据时只按可信认证密钥匹配，名字、用户名及客户端自报编号均不授权。
+	var identity_members:Array = []
+	if require_identity and not identity.is_empty():
+		for candidate in room.members:
+			if _member_identities.get(candidate,"") != identity: continue
+			identity_members.append(candidate)
+		if not args.has("resume") and identity_members.size() > 1: return room._reject("认证身份匹配多个成员，请使用原成员恢复凭据")
 	var token:String = _new_resume_token()
 	if token.is_empty(): return room._reject("无法生成私有恢复凭据")
-	if args.has("resume"):
-		var ticket = args.resume
-		if not ticket is Dictionary or not ticket.get("member") is int or not ticket.get("token") is String or ticket.token.length() != RESUME_TOKEN_BYTES * 2:
-			return room._reject("恢复凭据无效")
-		var member:int = ticket.member
-		if require_identity and (_member_identities.get(member,"") != identity or identity.is_empty()):
-			return room._reject("恢复凭据与当前认证密钥不匹配")
-		var proof:String = ticket.token.sha256_text()
-		if not _resume_hashes.has(member) or (proof != _resume_hashes[member] and proof != _resume_previous.get(member,"")):
-			return room._reject("恢复凭据无效")
+	if args.has("resume") or identity_members.size() == 1:
+		var member:int = 0
+		var proof:String = ""
+		if args.has("resume"):
+			var ticket = args.resume
+			if not ticket is Dictionary or not ticket.get("member") is int or not ticket.get("token") is String or ticket.token.length() != RESUME_TOKEN_BYTES * 2:
+				return room._reject("恢复凭据无效")
+			member = ticket.member
+			if require_identity and (_member_identities.get(member,"") != identity or identity.is_empty()):
+				return room._reject("恢复凭据与当前认证密钥不匹配")
+			proof = ticket.token.sha256_text()
+			if not _resume_hashes.has(member) or (proof != _resume_hashes[member] and proof != _resume_previous.get(member,"")):
+				return room._reject("恢复凭据无效")
+		else:
+			member = int(identity_members[0])
+			proof = _resume_hashes.get(member,"")
+			if not preload("res://scripts/net/identity/player_registry.gd").valid_id(proof):
+				return room._reject("原成员恢复绑定不完整，拒绝自动认领")
+		if require_identity:
+			for candidate in identity_members:
+				if room.members[candidate].connected: return room._reject("该认证身份已在房间在线")
 		var old_member:Dictionary = room.members[member].duplicate(true)
 		var old_revision:int = room.revision
 		if not room.reconnect(member): return false
@@ -367,6 +458,7 @@ func _join_identity(connection:int, args:Dictionary) -> bool:
 			room.revision = old_revision
 			return room._reject("恢复身份保存失败，原成员绑定和票据未改变")
 		if not room.members[member].connected: return room._reject(error)
+		if match_authority.started: match_authority.bind_notification_boundary(member)
 		return true
 	if not room_password.accepts(args.get("password","")): return room._reject("房间密码错误")
 	var old_members:Dictionary = room.members.duplicate(true)
@@ -385,6 +477,7 @@ func _join_identity(connection:int, args:Dictionary) -> bool:
 		else: _member_identities.erase(connection)
 		return room._reject("恢复身份保存失败，原成员绑定和票据未改变")
 	if not room.members[connection].connected: return room._reject(error)
+	if match_authority.started: match_authority.bind_notification_boundary(connection)
 	return true
 
 func _inheritance_snapshot() -> Dictionary:
@@ -451,6 +544,10 @@ func configure_identity(path:String,username:String,nickname:String) -> bool:
 	return true
 
 func join_server(address: String, port: int, name: String, room_id: String = "", room_name: String = "", settings: Dictionary = {}, spectator: bool = false) -> Error:
+	room_id = room_id.strip_edges()
+	if room_id.is_empty() and room_name.strip_edges().is_empty():
+		error = "请输入房间码"
+		return ERR_INVALID_PARAMETER
 	var result: Error = join(address, port, name, spectator)
 	if result != OK:
 		return result
@@ -503,26 +600,45 @@ func poll(delta: float = 0.0) -> void:
 		request("join", _hello)
 
 func request(kind: String, args: Dictionary, registered: Callable = Callable()) -> Error:
-	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
+	if _request_reset_in_progress or _restore_failed_closed or _restore_in_progress or _begin_in_progress: return ERR_UNAVAILABLE
+	# 当前清单 ACK 只能由已安装真实资产的客户端发送；旧清单 ACK 的主机忽略语义不变。
+	if not _host and kind == "data_ack" and args.get("revision") == data_revision and not _assets.is_installed():
+		error = "房间资产尚未安装，不能确认数据"
+		return ERR_UNAVAILABLE
 	if _seq == 9223372036854775807:
 		return ERR_OUT_OF_MEMORY
 	_seq += 1
+	var generation: int = _request_generation
 	var message := {"v": 1, "seq": _seq, "kind": kind, "args": args}
+	if kind in MATCH_RECEIPT_REQUEST_KINDS: _match_request_results[_seq] = false
 	# 房主 _receive 同步发回拒绝，必须在发送前登记序号。
 	if registered.is_valid(): registered.call(_seq)
+	# 登记回调可同步 close/reconnect；旧代请求不得继续发送或清理新代登记。
+	if generation != _request_generation or _request_reset_in_progress: return ERR_UNAVAILABLE
 	if _host:
 		_receive(1, message)
 		return OK
 	if kind == "catalog": return send_catalog_message(1, message)
-	return transport.send(1, message)
+	var sent: Error = transport.send(1, message)
+	if sent != OK and kind in MATCH_RECEIPT_REQUEST_KINDS: _match_request_results.erase(message.seq)
+	return sent
+
+func _begin_request_reset(reason: String) -> void:
+	_request_reset_in_progress = true
+	_request_generation += 1
+	_server_data_inbox.reset(_request_generation)
+	_catalog_transfer.fragments.reset()
+	request_associations_invalidated.emit(_request_generation, reason)
 
 func close() -> void:
+	if _request_reset_in_progress: return
 	if _restore_in_progress and not _restore_failed_closed:
 		_restore_cancelled = true # 不在维护栈中销毁规则；由事务出口失败关闭。
 		return
 	if _begin_in_progress:
 		_begin_cancelled = true # 不在同步初始化栈内结束规则或关闭 transport。
 		return
+	_begin_request_reset("close")
 	if authority_host != null:
 		authority_host.call("close")
 		authority_host = null
@@ -546,10 +662,7 @@ func close() -> void:
 	selection = preload("res://scripts/net/authority/selection_authority.gd").new()
 	selection_view.clear()
 	match_authority = preload("res://scripts/net/authority/match_authority.gd").new()
-	_mirror.reset(-1)
-	_match_bound = false
-	_pending_view.clear()
-	_action_view.clear()
+	_match_inbox.reset()
 	_selection_config.clear()
 	_masters.clear()
 	_servants.clear()
@@ -558,14 +671,13 @@ func close() -> void:
 	_host = false
 	_hello.clear()
 	_hello_sent = false
-	_seq = 0
+	# 保留分配水位；清登记不等于允许旧 seq 在新代再次结算。
 	_received_seq.clear()
+	_match_request_results.clear()
 	_peers.clear()
 	room_files.clear()
 	_manifest_transfer.reset()
-	_catalog_transfer.fragments.reset()
 	catalogs.clear()
-	server_data.clear()
 	selection_modes.clear()
 	data_revision = 0
 	_data_confirmed.clear()
@@ -576,6 +688,7 @@ func close() -> void:
 	require_room_data = false
 	dedicated = false
 	server_room_id = ""
+	server_room_code = ""
 	server_rooms.clear()
 	server_info.clear()
 	_server_request.clear()
@@ -596,11 +709,14 @@ func close() -> void:
 	_peer_by_member.clear()
 	_join_endpoint.clear()
 	_resume_inflight = false
+	_request_reset_in_progress = false
 
 func _connected(id: int) -> void:
+	_restore_trace("native_connected", {"connection":id})
 	if _host: _received_seq.erase(id)
 
 func _disconnected(id: int) -> void:
+	_restore_trace("native_disconnected", {"connection":id,"member":int(_member_by_peer.get(id,0))})
 	if _restore_in_progress: _restore_cancelled = true
 	var connection:int = id
 	_catalog_transfer.fragments.cancel_peer(connection)
@@ -625,7 +741,30 @@ func _disconnected(id: int) -> void:
 		rejected.emit(error)
 		changed.emit()
 
+## 已通过客户端来源门的身份消息；协调器不反向依赖 Session。
+## 显式安装状态后才发送 ACK，最后发布；不使用动态属性反查或通用服务定位器。
+func _receive_client_identity(message:Dictionary) -> bool:
+	if not _identity_inbox.handles(message): return false
+	var state:Dictionary = {"authority_host":authority_host != null,"server_request":not _server_request.is_empty(),"identity_sent":_identity_sent,"authenticated":identity_authenticated,"profile":identity_profile,"lan_context":_lan_identity_context,"connection":transport.peer_id(),"data_revision":data_revision,"assets_installed":_assets.is_installed() if message.get("kind") == "identity" else false,"resume_token_length":RESUME_TOKEN_BYTES * 2}
+	var result:Dictionary = _identity_inbox.receive(message,state,player_identity)
+	if result.has("lan_context"): _lan_identity_context = result.lan_context
+	if result.has("authenticated"): identity_authenticated = result.authenticated
+	if result.has("admin"): identity_is_admin = result.admin
+	if result.has("request_floor"): _seq = maxi(_seq,result.request_floor)
+	if result.has("inheritance_ticket"): _inheritance_ticket = result.inheritance_ticket
+	if result.has("resume_ticket"):
+		_resume_ticket = result.resume_ticket
+		_resume_inflight = false
+	for intent in result.requests: request(intent.kind,intent.args)
+	if result.has("candidates"): inheritance_candidates_received.emit(result.candidates)
+	if result.has("inheritance_ticket"): inheritance_ticket_received.emit(_inheritance_ticket.member)
+	if result.get("changed",false): changed.emit()
+	return true
+
 func _receive(sender: int, message: Dictionary) -> void:
+	var kind = message.get("kind")
+	if typeof(kind) != TYPE_STRING: return
+	if _request_reset_in_progress: return
 	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return
 	var connection:int = sender
 	if _host and authority_host_mode in ["lan","p2p"]:
@@ -634,7 +773,7 @@ func _receive(sender: int, message: Dictionary) -> void:
 			return
 		if lan_gate.call(connection,message): return
 	if _host: sender = int(_member_by_peer.get(connection,connection))
-	if message.get("kind") in ["catalog_part", "server_data_catalog_part"]:
+	if message.get("kind") == "catalog_part" or (_host and message.get("kind") == "server_data_catalog_part"):
 		if _host:
 			if (connection != 1 and not _member_by_peer.has(connection)) or room.phase != "lobby" or not room.members.has(sender) or not room.members[sender].connected:
 				_catalog_transfer.fragments.cancel_peer(connection)
@@ -650,35 +789,18 @@ func _receive(sender: int, message: Dictionary) -> void:
 	if not _host:
 		if sender != 1:
 			return
-		if message.get("kind") == "lan_identity_challenge":
-			if authority_host != null or not _server_request.is_empty() or not _identity_sent or identity_authenticated or identity_profile.is_empty() or not _lan_identity_context.is_empty(): return
-			if not message.get("challenge") is PackedByteArray or message.challenge.size() != 32 or message.get("peer") != transport.peer_id() or not message.get("room") is String or message.room.is_empty() or not message.get("instance") is String or message.instance.is_empty(): return
-			_lan_identity_context = {"peer":message.peer,"room":message.room,"instance":message.instance}
-			var context:String = preload("res://scripts/net/identity/lan_identity_challenge.gd").context(identity_profile,message.room,message.instance,message.peer)
-			var proof:Dictionary = _lan_identity_context.duplicate()
-			proof.signature = player_identity.sign_challenge(message.challenge,context)
-			request("lan_identity_proof",proof)
+		if _server_data_inbox.handles(message):
+			var result:Dictionary = _server_data_inbox.receive(connection,message,view.get("owner") == peer_id() and view.get("phase") == "lobby",view.get("members",[]),_catalog_transfer,transport.max_packet_bytes,_request_generation)
+			if result.get("clear_error",false): error = ""
+			if not result.get("error","").is_empty():
+				error = result.error
+				rejected.emit(error)
+			if result.changed: changed.emit()
 			return
-		if message.get("kind") == "lan_identity_ready":
-			if _server_request.is_empty() and not _lan_identity_context.is_empty() and message.get("peer") == _lan_identity_context.peer and message.get("room") == _lan_identity_context.room and message.get("instance") == _lan_identity_context.instance and message.get("identity") == player_identity.fingerprint(identity_profile.public_key) and message.get("username") == identity_profile.username and message.get("nickname") == identity_profile.nickname:
-				identity_authenticated = true
-				changed.emit()
+		if message.get("kind") == "match_command_result":
+			_accept_match_command_result(message)
 			return
-		if message.get("kind") == "server_identity_challenge":
-			if not _server_request.is_empty() and _identity_sent and message.get("challenge") is PackedByteArray:
-				var context:String = JSON.stringify([identity_profile.public_key,identity_profile.username,identity_profile.nickname])
-				request("server_identity_proof",{"signature":player_identity.sign_challenge(message.challenge,context)})
-			return
-		if message.get("kind") == "server_identity_ready":
-			if not identity_profile.is_empty() and message.get("identity") == player_identity.fingerprint(identity_profile.public_key) and message.get("username") == identity_profile.username and message.get("nickname") == identity_profile.nickname:
-				identity_authenticated = true
-				changed.emit()
-			return
-		if message.get("kind") == "server_identity_permissions":
-			if identity_authenticated and message.get("admin") is bool:
-				identity_is_admin = message.admin
-				changed.emit()
-			return
+		if _receive_client_identity(message): return
 		if message.get("kind") == "server_admin_result":
 			if identity_authenticated and message.get("response") is Dictionary: server_admin_result_received.emit(message.response)
 			return
@@ -686,28 +808,11 @@ func _receive(sender: int, message: Dictionary) -> void:
 			if not _server_request.is_empty() and message.get("text") is String:
 				server_notice_received.emit(message.text)
 			return
-		if message.get("kind") == "inheritance_candidates":
-			var input = preload("res://scripts/net/identity/identity_inheritance_input.gd").new()
-			if message.get("model") is Dictionary and input.accept(message.model):
-				_seq = maxi(_seq,int(message.model.request_floor))
-				inheritance_candidates_received.emit(message.model.duplicate(true))
-			return
-		if message.get("kind") == "inheritance_ticket":
-			if message.get("member") is int and message.member > 0 and message.get("token") is String and preload("res://scripts/net/identity/player_registry.gd").valid_id(message.token):
-				_inheritance_ticket = {"member":message.member,"token":message.token}
-				inheritance_ticket_received.emit(message.member)
-			return
-		if message.get("kind") == "identity":
-			if message.get("member") is int and message.member > 1 and message.get("token") is String and message.token.length() == RESUME_TOKEN_BYTES * 2:
-				_resume_ticket = {"member":message.member,"token":message.token}
-				_resume_inflight = false
-				request("identity_ack",{"token":message.token})
-				if data_revision > 0 and message.get("data_revision") == data_revision and _assets.is_installed(): request("data_ack",{"revision":data_revision})
-				changed.emit()
-			return
+
 		if message.get("kind") == "server_attached" and not _server_request.is_empty() and _server_peer_id == 0:
 			if message.get("room") is String and message.get("peer_id") is int and message.peer_id > 1:
 				server_room_id = message.room
+				server_room_code = message.get("code", message.room) if message.get("code", message.room) is String else message.room
 				_server_peer_id = message.peer_id
 				changed.emit()
 			return
@@ -729,19 +834,6 @@ func _receive(sender: int, message: Dictionary) -> void:
 				error = _manifest_transfer.error
 				rejected.emit(error)
 			return
-		if message.get("kind") == "server_data_catalog":
-			if view.get("owner") == peer_id() and view.get("phase") == "lobby":
-				if _accept_server_catalog(message): changed.emit()
-				else:
-					if error.is_empty(): error = "服务端候选目录无效"
-					rejected.emit(error)
-			return
-		if message.get("kind") == "server_data_status":
-			var state = message.get("state")
-			if view.get("owner") == peer_id() and view.get("phase") == "lobby" and state is Dictionary and state.get("stage") in ["idle", "preparing", "ready", "error", "applied", "cancelled"] and state.get("request_id") is int and state.get("catalog_revision") is int and state.get("text") is String and state.get("report") is Dictionary and state.request_id >= int(server_data.get("status", {}).get("request_id", 0)):
-				server_data["status"] = state.duplicate(true)
-				changed.emit()
-			return
 		if message.get("kind") == "room_files":
 			if message.get("revision") is int and message.revision > data_revision and message.get("files") is Array:
 				if message.revision < _manifest_transfer.pending_revision: return
@@ -756,37 +848,13 @@ func _receive(sender: int, message: Dictionary) -> void:
 					error = validator.error
 					rejected.emit(error)
 			return
-		if message.get("kind") == "group_preview" and message.get("request_id") is int and message.get("result") is Dictionary:
-			group_preview_received.emit(message.request_id, message.result.duplicate(true))
+		if _match_inbox.receive(message):
 			return
-		if message.get("kind") == "match_bind" and message.get("observer") is int and not _match_bound:
-			_mirror.reset(message.observer)
-			_match_bound = true
-			return
-		if message.get("kind") == "match_reset":
-			_clear_match_views()
-			changed.emit()
-			return
-		if message.get("kind") == "match_view" and message.get("state") is Dictionary:
-			if _match_bound and message.get("pending") is Dictionary and message.get("actions") is Dictionary and _mirror.accept(message.state):
-				_pending_view = message.pending.duplicate(true)
-				_action_view = message.actions.duplicate(true)
-				changed.emit()
-			return
-		if message.get("kind") == "selection" and message.get("state") is Dictionary:
-			selection_view = message.state.duplicate(true)
-			changed.emit()
-			return
-		if message.get("kind") == "blob_error" and message.get("key") is String:
-			blobs.cancel_blob(sender, message.key)
-			error = "请求的文件不可用"
-			rejected.emit(error)
-			return
-		if message.get("kind") == "blob_chunk":
-			if message.get("key") is String and message.get("offset") is int and message.get("bytes") is PackedByteArray:
-				if not blobs.accept(sender, message.key, message.offset, message.bytes):
-					error = blobs.error
-					rejected.emit(error)
+		var blob_result: Dictionary = blobs.receive_client(sender, message)
+		if blob_result.handled:
+			if blob_result.has("error"):
+				error = blob_result.error
+				rejected.emit(error)
 			return
 		if message.get("kind") == "room" and message.get("state") is Dictionary:
 			var state: Dictionary = message.state
@@ -794,12 +862,18 @@ func _receive(sender: int, message: Dictionary) -> void:
 				return
 			if state.revision > int(view.get("revision", -1)):
 				view = state.duplicate(true)
-				if view.get("owner") != peer_id() or view.get("phase") != "lobby": server_data.clear()
+				if view.get("owner") != peer_id() or view.get("phase") != "lobby":
+					_server_data_inbox.reset(_request_generation)
+					_catalog_transfer.fragments.cancel_peer(1)
 				elif view.get("dedicated") == true and server_data.is_empty():
-					server_data["requested"] = true
+					_server_data_inbox.mark_requested()
 					request("server_data_catalog", {})
 				changed.emit()
 		elif message.get("kind") == "error" and message.get("reason") is String:
+			if message.get("seq") is int and _match_request_results.has(message.seq):
+				if not _consume_match_result(message.seq, false, message.reason): return
+				changed.emit()
+				return
 			error = message.reason
 			if _resume_inflight:
 				transport.close()
@@ -823,23 +897,69 @@ func _receive(sender: int, message: Dictionary) -> void:
 				rejected.emit(error)
 		return
 	if message.get("kind") != "join" and connection != 1 and not _member_by_peer.has(connection):
-		transport.send(connection,{"kind":"error","seq":_request_sequence(message),"reason":"连接已无房间操作权限"})
+		_reject_request(connection, sender, message, "连接已无房间操作权限")
 		return
 	if message.get("v") != 1 or not message.get("seq") is int or not message.get("args") is Dictionary or not message.get("kind") is String:
-		if connection == 1: _fail(sender,"协议字段无效", _request_sequence(message))
-		else: transport.send(connection,{"kind":"error","seq":_request_sequence(message),"reason":"协议字段无效"})
+		_reject_request(connection, sender, message, "协议字段无效")
 		return
 	if message.seq <= int(_received_seq.get(connection, 0)):
-		if connection == 1: _fail(sender,"重复或过期请求", _request_sequence(message))
-		else: transport.send(connection,{"kind":"error","seq":_request_sequence(message),"reason":"重复或过期请求"})
+		_reject_request(connection, sender, message, "重复或过期请求")
 		return
 	if message.kind != "join" and (not room.members.has(sender) or not room.members[sender].connected):
-		_fail(sender, "连接已无房间操作权限", _request_sequence(message))
+		_reject_request(connection, sender, message, "连接已无房间操作权限")
 		return
 	_received_seq[connection] = message.seq
 	var args: Dictionary = message.args
 	var ok := false
 	room.error = ""
+	# 全局授权顺序仍在上方；模块只收到已认证且在线的稳定成员编号。
+	if _host_room_inbox.handles(message.kind):
+		ok = _host_room_inbox.receive(room,sender,message.kind,args,member_data_ready(sender),require_room_data and (data_revision <= 0 or _rules_revision != data_revision),_selection_config,selection_modes,_masters,_servants,_host_room_selection_rules,configure_selection)
+		if not ok:
+			_fail(sender,room.error if not room.error.is_empty() else "请求无效",_request_sequence(message))
+			return
+		if message.kind == "transfer" and room.phase == "playing": _publish_match()
+		if message.kind == "kick":
+			_resume_hashes.erase(args.target)
+			_resume_previous.erase(args.target)
+			_member_identities.erase(args.target)
+			# 已离线席位没有活连接；不能把稳定 member 猜成可断开的 transport peer。
+			if _peer_by_member.has(args.target): transport.disconnect_peer(int(_peer_by_member[args.target]))
+		_publish()
+		return
+	if _host_content_inbox.handles(message.kind):
+		var content:Dictionary = _host_content_inbox.receive(room,sender,message.kind,args,var_to_bytes(message).size(),_catalog_transfer.max_message_bytes,catalogs,_data_confirmed,data_revision,_queue_blob)
+		if not content.ok:
+			_fail(sender,content.reason,_request_sequence(message))
+			return
+		if content.get("catalog_changed",false): catalogs_changed.emit()
+		if content.has("blob_error"): _send(sender,{"kind":"blob_error","key":content.blob_error})
+		if content.get("publish",false): _publish()
+		return
+	if _host_guard_inbox.handles(message.kind):
+		# 来源、稳定 member、在线与 seq 已通过；管理态及当前 owner 仍归 Session。
+		if management_paused:
+			_fail(sender,"管理员已暂停对局",_request_sequence(message))
+			return
+		if sender != room.owner:
+			_fail(sender,"只有房主可以继续暂停的规则执行",_request_sequence(message))
+			return
+		var guard:Dictionary = _host_guard_inbox.receive(room.phase,sender,message.kind,args,match_authority.continue_runtime_guard,match_authority.get.bind("error"))
+		if not guard.ok:
+			_fail(sender,guard.reason,_request_sequence(message))
+			return
+		if guard.lobby:
+			room.return_to_lobby(sender)
+			selection = preload("res://scripts/net/authority/selection_authority.gd").new()
+			_masters = GameStart.get_masters_can_use()
+			_servants = GameStart.get_servants_can_use()
+			_clear_match_views()
+			for id in _peers:
+				if room.members.has(id): _send(id,{"kind":"match_reset"},1)
+			_publish()
+		else:
+			_publish_match()
+		return
 	match message.kind:
 		"identity_candidates", "identity_inherit":
 			var trusted = message.get("gateway_inheritance",{})
@@ -850,10 +970,11 @@ func _receive(sender: int, message: Dictionary) -> void:
 			if not dedicated or not trusted is Dictionary or not model.authorized_owner(state,sender,trusted):
 				_fail(sender,"只有当前认证房主可以管理身份继承", _request_sequence(message))
 				return
+			var decoded:Dictionary = _host_identity_request_codec.validate(message.kind,args)
+			if not decoded.ok:
+				_fail(sender,decoded.reason, _request_sequence(message))
+				return
 			if message.kind == "identity_candidates":
-				if not args.is_empty():
-					_fail(sender,"候选查询不接受身份参数", _request_sequence(message))
-					return
 				var eligible:Dictionary = {}
 				for id in room.members:
 					if id != sender and room.members[id].connected and room.members[id].spectator and not state.bindings.values().has(id): eligible[id] = room.members[id]
@@ -868,10 +989,11 @@ func _receive(sender: int, message: Dictionary) -> void:
 			if sender != room.owner or room.phase != "lobby" or not args.get("password") is String:
 				_fail(sender,"只有房主能在大厅设置房间密码", _request_sequence(message))
 				return
-			var previous:Dictionary = room_password.verifier.duplicate(true)
-			if not room_password.set_password(args.password) or (not recovery_state_path.is_empty() and not _persist_recovery_state()):
-				room_password.verifier = previous
-				_fail(sender,"房间密码保存失败，原设置未改变", _request_sequence(message))
+			var persist_password:Callable = func() -> bool: return true
+			if not recovery_state_path.is_empty(): persist_password = _persist_recovery_state
+			var password_result:Dictionary = _host_room_password_request.receive(room_password,args.password,persist_password)
+			if not password_result.ok:
+				_fail(sender,password_result.reason, _request_sequence(message))
 				return
 			room.revision += 1
 			ok = true
@@ -879,51 +1001,42 @@ func _receive(sender: int, message: Dictionary) -> void:
 			if not dedicated or sender != room.owner or room.phase != "lobby" or data_management_requested.get_connections().is_empty():
 				_fail(sender, "无权管理服务端数据或数据已冻结", _request_sequence(message))
 				return
-			data_management_requested.emit(sender, message.kind, args)
+			if not _host_content_inbox.receive_management(sender,message.kind,args,data_management_requested.emit):
+				_fail(sender, "无权管理服务端数据或数据已冻结", _request_sequence(message))
 			return
 		"identity_ack":
-			if args.get("token") is String and args.token.sha256_text() == _resume_hashes.get(sender,"") and _resume_previous.has(sender):
-				var previous:String = _resume_previous[sender]
-				_resume_previous.erase(sender)
-				if not recovery_state_path.is_empty() and not _persist_recovery_state():
-					_resume_previous[sender] = previous
-					_fail(sender,"恢复凭据确认保存失败，原凭据状态未改变", _request_sequence(message))
+			var persist_ack:Callable = func() -> bool: return true
+			if not recovery_state_path.is_empty(): persist_ack = _persist_recovery_state
+			var transaction = preload("res://scripts/net/identity/resume_ack_transaction.gd")
+			var ack_status = transaction.acknowledge(sender,args.get("token"),_resume_hashes.get(sender,""),_resume_previous,persist_ack)
+			if ack_status == transaction.Status.PERSIST_FAILED:
+				_fail(sender,"恢复凭据确认保存失败，原凭据状态未改变", _request_sequence(message))
 			return
-		"catalog":
-			if room.phase != "lobby" or not args.get("entries") is Array:
-				_fail(sender, "只能在大厅上报条目清单", _request_sequence(message))
-				return
-			if var_to_bytes(message).size() > _catalog_transfer.max_message_bytes:
-				_fail(sender, "条目清单超过累计消息预算", _request_sequence(message))
-				return
-			var catalog = preload("res://scripts/net/content/data_catalog.gd").new()
-			var accepted = catalog.accept(args.entries, str(sender))
-			if accepted == null:
-				_fail(sender, "\n".join(catalog.errors), _request_sequence(message))
-				return
-			catalogs[sender] = accepted
-			catalogs_changed.emit()
-			return
-		"data_ack":
-			# 旧清单的可靠消息可能在恢复发布新修订后到达；不确认新数据，也不污染身份状态。
-			if args.get("revision") is int and args.revision >= 0 and args.revision < data_revision: return
-			if data_revision > 0 and args.get("revision") is int and args.revision == data_revision:
-				_data_confirmed[sender] = data_revision
-				room.revision += 1
-				ok = true
+
 		"preview_group":
-			if room.phase == "playing" and args.get("request_id") is int and args.get("view_seq") is int and args.get("cards") is Array and args.get("hidden") is Array:
-				var result: Dictionary = match_authority.preview_group(sender, args.view_seq, args.cards, args.hidden)
-				if sender == 1:
-					group_preview_received.emit(args.request_id, result)
-				else:
-					_send(sender, {"kind": "group_preview", "request_id": args.request_id, "result": result}, 1)
-			else:
+			if room.phase != "playing":
 				_fail(sender, "组合预览请求无效", _request_sequence(message))
+				return
+			var preview_authority = match_authority
+			var preview:Callable = func(sequence:int, cards:Array, hidden:Array) -> Dictionary:
+				return preview_authority.preview_group(sender,sequence,cards,hidden)
+			var preview_result:Dictionary = _host_match_request_inbox.receive_preview(args,preview)
+			if not preview_result.ok:
+				_fail(sender, preview_result.reason, _request_sequence(message))
+				return
+			if sender == 1:
+				group_preview_received.emit(preview_result.request_id, preview_result.result)
+			else:
+				_send(sender, {"kind": "group_preview", "request_id": preview_result.request_id, "result": preview_result.result}, 1)
 			return
 		"begin_match":
 			if sender == room.owner and room.phase == "selecting" and data_ready():
-				ok = _begin_selected_match()
+				# 只封装原 bool 入口；原失败分支继续按原时点读取 authority.error。
+				var begin_selected:Callable = _begin_selected_match
+				var begin:Callable = func() -> Dictionary:
+					return {"ok":begin_selected.call()}
+				var begin_request:Dictionary = _host_match_request_inbox.receive_begin_match(args,begin)
+				ok = begin_request.ok and begin_request.result.ok
 				if ok:
 					room.phase = "playing"
 					room.revision += 1
@@ -934,49 +1047,80 @@ func _receive(sender: int, message: Dictionary) -> void:
 					_fail(sender, match_authority.error if not match_authority.error.is_empty() else "权威对局启动失败", _request_sequence(message))
 					return
 		"match_command":
+			# 本人确认不推进行动，允许在线真人在另一真人掉线时明确确认自己。
+			var self_confirmation: bool = args.get("command") == "confirm_broadcast"
 			if management_paused:
-				_fail(sender,"管理员已暂停对局", _request_sequence(message))
+				_reject_request(connection, sender, message, "管理员已暂停对局")
 				return
-			if not _disconnected_players().is_empty():
-				_fail(sender, "有玩家掉线，对局已暂停", _request_sequence(message))
+			if not self_confirmation and not _disconnected_players().is_empty():
+				_reject_request(connection, sender, message, "有玩家掉线，对局已暂停")
 				return
-			if room.phase == "playing" and args.get("view_seq") is int and args.get("command") is String and args.get("params") is Dictionary:
-				ok = match_authority.submit(sender, args.view_seq, args.command, args.params)
-				# 引擎拒绝也可能清除等待或续行；失败后同样发布实际状态。
-				_publish_match()
-				if not ok:
-					_fail(sender, match_authority.error if not match_authority.error.is_empty() else "引擎拒绝该对局操作", _request_sequence(message))
-					return
-		"guard_continue", "guard_skip", "guard_restart", "guard_lobby":
+			if room.phase != "playing":
+				_reject_request(connection, sender, message, "请求无效")
+				return
+			# 请求作用域能力只捕获权威对象和可信成员；收件器不反查 Session。
+			var request_authority = match_authority
+			var submit:Callable = func(sequence:int, command:String, params:Dictionary) -> bool:
+				return request_authority.submit(sender,sequence,command,params)
+			var command_result:Dictionary = _host_match_request_inbox.receive(message.kind,args,submit,request_authority.get.bind("error"))
+			ok = command_result.ok
+			# 引擎拒绝也可能清除等待或续行；失败后同样发布实际状态。
+			if command_result.dispatched: _publish_match()
+			if not ok:
+				_reject_request(connection, sender, message, command_result.reason)
+				return
+			_deliver_match_result(connection, message.seq, true, "")
+		"broadcast_confirm_absent":
+			var management: Dictionary = _confirm_absent_broadcast(connection, sender, args)
+			if not management.ok:
+				_reject_request(connection, sender, message, management.reason)
+				return
+			_publish_match()
+			_deliver_match_result(connection, message.seq, true, "")
+			return
+
+		"match_finished_lobby":
+			var finish_generation: int = _request_generation
 			if management_paused:
-				_fail(sender,"管理员已暂停对局", _request_sequence(message))
+				_reject_request(connection, sender, message, "管理员已暂停对局")
 				return
-			if sender != room.owner or room.phase != "playing" or args.size() != 1 or not args.get("view_seq") is int:
-				_fail(sender, "只有房主可以继续暂停的规则执行", _request_sequence(message))
+			if sender != room.owner or room.phase != "playing":
+				_reject_request(connection, sender, message, "只有在线房主能以有效终局视图返回大厅")
 				return
-			if not match_authority.continue_runtime_guard(sender, args.view_seq, message.kind):
-				_fail(sender, match_authority.error, _request_sequence(message))
+			var finish_authority = match_authority
+			var finish:Callable = func(sequence:int) -> Dictionary:
+				return finish_authority.finish_match_to_lobby(sender,sequence)
+			var finish_request:Dictionary = _host_match_request_inbox.receive_match_finished_lobby(args,finish)
+			if not finish_request.ok:
+				_reject_request(connection, sender, message, finish_request.reason)
 				return
-			if message.kind == "guard_lobby":
-				room.return_to_lobby(sender)
-				selection = preload("res://scripts/net/authority/selection_authority.gd").new()
-				_masters = GameStart.get_masters_can_use()
-				_servants = GameStart.get_servants_can_use()
-				_clear_match_views()
-				for id in _peers:
-					if room.members.has(id): _send(id, {"kind":"match_reset"}, 1)
-				_publish()
-			else:
-				_publish_match()
+			var finished:Dictionary = finish_request.result
+			if finish_generation != _request_generation or _request_reset_in_progress: return
+			if not finished.ok:
+				_reject_request(connection, sender, message, finished.reason)
+				return
+			# 无 await；以上认证/在线/owner/playing 预检须与 room 的迁移条件一致。
+			if not room.return_to_lobby(sender):
+				_restore_failed_closed = true
+				_reject_request(connection, sender, message, "终局规则已清理，但大厅迁移失败；权威已停止，请联系管理员：" + room.error)
+				return
+			selection = preload("res://scripts/net/authority/selection_authority.gd").new()
+			_masters = GameStart.get_masters_can_use()
+			_servants = GameStart.get_servants_can_use()
+			_clear_match_views()
+			# 清镜像通知可能同步 close/reconnect；不得结算已退休请求。
+			if finish_generation != _request_generation or _request_reset_in_progress: return
+			# 只有权威收尾及 room 迁移真实成功，才能交付本请求的 accepted。
+			# match_reset/大厅与回执可以跨通道乱序；消费方仍须同时等完成态。
+			_deliver_match_result(connection, message.seq, true, "")
+			if finish_generation != _request_generation or _request_reset_in_progress: return
+			for id in _peers:
+				if room.members.has(id): _send(id, {"kind":"match_reset"}, 1)
+			_publish()
 			return
-		"blob_request":
-			if args.get("key") is String and args.get("offset") is int:
-				ok = _queue_blob(sender, args.key, args.offset)
-				if not ok:
-					_send(sender, {"kind": "blob_error", "key": args.key})
-			return
+
 		"join":
-			if args.get("name") is String and args.get("spectator") is bool:
+			if _host_identity_request_codec.validate(message.kind,args).ok:
 				ok = _join_identity(connection,args)
 				if not ok:
 					transport.send(connection,{"kind":"error","seq":_request_sequence(message),"reason":room.error})
@@ -992,35 +1136,26 @@ func _receive(sender: int, message: Dictionary) -> void:
 					_publish_match()
 				elif ok and room.phase == "selecting":
 					_publish_selection()
-		"ready":
-			if args.get("ready") is bool:
-				ok = room.set_ready(sender, args.ready)
-		"settings":
-			if args.get("changes") is Dictionary:
-				ok = _set_room_settings(sender, args.changes)
 		"start":
-			if sender == room.owner and room.can_start() and data_ready() and _prepare_selection():
-				ok = room.start(sender)
-				if ok:
-					_publish_selection()
+			var start_room = room
+			ok = _host_room_inbox.receive_start(
+				sender,
+				func(actor:int) -> bool: return actor == start_room.owner,
+				start_room.can_start,
+				data_ready,
+				_prepare_selection,
+				start_room.start
+			)
+			if ok:
+				_publish_selection()
 		"choose_master":
-			if room.phase == "selecting" and args.get("seat") is int and args.get("name") is String:
-				ok = selection.choose(sender, args.seat, args.name)
+			if room.phase == "selecting":
+				ok = _host_room_inbox.receive_choice(sender,args,selection.choose)
 				if ok:
 					_publish_selection()
-		"transfer":
-			if args.get("target") is int:
-				ok = room.transfer_owner(sender, args.target)
-				if ok and room.phase == "playing":
-					_publish_match()
-		"kick":
-			if args.get("target") is int:
-				ok = room.kick(sender, args.target)
-				if ok:
-					_resume_hashes.erase(args.target)
-					_resume_previous.erase(args.target)
-					_member_identities.erase(args.target)
-					transport.disconnect_peer(int(_peer_by_member.get(args.target,args.target)))
+				else:
+					room.error = selection.error
+
 	if not ok:
 		_fail(sender, room.error if not room.error.is_empty() else "请求无效", _request_sequence(message))
 		return
@@ -1039,6 +1174,7 @@ func _publish(persist_recovery:bool = true) -> void:
 	var members: Array = []
 	for id in state.members:
 		var member: Dictionary = state.members[id].duplicate(true)
+		member.data_synced = member_data_ready(id)
 		member.id = id
 		members.append(member)
 	state.members = members
@@ -1063,43 +1199,6 @@ func submit_catalog(entries: Array) -> bool:
 		error = "条目清单超过累计消息预算"
 		return false
 	return request("catalog", {"entries": accepted}) == OK
-
-func _accept_server_catalog(message:Dictionary) -> bool:
-	error = ""
-	if var_to_bytes(message).size() > _catalog_transfer.max_message_bytes:
-		error = "候选目录超过累计消息预算"
-		return false
-	if not message.get("catalog_revision") is int or message.catalog_revision <= 0 or not message.get("entries") is Array or not message.get("selected") is Array:
-		return false
-	var grouped:Dictionary = {}
-	for entry in message.entries:
-		if not entry is Dictionary or not entry.get("provider") is String: return false
-		var provider:String = entry.provider
-		if provider != "server" and not view.get("members", []).any(func(member): return member is Dictionary and str(member.get("id")) == provider and member.get("connected") == true): return false
-		if not grouped.has(provider): grouped[provider] = []
-		grouped[provider].append(entry)
-	var entries:Array = []
-	var catalog = preload("res://scripts/net/content/data_catalog.gd").new()
-	for provider in grouped:
-		var accepted = catalog.accept(grouped[provider], provider)
-		if accepted == null:
-			error = "\n".join(catalog.errors)
-			return false
-		entries.append_array(accepted)
-	var identities:Dictionary = {}
-	for reference in message.selected:
-		if not reference is Dictionary or reference.size() != 2 or not reference.get("provider") is String or not reference.get("key") is String: return false
-		var identity:String = reference.provider + ":" + reference.key
-		if identities.has(identity): return false
-		identities[identity] = true
-	if not message.get("modes") is Array: return false
-	for mode in message.modes:
-		if not mode is Dictionary or not mode.get("id") is String or not mode.get("name") is String: return false
-	server_data["catalog_revision"] = message.catalog_revision
-	server_data["modes"] = message.modes.duplicate(true)
-	server_data["entries"] = entries
-	server_data["selected"] = message.selected.duplicate(true)
-	return true
 
 ## 主动分享时读取本机路径；远端仅能请求这份显式登记的哈希字节。
 func share_catalog(directory: String, entries: Array) -> bool:
@@ -1140,6 +1239,17 @@ func download_provider_blob(provider: int, key: String, size: int) -> bool:
 		blobs.cancel_blob(provider, key)
 		return false
 	return true
+
+## 大厅组合根：准备流程只取得现有内容能力，不取得整个 session。
+func create_data_preparation() -> RefCounted:
+	return preload("res://scripts/net/validation/room_data_preparation.gd").new(
+		_data_preparation_settings, _data_preparation_humans, blobs, publish_blob, download_provider_blob)
+
+func _data_preparation_settings() -> Dictionary:
+	return room.settings
+
+func _data_preparation_humans() -> int:
+	return room._humans()
 
 func set_room_files(files: Array) -> bool:
 	if not _host or room.phase not in ["lobby", "restoring"]:
@@ -1195,6 +1305,10 @@ func _recovery_barrier_ready() -> bool:
 		return false
 	return preload("res://scripts/net/session/recovery_seat_bindings.gd").ready(validation, room.members, _data_confirmed, data_revision)
 
+func member_data_ready(member:int) -> bool:
+	if require_room_data and (data_revision <= 0 or _rules_revision != data_revision): return false
+	return data_revision == 0 or _data_confirmed.get(member, 0) == data_revision
+
 func data_ready() -> bool:
 	if require_room_data and (data_revision == 0 or _rules_revision != data_revision):
 		return false
@@ -1231,8 +1345,47 @@ func _request_sequence(message: Dictionary) -> int:
 	var sequence = message.get("seq")
 	return sequence if sequence is int and sequence > 0 else 0
 
+## auth 来源是 transport 的连接编号，不接受消息自报 actor/member。
+## 独立版本只描述这类结果，不改变请求、快照或恢复协议版本。
+func _accept_match_command_result(message: Dictionary) -> void:
+	if message.size() != 5 or message.get("kind") != "match_command_result": return
+	if not message.get("result_version") is int or message.result_version != MATCH_COMMAND_RESULT_VERSION: return
+	if not message.get("seq") is int or message.seq <= 0 or not message.get("ok") is bool or not message.get("reason") is String: return
+	if (message.ok and not message.reason.is_empty()) or (not message.ok and message.reason.is_empty()): return
+	_consume_match_result(message.seq, message.ok, message.reason)
+
+func _consume_match_result(sequence: int, ok: bool, reason: String) -> bool:
+	if not _match_request_results.has(sequence) or _match_request_results[sequence]: return false
+	var generation: int = _request_generation
+	_match_request_results[sequence] = true # 发 signal 前标记，防止重入消费。
+	if not ok: error = reason
+	request_completed.emit(sequence, ok, reason)
+	if not ok and generation == _request_generation and not _request_reset_in_progress:
+		request_rejected.emit(sequence, reason)
+		if generation != _request_generation or _request_reset_in_progress: return true
+		rejected.emit(reason)
+	return true
+
+func _deliver_match_result(connection: int, sequence: int, ok: bool, reason: String) -> void:
+	if sequence <= 0: return
+	var receipt: Dictionary = {"kind":"match_command_result", "result_version":MATCH_COMMAND_RESULT_VERSION, "seq":sequence, "ok":ok, "reason":reason}
+	if connection == 1: _accept_match_command_result(receipt)
+	else: transport.send(connection, receipt)
+
+## 直接回复真实连接：被踢/未认证连接不能经 member 路由收到别人的结果。
+func _reject_request(connection: int, sender: int, message: Dictionary, reason: String) -> void:
+	var sequence: int = _request_sequence(message)
+	if message.get("kind") in MATCH_RECEIPT_REQUEST_KINDS:
+		_deliver_match_result(connection, sequence, false, reason)
+		if connection == 1: return # 完成入口已兼容发出 request_rejected。
+	if connection == 1: _fail(sender, reason, sequence)
+	else: transport.send(connection, {"kind":"error", "seq":sequence, "reason":reason})
+
 func _fail(sender: int, reason: String, sequence: int = 0) -> void:
 	if sender == 1:
+		if _match_request_results.has(sequence):
+			_consume_match_result(sequence, false, reason)
+			return
 		error = reason
 		if sequence > 0: request_rejected.emit(sequence, reason)
 		rejected.emit(reason)
@@ -1352,28 +1505,23 @@ func _prepare_rule_data(task, config:Dictionary) -> Dictionary:
 	if not assets.install(task.approved_files, directory, blobs.cache.max_file_bytes):
 		error = assets.error
 		return {}
-	var previous_root:String = LoadHelper.session_data_dir
-	var previous_cache:String = LoadGame.stored_jsons_path
-	LoadHelper.session_data_dir = directory
-	LoadGame.stored_jsons_path = task.directory.path_join("stored_jsons.dat")
+	var previous_environment:Dictionary = ContentEnvironmentScope.install(directory, task.directory.path_join("stored_jsons.dat"))
 	GameStart.end_session()
 	var masters: Array = GameStart.get_masters_can_use()
 	var servants: Array = GameStart.get_servants_can_use()
 	var candidate_room = _copy_room()
 	if not candidate_room.configure_rules({"capacity": rules.capacity(masters, servants, config)}):
 		error = candidate_room.error
-		LoadHelper.session_data_dir = previous_root
-		LoadGame.stored_jsons_path = previous_cache
+		ContentEnvironmentScope.restore(previous_environment)
 		GameStart.end_session()
 		_masters = GameStart.get_masters_can_use()
 		_servants = GameStart.get_servants_can_use()
 		return {}
-	return {"room":candidate_room, "assets":assets, "masters":masters, "servants":servants, "config":config.duplicate(true), "previous_root":previous_root, "previous_cache":previous_cache}
+	return {"room":candidate_room, "assets":assets, "masters":masters, "servants":servants, "config":config.duplicate(true), "previous_environment":previous_environment}
 
 func _commit_rule_data(candidate:Dictionary) -> void:
 	if not _room_rules_active:
-		_previous_data_root = candidate.previous_root
-		_previous_cache_path = candidate.previous_cache
+		_previous_content_environment = candidate.previous_environment
 		_room_rules_active = true
 	room.settings = candidate.room.settings
 	room.members = candidate.room.members
@@ -1387,9 +1535,9 @@ func _commit_rule_data(candidate:Dictionary) -> void:
 func _restore_room_rules() -> void:
 	if not _room_rules_active:
 		return
-	LoadHelper.session_data_dir = _previous_data_root
-	LoadGame.stored_jsons_path = _previous_cache_path
+	ContentEnvironmentScope.restore(_previous_content_environment)
 	GameStart.end_session()
+	_previous_content_environment = {}
 	_room_rules_active = false
 	_rules_revision = 0
 
@@ -1424,29 +1572,11 @@ func _selection_rules(config:Dictionary):
 		return null
 	return rules
 
-func _set_room_settings(actor:int, changes:Dictionary) -> bool:
-	if not changes.has("selection_mode") or changes.selection_mode == room.settings.selection_mode or _selection_config.is_empty():
-		return room.set_settings(actor, changes)
-	var candidate = _copy_room()
-	if not candidate.set_settings(actor, changes):
-		room.error = candidate.error
-		return false
-	var configs:Array = selection_modes.filter(func(config): return config is Dictionary and config.get("id") == changes.selection_mode)
-	if configs.size() != 1:
-		room.error = "选人模式未声明或声明重复"
-		return false
-	var rules = _selection_rules(configs[0])
-	if rules == null:
-		room.error = error
-		return false
-	if not candidate.configure_rules({"capacity":rules.capacity(_masters, _servants, configs[0])}):
-		room.error = candidate.error
-		return false
-	if not configure_selection(configs[0], _masters, _servants): return false
-	room.settings = candidate.settings
-	room.members = candidate.members
-	room.revision = candidate.revision
-	return true
+## 具体选人规则能力适配；错误投影保留旧 settings 路径，不存储 Callable。
+func _host_room_selection_rules(config:Dictionary):
+	var rules = _selection_rules(config)
+	if rules == null: room.error = error
+	return rules
 
 func _prepare_selection() -> bool:
 	if _selection_config.is_empty():
@@ -1456,6 +1586,10 @@ func _prepare_selection() -> bool:
 	if not script is Script or not script.can_instantiate():
 		return false
 	var seats:Dictionary = _room_seats()
+	# 与本地选人同一可信边界：任何选主（含 setup 内 AI 选主）前声明随机流；已声明则保持原流。
+	if not GameStart.declare_local_random_stream():
+		room.error = "无法声明本局随机流"
+		return false
 	if not selection.setup(script.new(), seats, _masters, _servants, _selection_config):
 		room.error = selection.error
 		return false
@@ -1581,7 +1715,9 @@ func _persist_recovery_state() -> bool:
 	var temporary:String = recovery_state_path + ".%d.tmp" % OS.get_process_id()
 	var paths = preload("res://scripts/net/server/recovery_path_safety.gd")
 	var directory:String = recovery_state_path.get_base_dir()
-	if not paths.checked(directory, recovery_state_path, true) or not paths.checked(directory, temporary, true): return false
+	if not paths.checked(directory, recovery_state_path, true) or not paths.checked(directory, temporary, true):
+		_report_recovery_save_failure("path")
+		return false
 	var snapshot:Dictionary = room.snapshot()
 	if snapshot.settings.has("runtime_guard"):
 		snapshot.settings.runtime_guard = preload("res://scripts/match/rule_budget.gd").encode_json_config(snapshot.settings.runtime_guard)
@@ -1589,46 +1725,83 @@ func _persist_recovery_state() -> bool:
 	var seat_kinds:Dictionary = _recovery_seat_kinds.duplicate()
 	if match_authority.started:
 		bindings = match_authority.controllers.duplicate()
-		if match_authority.recorder == null or not match_authority.recorder.initial.get("seat_kinds") is Dictionary: return false
+		if match_authority.recorder == null or not match_authority.recorder.initial.get("seat_kinds") is Dictionary:
+			_report_recovery_save_failure("seat")
+			return false
 		seat_kinds = match_authority.recorder.initial.seat_kinds.duplicate()
 	# 只保存存档显式类型；用同一 JSON 解码契约校验，失败不打开或覆盖恢复文件。
 	var seat_state:Dictionary = JSON.parse_string(JSON.stringify({"room":snapshot, "bindings":bindings, "seat_kinds":seat_kinds}))
 	var decoded_seats:Dictionary = preload("res://scripts/net/session/recovery_seat_json.gd").decode(seat_state)
 	if not decoded_seats.ok:
 		error = decoded_seats.error
+		_report_recovery_save_failure("seat")
 		return false
 	var approved:Dictionary = decode_approved_data_snapshot({"version":APPROVED_DATA_SNAPSHOT_VERSION, "revision":data_revision, "files":room_files.duplicate(true)})
 	if not approved.ok or (snapshot.phase in ["playing", "restoring"] and approved.snapshot.files.is_empty()):
 		error = "恢复状态缺少有效已采用数据快照"
+		_report_recovery_save_failure("snapshot")
 		return false
 	if authority_host_mode in ["lan","p2p"] and match_authority.started and match_authority.recorder != null:
 		var recorder = match_authority.recorder
-		if recorder == null or recorder.journal._file == null: return false
+		if recorder == null or recorder.journal._file == null:
+			_report_recovery_save_failure("snapshot")
+			return false
 		var archive:String = recorder.journal._file.get_path_absolute().get_base_dir()
 		var identity_path:String = archive.path_join("restore-identity.json")
-		if not paths.checked(archive_root,identity_path,true) or not paths.checked(archive_root,identity_path+".tmp",true): return false
+		if not paths.checked(archive_root,identity_path,true) or not paths.checked(archive_root,identity_path+".tmp",true):
+			_report_recovery_save_failure("path")
+			return false
 		if not FileAccess.file_exists(identity_path):
 			var identity_state:Dictionary = {"room":snapshot,"bindings":bindings,"seat_kinds":seat_kinds,"identity_binding_required":true,"member_identities":_member_identities.duplicate(),"resume_hashes":_resume_hashes.duplicate(),"resume_previous":_resume_previous.duplicate(),"inheritance_sequences":_inheritance_sequences.duplicate(),"inheritance_audit":_inheritance_audit.duplicate(true),"approved_data_snapshot":approved.snapshot}
-			if preload("res://scripts/net/server/server_console_channel.gd").write_json(identity_path,identity_state) != OK: return false
+			var identity_error:Error = preload("res://scripts/net/server/server_console_channel.gd").write_json(identity_path,identity_state)
+			if identity_error != OK:
+				_report_recovery_save_failure("write", null, identity_error)
+				return false
 	var file:=FileAccess.open(temporary, FileAccess.WRITE)
-	if file == null: return false
+	if file == null:
+		var open_error:Error = FileAccess.get_open_error()
+		_report_recovery_save_failure("write", null, open_error)
+		return false
 	var encoded:PackedByteArray = JSON.stringify({"recovery_schema_version":RECOVERY_SCHEMA_VERSION, "approved_data_snapshot":approved.snapshot, "room":snapshot, "room_password":room_password.verifier.duplicate(true), "management_paused":management_paused, "data_revision":data_revision, "resume_hashes":_resume_hashes.duplicate(), "resume_previous":_resume_previous.duplicate(), "bindings":bindings, "seat_kinds":seat_kinds, "identity_binding_required":_identity_binding_required, "member_identities":_member_identities.duplicate(), "inheritance_sequences":_inheritance_sequences.duplicate(), "inheritance_audit":_inheritance_audit.duplicate(true)}).to_utf8_buffer()
 	file.store_buffer(encoded)
 	file.flush()
 	var result:Error = file.get_error()
 	file.close()
 	var committed:bool = false
-	if result == OK and paths.checked(directory, temporary) and paths.checked(directory, recovery_state_path, true) and preload("res://scripts/io/validated_file_content.gd").matches_bytes(temporary, encoded):
+	# 拆分只捕获原短路的首个失败；不重复检查、不推断系统错误。
+	if result != OK:
+		_report_recovery_save_failure("write", null, result)
+	elif not paths.checked(directory, temporary):
+		_report_recovery_save_failure("path")
+	elif not paths.checked(directory, recovery_state_path, true):
+		_report_recovery_save_failure("path")
+	elif not preload("res://scripts/io/validated_file_content.gd").matches_bytes(temporary, encoded):
+		_report_recovery_save_failure("hash")
+	else:
 		if FileAccess.file_exists(recovery_state_path):
-			committed = preload("res://scripts/io/atomic_file_replace.gd").replace_validated_file(temporary, recovery_state_path, encoded.size()).get("ok", false) == true
-		elif not DirAccess.dir_exists_absolute(recovery_state_path) and DirAccess.rename_absolute(temporary, recovery_state_path) == OK:
-			committed = true
+			var native_result:Dictionary = preload("res://scripts/io/atomic_file_replace.gd").replace_validated_file(temporary, recovery_state_path, encoded.size())
+			committed = native_result.get("ok", false) == true
+			if not committed: _report_recovery_save_failure("native_commit", native_result)
+		elif not DirAccess.dir_exists_absolute(recovery_state_path):
+			var rename_error:Error = DirAccess.rename_absolute(temporary, recovery_state_path)
+			committed = rename_error == OK
+			if not committed: _report_recovery_save_failure("initial_commit", null, rename_error)
+		else:
+			_report_recovery_save_failure("initial_commit")
 	if committed:
 		_recovery_bindings = decoded_seats.bindings.duplicate()
 		_recovery_seat_kinds = decoded_seats.seat_kinds.duplicate()
 		return true
 	if paths.checked(directory, temporary): DirAccess.remove_absolute(temporary)
 	return false
+
+## 本机同步失败事件，无 last-error 状态，不提供跨 request/process-instance 身份。
+## 输入只交纯投影器；不记录路径、payload、自由文本或任何恢复身份。
+func _report_recovery_save_failure(stage:String, result:Variant = null, godot_error:Variant = null) -> void:
+	var diagnostic:Dictionary = preload("res://scripts/net/server/recovery_save_diagnostic.gd").project(stage, result, godot_error)
+	if diagnostic.is_empty(): return
+	diagnostic["pid"] = OS.get_process_id()
+	print("RECOVERY_SAVE_DIAGNOSTIC ", JSON.stringify(diagnostic))
 
 ## 崩溃自动恢复的许可来自当前 worker 身份 IPC 活连接账本，不来自旧 connected 标志。
 func authenticated_crash_recovery_ready() -> bool:
@@ -1708,10 +1881,15 @@ func restore_local_match(source:String) -> bool:
 	if not preload("res://scripts/net/validation/room_data_validator.gd").new().validate(fixed_root, approved_files):
 		error = "已采用固定数据副本校验失败"
 		return false
-	var previous_root:String = LoadHelper.session_data_dir
-	var previous_cache:String = LoadGame.stored_jsons_path
+	# 固定数据已校验；原值安装只取得事务入口 token，不改变路径权限。
+	var previous_environment:Dictionary = ContentEnvironmentScope.install(LoadHelper.session_data_dir, LoadGame.stored_jsons_path)
 	var original_room = room
 	var original_snapshot:Dictionary = room.snapshot().duplicate(true)
+	_restore_trace_id += 1
+	_restore_trace_snapshot = original_snapshot.duplicate(true)
+	_restore_trace_poll = 0
+	_restore_checkpoint_reason = ""
+	_restore_trace("enter")
 	var target:String = new_archive_folder()
 	var marker:String = target + ".restore-pending"
 	if FileAccess.file_exists(marker) or DirAccess.dir_exists_absolute(marker) or FileAccess.file_exists(target) or DirAccess.dir_exists_absolute(target):
@@ -1737,38 +1915,44 @@ func restore_local_match(source:String) -> bool:
 	var maintenance:Callable = _restore_checkpoint.bind(original_room, original_snapshot)
 	_restore_stage("archive_begin")
 	var candidate = preload("res://scripts/net/authority/match_authority.gd").new()
+	if not candidate.declare_broadcast_confirmation(_broadcast_confirmation_capable): return false
+	_restore_trace("await_before")
 	var recovered:bool = await candidate.restore_archive(source, bindings, target, maintenance)
+	_restore_trace("await_after", {"recovered":recovered})
 	_restore_stage("archive_return")
 	if not maintenance.call():
-		return _fail_closed_restore(candidate, previous_root, previous_cache, "恢复期间房间已变化，原子恢复不可用")
+		return _fail_closed_restore(candidate, previous_environment, _restore_checkpoint_reason if not _restore_checkpoint_reason.is_empty() else "恢复维护失败，原子恢复不可用")
 	if not recovered:
-		return _fail_closed_restore(candidate, previous_root, previous_cache, candidate.error)
+		return _fail_closed_restore(candidate, previous_environment, candidate.error)
 	# 副本只作为规则重放源；对外仍发布事务输入的固定快照，不扫描 provider。
 	var files:Array = approved_files.duplicate(true)
 	_restore_stage("blob_publish_begin")
 	for item in files:
 		if not maintenance.call():
-			return _fail_closed_restore(candidate, previous_root, previous_cache, "固定数据发布期间恢复取消或房间变化")
+			return _fail_closed_restore(candidate, previous_environment, "固定数据发布期间恢复取消或房间变化")
 		var bytes:PackedByteArray = FileAccess.get_file_as_bytes(fixed_root.path_join(item.path))
 		if bytes.size() != item.size or publish_blob(bytes) != item.hash:
-			return _fail_closed_restore(candidate, previous_root, previous_cache, "恢复期间固定数据副本变化")
+			return _fail_closed_restore(candidate, previous_environment, "恢复期间固定数据副本变化")
 	_restore_stage("blob_publish_end")
 	if not maintenance.call():
-		return _fail_closed_restore(candidate, previous_root, previous_cache, "固定数据发布后恢复取消或房间变化")
+		return _fail_closed_restore(candidate, previous_environment, "固定数据发布后恢复取消或房间变化")
 	var assets = preload("res://scripts/net/content/room_assets.gd").new()
 	_restore_stage("assets_install_begin")
 	if not _can_publish_room_files(files) or not assets.install(files, fixed_root, blobs.cache.max_file_bytes, maintenance):
 		var reason:String = error if not error.is_empty() else (assets.error if not assets.error.is_empty() else "无法发布完整已采用数据")
-		return _fail_closed_restore(candidate, previous_root, previous_cache, reason)
+		return _fail_closed_restore(candidate, previous_environment, reason)
 	_restore_stage("assets_install_end")
 	if not maintenance.call():
-		return _fail_closed_restore(candidate, previous_root, previous_cache, "固定数据提交前恢复取消或房间变化")
+		return _fail_closed_restore(candidate, previous_environment, "固定数据提交前恢复取消或房间变化")
 	_restore_stage("room_commit_begin")
 	if not _room_rules_active:
-		_previous_data_root = previous_root
-		_previous_cache_path = previous_cache
+		_previous_content_environment = previous_environment
 		_room_rules_active = true
 	match_authority = candidate
+	# 在恢复提交而非数据 barrier / 首 view 建立水位。
+	match_authority.bind_notification_boundary(1)
+	for member in room.members:
+		match_authority.bind_notification_boundary(member)
 	selection = preload("res://scripts/net/authority/selection_authority.gd").new()
 	_clear_match_views()
 	require_room_data = true
@@ -1779,16 +1963,16 @@ func restore_local_match(source:String) -> bool:
 	var committed_snapshot:Dictionary = room.snapshot().duplicate(true)
 	_restore_stage("room_commit_end")
 	if not _restore_checkpoint(original_room, committed_snapshot):
-		return _fail_closed_restore(candidate, previous_root, previous_cache, "恢复持久化前连接中断或取消")
+		return _fail_closed_restore(candidate, previous_environment, "恢复持久化前连接中断或取消")
 	_restore_stage("persist_begin")
 	if not recovery_state_path.is_empty() and not _persist_recovery_state():
-		return _fail_closed_restore(candidate, previous_root, previous_cache, "恢复状态保存失败，候选未发布")
+		return _fail_closed_restore(candidate, previous_environment, "恢复状态保存失败，候选未发布")
 	_restore_stage("persist_end")
 	if not _restore_checkpoint(original_room, committed_snapshot):
-		return _fail_closed_restore(candidate, previous_root, previous_cache, "恢复持久化期间中断；磁盘可能已提交，候选未发布")
+		return _fail_closed_restore(candidate, previous_environment, "恢复持久化期间中断；磁盘可能已提交，候选未发布")
 	# recovery.json 可能已提交；哨兵删除失败不假称磁盘回滚。
 	if DirAccess.remove_absolute(marker) != OK:
-		return _fail_closed_restore(candidate, previous_root, previous_cache, "恢复回执提交失败，磁盘可能已提交；候选未发布")
+		return _fail_closed_restore(candidate, previous_environment, "恢复回执提交失败，磁盘可能已提交；候选未发布")
 	_restore_in_progress = false
 	# 已在上方提交，避免第二次落盘失败却广播。
 	_publish(false)
@@ -1797,13 +1981,12 @@ func restore_local_match(source:String) -> bool:
 			_send_room_files(id)
 	return true
 
-func _fail_closed_restore(candidate, previous_root:String, previous_cache:String, reason:String) -> bool:
+func _fail_closed_restore(candidate, previous_environment:Dictionary, reason:String) -> bool:
 	_restore_failed_closed = true
 	candidate.close_archive()
 	close()
 	_recovery_bindings.clear()
-	LoadHelper.session_data_dir = previous_root
-	LoadGame.stored_jsons_path = previous_cache
+	ContentEnvironmentScope.restore(previous_environment)
 	GameStart.end_session()
 	preload("res://scripts/match/match_journal.gd").reset_audit_memory()
 	_restore_in_progress = false
@@ -1812,15 +1995,61 @@ func _fail_closed_restore(candidate, previous_root:String, previous_cache:String
 
 func _maintain_restore_transport() -> bool:
 	if not _host or _restore_failed_closed or not _restore_in_progress or _restore_cancelled: return false
+	if not transport.is_connected_to_host():
+		_restore_cancelled = true
+		_restore_checkpoint_reason = "恢复期间原生连接已断开，原子恢复不可用"
+		_restore_trace("transport_unavailable")
+		return false
 	# 不解码/分派业务消息，不弹出被 _send 恢复守卫拒绝的 blob 队列。
 	# 原生连接事件仍可同步发出；close/断线只锁存取消，外层事务负责清理。
 	transport.keep_alive()
+	if not transport.is_connected_to_host():
+		_restore_cancelled = true
+		_restore_checkpoint_reason = "恢复维护后原生连接已断开，原子恢复不可用"
+		_restore_trace("transport_unavailable_after_poll")
+		return false
 	return _host and _restore_in_progress and not _restore_failed_closed and not _restore_cancelled
 
 func _restore_checkpoint(original_room, original_snapshot:Dictionary) -> bool:
-	if room != original_room or not _host or room.snapshot() != original_snapshot: return false
-	if not _maintain_restore_transport(): return false
-	return room == original_room and _host and room.snapshot() == original_snapshot
+	_restore_trace_poll += 1
+	var before:bool = room == original_room and _host and room.snapshot() == original_snapshot
+	if not before:
+		_restore_checkpoint_reason = "恢复连接已取消或断开，原子恢复不可用" if _restore_cancelled else "恢复期间房间已变化，原子恢复不可用"
+		_restore_trace("checkpoint_before_reject")
+		return false
+	var maintained:bool = _maintain_restore_transport()
+	var after:bool = room == original_room and _host and room.snapshot() == original_snapshot
+	if not maintained or not after:
+		if _restore_checkpoint_reason.is_empty(): _restore_checkpoint_reason = "恢复连接已取消或断开，原子恢复不可用" if _restore_cancelled else "恢复维护期间房间已变化，原子恢复不可用"
+	if not maintained or not after or _restore_trace_poll % 1000 == 1:
+		_restore_trace("maintenance_poll", {"maintained":maintained,"same_snapshot":after,"poll":_restore_trace_poll})
+	return maintained and after
+
+# 仅输出显式安全字段与差异路径；不序列化身份、票据、nonce 或任意配置值。
+func _restore_trace(event:String, extra:Dictionary = {}) -> void:
+	if OS.get_environment("FD_RESTORE_TRANSACTION_TRACE") != "1": return
+	var current:Dictionary = room.snapshot()
+	var paths:Array = []
+	for field in ["owner","phase","revision","settings","members"]:
+		if _restore_trace_snapshot.has(field) and current.get(field) != _restore_trace_snapshot[field]:
+			if field in ["settings","members"]:
+				for key in current[field]:
+					if not _restore_trace_snapshot[field].has(key) or current[field][key] != _restore_trace_snapshot[field][key]:
+						if field == "members" and _restore_trace_snapshot[field].has(key):
+							var known_changes:int = paths.size()
+							for member_field in ["name","spectator","ready","connected"]:
+								if current[field][key].get(member_field) != _restore_trace_snapshot[field][key].get(member_field): paths.append("members/%s/%s" % [key,member_field])
+							if paths.size() == known_changes: paths.append("members/%s/unknown_field" % key)
+						elif field == "settings": paths.append("settings/" + (str(key) if key in ["capacity","minimum","ai_count","selection_mode","spectator_limit","runtime_guard","random_sim_enabled","random_sim_budget_sec"] else "unknown_field"))
+						else: paths.append(field + "/" + str(key))
+				for key in _restore_trace_snapshot[field]:
+					if not current[field].has(key): paths.append(field + "/" + str(key))
+			else: paths.append(field)
+	var online:Array = []
+	for member in room.members: online.append({"member":member,"connected":room.members[member].get("connected"),"ready":room.members[member].get("ready")})
+	var state:Dictionary = {"pid":OS.get_process_id(),"transaction":_restore_trace_id,"ticks_usec":Time.get_ticks_usec(),"event":event,"owner":room.owner,"phase":room.phase,"revision":room.revision,"members":online,"changed_paths":paths,"host":_host,"in_progress":_restore_in_progress,"cancelled":_restore_cancelled,"failed_closed":_restore_failed_closed,"transport_connected":transport.is_connected_to_host(),"checkpoint_reason":_restore_checkpoint_reason}
+	state.merge(extra)
+	print("RESTORE_TRANSACTION ", JSON.stringify(state))
 
 func _restore_stage(stage:String) -> void:
 	if OS.get_environment("FD_RESTORE_STAGE_TIMING") != "1": return
@@ -1835,17 +2064,16 @@ func _publish_selection() -> void:
 	changed.emit()
 
 func _clear_match_views() -> void:
-	_mirror.reset(-1)
-	_match_bound = false
-	_pending_view.clear()
-	_action_view.clear()
+	_match_inbox.reset()
 	selection_view.clear()
 
 func read_match() -> Dictionary:
-	return _map_assets(_mirror.read(), false) if data_revision > 0 else _mirror.read()
+	var state: Dictionary = _match_inbox.read_match()
+	return _map_assets(state, false) if data_revision > 0 else state
 
 func read_pending() -> Dictionary:
-	return _map_assets(_pending_view, false) if data_revision > 0 else _pending_view.duplicate(true)
+	var pending: Dictionary = _match_inbox.read_pending()
+	return _map_assets(pending, false) if data_revision > 0 else pending
 
 func match_commands_available() -> bool:
 	if not _host and not transport.is_connected_to_host(): return false
@@ -1877,7 +2105,7 @@ func _map_assets(value, encode: bool):
 	return value
 
 func read_actions() -> Dictionary:
-	return _action_view.duplicate(true)
+	return _match_inbox.read_actions()
 
 func _disconnected_players() -> Array:
 	var players:Array = []
@@ -1893,7 +2121,7 @@ func _disconnected_players() -> Array:
 	players.sort()
 	return players
 
-func _match_actions_for(peer: int) -> Dictionary:
+func _match_actions_base(peer: int) -> Dictionary:
 	var waiting:Array = _disconnected_players()
 	var actions:Dictionary = match_authority.actions_for(peer) if waiting.is_empty() and not management_paused else {}
 	actions["management_paused"] = management_paused
@@ -1911,8 +2139,7 @@ func _match_actions_for(peer: int) -> Dictionary:
 	return actions
 
 func _bind_match() -> void:
-	_mirror.reset(match_authority.observer_for(1))
-	_match_bound = true
+	_match_inbox.bind_local(match_authority.observer_for(1))
 	for peer in _peers:
 		if room.members.has(peer):
 			_send(peer, {"kind": "match_bind", "observer": match_authority.observer_for(peer)}, 1)
@@ -1921,18 +2148,104 @@ func _publish_match() -> void:
 	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return
 	var state: Dictionary = match_authority.view_for(1)
 	var pending: Dictionary = match_authority.pending_for(1)
-	_mirror.accept(_map_assets(state, true) if data_revision > 0 else state)
-	_pending_view = _map_assets(pending, true) if data_revision > 0 else pending
-	_action_view = _match_actions_for(1)
+	if not _match_inbox.accept_local_state(_map_assets(state, true) if data_revision > 0 else state, pending):
+		error = "权威待答视图无效，未发布"
+		return
+	_match_inbox.publish_local_details(_map_assets(pending, true) if data_revision > 0 else pending, _match_actions_for(1, int(state.get("seq", -1)), state))
 	for peer in _peers:
 		if room.members.has(peer):
 			state = match_authority.view_for(peer)
 			pending = match_authority.pending_for(peer)
-			_send(peer, {"kind": "match_view", "state": _map_assets(state, true) if data_revision > 0 else state, "pending": _map_assets(pending, true) if data_revision > 0 else pending, "actions": _match_actions_for(peer)}, 1)
+			_send(peer, {"kind": "match_view", "state": _map_assets(state, true) if data_revision > 0 else state, "pending": _map_assets(pending, true) if data_revision > 0 else pending, "actions": _match_actions_for(peer, int(state.get("seq", -1)), state)}, 1)
 	changed.emit()
 
 # 不调用 session.poll/transport.poll：原生包保留到外层正常 poll 再鉴权、分派。
 # 维护期间 close 只锁存取消；任何录制启动失败均不声称回滚，禁止继续规则推进。
+## 连接/认证/在线房主属于 Session；规则/修订/批次属于 authority。
+## 无 await，外部认证查询返回后重新读取授权，不保留可跨复连使用的授权票据。
+func _match_actions_for(peer: int, view_seq: int = -1, state: Dictionary = {}) -> Dictionary:
+	var actions: Dictionary = _match_actions_base(peer)
+	var declaration: Dictionary = _absent_broadcast_projection(peer, view_seq, state)
+	if not declaration.is_empty():
+		actions["broadcast_confirm_absent"] = declaration
+	return actions
+
+func _trusted_absent_broadcast_seats(authority) -> Array:
+	var seats: Array = []
+	for seat in authority.absent_broadcast_candidates(GameProgress.battle_broadcast_batch_id()):
+		var controller = authority.controllers[seat]
+		if seat is int and controller is int and controller > 0 and not str(_member_identities.get(controller, "")).is_empty() and room.members.has(controller) and not room.members[controller].connected:
+			seats.append(seat)
+	seats.sort()
+	return seats
+
+func _absent_broadcast_actor_is_current(peer: int) -> bool:
+	if not _host or management_paused or _restore_failed_closed or _restore_in_progress or _begin_in_progress or _request_reset_in_progress:
+		return false
+	if not match_authority.started or EffectManager.runtime_guard_status().paused:
+		return false
+	# actions_for 使用稳定 member；只有认证校验需要反查真实 connection。
+	var member: int = peer
+	var connection: int = 1 if peer == 1 else int(_peer_by_member.get(member, -1))
+	var key: String = str(_member_identities.get(member, ""))
+	if key.is_empty() or member != room.owner or room.phase != "playing" or not room.members.has(member) or not room.members[member].connected:
+		return false
+	if peer != 1 and (_member_by_peer.get(connection, -1) != member or _peer_by_member.get(member, -1) != connection):
+		return false
+	if peer == 1 and member != 1:
+		return false
+	if authority_host_mode in ["lan", "p2p"]:
+		if not lan_context.is_valid(): return false
+		var trusted = lan_context.call(connection, member, false)
+		if not trusted is Dictionary or trusted.get("authenticated") != true or trusted.get("actor_key") != key:
+			return false
+	return true
+
+func _absent_broadcast_projection(peer: int, view_seq: int, state: Dictionary) -> Dictionary:
+	if view_seq < 0 or state.is_empty() or not _absent_broadcast_actor_is_current(peer):
+		return {}
+	var broadcast: Dictionary = state.get("battle_broadcast", {})
+	if not broadcast.get("pending", false):
+		return {}
+	var batch_id = broadcast.get("batch_id", -1)
+	if not batch_id is int:
+		return {}
+	var seats: Array = _trusted_absent_broadcast_seats(match_authority)
+	if seats.is_empty():
+		return {}
+	return {"can_confirm": true, "view_seq": view_seq, "batch_id": batch_id, "seats": seats}
+
+func _confirm_absent_broadcast(connection: int, member: int, args: Dictionary) -> Dictionary:
+	# bind 追加可信 connection/member；形状门仍先于下方原授权门。
+	var confirm:Callable = _confirm_absent_broadcast_checked.bind(connection,member)
+	var received:Dictionary = _host_match_request_inbox.receive_broadcast_confirm_absent(args,confirm)
+	return received.result if received.ok else received
+
+func _confirm_absent_broadcast_checked(view_seq:int, batch_id:int, requested_seats:Array, connection:int, member:int) -> Dictionary:
+	var denied: Dictionary = {"ok":false, "code":"unauthorized", "reason":"只有当前认证在线房主能显式确认离线真人"}
+	if not _host or management_paused or _restore_failed_closed or _restore_in_progress or _begin_in_progress or _request_reset_in_progress: return denied
+	var original_room = room
+	var authority = match_authority
+	var key: String = str(_member_identities.get(member, ""))
+	if key.is_empty(): return denied
+	if authority_host_mode in ["lan", "p2p"]:
+		if not lan_context.is_valid(): return denied
+		var trusted = lan_context.call(connection, member, false)
+		if not trusted is Dictionary or trusted.get("authenticated") != true or trusted.get("actor_key") != key: return denied
+	if room != original_room or match_authority != authority or not _host or management_paused or _restore_failed_closed or _restore_in_progress or _begin_in_progress or _request_reset_in_progress: return denied
+	if key != _member_identities.get(member, "") or member != room.owner or room.phase != "playing" or not room.members.has(member) or not room.members[member].connected: return denied
+	if connection != 1 and (_member_by_peer.get(connection, -1) != member or _peer_by_member.get(member, -1) != connection): return denied
+	if connection == 1 and member != 1: return denied
+	var absent: Dictionary = {}
+	for seat in _trusted_absent_broadcast_seats(authority):
+		absent[seat] = true
+	var seats: Array = []
+	for seat in requested_seats:
+		if not seat is int or not absent.has(seat) or seats.has(seat):
+			return {"ok":false, "code":"invalid_seats", "reason":"整批目标须为当前可信离线真人，不得重复"}
+		seats.append(seat)
+	return authority.confirm_absent_broadcast(member, view_seq, batch_id, seats)
+
 func _begin_selected_match() -> bool:
 	if _restore_failed_closed or _restore_in_progress or _begin_in_progress: return false
 	var recorded:bool = record_matches
@@ -1940,6 +2253,7 @@ func _begin_selected_match() -> bool:
 	var revision:int = room.revision
 	var approved_revision:int = data_revision
 	var authority = match_authority
+	if not authority.declare_broadcast_confirmation(_broadcast_confirmation_capable): return false
 	var original_selection = selection
 	_begin_cancelled = false
 	_begin_in_progress = true

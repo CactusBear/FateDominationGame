@@ -5,6 +5,8 @@ extends RefCounted
 ## 玩家必须显式给出，local 别名只在这里翻译。
 
 var session:DebugSession
+# 与会话一同创建时保存上游原值；不从 map、业务卡或当前代际拼装。
+var source_context:SessionContext
 var player := DebugPlayerAdapter.new()
 var card := DebugCardAdapter.new()
 var map:DebugMapAdapter
@@ -78,8 +80,9 @@ var schemas:Dictionary = {
 }
 
 
-func _init(p_session:DebugSession):
+func _init(p_session:DebugSession, p_source_context:SessionContext = null):
 	session = p_session
+	source_context = p_source_context
 	map = DebugMapAdapter.new(card, session.host)
 	board = DebugBoardAdapter.new(map)
 
@@ -110,7 +113,7 @@ func schema(command_name:String) -> Dictionary:
 
 
 ## 唯一写入口：按钮提交结构化参数，经白名单、必填项、idle 与运行态校验后才分发。
-func execute_action(command_name:String, args:Dictionary = {}) -> Dictionary:
+func execute_action(command_name:String, args:Dictionary = {}, context:SessionContext = null) -> Dictionary:
 	if !schemas.has(command_name):
 		return _fail("未登记命令：%s" % command_name)
 	var spec:Dictionary = schema(command_name)
@@ -125,12 +128,13 @@ func execute_action(command_name:String, args:Dictionary = {}) -> Dictionary:
 		return _fail("命令 requires_idle：先完成或取消当前等待")
 	if spec.scope != "inspect" and EffectManager.is_running:
 		return _fail("效果管线正在同步执行，禁止写入")
-	var result:Dictionary = _dispatch(command_name, args)
+	# 创建层保存值和动作递送值必须是同一原回执；缺任一交接不拿另一份补票。
+	var result:Dictionary = _dispatch(command_name, args, context if is_same(context, source_context) else null)
 	result["params"] = args.duplicate(true)
 	return result
 
 
-func _dispatch(command_name:String, a:Dictionary) -> Dictionary:
+func _dispatch(command_name:String, a:Dictionary, context:SessionContext) -> Dictionary:
 	var id:int = _player(a).id if a.has("player") else -2147483648
 	match command_name:
 		"inspect.player": return player.inspect_player(id)
@@ -157,8 +161,8 @@ func _dispatch(command_name:String, a:Dictionary) -> Dictionary:
 		"card.power": return card.edit_power(int(a.card_id), a.get("set"), a.get("vary"))
 		"card.attrs": return card.edit_attributes(int(a.card_id), _array(a.get("add", [])), _array(a.get("remove", [])), _array(a.set) if a.has("set") else null)
 		"card.conceal": return card.conceal(int(a.card_id), bool(a.bool))
-		"skill.awaken": return card.awaken(int(a.card_id), id)
-		"card.close": return card.close(int(a.card_id))
+		"skill.awaken": return card.awaken(int(a.card_id), id, context)
+		"card.close": return card.close(int(a.card_id), context)
 		"map.deploy": return map.deploy(id, str(a.area))
 		"map.move": return map.move(id, int(a.steps), bool(a.get("ignore_limit", false)), bool(a.get("ignore_battle", false)))
 		"map.teleport": return map.teleport(id, int(a.location_id))
@@ -166,20 +170,20 @@ func _dispatch(command_name:String, a:Dictionary) -> Dictionary:
 		"play.regular": return map.regular_play(id, _int_array(a.cards), _bool_array(a.hidden))
 		"play.extra_attack": return map.extra_play(id, int(a.card_id), "attack")
 		"play.extra_skill": return map.extra_play(id, int(a.card_id), "skill")
-		"name.release": return map.release_name(id)
-		"name.hide": return map.hide_name(id)
-		"out.eliminate": return player.eliminate(id)
+		"name.release": return map.release_name(id, context)
+		"name.hide": return map.hide_name(id, context)
+		"out.eliminate": return player.eliminate(id, context)
 		"out.restore": return player.restore(id)
 		"buff.add": return player.manage_buff(id, player.find_buff(int(a.buff_id)), true)
 		"buff.remove": return player.manage_buff(id, player.find_buff(int(a.buff_id)), false)
 		"buff.defeat": return player.set_defeat(id, true)
 		"buff.undead": return player.set_defeat(id, false)
 		"event.place": return board.place_event(str(a.area), bool(a.get("concealed", false)), int(a.get("count", 1)))
-		"event.clear": return board.clear_events()
-		"event.reveal_planned": return board.reveal_planned()
-		"situation.activate": return board.activate_situation()
-		"situation.clear": return board.clear_situation()
-		"situation.replace": return board.replace_situation(str(a.source_name), bool(a.get("grant_printed_magic", false)))
+		"event.clear": return board.clear_events(context)
+		"event.reveal_planned": return board.reveal_planned(context)
+		"situation.activate": return board.activate_situation(context)
+		"situation.clear": return board.clear_situation(context)
+		"situation.replace": return board.replace_situation(str(a.source_name), bool(a.get("grant_printed_magic", false)), context)
 		"identity.set_master", "identity.equip_master": return identity.set_master(id, str(a.master_name), str(a.get("occupancy", "exclusive")), bool(a.get("rebind_command_spell", true)), str(a.get("master_zone", "clear")), bool(a.get("replay_game_start", false)))
 		"identity.set_servant", "identity.equip_servant": return identity.set_servant(id, str(a.servant_name), str(a.get("occupancy", "exclusive")), str(a.get("dealt_zones", "replace")), str(a.get("true_name", "keep_log")), bool(a.get("rebind_command_spell", true)))
 		"identity.set_pair": return identity.set_pair(id, str(a.master_name), str(a.servant_name), str(a.get("occupancy", "exclusive")), str(a.get("order", "master_first")))

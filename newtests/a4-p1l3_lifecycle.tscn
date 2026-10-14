@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/a4-p1l3_lifecycle.gd" id="1"]
+
+[node name="A4P1L3Lifecycle" type="Node"]
+script = ExtResource("1")

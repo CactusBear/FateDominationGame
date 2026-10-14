@@ -1,0 +1,49 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+CHECK debug awakening entrance true
+CHECK sword real zero-cost regular group true
+CHECK other player regular group true
+CHECK discounted group spends actual total true
+CHECK one record per paid card with payer and source true
+CHECK move records actual paid location true
+CHECK manual cost paid once through request true
+CHECK ability payment source true
+CHECK penalty and debug do not count true
+CHECK previous round excluded true
+CHECK sword gains all players actual spending true
+CHECK sword gain is not spending true
+CHECK sword once per round true
+CHECK activated sword removed at battle end true
+CHECK debug awakening entrance true
+CHECK sword real zero-cost regular group true
+CHECK unactivated sword is not removed true
+CHECK debug awakening entrance true
+CHECK sword real zero-cost regular group true
+CHECK zero spending gives zero true
+CHECK unlimited mana regular payment is zero true
+CHECK unlimited mana active cost is zero true
+CHECK unlimited mana movement is zero true
+CHECK legacy regular add records payment true
+CHECK negative regular fee is zero true
+CHECK effect attack discounts recorded true
+CHECK effect skill records actual payment true
+CHECK negative effect skill no spending true
+CHECK unaffordable active cost no payment true
+CHECK zero active cost no payment true
+CHECK negative active cost no payment true
+CHECK declined active cost no payment true
+CHECK command spell uses no mana payment true
+CHECK unaffordable movement neither moves nor pays true
+CHECK neutral movement explicit fee is spending true
+CHECK unaffordable neutral movement no payment true
+CHECK failed neutral destination no payment true
+CHECK negative neutral fee is zero without gain true
+CHECK locked neutral move unavailable: 侦察 true
+CHECK locked neutral move unavailable: 深山町 true
+CHECK debug awakening entrance true
+CHECK sword real zero-cost regular group true
+CHECK AI sword enters real pending choice true
+CHECK AI resolves sword without error true
+CHECK shared v2 legacy formatter distinguishes payment loss true
+RESULT checks=45 failures=[]

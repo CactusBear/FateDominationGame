@@ -1,10 +1,50 @@
 extends BaseObject
 class_name BaseEffect
 
+# 运行期来源句柄只由可信工厂显式绑定；模板与未绑定外来对象保持不可执行。
+# 不从 current_token() 补票，也不把成员、费用或规则状态塞进效果来源。
+var _runtime_context:SessionContext = null
+
+
+# 可信工厂在先调用 SessionGeneration.bind_origin(self, token, origin) 后使用。
+# 本入口再次核对服务登记与 context identity，避免仅凭同形句柄或可变字段洗票。
+# 已绑定对象不可被换成另一会话；换局后的旧 context 只能拒绝。
+func bind_runtime_context(context:Variant) -> bool:
+	if not context is SessionContext:
+		return false
+	var context_status:Dictionary = SessionGeneration.validate_context(context)
+	if not context_status.get("ok", false):
+		return false
+	var origin_status:Dictionary = SessionGeneration.origin_of(self)
+	if not origin_status.get("ok", false):
+		return false
+	var registered_context = origin_status.get("context")
+	if registered_context == null or not is_same(registered_context, context):
+		return false
+	if _runtime_context != null:
+		return is_same(_runtime_context, context) and SessionGeneration.validate_context(_runtime_context).get("ok", false)
+	_runtime_context = context as SessionContext
+	return true
+
+
+# 纯读取：模板/未绑定对象返回 null；绝不查询 current_token() 或创建绑定。
+func runtime_context() -> SessionContext:
+	return _runtime_context
+
+
+# 统一来源门的局部只读结果；消费方必须把失败当来源拒绝而不是条件不命中。
+func runtime_source_status() -> Dictionary:
+	if _runtime_context == null:
+		return {"ok":false, "reason":&"unbound_origin"}
+	return SessionGeneration.validate_context(_runtime_context)
+
 func clone_data(context):
 	var cloned = BaseEffect.new(_name, _time_points.duplicate(), _priority, _is_pure_passive, _is_residue)
 	copy_clone_fields(cloned, context)
+	# 模板 clone 仍无来源；runtime clone 只继承原 context，禁止清空后领取 current。
+	cloned._runtime_context = _runtime_context
 	cloned._need_activate = _need_activate
+	cloned._allow_while_concealed = _allow_while_concealed
 	cloned._source_bound = _source_bound
 	cloned._expire_time_points = _expire_time_points.duplicate()
 	cloned._time_points_require_all = _time_points_require_all
@@ -55,6 +95,8 @@ var _source_bound:bool = false
 # 未命中目标时点、但命中这里声明的任一时点时注销；空数组表示永久等待。
 var _expire_time_points:Array = []
 var _need_activate:bool = true
+# 仅事件明暗许可：缺省暗置不结算；显式允许也不绕过其他状态与来源门。
+var _allow_while_concealed:bool = false
 var _is_residue:bool = false
 var _self_vars:Array
 var _priority:int

@@ -1,0 +1,62 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+CHECK 审计初始化 true
+CHECK 存在单职责公开水位查询 true
+CHECK 未开始 返回整数值 true
+CHECK 未开始 精确水位及生命周期 true
+CHECK 未开始 与旧直读完全一致 true
+CHECK 未开始 旧大于零诊断等价 true
+CHECK 未开始 重复读取稳定 true
+CHECK 未开始 返回标量无可写别名 true
+CHECK 未开始 不推进不审计不签发不清错误 true
+REVISION_STATE 未开始 revision=0 started=false old=0
+CHECK 真实未开始提交拒绝 true
+CHECK 拒绝后未开始 返回整数值 true
+CHECK 拒绝后未开始 精确水位及生命周期 true
+CHECK 拒绝后未开始 与旧直读完全一致 true
+CHECK 拒绝后未开始 旧大于零诊断等价 true
+CHECK 拒绝后未开始 重复读取稳定 true
+CHECK 拒绝后未开始 返回标量无可写别名 true
+CHECK 拒绝后未开始 不推进不审计不签发不清错误 true
+REVISION_STATE 拒绝后未开始 revision=0 started=false old=0
+CHECK 真实自动选人 true
+CHECK 真实权威启动推进 true
+CHECK 已推进 返回整数值 true
+CHECK 已推进 精确水位及生命周期 true
+CHECK 已推进 与旧直读完全一致 true
+CHECK 已推进 旧大于零诊断等价 true
+CHECK 已推进 重复读取稳定 true
+CHECK 已推进 返回标量无可写别名 true
+CHECK 已推进 不推进不审计不签发不清错误 true
+REVISION_STATE 已推进 revision=1 started=true old=1
+CHECK 真实签发管理视图 true
+CHECK 公开故障入口产生暂停 true
+CHECK 暂停后 返回整数值 true
+CHECK 暂停后 精确水位及生命周期 true
+CHECK 暂停后 与旧直读完全一致 true
+CHECK 暂停后 旧大于零诊断等价 true
+CHECK 暂停后 重复读取稳定 true
+CHECK 暂停后 返回标量无可写别名 true
+CHECK 暂停后 不推进不审计不签发不清错误 true
+REVISION_STATE 暂停后 revision=1 started=true old=1
+CHECK 真实公开中止返回大厅 true
+CHECK 中止 返回整数值 true
+CHECK 中止 精确水位及生命周期 true
+CHECK 中止 与旧直读完全一致 true
+CHECK 中止 旧大于零诊断等价 true
+CHECK 中止 重复读取稳定 true
+CHECK 中止 返回标量无可写别名 true
+CHECK 中止 不推进不审计不签发不清错误 true
+REVISION_STATE 中止 revision=2 started=false old=2
+CHECK 三态水位可区分且中止不归零 true
+CHECK 中止后步进无推进 true
+CHECK 中止后空步进 返回整数值 true
+CHECK 中止后空步进 精确水位及生命周期 true
+CHECK 中止后空步进 与旧直读完全一致 true
+CHECK 中止后空步进 旧大于零诊断等价 true
+CHECK 中止后空步进 重复读取稳定 true
+CHECK 中止后空步进 返回标量无可写别名 true
+CHECK 中止后空步进 不推进不审计不签发不清错误 true
+REVISION_STATE 中止后空步进 revision=2 started=false old=2
+RESULT authority_revision_query checks=52 failures=[]

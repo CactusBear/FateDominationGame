@@ -1,24 +1,64 @@
 extends Node
 
+var _model = SessionGeneration.ModelBacking.new({
+	"player_num":7,
+	"player_max":7,
+	"player_id":6,
+	"player_data_library":{},
+	"skill_zone_magic_limit":BaseNumber.new(8),
+	"magic_limit":BaseNumber.new(12),
+	"hand_limit":BaseNumber.new(3),
+	"default_master":"emiya_shirou",
+	"default_servant":"emiya",
+	"default_player_name_pattern":"玩家%d",
+	"objects":[],
+	"effects":[],
+	"effects_signals":{},
+	"loaded_masters":[],
+	"loaded_servants":[],
+	"ingame_masters":[],
+	"ingame_servants":[]
+})
 
-var player_num:int = 7
-var player_max:int = 7
-var player_id:int = 6
-var player_data_library:Dictionary
+
+var player_num:int:
+	get: return _model.read(&"player_num", 0)
+	set(value): _model.write(&"player_num", value)
+var player_max:int:
+	get: return _model.read(&"player_max", 0)
+	set(value): _model.write(&"player_max", value)
+var player_id:int:
+	get: return _model.read(&"player_id", 0)
+	set(value): _model.write(&"player_id", value)
+var player_data_library:Dictionary:
+	get: return _model.read(&"player_data_library", {})
+	set(value): _model.write(&"player_data_library", value)
 
 #从技能区打出卡牌所需的魔力。规则数字不写死，特殊效果可以改动
-var skill_zone_magic_limit:BaseNumber = BaseNumber.new(8)
+var skill_zone_magic_limit:BaseNumber:
+	get: return _model.read(&"skill_zone_magic_limit", null)
+	set(value): _model.write(&"skill_zone_magic_limit", value)
 #魔力上限：界面按它显示"当前/上限"，不把 12 写死在界面里。规则数字不写死，特殊效果可以改动
-var magic_limit:BaseNumber = BaseNumber.new(12)
+var magic_limit:BaseNumber:
+	get: return _model.read(&"magic_limit", null)
+	set(value): _model.write(&"magic_limit", value)
 #手牌上限：准备阶段把每名玩家的手牌补充到这个张数。规则数字不写死，特殊效果可以改动
-var hand_limit:BaseNumber = BaseNumber.new(3)
+var hand_limit:BaseNumber:
+	get: return _model.read(&"hand_limit", null)
+	set(value): _model.write(&"hand_limit", value)
 #新对局里本地玩家的默认登场组合，填模板名（空串＝按加载顺序分配）。
 #这是数据声明，不写在分配代码里：换开局配置只改这里。
-var default_master:String = "emiya_shirou"
-var default_servant:String = "emiya"
+var default_master:String:
+	get: return _model.read(&"default_master", "")
+	set(value): _model.write(&"default_master", value)
+var default_servant:String:
+	get: return _model.read(&"default_servant", "")
+	set(value): _model.write(&"default_servant", value)
 #新对局给每名玩家写入的默认玩家名模板：%d 是号位（按开局传入的玩家顺序，从 1 起）。
 #命名规则只声明在这里；界面和查询 op 都只读玩家数据里的 player_name，不自己拼名字。
-var default_player_name_pattern:String = "玩家%d"
+var default_player_name_pattern:String:
+	get: return _model.read(&"default_player_name_pattern", "")
+	set(value): _model.write(&"default_player_name_pattern", value)
 
 
 #每个玩家都要一份独立的数据，不能共用同一个字典，否则各玩家的数值会互相串改
@@ -139,8 +179,12 @@ func _player_limit(player_id:int, key:String, fallback:BaseNumber) -> BaseNumber
 	return fallback
 
 
-#人数不写死，按需建立玩家数据；已存在的玩家不覆盖
+#显式模板初始化：只补缺失成员，不覆盖、不签票，也不绑定运行期来源。
 func setup_players(num:int = player_num):
+	_initialize_player_templates(num)
+
+
+func _initialize_player_templates(num:int) -> void:
 	player_num = num
 	for i in num:
 		if !player_data_library.has(i):
@@ -149,38 +193,93 @@ func setup_players(num:int = player_num):
 		player_data_library[player_id] = new_player_data()
 
 
-#局内会话重置：只重建本局玩家数据，不动已加载的御主/资源库(loaded_masters、objects、effects)。
-#调用方需要在返回后显式设置每个玩家的master/order/is_out等初始状态
-func reset_game_session(player_ids:Array):
+#公共重置先换代再清值；外层启动传入已验 context 时沿用同域，不二次换代。
+#成功只表示玩家数据重建；角色/runtime 绑定与规则开局仍由各自所有者显式完成。
+func reset_game_session(player_ids:Array, startup_context:Variant = null) -> Dictionary:
+	# EM runtime 清理尚未域化：拒绝必须在成员清值/换代前。
+	if SessionGeneration.in_private_frame(): return {"ok":false, "context":null, "reason":&"unsupported_domain_runtime_cleanup"}
+	var context:SessionContext
+	if startup_context == null:
+		var generation:Dictionary = preload("res://scripts/system/session_generation.gd").begin_generation(&"GameData.reset_game_session")
+		if not generation.ok:
+			return {"ok":false, "context":null, "reason":generation.reason}
+		var derived:Dictionary = preload("res://scripts/system/session_generation.gd").derive_context(generation.token, &"GameData.reset_game_session")
+		if not derived.ok:
+			return derived
+		context = derived.context
+	else:
+		if not startup_context is SessionContext:
+			return {"ok":false, "context":null, "reason":&"unbound_origin"}
+		var valid:Dictionary = preload("res://scripts/system/session_generation.gd").validate_context(startup_context)
+		if not valid.ok:
+			return {"ok":false, "context":null, "reason":valid.reason}
+		context = startup_context
+	if not _reset_player_values(player_ids, context):
+		return {"ok":false, "context":null, "reason":&"stale_session"}
+	#同域清理沿用本次捕获的原 context；失败原样传播，不再次换代或补票。
+	var cleanup:Dictionary = EffectManager.clear_runtime_in_context(context)
+	if not cleanup.ok:
+		return cleanup
+	var current:Dictionary = preload("res://scripts/system/session_generation.gd").validate_context(context)
+	if not current.ok:
+		return {"ok":false, "context":null, "reason":current.reason}
+	return {"ok":true, "context":context, "reason":&"current"}
+
+
+#内部同域清值：不能单独签发资格，清理回调换局后也不能继续重建另一域。
+func _reset_player_values(player_ids:Array, context:SessionContext) -> bool:
+	if not preload("res://scripts/system/session_generation.gd").validate_context(context).ok:
+		return false
 	player_data_library.clear()
+	if not preload("res://scripts/system/session_generation.gd").validate_context(context).ok:
+		return false
 	for id in player_ids:
 		player_data_library[id] = new_player_data()
 	player_num = player_ids.size()
 	player_max = player_ids.size()
-	EffectManager.reset_runtime()
+	return true
 
 
 func _ready():
 	setup_players()
 
 
-var objects:Array#[BaseObject]
-var effects:Array#[BaseEffect]
-var effects_signals:Dictionary #{BaseEffect : Signal}
+var objects:Array:
+	get: return _model.read(&"objects", [])
+	set(value): _model.write(&"objects", value)
+var effects:Array:
+	get: return _model.read(&"effects", [])
+	set(value): _model.write(&"effects", value)
+var effects_signals:Dictionary:
+	get: return _model.read(&"effects_signals", {})
+	set(value): _model.write(&"effects_signals", value)
 
-var loaded_masters:Array#[BaseMaster]
-var loaded_servants:Array#[BaseServant]
+var loaded_masters:Array:
+	get: return _model.read(&"loaded_masters", [])
+	set(value): _model.write(&"loaded_masters", value)
+var loaded_servants:Array:
+	get: return _model.read(&"loaded_servants", [])
+	set(value): _model.write(&"loaded_servants", value)
 
-var ingame_masters:Array#[BaseMaster]
-var ingame_servants:Array#[BaseServant]
+var ingame_masters:Array:
+	get: return _model.read(&"ingame_masters", [])
+	set(value): _model.write(&"ingame_masters", value)
+var ingame_servants:Array:
+	get: return _model.read(&"ingame_servants", [])
+	set(value): _model.write(&"ingame_servants", value)
 
 
 #释放一局完整对象图。先断开对象之间的所有权引用，再清全局容器；
 #否则只清 objects 注册表，御主→卡牌→效果等强引用链仍会存活到进程退出。
-#该函数只负责对象生命周期，不改变规则状态，也不负责开始下一局。
+#该函数关闭资格域，不负责开始下一局；嵌套清理也不能签新可执行资格。
 func release_game_objects() -> void:
+	# D cleanup 不得碰 L 的 Load*/EM/static 池。
+	if SessionGeneration.in_private_frame(): return
+	preload("res://scripts/system/session_generation.gd").invalidate_generation(&"GameData.release_game_objects")
 	GameLog.reset()
-	EffectManager.reset_runtime()
+	var cleanup:Dictionary = EffectManager.clear_runtime_after_invalidation()
+	if not cleanup.ok:
+		return
 
 	#快照后逐个断开对象内部强引用。字段是否存在由对象类型自身决定，
 	#不按角色或具体卡牌写分支，新增对象类型仍可复用公共容器约定。
@@ -243,3 +342,13 @@ func release_game_objects() -> void:
 
 func _exit_tree() -> void:
 	release_game_objects()
+
+# 只提供原始写集 backing 与 D 映射；没有 owner install/commit。
+func publication_backing() -> Dictionary:
+	return _model.backing()
+
+func bind_domain_model(domain:Variant, private_state:Dictionary) -> Dictionary:
+	return _model.bind(domain, private_state)
+
+func domain_model_status() -> Dictionary:
+	return _model.resolve()

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/play_attack_keyword_behavior_test.gd" id="1"]
+
+[node name="PlayAttackKeywordBehaviorTest" type="Node"]
+script = ExtResource("1")

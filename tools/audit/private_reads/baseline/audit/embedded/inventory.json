@@ -1,0 +1,397 @@
+{
+  "summary": {
+    "verified_templates": [
+      {
+        "path": "tools/tests/round64_shared_browsing.py",
+        "line": 24,
+        "template": "BROWSING_SCRIPT",
+        "generated_lines": 146
+      },
+      {
+        "path": "tools/tests/round64_shared_browsing.py",
+        "line": 74,
+        "template": "diagnostic",
+        "generated_lines": 1
+      },
+      {
+        "path": "tools/tests/round69_modal_hover.py",
+        "line": 28,
+        "template": "SPECIAL_VIEWER_SCRIPT",
+        "generated_lines": 73
+      },
+      {
+        "path": "tests/round55_gui_first_divergence_runner.py",
+        "line": 67,
+        "template": "NET_DIAGNOSTIC",
+        "generated_lines": 10
+      }
+    ],
+    "state_reads": 18,
+    "observation_reads": 15,
+    "categories": {
+      "需要新增公开能力": 18
+    },
+    "observation_categories": {
+      "需要新增公开能力": 15
+    },
+    "unresolved": 4,
+    "excluded": {
+      "纯赋值排除": 1,
+      "私有方法调用排除": 5
+    },
+    "source_sha256": {
+      "tools/tests/round64_shared_browsing.py": "bab3e35b28504401b802fb3d0b722a1dd02553a0ea423b7b77efeb4005320685",
+      "tools/tests/round69_modal_hover.py": "2adcc81e097f273d0eb7337099b5143d099cf9c78bb2e764d5af40b6f779dc8b",
+      "tests/round55_gui_first_divergence_runner.py": "2081020a744342b1ad8ab28c1d15399eee069609e317fc036b2e00545ca96ca8"
+    },
+    "limitations": "仅四个经调用点人工确认会被write_text/replace真实注入的字面量；词法工具闸门测试和源码迁移旧锚点不算运行时读取；任意动态生成片段仍非穷尽证明"
+  },
+  "reads": [
+    {
+      "path": "tools/tests/round64_shared_browsing.py",
+      "line": 24,
+      "template": "BROWSING_SCRIPT",
+      "generated_line": 82,
+      "receiver": "board",
+      "member": "_seat_controller",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 144,
+      "mode": "对象/容器读取后修改",
+      "resolution": "声明/类型/资源路径",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round64_shared_browsing.py",
+      "line": 24,
+      "template": "BROWSING_SCRIPT",
+      "generated_line": 99,
+      "receiver": "board",
+      "member": "_source",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 151,
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口；相关但不等价：refresh_all_ui@608",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round64_shared_browsing.py",
+      "line": 24,
+      "template": "BROWSING_SCRIPT",
+      "generated_line": 133,
+      "receiver": "board",
+      "member": "_source",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 151,
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口；相关但不等价：refresh_all_ui@608",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round64_shared_browsing.py",
+      "line": 74,
+      "template": "diagnostic",
+      "generated_line": 1,
+      "receiver": "board",
+      "member": "_fly_layer",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 225,
+      "mode": "读取",
+      "resolution": "唯一生产符号（静态归属推断）",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round64_shared_browsing.py",
+      "line": 74,
+      "template": "diagnostic",
+      "generated_line": 1,
+      "receiver": "board",
+      "member": "_fly_busy",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 232,
+      "mode": "读取",
+      "resolution": "唯一生产符号（静态归属推断）",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round64_shared_browsing.py",
+      "line": 74,
+      "template": "diagnostic",
+      "generated_line": 1,
+      "receiver": "board",
+      "member": "_fly_queues",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 231,
+      "mode": "读取",
+      "resolution": "唯一生产符号（静态归属推断）",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 45,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_line": 18,
+      "receiver": "board",
+      "member": "_seat_controller",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 144,
+      "mode": "对象/容器读取后修改",
+      "resolution": "声明/类型/资源路径",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 53,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_line": 26,
+      "receiver": "object",
+      "member": "_is_awakened",
+      "owner": "scripts/system/base_skill.gd",
+      "declaration_line": 14,
+      "mode": "读取",
+      "resolution": "唯一生产符号（静态归属推断）",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口；相关但不等价：clone_data@4",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 56,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_line": 29,
+      "receiver": "master",
+      "member": "_other_things",
+      "owner": "scripts/system/base_master.gd",
+      "declaration_line": 23,
+      "mode": "读取",
+      "resolution": "唯一生产符号（静态归属推断）",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口；相关但不等价：clone_data@4",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 63,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_line": 36,
+      "receiver": "board",
+      "member": "_local_player_id",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 165,
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口；相关但不等价：refresh_all_ui@608",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 71,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_line": 44,
+      "receiver": "card",
+      "member": "_card_back_img",
+      "owner": "scripts/system/base_card.gd",
+      "declaration_line": 32,
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口；相关但不等价：copy_clone_fields@11",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 71,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_line": 44,
+      "receiver": "card",
+      "member": "_card_back_img",
+      "owner": "scripts/system/base_card.gd",
+      "declaration_line": 32,
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口；相关但不等价：copy_clone_fields@11",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 73,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_line": 46,
+      "receiver": "board",
+      "member": "_source",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 151,
+      "mode": "对象/容器读取后修改",
+      "resolution": "声明/类型/资源路径",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口；相关但不等价：refresh_all_ui@608",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 74,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_line": 47,
+      "receiver": "board",
+      "member": "_source",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 151,
+      "mode": "读取",
+      "resolution": "声明/类型/资源路径",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口；相关但不等价：refresh_all_ui@608",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tests/round55_gui_first_divergence_runner.py",
+      "line": 70,
+      "template": "NET_DIAGNOSTIC",
+      "generated_line": 4,
+      "receiver": "guest",
+      "member": "_seq",
+      "owner": "scripts/net/session/lobby_session.gd",
+      "declaration_line": 105,
+      "mode": "读取",
+      "resolution": "唯一生产符号（静态归属推断）",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口；相关但不等价：request@602; submit_catalog@1176",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tests/round55_gui_first_divergence_runner.py",
+      "line": 70,
+      "template": "NET_DIAGNOSTIC",
+      "generated_line": 4,
+      "receiver": "board",
+      "member": "_battle_command_observer",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 159,
+      "mode": "读取",
+      "resolution": "唯一生产符号（静态归属推断）",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tests/round55_gui_first_divergence_runner.py",
+      "line": 70,
+      "template": "NET_DIAGNOSTIC",
+      "generated_line": 4,
+      "receiver": "board",
+      "member": "_battle_commands",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 156,
+      "mode": "读取",
+      "resolution": "唯一生产符号（静态归属推断）",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    },
+    {
+      "path": "tests/round55_gui_first_divergence_runner.py",
+      "line": 70,
+      "template": "NET_DIAGNOSTIC",
+      "generated_line": 4,
+      "receiver": "board",
+      "member": "_end_command_attempt",
+      "owner": "scripts/game_scene/battle_board_v2.gd",
+      "declaration_line": 163,
+      "mode": "读取",
+      "resolution": "唯一生产符号（静态归属推断）",
+      "kind": "state",
+      "category": "需要新增公开能力",
+      "public_equivalent": "没有确认完全等价入口",
+      "reason": "应按此断言需要增加只读事实/投影，不直接公开可变成员；setter/通用反射不算等价只读封装"
+    }
+  ],
+  "unresolved": [
+    {
+      "path": "tools/tests/round64_shared_browsing.py",
+      "line": 24,
+      "template": "BROWSING_SCRIPT",
+      "generated_line": 101,
+      "member": "_name",
+      "possible_owners": [
+        "scripts/net/p2p/p2p_signal_client.gd",
+        "scripts/net/session/authority_host_client.gd",
+        "scripts/system/base_func.gd",
+        "scripts/system/base_object.gd"
+      ],
+      "public_equivalent": "未消歧，不能确认等价入口"
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 51,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_line": 24,
+      "member": "_name",
+      "possible_owners": [
+        "scripts/net/p2p/p2p_signal_client.gd",
+        "scripts/net/session/authority_host_client.gd",
+        "scripts/system/base_func.gd",
+        "scripts/system/base_object.gd"
+      ],
+      "public_equivalent": "未消歧，不能确认等价入口"
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 52,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_line": 25,
+      "member": "_name",
+      "possible_owners": [
+        "scripts/net/p2p/p2p_signal_client.gd",
+        "scripts/net/session/authority_host_client.gd",
+        "scripts/system/base_func.gd",
+        "scripts/system/base_object.gd"
+      ],
+      "public_equivalent": "未消歧，不能确认等价入口"
+    },
+    {
+      "path": "tools/tests/round69_modal_hover.py",
+      "line": 57,
+      "template": "SPECIAL_VIEWER_SCRIPT",
+      "generated_line": 30,
+      "member": "_name",
+      "possible_owners": [
+        "scripts/net/p2p/p2p_signal_client.gd",
+        "scripts/net/session/authority_host_client.gd",
+        "scripts/system/base_func.gd",
+        "scripts/system/base_object.gd"
+      ],
+      "public_equivalent": "未消歧，不能确认等价入口"
+    }
+  ]
+}

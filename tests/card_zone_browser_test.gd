@@ -3,6 +3,8 @@ extends Node
 ## 由主执行者串行运行本场景；pressed 级接线验证可用于 headless，非鼠标命中测试。
 var failures: Array = []
 var checks := 0
+var context:SessionContext
+const SOURCE = preload("res://newtests/s1_signature_fixture.gd")
 var ui
 const BOARD := "Middle_MainPlayground/Battlefields_CenterContainer/"
 const BROWSER := "Modal_CardBrowser"
@@ -21,12 +23,16 @@ func frames(count := 2) -> void:
 		await get_tree().process_frame
 
 func run() -> void:
+	preload("res://scripts/match/rule_random.gd").start_seed(817)
 	# _ready 会初始化对局，必须在实例化之后布置数据。
 	ui = load("res://assets/scenes/game_scene/tactical_board_ui.tscn").instantiate()
 	add_child(ui)
 	ui.set_process(false)
+	var original:Dictionary = SessionGeneration.origin_of(GameData.player_data_library[GameData.player_id].hand_cards[0])
+	check(original.ok,"S1 actual startup role retains original context")
+	context = original.context
 	GameProgress.is_game_over = true
-	EffectManager.reset_runtime()
+	check(EffectManager.clear_runtime_in_context(context).ok,"S1 cleanup preserves original startup domain")
 	await frames()
 	await test_event_discard_entries()
 	await test_player_removed_cards()
@@ -52,10 +58,10 @@ func skill(key: String):
 func other_card(key: String):
 	var card := BaseCard.new()
 	card.add_object()
-	return mark_card(card, key)
+	return SOURCE.runtime(mark_card(card, key),context)
 
 func event_card(key: String):
-	return mark_card(BaseEvent.new(key, ""), key)
+	return SOURCE.runtime(mark_card(BaseEvent.new(key, ""), key),context)
 
 ## 浏览器没有对象指针 metadata；用唯一显示名读取实际渲染卡位，
 ## 与期望对象的 get_shown_name 对账，不把控制器内部过滤结果冒充展示结果。
@@ -156,30 +162,32 @@ func event_button(area_node: String) -> Button:
 	return ui.get_node_or_null(BOARD + area_node + "/VBox/EventDiscardRow/BtnEventDiscard") as Button
 
 func test_event_discard_entries() -> void:
-	EventResolver.new().clear_all()
+	check(EventResolver.new().clear_all(context).ok,"S1 original-context event cleanup accepted")
 	MapData.event_discard.clear()
 	var old_deck: Array = MapData.event_deck.duplicate()
 	var miyama_card = event_card("zone_miyama_event")
 	var shinto_card = event_card("zone_shinto_event")
 	MapData.event_deck.assign([miyama_card, shinto_card])
-	EventResolver.new().place([
+	var placement_1:Dictionary = await GameProgress.wait_progress_state(EventResolver.new().place([
 		{"area_name": MapData.miyama._area_name, "concealed": false},
 		{"area_name": MapData.shinto._area_name, "concealed": true}
-	])
+	],context),context)
+	check(placement_1.ok and placement_1.completed,"S1 placement accepted and completed")
 	check(MapData.miyama._events.size() == 1 and MapData.shinto._events.size() == 1, "fixture places one event in each real battlefield")
 	if MapData.miyama._events.is_empty() or MapData.shinto._events.is_empty():
 		MapData.event_deck.assign(old_deck)
 		return
 	var m = MapData.miyama._events[0]
 	var s = MapData.shinto._events[0]
-	EventResolver.new().clear_all()
+	check(EventResolver.new().clear_all(context).ok,"S1 original-context event cleanup accepted")
 	check(m.get_from() == MapData.miyama and s.get_from() == MapData.shinto, "discard preserves event source battlefield")
 	check(MapData.event_discard.has(m) and MapData.event_discard.has(s), "one shared discard holds both original event objects")
 	# 用新一轮场上事件验证可见布局，不能比较隐藏 EventSlot 的旧矩形。
-	EventResolver.new().place([
+	var placement_2:Dictionary = await GameProgress.wait_progress_state(EventResolver.new().place([
 		{"area_name": MapData.miyama._area_name, "concealed": false},
 		{"area_name": MapData.shinto._area_name, "concealed": true}
-	])
+	],context),context)
+	check(placement_2.ok and placement_2.completed,"S1 placement accepted and completed")
 	ui.refresh_all_ui()
 	await frames()
 	for node_name in ["Area_Miyama", "Area_Shinto"]:
@@ -261,7 +269,7 @@ func test_player_removed_cards() -> void:
 	local.out_of_game.others = [local_item]
 	# 夹具要改的是"这个玩家自己的御主实例"，不是全局共享的模板：
 	# 直接写模板的 _other_things / _specials 会污染所有用同一御主的玩家与后续克隆体。
-	local.master = CloneObject.new().exec(local.master)
+	local.master = SOURCE.runtime(local.master,context)
 	local.master._other_things = [local_item, retained]
 	local.master._specials["ATTACKS"] = [local_attack]
 	local.master_skills = [local_skill]
@@ -270,7 +278,7 @@ func test_player_removed_cards() -> void:
 	var second_card = other_card("second_opponent_removed")
 	first.out_of_game.others = [first_card]
 	# 同理：夹具只改该玩家自己的御主实例，不动共享模板
-	first.master = CloneObject.new().exec(first.master)
+	first.master = SOURCE.runtime(first.master,context)
 	first.master._other_things = [first_card, first_retained]
 	second.out_of_game.others = [second_card]
 	ui.refresh_all_ui()
@@ -305,7 +313,7 @@ func test_player_removed_cards() -> void:
 	check(rin_template != null, "tohsaka rin master is loadable for removed jewel fixture")
 	if rin_template != null:
 		var original_first_master = first.master
-		var rin = CloneObject.new().exec(rin_template)
+		var rin = SOURCE.runtime(rin_template,context)
 		first.master = rin
 		clear_removed(first)
 		open_drawer(first_id)

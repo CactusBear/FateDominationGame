@@ -56,7 +56,8 @@ func run() -> void:
 				if bad.size() == 1:
 					_diff(original, ui.data, "")
 	check(opened > 60, "opened every card " + str(opened))
-	check(subs > 50, "visited sub cards " + str(subs))
+	# 凛的 10 张同名宝石合并为 1 条 + count:10 后子牌条目少 9 个（50 条）；门槛只防「子牌没遍历到」
+	check(subs >= 40, "visited sub cards " + str(subs))
 	check(bad.is_empty(), "untouched cards commit unchanged " + str(bad.slice(0, 5)))
 
 	# 新建一张攻击牌，加效果，把「魔力加 N」拖进去，再把「还在场的玩家」这种报告积木拖进空位
@@ -437,7 +438,9 @@ func run() -> void:
 	ui._save_to(ProjectSettings.globalize_path(tmp))
 	check(FileAccess.file_exists(tmp), "save wrote file")
 	check(Codec.same(ui.maker.read_json(tmp), ui.maker.read_json(src)), "saved copy keeps meaning")
-	check(FileAccess.get_file_as_string(tmp).begins_with("{\r\n  \""), "saved copy keeps original indent and line endings")
+	# 「照原样」= 与源文件同一缩进与换行（源文件在库里是 LF，原断言写死了 CRLF）
+	var src_head := FileAccess.get_file_as_string(src).substr(0, 5)
+	check(FileAccess.get_file_as_string(tmp).begins_with(src_head) and src_head.begins_with("{"), "saved copy keeps original indent and line endings")
 	var before := FileAccess.get_file_as_bytes(src)
 	ui._select_kind(0)
 	ui.open_path(src)

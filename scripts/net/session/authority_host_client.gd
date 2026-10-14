@@ -29,7 +29,7 @@ func _peer_disconnected(peer:int) -> void:
 	_pending_joins.erase(peer)
 	lan_identity.forget(peer)
 
-func start(session:RefCounted, name:String, settings:Dictionary, host_mode:String, port:int = 0, bind_address:String = "*", peer:MultiplayerPeer = null, storage_root:String = "user://authority_rooms") -> Error:
+func start(session:RefCounted, name:String, settings:Dictionary, host_mode:String, port:int = 0, bind_address:String = "*", peer:MultiplayerPeer = null, storage_root:String = "user://authority_rooms", data_root:String = "") -> Error:
 	if host_mode not in ["lan", "p2p"] or name.strip_edges().is_empty(): return ERR_INVALID_PARAMETER
 	if host_mode == "p2p" and (peer == null or peer.get_unique_id() != 1): return ERR_INVALID_PARAMETER
 	# 不开启注定无法完成 OS 所有权验证的监听，也不接管外部 P2P peer。
@@ -39,6 +39,9 @@ func start(session:RefCounted, name:String, settings:Dictionary, host_mode:Strin
 	if session.identity_profile.is_empty() or session.player_identity.public_key() != session.identity_profile.get("public_key"):
 		error = "LAN/P2P 房主必须先配置密钥身份"
 		return ERR_UNAUTHORIZED
+	if not configure_deployment_data_root(deployment_data_root(data_root)):
+		error = "房主本机批准数据目录无效或包含链接"
+		return ERR_INVALID_PARAMETER
 	_name = name
 	_session = weakref(session)
 	session.authority_host_mode = host_mode
@@ -47,7 +50,7 @@ func start(session:RefCounted, name:String, settings:Dictionary, host_mode:Strin
 	# 保留既有录制开关；事务审计独立启用，不伪装成可恢复的对局存档。
 	gateway.manager.record_matches = session.record_matches
 	gateway.manager.transaction_log = true
-	gateway.data_root = LoadHelper.get_data_dir()
+
 	var result:Error = gateway.transport.listen(port, bind_address) if host_mode == "lan" else gateway.transport.attach_peer(peer)
 	if result != OK:
 		error = "房主直连监听失败：" + error_string(result)
@@ -60,6 +63,28 @@ func start(session:RefCounted, name:String, settings:Dictionary, host_mode:Strin
 		gateway.transport.close()
 		return ERR_CANT_CREATE
 	return OK
+
+## 本机组合根显式批准；不从房间 settings 或旧 config 反向取得权限。
+static func deployment_data_root(explicit_root:String = "") -> String:
+	return explicit_root if not explicit_root.is_empty() else LoadHelper.resolve_path(LoadHelper.DATA_DIR_NAME)
+
+func configure_deployment_data_root(path:String) -> bool:
+	var paths = preload("res://scripts/net/server/recovery_path_safety.gd")
+	var root:String = paths.absolute(path)
+	if root.is_empty() or not paths.checked(root, root): return false
+	gateway.manager.approved_data_root = root
+	gateway.data_root = root
+	return true
+
+## 仅供房主本机部署组合根在start前调用，不从session/settings/旧档取配置。
+func configure_deployment_heartbeat(value:Variant) -> bool:
+	return gateway.manager.configure_heartbeat_publication(value)
+
+## 本机组合根在 start 前显式声明，manager 将其写入独立 worker 顶层启动配置。
+## 不读取 UI Session、公开 settings、人数或历史配置来猜测消费者能力。
+func configure_deployment_broadcast_confirmation(value:Variant) -> bool:
+	if not value is bool or not room_id.is_empty(): return false
+	return gateway.manager.configure_deployment_broadcast_confirmation(value)
 
 func poll() -> void:
 	if room_id.is_empty(): return
@@ -299,7 +324,12 @@ func _drain_close() -> void:
 		_close_response = ""
 		return
 	if response.get("ok") != true: return
-	if not response.get("result",{}).get("closing",false): return
+	# closing 只是关闭意图；复用管理通道的显式保存成功判据。
+	if not preload("res://scripts/net/server/server_console_channel.gd").saved_close_receipt(response):
+		if not _close_error_reported:
+			_close_error_reported = true
+			push_warning("权威关闭回执缺少保存成功证据，未确认保存，继续等待原请求")
+		return
 	var historical:Dictionary = _closing_target.binding.merged({"request_id":_close_request_id})
 	var retired:bool = gateway.manager.retired_binding_for_request(room_id,_close_request_id) == historical
 	var process_state:int = 0 if retired else gateway.manager.process_state_for_binding(_closing_target.binding)

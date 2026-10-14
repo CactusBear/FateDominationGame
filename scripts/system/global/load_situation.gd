@@ -50,16 +50,23 @@ static func _load_file(dir_path:String, file_name:String) -> void:
 
 
 #按一份局势牌数据建牌，图片相对 dir_path，不放进任何牌堆。读文件与效果里自定义生成的牌共用这一份
-static func build_situation(data:Dictionary, dir_path:String) -> BaseSituation:
+static func build_situation(data:Dictionary, dir_path:String, source_context:Variant = null) -> BaseSituation:
+	var source:Dictionary = LoadHelper.validate_source_context(source_context)
+	if not source.ok:
+		return null
 	var situation := BaseSituation.new(
 		data["card_name"],
 		dir_path + "/" + data["card_img"],
-		LoadHelper.load_number(data["magic"])
+		LoadHelper.load_number(data["magic"]),
+		[],
+		source.context == null
 	)
 	situation._shown_name = data.get("shown_name", "")
 	situation._zoom_kind = LoadHelper.resolve_zoom_kind(data, "card_img")
-	situation._effects = LoadHelper.load_effects(data.get("effects", []), situation)
+	situation._effects = LoadHelper.load_effects(data.get("effects", []), situation, source_context)
 	var back_type := "climax_situation" if data.get("is_climax", false) else "situation"
 	situation._card_back_img = LoadHelper.resolve_card_back(data.get("card_back_img", ""), dir_path, back_type)
 	LoadHelper.load_object_extras(situation, data)
+	if not LoadHelper.finalize_loaded_card(situation, source_context):
+		return null
 	return situation

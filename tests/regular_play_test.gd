@@ -1,4 +1,9 @@
 extends Node
+# 本局原来源取自 reset_runtime 回执；夹具对 operation 显式传入，不从全局补票。
+var ctx: SessionContext = null
+func _reset_ctx() -> SessionContext:
+	var reset: Dictionary = EffectManager.reset_runtime()
+	return reset.get("context") if reset.get("ok", false) else null
 var failures:Array=[]
 var checks:=0
 func check(ok:bool,label:String):
@@ -6,7 +11,7 @@ func check(ok:bool,label:String):
 	if not ok: failures.append(label)
 	print("CHECK ",label," ",ok)
 func setup(count:int=3, magic:int=10)->Dictionary:
-	EffectManager.reset_runtime(); GameLog.reset(); GameLog.set_context(1,"action")
+	ctx = _reset_ctx(); GameLog.reset(); GameLog.set_context(1,"action")
 	GameProgress.current_round=1; GameProgress.current_phase_index=2; GameProgress.current_player_id=0
 	GameData.player_data_library[0]=GameData.new_player_data()
 	var d=GameData.player_data_library[0]; d.is_out=false; d.magic.number=magic
@@ -162,10 +167,10 @@ func run():
 	d.servant_skills=[source_skill,other_skill]
 	EffectManager.register_effect(source_effect,0)
 	EffectManager.register_effect(listener,0)
-	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD],0,other_skill)
+	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], 0, other_skill, ctx)
 	check(GameLog.query({"type":"effect","data":{"effect_name":"source_effect"}},0).is_empty(),"source-bound effect ignores another card")
 	check(GameLog.query({"type":"effect","data":{"effect_name":"independent_listener"}},0).size()==1,"independent listener still observes another card")
-	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD],0,source_skill)
+	TimePointChecker.dynamic_time_point([TimePoints.PLAYED_CARD], 0, source_skill, ctx)
 	check(GameLog.query({"type":"effect","data":{"effect_name":"source_effect"}},0).size()==1,"source-bound effect observes its own card")
 	check(EffectManager.messages.is_empty(),"placeholder effects never produce a success announcement")
 	# 回归验证：技能卡位的金框与"能不能出"的状态必须同在卡图层。

@@ -1,0 +1,266 @@
+*** Begin Patch
+*** Add File: newtests/round74_cleanup_handoff_contract_test.gd
++extends Node
++
++## 所有 registration/lease/member 正负值均为显式 CONTRACT TEST，不是生产 native proof。
++const Collector = preload("res://scripts/net/server/temporary_cleanup_proof_collector.gd")
++const Ledger = preload("res://scripts/net/server/temporary_cleanup_ledger.gd")
++var checks:Array = []
++var native_observation:Dictionary = {}
++
++class TestLease extends RefCounted:
++	var scope:Dictionary
++	var epoch:int = 1
++	var reads:int = 0
++	var drift:bool = false
++	func cleanup_lease_observe(_scope:Dictionary) -> Dictionary:
++		reads += 1
++		if drift and reads == 3: epoch += 1
++		return {"lease_version":1,"scope":scope.duplicate(true),"held":true,"mode":"exclusive","lease_id":"contract-test-only","epoch":epoch}
++
++class TestRegistration extends RefCounted:
++	var scope:Dictionary
++	var binding:Dictionary
++	var mode:String = "closed"
++	var reads:int = 0
++	var generation:int = 1
++	func cleanup_registration_contract() -> Dictionary:
++		return {"contract_version":1,"scope":scope.duplicate(true),"registration_boundary":"before_start_until_all_handles_released","enumeration_source":"authoritative_ownership_boundary","writer_exclusion":"all_scope_writers_require_same_lease"}
++	func cleanup_enumerate(_lease:Object) -> Dictionary:
++		reads += 1
++		if mode == "generation_drift" and reads == 3: generation += 1
++		return {"enumeration_version":1,"registry_generation":generation,"entries":[] if mode == "omitted_member" else [binding.duplicate(true)]}
++	func cleanup_verify_enumeration(enumeration:Dictionary, held:Dictionary) -> Dictionary:
++		# 独立 fixture 见证，故意不从 enumeration.entries 导出成员集合。
++		return {"verification_version":1,"enumeration":enumeration.duplicate(true),"lease":held.duplicate(true),"registered_binding_ids":[binding.instance_id],"unregistered_writers":[],"pending_registrations":0}
++	func cleanup_verify_member(_binding:Dictionary, held:Dictionary) -> Dictionary:
++		var member:Dictionary = {"binding":binding.duplicate(true),"registry_generation":generation,"lease_id":held.lease_id,"lease_epoch":held.epoch,"identity_status":"verified","process_state":"EXITED","handle_state":"RELEASED","job_state":"EMPTY_RELEASED"}
++		if mode.begins_with("mismatch_"):
++			var field:String = mode.trim_prefix("mismatch_")
++			member.binding[field] = binding[field] + 1 if field == "pid" else "different-contract-test-binding"
++		elif mode in ["identity_unknown","missing_native"]:
++			member.identity_status = "unknown"
++			member.process_state = "UNKNOWN"
++		elif mode == "state_unknown": member.process_state = "UNKNOWN"
++		elif mode == "active":
++			member.process_state = "RUNNING"
++			member.handle_state = "HELD"
++			member.job_state = "ACTIVE"
++		elif mode == "handles_held": member.handle_state = "HELD"
++		elif mode == "job_active": member.job_state = "ACTIVE"
++		elif mode == "member_epoch": member.lease_epoch += 1
++		elif mode == "member_generation": member.registry_generation += 1
++		elif mode == "malformed_identity": member.identity_status = true
++		return member
++
++func _check(name:String, ok:bool) -> void:
++	checks.append({"name":name,"ok":ok})
++	print("CHECK ",name," ",ok)
++
++func _write(path:String, value:Dictionary) -> void:
++	var file := FileAccess.open(path,FileAccess.WRITE)
++	if file == null:
++		_check("fixture_write",false)
++		return
++	file.store_string(JSON.stringify(value))
++	file.close()
++
++func _ready() -> void:
++	var root:String = ProjectSettings.globalize_path("res://owned_data")
++	DirAccess.make_dir_recursive_absolute(root)
++	var id:String = "1".repeat(32)
++	var binding:Dictionary = {"room":"contract-test-room","pid":OS.get_process_id(),"instance_id":"contract-test-instance","authority_host_mode":"dedicated_server"}
++	var artifact:String = root.path_join(id+".request.json")
++	_write(artifact,{"contract_test_only":true})
++	var file := FileAccess.open(artifact,FileAccess.READ)
++	var size:int = file.get_length()
++	file.close()
++	var digest:String = FileAccess.get_sha256(artifact)
++	var released:Dictionary = binding.merged({"request_id":id})
++	var record:Dictionary = {"artifact_id":id+":request","source":"server_console_channel.close:request","instance_id":binding.instance_id,"path":artifact,"sha256":digest,"bytes":size,"artifact_kind":"temporary_file","save_status":"confirmed","consumed":true,"recyclable":true,"instance_exited":true,"consumed_at":0,"consumption_receipt_id":id,"exit_receipt_id":id,"save_exit_binding":released}
++	var ledger_path:String = root.path_join("contract-ledger.json")
++	_write(ledger_path,{"version":1,"entries":{id:{"source":"server_console_channel.close","binding":binding,"root":root,"request_sha256":digest,"response_sha256":"0".repeat(64),"state":"consumed","consumed_at":0,"save_exit_binding":released,"records":[record]}},"runs":[]})
++	var ledger = Ledger.new()
++	ledger.path = ledger_path
++	var ledger_digest:String = FileAccess.get_sha256(ledger_path)
++	var config:Dictionary = {"approved_roots":[root],"protected_paths":[],"retention_seconds":0,"max_files":1,"max_bytes":size}
++	var scope:Dictionary = {"deployment_id":"contract-test-only","approved_roots":[root],"protected_paths":[]}
++	var lease := TestLease.new()
++	lease.scope = scope
++	var provider := TestRegistration.new()
++	provider.scope = scope
++	provider.binding = binding
++	var result:Dictionary = ledger.preview_proven(config,1,provider,lease,scope.deployment_id)
++	_check("complete_contract_reaches_existing_eligibility",result.get("ok") == true and result.get("planned_files") == 1)
++	_check("complete_contract_never_grants_deletion",result.get("diagnostic_only") == true and result.get("blocked") == true and result.get("removed_files") == 0 and result.get("execution_blocker") == "cleanup_execution_lease_unwired")
++	var cases:Dictionary = {"mismatch_room":"member_binding_or_generation_changed","mismatch_pid":"member_binding_or_generation_changed","mismatch_instance_id":"member_binding_or_generation_changed","mismatch_authority_host_mode":"member_binding_or_generation_changed","identity_unknown":"unknown_process_identity_or_state","missing_native":"unknown_process_identity_or_state","state_unknown":"unknown_process_identity_or_state","handles_held":"exited_handles_not_released","job_active":"exited_handles_not_released","member_epoch":"member_binding_or_generation_changed","member_generation":"member_binding_or_generation_changed","malformed_identity":"invalid_member_observation","omitted_member":"incomplete_instance_enumeration","generation_drift":"lifecycle_proof_changed_between_steps"}
++	for mode in cases:
++		provider.mode = mode
++		provider.reads = 0
++		provider.generation = 1
++		lease.reads = 0
++		result = ledger.preview_proven(config,1,provider,lease,scope.deployment_id)
++		_check(mode+"_caller_deny",result.get("ok") == false and result.get("error") == cases[mode] and not result.has("candidates") and result.get("removed_files") == 0)
++	provider.mode = "active"
++	result = ledger.preview_proven(config,1,provider,lease,scope.deployment_id)
++	_check("active_caller_policy_deny",result.get("ok") == true and result.get("planned_files") == 0 and result.rejected[0].reason == "current_instance" and result.lifecycle_proof.current_instances == [binding.instance_id])
++	provider.mode = "closed"
++	lease.reads = 0
++	lease.drift = true
++	result = ledger.preview_proven(config,1,provider,lease,scope.deployment_id)
++	_check("lease_epoch_drift_caller_deny",result.get("ok") == false and result.get("error") == "lifecycle_proof_changed_between_steps" and not result.has("candidates"))
++	lease.drift = false
++	result = ledger.preview_proven(config,1,null,lease,scope.deployment_id)
++	_check("missing_capability_caller_unknown_failclosed",result.get("ok") == false and result.get("error") == "missing_registration_capability")
++	var proof:Dictionary = Collector.collect(provider,lease,scope)
++	var another := TestRegistration.new()
++	another.scope = scope
++	another.binding = binding
++	another.generation = provider.generation
++	result = Collector.revalidate(proof,another,lease,scope)
++	_check("different_observation_source_deny",result.get("ok") == false and result.get("error") == "lifecycle_proof_changed_between_steps")
++	_check("old_execution_caller_still_blocked",ledger.cleanup(config,1,func(): return proof).get("error") == "cleanup_execution_lease_unwired")
++	_check("caller_ledger_unchanged",FileAccess.get_sha256(ledger_path) == ledger_digest)
++	file = FileAccess.open(artifact,FileAccess.READ)
++	_check("caller_artifact_reopens_unchanged",file != null and FileAccess.get_sha256(artifact) == digest)
++	if file != null: file.close()
++	_observe_native()
++	var failed:Array = checks.filter(func(row): return not row.ok)
++	var report:Dictionary = {"passed":failed.is_empty(),"contract_test_only":true,"production_registry_verified":false,"actual_job_zero_verified":false,"removed_files":0,"checks":checks,"native_observation":native_observation,"artifact_path":artifact,"artifact_sha256":digest,"ledger_path":ledger_path,"ledger_sha256":ledger_digest,"user_data_dir":OS.get_user_data_dir()}
++	_write(ProjectSettings.globalize_path("res://result.json"),report)
++	print("RESULT ",JSON.stringify(report))
++	get_tree().quit(0 if failed.is_empty() else 1)
++
++func _observe_native() -> void:
++	# 独立夹具仅加载正式旧 DLL；不接触 manager owner、token 或任何活体 worker。
++	var loaded:int = GDExtensionManager.load_extension("res://native/production_old.gdextension")
++	native_observation = {"load_error":loaded,"status":"UNKNOWN","query_performed":false,"actual_job_zero_verified":false}
++	if loaded != OK or not ClassDB.class_exists("FateProcessOwner") or not ClassDB.class_has_method("FateProcessOwner","state"):
++		native_observation.reason = "optional_native_unavailable"
++		_check("optional_native_missing_never_safe",native_observation.status == "UNKNOWN")
++		return
++	# Test-owned object only. No spawn/terminate/release, no real owner token exists here.
++	var owner:Object = ClassDB.instantiate("FateProcessOwner")
++	if owner == null:
++		native_observation.reason = "optional_native_not_instantiable"
++		_check("optional_native_not_instantiable_unknown",true)
++		return
++	var state:Variant = owner.call("state","round74-unclaimed-contract-test",OS.get_process_id())
++	native_observation.query_performed = true
++	native_observation.state = state
++	_check("real_native_unclaimed_binding_unknown",state is int and state == -1)
++	native_observation.tree_observe_available = owner.has_method("tree_observe")
++	if owner.has_method("tree_observe"):
++		var tree:Variant = owner.call("tree_observe","round74-unclaimed-contract-test",OS.get_process_id())
++		if tree is Dictionary:
++			var public_observation:Dictionary = {}
++			for field in ["ok","stage","root_state","active_known","active_processes","release_complete","handles_released"]:
++				if tree.has(field): public_observation[field] = tree[field]
++			native_observation.tree = public_observation
++		_check("real_native_tree_never_release_proof",tree is Dictionary and tree.get("ok") == false and tree.get("release_complete") != true and tree.get("handles_released") != true)
++	else:
++		native_observation.reason = "optional_tree_query_missing_unknown"
++		_check("real_optional_tree_missing_remains_unknown",native_observation.status == "UNKNOWN" and native_observation.actual_job_zero_verified == false)
+*** Add File: newtests/round74_cleanup_handoff_contract_test.tscn
++[gd_scene load_steps=2 format=3]
++[ext_resource type="Script" path="res://newtests/round74_cleanup_handoff_contract_test.gd" id="1"]
++[node name="Round74CleanupHandoffContract" type="Node"]
++script = ExtResource("1")
+*** Add File: newtests/run_round74_cleanup_handoff.py
++"""Frozen E-only Godot contract test; no production writes or cleanup."""
++from pathlib import Path
++import hashlib
++import argparse
++import json
++import os
++import re
++import shutil
++import subprocess
++import sys
++import uuid
++
++ROOT = Path(__file__).resolve().parents[1]
++ENGINE = Path('D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe')
++SCENE = 'newtests/round74_cleanup_handoff_contract_test.tscn'
++TEST = SCENE.replace('.tscn', '.gd')
++DLL = 'addons/fate_server_signals/bin/libfate_server_signals.windows.template_release.x86_64.dll'
++
++
++def sha(path):
++    return hashlib.sha256(path.read_bytes()).hexdigest()
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument('--mutation-binding', action='store_true', help='Test-only RED: bypass member binding equality in the frozen copy')
++    args = parser.parse_args()
++    parent = Path('E:/scratch').resolve()
++    if parent.drive.lower() != 'e:':
++        raise RuntimeError('physical E scratch required')
++    scope = parent / ('round74-cleanup-handoff-' + uuid.uuid4().hex)
++    project = scope / 'project'
++    project.mkdir(parents=True)
++    pending = ['scripts/net/server/temporary_cleanup_ledger.gd', TEST]
++    sources = {}
++    while pending:
++        name = pending.pop()
++        if name in sources:
++            continue
++        source = ROOT / name
++        content = source.read_text(encoding='utf-8')
++        sources[name] = sha(source)
++        target = project / name
++        target.parent.mkdir(parents=True, exist_ok=True)
++        shutil.copyfile(source, target)
++        pending += re.findall(r'(?:preload|extends)\s*\(?\s*[\"\x27]res://([^\"\x27]+\.gd)[\"\x27]', content)
++    shutil.copyfile(ROOT / SCENE, project / SCENE)
++    sources[SCENE] = sha(ROOT / SCENE)
++    mutation = None
++    if args.mutation_binding:
++        collector = project / 'scripts/net/server/temporary_cleanup_proof_collector.gd'
++        original = collector.read_text(encoding='utf-8')
++        needle = 'member.binding != binding'
++        if original.count(needle) != 1:
++            raise RuntimeError('mutation anchor drift')
++        collector.write_text(original.replace(needle, 'false'), encoding='utf-8')
++        mutation = {'test_only': True, 'target': 'scripts/net/server/temporary_cleanup_proof_collector.gd', 'bypass': needle, 'frozen_sha256': sha(collector)}
++    native = project / 'native'
++    native.mkdir()
++    shutil.copyfile(ROOT / DLL, native / 'production_old.dll')
++    sources[DLL] = sha(ROOT / DLL)
++    (native / 'production_old.gdextension').write_text('[configuration]\nentry_symbol="fate_server_signals_init"\ncompatibility_minimum="4.4"\nreloadable=false\n[libraries]\nwindows.x86_64="res://native/production_old.dll"\n', encoding='utf-8')
++    (project / 'project.godot').write_text('[application]\nconfig/name="Round74CleanupHandoffContract"\n[rendering]\nrenderer/rendering_method="gl_compatibility"\n', encoding='utf-8')
++    env = dict(os.environ)
++    for key in ('APPDATA', 'LOCALAPPDATA', 'TEMP', 'TMP', 'TMPDIR'):
++        target = scope / 'environment' / key.lower()
++        target.mkdir(parents=True)
++        env[key] = str(target)
++    command = [str(ENGINE), '--headless', '--fixed-fps', '60', '--path', str(project), '--scene', 'res://' + SCENE]
++    (scope / 'freeze.json').write_text(json.dumps({'sources': sources, 'mutation': mutation, 'command': command, 'environment': {key: env[key] for key in ('APPDATA', 'LOCALAPPDATA', 'TEMP', 'TMP', 'TMPDIR')}, 'contract_test_only': True}, indent=2), encoding='utf-8')
++    process = subprocess.Popen(command, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
++    try:
++        output, _ = process.communicate(timeout=90)
++    except subprocess.TimeoutExpired:
++        # Exact owned PID tree only; this is a watchdog, never evidence of Job release.
++        subprocess.run(['taskkill.exe', '/PID', str(process.pid), '/T', '/F'], capture_output=True)
++        output, _ = process.communicate(timeout=10)
++        (scope / 'godot.log').write_bytes(output)
++        raise RuntimeError('owned fixture watchdog expired: ' + str(scope))
++    (scope / 'godot.log').write_bytes(output)
++    report_path = project / 'result.json'
++    report = json.loads(report_path.read_text(encoding='utf-8')) if report_path.exists() else {}
++    unchanged = {name: sha(ROOT / name) == digest for name, digest in sources.items()}
++    text = output.decode('utf-8', errors='replace')
++    passed = process.returncode == 0 and report.get('passed') is True and all(unchanged.values()) and 'SCRIPT ERROR' not in text and 'ERROR:' not in text
++    independent = {key: sha(Path(report[key.replace('_sha256', '_path')])) == report[key] for key in ('artifact_sha256', 'ledger_sha256')} if report else {}
++    passed = passed and all(independent.values())
++    evidence = {'passed': passed, 'exit_code': process.returncode, 'pid': process.pid, 'command': command, 'sources_before_sha256': sources, 'sources_after_unchanged': unchanged, 'independent_readback': independent, 'checks': len(report.get('checks', [])), 'failed_checks': [row['name'] for row in report.get('checks', []) if row['ok'] is False], 'mutation': mutation, 'native_observation': report.get('native_observation'), 'actual_job_zero_verified': False, 'scope': str(scope), 'production_auto_cleanup_enabled': False}
++    (scope / 'verification.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')
++    print(text)
++    print(json.dumps(evidence, indent=2))
++    return 0 if passed else 1
++
++
++if __name__ == '__main__':
++    sys.exit(main())
+*** End Patch

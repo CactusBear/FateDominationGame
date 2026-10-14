@@ -10,23 +10,20 @@ var load_masters_finished:bool = false
 var load_servants_finished:bool = false
 var roster_catalog = preload("res://scripts/selection/roster_catalog.gd").new()
 
+const ProcessBootstrap = preload("res://scripts/net/server/server_bootstrap.gd")
+var _load_on_ready:bool = true
+
 static func is_server_worker_process(arguments:PackedStringArray = OS.get_cmdline_user_args()) -> bool:
-	for role in ["--server-console", "--room-data-validation-worker", "--server-room-worker", "--server-gateway", "--server-signaling"]:
-		if arguments.has(role):
-			return true
-	return false
+	return ProcessBootstrap.is_background_process(arguments)
+
+func _enter_tree() -> void:
+	ProcessBootstrap.prepare_loader(self)
 
 func _ready():
-	# 正式客户端也会复用自身可执行文件启动后台职责，路由复用统一入口。
-	if not OS.has_feature("editor") and not OS.has_feature("fate_server") and is_server_worker_process():
-		get_tree().change_scene_to_file.call_deferred("res://assets/scenes/main_menu/server_bootstrap.tscn")
-		return
-	if OS.has_feature("fate_server") or OS.get_cmdline_user_args().has("--server-console") or OS.get_cmdline_user_args().has("--room-data-validation-worker") or OS.get_cmdline_user_args().has("--server-room-worker") or OS.get_cmdline_user_args().has("--server-gateway"):
-		return
-	load_game()
-	pass
+	if _load_on_ready:
+		load_game()
 
-func load_game():
+func load_game(error_sink:Callable = Callable()):
 	var data_dir := LoadHelper.get_data_dir()
 	masters_path = data_dir.path_join("masters")
 	servants_path = data_dir.path_join("servants")
@@ -35,8 +32,8 @@ func load_game():
 	LoadEvent.load_all()
 	LoadSituation.load_all()
 	LoadCommandSpell.load_all()
-	load_masters_from_jsons(masters_path)
-	load_servants_from_jsons(servants_path)
+	load_masters_from_jsons(masters_path, error_sink)
+	load_servants_from_jsons(servants_path, error_sink)
 	write_tag_list()
 	load_stored_jsons()
 	store_jsons()
@@ -46,12 +43,12 @@ func load_game():
 
 #中途结束对局后重新加载全部模板。load_game 依赖的递归扫描标志与标签/缓存累加器
 #都是启动时一次性的状态，不复位就会跳过扫描或把标签重复追加，所以先清再加载
-func reload_game():
+func reload_game(error_sink:Callable = Callable()):
 	load_masters_finished = false
 	load_servants_finished = false
 	tag_list.clear()
 	temp_stored_jsons_arr.clear()
-	load_game()
+	load_game(error_sink)
 
 
 ## 仅在未开局时同步角色模板，不重跑全局加载与游戏初始化。
@@ -180,24 +177,30 @@ func load_tags(need_check:bool = false):
 	#check_tag(need_check)
 
 
-func load_masters_from_jsons(load_path:String):
+func load_masters_from_jsons(load_path:String, error_sink:Callable = Callable()):
 	var files: Dictionary = {}
 	roster_catalog.error = ""
 	roster_catalog._scan(load_path, files)
 	if not roster_catalog.error.is_empty():
-		push_error(roster_catalog.error)
+		if error_sink.is_valid():
+			error_sink.call(roster_catalog.error)
+		else:
+			push_error(roster_catalog.error)
 		return
 	for path in files:
 		GameData.loaded_masters.append(load_master_file(path.get_base_dir(), path.get_file()))
 	load_masters_finished = true
 
 
-func load_servants_from_jsons(load_path:String):
+func load_servants_from_jsons(load_path:String, error_sink:Callable = Callable()):
 	var files: Dictionary = {}
 	roster_catalog.error = ""
 	roster_catalog._scan(load_path, files)
 	if not roster_catalog.error.is_empty():
-		push_error(roster_catalog.error)
+		if error_sink.is_valid():
+			error_sink.call(roster_catalog.error)
+		else:
+			push_error(roster_catalog.error)
 		return
 	for path in files:
 		GameData.loaded_servants.append(load_servant_file(path.get_base_dir(), path.get_file()))
@@ -380,15 +383,18 @@ func load_servant_file(path:String, servant_file_name:String):
 	return servant
 
 
-func load_effects(effects:Array, from):
-	return LoadHelper.load_effects(effects, from)
+func load_effects(effects:Array, from, source_context:Variant = null):
+	return LoadHelper.load_effects(effects, from, source_context)
 
 
 func load_number(number:Dictionary):
 	return LoadHelper.load_number(number)
 
 
-func load_skills(skills:Array, pic_path:String, from, type_name:String = "skill"):
+func load_skills(skills:Array, pic_path:String, from, type_name:String = "skill", source_context:Variant = null):
+	var source:Dictionary = LoadHelper.validate_source_context(source_context)
+	if not source.ok:
+		return []
 	var ski_arr:Array
 	for ski:Dictionary in skills:
 		var skill_name = ski["skill_name"]
@@ -397,22 +403,17 @@ func load_skills(skills:Array, pic_path:String, from, type_name:String = "skill"
 		var cost = load_number(ski["cost"])
 		var power = load_number(ski["power"])
 		var ignore_limit = ski["ignore_limit"]
-		var skill = BaseSkill.new(skill_name, skill_card_img, attributes, cost, power, ignore_limit)
+		var skill = BaseSkill.new(skill_name, skill_card_img, attributes, cost, power, ignore_limit, [], source.context == null)
 		skill._shown_name = ski.get("shown_skill_name", "")
-		var effects = load_effects(ski["effects"], skill)
-		skill._effects = effects
+		skill._effects = load_effects(ski["effects"], skill, source.context)
 		skill.from = from
 		skill._card_back_img = LoadHelper.resolve_card_back(ski.get("card_back_img", ""), pic_path, type_name)
 		skill._zoom_kind = LoadHelper.resolve_zoom_kind(ski, "skill_card_img")
 		#升华技默认未觉醒(要靠特定从者激活)，其它技能牌默认已获得
 		skill._is_awakened = bool(ski.get("is_awakened", type_name != "upgrade_skill"))
-		#打出规则与卡面提示都是卡自己的数据；没声明就什么都不加
-		skill._play_requirements = ski.get("play_requirements", [])
-		skill._shown_notes = ski.get("shown_notes", [])
-		skill._need_extra_play = bool(ski.get("need_extra_play", false))
-		#词条(如真名解放)：卡自己显式声明，引擎按词条名执行对应规则。没声明就没有
-		skill._keywords = ski.get("keywords", [])
 		LoadHelper.load_object_extras(skill, ski)
+		if not LoadHelper.finalize_loaded_card(skill, source.context):
+			return []
 		ski_arr.append(skill)
 
 	return ski_arr
@@ -420,12 +421,15 @@ func load_skills(skills:Array, pic_path:String, from, type_name:String = "skill"
 
 #owner_effects_data 是持有者(御主)的效果原始 JSON：御主附带攻击牌的卡背要按"这张卡最终去哪"分类，
 #而"加入牌库"的声明写在持有者效果里而不是这张卡上，所以要一并传进来判定。从者牌库不传，走默认
-func load_attacks(attacks:Array, pic_path:String, from, owner_effects_data:Array = []):
+func load_attacks(attacks:Array, pic_path:String, from, owner_effects_data:Array = [], source_context:Variant = null):
+	var source:Dictionary = LoadHelper.validate_source_context(source_context)
+	if not source.ok:
+		return []
 	var att_arr:Array
 	for att in attacks:
 		if att is String:
 			#牌库构成引用："attribute:power"（如 strength:2）或 "special:name"（如 special:surveil）
-			var card: BaseAttack = LoadAttack.resolve(att)
+			var card: BaseAttack = LoadAttack.resolve(att, source.context)
 			if card != null:
 				card.from = from
 				att_arr.append(card)
@@ -435,11 +439,11 @@ func load_attacks(attacks:Array, pic_path:String, from, owner_effects_data:Array
 		var attributes = att["attributes"]
 		var cost = load_number(att["cost"])
 		var power = load_number(att["power"])
-		var attack = BaseAttack.new(attack_name, attack_card_img, attributes, cost, power)
+		var attack = BaseAttack.new(attack_name, attack_card_img, attributes, cost, power, [], source.context == null)
 		attack._shown_name = att.get("shown_attack_name", "")
 		#写了类别就按写的，没写保持构造时的默认
 		attack._category = att.get("category", attack._category)
-		var effects = load_effects(att["effects"], attack)
+		var effects = load_effects(att["effects"], attack, source.context)
 		attack._effects = effects
 		attack.from = from
 		#会被持有者效果搬进牌库的（如葛木的蛇）印攻击牌卡背，留在持有者身上随时打出的
@@ -449,14 +453,9 @@ func load_attacks(attacks:Array, pic_path:String, from, owner_effects_data:Array
 			back_type = "attack"
 		attack._card_back_img = LoadHelper.resolve_card_back(att.get("card_back_img", ""), pic_path, back_type)
 		attack._zoom_kind = LoadHelper.resolve_zoom_kind(att, "attack_card_img")
-		attack._play_requirements = att.get("play_requirements", [])
-		attack._shown_notes = att.get("shown_notes", [])
-		attack._need_extra_play = bool(att.get("need_extra_play", false))
-		attack._initial_zone = str(att.get("initial_zone", ""))
-		attack._initial_count = maxi(0, int(att.get("initial_count", 1)))
-		#词条同技能牌：攻击牌也能带词条(如御主附加牌带真名解放)，声明在卡自己身上
-		attack._keywords = att.get("keywords", [])
 		LoadHelper.load_object_extras(attack, att)
+		if not LoadHelper.finalize_loaded_card(attack, source.context):
+			return []
 		att_arr.append(attack)
 
 	return att_arr
@@ -489,24 +488,37 @@ func load_buffs(buffs:Array, pic_path:String, from):
 
 #不能归类为技能/攻击/buff的御主附带物件(如宝石卡)。用BaseCard承载卡面/卡背/效果，
 #卡背默认走skill卡背，JSON可写card_back_img覆盖
-func load_other_master_things(things:Array, pic_path:String, from):
+func load_other_master_things(things:Array, pic_path:String, from, source_context:Variant = null):
+	var source:Dictionary = LoadHelper.validate_source_context(source_context)
+	if not source.ok:
+		return []
 	var thing_arr:Array
 	for thing:Dictionary in things:
-		var thing_name = thing["thing_name"]
-		var card = BaseCard.new()
-		card._name = thing_name
-		card._shown_name = thing.get("shown_thing_name", "")
-		card._card_img = pic_path + "/" + thing["card_img"]
-		card._card_back_img = LoadHelper.resolve_card_back(thing.get("card_back_img", ""), pic_path, "skill")
-		card._zoom_kind = LoadHelper.resolve_zoom_kind(thing, "card_img")
-		card._effects = load_effects(thing.get("effects", []), card)
-		card._attributes = []
-		card.from = from
-		LoadHelper.load_object_extras(card, thing)
-		card.add_object()
-		thing_arr.append(card)
+		#同一张附带物有几份由数据的 count 声明（缺省 1）；每份是独立的牌对象，效果按张移动
+		for copy_i in LoadHelper.thing_count(thing):
+			var card = _load_one_master_thing(thing, pic_path, from, source.context)
+			if card == null:
+				return []
+			thing_arr.append(card)
 	
 	return thing_arr
+
+
+func _load_one_master_thing(thing:Dictionary, pic_path:String, from, context):
+	var thing_name = thing["thing_name"]
+	var card = BaseCard.new()
+	card._name = thing_name
+	card._shown_name = thing.get("shown_thing_name", "")
+	card._card_img = pic_path + "/" + thing["card_img"]
+	card._card_back_img = LoadHelper.resolve_card_back(thing.get("card_back_img", ""), pic_path, "skill")
+	card._zoom_kind = LoadHelper.resolve_zoom_kind(thing, "card_img")
+	card._effects = load_effects(thing.get("effects", []), card, context)
+	card._attributes = []
+	card.from = from
+	LoadHelper.load_object_extras(card, thing)
+	if not LoadHelper.finalize_loaded_card(card, context):
+		return null
+	return card
 
 
 func load_map_areas(map_areas:Array, from):
@@ -554,17 +566,22 @@ func load_locations(locations:Array, from):
 	return location_arr
 
 
-func load_events(events:Array, pic_path:String, from):
+func load_events(events:Array, pic_path:String, from, source_context:Variant = null):
+	var source:Dictionary = LoadHelper.validate_source_context(source_context)
+	if not source.ok:
+		return []
 	var event_arr:Array
 	for even:Dictionary in events:
 		var card_name = even["card_name"]
 		var card_img = pic_path + "/" + even["card_img"]
 		var score = load_number(even["score"])
-		var event = BaseEvent.new(card_name, card_img, score)
-		event._effects = load_effects(even["effects"], event)
+		var event = BaseEvent.new(card_name, card_img, score, [], source.context == null)
+		event._effects = load_effects(even["effects"], event, source.context)
 		event.from = from
+		if not LoadHelper.finalize_loaded_card(event, source.context):
+			return []
 		event_arr.append(event)
-	
+
 	return event_arr
 	
 

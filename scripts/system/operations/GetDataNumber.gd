@@ -4,7 +4,7 @@ extends RefCounted
 func exec(key:String, player_id:int = -1):
 
 	player_id = EffectManager.resolve_player_id(player_id)
-	var player_data = GameDataManager.get_player_data(player_id) as Dictionary
+	var player_data = GameDataManager.get_player_data_readonly(player_id) as Dictionary
 	if !player_data.has(key):
 		#show("所提供的键不存在于player_data中")
 		return

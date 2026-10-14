@@ -82,7 +82,7 @@ func run():
 			var current:BaseSkill=d.servant_skills[index]
 			var allowed:bool=RegularPlay.pending_modes(id,[],[],current).has(false)
 			print("CURSE ",current.get_shown_name()," attributes=",current._attributes," allowed=",allowed)
-			check(allowed == not current._attributes.has(Attributes.NOBLE_PHANTASM),
+			check(allowed == not current.has_attribute(Attributes.NOBLE_PHANTASM),
 				"curse permits only non-noble servant skill %d" % index)
 	# 后续断言的前提是"局面没有宝具禁令"。开局随机抽到的局势牌可能正好是禁令，
 	# 若沿用先前局面会让宝具技能不合法、把夹具随机性误报成规则 bug，这里显式清空。

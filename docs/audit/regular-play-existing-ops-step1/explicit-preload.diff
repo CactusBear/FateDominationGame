@@ -1,0 +1,21 @@
+--- previous/regular_play.gd
++++ explicit-preload/regular_play.gd
+@@ -56,9 +56,16 @@
+ 			return true
+ 	return false
+ 
+-# 只从注册表取得已有原语；不经过效果执行器，避免新增预算、日志或事务边界。
++# 显式依赖供冻结/打包扫描；选择仍以注册表的类名为准。
++const _OPERATION_SCRIPTS := {
++	"RemoveFromArray":preload("res://scripts/system/operations/RemoveFromArray.gd"),
++	"AddToArray":preload("res://scripts/system/operations/AddToArray.gd"),
++	"SetProperty":preload("res://scripts/system/operations/SetProperty.gd")
++}
++
++# 不经过效果执行器，避免新增预算、日志或事务边界。
+ static func _operation(func_name:String) -> RefCounted:
+-	return load("res://scripts/system/operations/%s.gd" % AllOperations.get_class_name_of(func_name)).new()
++	return _OPERATION_SCRIPTS[AllOperations.get_class_name_of(func_name)].new()
+ 
+ #打出时从来源区移除：出牌区与技能区都查，不假设牌来自手牌
+ static func _take_from_source(d: Dictionary, card) -> void:

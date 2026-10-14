@@ -27,6 +27,7 @@ func press(button: Button) -> void:
 
 func run() -> void:
 	var board = load("res://assets/scenes/game_scene/battle_board_v2.tscn").instantiate()
+	board.set_script(preload("res://newtests/v2-discard-stable-id_board.gd"))
 	get_tree().root.add_child(board)
 	board.set_process(false)
 	await get_tree().process_frame
@@ -34,14 +35,38 @@ func run() -> void:
 	if not board.has_node("Piles/EventPile/Open"):
 		finish()
 		return
-	EventResolver.new().clear_all()
+	var source: SessionContext = GameStart.startup_context()
+	check(source != null and SessionGeneration.validate_context(source).ok, "successful formal startup retains original context")
+	check(board.identity_builder != null and board.builder_factory_calls == 1, "formal local composition hands off exactly one builder")
+	if source == null or board.identity_builder == null:
+		finish()
+		return
+	var first_clear: Dictionary = EventResolver.new().clear_all(source)
+	check(first_clear.ok and first_clear.get("completed", false), "initial cleanup consumes original source receipt")
+	if not first_clear.ok:
+		finish()
+		return
 	MapData.event_discard.clear()
 	var cards: Array = []
 	for area in [MapData.shinto, MapData.miyama, MapData.scout]:
-		var event: BaseEvent = CloneObject.new().exec(LoadEvent.events[0])
-		AddMapAreaEvents.new().exec(area, event)
+		var factory := CloneContext.new()
+		check(factory.configure_template(source, [LoadEvent.events[0]]), "trusted event template authorized " + area._area_name)
+		var copied: Dictionary = factory.copy_result(LoadEvent.events[0], source)
+		check(copied.ok and copied.object is BaseEvent, "runtime event factory receipt " + area._area_name)
+		if not copied.ok or not copied.object is BaseEvent:
+			finish()
+			return
+		var event: BaseEvent = copied.object
+		preload("res://scripts/system/operation_router.gd").exec_registered("add_map_area_events", [area, event], source)
+		check(area._events.has(event) and is_same(event.from, area), "event placed through original source " + area._area_name)
 		cards.append(event)
-	EventResolver.new().clear_all()
+	var final_clear: Dictionary = EventResolver.new().clear_all(source)
+	check(final_clear.ok and final_clear.get("completed", false), "discard publication consumes original source receipt")
+	var card_ids: Array = []
+	for card in cards:
+		card_ids.append(board.identity_builder.ids.id_for(card))
+		check(is_same(board.identity_builder.ids.object_for(card_ids.back()), card), "same builder stable ID resolves original event")
+	board.refresh_all_ui()
 	await press(board.get_node("Piles/EventPile/Open"))
 	check(board.get_node("EventDiscardMenu").visible, "entrance opens second-level menu")
 	for key in ["Shinto", "Miyama", "Other"]:
@@ -54,10 +79,11 @@ func run() -> void:
 		var browser: Control = board.get_node("CardBrowser")
 		var row: Node = browser.get_node("Panel/CardScroll/Row")
 		check(browser.visible and not board.get_node("EventDiscardMenu").visible, "category opens browser " + keys[i])
-		check(row.get_child_count() == 1 and row.get_child(0).get_meta("card") == cards[i], "category filters source identity " + keys[i])
+		check(row.get_child_count() == 1 and row.get_child(0).get_meta("card") is Dictionary and row.get_child(0).get_meta("card").get("id", -1) == card_ids[i], "category filters source identity " + keys[i])
 		await press(browser.get_node("Panel/Close"))
 		check(not browser.visible, "browser close " + keys[i])
 	MapData.event_discard.erase(cards[0])
+	board.refresh_all_ui()
 	await press(board.get_node("Piles/EventPile/Open"))
 	await press(board.get_node("EventDiscardMenu/Choices/Shinto"))
 	check(board.get_node("CardBrowser/Panel/CardScroll/Row").get_child_count() == 0 and board.get_node("CardBrowser/Panel/Empty").visible, "reopening reads current discard data and shows empty state")

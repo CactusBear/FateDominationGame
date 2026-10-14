@@ -18,6 +18,8 @@ signal warped
 ## 按键确认反馈，由场景定义外观与时长。
 @export var feedback_player: AnimationPlayer
 @export var feedback_animation: StringName = &"press"
+## 已预渲染的全屏转场；未配置时继续使用 warp_player 的程序化动画。
+@export var transition_video: VideoStreamPlayer
 
 ## 跃迁开始时要停下的动画：非循环的先跳到终态再停，循环的直接暂停。
 @export var stop_players: Array[AnimationPlayer] = []
@@ -31,9 +33,15 @@ signal warped
 ## 跃迁完成后要切换到的场景。留空则只发 warped 信号、不切换（预览与测试状态）。
 ## warp_started 时开始后台线程预加载，warped 时若尚未加载完则停在终态画面等待。
 @export_file("*.tscn") var next_scene: String = ""
+## 预渲染视频中真实菜单开始出现的位置；到达后提前启动菜单，片尾时无缝交接。
+@export var transition_menu_start_position := -1.0
 
 var _started := false
 var _entering := false
+var _video_transition_active := false
+var _warped_emitted := false
+var _staged_next_scene: Node
+var _next_scene_packed: PackedScene
 
 
 func _ready() -> void:
@@ -92,6 +100,12 @@ func _play_feedback() -> bool:
 
 ## 跃迁播放中直接跳到终态；终态之后照常发出 warped。未在播放时无效。
 func skip_warp() -> void:
+	if _video_transition_active and transition_video != null:
+		_video_transition_active = false
+		transition_video.stop()
+		_discard_staged_scene()
+		_complete_warp()
+		return
 	if not _started or warp_player == null or not warp_player.is_playing():
 		return
 	var anim := warp_player.get_animation(warp_player.current_animation)
@@ -102,7 +116,8 @@ func skip_warp() -> void:
 
 ## 开始跃迁。重复调用无效。
 func start_warp() -> void:
-	if _started or warp_player == null or not warp_player.has_animation(warp_animation):
+	var use_transition_video := transition_video != null and transition_video.stream != null
+	if _started or (not use_transition_video and (warp_player == null or not warp_player.has_animation(warp_animation))):
 		return
 	_started = true
 	for p in stop_players:
@@ -112,16 +127,76 @@ func start_warp() -> void:
 		if anim != null and anim.loop_mode == Animation.LOOP_NONE:
 			p.seek(anim.length, true)
 		p.pause()
-	for v in freeze_videos:
-		if v != null:
-			v.paused = true
 	if _will_change_scene():
 		ResourceLoader.load_threaded_request(next_scene)
 	warp_started.emit()
+	if transition_video != null and transition_video.stream != null:
+		_video_transition_active = true
+		transition_video.stream_position = 0.0
+		transition_video.visible = true
+		transition_video.play()
+		# 首帧先真实绘制，再冻结原背景；headless 测试没有 post_draw 信号。
+		if DisplayServer.get_name() == "headless":
+			await get_tree().process_frame
+		else:
+			await RenderingServer.frame_post_draw
+		for v in freeze_videos:
+			if v != null:
+				v.paused = true
+		while _video_transition_active and transition_video.is_playing():
+			if _staged_next_scene == null and transition_menu_start_position >= 0.0 and transition_video.stream_position >= transition_menu_start_position and _will_change_scene():
+				await _stage_next_scene()
+			await get_tree().process_frame
+		if not _warped_emitted:
+			_complete_warp()
+		return
+	for v in freeze_videos:
+		if v != null:
+			v.paused = true
 	warp_player.play(warp_animation)
 	await warp_player.animation_finished
+	_complete_warp()
+
+
+func _complete_warp() -> void:
+	if _warped_emitted:
+		return
+	_warped_emitted = true
 	warped.emit()
-	_change_to_next_scene()
+	if is_instance_valid(_staged_next_scene):
+		var staged := _staged_next_scene
+		_staged_next_scene = null
+		get_tree().current_scene = staged
+		queue_free()
+	else:
+		_change_to_next_scene()
+
+
+func _stage_next_scene() -> void:
+	while _video_transition_active:
+		var status := ResourceLoader.load_threaded_get_status(next_scene)
+		if status == ResourceLoader.THREAD_LOAD_LOADED:
+			break
+		if status == ResourceLoader.THREAD_LOAD_FAILED or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+			return
+		await get_tree().process_frame
+	if not _video_transition_active:
+		return
+	_next_scene_packed = ResourceLoader.load_threaded_get(next_scene) as PackedScene
+	if _next_scene_packed == null:
+		return
+	var staged := _next_scene_packed.instantiate()
+	var root := get_tree().root
+	var opening_index := get_index()
+	root.add_child(staged)
+	root.move_child(staged, opening_index)
+	_staged_next_scene = staged
+
+
+func _discard_staged_scene() -> void:
+	if is_instance_valid(_staged_next_scene):
+		_staged_next_scene.queue_free()
+	_staged_next_scene = null
 
 
 ## 只有声明了 next_scene 且本节点是当前场景根时才切换；
@@ -135,7 +210,9 @@ func _change_to_next_scene() -> void:
 	if not _will_change_scene():
 		return
 	# load_threaded_get 在未加载完时阻塞到完成，画面停在跃迁终态
-	var packed: PackedScene = ResourceLoader.load_threaded_get(next_scene)
+	var packed := _next_scene_packed
+	if packed == null:
+		packed = ResourceLoader.load_threaded_get(next_scene) as PackedScene
 	if packed == null:
 		push_error("无法加载场景：" + next_scene)
 		return

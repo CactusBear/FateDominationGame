@@ -1,0 +1,1933 @@
+{
+  "status": "AI_IMPLEMENTED_VERIFIED_WITH_RULE_REGRESSION_BLOCKERS",
+  "changed_files": [
+    {
+      "path": "scripts/system/ai/group_search.gd",
+      "purpose": "纯搜索游标、贪心、确定性预算、同层去重、上界剪枝、同步/分帧驱动",
+      "sha256": "2a8c6cf52dbdc86eedf72f91c2e86fdaf9aaa3e99a2dba15b02cae908deba521"
+    },
+    {
+      "path": "scripts/system/ai/effect_planner.gd",
+      "purpose": "B 档选项次数/数量枚举、目标组合估计、帧间规则图变化检测",
+      "sha256": "642f28ab03eb7cc4d0a90d5d9cd7b6d1771c6c6fb561454b8da43f0103618a76"
+    },
+    {
+      "path": "scripts/system/ai/rule_bot.gd",
+      "purpose": "部署/常规出牌/阶段能力/令咒与效果选择的编排，保留尝试记录 ABI",
+      "sha256": "d09b154d07452b9811b249f62aadc460f118a192842f8f095939fea193d1a1ce"
+    },
+    {
+      "path": "scripts/system/ai/temp/dummy_bot.gd",
+      "purpose": "保留 DummyBot 同步兼容名，继承正式编排实现",
+      "sha256": "61cf8910fa244833508e6ed03309cceb517d4b22ddcc44cd141a151c25633fea"
+    },
+    {
+      "path": "scripts/match/match_driver.gd",
+      "purpose": "AI 创建边界保存原来源，保留同步回合并加异步回合/答复防重入",
+      "sha256": "7f282e644c5ef494c85f1e02a3fa9be504e72eb754459693234ed04f07576111"
+    },
+    {
+      "path": "scripts/game_scene/battle_board_v2.gd",
+      "purpose": "本地开局交接原来源，AI 回合和效果/目标答复 await 分帧入口",
+      "sha256": "9277e0b7fd6a60a0bf4e024bf5cdb1b0ae0a9f1d4fa07e35233c5bf60faa6918"
+    },
+    {
+      "path": "newtests/ai_group_search_test.gd",
+      "purpose": "独立三态暴力枚举、协同/INF、去重、剪枝、确定性、18 候选、实测 15 秒上限",
+      "sha256": "5097c77f10dca3b8759ed781df05a78b29ce31e3e95849ca32e652f00fd15097"
+    },
+    {
+      "path": "newtests/ai_group_search_test.tscn",
+      "purpose": "纯搜索专项场景",
+      "sha256": "f78bde408f5e41d501e9d8952170aec9dc8d38b7a41d67019b33d2b6b5a4cf36"
+    },
+    {
+      "path": "newtests/ai_rule_bot_test.gd",
+      "purpose": "真实来源与正式数据、实交组合、148 项 B 档/边界/异步/部署集成检查",
+      "sha256": "e0ea6f3371f695f722953a5ec76cd12c63408ee8ddee13bfb1538bedd5eeed14"
+    },
+    {
+      "path": "newtests/ai_rule_bot_test.tscn",
+      "purpose": "规则 AI 集成场景",
+      "sha256": "f36319bf9d32f1436a70e849d105eb8c58bf78ba443076df1472e12570a12887"
+    }
+  ],
+  "budgets": {
+    "node_budget": 4096,
+    "timeout_usec": 15000000,
+    "slice_usec": 4000,
+    "wall_timer": "Time.get_ticks_usec() cooperative between nodes; not preemptive rule execution"
+  },
+  "latest_sources": {
+    "before_fingerprint": "E:/scratch/ai-search/source-before-latest.json",
+    "checked_count": 1297,
+    "drift": []
+  },
+  "historical_batch_drift": [
+    "scripts/system/global/battle_resolver.gd",
+    "scripts/system/global/climax_resolver.gd",
+    "scripts/system/global/game_progress.gd",
+    "scripts/system/global/victory_resolver.gd",
+    "scripts/system/operations/EditLives.gd",
+    "scripts/system/operations/EndGame.gd"
+  ],
+  "effect_tier": "B: static numeric heuristic, not real settlement enumeration; direct power/magic and power/total_power_bonus data increments, unknown/conditional/delayed chains zero; card printed power/player current total/location benefit target proxies",
+  "latest_labels": [
+    "ai-current-source-check",
+    "ai-current-natural"
+  ],
+  "runs": [
+    {
+      "label": "ai-checkpoint-resume",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-checkpoint-resume res://newtests/ai_checkpoint_feasibility_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://newtests/ai_checkpoint_feasibility_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_checkpoint_feasibility_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_checkpoint_feasibility_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 2.8,
+            "checks": [
+              23
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":23,\"failures\":[],\"suite\":\"ai_checkpoint_feasibility\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_A_TIER_EVIDENCE {\"audit_after\":{\"error\":\"\",\"hash\":\"\",\"identity\":1,\"records\":0,\"revision\":0},\"audit_before\":{\"error\":\"\",\"hash\":\"\",\"identity\":0,\"records\":0,\"revision\":0},\"batch_after\":0,\"batch_before\":0,\"reason\":\"audit_identity_is_not_rollback_state\",\"rule_fields_unchanged\":{\"hand\":true,\"keys\":true,\"logs\":true,\"magic\":true,\"messages\":true,\"played\":true,\"power\":true,\"progress\":true,\"random\":true,\"token\":true,\"transaction\":true},\"tier\":\"B\"}"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-checkpoint-resume\\ai_checkpoint_feasibility_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-checkpoint-resume\\ai_checkpoint_feasibility_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-compile-first",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-compile-first res://newtests/ai_checkpoint_feasibility_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://newtests/ai_checkpoint_feasibility_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_checkpoint_feasibility_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_checkpoint_feasibility_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 3.1,
+            "checks": [
+              23
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":23,\"failures\":[],\"suite\":\"ai_checkpoint_feasibility\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_A_TIER_EVIDENCE {\"audit_after\":{\"error\":\"\",\"hash\":\"\",\"identity\":1,\"records\":0,\"revision\":0},\"audit_before\":{\"error\":\"\",\"hash\":\"\",\"identity\":0,\"records\":0,\"revision\":0},\"batch_after\":0,\"batch_before\":0,\"reason\":\"audit_identity_is_not_rollback_state\",\"rule_fields_unchanged\":{\"hand\":true,\"keys\":true,\"logs\":true,\"magic\":true,\"messages\":true,\"played\":true,\"power\":true,\"progress\":true,\"random\":true,\"token\":true,\"transaction\":true},\"tier\":\"B\"}"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-compile-first\\ai_checkpoint_feasibility_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-compile-first\\ai_checkpoint_feasibility_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-pure-first",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-pure-first res://newtests/ai_group_search_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://newtests/ai_group_search_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_group_search_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_group_search_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 17.7,
+            "checks": [
+              10
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":10,\"failures\":[],\"suite\":\"ai_group_search\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=6",
+            "AI_SEARCH_TIMEOUT nodes=6209301",
+            "AI_TIMEOUT_EVIDENCE elapsed_usec=15002697 budget=4096 safety_usec=15000000 nodes=6209301"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-pure-first\\ai_group_search_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-pure-first\\ai_group_search_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-rule-first",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-rule-first res://newtests/ai_rule_bot_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://newtests/ai_rule_bot_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_rule_bot_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_rule_bot_test",
+            "status": "RED",
+            "exit": 1,
+            "secs": 11.7,
+            "checks": [
+              98
+            ],
+            "failures": [
+              "B real manual request",
+              "B cannot afford cost declines",
+              "B required targets and unlimited selection"
+            ],
+            "reasons": [
+              "nonzero_exit",
+              "check_false",
+              "result_failures"
+            ],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":98,\"failures\":[\"B real manual request\",\"B cannot afford cost declines\",\"B required targets and unlimited selection\"],\"suite\":\"ai_rule_bot\"}"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-rule-first\\ai_rule_bot_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-rule-first\\ai_rule_bot_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-rule-second",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-rule-second res://newtests/ai_rule_bot_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://newtests/ai_rule_bot_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_rule_bot_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_rule_bot_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 13.5,
+            "checks": [
+              98
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":98,\"failures\":[],\"suite\":\"ai_rule_bot\"}"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-rule-second\\ai_rule_bot_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-rule-second\\ai_rule_bot_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-async-integration",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-async-integration res://newtests/ai_group_search_test.tscn res://newtests/ai_rule_bot_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://newtests/ai_group_search_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_group_search_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_group_search_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 17.7,
+            "checks": [
+              10
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":10,\"failures\":[],\"suite\":\"ai_group_search\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=12",
+            "AI_SEARCH_TIMEOUT nodes=6480309",
+            "AI_TIMEOUT_EVIDENCE elapsed_usec=15002722 budget=4096 safety_usec=15000000 nodes=6480309"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-async-integration\\ai_group_search_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-async-integration\\ai_group_search_test.err.log"
+        },
+        {
+          "scene": "res://newtests/ai_rule_bot_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_rule_bot_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_rule_bot_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 12.1,
+            "checks": [
+              108
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":108,\"failures\":[],\"suite\":\"ai_rule_bot\"}"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-async-integration\\ai_rule_bot_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-async-integration\\ai_rule_bot_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-required-regressions",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-required-regressions res://tests/natural_game_over_test.tscn res://tests/match_view_test.tscn res://newtests/a1_06_regular_origin_test.tscn res://tests/card_effect_runtime_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://tests/natural_game_over_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/natural_game_over_test.tscn"
+          ],
+          "observation": {
+            "scene": "natural_game_over_test",
+            "status": "RED",
+            "exit": 0,
+            "secs": 101.9,
+            "checks": [],
+            "failures": [],
+            "reasons": [
+              "missing_result",
+              "check_false"
+            ],
+            "errors": []
+          },
+          "result_raw": [],
+          "diagnostic_raw": [
+            "NATURAL_TERMINAL local steps=40000 round=1 end=[]"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-required-regressions\\natural_game_over_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-required-regressions\\natural_game_over_test.err.log"
+        },
+        {
+          "scene": "res://tests/match_view_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/match_view_test.tscn"
+          ],
+          "observation": {
+            "scene": "match_view_test",
+            "status": "RED",
+            "exit": 1,
+            "secs": 39.9,
+            "checks": [
+              3091
+            ],
+            "failures": [
+              "real AI match reaches end through view loopback"
+            ],
+            "reasons": [
+              "nonzero_exit",
+              "check_false",
+              "result_failures"
+            ],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=3091 failures=[\"real AI match reaches end through view loopback\"]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-required-regressions\\match_view_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-required-regressions\\match_view_test.err.log"
+        },
+        {
+          "scene": "res://newtests/a1_06_regular_origin_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/a1_06_regular_origin_test.tscn"
+          ],
+          "observation": {
+            "scene": "a1_06_regular_origin_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 5.3,
+            "checks": [
+              148
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":148,\"failures\":[],\"suite\":\"a1_06_regular_origin\"}"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-required-regressions\\a1_06_regular_origin_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-required-regressions\\a1_06_regular_origin_test.err.log"
+        },
+        {
+          "scene": "res://tests/card_effect_runtime_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/card_effect_runtime_test.tscn"
+          ],
+          "observation": {
+            "scene": "card_effect_runtime_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 37.5,
+            "checks": [
+              228
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=228 failures=[]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-required-regressions\\card_effect_runtime_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-required-regressions\\card_effect_runtime_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-source-wired-regressions",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-source-wired-regressions res://tests/natural_game_over_test.tscn res://tests/match_view_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://tests/natural_game_over_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/natural_game_over_test.tscn"
+          ],
+          "observation": {
+            "scene": "natural_game_over_test",
+            "status": "RED",
+            "exit": 0,
+            "secs": 221.8,
+            "checks": [],
+            "failures": [],
+            "reasons": [
+              "missing_result",
+              "check_false"
+            ],
+            "errors": []
+          },
+          "result_raw": [],
+          "diagnostic_raw": [
+            "NATURAL_TERMINAL local steps=4613 round=1 end=[]"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-source-wired-regressions\\natural_game_over_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-source-wired-regressions\\natural_game_over_test.err.log"
+        },
+        {
+          "scene": "res://tests/match_view_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/match_view_test.tscn"
+          ],
+          "observation": {
+            "scene": "match_view_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 69.4,
+            "checks": [
+              227
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=227 failures=[]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-source-wired-regressions\\match_view_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-source-wired-regressions\\match_view_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-expanded-checks",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-expanded-checks res://newtests/ai_group_search_test.tscn res://newtests/ai_rule_bot_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://newtests/ai_group_search_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_group_search_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_group_search_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 17.9,
+            "checks": [
+              11
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":11,\"failures\":[],\"suite\":\"ai_group_search\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=12",
+            "AI_SEARCH_TIMEOUT nodes=6110974",
+            "AI_TIMEOUT_EVIDENCE elapsed_usec=15000449 budget=4096 safety_usec=15000000 nodes=6110974"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-expanded-checks\\ai_group_search_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-expanded-checks\\ai_group_search_test.err.log"
+        },
+        {
+          "scene": "res://newtests/ai_rule_bot_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_rule_bot_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_rule_bot_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 53.2,
+            "checks": [
+              138
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":138,\"failures\":[],\"suite\":\"ai_rule_bot\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=186"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-expanded-checks\\ai_rule_bot_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-expanded-checks\\ai_rule_bot_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-final-verification",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-final-verification res://newtests/ai_checkpoint_feasibility_test.tscn res://newtests/ai_group_search_test.tscn res://newtests/ai_rule_bot_test.tscn res://tests/natural_game_over_test.tscn res://tests/match_view_test.tscn res://newtests/a1_06_regular_origin_test.tscn res://tests/card_effect_runtime_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://newtests/ai_checkpoint_feasibility_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_checkpoint_feasibility_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_checkpoint_feasibility_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 3.2,
+            "checks": [
+              23
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":23,\"failures\":[],\"suite\":\"ai_checkpoint_feasibility\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_A_TIER_EVIDENCE {\"audit_after\":{\"error\":\"\",\"hash\":\"\",\"identity\":1,\"records\":0,\"revision\":0},\"audit_before\":{\"error\":\"\",\"hash\":\"\",\"identity\":0,\"records\":0,\"revision\":0},\"batch_after\":0,\"batch_before\":0,\"reason\":\"audit_identity_is_not_rollback_state\",\"rule_fields_unchanged\":{\"hand\":true,\"keys\":true,\"logs\":true,\"magic\":true,\"messages\":true,\"played\":true,\"power\":true,\"progress\":true,\"random\":true,\"token\":true,\"transaction\":true},\"tier\":\"B\"}"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\ai_checkpoint_feasibility_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\ai_checkpoint_feasibility_test.err.log"
+        },
+        {
+          "scene": "res://newtests/ai_group_search_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_group_search_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_group_search_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 17.9,
+            "checks": [
+              12
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":12,\"failures\":[],\"suite\":\"ai_group_search\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=12",
+            "AI_SEARCH_TIMEOUT nodes=6274512",
+            "AI_TIMEOUT_EVIDENCE elapsed_usec=15000889 budget=4096 safety_usec=15000000 nodes=6274512"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\ai_group_search_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\ai_group_search_test.err.log"
+        },
+        {
+          "scene": "res://newtests/ai_rule_bot_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_rule_bot_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_rule_bot_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 51.3,
+            "checks": [
+              138
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":138,\"failures\":[],\"suite\":\"ai_rule_bot\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=186"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\ai_rule_bot_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\ai_rule_bot_test.err.log"
+        },
+        {
+          "scene": "res://tests/natural_game_over_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/natural_game_over_test.tscn"
+          ],
+          "observation": {
+            "scene": "natural_game_over_test",
+            "status": "RED",
+            "exit": 0,
+            "secs": 221.0,
+            "checks": [],
+            "failures": [],
+            "reasons": [
+              "missing_result",
+              "check_false"
+            ],
+            "errors": []
+          },
+          "result_raw": [],
+          "diagnostic_raw": [
+            "NATURAL_TERMINAL local steps=4522 round=1 end=[]"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\natural_game_over_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\natural_game_over_test.err.log"
+        },
+        {
+          "scene": "res://tests/match_view_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/match_view_test.tscn"
+          ],
+          "observation": {
+            "scene": "match_view_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 64.5,
+            "checks": [
+              222
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=222 failures=[]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\match_view_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\match_view_test.err.log"
+        },
+        {
+          "scene": "res://newtests/a1_06_regular_origin_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/a1_06_regular_origin_test.tscn"
+          ],
+          "observation": {
+            "scene": "a1_06_regular_origin_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 5.0,
+            "checks": [
+              148
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":148,\"failures\":[],\"suite\":\"a1_06_regular_origin\"}"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\a1_06_regular_origin_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\a1_06_regular_origin_test.err.log"
+        },
+        {
+          "scene": "res://tests/card_effect_runtime_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/card_effect_runtime_test.tscn"
+          ],
+          "observation": {
+            "scene": "card_effect_runtime_test",
+            "status": "RED",
+            "exit": 1,
+            "secs": 35.6,
+            "checks": [
+              228
+            ],
+            "failures": [
+              "the ai spends a command spell when its magic runs out",
+              "the ai takes the gain magic option by default"
+            ],
+            "reasons": [
+              "nonzero_exit",
+              "check_false",
+              "result_failures"
+            ],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=228 failures=[\"the ai spends a command spell when its magic runs out\", \"the ai takes the gain magic option by default\"]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\card_effect_runtime_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-final-verification\\card_effect_runtime_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-magic-estimate-fix",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-magic-estimate-fix res://newtests/ai_rule_bot_test.tscn res://tests/card_effect_runtime_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://newtests/ai_rule_bot_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_rule_bot_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_rule_bot_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 49.9,
+            "checks": [
+              147
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":147,\"failures\":[],\"suite\":\"ai_rule_bot\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=195"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-magic-estimate-fix\\ai_rule_bot_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-magic-estimate-fix\\ai_rule_bot_test.err.log"
+        },
+        {
+          "scene": "res://tests/card_effect_runtime_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/card_effect_runtime_test.tscn"
+          ],
+          "observation": {
+            "scene": "card_effect_runtime_test",
+            "status": "RED",
+            "exit": 1,
+            "secs": 35.9,
+            "checks": [
+              228
+            ],
+            "failures": [
+              "the ai spends a command spell when its magic runs out",
+              "the ai takes the gain magic option by default"
+            ],
+            "reasons": [
+              "nonzero_exit",
+              "check_false",
+              "result_failures"
+            ],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=228 failures=[\"the ai spends a command spell when its magic runs out\", \"the ai takes the gain magic option by default\"]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-magic-estimate-fix\\card_effect_runtime_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-magic-estimate-fix\\card_effect_runtime_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-json-number-fix",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-json-number-fix res://tests/card_effect_runtime_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://tests/card_effect_runtime_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/card_effect_runtime_test.tscn"
+          ],
+          "observation": {
+            "scene": "card_effect_runtime_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 35.7,
+            "checks": [
+              228
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=228 failures=[]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-json-number-fix\\card_effect_runtime_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-json-number-fix\\card_effect_runtime_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-delivery-final",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-delivery-final res://newtests/ai_checkpoint_feasibility_test.tscn res://newtests/ai_group_search_test.tscn res://newtests/ai_rule_bot_test.tscn res://tests/natural_game_over_test.tscn res://tests/match_view_test.tscn res://newtests/a1_06_regular_origin_test.tscn res://tests/card_effect_runtime_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://newtests/ai_checkpoint_feasibility_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_checkpoint_feasibility_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_checkpoint_feasibility_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 2.8,
+            "checks": [
+              23
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":23,\"failures\":[],\"suite\":\"ai_checkpoint_feasibility\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_A_TIER_EVIDENCE {\"audit_after\":{\"error\":\"\",\"hash\":\"\",\"identity\":1,\"records\":0,\"revision\":0},\"audit_before\":{\"error\":\"\",\"hash\":\"\",\"identity\":0,\"records\":0,\"revision\":0},\"batch_after\":0,\"batch_before\":0,\"reason\":\"audit_identity_is_not_rollback_state\",\"rule_fields_unchanged\":{\"hand\":true,\"keys\":true,\"logs\":true,\"magic\":true,\"messages\":true,\"played\":true,\"power\":true,\"progress\":true,\"random\":true,\"token\":true,\"transaction\":true},\"tier\":\"B\"}"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\ai_checkpoint_feasibility_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\ai_checkpoint_feasibility_test.err.log"
+        },
+        {
+          "scene": "res://newtests/ai_group_search_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_group_search_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_group_search_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 17.5,
+            "checks": [
+              12
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":12,\"failures\":[],\"suite\":\"ai_group_search\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=12",
+            "AI_SEARCH_TIMEOUT nodes=6736119",
+            "AI_TIMEOUT_EVIDENCE elapsed_usec=15001070 budget=4096 safety_usec=15000000 nodes=6736119"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\ai_group_search_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\ai_group_search_test.err.log"
+        },
+        {
+          "scene": "res://newtests/ai_rule_bot_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_rule_bot_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_rule_bot_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 49.9,
+            "checks": [
+              147
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":147,\"failures\":[],\"suite\":\"ai_rule_bot\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=196"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\ai_rule_bot_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\ai_rule_bot_test.err.log"
+        },
+        {
+          "scene": "res://tests/natural_game_over_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/natural_game_over_test.tscn"
+          ],
+          "observation": {
+            "scene": "natural_game_over_test",
+            "status": "RED",
+            "exit": 0,
+            "secs": 220.0,
+            "checks": [],
+            "failures": [],
+            "reasons": [
+              "missing_result",
+              "check_false"
+            ],
+            "errors": []
+          },
+          "result_raw": [],
+          "diagnostic_raw": [
+            "NATURAL_TERMINAL local steps=2053 round=1 end=[]"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\natural_game_over_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\natural_game_over_test.err.log"
+        },
+        {
+          "scene": "res://tests/match_view_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/match_view_test.tscn"
+          ],
+          "observation": {
+            "scene": "match_view_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 70.6,
+            "checks": [
+              225
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=225 failures=[]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\match_view_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\match_view_test.err.log"
+        },
+        {
+          "scene": "res://newtests/a1_06_regular_origin_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/a1_06_regular_origin_test.tscn"
+          ],
+          "observation": {
+            "scene": "a1_06_regular_origin_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 6.7,
+            "checks": [
+              148
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":148,\"failures\":[],\"suite\":\"a1_06_regular_origin\"}"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\a1_06_regular_origin_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\a1_06_regular_origin_test.err.log"
+        },
+        {
+          "scene": "res://tests/card_effect_runtime_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/card_effect_runtime_test.tscn"
+          ],
+          "observation": {
+            "scene": "card_effect_runtime_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 37.2,
+            "checks": [
+              228
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=228 failures=[]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\card_effect_runtime_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-delivery-final\\card_effect_runtime_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-handoff-verification",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-handoff-verification res://newtests/ai_checkpoint_feasibility_test.tscn res://newtests/ai_group_search_test.tscn res://newtests/ai_rule_bot_test.tscn res://tests/natural_game_over_test.tscn res://tests/match_view_test.tscn res://newtests/a1_06_regular_origin_test.tscn res://tests/card_effect_runtime_test.tscn",
+      "runner_exit": null,
+      "outer_tool_timeout_seconds": 420,
+      "records": [
+        {
+          "scene": "res://newtests/ai_checkpoint_feasibility_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_checkpoint_feasibility_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_checkpoint_feasibility_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 3.4,
+            "checks": [
+              23
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":23,\"failures\":[],\"suite\":\"ai_checkpoint_feasibility\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_A_TIER_EVIDENCE {\"audit_after\":{\"error\":\"\",\"hash\":\"\",\"identity\":1,\"records\":0,\"revision\":0},\"audit_before\":{\"error\":\"\",\"hash\":\"\",\"identity\":0,\"records\":0,\"revision\":0},\"batch_after\":0,\"batch_before\":0,\"reason\":\"audit_identity_is_not_rollback_state\",\"rule_fields_unchanged\":{\"hand\":true,\"keys\":true,\"logs\":true,\"magic\":true,\"messages\":true,\"played\":true,\"power\":true,\"progress\":true,\"random\":true,\"token\":true,\"transaction\":true},\"tier\":\"B\"}"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\ai_checkpoint_feasibility_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\ai_checkpoint_feasibility_test.err.log"
+        },
+        {
+          "scene": "res://newtests/ai_group_search_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_group_search_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_group_search_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 17.9,
+            "checks": [
+              12
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":12,\"failures\":[],\"suite\":\"ai_group_search\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=12",
+            "AI_SEARCH_TIMEOUT nodes=6228570",
+            "AI_TIMEOUT_EVIDENCE elapsed_usec=15000417 budget=4096 safety_usec=15000000 nodes=6228570"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\ai_group_search_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\ai_group_search_test.err.log"
+        },
+        {
+          "scene": "res://newtests/ai_rule_bot_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_rule_bot_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_rule_bot_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 53.7,
+            "checks": [
+              148
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":148,\"failures\":[],\"suite\":\"ai_rule_bot\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=164"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\ai_rule_bot_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\ai_rule_bot_test.err.log"
+        },
+        {
+          "scene": "res://tests/natural_game_over_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/natural_game_over_test.tscn"
+          ],
+          "observation": {
+            "scene": "natural_game_over_test",
+            "status": "RED",
+            "exit": 0,
+            "secs": 245.3,
+            "checks": [],
+            "failures": [],
+            "reasons": [
+              "missing_result",
+              "check_false"
+            ],
+            "errors": []
+          },
+          "result_raw": [],
+          "diagnostic_raw": [
+            "NATURAL_TERMINAL local steps=227 round=1 end=[]"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\natural_game_over_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\natural_game_over_test.err.log"
+        },
+        {
+          "scene": "res://tests/match_view_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/match_view_test.tscn"
+          ],
+          "observation": {
+            "scene": "match_view_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 79.1,
+            "checks": [
+              226
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=226 failures=[]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\match_view_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\match_view_test.err.log"
+        },
+        {
+          "scene": "res://newtests/a1_06_regular_origin_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/a1_06_regular_origin_test.tscn"
+          ],
+          "observation": {
+            "scene": "a1_06_regular_origin_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 5.5,
+            "checks": [
+              148
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":148,\"failures\":[],\"suite\":\"a1_06_regular_origin\"}"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\a1_06_regular_origin_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\a1_06_regular_origin_test.err.log"
+        },
+        {
+          "scene": "res://tests/card_effect_runtime_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/card_effect_runtime_test.tscn"
+          ],
+          "observation": null,
+          "result_raw": [],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\card_effect_runtime_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-verification\\card_effect_runtime_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-handoff-runtime",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-handoff-runtime res://tests/card_effect_runtime_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://tests/card_effect_runtime_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/card_effect_runtime_test.tscn"
+          ],
+          "observation": {
+            "scene": "card_effect_runtime_test",
+            "status": "RED",
+            "exit": 1,
+            "secs": 38.5,
+            "checks": [
+              228
+            ],
+            "failures": [
+              "real closed sword returns inactive to skill zone",
+              "a closed sword no longer counts as being on the battlefield"
+            ],
+            "reasons": [
+              "nonzero_exit",
+              "check_false",
+              "result_failures"
+            ],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=228 failures=[\"real closed sword returns inactive to skill zone\", \"a closed sword no longer counts as being on the battlefield\"]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-runtime\\card_effect_runtime_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-handoff-runtime\\card_effect_runtime_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-current-source-check",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-current-source-check res://newtests/ai_checkpoint_feasibility_test.tscn res://newtests/ai_group_search_test.tscn res://newtests/ai_rule_bot_test.tscn res://tests/match_view_test.tscn res://newtests/a1_06_regular_origin_test.tscn res://tests/card_effect_runtime_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://newtests/ai_checkpoint_feasibility_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_checkpoint_feasibility_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_checkpoint_feasibility_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 3.2,
+            "checks": [
+              23
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":23,\"failures\":[],\"suite\":\"ai_checkpoint_feasibility\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_A_TIER_EVIDENCE {\"audit_after\":{\"error\":\"\",\"hash\":\"\",\"identity\":1,\"records\":0,\"revision\":0},\"audit_before\":{\"error\":\"\",\"hash\":\"\",\"identity\":0,\"records\":0,\"revision\":0},\"batch_after\":0,\"batch_before\":0,\"reason\":\"audit_identity_is_not_rollback_state\",\"rule_fields_unchanged\":{\"hand\":true,\"keys\":true,\"logs\":true,\"magic\":true,\"messages\":true,\"played\":true,\"power\":true,\"progress\":true,\"random\":true,\"token\":true,\"transaction\":true},\"tier\":\"B\"}"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\ai_checkpoint_feasibility_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\ai_checkpoint_feasibility_test.err.log"
+        },
+        {
+          "scene": "res://newtests/ai_group_search_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_group_search_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_group_search_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 17.9,
+            "checks": [
+              12
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":12,\"failures\":[],\"suite\":\"ai_group_search\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=12",
+            "AI_SEARCH_TIMEOUT nodes=6349618",
+            "AI_TIMEOUT_EVIDENCE elapsed_usec=15000700 budget=4096 safety_usec=15000000 nodes=6349618"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\ai_group_search_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\ai_group_search_test.err.log"
+        },
+        {
+          "scene": "res://newtests/ai_rule_bot_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/ai_rule_bot_test.tscn"
+          ],
+          "observation": {
+            "scene": "ai_rule_bot_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 53.3,
+            "checks": [
+              148
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":148,\"failures\":[],\"suite\":\"ai_rule_bot\"}"
+          ],
+          "diagnostic_raw": [
+            "AI_SEARCH_TIMEOUT nodes=171"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\ai_rule_bot_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\ai_rule_bot_test.err.log"
+        },
+        {
+          "scene": "res://tests/match_view_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/match_view_test.tscn"
+          ],
+          "observation": {
+            "scene": "match_view_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 77.6,
+            "checks": [
+              225
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=225 failures=[]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\match_view_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\match_view_test.err.log"
+        },
+        {
+          "scene": "res://newtests/a1_06_regular_origin_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://newtests/a1_06_regular_origin_test.tscn"
+          ],
+          "observation": {
+            "scene": "a1_06_regular_origin_test",
+            "status": "PASS",
+            "exit": 0,
+            "secs": 5.6,
+            "checks": [
+              148
+            ],
+            "failures": [],
+            "reasons": [],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT {\"checks\":148,\"failures\":[],\"suite\":\"a1_06_regular_origin\"}"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\a1_06_regular_origin_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\a1_06_regular_origin_test.err.log"
+        },
+        {
+          "scene": "res://tests/card_effect_runtime_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/card_effect_runtime_test.tscn"
+          ],
+          "observation": {
+            "scene": "card_effect_runtime_test",
+            "status": "RED",
+            "exit": 1,
+            "secs": 38.6,
+            "checks": [
+              228
+            ],
+            "failures": [
+              "real closed sword returns inactive to skill zone",
+              "a closed sword no longer counts as being on the battlefield"
+            ],
+            "reasons": [
+              "nonzero_exit",
+              "check_false",
+              "result_failures"
+            ],
+            "errors": []
+          },
+          "result_raw": [
+            "RESULT checks=228 failures=[\"real closed sword returns inactive to skill zone\", \"a closed sword no longer counts as being on the battlefield\"]"
+          ],
+          "diagnostic_raw": [],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\card_effect_runtime_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-current-source-check\\card_effect_runtime_test.err.log"
+        }
+      ]
+    },
+    {
+      "label": "ai-current-natural",
+      "runner_command": "python E:/scratch/refactor-main/run_suites.py ai-current-natural res://tests/natural_game_over_test.tscn",
+      "runner_exit": 0,
+      "outer_tool_timeout_seconds": null,
+      "records": [
+        {
+          "scene": "res://tests/natural_game_over_test.tscn",
+          "godot_argv": [
+            "D:/Godot4/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe",
+            "--headless",
+            "--fixed-fps",
+            "60",
+            "--quit-after",
+            "36000",
+            "--path",
+            "E:\\Projects\\Godot\\FateDominationGame-master",
+            "--scene",
+            "res://tests/natural_game_over_test.tscn"
+          ],
+          "observation": {
+            "scene": "natural_game_over_test",
+            "status": "RED",
+            "exit": 0,
+            "secs": 249.5,
+            "checks": [],
+            "failures": [],
+            "reasons": [
+              "missing_result",
+              "check_false"
+            ],
+            "errors": []
+          },
+          "result_raw": [],
+          "diagnostic_raw": [
+            "NATURAL_TERMINAL local steps=3994 round=1 end=[]"
+          ],
+          "engine_error_raw": [],
+          "stdout_path": "E:\\scratch\\refactor-main\\runs\\ai-current-natural\\natural_game_over_test.out.log",
+          "stderr_path": "E:\\scratch\\refactor-main\\runs\\ai-current-natural\\natural_game_over_test.err.log"
+        }
+      ]
+    }
+  ],
+  "auxiliary_commands": [
+    {
+      "command": "git status --short && python E:/scratch/refactor-main/run_suites.py ai-checkpoint-resume res://newtests/ai_checkpoint_feasibility_test.tscn",
+      "exit": 0
+    },
+    {
+      "command": "git diff --check -- scripts/system/ai scripts/match/match_driver.gd scripts/game_scene/battle_board_v2.gd",
+      "exit": 0
+    },
+    {
+      "command": "python -c \"import psutil,json; ...\" (read-only process lookup)",
+      "exit": 1,
+      "error": "ModuleNotFoundError: No module named psutil; replaced with powershell.exe Get-CimInstance process lookup exit 0"
+    },
+    {
+      "command": "powershell.exe -NoProfile -Command 'Get-CimInstance Win32_Process | Where-Object { $_.Name -like \"Godot_v*\" -and $_.CommandLine -like \"*FateDominationGame-master*\" } | Select-Object ProcessId,ParentProcessId,Name,CommandLine | ConvertTo-Json -Compress'",
+      "exit": 0,
+      "stdout": "",
+      "meaning": "no lingering Godot process for this source project; no other process stopped"
+    }
+  ],
+  "not_done": [
+    "No git commit",
+    "No project copy created; tests run source worktree using approved runner",
+    "No new class_name; import not necessary",
+    "No window input, cross-machine replay or network-authority full acceptance",
+    "No live trial effects because strict rollback audit identity changes",
+    "No end-to-end live player/card/location pending-choice scenario beyond shared target search tests and existing required regressions",
+    "Current card_effect_runtime has two close-card failures; outside allowed rule write scope",
+    "Natural end still round 1, no unique RESULT; not a pass"
+  ]
+}

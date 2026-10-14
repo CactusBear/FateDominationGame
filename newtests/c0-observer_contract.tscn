@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://newtests/c0-observer_contract.gd" id="1"]
+
+[node name="C0ObserverContract" type="Node"]
+script = ExtResource("1")

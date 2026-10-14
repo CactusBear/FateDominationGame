@@ -9,6 +9,7 @@ extends Node
 
 var failures:Array[String] = []
 var checks:int = 0
+var fixture_context:SessionContext = null
 
 
 func check(ok:bool, label:String) -> void:
@@ -22,7 +23,8 @@ func _ready() -> void:
 
 
 func setup(count:int = 2) -> void:
-	EffectManager.reset_runtime()
+	var lifecycle:Dictionary = EffectManager.reset_runtime()
+	fixture_context = lifecycle.context
 	GameLog.reset()
 	GameData.player_data_library.clear()
 	GameProgress.is_game_over = false
@@ -54,8 +56,9 @@ func effect_data(name:String, funcs:Array, numbers:Array = [], time_points:Array
 
 
 func host_with(effects:Array, id:int = 0) -> BaseAttack:
-	var host := BaseAttack.new("probe_host", "", [])
-	host._effects = LoadHelper.load_effects(effects, host)
+	# 宿主与效果都在本局原来源下创建；否则登记被来源门拒绝，效果不会进入效果池。
+	var host:BaseAttack = LoadGame.load_attacks([{"attack_name": "probe_host", "attack_card_img": "", "attributes": [], "cost": num(0), "power": num(0), "effects": []}], "", null, [], fixture_context)[0]
+	host._effects = LoadHelper.load_effects(effects, host, fixture_context)
 	EffectManager.register_effects(host._effects, id)
 	return host
 
@@ -77,8 +80,9 @@ func run() -> void:
 	test_regular_play_zones()
 	test_effect_start_end()
 	test_phase_order()
-	print("RESULT checks=%d failures=%s" % [checks, str(failures)])
-	get_tree().quit()
+	# failures 用 JSON 输出（str() 产生的转义不是合法 JSON）；有失败时非零退出。
+	print("RESULT checks=%d failures=%s" % [checks, JSON.stringify(failures)])
+	get_tree().quit(0 if failures.is_empty() else 1)
 
 
 func test_registry() -> void:
@@ -91,7 +95,7 @@ func test_registry() -> void:
 func test_add_player_basics() -> void:
 	setup(2)
 	var order_before:Array = EffectManager.get_player_order_ids()
-	var clone:int = AddPlayer.new().exec(0, ["played_cards", "score", "magic"], {"player_name": "分身"})
+	var clone:int = AddPlayer.new().exec(0, ["played_cards", "score", "magic"], {"player_name": "分身"}, fixture_context)
 	check(clone == 2, "new id is max+1: %d" % clone)
 	check(EffectManager.get_player_order_ids() == order_before, "clone does not join turn order")
 	check(GameDataManager.get_active_player_ids() == [0, 1], "clone excluded from active players (victory/climax/turns)")
@@ -113,16 +117,16 @@ func test_add_player_basics() -> void:
 			dup = true
 	check(!dup, "validator does not report shared zones as duplicates")
 	# 数字初值：裸数字包成数字对象
-	var npc:int = AddPlayer.new().exec(-2, [], {"power": 14})
+	var npc:int = AddPlayer.new().exec(-2, [], {"power": 14}, fixture_context)
 	check(pd(npc).power is BaseNumber and pd(npc).power.number == 14 and int(pd(npc).controller) == -2, "npc numeric override wrapped")
 	check(GameDataManager.represented_id(npc) == npc, "npc represents itself")
 	# 独立条目（-1）与普通玩家相同
-	var extra:int = AddPlayer.new().exec(-1)
+	var extra:int = AddPlayer.new().exec(-1, [], {}, fixture_context)
 	check(GameDataManager.get_active_player_ids().has(extra), "controller -1 creates an ordinary player")
 
 
 func _place(id:int, loc:BaseLocation, power:int) -> void:
-	Deploy.new().exec(loc, id, true)
+	Deploy.new().exec(loc, id, true, fixture_context)
 	pd(id).power.set_num(BaseNumber.new(power))
 
 
@@ -130,13 +134,13 @@ func test_clone_battle() -> void:
 	var miyama:BaseMapArea = MapData.miyama
 	var shinto:BaseMapArea = MapData.shinto
 	setup(2)
-	var clone:int = AddPlayer.new().exec(0, ["score", "magic", "total_power_bonus"])
+	var clone:int = AddPlayer.new().exec(0, ["score", "magic", "total_power_bonus"], {}, fixture_context)
 	# 本体在新都输（2 对 9），分身在深山町赢（8 对 3）：两处威力分别计算，分身的胜利算本体的
 	_place(0, shinto._locations[2], 2)
 	_place(1, shinto._locations[2], 9)
 	_place(clone, miyama._locations[2], 8)
-	var npc:int = AddPlayer.new().exec(-2, [], {"power": 3})
-	Deploy.new().exec(miyama._locations[2], npc, true)
+	var npc:int = AddPlayer.new().exec(-2, [], {"power": 3}, fixture_context)
+	Deploy.new().exec(miyama._locations[2], npc, true, fixture_context)
 	var score0:int = pd(0).score.number
 	var res:Dictionary = BattleResolver.new().exec(GameDataManager.get_board_player_ids())
 	check(res.winners_by_area.get(miyama._area_name) == [clone], "clone wins its own battlefield by its own power")
@@ -156,8 +160,8 @@ func test_clone_battle() -> void:
 func test_npc_battle() -> void:
 	var miyama:BaseMapArea = MapData.miyama
 	setup(2)
-	var npc:int = AddPlayer.new().exec(-2, [], {"power": 14})
-	Deploy.new().exec(miyama._locations[2], npc, true)
+	var npc:int = AddPlayer.new().exec(-2, [], {"power": 14}, fixture_context)
+	Deploy.new().exec(miyama._locations[2], npc, true, fixture_context)
 	_place(0, miyama._locations[2], 9)
 	var res:Dictionary = BattleResolver.new().exec(GameDataManager.get_board_player_ids())
 	check(res.winners_by_area.get(miyama._area_name) == [npc], "npc with fixed power beats the player")
@@ -172,12 +176,12 @@ func test_npc_battle() -> void:
 func test_engagement() -> void:
 	var miyama:BaseMapArea = MapData.miyama
 	setup(2)
-	var clone:int = AddPlayer.new().exec(0, ["score"])
-	Deploy.new().exec(miyama._locations[0], 0, true)
-	Deploy.new().exec(miyama._locations[1], clone, true)
+	var clone:int = AddPlayer.new().exec(0, ["score"], {}, fixture_context)
+	Deploy.new().exec(miyama._locations[0], 0, true, fixture_context)
+	Deploy.new().exec(miyama._locations[1], clone, true, fixture_context)
 	check(!IsEngaged.new().exec(0), "own clone is not an opponent")
-	var npc:int = AddPlayer.new().exec(-2)
-	Deploy.new().exec(miyama._locations[2], npc, true)
+	var npc:int = AddPlayer.new().exec(-2, [], {}, fixture_context)
+	Deploy.new().exec(miyama._locations[2], npc, true, fixture_context)
 	check(IsEngaged.new().exec(0), "npc on the same battlefield engages")
 
 
@@ -242,7 +246,7 @@ func test_regular_play_zones() -> void:
 	check(RegularPlay.candidates(0).has(from_discard) and !RegularPlay.candidates(0).has(in_hand), "discard treated as the hand, hand no longer")
 	pd(0).regular_play_min.set_num(BaseNumber.new(1))
 	check(RegularPlay.modes(0, from_discard).has(true), "concealed play allowed from the declared zone")
-	check(RegularPlay.submit_group(0, [from_discard], [false]), "group from the declared zone submits")
+	check(RegularPlay.submit_group(0, [from_discard], [false], false, fixture_context), "group from the declared zone submits")
 	check(pd(0).played_cards.has(from_discard) and !pd(0).discard.has(from_discard), "played card leaves the declared zone")
 	pd(0).regular_play_zones = ["extra_zones/missing"]
 	check(!RegularPlay.candidates(0).has(in_hand), "unknown zone path contributes nothing")
@@ -329,5 +333,5 @@ func test_phase_order() -> void:
 	ChangePlOrder.new().exec(null, BaseNumber.new(1))
 	var ids:Array = EffectManager.get_player_order_ids()
 	check(GetPhaseOrder.new().exec(ids[0]).number == 0, "phase order follows order changes")
-	var clone:int = AddPlayer.new().exec(0)
+	var clone:int = AddPlayer.new().exec(0, [], {}, fixture_context)
 	check(GetPhaseOrder.new().exec(clone) == null, "controlled entries have no phase order")

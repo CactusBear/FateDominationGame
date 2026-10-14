@@ -1,0 +1,34 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+CHECK normal terminal authority entry exists true
+CHECK unstarted rejected true
+CHECK formal data starts true
+CHECK nonterminal preserves rules true
+CHECK formal rules naturally reach terminal true
+CHECK one natural game_end true
+NATURAL_TERMINAL steps=272
+CHECK old revision rejected true
+CHECK wrong sequence rejected true
+CHECK unissued member rejected true
+CHECK observer rebinding rejected true
+CHECK archive busy preserves rules true
+CHECK real recorder close failure exposed true
+CHECK archive failure preserves rule graph true
+CHECK archive failure preserves version and views true
+CHECK audit failure cannot finish true
+CHECK audit fail closed invalidates views true
+CHECK explicit terminal success true
+CHECK engine session and progress reset true
+CHECK controllers and views cleared true
+CHECK restart state cleared true
+CHECK fresh driver and detached recorder true
+CHECK one completion revision true
+CHECK outputs empty after completion true
+CHECK random tracking stopped true
+CHECK duplicate cannot clean twice true
+CHECK real archive starts:  true
+CHECK real recording closes true
+CHECK closed archive persists log true
+CHECK closed log readable true
+RESULT checks=29 failures=[]

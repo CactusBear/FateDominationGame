@@ -6,7 +6,9 @@ extends RefCounted
 func exec(item, player_id:int = -1):
 
 	var id = EffectManager.resolve_player_id(player_id)
-	var player_data:Dictionary = GameDataManager.get_player_data(id)
+	var player_data:Dictionary = GameDataManager.get_player_data_readonly(id)
+	if player_data.is_empty():
+		return null
 	var zones:Array = [
 		player_data["deck"],
 		player_data["hand_cards"],

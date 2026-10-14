@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ACTUAL_USER_PATH E:/scratch/regular-play-existing-ops/isolated-bcb811c286fd49cea4c820fdd0aa0a7b/generated/appdata/FateDomination
+USER_PROBE {"path":"E:/scratch/regular-play-existing-ops/isolated-bcb811c286fd49cea4c820fdd0aa0a7b/generated/appdata/FateDomination","pid":33380,"role":"main","token":"bcb811c286fd49cea4c820fdd0aa0a7b","worker_pool_max_threads":20}
+OWNED_CHILD 14540
+CHILD_EXITED 14540
+CHILD_EXIT_CODE 0
+USER_PROBE {"path":"E:/scratch/regular-play-existing-ops/isolated-bcb811c286fd49cea4c820fdd0aa0a7b/generated/appdata/FateDomination","pid":14540,"role":"worker","token":"bcb811c286fd49cea4c820fdd0aa0a7b","worker_pool_max_threads":20}

@@ -11,52 +11,74 @@ var _authority_host_mode:String = ""
 var _supervisor_timeout_msec: int = 0
 var _supervisor_seen_msec: int = 0
 var _supervisor_version: int = -1
+var _supervisor_close_attempted:bool = false
+var _supervisor_loss_result:Dictionary = {}
+var _supervisor_loss_published:bool = false
 var _recovery_attempted: bool = false
 var _audit_journal
 var _lan_identity_bridge
 const RecoveryPaths = preload("res://scripts/net/server/recovery_path_safety.gd")
 var _startup_pins:Array = []
 var _copy_source_root:String = ""
+var _idle_publish_msec:int = -1000
 var recovery_copy_max_bytes:int = 2 * 1024 * 1024 * 1024
 var recovery_copy_max_file_bytes:int = 64 * 1024 * 1024
 const RECOVERY_COPY_CHUNK_BYTES:int = 64 * 1024
 
 
+## 仅本机业务组合根注入；没有确认消费者的 worker 保持 Session 默认 false。
+## 不读取 settings、窗口状态或 controllers 来猜测能力。
+func configure_deployment_broadcast_confirmation(value:Variant) -> bool:
+	if not value is bool: return false
+	return session.declare_broadcast_confirmation(value)
+
+
 func _ready() -> void:
+	var stage:String = _startup_begin("signal_protection")
 	_system_signals = preload("res://scripts/net/server/server_process_signals.gd").create()
 	if _system_signals == null or not _system_signals.protect_worker():
-		_fail("房间子进程信号保护不可用")
+		_fail("房间子进程信号保护不可用", stage)
 		return
+	stage = _startup_next(stage, "launch_arguments")
 	var arguments := OS.get_cmdline_user_args()
 	arguments.erase("--server-room-worker")
 	if arguments.size() != 3:
+		_startup_result(stage, -1)
 		push_error("房间子进程需要本机配置路径")
 		get_tree().quit(2)
 		return
+	stage = _startup_next(stage, "configuration")
 	# 授权根来自本机主管参数，不信任 config 中自报的批准根。
 	if not RecoveryPaths.checked(arguments[2], arguments[0]):
-		_fail("房间启动配置不在主管批准目录")
+		_fail("房间启动配置不在主管批准目录", stage)
 		return
 	var config = JSON.parse_string(FileAccess.get_file_as_string(arguments[0]))
 	if not config is Dictionary or not config.get("data_root") is String or not config.get("directory") is String or not config.get("settings") is Dictionary or not config.get("id") is String or not _valid_integer(config.get("port"), 1, 65535):
-		_fail("房间启动配置无效")
+		_fail("房间启动配置无效", stage)
 		return
 	var recovery_state_path:String = config.directory.path_join("recovery.json")
 	var has_recovery_state:bool = FileAccess.file_exists(recovery_state_path)
 	var recovery_digest:String = FileAccess.get_sha256(recovery_state_path) if has_recovery_state else ""
 	if not preload("res://scripts/net/server/server_room_manager.gd").valid_instance_id(config.id) or not RecoveryPaths.same(config.directory, arguments[2].path_join(config.id)) or not RecoveryPaths.same(arguments[0], config.directory.path_join("config.json")) or not RecoveryPaths.checked(arguments[2], config.directory) or (not has_recovery_state and (not RecoveryPaths.checked(arguments[1], config.data_root) or not RecoveryPaths.tree(arguments[1], config.data_root, [20000]))):
-		_fail("房间目录或数据根越过批准范围或包含链接")
+		_fail("房间目录或数据根越过批准范围或包含链接", stage)
 		return
 	for child in ["control", "cache", "data", "preflight", "matches", "recovery.json", "stored_jsons.dat", "ready.json", "ready.json.tmp"]:
 		if not RecoveryPaths.checked(config.directory, config.directory.path_join(child), true):
-			_fail("房间内部路径不安全：" + child)
+			_fail("房间内部路径不安全：" + child, stage)
 			return
 	if config.get("authority_host_mode") not in preload("res://scripts/net/server/server_room_manager.gd").AUTHORITY_HOST_MODES or not preload("res://scripts/net/server/server_room_manager.gd").valid_instance_id(config.get("instance_id")):
-		_fail("权威位置或进程实例未显式声明")
+		_fail("权威位置或进程实例未显式声明", stage)
+		return
+	if not _control.empty_policy.configure(config.get("room_runtime",{})):
+		_fail("房间无人等待配置无效", stage)
 		return
 	_authority_host_mode = config.authority_host_mode
+	# 顶层本机启动配置由批准组合根提供；不是公开房间设置或远端声明。
+	if not configure_deployment_broadcast_confirmation(config.get("broadcast_confirmation_capable", false)):
+		_fail("本机播报确认消费能力声明无效", stage)
+		return
 	if not config.get("transaction_log", true) is bool or config.get("recovery_key_mismatch", "reject") != "reject" or config.get("recovery_inheritance", "host_select") != "host_select":
-		_fail("房间恢复或事务审计策略无效")
+		_fail("房间恢复或事务审计策略无效", stage)
 		return
 	var transaction_log_enabled:bool = config.get("transaction_log", true)
 	# 复用管理通道的随机实例，不另建一套管理凭据。
@@ -64,22 +86,23 @@ func _ready() -> void:
 	_control.room_id = config.id
 	_control.authority_host_mode = config.authority_host_mode
 	session.authority_host_mode = config.authority_host_mode
+	stage = _startup_next(stage, "settings")
 	# 本机配置中的专用策略由网关覆盖写入，不进入公开房间设置。
 	var identity_required = config.settings.get("_gateway_identity_required",false)
 	if not identity_required is bool:
-		_fail("房间身份策略无效")
+		_fail("房间身份策略无效", stage)
 		return
 	# LAN/P2P 永不接受无密钥绑定旧档或身份策略降级。
 	if _authority_host_mode in ["lan", "p2p"]: identity_required = true
 	config.settings.erase("_gateway_identity_required")
 	var decoded:Dictionary = preload("res://scripts/net/session/room_state.gd").decode_json_settings(config.settings)
 	if not decoded.ok:
-		_fail(decoded.error)
+		_fail(decoded.error, stage)
 		return
 	config.settings = decoded.settings
 	var root: String = config.data_root
 	if typeof(config.get("supervisor_timeout_seconds")) not in [TYPE_INT,TYPE_FLOAT] or not is_finite(float(config.supervisor_timeout_seconds)) or config.supervisor_timeout_seconds <= 1:
-		_fail("主管心跳预算无效")
+		_fail("主管心跳预算无效", stage)
 		return
 	_directory = config.directory
 	_control.directory = _directory.path_join("control")
@@ -88,7 +111,7 @@ func _ready() -> void:
 	_control.restore_transaction = _restore_manual_match
 	_control.shutdown_ready.connect(_shutdown_after_control)
 	if not config.get("record_matches", false) is bool:
-		_fail("存档开关必须显式声明为布尔值")
+		_fail("存档开关必须显式声明为布尔值", stage)
 		return
 	session.record_matches = config.get("record_matches", false)
 	session.archive_root = config.directory.path_join("matches")
@@ -96,101 +119,137 @@ func _ready() -> void:
 	# recovery_state_path 在 host() 前清空，禁止空大厅覆盖旧档。
 	var isolated: String = config.directory.path_join("data")
 	if has_recovery_state:
+		stage = _startup_next(stage, "recovery_precheck")
 		session._identity_binding_required = identity_required
 		if not session.load_recovery_state(recovery_state_path):
-			_fail("恢复文件无效，原档保留：" + session.error)
+			_fail("恢复文件无效，原档保留：" + session.error, stage)
 			return
 		root = isolated
 		config.settings = session.room.settings.duplicate(true)
 		# 读取模式或加载规则之前，固定副本必须通过完整树和逐文件校验。
 		if not RecoveryPaths.tree(_directory, isolated, [20000]) or not preload("res://scripts/net/validation/room_data_validator.gd").new().validate(isolated, session.room_files):
-			_fail("恢复固定数据副本缺失或校验失败")
+			_fail("恢复固定数据副本缺失或校验失败", stage)
 			return
 	_room_id = config.id
 	_supervisor_timeout_msec = int(config.supervisor_timeout_seconds * 1000.0)
+	stage = _startup_next(stage, "selection_mode")
 	var modes = JSON.parse_string(FileAccess.get_file_as_string(root.path_join("selection_modes.json")))
 	if not modes is Dictionary or not modes.get("modes") is Array:
-		_fail("服务端本机选人配置无效")
+		_fail("服务端本机选人配置无效", stage)
 		return
 	var mode: Dictionary = {}
 	for candidate in modes.modes:
 		if candidate is Dictionary and candidate.get("id") == config.settings.get("selection_mode"):
 			mode = candidate
 	if mode.is_empty():
-		_fail("服务端未声明所选选人模式")
+		_fail("服务端未声明所选选人模式", stage)
 		return
 	var entries: Array = []
 	var base: Array = []
 	var plan: Dictionary = {}
 	if has_recovery_state:
+		stage = _startup_next(stage, "recovery_plan")
 		# load_recovery_state 已完成 schema、整数、身份和座位校验。
 		plan = {"ok":true, "files":session.room_files.duplicate(true), "sources":[]}
 	else:
+		stage = _startup_next(stage, "catalog_scan")
 		var catalog = preload("res://scripts/net/content/data_catalog.gd").new()
 		var scanned_entries: Array = catalog.scan(root, "server").filter(func(entry): return entry.category != "command_spells")
 		if not catalog.errors.is_empty():
-			_fail("\n".join(catalog.errors))
+			_fail("\n".join(catalog.errors), stage)
 			return
+		stage = _startup_next(stage, "data_plan")
 		entries = scanned_entries
 		for path in catalog._files(root, "card_backs") + catalog._files(root, "command_spells") + ["selection_modes.json"]:
 			if path.get_extension() not in catalog.EXTENSIONS: continue
 			base.append({"provider": "server", "path": path, "hash": FileAccess.get_sha256(root.path_join(path)), "size": FileAccess.get_file_as_bytes(root.path_join(path)).size()})
 		plan = preload("res://scripts/net/content/room_data_plan.gd").new().build(entries, base)
 		if not plan.ok:
-			_fail(plan.error)
+			_fail(plan.error, stage)
 			return
-	session.blobs.cache.root = config.directory.path_join("cache")
+	# 与 empty-room 共用 room_runtime 契约，但不读取/改变无人关闭策略。
+	stage = _startup_next(stage, "cache_policy")
+	var runtime_policy = config.get("room_runtime", {})
+	if not runtime_policy is Dictionary or not runtime_policy.get("shared_cache", false) is bool:
+		_fail("共享缓存策略无效", stage)
+		return
+	var shared_cache: bool = _authority_host_mode == "dedicated" and runtime_policy.get("shared_cache", false)
+	if shared_cache:
+		# 只由主管的批准 storage_root 派生，不信任 config 自报缓存目录。
+		if not session.blobs.cache.configure_shared_root(arguments[2]):
+			_fail(session.blobs.cache.error, stage)
+			return
+	else:
+		session.blobs.cache.root = config.directory.path_join("cache")
+	stage = _startup_next(stage, "cache_population")
 	for index in range(plan.files.size()):
 		if has_recovery_state: continue
 		# store 自身可能触发预算淘汰，先 pin；失败出口统一释放。
 		session.blobs.cache.pin(plan.files[index].hash)
 		_startup_pins.append(plan.files[index].hash)
 		if not RecoveryPaths.checked(root, root.path_join(plan.sources[index].path)):
-			_fail("批准数据源路径在读取前失效")
+			_fail("批准数据源路径在读取前失效", stage)
 			return
-		var bytes := FileAccess.get_file_as_bytes(root.path_join(plan.sources[index].path))
-		if not session.blobs.cache.store(plan.files[index].hash, bytes):
-			_fail(session.blobs.cache.error)
-			return
+		if shared_cache:
+			if not session.blobs.cache.register_verified_source(plan.files[index].hash, arguments[1], root.path_join(plan.sources[index].path), plan.files[index].size):
+				_fail(session.blobs.cache.error, stage)
+				return
+		else:
+			var bytes := FileAccess.get_file_as_bytes(root.path_join(plan.sources[index].path))
+			if not session.blobs.cache.store(plan.files[index].hash, bytes):
+				_fail(session.blobs.cache.error, stage)
+				return
+	stage = _startup_next(stage, "data_assembly")
 	var assembler = preload("res://scripts/net/content/room_data_assembler.gd").new()
 	var validator = preload("res://scripts/net/validation/room_data_validator.gd").new()
 	if DirAccess.dir_exists_absolute(isolated):
 		# 重启只复用逐文件校验仍完整的目录；不覆盖或删除未知残留。
 		if not RecoveryPaths.tree(_directory, isolated, [20000]) or not validator.validate(isolated, plan.files):
-			_fail("房间已有数据目录不完整，拒绝覆盖恢复：" + "\n".join(validator.errors))
+			_fail("房间已有数据目录不完整，拒绝覆盖恢复：" + "\n".join(validator.errors), stage)
 			return
 	elif has_recovery_state:
-		_fail("固定主机数据副本缺失，拒绝从候选 provider 重建")
+		_fail("固定主机数据副本缺失，拒绝从候选 provider 重建", stage)
 		return
 	else:
 		if not assembler.assemble(isolated, plan.files, session.blobs.cache):
-			_fail(assembler.error)
+			_fail(assembler.error, stage)
 			return
+	stage = _startup_next(stage, "data_validation")
 	if not RecoveryPaths.tree(_directory, isolated, [20000]) or not validator.validate(isolated, plan.files):
-		_fail("\n".join(validator.errors))
+		_fail("\n".join(validator.errors), stage)
 		return
-	LoadHelper.session_data_dir = isolated
-	LoadGame.stored_jsons_path = config.directory.path_join("stored_jsons.dat")
-	LoadGame.reload_game()
+	stage = _startup_next(stage, "fixed_source_registration")
+	if shared_cache:
+		# 房间数据仍为独立副本。运行/恢复只从逐文件验证的固定副本取字节，
+		# 不再依赖可变 provider；同 hash 的另一相对路径可提供相同内容。
+		for item in plan.files:
+			if not session.blobs.cache.register_verified_source(item.hash, _directory, isolated.path_join(item.path), item.size):
+				_fail("固定数据只读登记失败：" + session.blobs.cache.error, stage)
+				return
+	stage = _startup_next(stage, "process_content")
+	_load_process_content(isolated, config.directory.path_join("stored_jsons.dat"))
+	stage = _startup_next(stage, "roster")
 	var masters: Array = GameStart.get_masters_can_use()
 	var servants: Array = GameStart.get_servants_can_use()
 	if masters.is_empty() or servants.is_empty():
-		_fail("房间数据缺少可用阵容")
+		_fail("房间数据缺少可用阵容", stage)
 		return
 	var settings: Dictionary = config.settings.duplicate(true)
 	settings.capacity = load(mode.script).new().capacity(masters, servants, mode)
 	session.recovery_state_path = ""
+	stage = _startup_next(stage, "host")
 	if session.host(int(config.port), "服务端", settings, "127.0.0.1") != OK:
-		_fail(session.error)
+		_fail(session.error, stage)
 		return
+	stage = _startup_next(stage, "recovery_binding")
 	session.dedicated = true
 	session._identity_binding_required = identity_required
 	var recovered_state:bool = has_recovery_state and session.load_recovery_state(recovery_state_path)
 	if has_recovery_state and not recovered_state:
-		_fail("房间恢复文件无效，拒绝覆盖既有状态")
+		_fail("房间恢复文件无效，拒绝覆盖既有状态", stage)
 		return
 	if recovered_state and (session.room_files != plan.files or FileAccess.get_sha256(recovery_state_path) != recovery_digest):
-		_fail("恢复文件在启动校验期间变化，拒绝发布")
+		_fail("恢复文件在启动校验期间变化，拒绝发布", stage)
 		return
 	if not recovered_state: session.recovery_state_path = recovery_state_path
 	session.dedicated = true
@@ -198,51 +257,82 @@ func _ready() -> void:
 	if not recovered_state:
 		session.room.members.erase(1)
 		session.room.owner = 0
+	stage = _startup_next(stage, "selection_configuration")
 	session.configure_selection(mode, masters, servants)
+	stage = _startup_next(stage, "blob_publication")
 	for file in plan.files:
-		var fixed_bytes:PackedByteArray = FileAccess.get_file_as_bytes(isolated.path_join(file.path)) if has_recovery_state else session.blobs.cache.fetch(file.hash)
+		var fixed_bytes:PackedByteArray = session.blobs.cache.fetch(file.hash) if shared_cache or not has_recovery_state else FileAccess.get_file_as_bytes(isolated.path_join(file.path))
 		if session.publish_blob(fixed_bytes) != file.hash:
-			_fail("无法发布批准内容")
+			_fail("无法发布批准内容", stage)
 			return
 	# 显式启用预检配置的房间，初始目录仅作为候选；恢复也不能绕过批准。
+	stage = _startup_next(stage, "room_asset_installation")
 	if has_recovery_state:
 		if not session.install_room_assets(isolated):
-			_fail(session.error)
+			_fail(session.error, stage)
 			return
 	elif not session.room.settings.has("random_sim_enabled"):
 		if not session.set_room_files(plan.files) or not session.install_room_assets(isolated):
-			_fail(session.error)
+			_fail(session.error, stage)
 			return
 	session.require_room_data = true
+	stage = _startup_next(stage, "startup_pin_release")
 	_release_startup_pins()
+	stage = _startup_next(stage, "identity_bridge")
 	if _authority_host_mode in ["lan","p2p"]:
 		_lan_identity_bridge = preload("res://scripts/net/server/lan_worker_identity_bridge.gd").new()
 		if not _lan_identity_bridge.configure(_control,session):
-			_fail("LAN 认证连接观察通道不可用")
+			_fail("LAN 认证连接观察通道不可用", stage)
 			return
 	session._rules_revision = session.data_revision
 	# config.directory 是启动时已校验的本机房间目录，不由批准网络请求提供。
+	stage = _startup_next(stage, "data_approval")
 	_data_approval.configure(session, root, entries, base, config.directory.path_join("preflight"))
+	stage = _startup_next(stage, "transaction_audit")
 	# 对局录制和事务审计不是同一个开关。关闭对局录制仍保存完整事务审计。
 	# 开启录制时由 MatchReplay 创建/恢复其 transactions.log，不重复占用全局写入器。
 	if transaction_log_enabled and not session.record_matches and session.room.phase != "restoring":
 		_audit_journal = preload("res://scripts/match/match_journal.gd").begin_audit(_directory.path_join("transactions.%s.log" % _control.instance_id))
 		if _audit_journal == null:
-			_fail("权威事务审计文件建立失败")
+			_fail("权威事务审计文件建立失败", stage)
 			return
+	stage = _startup_next(stage, "ready_publication")
 	var report := FileAccess.open(config.directory.path_join("ready.json.tmp"), FileAccess.WRITE)
 	if report == null:
-		_fail("无法写出房间就绪报告")
+		_fail("无法写出房间就绪报告", stage)
 		return
 	report.store_string(JSON.stringify({"ok": true, "id": config.id, "room_id":config.id, "pid": OS.get_process_id(), "port": int(config.port), "instance":_control.instance_id, "instance_id":_control.instance_id, "authority_host_mode":_authority_host_mode, "capabilities":_capabilities()}))
 	report.flush()
 	var report_error:Error = report.get_error()
 	report.close()
 	if report_error != OK or DirAccess.rename_absolute(config.directory.path_join("ready.json.tmp"), config.directory.path_join("ready.json")) != OK:
-		_fail("无法发布房间就绪报告")
+		_fail("无法发布房间就绪报告", stage)
 		return
+	_startup_result(stage, 0)
 	print("SERVER_ROOM_READY ", config.id)
 	_supervisor_seen_msec = Time.get_ticks_msec()
+
+func _load_process_content(data_root: String, cache_path: String) -> void:
+	# 固定副本是该房间进程的运行环境；失败关闭或退出也不恢复旧根。
+	var stage:String = _startup_begin("content_environment")
+	preload("res://scripts/system/global/content_environment.gd").install(data_root, cache_path)
+	stage = _startup_next(stage, "rules_reload")
+	LoadGame.reload_game()
+	_startup_result(stage, 0)
+
+## 仅已有engine日志：1进入、0真实调用/门禁完成、-1既有拒绝出口。
+## stage只由启动代码中的固定字面量给出；不输出参数、耗时或错误载荷。
+## void调用的0只表示返回，不替代后续校验，也不授权READY。
+func _startup_begin(stage:String) -> String:
+	_startup_result(stage, 1)
+	return stage
+
+func _startup_next(stage:String, next_stage:String) -> String:
+	_startup_result(stage, 0)
+	return _startup_begin(next_stage)
+
+func _startup_result(stage:String, result:int) -> void:
+	print("SERVER_ROOM_STARTUP stage=", stage, " result=", result)
 
 func _process(delta: float) -> void:
 	if not _directory.is_empty() and _supervisor_seen_msec > 0:
@@ -253,17 +343,43 @@ func _process(delta: float) -> void:
 		if pulse is Dictionary and pulse.get("id") == _room_id and pulse.get("pid") == OS.get_process_id() and pulse.get("instance_id") == _control.instance_id and _valid_integer(pulse.get("version"), 0, 9007199254740991) and pulse.version > _supervisor_version:
 			_supervisor_version = int(pulse.version)
 			_supervisor_seen_msec = Time.get_ticks_msec()
-		if Time.get_ticks_msec() - _supervisor_seen_msec > _supervisor_timeout_msec:
-			print("SERVER_ROOM_SUPERVISOR_LOST ", _room_id)
-			get_tree().quit(0)
+			if not preload("res://scripts/net/server/server_console_channel.gd").saved_close_receipt(_supervisor_loss_result):
+				_supervisor_close_attempted = false
+				_supervisor_loss_result.clear()
+				_supervisor_loss_published = false
+		if Time.get_ticks_msec() - _supervisor_seen_msec > _supervisor_timeout_msec or preload("res://scripts/net/server/server_console_channel.gd").saved_close_receipt(_supervisor_loss_result):
+			_close_after_supervisor_loss()
+			# 保存拒绝/发布未知时仍收管理请求，但不继续推进失去监督的对局。
+			_control.poll()
 			return
 	if session.transport.is_connected_to_host():
 		session.poll(delta)
 		_data_approval.poll()
+	if _authority_host_mode == "dedicated" and not _control.empty_policy.config.is_empty():
+		var now:int = Time.get_ticks_msec()
+		_control.observe_empty(now)
+		if now - _idle_publish_msec >= 1000:
+			_idle_publish_msec = now
+			preload("res://scripts/net/server/server_room_manager.gd").write_configuration(_directory.path_join("idle.json"),_control.idle_state(now))
 	_control.poll()
 	if _lan_identity_bridge != null: _lan_identity_bridge.poll()
 	if not _recovery_attempted and session.room.phase == "restoring" and not session.match_authority.started:
 		_try_restore_match()
+
+func _close_after_supervisor_loss() -> void:
+	# 与既有控制入口使用相同忙状态门禁；不能在恢复/开局/归档中截断保存。
+	if not _supervisor_close_attempted:
+		if session._restore_in_progress or session._begin_in_progress or session.match_authority._archive_pulse_running or session.room.phase == "restoring": return
+		_supervisor_close_attempted = true
+		print("SERVER_ROOM_SUPERVISOR_LOST ", _room_id)
+		_supervisor_loss_result = _control.prepare_close()
+		_supervisor_loss_result.merge({"room":_room_id,"pid":OS.get_process_id(),"instance":_control.instance_id,"authority_host_mode":_authority_host_mode,"reason":"supervisor_timeout"},true)
+	# 原样发布真实保存结果；该诊断不是任何管理请求的成功回执。
+	if _supervisor_loss_result.is_empty() or _supervisor_loss_published: return
+	if preload("res://scripts/net/server/server_console_channel.gd").write_json(_directory.path_join("supervisor-loss.json"),_supervisor_loss_result) != OK: return
+	_supervisor_loss_published = true
+	if preload("res://scripts/net/server/server_console_channel.gd").saved_close_receipt(_supervisor_loss_result):
+		get_tree().quit(0)
 
 func _try_restore_match() -> void:
 	_recovery_attempted = true
@@ -475,7 +591,8 @@ static func _script_has_method(script:GDScript, method_name:String) -> bool:
 		if method.get("name") == method_name: return true
 	return false
 
-func _fail(reason: String) -> void:
+func _fail(reason: String, stage:String = "") -> void:
+	if not stage.is_empty(): _startup_result(stage, -1)
 	push_error(reason)
 	_release_startup_pins()
 	_data_approval.close()

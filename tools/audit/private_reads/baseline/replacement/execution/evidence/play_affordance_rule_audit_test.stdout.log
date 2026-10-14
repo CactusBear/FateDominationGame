@@ -1,0 +1,443 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[godot_ai game_helper] registered mcp capture (debugger active=false, logger=true)
+CHECK magic exact 2 expected modes true
+CHECK magic exact 2 authority preview same modes true
+CHECK magic exact 2 v2 hint same predicate true
+CHECK magic exact 2 faceup complete-group oracle true
+CHECK magic exact 2 faceup actual execution true
+CHECK magic exact 2 hidden complete-group oracle true
+CHECK magic exact 2 hidden actual execution true
+CHECK magic exact 2 read-only/rebuilt magic unchanged true
+CHECK magic exact 2 PlayAttack observed contract true
+CHECK magic short 1 expected modes true
+CHECK magic short 1 authority preview same modes true
+CHECK magic short 1 v2 hint same predicate true
+CHECK magic short 1 faceup complete-group oracle true
+CHECK magic short 1 faceup actual illegal submissions reject true
+CHECK magic short 1 faceup rejection has no payment or entry true
+CHECK magic short 1 hidden complete-group oracle true
+CHECK magic short 1 hidden actual execution true
+CHECK magic short 1 read-only/rebuilt magic unchanged true
+CHECK magic short 1 PlayAttack observed contract true
+CHECK magic zero expected modes true
+CHECK magic zero authority preview same modes true
+CHECK magic zero v2 hint same predicate true
+CHECK magic zero faceup complete-group oracle true
+CHECK magic zero faceup actual illegal submissions reject true
+CHECK magic zero faceup rejection has no payment or entry true
+CHECK magic zero hidden complete-group oracle true
+CHECK magic zero hidden actual execution true
+CHECK magic zero read-only/rebuilt magic unchanged true
+CHECK magic zero PlayAttack observed contract true
+CHECK discount exact expected modes true
+CHECK discount exact authority preview same modes true
+CHECK discount exact v2 hint same predicate true
+CHECK discount exact faceup complete-group oracle true
+CHECK discount exact faceup actual execution true
+CHECK discount exact hidden complete-group oracle true
+CHECK discount exact hidden actual execution true
+CHECK discount exact read-only/rebuilt magic unchanged true
+CHECK discount exact PlayAttack observed contract true
+CHECK discount short expected modes true
+CHECK discount short authority preview same modes true
+CHECK discount short v2 hint same predicate true
+CHECK discount short faceup complete-group oracle true
+CHECK discount short faceup actual illegal submissions reject true
+CHECK discount short faceup rejection has no payment or entry true
+CHECK discount short hidden complete-group oracle true
+CHECK discount short hidden actual execution true
+CHECK discount short read-only/rebuilt magic unchanged true
+CHECK discount short PlayAttack observed contract true
+CHECK discount clamps zero expected modes true
+CHECK discount clamps zero authority preview same modes true
+CHECK discount clamps zero v2 hint same predicate true
+CHECK discount clamps zero faceup complete-group oracle true
+CHECK discount clamps zero faceup actual execution true
+CHECK discount clamps zero hidden complete-group oracle true
+CHECK discount clamps zero hidden actual execution true
+CHECK discount clamps zero read-only/rebuilt magic unchanged true
+CHECK discount clamps zero PlayAttack observed contract true
+CHECK immune bypass cost expected modes true
+CHECK immune bypass cost authority preview same modes true
+CHECK immune bypass cost v2 hint same predicate true
+CHECK immune bypass cost faceup complete-group oracle true
+CHECK immune bypass cost faceup actual execution true
+CHECK immune bypass cost hidden complete-group oracle true
+CHECK immune bypass cost hidden actual execution true
+CHECK immune bypass cost read-only/rebuilt magic unchanged true
+CHECK immune bypass cost PlayAttack observed contract true
+CHECK magic cap exact expected modes true
+CHECK magic cap exact authority preview same modes true
+CHECK magic cap exact v2 hint same predicate true
+CHECK magic cap exact faceup complete-group oracle true
+CHECK magic cap exact faceup actual execution true
+CHECK magic cap exact hidden complete-group oracle true
+CHECK magic cap exact hidden actual execution true
+CHECK magic cap exact read-only/rebuilt magic unchanged true
+CHECK magic cap exact PlayAttack observed contract true
+CHECK magic cap short expected modes true
+CHECK magic cap short authority preview same modes true
+CHECK magic cap short v2 hint same predicate true
+CHECK magic cap short faceup complete-group oracle true
+CHECK magic cap short faceup actual illegal submissions reject true
+CHECK magic cap short faceup rejection has no payment or entry true
+CHECK magic cap short hidden complete-group oracle true
+CHECK magic cap short hidden actual execution true
+CHECK magic cap short read-only/rebuilt magic unchanged true
+CHECK magic cap short PlayAttack observed contract true
+CHECK min magic exact expected modes true
+CHECK min magic exact authority preview same modes true
+CHECK min magic exact v2 hint same predicate true
+CHECK min magic exact faceup complete-group oracle true
+CHECK min magic exact faceup actual execution true
+CHECK min magic exact hidden complete-group oracle true
+CHECK min magic exact hidden actual execution true
+CHECK min magic exact read-only/rebuilt magic unchanged true
+CHECK min magic exact PlayAttack observed contract true
+CHECK min magic short expected modes true
+CHECK min magic short authority preview same modes true
+CHECK min magic short v2 hint same predicate true
+CHECK min magic short faceup complete-group oracle true
+CHECK min magic short faceup actual illegal submissions reject true
+CHECK min magic short faceup rejection has no payment or entry true
+CHECK min magic short hidden complete-group oracle true
+CHECK min magic short hidden actual execution true
+CHECK min magic short read-only/rebuilt magic unchanged true
+CHECK min magic short PlayAttack observed contract true
+CHECK immune does not bypass min magic expected modes true
+CHECK immune does not bypass min magic authority preview same modes true
+CHECK immune does not bypass min magic v2 hint same predicate true
+CHECK immune does not bypass min magic faceup complete-group oracle true
+CHECK immune does not bypass min magic faceup actual illegal submissions reject true
+CHECK immune does not bypass min magic faceup rejection has no payment or entry true
+CHECK immune does not bypass min magic hidden complete-group oracle true
+CHECK immune does not bypass min magic hidden actual execution true
+CHECK immune does not bypass min magic read-only/rebuilt magic unchanged true
+CHECK immune does not bypass min magic PlayAttack observed contract true
+CHECK unknown requirement expected modes true
+CHECK unknown requirement authority preview same modes true
+CHECK unknown requirement v2 hint same predicate true
+CHECK unknown requirement faceup complete-group oracle true
+CHECK unknown requirement faceup actual execution true
+CHECK unknown requirement hidden complete-group oracle true
+CHECK unknown requirement hidden actual execution true
+CHECK unknown requirement read-only/rebuilt magic unchanged true
+CHECK unknown requirement PlayAttack observed contract true
+CHECK extra play prohibited expected modes true
+CHECK extra play prohibited authority preview same modes true
+CHECK extra play prohibited v2 hint same predicate true
+CHECK extra play prohibited faceup complete-group oracle true
+CHECK extra play prohibited faceup actual illegal submissions reject true
+CHECK extra play prohibited faceup rejection has no payment or entry true
+CHECK extra play prohibited hidden complete-group oracle true
+CHECK extra play prohibited hidden actual illegal submissions reject true
+CHECK extra play prohibited hidden rejection has no payment or entry true
+CHECK extra play prohibited read-only/rebuilt magic unchanged true
+CHECK extra play prohibited PlayAttack observed contract true
+CHECK activated prohibited expected modes true
+CHECK activated prohibited authority preview same modes true
+CHECK activated prohibited v2 hint same predicate true
+CHECK activated prohibited faceup complete-group oracle true
+CHECK activated prohibited faceup actual illegal submissions reject true
+CHECK activated prohibited faceup rejection has no payment or entry true
+CHECK activated prohibited hidden complete-group oracle true
+CHECK activated prohibited hidden actual illegal submissions reject true
+CHECK activated prohibited hidden rejection has no payment or entry true
+CHECK activated prohibited read-only/rebuilt magic unchanged true
+CHECK activated prohibited PlayAttack observed contract true
+CHECK already played candidate excluded expected modes true
+CHECK already played candidate excluded authority preview same modes true
+CHECK already played candidate excluded v2 hint same predicate true
+CHECK already played candidate excluded faceup complete-group oracle true
+CHECK already played candidate excluded faceup actual illegal submissions reject true
+CHECK already played candidate excluded faceup rejection has no payment or entry true
+CHECK already played candidate excluded hidden complete-group oracle true
+CHECK already played candidate excluded hidden actual illegal submissions reject true
+CHECK already played candidate excluded hidden rejection has no payment or entry true
+CHECK already played candidate excluded read-only/rebuilt magic unchanged true
+CHECK already played candidate excluded PlayAttack observed contract true
+CHECK undeclared discard excluded expected modes true
+CHECK undeclared discard excluded authority preview same modes true
+CHECK undeclared discard excluded v2 hint same predicate true
+CHECK undeclared discard excluded faceup complete-group oracle true
+CHECK undeclared discard excluded faceup actual illegal submissions reject true
+CHECK undeclared discard excluded faceup rejection has no payment or entry true
+CHECK undeclared discard excluded hidden complete-group oracle true
+CHECK undeclared discard excluded hidden actual illegal submissions reject true
+CHECK undeclared discard excluded hidden rejection has no payment or entry true
+CHECK undeclared discard excluded read-only/rebuilt magic unchanged true
+CHECK undeclared discard excluded PlayAttack observed contract true
+CHECK declared discard allowed expected modes true
+CHECK declared discard allowed authority preview same modes true
+CHECK declared discard allowed v2 hint same predicate true
+CHECK declared discard allowed faceup complete-group oracle true
+CHECK declared discard allowed faceup actual execution true
+CHECK declared discard allowed hidden complete-group oracle true
+CHECK declared discard allowed hidden actual execution true
+CHECK declared discard allowed read-only/rebuilt magic unchanged true
+CHECK declared discard allowed PlayAttack observed contract true
+CHECK out prohibited expected modes true
+CHECK out prohibited authority preview same modes true
+CHECK out prohibited v2 hint same predicate true
+CHECK out prohibited faceup complete-group oracle true
+CHECK out prohibited faceup actual illegal submissions reject true
+CHECK out prohibited faceup rejection has no payment or entry true
+CHECK out prohibited hidden complete-group oracle true
+CHECK out prohibited hidden actual illegal submissions reject true
+CHECK out prohibited hidden rejection has no payment or entry true
+CHECK out prohibited read-only/rebuilt magic unchanged true
+CHECK out prohibited PlayAttack observed contract true
+CHECK wrong actor prohibited expected modes true
+CHECK wrong actor prohibited authority preview same modes true
+CHECK wrong actor prohibited v2 hint same predicate true
+CHECK wrong actor prohibited faceup complete-group oracle true
+CHECK wrong actor prohibited faceup actual illegal submissions reject true
+CHECK wrong actor prohibited faceup rejection has no payment or entry true
+CHECK wrong actor prohibited hidden complete-group oracle true
+CHECK wrong actor prohibited hidden actual illegal submissions reject true
+CHECK wrong actor prohibited hidden rejection has no payment or entry true
+CHECK wrong actor prohibited read-only/rebuilt magic unchanged true
+CHECK wrong actor prohibited PlayAttack observed contract true
+CHECK phase 0 prohibited expected modes true
+CHECK phase 0 prohibited authority preview same modes true
+CHECK phase 0 prohibited v2 hint same predicate true
+CHECK phase 0 prohibited faceup complete-group oracle true
+CHECK phase 0 prohibited faceup actual illegal submissions reject true
+CHECK phase 0 prohibited faceup rejection has no payment or entry true
+CHECK phase 0 prohibited hidden complete-group oracle true
+CHECK phase 0 prohibited hidden actual illegal submissions reject true
+CHECK phase 0 prohibited hidden rejection has no payment or entry true
+CHECK phase 0 prohibited read-only/rebuilt magic unchanged true
+CHECK phase 0 prohibited PlayAttack observed contract true
+CHECK phase 1 prohibited expected modes true
+CHECK phase 1 prohibited authority preview same modes true
+CHECK phase 1 prohibited v2 hint same predicate true
+CHECK phase 1 prohibited faceup complete-group oracle true
+CHECK phase 1 prohibited faceup actual illegal submissions reject true
+CHECK phase 1 prohibited faceup rejection has no payment or entry true
+CHECK phase 1 prohibited hidden complete-group oracle true
+CHECK phase 1 prohibited hidden actual illegal submissions reject true
+CHECK phase 1 prohibited hidden rejection has no payment or entry true
+CHECK phase 1 prohibited read-only/rebuilt magic unchanged true
+CHECK phase 1 prohibited PlayAttack observed contract true
+CHECK phase 3 prohibited expected modes true
+CHECK phase 3 prohibited authority preview same modes true
+CHECK phase 3 prohibited v2 hint same predicate true
+CHECK phase 3 prohibited faceup complete-group oracle true
+CHECK phase 3 prohibited faceup actual illegal submissions reject true
+CHECK phase 3 prohibited faceup rejection has no payment or entry true
+CHECK phase 3 prohibited hidden complete-group oracle true
+CHECK phase 3 prohibited hidden actual illegal submissions reject true
+CHECK phase 3 prohibited hidden rejection has no payment or entry true
+CHECK phase 3 prohibited read-only/rebuilt magic unchanged true
+CHECK phase 3 prohibited PlayAttack observed contract true
+CHECK effective action in battle expected modes true
+CHECK effective action in battle authority preview same modes true
+CHECK effective action in battle v2 hint same predicate true
+CHECK effective action in battle faceup complete-group oracle true
+CHECK effective action in battle faceup actual execution true
+CHECK effective action in battle hidden complete-group oracle true
+CHECK effective action in battle hidden actual execution true
+CHECK effective action in battle read-only/rebuilt magic unchanged true
+CHECK effective action in battle PlayAttack observed contract true
+CHECK actual action remapped away expected modes true
+CHECK actual action remapped away authority preview same modes true
+CHECK actual action remapped away v2 hint same predicate true
+CHECK actual action remapped away faceup complete-group oracle true
+CHECK actual action remapped away faceup actual illegal submissions reject true
+CHECK actual action remapped away faceup rejection has no payment or entry true
+CHECK actual action remapped away hidden complete-group oracle true
+CHECK actual action remapped away hidden actual illegal submissions reject true
+CHECK actual action remapped away hidden rejection has no payment or entry true
+CHECK actual action remapped away read-only/rebuilt magic unchanged true
+CHECK actual action remapped away PlayAttack observed contract true
+CHECK play limit short expected modes true
+CHECK play limit short authority preview same modes true
+CHECK play limit short v2 hint same predicate true
+CHECK play limit short faceup complete-group oracle true
+CHECK play limit short faceup actual illegal submissions reject true
+CHECK play limit short faceup rejection has no payment or entry true
+CHECK play limit short hidden complete-group oracle true
+CHECK play limit short hidden actual illegal submissions reject true
+CHECK play limit short hidden rejection has no payment or entry true
+CHECK play limit short read-only/rebuilt magic unchanged true
+CHECK play limit short PlayAttack observed contract true
+CHECK no completion support expected modes true
+CHECK no completion support authority preview same modes true
+CHECK no completion support v2 hint same predicate true
+CHECK no completion support faceup complete-group oracle true
+CHECK no completion support faceup actual illegal submissions reject true
+CHECK no completion support faceup rejection has no payment or entry true
+CHECK no completion support hidden complete-group oracle true
+CHECK no completion support hidden actual illegal submissions reject true
+CHECK no completion support hidden rejection has no payment or entry true
+CHECK no completion support read-only/rebuilt magic unchanged true
+CHECK no completion support PlayAttack observed contract true
+CHECK committed at limit expected modes true
+CHECK committed at limit authority preview same modes true
+CHECK committed at limit v2 hint same predicate true
+CHECK committed at limit faceup complete-group oracle true
+CHECK committed at limit faceup actual illegal submissions reject true
+CHECK committed at limit faceup rejection has no payment or entry true
+CHECK committed at limit hidden complete-group oracle true
+CHECK committed at limit hidden actual illegal submissions reject true
+CHECK committed at limit hidden rejection has no payment or entry true
+CHECK committed at limit read-only/rebuilt magic unchanged true
+CHECK committed at limit PlayAttack observed contract true
+CHECK flow completed expected modes true
+CHECK flow completed authority preview same modes true
+CHECK flow completed v2 hint same predicate true
+CHECK flow completed faceup complete-group oracle true
+CHECK flow completed faceup actual illegal submissions reject true
+CHECK flow completed faceup rejection has no payment or entry true
+CHECK flow completed hidden complete-group oracle true
+CHECK flow completed hidden actual illegal submissions reject true
+CHECK flow completed hidden rejection has no payment or entry true
+CHECK flow completed read-only/rebuilt magic unchanged true
+CHECK flow completed PlayAttack observed contract true
+CHECK cannot play buff expected modes true
+CHECK cannot play buff authority preview same modes true
+CHECK cannot play buff v2 hint same predicate true
+CHECK cannot play buff faceup complete-group oracle true
+CHECK cannot play buff faceup actual illegal submissions reject true
+CHECK cannot play buff faceup rejection has no payment or entry true
+CHECK cannot play buff hidden complete-group oracle true
+CHECK cannot play buff hidden actual illegal submissions reject true
+CHECK cannot play buff hidden rejection has no payment or entry true
+CHECK cannot play buff read-only/rebuilt magic unchanged true
+CHECK cannot play buff PlayAttack observed contract true
+CHECK noble forbidden expected modes true
+CHECK noble forbidden authority preview same modes true
+CHECK noble forbidden v2 hint same predicate true
+CHECK noble forbidden faceup complete-group oracle true
+CHECK noble forbidden faceup actual illegal submissions reject true
+CHECK noble forbidden faceup rejection has no payment or entry true
+CHECK noble forbidden hidden complete-group oracle true
+CHECK noble forbidden hidden actual illegal submissions reject true
+CHECK noble forbidden hidden rejection has no payment or entry true
+CHECK noble forbidden read-only/rebuilt magic unchanged true
+CHECK noble forbidden PlayAttack observed contract true
+CHECK special area forbidden expected modes true
+CHECK special area forbidden authority preview same modes true
+CHECK special area forbidden v2 hint same predicate true
+CHECK special area forbidden faceup complete-group oracle true
+CHECK special area forbidden faceup actual illegal submissions reject true
+CHECK special area forbidden faceup rejection has no payment or entry true
+CHECK special area forbidden hidden complete-group oracle true
+CHECK special area forbidden hidden actual illegal submissions reject true
+CHECK special area forbidden hidden rejection has no payment or entry true
+CHECK special area forbidden read-only/rebuilt magic unchanged true
+CHECK special area forbidden PlayAttack observed contract true
+CHECK battle second all hidden expected modes true
+CHECK battle second all hidden authority preview same modes true
+CHECK battle second all hidden v2 hint same predicate true
+CHECK battle second all hidden faceup complete-group oracle true
+CHECK battle second all hidden faceup actual execution true
+CHECK battle second all hidden hidden complete-group oracle true
+CHECK battle second all hidden hidden actual illegal submissions reject true
+CHECK battle second all hidden hidden rejection has no payment or entry true
+CHECK battle second all hidden read-only/rebuilt magic unchanged true
+CHECK battle second all hidden PlayAttack observed contract true
+CHECK battle second after faceup expected modes true
+CHECK battle second after faceup authority preview same modes true
+CHECK battle second after faceup v2 hint same predicate true
+CHECK battle second after faceup faceup complete-group oracle true
+CHECK battle second after faceup faceup actual execution true
+CHECK battle second after faceup hidden complete-group oracle true
+CHECK battle second after faceup hidden actual execution true
+CHECK battle second after faceup read-only/rebuilt magic unchanged true
+CHECK battle second after faceup PlayAttack observed contract true
+CHECK nonbattle second all hidden expected modes true
+CHECK nonbattle second all hidden authority preview same modes true
+CHECK nonbattle second all hidden v2 hint same predicate true
+CHECK nonbattle second all hidden faceup complete-group oracle true
+CHECK nonbattle second all hidden faceup actual execution true
+CHECK nonbattle second all hidden hidden complete-group oracle true
+CHECK nonbattle second all hidden hidden actual execution true
+CHECK nonbattle second all hidden read-only/rebuilt magic unchanged true
+CHECK nonbattle second all hidden PlayAttack observed contract true
+CHECK pending cost exactly expected modes true
+CHECK pending cost exactly authority preview same modes true
+CHECK pending cost exactly v2 hint same predicate true
+CHECK pending cost exactly faceup complete-group oracle true
+CHECK pending cost exactly faceup actual execution true
+CHECK pending cost exactly hidden complete-group oracle true
+CHECK pending cost exactly hidden actual execution true
+CHECK pending cost exactly read-only/rebuilt magic unchanged true
+CHECK pending cost exactly PlayAttack observed contract true
+CHECK pending cost short expected modes true
+CHECK pending cost short authority preview same modes true
+CHECK pending cost short v2 hint same predicate true
+CHECK pending cost short faceup complete-group oracle true
+CHECK pending cost short faceup actual illegal submissions reject true
+CHECK pending cost short faceup rejection has no payment or entry true
+CHECK pending cost short hidden complete-group oracle true
+CHECK pending cost short hidden actual execution true
+CHECK pending cost short read-only/rebuilt magic unchanged true
+CHECK pending cost short PlayAttack observed contract true
+CHECK skill zone exact 8 expected modes true
+CHECK skill zone exact 8 authority preview same modes true
+CHECK skill zone exact 8 v2 hint same predicate true
+CHECK skill zone exact 8 faceup complete-group oracle true
+CHECK skill zone exact 8 faceup actual execution true
+CHECK skill zone exact 8 hidden complete-group oracle true
+CHECK skill zone exact 8 hidden actual illegal submissions reject true
+CHECK skill zone exact 8 hidden rejection has no payment or entry true
+CHECK skill zone exact 8 read-only/rebuilt magic unchanged true
+CHECK skill zone short 7 expected modes true
+CHECK skill zone short 7 authority preview same modes true
+CHECK skill zone short 7 v2 hint same predicate true
+CHECK skill zone short 7 faceup complete-group oracle true
+CHECK skill zone short 7 faceup actual illegal submissions reject true
+CHECK skill zone short 7 faceup rejection has no payment or entry true
+CHECK skill zone short 7 hidden complete-group oracle true
+CHECK skill zone short 7 hidden actual illegal submissions reject true
+CHECK skill zone short 7 hidden rejection has no payment or entry true
+CHECK skill zone short 7 read-only/rebuilt magic unchanged true
+CHECK skill zone explicit bypass expected modes true
+CHECK skill zone explicit bypass authority preview same modes true
+CHECK skill zone explicit bypass v2 hint same predicate true
+CHECK skill zone explicit bypass faceup complete-group oracle true
+CHECK skill zone explicit bypass faceup actual execution true
+CHECK skill zone explicit bypass hidden complete-group oracle true
+CHECK skill zone explicit bypass hidden actual illegal submissions reject true
+CHECK skill zone explicit bypass hidden rejection has no payment or entry true
+CHECK skill zone explicit bypass read-only/rebuilt magic unchanged true
+CHECK skill card zone bypass expected modes true
+CHECK skill card zone bypass authority preview same modes true
+CHECK skill card zone bypass v2 hint same predicate true
+CHECK skill card zone bypass faceup complete-group oracle true
+CHECK skill card zone bypass faceup actual execution true
+CHECK skill card zone bypass hidden complete-group oracle true
+CHECK skill card zone bypass hidden actual illegal submissions reject true
+CHECK skill card zone bypass hidden rejection has no payment or entry true
+CHECK skill card zone bypass read-only/rebuilt magic unchanged true
+CHECK unawakened skill prohibited expected modes true
+CHECK unawakened skill prohibited authority preview same modes true
+CHECK unawakened skill prohibited v2 hint same predicate true
+CHECK unawakened skill prohibited faceup complete-group oracle true
+CHECK unawakened skill prohibited faceup actual illegal submissions reject true
+CHECK unawakened skill prohibited faceup rejection has no payment or entry true
+CHECK unawakened skill prohibited hidden complete-group oracle true
+CHECK unawakened skill prohibited hidden actual illegal submissions reject true
+CHECK unawakened skill prohibited hidden rejection has no payment or entry true
+CHECK unawakened skill prohibited read-only/rebuilt magic unchanged true
+CHECK hand skill no zone threshold expected modes true
+CHECK hand skill no zone threshold authority preview same modes true
+CHECK hand skill no zone threshold v2 hint same predicate true
+CHECK hand skill no zone threshold faceup complete-group oracle true
+CHECK hand skill no zone threshold faceup actual execution true
+CHECK hand skill no zone threshold hidden complete-group oracle true
+CHECK hand skill no zone threshold hidden actual illegal submissions reject true
+CHECK hand skill no zone threshold hidden rejection has no payment or entry true
+CHECK hand skill no zone threshold read-only/rebuilt magic unchanged true
+CHECK PlayAttack default rejects a legal normal card without effect chain true
+CHECK effect-driven PlayAttack bypasses phase and actor true
+CHECK PlayAttack default limit guard unreachable with activating effect true
+CHECK cost calculation event actually raises cost false true
+CHECK regular group has no post-event affordability recheck (RED business evidence) true
+CHECK cost calculation event actually raises cost true true
+CHECK PlayAttack rechecks raised cost and refuses true
+AUDIT_ROWS [{"case":"magic exact 2","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"magic short 1","executed_modes":[true],"modes":[true],"play_attack_ignore_limit":false,"v2_hint":true},{"case":"magic zero","executed_modes":[true],"modes":[true],"play_attack_ignore_limit":false,"v2_hint":true},{"case":"discount exact","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"discount short","executed_modes":[true],"modes":[true],"play_attack_ignore_limit":false,"v2_hint":true},{"case":"discount clamps zero","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"immune bypass cost","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"magic cap exact","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"magic cap short","executed_modes":[true],"modes":[true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"min magic exact","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"min magic short","executed_modes":[true],"modes":[true],"play_attack_ignore_limit":false,"v2_hint":true},{"case":"immune does not bypass min magic","executed_modes":[true],"modes":[true],"play_attack_ignore_limit":false,"v2_hint":true},{"case":"unknown requirement","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"extra play prohibited","executed_modes":[],"modes":[],"play_attack_ignore_limit":false,"v2_hint":false},{"case":"activated prohibited","executed_modes":[],"modes":[],"play_attack_ignore_limit":false,"v2_hint":false},{"case":"already played candidate excluded","executed_modes":[],"modes":[],"play_attack_ignore_limit":true,"v2_hint":false},{"case":"undeclared discard excluded","executed_modes":[],"modes":[],"play_attack_ignore_limit":true,"v2_hint":false},{"case":"declared discard allowed","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"out prohibited","executed_modes":[],"modes":[],"play_attack_ignore_limit":false,"v2_hint":false},{"case":"wrong actor prohibited","executed_modes":[],"modes":[],"play_attack_ignore_limit":false,"v2_hint":false},{"case":"phase 0 prohibited","executed_modes":[],"modes":[],"play_attack_ignore_limit":false,"v2_hint":false},{"case":"phase 1 prohibited","executed_modes":[],"modes":[],"play_attack_ignore_limit":false,"v2_hint":false},{"case":"phase 3 prohibited","executed_modes":[],"modes":[],"play_attack_ignore_limit":false,"v2_hint":false},{"case":"effective action in battle","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":false,"v2_hint":true},{"case":"actual action remapped away","executed_modes":[],"modes":[],"play_attack_ignore_limit":true,"v2_hint":false},{"case":"play limit short","executed_modes":[],"modes":[],"play_attack_ignore_limit":true,"v2_hint":false},{"case":"no completion support","executed_modes":[],"modes":[],"play_attack_ignore_limit":true,"v2_hint":false},{"case":"committed at limit","executed_modes":[],"modes":[],"play_attack_ignore_limit":true,"v2_hint":false},{"case":"flow completed","executed_modes":[],"modes":[],"play_attack_ignore_limit":true,"v2_hint":false},{"case":"cannot play buff","executed_modes":[],"modes":[],"play_attack_ignore_limit":false,"v2_hint":false},{"case":"noble forbidden","executed_modes":[],"modes":[],"play_attack_ignore_limit":false,"v2_hint":false},{"case":"special area forbidden","executed_modes":[],"modes":[],"play_attack_ignore_limit":false,"v2_hint":false},{"case":"battle second all hidden","executed_modes":[false],"modes":[false],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"battle second after faceup","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"nonbattle second all hidden","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"pending cost exactly","executed_modes":[false,true],"modes":[false,true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"pending cost short","executed_modes":[true],"modes":[true],"play_attack_ignore_limit":true,"v2_hint":true},{"case":"skill zone exact 8","executed_modes":[false],"modes":[false],"play_attack_ignore_limit":null,"v2_hint":true},{"case":"skill zone short 7","executed_modes":[],"modes":[],"play_attack_ignore_limit":null,"v2_hint":false},{"case":"skill zone explicit bypass","executed_modes":[false],"modes":[false],"play_attack_ignore_limit":null,"v2_hint":true},{"case":"skill card zone bypass","executed_modes":[false],"modes":[false],"play_attack_ignore_limit":null,"v2_hint":true},{"case":"unawakened skill prohibited","executed_modes":[],"modes":[],"play_attack_ignore_limit":null,"v2_hint":false},{"case":"hand skill no zone threshold","executed_modes":[false],"modes":[false],"play_attack_ignore_limit":null,"v2_hint":true},{"accepted":true,"actual_cost":3,"case":"dynamic cost group","hinted_faceup":true,"magic_after":-1.0},{"accepted":false,"actual_cost":3,"case":"dynamic cost single","hinted_faceup":true,"magic_after":2}]
+RESULT play_affordance_rule_audit checks=438 failures=[]

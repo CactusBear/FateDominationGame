@@ -42,6 +42,14 @@ func encode(value, depth: int = 0):
 	if depth > 128:
 		error = "存档数据嵌套过深"
 		return null
+	# 字面量占完整投影的大多数；类型分派不读取或缓存任何规则字段值。
+	var kind:int = typeof(value)
+	if kind <= TYPE_STRING:
+		if _capturing and kind == TYPE_STRING and not data_root.is_empty():
+			for prefix in _prefixes:
+				if value.begins_with(prefix + "/"):
+					return ["value", "<session-data>/" + value.substr(prefix.length() + 1)]
+		return ["value", value]
 	if value is WeakRef:
 		return encode(value.get_ref(), depth + 1)
 	if value is Object:
@@ -52,32 +60,26 @@ func encode(value, depth: int = 0):
 			_definitions.append(definition)
 			definition.fields = encode(script_fields(value), depth + 1)
 		return ["ref", id]
-	if value is Array:
+	if kind == TYPE_ARRAY:
 		if _capture_collections:
 			return _encode_collection(value, depth)
 		var items: Array = []
 		for item in value:
 			items.append(encode(item, depth + 1))
 		return ["array", items]
-	if value is Dictionary:
+	if kind == TYPE_DICTIONARY:
 		if _capture_collections:
 			return _encode_collection(value, depth)
 		var pairs: Array = []
 		for key in value:
 			pairs.append([encode(key, depth + 1), encode(value[key], depth + 1)])
 		return ["dict", pairs]
-	if value is Callable:
+	if kind == TYPE_CALLABLE:
 		# Callable 不反序列化执行。定义校验只保存绑定目标与方法，恢复由原代码重新构造。
 		return ["callable", str(value.get_method()), encode(value.get_object(), depth + 1), encode(value.get_bound_arguments(), depth + 1)]
-	if value is Signal:
+	if kind == TYPE_SIGNAL:
 		return ["signal", str(value.get_name())]
-	if typeof(value) in [TYPE_NIL, TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING]:
-		if _capturing and value is String and not data_root.is_empty():
-			for prefix in _prefixes:
-				if value.begins_with(prefix + "/"):
-					return ["value", "<session-data>/" + value.substr(prefix.length() + 1)]
-		return ["value", value]
-	if value is StringName or value is NodePath:
+	if kind == TYPE_STRING_NAME or kind == TYPE_NODE_PATH:
 		return ["value", str(value)]
 	error = "存档不支持的类型: %s" % type_string(typeof(value))
 	return null

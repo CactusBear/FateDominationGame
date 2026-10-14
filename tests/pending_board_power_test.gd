@@ -96,7 +96,7 @@ func snapshot() -> Dictionary:
 	return {"players":freeze(GameData.player_data_library), "cards":cards,
 		"objects":freeze(GameData.objects), "seats":seats,
 		"logs":freeze(GameLog.query({}, null)), "messages":freeze(EffectManager.messages),
-		"announcements":freeze(EffectManager._pending_announcements),
+		"announcements":freeze(EffectManager.pending_announcements_snapshot()),
 		"activating":freeze(EffectManager.activating_eff)}
 
 func ui_total(expected:int, board:int, label:String):

@@ -46,7 +46,17 @@ func modes_for(id: int) -> Array:
 	return []
 
 func add(id: int, hidden: bool) -> bool:
-	if _cards.has(id) or not modes_for(id).has(hidden):
+	# 暂选与合法性独立；只允许当前观察者的已声明持有牌。
+	if _session == null or _submitted or _cards.has(id):
+		return false
+	var owned: bool = false
+	for player in _session.read_match().get("players", []):
+		if player.id != _session.read_match().get("observer", -1):
+			continue
+		for entry in player.get("held_cards", []):
+			if entry.card.id == id and entry.card.get("visible", false) and not entry.played and entry.card.concealed == hidden:
+				owned = true
+	if not owned:
 		return false
 	_cards.append(id)
 	_hidden.append(hidden)
@@ -82,8 +92,22 @@ func _state_changed() -> void:
 	_submit_sequence = 0
 	_preview_sequence = 0
 	_view_seq = sequence
-	_cards.clear()
-	_hidden.clear()
+	# 非提交刷新（例如右键翻面）保留仍持有的选择，并采用权威最新朝向。
+	var live: Dictionary = {}
+	for player in _session.read_match().get("players", []):
+		if player.id == _session.read_match().get("observer", -1):
+			for entry in player.get("held_cards", []):
+				if entry.card.get("visible", false) and not entry.played:
+					live[entry.card.id] = entry.card.concealed
+	var preserved: Array = []
+	var flags: Array = []
+	if not _submitted:
+		for id in _cards:
+			if live.has(id):
+				preserved.append(id)
+				flags.append(live[id])
+	_cards = preserved
+	_hidden = flags
 	_submitted = false
 	if int(_session.read_match().get("observer", -1)) < 0:
 		_preview.clear()
@@ -94,9 +118,10 @@ func _state_changed() -> void:
 
 func _request_preview() -> void:
 	_preview.clear()
-	_request_id += 1
+	_preview_sequence = 0
 	_waiting = true
-	var result: Error = _session.request("preview_group", {"request_id": _request_id, "view_seq": _view_seq, "cards": _cards.duplicate(), "hidden": _hidden.duplicate()}, _register_preview)
+	var args:Dictionary = {"request_id": 0, "view_seq": _view_seq, "cards": _cards.duplicate(), "hidden": _hidden.duplicate()}
+	var result: Error = _session.request("preview_group", args, _register_preview.bind(args))
 	if result != OK:
 		_waiting = false
 	changed.emit()
@@ -105,8 +130,10 @@ func _request_preview() -> void:
 func _register_submit(sequence: int) -> void:
 	_submit_sequence = sequence
 
-func _register_preview(sequence: int) -> void:
+func _register_preview(sequence: int, args:Dictionary) -> void:
 	_preview_sequence = sequence
+	_request_id = sequence
+	args.request_id = sequence
 
 func _rejected(sequence: int, _reason: String) -> void:
 	if sequence <= 0:

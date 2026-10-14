@@ -1,0 +1,11 @@
+--- previous/regular_play.gd
++++ R07/regular_play.gd
+@@ -385,7 +385,7 @@
+ 					_reject_group(state)
+ 					return
+ 				_operation("set_property").exec(card, "_is_concealed", hidden)
+-				card._is_activating = not hidden
++				_operation("set_property").exec(card, "_is_activating", not hidden)
+ 				_take_from_source(d, card)
+ 				_operation("add_to_array").exec(card, d.played_cards, -1)
+ 				if CardCountsPower.new().exec(card, id): d.power.add(card._power)

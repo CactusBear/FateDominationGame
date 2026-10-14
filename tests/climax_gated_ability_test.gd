@@ -59,7 +59,7 @@ func run():
 	for servant in GameData.loaded_servants:
 		for template in (servant._specials.get("SKILLS", []) as Array):
 			var clone:BaseSkill=CloneObject.new().exec(template)
-			if clone != null and clone._cost.number == 8 and clone._attributes.has(Attributes.NOBLE_PHANTASM):
+			if clone != null and clone._cost.number == 8 and clone.has_attribute(Attributes.NOBLE_PHANTASM):
 				if blade == null:
 					blade=clone
 	check(blade != null, "the priciest noble phantasm is loaded from the servant template")
